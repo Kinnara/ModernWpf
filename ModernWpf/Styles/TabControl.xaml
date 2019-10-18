@@ -1,0 +1,264 @@
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <Thickness x:Key="TabViewTopHeaderPadding">8,8,0,0</Thickness>
+    <Thickness x:Key="TabViewBottomHeaderPadding">8,0,0,8</Thickness>
+    <Thickness x:Key="TabViewLeftHeaderPadding">8,8,0,8</Thickness>
+    <Thickness x:Key="TabViewRightHeaderPadding">0,8,8,8</Thickness>
+    <Thickness x:Key="TabViewItemHeaderPadding">12,8,10,8</Thickness>
+
+    <sys:Double x:Key="TabViewItemMaxWidth">240</sys:Double>
+    <sys:Double x:Key="TabViewItemMinWidth">100</sys:Double>
+
+    <sys:Double x:Key="TabViewItemHeaderFontSize">12</sys:Double>
+    <sys:Double x:Key="TabViewItemHeaderIconSize">16</sys:Double>
+    <Thickness x:Key="TabViewItemHeaderIconMargin">0,0,10,0</Thickness>
+
+    <sys:Double x:Key="TabViewItemHeaderCloseButtonSize">16</sys:Double>
+    <sys:Double x:Key="TabViewItemHeaderCloseFontSize">12</sys:Double>
+    <Thickness x:Key="TabViewItemHeaderCloseMargin">10,0,0,0</Thickness>
+
+    <sys:Double x:Key="TabViewItemScrollButtonWidth">29</sys:Double>
+    <sys:Double x:Key="TabViewItemScrollButtonHeight">29</sys:Double>
+    <Thickness x:Key="TabViewItemScrollButtonPadding">6,4,10,5</Thickness>
+
+    <primitives:CornerRadiusFilterConverter x:Key="TopCornerRadiusFilterConverter" Filter="Top" />
+    <primitives:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
+    <primitives:CornerRadiusFilterConverter x:Key="BottomCornerRadiusFilterConverter" Filter="Bottom" />
+    <primitives:CornerRadiusFilterConverter x:Key="LeftCornerRadiusFilterConverter" Filter="Left" />
+
+    <Style x:Key="DefaultTabItemStyle" TargetType="TabItem">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Foreground" Value="{DynamicResource TabViewItemHeaderForeground}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource EmptyFocusVisual}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <!-- This item will cover the separator on its left side. -->
+                    <Border
+                        x:Name="LayoutRoot"
+                        Padding="{TemplateBinding Padding}"
+                        Margin="-1,0,0,0"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+
+                            <Grid.RenderTransform>
+                                <ScaleTransform x:Name="LayoutRootScale" />
+                            </Grid.RenderTransform>
+
+                            <Border
+                                x:Name="TabSeparator"
+                                HorizontalAlignment="Right"
+                                Width="1"
+                                BorderBrush="{DynamicResource TabViewItemSeparator}"
+                                BorderThickness="1"
+                                Margin="0,6,0,6" />
+
+                            <!-- Control.IsTemplateFocusTarget="True" -->
+                            <!-- FocusVisualMargin="{TemplateBinding FocusVisualMargin}" -->
+                            <Border
+                                x:Name="TabContainer"
+                                Grid.Column="1"
+                                Background="{DynamicResource TabViewItemHeaderBackground}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{DynamicResource TabViewItemHeaderPadding}"
+                                CornerRadius="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}">
+                                <Grid>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Viewbox
+                                        x:Name="IconBox"
+                                        MaxWidth="{DynamicResource TabViewItemHeaderIconSize}"
+                                        MaxHeight="{DynamicResource TabViewItemHeaderIconSize}"
+                                        Margin="{DynamicResource TabViewItemHeaderIconMargin}">
+                                        <ContentControl
+                                            x:Name="IconControl"
+                                            Content="{TemplateBinding primitives:TabItemHelper.Icon}"
+                                            IsTabStop="False"
+                                            Foreground="{DynamicResource TabViewItemIconForeground}" />
+                                    </Viewbox>
+
+                                    <ContentPresenter
+                                        x:Name="ContentPresenter"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        ContentSource="Header"
+                                        TextElement.FontWeight="{TemplateBinding FontWeight}"
+                                        TextElement.FontSize="{DynamicResource TabViewItemHeaderFontSize}"
+                                        Focusable="False"
+                                        RecognizesAccessKey="True"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
+                                </Grid>
+                            </Border>
+
+                            <Control
+                                x:Name="FocusVisual"
+                                Grid.Column="1"
+                                Style="{DynamicResource CustomFocusVisual}"
+                                Margin="{TemplateBinding primitives:FrameworkElementHelper.FocusVisualMargin}" />
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
+                        </Trigger>
+                        <!-- Selected -->
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundSelected}" />
+                            <Setter Property="Panel.ZIndex" Value="1" />
+                        </Trigger>
+                        <!-- PointerOverSelected -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsSelected" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
+                            <Setter Property="Panel.ZIndex" Value="1" />
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
+                        </Trigger>
+                        <!-- NoIcon -->
+                        <Trigger Property="primitives:TabItemHelper.Icon" Value="{x:Null}">
+                            <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="primitives:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
+                            <Setter TargetName="FocusVisual" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Bottom">
+                            <Setter TargetName="TabContainer" Property="CornerRadius" Value="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Left">
+                            <Setter TargetName="TabSeparator" Property="BorderBrush" Value="{x:Null}" />
+                            <Setter TargetName="TabContainer" Property="CornerRadius" Value="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Right">
+                            <Setter TargetName="TabSeparator" Property="BorderBrush" Value="{x:Null}" />
+                            <Setter TargetName="TabContainer" Property="CornerRadius" Value="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource RightCornerRadiusFilterConverter}}" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="TabItem" BasedOn="{StaticResource DefaultTabItemStyle}" />
+
+    <Style x:Key="DefaultTabControlStyle" TargetType="{x:Type TabControl}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <!--<Setter Property="VerticalAlignment" Value="Top" />-->
+        <!--<Setter Property="IsTabStop" Value="False" />-->
+        <Setter Property="Background" Value="{DynamicResource TabViewBackground}" />
+        <!--<Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />-->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabControl}">
+                    <Grid
+                        x:Name="templateRoot"
+                        ClipToBounds="true"
+                        KeyboardNavigation.TabNavigation="Local"
+                        SnapsToDevicePixels="true">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="ColumnDefinition0" />
+                            <ColumnDefinition x:Name="ColumnDefinition1" Width="0" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition
+                                x:Name="RowDefinition0"
+                                Height="Auto" />
+                            <RowDefinition
+                                x:Name="RowDefinition1"
+                                Height="*" />
+                        </Grid.RowDefinitions>
+                        <Border
+                            x:Name="headerPanel"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Background="{TemplateBinding Background}"
+                            Padding="{DynamicResource TabViewTopHeaderPadding}">
+                            <TabPanel
+                                Panel.ZIndex="1"
+                                Background="Transparent"
+                                IsItemsHost="true"
+                                KeyboardNavigation.TabIndex="1" />
+                        </Border>
+                        <Border
+                            x:Name="contentPanel"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            KeyboardNavigation.DirectionalNavigation="Contained"
+                            KeyboardNavigation.TabIndex="2"
+                            KeyboardNavigation.TabNavigation="Local">
+                            <ContentPresenter
+                                x:Name="PART_SelectedContentHost"
+                                Margin="{TemplateBinding Padding}"
+                                ContentSource="SelectedContent"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="TabStripPlacement" Value="Bottom">
+                            <Setter TargetName="headerPanel" Property="Grid.Row" Value="1" />
+                            <Setter TargetName="contentPanel" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="RowDefinition0" Property="Height" Value="*" />
+                            <Setter TargetName="RowDefinition1" Property="Height" Value="Auto" />
+                            <Setter TargetName="headerPanel" Property="Padding" Value="{DynamicResource TabViewBottomHeaderPadding}" />
+                        </Trigger>
+                        <Trigger Property="TabStripPlacement" Value="Left">
+                            <Setter TargetName="headerPanel" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="contentPanel" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="headerPanel" Property="Grid.Column" Value="0" />
+                            <Setter TargetName="contentPanel" Property="Grid.Column" Value="1" />
+                            <Setter TargetName="ColumnDefinition0" Property="Width" Value="Auto" />
+                            <Setter TargetName="ColumnDefinition1" Property="Width" Value="*" />
+                            <Setter TargetName="RowDefinition0" Property="Height" Value="*" />
+                            <Setter TargetName="RowDefinition1" Property="Height" Value="0" />
+                            <Setter TargetName="headerPanel" Property="Padding" Value="{DynamicResource TabViewLeftHeaderPadding}" />
+                        </Trigger>
+                        <Trigger Property="TabStripPlacement" Value="Right">
+                            <Setter TargetName="headerPanel" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="contentPanel" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="headerPanel" Property="Grid.Column" Value="1" />
+                            <Setter TargetName="contentPanel" Property="Grid.Column" Value="0" />
+                            <Setter TargetName="ColumnDefinition0" Property="Width" Value="*" />
+                            <Setter TargetName="ColumnDefinition1" Property="Width" Value="Auto" />
+                            <Setter TargetName="RowDefinition0" Property="Height" Value="*" />
+                            <Setter TargetName="RowDefinition1" Property="Height" Value="0" />
+                            <Setter TargetName="headerPanel" Property="Padding" Value="{DynamicResource TabViewRightHeaderPadding}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="templateRoot" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="TabControl" BasedOn="{StaticResource DefaultTabControlStyle}" />
+
+</ResourceDictionary>

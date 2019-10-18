@@ -1,0 +1,65 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.DatePickerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://www.modernwpf.com"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900">
+
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <controls:ControlExample HeaderText="DatePicker with a header and placeholder text.">
+                <DatePicker
+                    x:Name="datePicker"
+                    VerticalAlignment="Top"
+                    ui:ControlHelper.Header="Calendar"
+                    ui:ControlHelper.PlaceholderText="Pick a date" />
+
+                <controls:ControlExample.Options>
+                    <controls:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <TextBox
+                            ui:ControlHelper.Header="Header"
+                            Text="{Binding ElementName=datePicker, Path=(ui:ControlHelper.Header), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBox
+                            ui:ControlHelper.Header="PlaceholderText"
+                            Text="{Binding ElementName=datePicker, Path=(ui:ControlHelper.PlaceholderText), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBox
+                            ui:ControlHelper.Header="Description"
+                            Text="{Binding ElementName=datePicker, Path=(ui:ControlHelper.Description), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <DatePicker
+                            ui:ControlHelper.Header="DisplayDateStart"
+                            SelectedDate="{Binding ElementName=datePicker, Path=DisplayDateStart, Mode=TwoWay}" />
+
+                        <DatePicker
+                            ui:ControlHelper.Header="DisplayDateEnd"
+                            SelectedDate="{Binding ElementName=datePicker, Path=DisplayDateEnd, Mode=TwoWay}" />
+
+                        <CheckBox
+                            Content="IsTodayHighlighted"
+                            IsChecked="{Binding ElementName=datePicker, Path=IsTodayHighlighted, Mode=TwoWay}" />
+
+                        <CheckBox
+                            Content="IsDropDownOpen"
+                            IsChecked="{Binding ElementName=datePicker, Path=IsDropDownOpen, Mode=TwoWay}" />
+
+                        <Button
+                            Content="Blackout dates in the past"
+                            Click="BlackoutDatesInPast" />
+
+                        <CheckBox
+                            Content="IsEnabled"
+                            IsChecked="{Binding ElementName=datePicker, Path=IsEnabled, Mode=TwoWay}" />
+                    </controls:SimpleStackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

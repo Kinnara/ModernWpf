@@ -1,0 +1,1444 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>ModernWpf.Controls</name>
+  </assembly>
+  <members>
+    <member name="T:ModernWpf.Automation.Peers.RepeaterAutomationPeer" />
+    <member name="M:ModernWpf.Automation.Peers.RepeaterAutomationPeer.#ctor(ModernWpf.Controls.ItemsRepeater)">
+      <param name="owner" />
+    </member>
+    <member name="T:ModernWpf.Controls.AnimationContext">
+      <summary>Defines constants that specify information about changes to a data collection that is useful for animating data elements.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.AnimationContext.CollectionChangeAdd">
+      <summary>An item was added to the collection.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.AnimationContext.CollectionChangeRemove">
+      <summary>An item was removed from the collection.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.AnimationContext.CollectionChangeReset">
+      <summary>The collection was reset.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.AnimationContext.LayoutTransition">
+      <summary>The layout of items was changed.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.AnimationContext.None">
+      <summary>There was no change.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.ContentDialog">
+      <summary>Represents a dialog box that can be customized to contain checkboxes, hyperlinks, buttons and any other XAML content.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ContentDialog.#ctor">
+      <summary>Initializes a new instance of the ContentDialog class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.CloseButtonCommand">
+      <summary>Gets or sets the command to invoke when the close button is tapped.</summary>
+      <returns>The command to invoke when the primary button is tapped.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.CloseButtonCommandParameter">
+      <summary>Gets or sets the parameter to pass to the command for the close button.</summary>
+      <returns>The parameter to pass to the command for the close button. The default is **null.**</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.CloseButtonCommandParameterProperty">
+      <summary>Gets the identifier of the CloseButtonCommandParameter dependency property.</summary>
+      <returns>The identifier of the CloseButtonCommandParameter dependency property.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.CloseButtonCommandProperty">
+      <summary>Gets the identifier of the CloseButtonCommand dependency property.</summary>
+      <returns>The identifier of the CloseButtonCommand dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.CloseButtonStyle">
+      <summary>Gets or sets the Style to apply to the dialog's close button.</summary>
+      <returns>The applied style for the button, if present; otherwise, **null**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.CloseButtonStyleProperty">
+      <summary>Gets the identifier of the CloseButtonStyle dependency property.</summary>
+      <returns>The identifier of the CloseButtonStyle dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.CloseButtonText">
+      <summary>Gets or sets the text to display on the close button.</summary>
+      <returns>The text to display on the close button.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.CloseButtonTextProperty">
+      <summary>Gets the identifier of the CloseButtonText dependency property.</summary>
+      <returns>The identifier of the CloseButtonText dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.DefaultButton">
+      <summary>Gets or sets a value that indicates which button on the dialog is the default action.</summary>
+      <returns>A value of the enumeration. The default is **None.**</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.DefaultButtonProperty">
+      <summary>Gets the identifier of the DefaultButton dependency property.</summary>
+      <returns>The identifier of the DefaultButton dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.FullSizeDesired">
+      <summary>Gets or sets a value that indicates whether a request is being made to display the dialog full screen.</summary>
+      <returns>**true** to request that the dialog is displayed full screen; otherwise, **false**. The default is **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.FullSizeDesiredProperty">
+      <summary>Gets the identifier of the FullSizeDesired dependency property.</summary>
+      <returns>The identifier of the FullSizeDesired dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.IsPrimaryButtonEnabled">
+      <summary>Gets or sets whether the dialog's primary button is enabled.</summary>
+      <returns>True if the primary button of the dialog is enabled; Otherwise, false.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.IsPrimaryButtonEnabledProperty">
+      <summary>Gets the identifier of the IsPrimaryButtonEnabled dependency property.</summary>
+      <returns>The identifier of the IsPrimaryButtonEnabled dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.IsSecondaryButtonEnabled">
+      <summary>Gets or sets whether the dialog's secondary button is enabled.</summary>
+      <returns>True if the secondary button of the dialog is enabled; Otherwise, false.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.IsSecondaryButtonEnabledProperty">
+      <summary>Gets the identifier of the IsSecondaryButtonEnabled dependency property.</summary>
+      <returns>The identifier of the IsSecondaryButtonEnabled dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.PrimaryButtonCommand">
+      <summary>Gets or sets the command to invoke when the primary button is tapped.</summary>
+      <returns>The command to invoke when the primary button is tapped.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.PrimaryButtonCommandParameter">
+      <summary>Gets or sets the parameter to pass to the command for the primary button.</summary>
+      <returns>The parameter to pass to the command for the primary button. The default is null.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.PrimaryButtonCommandParameterProperty">
+      <summary>Gets the identifier of the PrimaryButtonCommandParameter dependency property.</summary>
+      <returns>The identifier of the PrimaryButtonCommandParameter dependency property</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.PrimaryButtonCommandProperty">
+      <summary>Gets the identifier of the PrimaryButtonCommand dependency property.</summary>
+      <returns>The identifier of the PrimaryButtonCommand dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.PrimaryButtonStyle">
+      <summary>Gets or sets the Style to apply to the dialog's primary button.</summary>
+      <returns>The applied style for the button, if present; otherwise, **null**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.PrimaryButtonStyleProperty">
+      <summary>Gets the identifier of the PrimaryButtonStyle dependency property.</summary>
+      <returns>The identifier of the PrimaryButtonStyle dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.PrimaryButtonText">
+      <summary>Gets or sets the text to display on the primary button.</summary>
+      <returns>The text to display on the primary button. To hide this button, set the text to **null** or string.empty. The default is empty.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.PrimaryButtonTextProperty">
+      <summary>Gets the identifier of the PrimaryButtonText dependency property.</summary>
+      <returns>The identifier of the PrimaryButtonText dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.SecondaryButtonCommand">
+      <summary>Gets or sets the command to invoke when the secondary button is tapped.</summary>
+      <returns>The command to invoke when the secondary button is tapped.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.SecondaryButtonCommandParameter">
+      <summary>Gets or sets the parameter to pass to the command for the secondary button.</summary>
+      <returns>The command parameter for the secondary button. The default is null.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.SecondaryButtonCommandParameterProperty">
+      <summary>Gets the identifier of the SecondaryButtonCommandParameter dependency property.</summary>
+      <returns>The identifier of the SecondaryButtonCommandParameter dependency property.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.SecondaryButtonCommandProperty">
+      <summary>Gets the identifier of the SecondaryButtonCommand dependency property.</summary>
+      <returns>The identifier of the SecondaryButtonCommand dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.SecondaryButtonStyle">
+      <summary>Gets or sets the Style to apply to the dialog's secondary button.</summary>
+      <returns>The applied style for the button, if present; otherwise, **null**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.SecondaryButtonStyleProperty">
+      <summary>Gets the identifier of the SecondaryButtonStyle dependency property.</summary>
+      <returns>The identifier of the SecondaryButtonStyle dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.SecondaryButtonText">
+      <summary>Gets or sets the text to be displayed on the secondary button.</summary>
+      <returns>The text to be displayed on the secondary button. To hide this button, set the value to **null** or **string.empty**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.SecondaryButtonTextProperty">
+      <summary>Gets the identifier of the SecondaryButtonText dependency property.</summary>
+      <returns>The identifier of the SecondaryButtonText dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.Title">
+      <summary>Gets or sets the title of the dialog.</summary>
+      <returns>The title of the dialog.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.TitleProperty">
+      <summary>Gets the identifier of the Title dependency property.</summary>
+      <returns>The identifier of the Title dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialog.TitleTemplate">
+      <summary>Gets or sets the title template.</summary>
+      <returns>The title template.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialog.TitleTemplateProperty">
+      <summary>Gets the identifier of the TitleTemplate dependency property.</summary>
+      <returns>The identifier of the TitleTemplate dependency property.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.ContentDialog.CloseButtonClick">
+      <summary>Occurs after the close button has been tapped.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.ContentDialog.Closed">
+      <summary>Occurs after the dialog is closed.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.ContentDialog.Closing">
+      <summary>Occurs after the dialog starts to close, but before it is closed and before the Closed event occurs.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.ContentDialog.Opened">
+      <summary>Occurs after the dialog is opened.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.ContentDialog.PrimaryButtonClick">
+      <summary>Occurs after the primary button has been tapped.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.ContentDialog.SecondaryButtonClick">
+      <summary>Occurs after the secondary button has been tapped.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ContentDialog.Hide">
+      <summary>Hides the dialog.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ContentDialog.ShowAsync">
+      <summary>Begins an asynchronous operation to show the dialog.</summary>
+      <returns>An asynchronous operation showing the dialog. When complete, returns a ContentDialogResult.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ContentDialog.ShowAsync(ModernWpf.Controls.ContentDialogPlacement)">
+      <summary>Begins an asynchronous operation to show the dialog with the specified placement.</summary>
+      <param name="placement">A value that specifies whether the dialog is placed in the PopupRoot or in its parent's visual tree.</param>
+      <returns>An asynchronous operation showing the dialog. When complete, returns a ContentDialogResult.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ContentDialogButton">
+      <summary>Defines constants that specify the default button on a content dialog.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialogButton.Close">
+      <summary>The close button is the default.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialogButton.None">
+      <summary>No button is specified as the default.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialogButton.Primary">
+      <summary>The primary button is the default.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialogButton.Secondary">
+      <summary>The secondary button is the default.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.ContentDialogButtonClickDeferral">
+      <summary>Represents a deferral that can be used by an app to respond asynchronously to a button click event.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ContentDialogButtonClickDeferral.Complete">
+      <summary>Notifies the system that the app has finished processing the button click event.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.ContentDialogButtonClickEventArgs">
+      <summary>Provides data for the button click events.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialogButtonClickEventArgs.Cancel">
+      <summary>Gets or sets a value that can cancel the button click. A **true** value for Cancel cancels the default behavior.</summary>
+      <returns>True to cancel the button click; Otherwise, false.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ContentDialogButtonClickEventArgs.GetDeferral">
+      <summary>Gets a ContentDialogButtonClickDeferral that the app can use to respond asynchronously to a button click event.</summary>
+      <returns>A ContentDialogButtonClickDeferral that the app can use to respond asynchronously to a button click event.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ContentDialogClosedEventArgs">
+      <summary>Provides data for the Closed event.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialogClosedEventArgs.Result">
+      <summary>Gets the ContentDialogResult of the button click event.</summary>
+      <returns>The result of the button click event.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ContentDialogClosingDeferral">
+      <summary>Represents a deferral that can be used by an app to respond asynchronously to the closing event of the ContentDialog.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ContentDialogClosingDeferral.Complete">
+      <summary>Notifies the system that the app has finished processing the closing event.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.ContentDialogClosingEventArgs">
+      <summary>Provides data for the closing event.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialogClosingEventArgs.Cancel">
+      <summary>Gets or sets a value that can cancel the closing of the dialog.. A **true** value for Cancel cancels the default behavior.</summary>
+      <returns>True to cancel the closing of the dialog; Otherwise, false.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ContentDialogClosingEventArgs.Result">
+      <summary>Gets the ContentDialogResult of the closing event.</summary>
+      <returns>The ContentDialogResult of the closing event.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ContentDialogClosingEventArgs.GetDeferral">
+      <summary>Gets a ContentDialogClosingDeferral that the app can use to respond asynchronously to the closing event.</summary>
+      <returns>A ContentDialogClosingDeferral that the app can use to respond asynchronously to the closing event.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ContentDialogOpenedEventArgs">
+      <summary>Provides data for the Opened event.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.ContentDialogPlacement">
+      <summary>Defines constants that specify where in the XAML visual tree a ContentDialog is rooted.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialogPlacement.InPlace">
+      <summary>If the dialog has a parent element, the dialog is rooted in the parent's visual tree. Otherwise, it falls back to the **Popup** behavior.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialogPlacement.Popup">
+      <summary>The dialog is rooted in the PopupRoot element of the XAML Window.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.ContentDialogResult">
+      <summary>Specifies identifiers to indicate the return value of a ContentDialog</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialogResult.None">
+      <summary>No button was tapped.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialogResult.Primary">
+      <summary>The primary button was tapped by the user.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ContentDialogResult.Secondary">
+      <summary>The secondary button was tapped by the user.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.ElementAnimationCompleted">
+      <param name="sender" />
+      <param name="element" />
+    </member>
+    <member name="T:ModernWpf.Controls.ElementAnimator">
+      <summary>Represents the base class for components that coordinate the animations of elements that are being conceptually added, repositioned/resized, or removed from the live visual tree.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.ElementAnimator?text=ElementAnimator" /> class.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.ElementAnimator.BoundsChangeAnimationCompleted">
+      <summary>Raised by a derived class to notify the framework that a bounds change animation has completed.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.HasBoundsChangeAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext,System.Windows.Rect,System.Windows.Rect)">
+      <summary>Determines whether a bounds change animation is being provided by this animator.</summary>
+      <param name="element">The element to animate.</param>
+      <param name="context">Information about the reason for the animation.</param>
+      <param name="oldBounds">The old bounds used to arrange the element.</param>
+      <param name="newBounds">The new bounds used to arrange the element.</param>
+      <returns>true if the animation is being provided by this animator.; otherwise, false.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.HasBoundsChangeAnimationCore(System.Windows.UIElement,ModernWpf.Controls.AnimationContext,System.Windows.Rect,System.Windows.Rect)">
+      <summary>When implemented in a derived class, determines whether a bounds change animation is being provided by this animator.</summary>
+      <param name="element">The element to animate.</param>
+      <param name="context">Information about the reason for the animation.</param>
+      <param name="oldBounds">The old bounds used to arrange the element.</param>
+      <param name="newBounds">The new bounds used to arrange the element.</param>
+      <returns>true if the animation is being provided by this animator; otherwise, false.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ElementAnimator.HasBoundsChangeAnimationsPending">
+      <summary>Gets a value that indicates whether a bounds change animation is pending.</summary>
+      <returns>true if a bounds change animation is pending; otherwise, false.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.HasHideAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
+      <summary>Determines whether a hide animation is being provided by this animator.</summary>
+      <param name="element">The element to animate.</param>
+      <param name="context">Information about the reason for the animation.</param>
+      <returns>true if the animation is being provided by this animator; otherwise, false.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.HasHideAnimationCore(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
+      <summary>When implemented in a derived class, determines whether a hide animation is being provided by this animator.</summary>
+      <param name="element">The element to animate.</param>
+      <param name="context">Information about the reason for the animation.</param>
+      <returns>true if the animation is being provided by this animator; otherwise, false.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ElementAnimator.HasHideAnimationsPending">
+      <summary>Gets a value that indicates whether a hide animation is pending.</summary>
+      <returns>true if a hide animation is pending; otherwise, false.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.HasShowAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
+      <summary>Determines whether a show animation is being provided by this animator.</summary>
+      <param name="element">The element to animate.</param>
+      <param name="context">Information about the reason for the animation.</param>
+      <returns>true if the animation is being provided by this animator; otherwise, false.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.HasShowAnimationCore(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
+      <summary>When implemented in a derived class, determines whether a show animation is being provided by this animator.</summary>
+      <param name="element">The element to animate.</param>
+      <param name="context">Information about the reason for the animation.</param>
+      <returns>true if the animation is being provided by this animator, false.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ElementAnimator.HasShowAnimationsPending">
+      <summary>Gets a value that indicates whether a show animation is pending.</summary>
+      <returns>true if a show animation is pending; otherwise, false.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.ElementAnimator.HideAnimationCompleted">
+      <summary>Raised by a derived class to notify the framework that a hide animation has completed.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.OnBoundsChangeAnimationCompleted(System.Windows.UIElement)">
+      <summary>Called when a bounds changed animation completes.</summary>
+      <param name="element">The element that was animated.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.OnElementBoundsChanged(System.Windows.UIElement,ModernWpf.Controls.AnimationContext,System.Windows.Rect,System.Windows.Rect)">
+      <summary>Determines whether a bounds changed animation is needed, and prepares the animation if it is.</summary>
+      <param name="element">The element to animate.</param>
+      <param name="context">Information about the change that is being animated.</param>
+      <param name="oldBounds">The old bounds used to arrange the element.</param>
+      <param name="newBounds">The new bounds used to arrange the element.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.OnElementHidden(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
+      <summary>Determines whether a hide animation is needed, and prepares the animation if it is.</summary>
+      <param name="element">The element to animate.</param>
+      <param name="context">Information about the change that is being animated.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.OnElementShown(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
+      <summary>Determines whether a show animation is needed, and prepares the animation if it is.</summary>
+      <param name="element">The element to animate.</param>
+      <param name="context">Information about the change that is being animated.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.OnHideAnimationCompleted(System.Windows.UIElement)">
+      <summary>Called when a hide animation completes.</summary>
+      <param name="element">The element that was animated.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.OnShowAnimationCompleted(System.Windows.UIElement)">
+      <summary>Called when a show animation completes.</summary>
+      <param name="element">The element that was animated.</param>
+    </member>
+    <member name="P:ModernWpf.Controls.ElementAnimator.SharedContext">
+      <summary>Gets the union of all animation contexts during the current tick.</summary>
+      <returns>The union of all animation contexts during the current tick.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.ElementAnimator.ShowAnimationCompleted">
+      <summary>Raised by a derived class to notify the framework that a show animation has completed.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.StartBoundsChangeAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext,System.Windows.Rect,System.Windows.Rect)">
+      <summary>Starts the animation to play when the bounds used to arrange an element change.</summary>
+      <param name="element">The element to animate.</param>
+      <param name="context">Information about the change that is being animated.</param>
+      <param name="oldBounds">The old bounds used to arrange the element.</param>
+      <param name="newBounds">The new bounds used to arrange the element.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.StartHideAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
+      <summary>Starts the animation to play when an element is conceptually removed from the visual tree.</summary>
+      <param name="element">The element to animate.</param>
+      <param name="context">Information about the change that is being animated.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementAnimator.StartShowAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
+      <summary>Starts the animation to play when an element is conceptually added to the visual tree.</summary>
+      <param name="element">The element to animate.</param>
+      <param name="context">Information about the change that is being animated.</param>
+    </member>
+    <member name="T:ModernWpf.Controls.ElementFactory">
+      <summary>Represents the base class for components that create and optionally recycle elements for use in a <see cref="ModernWpf.Controls.Layout?text=Layout" />.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementFactory.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.ElementFactory?text=ElementFactory" /> class.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementFactory.GetElement(ModernWpf.Controls.ElementFactoryGetArgs)">
+      <summary>Prepares a UIElement to display data.</summary>
+      <param name="args">The data to display, and the parent element.</param>
+      <returns>A UIElement prepared to display the data specified in the args.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementFactory.GetElementCore(ModernWpf.Controls.ElementFactoryGetArgs)">
+      <summary>When implemented in a derived class, prepares a UIElement to display data.</summary>
+      <param name="args">The data to display, and the parent element.</param>
+      <returns>A UIElement prepared to display the data specified in the args.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementFactory.RecycleElement(ModernWpf.Controls.ElementFactoryRecycleArgs)">
+      <summary>Clears a UIElement to be re-used to display a new data item.</summary>
+      <param name="args">The element to recycle, and the parent element.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementFactory.RecycleElementCore(ModernWpf.Controls.ElementFactoryRecycleArgs)">
+      <summary>When implemented in a derived class, clears a UIElement to be re-used to display a new data item.</summary>
+      <param name="args">The element to recycle, and the parent element.</param>
+    </member>
+    <member name="T:ModernWpf.Controls.ElementFactoryGetArgs">
+      <summary>Provides data for the <see cref="ModernWpf.Controls.ElementFactory.GetElement(ModernWpf.Controls.ElementFactoryGetArgs)?text=ElementFactory.GetElement" /> method.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementFactoryGetArgs.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.ElementFactoryGetArgs?text=ElementFactoryGetArgs" /> class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ElementFactoryGetArgs.Data">
+      <summary>Gets or sets the data item to prepare an element for.</summary>
+      <returns>The data item to prepare an element for.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ElementFactoryGetArgs.Parent">
+      <summary>Gets or sets the parent of the prepared element.</summary>
+      <returns>The parent of the prepared element.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ElementFactoryRecycleArgs">
+      <summary>Provides data for the <see cref="ModernWpf.Controls.ElementFactory.RecycleElement(ModernWpf.Controls.ElementFactoryRecycleArgs)?text=ElementFactory.RecycleElement" /> method.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ElementFactoryRecycleArgs.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.ElementFactoryRecycleArgs?text=ElementFactoryRecycleArgs" /> class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ElementFactoryRecycleArgs.Element">
+      <summary>Gets or sets the element to recycle.</summary>
+      <returns>The element to recycle.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ElementFactoryRecycleArgs.Parent">
+      <summary>Gets or sets the parent of the recycled element.</summary>
+      <returns>The parent of the recycled element.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ElementRealizationOptions">
+      <summary>Defines constants that specify whether to suppress automatic recycling of the retrieved element or force creation of a new element.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ElementRealizationOptions.ForceCreate">
+      <summary>Creation of a new element is forced.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ElementRealizationOptions.None">
+      <summary>No option is specified.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ElementRealizationOptions.SuppressAutoRecycle">
+      <summary>The element is ignored by the automatic recycling logic.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.FlowLayout">
+      <summary>Represents a layout that stacks lines of items. When a line of items is full, items flow to the next line.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.FlowLayout.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.FlowLayout?text=FlowLayout" /> class.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.FlowLayout.GetAnchorForRealizationRect(System.Windows.Size,ModernWpf.Controls.VirtualizingLayoutContext)">
+      <summary>Retrives an anchor for a <see cref="ModernWpf.Controls.VirtualizingLayoutContext.RealizationRect?text=RealizationRect" />.</summary>
+      <param name="availableSize">The amount of space available.</param>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+      <returns>An anchor for the <see cref="ModernWpf.Controls.VirtualizingLayoutContext.RealizationRect?text=RealizationRect" /> of the context parameter.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.FlowLayout.GetAnchorForTargetElement(System.Int32,System.Windows.Size,ModernWpf.Controls.VirtualizingLayoutContext)">
+      <summary>Retrives an anchor for a target.</summary>
+      <param name="targetIndex">The index of the element that is the target of scrolling.</param>
+      <param name="availableSize">The amount of space available.</param>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+      <returns>The anchor for the target element.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.FlowLayout.GetExtent(System.Windows.Size,ModernWpf.Controls.VirtualizingLayoutContext,System.Windows.UIElement,System.Int32,System.Windows.Rect,System.Windows.UIElement,System.Int32,System.Windows.Rect)">
+      <summary>Estimates the extent for a specified available size and range of realized items.</summary>
+      <param name="availableSize">The available size for the extent.</param>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+      <param name="firstRealized">The first realized item in the range.</param>
+      <param name="firstRealizedItemIndex">The index of the first realized item in the range.</param>
+      <param name="firstRealizedLayoutBounds">The layout bounds of the first realized item in the range.</param>
+      <param name="lastRealized">The last realized item in the range.</param>
+      <param name="lastRealizedItemIndex">The index of the last realized item in the range.</param>
+      <param name="lastRealizedLayoutBounds">The layout bounds of the last realized item in the range.</param>
+      <returns>The estimated extent.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.FlowLayout.GetMeasureSize(System.Int32,System.Windows.Size)">
+      <summary>Retrieves the available size for the element at the given index.</summary>
+      <param name="index">The index of the element.</param>
+      <param name="availableSize">The amount of space the element can use.</param>
+      <returns>The available size for the element.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.FlowLayout.GetProvisionalArrangeSize(System.Int32,System.Windows.Size,System.Windows.Size)">
+      <summary>Retrieves the size intended to eventually arrange the element.</summary>
+      <param name="index">The position of the item in the collection.</param>
+      <param name="measureSize">The measure size of the item.</param>
+      <param name="desiredSize">The preferred size of the item.</param>
+      <returns>The size intended to eventually arrange the element.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.FlowLayout.LineAlignment">
+      <summary>Gets or sets a value that indicates how items are aligned on the non-scrolling or non-virtualizing axis.</summary>
+      <returns>An enumeration value that indicates how items are aligned. The default is Near.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.FlowLayout.LineAlignmentProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.FlowLayout.LineAlignment?text=LineAlignment" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.FlowLayout.LineAlignment?text=LineAlignment" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.FlowLayout.MinColumnSpacing">
+      <summary>Gets or sets the minimum space between items on the horizontal axis.</summary>
+      <returns>The minimum space (in pixels) between items on the horizontal axis.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.FlowLayout.MinColumnSpacingProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.FlowLayout.MinColumnSpacing?text=MinColumnSpacing" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.FlowLayout.MinColumnSpacing?text=MinColumnSpacing" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.FlowLayout.MinRowSpacing">
+      <summary>Gets or sets the minimum space between items on the vertical axis.</summary>
+      <returns>The minimum space (in pixels) between items on the vertical axis.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.FlowLayout.MinRowSpacingProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.FlowLayout.MinRowSpacing?text=MinRowSpacing" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.FlowLayout.MinRowSpacing?text=MinRowSpacing" /> dependency property.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.FlowLayout.OnElementMeasured(System.Windows.UIElement,System.Int32,System.Windows.Size,System.Windows.Size,System.Windows.Size,System.Windows.Size,ModernWpf.Controls.VirtualizingLayoutContext)">
+      <summary>Called when an element has been measured.</summary>
+      <param name="element">The measured element.</param>
+      <param name="index">The position of the element in the collection.</param>
+      <param name="availableSize">The amount of space available for the element.</param>
+      <param name="measureSize">The measure size of the element.</param>
+      <param name="desiredSize">The preferred size of the element.</param>
+      <param name="provisionalArrangeSize">The size intended to eventually arrange the element.</param>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.FlowLayout.OnLineArranged(System.Int32,System.Int32,System.Double,ModernWpf.Controls.VirtualizingLayoutContext)">
+      <summary>Called when a line has been arranged.</summary>
+      <param name="startIndex">The index of the first item in the line.</param>
+      <param name="countInLine">The number of items in the line.</param>
+      <param name="lineSize">The height of the line.</param>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+    </member>
+    <member name="P:ModernWpf.Controls.FlowLayout.Orientation">
+      <summary>Gets or sets the axis along which items are laid out.</summary>
+      <returns>One of the enumeration values that specifies the axis along which items are laid out. The default is Vertical.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.FlowLayout.OrientationProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.FlowLayout.Orientation?text=Orientation" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.FlowLayout.Orientation?text=Orientation" /> dependency property.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.FlowLayout.ShouldBreakLine(System.Int32,System.Double)">
+      <summary>Determines whether the element at the specified index should be on a new line.</summary>
+      <param name="index">The position of the element in the collection.</param>
+      <param name="remainingSpace">The amount of space available in the line.</param>
+      <returns>true if the item should be placed in a new line; otherwise, false.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.FlowLayoutAnchorInfo">
+      <summary>Represents information about the position of an anchor element for a FlowLayout.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.FlowLayoutAnchorInfo.Index">
+      <summary>The position of the anchor element in the collection.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.FlowLayoutAnchorInfo.Offset">
+      <summary>The offset of the anchor element in the virtualizing direction relative to the viewport.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.FlowLayoutLineAlignment">
+      <summary>Defines constants that specify how items are aligned on the non-scrolling or non-virtualizing axis.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.FlowLayoutState">
+      <summary>Represents the state of a FlowLayout.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.FlowLayoutState.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.FlowLayoutState?text=FlowLayoutState" /> class.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.HyperlinkButton">
+      <summary>Represents a button control that functions as a hyperlink.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.HyperlinkButton.#ctor">
+      <summary>Initializes a new instance of the HyperlinkButton class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.HyperlinkButton.NavigateUri">
+      <summary>Gets or sets the Uniform Resource Identifier (URI) to navigate to when the HyperlinkButton is clicked.</summary>
+      <returns>The Uniform Resource Identifier (URI) to navigate to when the HyperlinkButton is clicked.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.HyperlinkButton.NavigateUriProperty">
+      <summary>Identifies the NavigateUri dependency property.</summary>
+      <returns>The identifier for the NavigateUri dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.IElementFactoryShim" />
+    <member name="M:ModernWpf.Controls.IElementFactoryShim.GetElement(ModernWpf.Controls.ElementFactoryGetArgs)">
+      <param name="args" />
+    </member>
+    <member name="M:ModernWpf.Controls.IElementFactoryShim.RecycleElement(ModernWpf.Controls.ElementFactoryRecycleArgs)">
+      <param name="args" />
+    </member>
+    <member name="T:ModernWpf.Controls.IKeyIndexMapping">
+      <summary>Provides methods that support mapping between an item's unique identifier and index.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.IKeyIndexMapping.IndexFromKey(System.String)">
+      <summary>Retrieves the index of the item that has the specified unique identifier (key).</summary>
+      <param name="key">The unique identifier (key) of the item to find the index of.</param>
+      <returns>The index of the item with the specified key.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.IKeyIndexMapping.KeyFromIndex(System.Int32)">
+      <summary>Retrieves the unique identifier (key) for the item at the specified index.</summary>
+      <param name="index">The index of the item to get the key for.</param>
+      <returns>The unique identifier (key) for the item at the specified index.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ItemsRepeater">
+      <summary>Represents a data-driven collection control that incorporates a flexible layout system, custom views, and virtualization.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ItemsRepeater.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.ItemsRepeater?text=ItemsRepeater" /> class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeater.Animator">
+      <summary>Gets or sets an element animator that manages animating the items in the layout.</summary>
+      <returns>An element animator that manages animating the items in the layout.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ItemsRepeater.AnimatorProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.ItemsRepeater.Animator?text=Animator" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.ItemsRepeater.Animator?text=Animator" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeater.Background">
+      <summary>Gets or sets a brush that provides the background of the control.</summary>
+      <returns>The brush that provides the background of the control. The default is null, (a null brush) which is evaluated as Transparent for rendering.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ItemsRepeater.BackgroundProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.ItemsRepeater.Background?text=Background" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.ItemsRepeater.Background?text=Background" /> dependency property.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.ItemsRepeater.ElementClearing">
+      <summary>Occurs each time an element is cleared and made available to be re-used.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.ItemsRepeater.ElementIndexChanged">
+      <summary>Occurs for each realized UIElement when the index for the item it represents has changed.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.ItemsRepeater.ElementPrepared">
+      <summary>Occurs each time an element is prepared for use.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ItemsRepeater.GetElementIndex(System.Windows.UIElement)">
+      <summary>Retrieves the index of the item from the data source that corresponds to the specified UIElement.</summary>
+      <param name="element">The element that corresponds to the item to get the index of.</param>
+      <returns>The index of the item from the data source that corresponds to the specified UIElement, or -1 if the element is not supported.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ItemsRepeater.GetOrCreateElement(System.Int32)">
+      <summary>Retrieves the UIElement that corresponds to the item at the specified index in the data source.</summary>
+      <param name="index">The index of the item.</param>
+      <returns>A UIElement that corresponds to the item at the specified index. If the item is not realized, a new UIElement is created.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeater.HorizontalCacheLength">
+      <summary>Gets or sets a value that indicates the size of the buffer used to realize items when panning or scrolling horizontally.</summary>
+      <returns>A non-negative value that indicates the size of the buffer as a multiple of the viewport size. The default value is determined by the system.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ItemsRepeater.HorizontalCacheLengthProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.ItemsRepeater.HorizontalCacheLength?text=HorizontalCacheLength" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.ItemsRepeater.HorizontalCacheLength?text=HorizontalCacheLength" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeater.ItemsSource">
+      <summary>Gets or sets an object source used to generate the content of the ItemsRepeater.</summary>
+      <returns>The object that is used to generate the content of the ItemsRepeater. The default is null.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ItemsRepeater.ItemsSourceProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.ItemsRepeater.ItemsSource?text=ItemsSource" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.ItemsRepeater.ItemsSource?text=ItemsSource" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeater.ItemsSourceView">
+      <summary>Gets a standardized view of the supported interactions between a given ItemsSource object and the ItemsRepeater control and its associated components.</summary>
+      <returns>A standardized view of the supported interactions between an ItemsSource object and the ItemsRepeater.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeater.ItemTemplate">
+      <summary>Gets or sets the template used to display each item.</summary>
+      <returns>The template that specifies the visualization of the data objects. The default is null.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ItemsRepeater.ItemTemplateProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.ItemsRepeater.ItemTemplate?text=ItemTemplate" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.ItemsRepeater.ItemTemplate?text=ItemTemplate" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeater.Layout">
+      <summary>Gets or sets the layout used to size and position elements in the ItemsRepeater.</summary>
+      <returns>The layout used to size and position elements. The default is a <see cref="ModernWpf.Controls.StackLayout?text=StackLayout" /> with vertical orientation.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ItemsRepeater.LayoutProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.ItemsRepeater.Layout?text=Layout" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.ItemsRepeater.Layout?text=Layout" /> dependency property.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ItemsRepeater.TryGetElement(System.Int32)">
+      <summary>Retrieves the realized UIElement that corresponds to the item at the specified index in the data source.</summary>
+      <param name="index">The index of the item.</param>
+      <returns>The UIElement that corresponds to the item at the specified index if the item is realized, or null if the item is not realized.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeater.VerticalCacheLength">
+      <summary>Gets or sets a value that indicates the size of the buffer used to realize items when panning or scrolling vertically.</summary>
+      <returns>A non-negative value that indicates the size of the buffer as a multiple of the viewport size. The default value is determined by the system.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ItemsRepeater.VerticalCacheLengthProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.ItemsRepeater.VerticalCacheLength?text=VerticalCacheLength" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.ItemsRepeater.VerticalCacheLength?text=VerticalCacheLength" /> dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ItemsRepeaterElementClearingEventArgs">
+      <summary>Provides data for the ItemsRepeater.ElementClearing event.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeaterElementClearingEventArgs.Element">
+      <summary>Gets the element that is being cleared for re-use.</summary>
+      <returns>The element that is being cleared.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ItemsRepeaterElementIndexChangedEventArgs">
+      <summary>Provides data for the ItemsRepeater.ElementIndexChanged event.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeaterElementIndexChangedEventArgs.Element">
+      <summary>Get the element for which the index changed.</summary>
+      <returns>The element for which the index changed.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeaterElementIndexChangedEventArgs.NewIndex">
+      <summary>Gets the index of the element after the change.</summary>
+      <returns>The index of the element after the change.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeaterElementIndexChangedEventArgs.OldIndex">
+      <summary>Gets the index of the element before the change.</summary>
+      <returns>The index of the element before the change.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ItemsRepeaterElementPreparedEventArgs">
+      <summary>Provides data for the ItemsRepeater.ElementPrepared event.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeaterElementPreparedEventArgs.Element">
+      <summary>Gets the prepared element.</summary>
+      <returns>The prepared element.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeaterElementPreparedEventArgs.Index">
+      <summary>Gets the index of the item the element was prepared for.</summary>
+      <returns>The index of the item the element was prepared for.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ItemsRepeaterScrollHost">
+      <summary>A helper to coordinate interaction between the <see cref="ModernWpf.Controls.ItemsRepeater?text=ItemsRepeater" /> and ScrollViewer.
+Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prior Windows 10 1809 (Build 17763).  If your app will only run on versions of Windows 1809 or higher, there is no need to use this control.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ItemsRepeaterScrollHost.#ctor" />
+    <member name="P:ModernWpf.Controls.ItemsRepeaterScrollHost.CurrentAnchor">
+      <summary>The currently chosen anchor element to use for scroll anchoring.</summary>
+      <returns>The most recently chosen UIElement for scroll anchoring after a layout pass, or null.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeaterScrollHost.HorizontalAnchorRatio">
+      <summary>Determines the horizontal position of the ScrollViewer's anchor point with respect to the viewport. By default, the ScrollViewer selects an element as its <see cref="ModernWpf.Controls.ItemsRepeaterScrollHost.CurrentAnchor?text=CurrentAnchor" /> by identifying the element in its viewport nearest to the anchor point.</summary>
+      <returns>A normalized value (0.0 to 1.0). The default is 0.0.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeaterScrollHost.ScrollViewer">
+      <summary>Gets or sets the ScrollViewer to host.</summary>
+      <returns>A ScrollViewer that contains one or more <see cref="ModernWpf.Controls.ItemsRepeater?text=ItemsRepeater" /> controls.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsRepeaterScrollHost.VerticalAnchorRatio">
+      <summary>Determines the vertical position of the ScrollViewer's anchor point with respect to the viewport. By default, the ScrollViewer selects an element as its CurrentAnchor by identifying the element in its viewport nearest to the anchor point.</summary>
+      <returns>A normalized value (0.0 to 1.0). The default is 0.0.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ItemsSourceView">
+      <summary>Represents a standardized view of the supported interactions between a given ItemsSource object and an ItemsRepeater control.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ItemsSourceView.#ctor(System.Object)">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.ItemsSourceView?text=ItemsSourceView" /> class for the specified data source.</summary>
+      <param name="source">The data source for this view.</param>
+    </member>
+    <member name="E:ModernWpf.Controls.ItemsSourceView.CollectionChanged">
+      <summary>Occurs when the collection has changed to indicate the reason for the change and which items changed.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsSourceView.Count">
+      <summary>Gets the number of items in the collection.</summary>
+      <returns>The number of items in the collection.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ItemsSourceView.GetAt(System.Int32)">
+      <summary>Retrieves the item at the specified index.</summary>
+      <param name="index">The index of the item to retrieve.</param>
+      <returns>The item at the specified index.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemsSourceView.HasKeyIndexMapping">
+      <summary>Gets a value that indicates whether the items source can provide a unique key for each item.</summary>
+      <returns>true if the items source can provide a unique key for each item; otherwise, false.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ItemsSourceView.IndexFromKey(System.String)">
+      <summary>Retrieves the index of the item that has the specified unique identifier (key).</summary>
+      <param name="key">The unique identifier (key) of the item to find the index of.</param>
+      <returns>The index of the item with the specified key.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ItemsSourceView.KeyFromIndex(System.Int32)">
+      <summary>Retrieves the unique identifier (key) for the item at the specified index.</summary>
+      <param name="index">The index of the item to get the key for.</param>
+      <returns>The unique identifier (key) for the item at the specified index.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.Layout">
+      <summary>Represents the base class for an object that sizes and arranges child elements for a host.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.Layout.Arrange(ModernWpf.Controls.LayoutContext,System.Windows.Size)">
+      <summary>Positions child elements and determines a size for a container UIElement. Container elements that support attached layouts should call this method from their layout override implementations to form a recursive layout update.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+      <param name="finalSize">The final size that the container computes for the child in layout.</param>
+      <returns>The actual size that is used after the element is arranged in layout.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.Layout.ArrangeInvalidated">
+      <summary>Occurs when the arrange state (layout) has been invalidated.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.Layout.InitializeForContext(ModernWpf.Controls.LayoutContext)">
+      <summary>Initializes any per-container state the layout requires when it is attached to a UIElement container.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.Layout.InvalidateArrange">
+      <summary>Invalidates the arrange state (layout) for all UIElement containers that reference this layout. After the invalidation, the UIElement will have its layout updated, which occurs asynchronously.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.Layout.InvalidateMeasure">
+      <summary>Invalidates the measurement state (layout) for all UIElement containers that reference this layout.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.Layout.Measure(ModernWpf.Controls.LayoutContext,System.Windows.Size)">
+      <summary>Suggests a DesiredSize for a container element. A container element that supports attached layouts should call this method from their own MeasureOverride implementations to form a recursive layout update. The attached layout is expected to call the Measure for each of the container’s UIElement children.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+      <param name="availableSize">The available space that a container can allocate to a child object. A child object can request a larger space than what is available; the provided size might be accommodated if scrolling or other resize behavior is possible in that particular container.</param>
+      <returns>The size that this object determines it needs during layout, based on its calculations of the allocated sizes for child objects or based on other considerations such as a fixed container size.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.Layout.MeasureInvalidated">
+      <summary>Occurs when the measurement state (layout) has been invalidated.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.Layout.UninitializeForContext(ModernWpf.Controls.LayoutContext)">
+      <summary>Removes any state the layout previously stored on the UIElement container.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+    </member>
+    <member name="T:ModernWpf.Controls.LayoutContext">
+      <summary>Represents the base class for an object that facilitates communication between an attached layout and its host container.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.LayoutContext.LayoutState">
+      <summary>Gets or sets an object that represents the state of a layout.</summary>
+      <returns>An object that represents the state of a layout.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.LayoutContext.LayoutStateCore">
+      <summary>Implements the behavior of <see cref="ModernWpf.Controls.LayoutContext.LayoutState?text=LayoutState" /> in a derived or custom LayoutContext.</summary>
+      <returns>The value that should be returned as <see cref="ModernWpf.Controls.LayoutContext.LayoutState?text=LayoutState" /> by the LayoutContext.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.LayoutPanel">
+      <summary>Represents a container that uses an attached layout object to size and position its child elements.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.LayoutPanel.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.LayoutPanel?text=LayoutPanel" /> class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.LayoutPanel.BorderBrush">
+      <summary>Gets or sets a brush that describes the fill of the panel border.</summary>
+      <returns>The brush that is used to fill the panel's border. The default is null, (a null brush) which is evaluated as Transparent for rendering.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.LayoutPanel.BorderBrushProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.LayoutPanel.BorderBrush?text=BorderBrush" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.LayoutPanel.BorderBrush?text=BorderBrush" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.LayoutPanel.BorderThickness">
+      <summary>Gets or sets the thickness of the panel border.</summary>
+      <returns>The thickness of the panel border.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.LayoutPanel.BorderThicknessProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.LayoutPanel.BorderThickness?text=BorderThickness" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.LayoutPanel.BorderThickness?text=BorderThickness" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.LayoutPanel.CornerRadius">
+      <summary>Gets or sets the radius for the corners of the panel border.</summary>
+      <returns>The degree to which the corners are rounded, expressed as values of the CornerRadius structure.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.LayoutPanel.CornerRadiusProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.LayoutPanel.CornerRadius?text=CornerRadius" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.LayoutPanel.CornerRadius?text=CornerRadius" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.LayoutPanel.Layout">
+      <summary>Gets or sets the layout used to size and position elements in the panel.</summary>
+      <returns>The attached layout used to size and position elements.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.LayoutPanel.LayoutProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.LayoutPanel.Layout?text=Layout" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.LayoutPanel.Layout?text=Layout" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.LayoutPanel.Padding">
+      <summary>Gets or sets the distance between the border and the panel content.</summary>
+      <returns>The dimensions of the space between the border and the panel content. Thickness is a structure that stores dimension values using pixel measures.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.LayoutPanel.PaddingProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.LayoutPanel.Padding?text=Padding" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.LayoutPanel.Padding?text=Padding" /> dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.NonVirtualizingLayout">
+      <summary>Represents the base class for an object that sizes and arranges child elements for a host and and does not support virtualization.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.NonVirtualizingLayout.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.NonVirtualizingLayout?text=NonVirtualizingLayout" /> class.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.NonVirtualizingLayout.ArrangeOverride(ModernWpf.Controls.NonVirtualizingLayoutContext,System.Windows.Size)">
+      <summary>When implemented in a derived class, provides the behavior for the "Arrange" pass of layout. Classes can override this method to define their own "Arrange" pass behavior.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+      <param name="finalSize">The final area within the container that this object should use to arrange itself and its children.</param>
+      <returns>The actual size that is used after the element is arranged in layout.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.NonVirtualizingLayout.InitializeForContextCore(ModernWpf.Controls.NonVirtualizingLayoutContext)">
+      <summary>When overridden in a derived class, initializes any per-container state the layout requires when it is attached to a UIElement container.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.NonVirtualizingLayout.MeasureOverride(ModernWpf.Controls.NonVirtualizingLayoutContext,System.Windows.Size)">
+      <summary>Provides the behavior for the "Measure" pass of the layout cycle. Classes can override this method to define their own "Measure" pass behavior.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+      <param name="availableSize">The available size that this object can give to child objects. Infinity can be specified as a value to indicate that the object will size to whatever content is available.</param>
+      <returns>The size that this object determines it needs during layout, based on its calculations of the allocated sizes for child objects or based on other considerations such as a fixed container size.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.NonVirtualizingLayout.UninitializeForContextCore(ModernWpf.Controls.NonVirtualizingLayoutContext)">
+      <summary>When overridden in a derived class, removes any state the layout previously stored on the UIElement container.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+    </member>
+    <member name="T:ModernWpf.Controls.NonVirtualizingLayoutContext">
+      <summary>Represents the base class for layout context types that do not support virtualization.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.NonVirtualizingLayoutContext.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.NonVirtualizingLayoutContext?text=NonVirtualizingLayoutContext" /> class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.NonVirtualizingLayoutContext.Children">
+      <summary>Gets the collection of child UIElements from the container that provides the context.</summary>
+      <returns>The collection of child elements from the container that provides the context.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.NonVirtualizingLayoutContext.ChildrenCore">
+      <summary>Implements the behavior for getting the return value of <see cref="ModernWpf.Controls.NonVirtualizingLayoutContext.Children?text=Children" /> in a derived or custom NonVirtualizingLayoutContext.</summary>
+      <returns>The value that should be returned as <see cref="ModernWpf.Controls.NonVirtualizingLayoutContext.Children?text=Children" /> by the NonVirtualizingLayoutContext.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ProgressRing">
+      <summary>Represents a control that indicates that an operation is ongoing. The typical visual appearance is a ring-shaped "spinner" that cycles an animation as progress continues.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ProgressRing.#ctor">
+      <summary>Initializes a new instance of the ProgressRing class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ProgressRing.IsActive">
+      <summary>Gets or sets a value that indicates whether the ProgressRing is showing progress.</summary>
+      <returns>**True** if the ProgressRing is showing progress; otherwise, **false**. The default is **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ProgressRing.IsActiveProperty">
+      <summary>Identifies the IsActive dependency property.</summary>
+      <returns>The identifier for the IsActive dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ProgressRing.TemplateSettings">
+      <summary>Gets an object that provides calculated values that can be referenced as **TemplateBinding** sources when defining templates for a ProgressRing control.</summary>
+      <returns>An object that provides calculated values for templates.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.Primitives.ProgressRingTemplateSettings">
+      <summary>Provides calculated values that can be referenced as **TemplatedParent** sources when defining templates for a ProgressRing control. Not intended for general use.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ProgressRingTemplateSettings.EllipseDiameter">
+      <summary>Gets the template-defined diameter of the "Ellipse" element that is animated in a templated ProgressRing.</summary>
+      <returns>The "Ellipse" width in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ProgressRingTemplateSettings.EllipseOffset">
+      <summary>Gets the template-defined offset position of the "Ellipse" element that is animated in a templated ProgressRing.</summary>
+      <returns>The offset in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ProgressRingTemplateSettings.MaxSideLength">
+      <summary>Gets the maximum bounding size of the progress ring as rendered.</summary>
+      <returns>The maximum bounding size of the progress ring as rendered, in pixels.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.Primitives.RadioButtonsListView" />
+    <member name="M:ModernWpf.Controls.Primitives.RadioButtonsListView.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.Primitives.RadioButtonsListView?text=RadioButtonsListView" /> class.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.Primitives.RadioButtonsListViewItem" />
+    <member name="M:ModernWpf.Controls.Primitives.RadioButtonsListViewItem.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.Primitives.RadioButtonsListViewItem?text=RadioButtonsListViewItem" /> class.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.RadioButtons" />
+    <member name="M:ModernWpf.Controls.RadioButtons.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.RadioButtons?text=RadioButtons" /> class.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.RadioButtons.ContainerFromIndex(System.Int32)">
+      <param name="index" />
+    </member>
+    <member name="M:ModernWpf.Controls.RadioButtons.ContainerFromItem(System.Object)">
+      <param name="item" />
+    </member>
+    <member name="P:ModernWpf.Controls.RadioButtons.Header" />
+    <member name="F:ModernWpf.Controls.RadioButtons.HeaderProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.RadioButtons.Header?text=Header" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.RadioButtons.Header?text=Header" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RadioButtons.Items" />
+    <member name="F:ModernWpf.Controls.RadioButtons.ItemsProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.RadioButtons.Items?text=Items" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.RadioButtons.Items?text=Items" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RadioButtons.ItemsSource" />
+    <member name="F:ModernWpf.Controls.RadioButtons.ItemsSourceProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.RadioButtons.ItemsSource?text=ItemsSource" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.RadioButtons.ItemsSource?text=ItemsSource" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RadioButtons.ItemTemplate" />
+    <member name="F:ModernWpf.Controls.RadioButtons.ItemTemplateProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.RadioButtons.ItemTemplate?text=ItemTemplate" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.RadioButtons.ItemTemplate?text=ItemTemplate" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RadioButtons.MaximumColumns" />
+    <member name="F:ModernWpf.Controls.RadioButtons.MaximumColumnsProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.RadioButtons.MaximumColumns?text=MaximumColumns" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.RadioButtons.MaximumColumns?text=MaximumColumns" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RadioButtons.SelectedIndex" />
+    <member name="F:ModernWpf.Controls.RadioButtons.SelectedIndexProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.RadioButtons.SelectedIndex?text=SelectedIndex" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.RadioButtons.SelectedIndex?text=SelectedIndex" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RadioButtons.SelectedItem" />
+    <member name="F:ModernWpf.Controls.RadioButtons.SelectedItemProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.RadioButtons.SelectedItem?text=SelectedItem" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.RadioButtons.SelectedItem?text=SelectedItem" /> dependency property.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.RadioButtons.SelectionChanged" />
+    <member name="T:ModernWpf.Controls.RadioMenuItem" />
+    <member name="M:ModernWpf.Controls.RadioMenuItem.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.RadioMenuItem?text=RadioMenuItem" /> class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.RadioMenuItem.GroupName">
+      <summary>Gets or sets the name that specifies which RadioMenuItem controls are mutually exclusive.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.RadioMenuItem.GroupNameProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.RadioMenuItem.GroupName?text=GroupName" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.RadioMenuItem.GroupName?text=GroupName" /> dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.RecyclePool">
+      <summary>Represents a cache of elements that can be re-used to display data items.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.RecyclePool.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.RecyclePool?text=RecyclePool" /> class.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.RecyclePool.GetPoolInstance(System.Windows.DataTemplate)">
+      <summary>Gets the value of the RecyclePool.PoolInstance XAML attached property for the target data template.</summary>
+      <param name="dataTemplate">The object from which the property value is read.</param>
+      <returns>The RecyclePool.PoolInstance XAML attached property value of the specified object.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RecyclePool.PoolInstanceProperty">
+      <summary>Identifies the PoolInstance attached property.</summary>
+      <returns>The identifier for the PoolInstance attached property.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.RecyclePool.PutElement(System.Windows.UIElement,System.String)">
+      <summary>Adds an element to the recycle pool.</summary>
+      <param name="element">The element to add to the recycle pool.</param>
+      <param name="key">The identifier for the element.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.RecyclePool.PutElement(System.Windows.UIElement,System.String,System.Windows.UIElement)">
+      <summary>Adds an element to the recycle pool with the specified owner.</summary>
+      <param name="element">The element to add to the recycle pool.</param>
+      <param name="key">The identifier for the element.</param>
+      <param name="owner">The parent container for the element.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.RecyclePool.PutElementCore(System.Windows.UIElement,System.String,System.Windows.UIElement)">
+      <summary>Adds an element to the recycle pool with the specified owner. (This method provides the behavior when PutElement is called.)</summary>
+      <param name="element">The element to add to the recycle pool.</param>
+      <param name="key">The identifier for the element.</param>
+      <param name="owner">The parent container for the element.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.RecyclePool.SetPoolInstance(System.Windows.DataTemplate,ModernWpf.Controls.RecyclePool)">
+      <summary>Sets the value of the RecyclePool.PoolInstance XAML attached property for the target data template.</summary>
+      <param name="dataTemplate">The object to which the property value is written.</param>
+      <param name="value">The value to set.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.RecyclePool.TryGetElement(System.String)">
+      <summary>Attempts to retrieve an element identified by the specified key.</summary>
+      <param name="key">The identifier for the element.</param>
+      <returns>The element identified by key if it can be found; otherwise, null.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.RecyclePool.TryGetElement(System.String,System.Windows.UIElement)">
+      <summary>Attempts to retrieve an element identified by the specified key, with the specified owner.</summary>
+      <param name="key">The identifier for the element.</param>
+      <param name="owner">The parent container for the element.</param>
+      <returns>The element identified by key if it can be found; otherwise, null.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.RecyclePool.TryGetElementCore(System.String,System.Windows.UIElement)">
+      <summary>Attempts to retrieve an element identified by the specified key. (This method provides the behavior when TryGetElement is called.)</summary>
+      <param name="key">The identifier for the element.</param>
+      <param name="owner">The parent container for the element.</param>
+      <returns>The element identified by key if it can be found; otherwise, null.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.RecyclingElementFactory">
+      <summary>Represents a component that creates and recycles elements for use in a <see cref="ModernWpf.Controls.Layout?text=Layout" />.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.RecyclingElementFactory.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.RecyclingElementFactory?text=RecyclingElementFactory" /> class.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.RecyclingElementFactory.OnSelectTemplateKeyCore(System.Object,System.Windows.UIElement)">
+      <summary>Raises the <see cref="ModernWpf.Controls.RecyclingElementFactory.SelectTemplateKey?text=SelectTemplateKey" /> event.</summary>
+      <param name="dataContext">The data item to be displayed by the template.</param>
+      <param name="owner">The parent container for the element.</param>
+      <returns>The key for the data template.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RecyclingElementFactory.RecyclePool">
+      <summary>Gets or sets the pool of elements that can be recycled.</summary>
+      <returns>The pool of elements that can be recycled.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.RecyclingElementFactory.SelectTemplateKey">
+      <summary>Occurs when an element is retrieved in order to get a template key for the element.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.RecyclingElementFactory.Templates">
+      <returns>Gets or sets the collection of data templates, identified by key, that can be applied to the element.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.SelectTemplateEventArgs">
+      <summary>Provides data for the <see cref="ModernWpf.Controls.RecyclingElementFactory.SelectTemplateKey?text=RecyclingElementFactory.SelectTemplateKey" /> event.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.SelectTemplateEventArgs.DataContext">
+      <summary>Gets or sets the data item to be displayed by the template.</summary>
+      <returns>The data item to be displayed by the template.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SelectTemplateEventArgs.Owner">
+      <summary>Gets or sets the parent container for the element.</summary>
+      <returns>The parent container for the element.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SelectTemplateEventArgs.TemplateKey">
+      <summary>Gets or sets the key that identifies the data template.</summary>
+      <returns>The key that identifies the data template.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.StackLayout">
+      <summary>Arranges elements into a single line (with spacing) that can be oriented horizontally or vertically.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.StackLayout.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.StackLayout?text=StackLayout" /> class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.StackLayout.Orientation">
+      <summary>Gets or sets the axis along which items are laid out.</summary>
+      <returns>One of the enumeration values that specifies the axis along which items are laid out. The default is Vertical.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.StackLayout.OrientationProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.StackLayout.Orientation?text=Orientation" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.StackLayout.Orientation?text=Orientation" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.StackLayout.Spacing">
+      <summary>Gets or sets a uniform distance (in pixels) between stacked items. It is applied in the direction of the StackLayout's Orientation.</summary>
+      <returns>The uniform distance (in pixels) between stacked items.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.StackLayout.SpacingProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.StackLayout.Spacing?text=Spacing" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.StackLayout.Spacing?text=Spacing" /> dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.StackLayoutState">
+      <summary>Represents the state of a StackLayout.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.StackLayoutState.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.StackLayoutState?text=StackLayoutState" /> class.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.ToggleSwitch">
+      <summary>Represents a switch that can be toggled between two states.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ToggleSwitch.#ctor">
+      <summary>Initializes a new instance of the ToggleSwitch class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ToggleSwitch.Header">
+      <summary>Gets or sets the header content.</summary>
+      <returns>The header content for the ToggleSwitch.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ToggleSwitch.HeaderProperty">
+      <summary>Identifies the Header dependency property.</summary>
+      <returns>The identifier for the Header dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ToggleSwitch.HeaderTemplate">
+      <summary>Gets or sets the DataTemplate used to display the control's header.</summary>
+      <returns>The DataTemplate used to display the control's header.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ToggleSwitch.HeaderTemplateProperty">
+      <summary>Identifies the HeaderTemplate dependency property.</summary>
+      <returns>The identifier for the HeaderTemplate dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ToggleSwitch.IsOn">
+      <summary>Gets or sets a value that declares whether the state of the ToggleSwitch is "On".</summary>
+      <returns>**true** if the state is "On"; **false** if the state is "Off".</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ToggleSwitch.IsOnProperty">
+      <summary>Identifies the IsOn dependency property.</summary>
+      <returns>The identifier for the IsOn dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ToggleSwitch.OffContent">
+      <summary>Provides the object content that should be displayed using the OffContentTemplate when this ToggleSwitch has state of "Off".</summary>
+      <returns>The object content. In some cases this is a string, in other cases it is a single element that provides a root for further composition content. Probably the most common "set" usage is to place a binding here.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ToggleSwitch.OffContentProperty">
+      <summary>Identifies the OffContent dependency property.</summary>
+      <returns>The identifier for the OffContent dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ToggleSwitch.OffContentTemplate">
+      <summary>Gets or sets the DataTemplate used to display the control's content while in "Off" state.</summary>
+      <returns>The DataTemplate that displays the control's content while in "Off" state.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ToggleSwitch.OffContentTemplateProperty">
+      <summary>Identifies the OffContentTemplate dependency property.</summary>
+      <returns>The identifier for the OffContentTemplate dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ToggleSwitch.OnContent">
+      <summary>Provides the object content that should be displayed using the OnContentTemplate when this ToggleSwitch has state of "On".</summary>
+      <returns>The object content. In some cases this is a string, in other cases it is a single element that provides a root for further composition content. Probably the most common "set" usage is to place a binding here.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ToggleSwitch.OnContentProperty">
+      <summary>Identifies the OnContent dependency property.</summary>
+      <returns>The identifier for the OnContent dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ToggleSwitch.OnContentTemplate">
+      <summary>Gets or sets the DataTemplate used to display the control's content while in "On" state.</summary>
+      <returns>The DataTemplate that displays the control's content while in "On" state.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ToggleSwitch.OnContentTemplateProperty">
+      <summary>Identifies the OnContentTemplate dependency property.</summary>
+      <returns>The identifier for the OnContentTemplate dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ToggleSwitch.TemplateSettings">
+      <summary>Gets an object that provides calculated values that can be referenced as **TemplateBinding** sources when defining templates for a ToggleSwitch control.</summary>
+      <returns>An object that provides calculated values for templates.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.ToggleSwitch.Toggled">
+      <summary>Occurs when "On"/"Off" state changes for this ToggleSwitch.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ToggleSwitch.OnHeaderChanged(System.Object,System.Object)">
+      <summary>Invoked when the content for Header changes.</summary>
+      <param name="oldContent">The string or object content of the old content.</param>
+      <param name="newContent">The string or object content of the new content.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.ToggleSwitch.OnOffContentChanged(System.Object,System.Object)">
+      <summary>Invoked when the content for OffContent changes.</summary>
+      <param name="oldContent">The string or object content of the old content.</param>
+      <param name="newContent">The string or object content of the new content that is about to display.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.ToggleSwitch.OnOnContentChanged(System.Object,System.Object)">
+      <summary>Invoked when the content for OnContent changes.</summary>
+      <param name="oldContent">The string or object content of the old content.</param>
+      <param name="newContent">The string or object content of the new content that is about to display.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.ToggleSwitch.OnToggled">
+      <summary>Invoked before the Toggled event is raised.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.UniformGridLayout">
+      <summary>Positions elements sequentially from left to right or top to bottom in a wrapping layout.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.UniformGridLayout.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.UniformGridLayout?text=UniformGridLayout" /> class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.UniformGridLayout.ItemsJustification">
+      <summary>Gets or sets a value that indicates how items are aligned on the non-scrolling or non-virtualizing axis.</summary>
+      <returns>An enumeration value that indicates how items are aligned. The default is Start.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayout.ItemsJustificationProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.UniformGridLayout.ItemsJustification?text=ItemsJustification" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.UniformGridLayout.ItemsJustification?text=ItemsJustification" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.UniformGridLayout.ItemsStretch">
+      <summary>Gets or sets a value that indicates how items are sized to fill the available space.</summary>
+      <returns>An enumeration value that indicates how items are sized to fill the available space. The default is None.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayout.ItemsStretchProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.UniformGridLayout.ItemsStretch?text=ItemsStretch" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.UniformGridLayout.ItemsStretch?text=ItemsStretch" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.UniformGridLayout.MinColumnSpacing">
+      <summary>Gets or sets the minimum space between items on the horizontal axis.</summary>
+      <returns>The minimum space (in pixels) between items on the horizontal axis.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayout.MinColumnSpacingProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.UniformGridLayout.MinColumnSpacing?text=MinColumnSpacing" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.UniformGridLayout.MinColumnSpacing?text=MinColumnSpacing" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.UniformGridLayout.MinItemHeight">
+      <summary>Gets or sets the minimum height of each item.</summary>
+      <returns>The minimum height (in pixels) of each item. The default is NaN, in which case the height of the first item is used as the minimum.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayout.MinItemHeightProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.UniformGridLayout.MinItemHeight?text=MinItemHeight" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.UniformGridLayout.MinItemHeight?text=MinItemHeight" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.UniformGridLayout.MinItemWidth">
+      <summary>Gets or sets the minimum width of each item.</summary>
+      <returns>The minimum width (in pixels) of each item. The default is NaN, in which case the width of the first item is used as the minimum.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayout.MinItemWidthProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.UniformGridLayout.MinItemWidth?text=MinItemWidth" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.UniformGridLayout.MinItemWidth?text=MinItemWidth" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.UniformGridLayout.MinRowSpacing">
+      <summary>Gets or sets the minimum space between items on the vertical axis.</summary>
+      <returns>The minimum space (in pixels) between items on the vertical axis.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayout.MinRowSpacingProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.UniformGridLayout.MinRowSpacing?text=MinRowSpacing" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.UniformGridLayout.MinRowSpacing?text=MinRowSpacing" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.UniformGridLayout.Orientation">
+      <summary>Gets or sets the axis along which items are laid out.</summary>
+      <returns>One of the enumeration values that specifies the axis along which items are laid out. The default is Vertical.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayout.OrientationProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.UniformGridLayout.Orientation?text=Orientation" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.UniformGridLayout.Orientation?text=Orientation" /> dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.UniformGridLayoutItemsJustification">
+      <summary>Defines constants that specify how items are aligned on the non-scrolling or non-virtualizing axis.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayoutItemsJustification.Center">
+      <summary>Items are aligned in the center of the row or column, with extra space at the start and end. Spacing between items does not change.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayoutItemsJustification.End">
+      <summary>Items are aligned with the end of the row or column, with extra space at the start. Spacing between items does not change.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayoutItemsJustification.SpaceAround">
+      <summary>Items are aligned so that extra space is added evenly before and after each item.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayoutItemsJustification.SpaceBetween">
+      <summary>Items are aligned so that extra space is added evenly between adjacent items. No space is added at the start or end.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayoutItemsJustification.Start">
+      <summary>Items are aligned with the start of the row or column, with extra space at the end. Spacing between items does not change.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.UniformGridLayoutItemsStretch">
+      <summary>Defines constants that specify how items are sized to fill the available space.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayoutItemsStretch.Fill">
+      <summary>The item is sized to fill the available space in the non-scrolling direction. Item size in the scrolling direction is not changed.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayoutItemsStretch.None">
+      <summary>The item retains its natural size. Use of extra space is determined by the <see cref="ModernWpf.Controls.UniformGridLayout.ItemsJustification?text=ItemsJustification" /> property.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.UniformGridLayoutItemsStretch.Uniform">
+      <summary>The item is sized to both fill the available space in the non-scrolling direction and maintain its aspect ratio.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.UniformGridLayoutState">
+      <summary>Represents the state of a UniformGridLayout.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.UniformGridLayoutState.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.UniformGridLayoutState?text=UniformGridLayoutState" /> class.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.VirtualizingLayout">
+      <summary>Represents the base class for an object that sizes and arranges child elements for a host and supports virtualization.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayout.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.VirtualizingLayout?text=VirtualizingLayout" /> class.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayout.ArrangeOverride(ModernWpf.Controls.VirtualizingLayoutContext,System.Windows.Size)">
+      <summary>When implemented in a derived class, provides the behavior for the "Arrange" pass of layout. Classes can override this method to define their own "Arrange" pass behavior.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+      <param name="finalSize">The final area within the container that this object should use to arrange itself and its children.</param>
+      <returns>The actual size that is used after the element is arranged in layout.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayout.InitializeForContextCore(ModernWpf.Controls.VirtualizingLayoutContext)">
+      <summary>When overridden in a derived class, initializes any per-container state the layout requires when it is attached to a UIElement container.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayout.MeasureOverride(ModernWpf.Controls.VirtualizingLayoutContext,System.Windows.Size)">
+      <summary>Provides the behavior for the "Measure" pass of the layout cycle. Classes can override this method to define their own "Measure" pass behavior.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+      <param name="availableSize">The available size that this object can give to child objects. Infinity can be specified as a value to indicate that the object will size to whatever content is available.</param>
+      <returns>The size that this object determines it needs during layout, based on its calculations of the allocated sizes for child objects or based on other considerations such as a fixed container size.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayout.OnItemsChangedCore(ModernWpf.Controls.VirtualizingLayoutContext,System.Object,System.Windows.Interop.NotifyCollectionChangedEventArgs)">
+      <summary>Notifies the layout when the data collection assigned to the container element (ItemsSource) has changed.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+      <param name="source">The data source.</param>
+      <param name="args">Data about the collection change.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayout.UninitializeForContextCore(ModernWpf.Controls.VirtualizingLayoutContext)">
+      <summary>When overridden in a derived class, removes any state the layout previously stored on the UIElement container.</summary>
+      <param name="context">The context object that facilitates communication between the layout and its host container.</param>
+    </member>
+    <member name="T:ModernWpf.Controls.VirtualizingLayoutContext">
+      <summary>Represents the base class for layout context types that support virtualization.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.VirtualizingLayoutContext?text=VirtualizingLayoutContext" /> class.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.GetItemAt(System.Int32)">
+      <summary>Retrieves the data item in the source found at the specified index.</summary>
+      <param name="index">The index of the data item to retrieve.</param>
+      <returns>The data item at the specified index.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.GetItemAtCore(System.Int32)">
+      <summary>When implemented in a derived class, retrieves the data item in the source found at the specified index.</summary>
+      <param name="index">The index of the data item to retrieve.</param>
+      <returns>The data item at the specified index.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.GetOrCreateElementAt(System.Int32)">
+      <summary>Retrieves a UIElement that represents the data item in the source found at the specified index. By default, if an element already exists, it is returned; otherwise, a new element is created.</summary>
+      <param name="index">The index of the data item to retrieve a UIElement for.</param>
+      <returns>A UIElement that represents the data item.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.GetOrCreateElementAt(System.Int32,ModernWpf.Controls.ElementRealizationOptions)">
+      <summary>Retrieves a UIElement that represents the data item in the source found at the specified index using the specified options.</summary>
+      <param name="index">The index of the data item to retrieve a UIElement for.</param>
+      <param name="options">A value of <see cref="ModernWpf.Controls.ElementRealizationOptions?text=ElementRealizationOptions" /> that specifies whether to suppress automatic recycling of the retrieved element or force creation of a new element.</param>
+      <returns>A UIElement that represents the data item.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.GetOrCreateElementAtCore(System.Int32,ModernWpf.Controls.ElementRealizationOptions)">
+      <param name="index" />
+      <param name="options" />
+    </member>
+    <member name="P:ModernWpf.Controls.VirtualizingLayoutContext.ItemCount">
+      <summary>Gets the number of items in the data.</summary>
+      <returns>The number of items in the data.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.ItemCountCore">
+      <summary>When implemented in a derived class, retrieves the number of items in the data.</summary>
+      <returns>The number of items in the data.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.VirtualizingLayoutContext.LayoutOrigin">
+      <summary>Gets or sets the origin point for the estimated content size.</summary>
+      <returns>The origin point for the estimated content size.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.VirtualizingLayoutContext.LayoutOriginCore">
+      <summary>Implements the behavior of <see cref="ModernWpf.Controls.VirtualizingLayoutContext.LayoutOrigin?text=LayoutOrigin" /> in a derived or custom VirtualizingLayoutContext.</summary>
+      <returns>The value that should be returned as <see cref="ModernWpf.Controls.VirtualizingLayoutContext.LayoutOrigin?text=LayoutOrigin" /> by the VirtualizingLayoutContext.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.VirtualizingLayoutContext.RealizationRect">
+      <summary>Gets an area that represents the viewport and buffer that the layout should fill with realized elements.</summary>
+      <returns>An area that represents the viewport and buffer that the layout should fill with realized elements.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.RealizationRectCore">
+      <summary>When implemented in a derived class, retrieves an area that represents the viewport and buffer that the layout should fill with realized elements.</summary>
+      <returns>An area that represents the viewport and buffer that the layout should fill with realized elements.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.VirtualizingLayoutContext.RecommendedAnchorIndex">
+      <summary>Gets the recommended index from which to start the generation and layout of elements.</summary>
+      <returns>The recommended index from which the layout should start.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.VirtualizingLayoutContext.RecommendedAnchorIndexCore">
+      <summary>Implements the behavior for getting the return value of <see cref="ModernWpf.Controls.VirtualizingLayoutContext.RecommendedAnchorIndex?text=RecommendedAnchorIndex" /> in a derived or custom VirtualizingLayoutContext.</summary>
+      <returns>The value that should be returned as <see cref="ModernWpf.Controls.VirtualizingLayoutContext.RecommendedAnchorIndex?text=RecommendedAnchorIndex" /> by the VirtualizingLayoutContext.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.RecycleElement(System.Windows.UIElement)">
+      <summary>Clears the specified UIElement and allows it to be either re-used or released.</summary>
+      <param name="element">The element to clear.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.RecycleElementCore(System.Windows.UIElement)">
+      <summary>When implemented in a derived class, clears the specified UIElement and allows it to be either re-used or released.</summary>
+      <param name="element">The element to clear.</param>
+    </member>
+  </members>
+</doc>

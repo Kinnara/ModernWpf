@@ -1,0 +1,27 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.TabControlPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://www.modernwpf.com"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900">
+
+    <Grid Margin="{StaticResource ControlPageContentMargin}">
+        <controls:ControlExample HeaderText="A simple TabControl">
+            <TabControl x:Name="tabControl" />
+
+            <controls:ControlExample.Options>
+                <controls:SimpleStackPanel>
+                    <ui:RadioButtons
+                        Header="TabStripPlacement"
+                        ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
+                        SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement, Mode=TwoWay}" />
+                </controls:SimpleStackPanel>
+            </controls:ControlExample.Options>
+        </controls:ControlExample>
+    </Grid>
+</UserControl>

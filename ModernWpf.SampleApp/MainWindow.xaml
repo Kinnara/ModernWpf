@@ -1,0 +1,27 @@
+﻿<Window
+    x:Name="Window"
+    x:Class="ModernWpf.SampleApp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://www.modernwpf.com"
+    mc:Ignorable="d"
+    Title="Main Window"
+    Width="1024"
+    Height="768"
+    Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:WindowHelper.IsEnabled="True"
+    ui:WindowHelper.IsBackButtonVisible="True"
+    ui:WindowHelper.IsBackEnabled="{Binding ElementName=RootFrame, Path=CanGoBack}"
+    ui:WindowHelper.BackRequested="Window_BackRequested">
+
+    <Frame
+        x:Name="RootFrame"
+        NavigationUIVisibility="Hidden"
+        IsTabStop="False"
+        Source="/MainPage.xaml" />
+
+</Window>

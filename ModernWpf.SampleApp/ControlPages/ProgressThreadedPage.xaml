@@ -1,0 +1,103 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.ProgressThreadedPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
+    xmlns:ui="http://www.modernwpf.com"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900">
+
+    <UserControl.Resources>
+        <Style TargetType="controls:BackgroundProgressBar">
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+            <Setter Property="BorderThickness" Value="{DynamicResource ProgressBarBorderThemeThickness}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightTransparentBrush}" />
+            <Setter Property="MinHeight" Value="{DynamicResource ProgressBarThemeMinHeight}" />
+            <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+            <Setter Property="ControlStyle">
+                <Setter.Value>
+                    <Style TargetType="ProgressBar" BasedOn="{StaticResource {x:Type ProgressBar}}">
+                        <Setter Property="Foreground" Value="{x:Null}" />
+                        <Setter Property="Background" Value="{x:Null}" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="BorderBrush" Value="{x:Null}" />
+                        <Setter Property="MinHeight" Value="0" />
+                        <Setter Property="ui:ControlHelper.CornerRadius" Value="0" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="controls:BackgroundProgressRing">
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+            <Setter Property="ControlStyle">
+                <Setter.Value>
+                    <Style TargetType="ui:ProgressRing">
+                        <Setter Property="Foreground" Value="{x:Null}" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:Name="RootGrid">
+        <StackPanel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Margin="24">
+
+            <GroupBox
+                Header="ProgressBar on UI thread"
+                HorizontalAlignment="Center">
+                <ProgressBar
+                    Width="200"
+                    HorizontalAlignment="Center"
+                    IsIndeterminate="{Binding ElementName=IsActiveToggle, Path=IsChecked}" />
+            </GroupBox>
+
+            <GroupBox
+                Header="ProgressBar on background thread"
+                HorizontalAlignment="Center">
+                <controls:BackgroundProgressBar
+                    Width="200"
+                    HorizontalAlignment="Center"
+                    IsIndeterminate="{Binding ElementName=IsActiveToggle, Path=IsChecked}" />
+            </GroupBox>
+
+            <GroupBox
+                Header="ProgressRing on UI thread"
+                HorizontalAlignment="Center">
+                <ui:ProgressRing
+                    Width="60"
+                    Height="60"
+                    HorizontalAlignment="Center"
+                    IsActive="{Binding ElementName=IsActiveToggle, Path=IsChecked}" />
+            </GroupBox>
+
+            <GroupBox
+                Header="ProgressRing on background thread"
+                HorizontalAlignment="Center">
+                <controls:BackgroundProgressRing
+                    IsActive="{Binding ElementName=IsActiveToggle, Path=IsChecked}"
+                    Width="60"
+                    Height="60" />
+            </GroupBox>
+
+            <CheckBox
+                x:Name="IsActiveToggle"
+                Content="IsActive"
+                IsChecked="True"
+                HorizontalAlignment="Center" />
+
+            <Button
+                Content="Block UI thread"
+                HorizontalAlignment="Center"
+                Margin="0,24,0,0"
+                Click="BlockUIThread" />
+        </StackPanel>
+    </Grid>
+</UserControl>

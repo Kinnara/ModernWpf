@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <authors>$authors$</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5">
+        <dependency id="System.Runtime.WindowsRuntime" version="4.6.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETCoreApp3.0">
+        <dependency id="System.Runtime.WindowsRuntime" version="4.6.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework=".NETCoreApp3.0">
+        <frameworkReference name="Microsoft.WindowsDesktop.App.WPF" />
+      </group>
+    </frameworkReferences>
+  </metadata>
+  <files>
+    <file src="bin\$config$\net45\ModernWpf.dll" target="lib\net45\ModernWpf.dll" />
+    <file src="bin\$config$\net45\ModernWpf.xml" target="lib\net45\ModernWpf.xml" />
+    <file src="bin\$config$\net45\ModernWpf.Controls.dll" target="lib\net45\ModernWpf.Controls.dll" />
+    <file src="bin\$config$\net45\ModernWpf.Controls.xml" target="lib\net45\ModernWpf.Controls.xml" />
+    <file src="bin\$config$\netcoreapp3.0\ModernWpf.dll" target="lib\netcoreapp3.0\ModernWpf.dll" />
+    <file src="bin\$config$\netcoreapp3.0\ModernWpf.xml" target="lib\netcoreapp3.0\ModernWpf.xml" />
+    <file src="bin\$config$\netcoreapp3.0\ModernWpf.Controls.dll" target="lib\netcoreapp3.0\ModernWpf.Controls.dll" />
+    <file src="bin\$config$\netcoreapp3.0\ModernWpf.Controls.xml" target="lib\netcoreapp3.0\ModernWpf.Controls.xml" />
+  </files>
+</package>

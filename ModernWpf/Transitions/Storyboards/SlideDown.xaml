@@ -1,0 +1,32 @@
+﻿<!--
+    // (c) Copyright Microsoft Corporation.
+    // This source is subject to the Microsoft Public License (Ms-PL).
+    // Please see http://go.microsoft.com/fwlink/?LinkID=131993 for details.
+    // All other rights reserved.
+-->
+
+<Storyboard
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animation="clr-namespace:ModernWpf.Media.Animation;assembly=ModernWpf">
+    <DoubleAnimation
+        Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+        From="0"
+        To="200"
+        Duration="0:0:0.25">
+        <DoubleAnimation.EasingFunction>
+            <animation:BezierEase ControlPoint1="0.3825,0.0025" ControlPoint2="0.8775,-0.1075" />
+        </DoubleAnimation.EasingFunction>
+    </DoubleAnimation>
+    <animation:DoubleAnimationEx
+        Storyboard.TargetProperty="(UIElement.Opacity)"
+        From="1"
+        To="0"
+        Duration="0:0:0.25"
+        Min="0"
+        Max="1">
+        <DoubleAnimation.EasingFunction>
+            <animation:BezierEase ControlPoint1="1,-0.42" ControlPoint2="0.995,-0.425" />
+        </DoubleAnimation.EasingFunction>
+    </animation:DoubleAnimationEx>
+</Storyboard>

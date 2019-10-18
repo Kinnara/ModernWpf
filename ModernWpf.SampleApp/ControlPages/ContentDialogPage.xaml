@@ -1,0 +1,38 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.ContentDialogPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:ui="http://www.modernwpf.com"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900">
+
+    <Grid Margin="{StaticResource ControlPageContentMargin}">
+        <controls:ControlExample HeaderText="A basic content dialog with content.">
+            <Grid>
+                <!--<Rectangle Fill="{DynamicResource SystemControlBackgroundAccentBrush}" />-->
+                <local:TestContentDialog
+                    x:Name="ParentedDialog"
+                    PrimaryButtonText="Invert theme" />
+            </Grid>
+
+            <controls:ControlExample.Options>
+                <controls:SimpleStackPanel>
+                    <Button
+                        Content="Show ContentDialog"
+                        Click="ShowDialog" />
+                    <Button
+                        Content="Show parented ContentDialog (Popup)"
+                        Click="ShowParentedDialogPopup" />
+                    <Button
+                        Content="Show parented ContentDialog (InPlace)"
+                        Click="ShowParentedDialogInPlace" />
+                </controls:SimpleStackPanel>
+            </controls:ControlExample.Options>
+        </controls:ControlExample>
+    </Grid>
+</UserControl>

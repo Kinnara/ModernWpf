@@ -1,0 +1,59 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.SliderPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://www.modernwpf.com"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900">
+
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <controls:ControlExample HeaderText="A configurable Slider.">
+                <Grid>
+                    <Slider
+                        x:Name="slider"
+                        Maximum="100"
+                        IsMoveToPointEnabled="True"
+                        AutoToolTipPlacement="TopLeft"
+                        TickFrequency="10"
+                        TickPlacement="Both"
+                        ui:ControlHelper.Header="Header" />
+                </Grid>
+
+                <controls:ControlExample.Options>
+                    <controls:SimpleStackPanel>
+                        <CheckBox
+                            Content="IsSnapToTickEnabled"
+                            IsChecked="{Binding ElementName=slider, Path=IsSnapToTickEnabled, Mode=TwoWay}" />
+                        <CheckBox
+                            Content="IsSelectionRangeEnabled"
+                            IsEnabled="False"
+                            IsChecked="{Binding ElementName=slider, Path=IsSelectionRangeEnabled, Mode=TwoWay}" />
+                        <CheckBox
+                            Content="IsDirectionReversed"
+                            IsChecked="{Binding ElementName=slider, Path=IsDirectionReversed, Mode=TwoWay}" />
+                        <CheckBox
+                            Content="IsMoveToPointEnabled"
+                            IsChecked="{Binding ElementName=slider, Path=IsMoveToPointEnabled, Mode=TwoWay}" />
+                        <ui:RadioButtons
+                            Header="AutoToolTipPlacement"
+                            ItemsSource="{Binding Source={x:Type AutoToolTipPlacement}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=slider, Path=AutoToolTipPlacement, Mode=TwoWay}" />
+                        <ui:RadioButtons
+                            Header="TickPlacement"
+                            ItemsSource="{Binding Source={x:Type TickPlacement}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=slider, Path=TickPlacement, Mode=TwoWay}" />
+                        <ui:RadioButtons
+                            Header="Orientation"
+                            ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=slider, Path=Orientation, Mode=TwoWay}" />
+                    </controls:SimpleStackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

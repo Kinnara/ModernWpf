@@ -1,0 +1,61 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.GroupBoxPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
+    xmlns:ui="http://www.modernwpf.com"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900"
+    Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}">
+
+    <UserControl.Resources>
+        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+            <Setter Property="MinWidth" Value="280" />
+            <Setter Property="Margin" Value="0,0,0,12" />
+        </Style>
+        <Style TargetType="ui:HyperlinkButton">
+            <Setter Property="Margin" Value="0,0,0,20" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <GroupBox Header="Scale and layout">
+                <StackPanel>
+                    <ComboBox ui:ControlHelper.Header="Change the size of text, apps, and other items">
+                        <ComboBoxItem
+                            Content="100% (Recommended)"
+                            IsSelected="True" />
+                    </ComboBox>
+                    <ui:HyperlinkButton Content="Advanced scaling settings" />
+                    <ComboBox ui:ControlHelper.Header="Display resolution">
+                        <ComboBoxItem
+                            Content="1920 × 1080 (Recommended)"
+                            IsSelected="True" />
+                    </ComboBox>
+                    <ComboBox ui:ControlHelper.Header="Display orientation">
+                        <ComboBoxItem
+                            Content="Landscape"
+                            IsSelected="True" />
+                    </ComboBox>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Multiple displays">
+                <StackPanel>
+                    <ComboBox ui:ControlHelper.Header="Multiple displays">
+                        <ComboBoxItem
+                            Content="Extend these displays"
+                            IsSelected="True" />
+                    </ComboBox>
+                    <CheckBox
+                        Content="Make this my main display"
+                        IsChecked="True" />
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

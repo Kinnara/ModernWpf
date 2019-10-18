@@ -1,0 +1,53 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.ToggleSwitchPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://www.modernwpf.com"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900">
+
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <controls:ControlExample HeaderText="A simple ToggleSwitch.">
+                <ui:ToggleSwitch />
+            </controls:ControlExample>
+
+            <controls:ControlExample HeaderText="A ToggleSwitch with custom header and content.">
+                <StackPanel
+                    Orientation="Horizontal"
+                    VerticalAlignment="Top">
+                    <ui:ToggleSwitch
+                        x:Name="toggleSwitch"
+                        Header="Toggle work"
+                        OffContent="Do work"
+                        OnContent="Working"
+                        IsOn="True" />
+                    <ui:ProgressRing
+                        IsActive="{Binding IsOn, ElementName=toggleSwitch}"
+                        Width="130" />
+                </StackPanel>
+
+                <controls:ControlExample.Options>
+                    <controls:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <CheckBox
+                            Content="IsOn"
+                            IsChecked="{Binding ElementName=toggleSwitch, Path=IsOn, Mode=TwoWay}" />
+                        <TextBox
+                            ui:ControlHelper.Header="Header"
+                            Text="{Binding ElementName=toggleSwitch, Path=Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox
+                            ui:ControlHelper.Header="OnContent"
+                            Text="{Binding ElementName=toggleSwitch, Path=OnContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox
+                            ui:ControlHelper.Header="OffContent"
+                            Text="{Binding ElementName=toggleSwitch, Path=OffContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </controls:SimpleStackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,147 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.PageTransitionsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://www.modernwpf.com"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900">
+
+    <UserControl.Resources>
+        <Style x:Key="DrillFrameStyle" TargetType="controls:TransitionFrameEx">
+            <Setter Property="DefaultNavigationInTransition">
+                <Setter.Value>
+                    <ui:NavigationInTransition>
+                        <ui:NavigationInTransition.Backward>
+                            <ui:DrillTransition Mode="DrillOutIncoming" />
+                        </ui:NavigationInTransition.Backward>
+                        <ui:NavigationInTransition.Forward>
+                            <ui:DrillTransition Mode="DrillInIncoming" />
+                        </ui:NavigationInTransition.Forward>
+                    </ui:NavigationInTransition>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="DefaultNavigationOutTransition">
+                <Setter.Value>
+                    <ui:NavigationOutTransition>
+                        <ui:NavigationOutTransition.Backward>
+                            <ui:DrillTransition Mode="DrillOutOutgoing" />
+                        </ui:NavigationOutTransition.Backward>
+                        <ui:NavigationOutTransition.Forward>
+                            <ui:DrillTransition Mode="DrillInOutgoing" />
+                        </ui:NavigationOutTransition.Forward>
+                    </ui:NavigationOutTransition>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SlideFromRightFrameStyle" TargetType="controls:TransitionFrameEx">
+            <Setter Property="DefaultNavigationInTransition">
+                <Setter.Value>
+                    <ui:NavigationInTransition>
+                        <ui:NavigationInTransition.Backward>
+                            <ui:SlideTransition Mode="SlideRightIn" />
+                        </ui:NavigationInTransition.Backward>
+                        <ui:NavigationInTransition.Forward>
+                            <ui:SlideTransition Mode="SlideLeftIn" />
+                        </ui:NavigationInTransition.Forward>
+                    </ui:NavigationInTransition>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="DefaultNavigationOutTransition">
+                <Setter.Value>
+                    <ui:NavigationOutTransition>
+                        <ui:NavigationOutTransition.Backward>
+                            <ui:SlideTransition Mode="SlideRightOut" />
+                        </ui:NavigationOutTransition.Backward>
+                        <ui:NavigationOutTransition.Forward>
+                            <ui:SlideTransition Mode="SlideLeftOut" />
+                        </ui:NavigationOutTransition.Forward>
+                    </ui:NavigationOutTransition>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SlideFromLeftFrameStyle" TargetType="controls:TransitionFrameEx">
+            <Setter Property="DefaultNavigationInTransition">
+                <Setter.Value>
+                    <ui:NavigationInTransition>
+                        <ui:NavigationInTransition.Backward>
+                            <ui:SlideTransition Mode="SlideLeftIn" />
+                        </ui:NavigationInTransition.Backward>
+                        <ui:NavigationInTransition.Forward>
+                            <ui:SlideTransition Mode="SlideRightIn" />
+                        </ui:NavigationInTransition.Forward>
+                    </ui:NavigationInTransition>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="DefaultNavigationOutTransition">
+                <Setter.Value>
+                    <ui:NavigationOutTransition>
+                        <ui:NavigationOutTransition.Backward>
+                            <ui:SlideTransition Mode="SlideLeftOut" />
+                        </ui:NavigationOutTransition.Backward>
+                        <ui:NavigationOutTransition.Forward>
+                            <ui:SlideTransition Mode="SlideRightOut" />
+                        </ui:NavigationOutTransition.Forward>
+                    </ui:NavigationOutTransition>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer Margin="{StaticResource ControlPageContentMargin}">
+        <controls:ControlExample HeaderText="Page transitions">
+            <controls:TransitionFrameEx
+                x:Name="frame"
+                MinHeight="600"
+                JournalOwnership="OwnsJournal"
+                ClipToBounds="True"
+                TransitionsEnabled="True"
+                Navigated="Frame_Navigated" />
+
+            <controls:ControlExample.Options>
+                <controls:SimpleStackPanel>
+                    <TextBlock
+                        x:Name="TierTB"
+                        Style="{StaticResource BodyTextBlockStyle}" />
+                    <TextBlock
+                        Text="Transition modes"
+                        Style="{StaticResource BodyTextBlockStyle}" />
+                    <RadioButton
+                        x:Name="DefaultRB"
+                        Content="Default"
+                        IsChecked="True"
+                        Checked="DefaultRB_Checked" />
+                    <RadioButton
+                        x:Name="DrillRB"
+                        Content="Drill"
+                        Checked="DrillRB_Checked" />
+                    <RadioButton
+                        x:Name="SlideFromRightRB"
+                        Content="Slide from Right"
+                        Checked="SlideFromRightRB_Checked" />
+                    <RadioButton
+                        x:Name="SlideFromLeftRB"
+                        Content="Slide from Left"
+                        Checked="SlideFromLeftRB_Checked" />
+
+                    <TextBlock
+                        Text="Navigate"
+                        Style="{StaticResource BodyTextBlockStyle}" />
+                    <Button
+                        x:Name="NavigateForwardButton"
+                        Content="Navigate Forward"
+                        Click="NavigateForward" />
+                    <Button
+                        Content="Navigate Backward"
+                        IsEnabled="{Binding ElementName=frame, Path=CanGoBack}"
+                        Click="NavigateBackward" />
+                </controls:SimpleStackPanel>
+            </controls:ControlExample.Options>
+        </controls:ControlExample>
+    </ScrollViewer>
+</UserControl>

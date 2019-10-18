@@ -1,0 +1,421 @@
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:animation="clr-namespace:ModernWpf.Media.Animation">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Button.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style x:Key="DefaultCalendarItemStyle" TargetType="{x:Type CalendarItem}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CalendarItem}">
+                    <ControlTemplate.Resources>
+                        <Style TargetType="TextBlock" x:Key="WeekDayNameStyle">
+                            <Setter Property="FontWeight" Value="Normal" />
+                            <Setter Property="FontSize" Value="12" />
+                            <Setter Property="TextTrimming" Value="None" />
+                            <Setter Property="TextWrapping" Value="Wrap" />
+                            <Setter Property="LineStackingStrategy" Value="MaxHeight" />
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                        </Style>
+                        <DataTemplate x:Key="{x:Static CalendarItem.DayTitleTemplateResourceKey}">
+                            <TextBlock
+                                Style="{StaticResource WeekDayNameStyle}"
+                                Text="{Binding}" />
+                        </DataTemplate>
+                    </ControlTemplate.Resources>
+                    <Grid
+                        x:Name="PART_Root"
+                        SnapsToDevicePixels="True">
+                        <Grid.Resources>
+                            <Style TargetType="Button" x:Key="NavigationButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}">
+                                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                <Setter Property="VerticalAlignment" Value="Stretch" />
+                                <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+                                <Setter Property="primitives:FrameworkElementHelper.FocusVisualMargin" Value="-3" />
+                                <Setter Property="FontSize" Value="20" />
+                                <Setter Property="Background" Value="{DynamicResource CalendarViewNavigationButtonBackground}" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border
+                                                Background="{TemplateBinding Background}"
+                                                Margin="{TemplateBinding Padding}">
+                                                <Border
+                                                    x:Name="Border"
+                                                    BorderBrush="{DynamicResource CalendarViewNavigationButtonBorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                                    <ContentPresenter
+                                                        x:Name="Text"
+                                                        Content="{TemplateBinding Content}"
+                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                </Border>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource CalendarViewNavigationButtonBorderBrushPointerOver}" />
+                                                    <Setter TargetName="Text" Property="TextElement.Foreground" Value="{DynamicResource CalendarViewNavigationButtonForegroundPointerOver}" />
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter TargetName="Text" Property="TextElement.Foreground" Value="{DynamicResource CalendarViewNavigationButtonForegroundPressed}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Grid.Resources>
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                            <Grid
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button
+                                        x:Name="PART_HeaderButton"
+                                        Style="{StaticResource NavigationButtonStyle}"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        Focusable="False"
+                                        Padding="12,0,0,0"
+                                        HorizontalContentAlignment="Left" />
+                                    <Button
+                                        x:Name="PART_PreviousButton"
+                                        Grid.Column="1"
+                                        Content="&#xE0E4;"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Focusable="False"
+                                        Padding="1"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        HorizontalContentAlignment="Center"
+                                        Style="{StaticResource NavigationButtonStyle}" />
+                                    <Button
+                                        x:Name="PART_NextButton"
+                                        Grid.Column="2"
+                                        Content="&#xE0E5;"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        Focusable="False"
+                                        Padding="1"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        HorizontalContentAlignment="Center"
+                                        Style="{StaticResource NavigationButtonStyle}" />
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <Rectangle
+                                        x:Name="BackgroundLayer"
+                                        Fill="{TemplateBinding BorderBrush}"
+                                        Margin="0,38,0,0" />
+                                    <Grid
+                                        x:Name="PART_MonthView"
+                                        Visibility="Visible"
+                                        TextElement.Foreground="{DynamicResource CalendarViewCalendarItemForeground}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="38" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                    </Grid>
+                                    <Grid
+                                        x:Name="PART_YearView"
+                                        Visibility="Hidden">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PART_MonthView" Property="TextElement.Foreground" Value="{DynamicResource CalendarViewWeekDayForegroundDisabled}" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding DisplayMode, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Calendar}}}" Value="Year">
+                            <Setter TargetName="PART_MonthView" Property="Visibility" Value="Hidden" />
+                            <Setter TargetName="PART_YearView" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="BackgroundLayer" Property="Margin" Value="0" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DisplayMode, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Calendar}}}" Value="Decade">
+                            <Setter TargetName="PART_MonthView" Property="Visibility" Value="Hidden" />
+                            <Setter TargetName="PART_YearView" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="BackgroundLayer" Property="Margin" Value="0" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="CalendarItem" BasedOn="{StaticResource DefaultCalendarItemStyle}" />
+
+    <Style x:Key="DefaultCalendarDayButtonStyle" TargetType="{x:Type CalendarDayButton}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="{DynamicResource CalendarViewCalendarItemRevealBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource CalendarViewCalendarItemForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CalendarViewCalendarItemRevealBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="MinWidth" Value="40" />
+        <Setter Property="MinHeight" Value="40" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="primitives:FrameworkElementHelper.FocusVisualMargin" Value="-2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CalendarDayButton}">
+                    <Grid SnapsToDevicePixels="True">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="DayStates">
+                                <VisualState x:Name="RegularDay" />
+                                <VisualState x:Name="Today" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <primitives:VisualStateGroupListener
+                            x:Name="DayStatesProxy"
+                            GroupName="DayStates" />
+                        <Border
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Margin="-1" />
+                        <Rectangle
+                            x:Name="Background"
+                            Fill="{TemplateBinding Background}" />
+                        <Border
+                            x:Name="HighlightBorder"
+                            BorderThickness="2" />
+                        <TextBlock
+                            x:Name="NormalText"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            FontSize="{TemplateBinding FontSize}"
+                            FontWeight="{TemplateBinding FontWeight}"
+                            Text="{TemplateBinding Content}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <TextBlock.RenderTransform>
+                                <TranslateTransform Y="-1" />
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HighlightBorder" Property="BorderBrush" Value="{DynamicResource CalendarViewHoverBorderBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="HighlightBorder" Property="BorderBrush" Value="{DynamicResource CalendarViewPressedBorderBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="HighlightBorder" Property="BorderBrush" Value="{DynamicResource CalendarViewSelectedBorderBrush}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="HighlightBorder" Property="BorderBrush" Value="{DynamicResource CalendarViewSelectedHoverBorderBrush}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="HighlightBorder" Property="BorderBrush" Value="{DynamicResource CalendarViewSelectedPressedBorderBrush}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsInactive" Value="True">
+                            <Setter TargetName="Background" Property="Fill" Value="{DynamicResource SystemControlDisabledChromeMediumLowBrush}" />
+                        </Trigger>
+                        <Trigger SourceName="DayStatesProxy" Property="CurrentStateName" Value="Today">
+                            <Setter TargetName="Background" Property="Fill" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+                            <Setter TargetName="NormalText" Property="Foreground" Value="{DynamicResource CalendarViewTodayForeground}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsBlackedOut" Value="True" />
+                                <Condition SourceName="DayStatesProxy" Property="CurrentStateName" Value="RegularDay" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="NormalText" Property="Foreground" Value="{DynamicResource CalendarViewBlackoutForeground}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsBlackedOut" Value="True" />
+                                <Condition SourceName="DayStatesProxy" Property="CurrentStateName" Value="Today" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Background" Property="Opacity" Value="0.5" />
+                            <Setter TargetName="NormalText" Property="Opacity" Value="0.4" />
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="NormalText" Property="Foreground" Value="{DynamicResource CalendarViewBlackoutForeground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="CalendarDayButton" BasedOn="{StaticResource DefaultCalendarDayButtonStyle}" />
+
+    <Style x:Key="DefaultCalendarButtonStyle" TargetType="{x:Type CalendarButton}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="{DynamicResource CalendarViewCalendarItemRevealBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource CalendarViewCalendarItemForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CalendarViewCalendarItemRevealBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="MinWidth" Value="40" />
+        <Setter Property="MinHeight" Value="42" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="primitives:FrameworkElementHelper.FocusVisualMargin" Value="-2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CalendarButton}">
+                    <Grid SnapsToDevicePixels="True">
+                        <Border
+                            x:Name="Background"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Margin="-1" />
+                        <Border
+                            x:Name="HighlightBorder"
+                            BorderThickness="2" />
+                        <TextBlock
+                            x:Name="NormalText"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            FontSize="{TemplateBinding FontSize}"
+                            FontWeight="{TemplateBinding FontWeight}"
+                            Text="{TemplateBinding Content}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="HighlightBorder" Property="BorderBrush" Value="{DynamicResource CalendarViewHoverBorderBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="HighlightBorder" Property="BorderBrush" Value="{DynamicResource CalendarViewPressedBorderBrush}" />
+                        </Trigger>
+                        <Trigger Property="HasSelectedDays" Value="True">
+                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+                            <Setter TargetName="NormalText" Property="Foreground" Value="{DynamicResource CalendarViewTodayForeground}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="HasSelectedDays" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="HighlightBorder" Property="BorderBrush" Value="{DynamicResource CalendarViewSelectedHoverBorderBrush}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="HasSelectedDays" Value="True" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="HighlightBorder" Property="BorderBrush" Value="{DynamicResource CalendarViewSelectedPressedBorderBrush}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsInactive" Value="True">
+                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource SystemControlDisabledChromeMediumLowBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="NormalText" Property="Foreground" Value="{DynamicResource CalendarViewBlackoutForeground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="CalendarButton" BasedOn="{StaticResource DefaultCalendarButtonStyle}" />
+
+    <Style x:Key="DefaultCalendarStyle" TargetType="{x:Type Calendar}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="CalendarItemStyle" Value="{StaticResource DefaultCalendarItemStyle}" />
+        <Setter Property="CalendarDayButtonStyle" Value="{StaticResource DefaultCalendarDayButtonStyle}" />
+        <Setter Property="CalendarButtonStyle" Value="{StaticResource DefaultCalendarButtonStyle}" />
+        <Setter Property="Foreground" Value="{DynamicResource CalendarViewForeground}" />
+        <Setter Property="Background" Value="{DynamicResource CalendarViewBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CalendarViewBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="primitives:CalendarHelper.ReleaseMouseCapture" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Calendar}">
+                    <StackPanel
+                        x:Name="PART_Root"
+                        SnapsToDevicePixels="True">
+                        <CalendarItem
+                            x:Name="PART_CalendarItem"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            Style="{TemplateBinding CalendarItemStyle}" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Calendar" BasedOn="{StaticResource DefaultCalendarStyle}" />
+
+    <Style x:Key="DatePickerCalendarStyle" TargetType="Calendar" BasedOn="{StaticResource DefaultCalendarStyle}">
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="Loaded">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <animation:FadeInThemeAnimation />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>

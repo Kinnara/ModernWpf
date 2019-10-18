@@ -1,0 +1,115 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://www.modernwpf.com"
+    xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900">
+
+    <!--<UserControl.Resources>
+        <ContextMenu
+            x:Key="TabItemContextMenu"
+            Loaded="ContextMenu_Loaded"
+            MenuItem.Checked="ThemeMenuItem_Checked"
+            MenuItem.Unchecked="ThemeMenuItem_Unchecked">
+            <MenuItem
+                Header="Invert theme"
+                Click="InvertTheme" />
+            <Separator />
+            <ui:RadioMenuItem
+                Header="Default"
+                GroupName="Theme"
+                Tag="{x:Static ui:ElementTheme.Default}" />
+            <ui:RadioMenuItem
+                Header="Light"
+                GroupName="Theme"
+                Tag="{x:Static ui:ElementTheme.Light}" />
+            <ui:RadioMenuItem
+                Header="Dark"
+                GroupName="Theme"
+                Tag="{x:Static ui:ElementTheme.Dark}" />
+        </ContextMenu>
+
+        <Style TargetType="TabItem" BasedOn="{StaticResource DefaultTabItemStyle}">
+            <Setter Property="ContextMenu" Value="{StaticResource TabItemContextMenu}" />
+        </Style>
+    </UserControl.Resources>-->
+    <UserControl.Resources>
+        <common:EqualsConverter
+            x:Key="IsDefaultConverter"
+            Value="{x:Null}" />
+        <common:EqualsConverter
+            x:Key="IsLightConverter"
+            Value="{x:Static ui:ApplicationTheme.Light}" />
+        <common:EqualsConverter
+            x:Key="IsDarkConverter"
+            Value="{x:Static ui:ApplicationTheme.Dark}" />
+    </UserControl.Resources>
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Menu
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="2">
+            <MenuItem Header="Theme">
+                <ui:RadioMenuItem
+                    Header="Default"
+                    IsChecked="{Binding ApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay, Converter={StaticResource IsDefaultConverter}}"
+                    Checked="Default_Checked" />
+                <ui:RadioMenuItem
+                    Header="Light"
+                    IsChecked="{Binding ApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay, Converter={StaticResource IsLightConverter}}"
+                    Checked="Light_Checked" />
+                <ui:RadioMenuItem
+                    Header="Dark"
+                    IsChecked="{Binding ApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay, Converter={StaticResource IsDarkConverter}}"
+                    Checked="Dark_Checked" />
+            </MenuItem>
+            <MenuItem
+                Header="Presets"
+                MenuItem.Click="PresetMenuItem_Click">
+                <ui:RadioMenuItem
+                    Header="Default"
+                    IsChecked="True" />
+                <ui:RadioMenuItem Header="Forest" />
+                <ui:RadioMenuItem Header="Lavender" />
+                <ui:RadioMenuItem Header="Nighttime" />
+            </MenuItem>
+        </Menu>
+
+        <ListBox
+            x:Name="PagesList"
+            Grid.Row="1"
+            Grid.Column="0"
+            DisplayMemberPath="DisplayName"
+            SelectedValuePath="NavigateUri"
+            SelectedIndex="0"
+            SelectionChanged="PagesList_SelectionChanged">
+            <ListBox.ItemsSource>
+                <local:ControlPagesData />
+            </ListBox.ItemsSource>
+        </ListBox>
+
+        <controls:TransitionFrameEx
+            x:Name="Frame"
+            Grid.Row="1"
+            Grid.Column="1"
+            NavigationUIVisibility="Hidden"
+            Navigated="Frame_Navigated" />
+    </Grid>
+</UserControl>

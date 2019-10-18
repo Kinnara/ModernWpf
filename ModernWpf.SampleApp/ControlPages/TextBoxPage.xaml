@@ -1,0 +1,73 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.TextBoxPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://www.modernwpf.com"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900">
+
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <controls:ControlExample HeaderText="A TextBox.">
+                <TextBox
+                    x:Name="textBox"
+                    VerticalAlignment="Top"
+                    ui:ControlHelper.Header="TextBox"
+                    ui:ControlHelper.PlaceholderText="Placeholder text" />
+
+                <controls:ControlExample.Options>
+                    <controls:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <Button
+                            Content="Clear clipboard"
+                            Click="ClearClipboard" />
+                        <CheckBox
+                            Content="IsReadOnly"
+                            IsChecked="{Binding ElementName=textBox, Path=IsReadOnly, Mode=TwoWay}" />
+                        <CheckBox
+                            Content="IsReadOnlyCaretVisible"
+                            IsChecked="{Binding ElementName=textBox, Path=IsReadOnlyCaretVisible, Mode=TwoWay}" />
+                        <CheckBox
+                            Content="IsUndoEnabled"
+                            IsChecked="{Binding ElementName=textBox, Path=IsUndoEnabled, Mode=TwoWay}" />
+                        <CheckBox
+                            Content="IsInactiveSelectionHighlightEnabled"
+                            IsChecked="{Binding ElementName=textBox, Path=IsInactiveSelectionHighlightEnabled, Mode=TwoWay}" />
+                        <TextBox
+                            ui:ControlHelper.Header="Header"
+                            Text="{Binding ElementName=textBox, Path=(ui:ControlHelper.Header), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox
+                            ui:ControlHelper.Header="PlaceholderText"
+                            Text="{Binding ElementName=textBox, Path=(ui:ControlHelper.PlaceholderText), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <ComboBox
+                            ui:ControlHelper.Header="HorizontalScrollBarVisibility"
+                            ItemsSource="{Binding Source={x:Type ScrollBarVisibility}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=textBox, Path=HorizontalScrollBarVisibility, Mode=TwoWay}" />
+                        <ComboBox
+                            ui:ControlHelper.Header="VerticalScrollBarVisibility"
+                            ItemsSource="{Binding Source={x:Type ScrollBarVisibility}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=textBox, Path=VerticalScrollBarVisibility, Mode=TwoWay}" />
+                        <ComboBox
+                            ui:ControlHelper.Header="SelectionOpacity"
+                            SelectedItem="{Binding ElementName=textBox, Path=SelectionOpacity, Mode=TwoWay}"
+                            IsEditable="True">
+                            <sys:Double>0</sys:Double>
+                            <sys:Double>0.4</sys:Double>
+                            <sys:Double>1</sys:Double>
+                        </ComboBox>
+                    </controls:SimpleStackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+
+            <controls:ControlExample HeaderText="A RichTextBox.">
+                <RichTextBox
+                    x:Name="richTextBox"
+                    ui:ControlHelper.Header="RichTextBox" />
+            </controls:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

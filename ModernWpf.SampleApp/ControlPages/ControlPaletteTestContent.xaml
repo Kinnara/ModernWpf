@@ -1,0 +1,182 @@
+﻿<UserControl
+    x:Name="Root"
+    x:Class="ModernWpf.SampleApp.ControlPages.ControlPaletteTestContent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://www.modernwpf.com"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="400"
+    d:DesignHeight="300"
+    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}">
+
+    <UserControl.Resources>
+        <Style TargetType="HeaderedContentControl">
+            <Setter Property="Margin" Value="0,0,0,28" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="HeaderTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding}"
+                            Style="{StaticResource BaseTextBlockStyle}"
+                            Margin="0,0,0,16" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="controls:SimpleStackPanel">
+            <Setter Property="Spacing" Value="12" />
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel Margin="24,20,24,20">
+
+        <Border
+            Height="40"
+            Margin="0,0,0,20">
+            <TextBlock
+                VerticalAlignment="Center"
+                FontWeight="SemiBold"
+                LineHeight="20"
+                Style="{StaticResource SubtitleTextBlockStyle}"
+                Text="{Binding ElementName=Root, Path=Title}" />
+        </Border>
+
+        <HeaderedContentControl Header="Buttons">
+            <controls:SimpleStackPanel>
+                <Button
+                    x:Name="Button"
+                    Content="Enabled button" />
+                <Button
+                    Content="Disabled button"
+                    IsEnabled="False" />
+                <ToggleButton Content="Toggle button" />
+                <ToggleButton
+                    Content="Toggled button"
+                    IsChecked="True" />
+                <Button
+                    Style="{DynamicResource AccentButtonStyle}"
+                    Content="Enabled accent button" />
+                <Button
+                    Style="{DynamicResource AccentButtonStyle}"
+                    Content="Disabled accent button"
+                    IsEnabled="False" />
+            </controls:SimpleStackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="Checkbox">
+            <controls:SimpleStackPanel>
+                <CheckBox Content="Unchecked" />
+                <CheckBox
+                    Content="Checked"
+                    IsChecked="True" />
+                <CheckBox
+                    Content="Third state"
+                    IsThreeState="True"
+                    IsChecked="{x:Null}" />
+                <CheckBox
+                    Content="Disabled"
+                    IsChecked="True"
+                    IsEnabled="False" />
+            </controls:SimpleStackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="Radio button">
+            <controls:SimpleStackPanel>
+                <RadioButton
+                    Content="Unchecked"
+                    GroupName="Test1" />
+                <RadioButton
+                    Content="Checked"
+                    GroupName="Test1"
+                    IsChecked="True" />
+                <RadioButton
+                    Content="Disabled"
+                    IsChecked="True"
+                    IsEnabled="False" />
+            </controls:SimpleStackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="Combo box">
+            <controls:SimpleStackPanel>
+                <ComboBox Width="200">
+                    <ComboBoxItem
+                        Content="Item 1"
+                        IsSelected="True" />
+                    <ComboBoxItem Content="Item 2" />
+                    <ComboBoxItem Content="Item 3" />
+                </ComboBox>
+                <ComboBox
+                    Width="200"
+                    IsEditable="True">
+                    <ComboBoxItem
+                        Content="Editable item 1"
+                        IsSelected="True" />
+                    <ComboBoxItem Content="Editable item 2" />
+                    <ComboBoxItem Content="Editable item 3" />
+                </ComboBox>
+            </controls:SimpleStackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="Textbox">
+            <TextBox
+                ui:ControlHelper.PlaceholderText="Enter text here"
+                Width="200"
+                HorizontalAlignment="Left" />
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="Toggle switch">
+            <controls:SimpleStackPanel>
+                <ui:ToggleSwitch IsOn="False" />
+                <ui:ToggleSwitch IsOn="True" />
+            </controls:SimpleStackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="Slider">
+            <Slider
+                Maximum="100"
+                Value="50"
+                AutoToolTipPlacement="TopLeft" />
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="List view">
+            <ListView HorizontalAlignment="Stretch">
+                <ListView.Template>
+                    <ControlTemplate TargetType="ListView">
+                        <Border
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="true">
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                    </ControlTemplate>
+                </ListView.Template>
+                <ListView.Items>
+                    <ListViewItem
+                        Content="Howdy! (disabled)"
+                        IsEnabled="False" />
+                    <ListViewItem
+                        Content="Aloha! (selected)"
+                        IsSelected="True" />
+                    <ListViewItem Content="Hello!" />
+                    <ListViewItem Content="Hola!" />
+                </ListView.Items>
+            </ListView>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="Calendar">
+            <Calendar HorizontalAlignment="Stretch" />
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="Date picker">
+            <DatePicker Width="200" />
+        </HeaderedContentControl>
+
+    </StackPanel>
+</UserControl>

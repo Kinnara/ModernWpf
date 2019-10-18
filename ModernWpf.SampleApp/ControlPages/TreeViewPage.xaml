@@ -1,0 +1,111 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.TreeViewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900">
+
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <controls:ControlExample HeaderText="A simple TreeView">
+                <Border
+                    Height="400"
+                    HorizontalAlignment="Left"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"
+                    BorderThickness="1">
+                    <TreeView
+                        x:Name="sampleTreeView"
+                        MinWidth="345"
+                        MaxHeight="400"
+                        Margin="0,12,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top">
+                        <TreeViewItem
+                            Header="Work Documents"
+                            IsExpanded="True">
+                            <TreeViewItem Header="XYZ Functional Spec" />
+                            <TreeViewItem Header="Feature Schedule" />
+                            <TreeViewItem Header="Overall Project Plan" />
+                            <TreeViewItem Header="Feature Resources Allocation" />
+                        </TreeViewItem>
+                        <TreeViewItem
+                            Header="Personal Documents"
+                            IsExpanded="True">
+                            <TreeViewItem
+                                Header="Home Remodel"
+                                IsExpanded="True">
+                                <TreeViewItem Header="Contractor Contact Info" />
+                                <TreeViewItem Header="Paint Color Scheme" />
+                                <TreeViewItem Header="Flooring woodgrain type" />
+                                <TreeViewItem Header="Kitchen cabinet style" />
+                            </TreeViewItem>
+                        </TreeViewItem>
+                    </TreeView>
+                </Border>
+            </controls:ControlExample>
+
+            <controls:ControlExample Visibility="Collapsed">
+                <Grid>
+                    <TreeView
+                        Visibility="Collapsed"
+                        ItemsSource="{Binding}"
+                        VirtualizingPanel.IsVirtualizing="True"
+                        VirtualizingPanel.VirtualizationMode="Recycling">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                                <Setter Property="IsExpanded" Value="True" />
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding SecondLevelItems}">
+                                <TextBlock Text="{Binding Title}" />
+                                <HierarchicalDataTemplate.ItemTemplate>
+                                    <HierarchicalDataTemplate ItemsSource="{Binding ThirdLevelItems}">
+                                        <TextBlock Text="{Binding Title}" />
+                                        <HierarchicalDataTemplate.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" />
+                                            </DataTemplate>
+                                        </HierarchicalDataTemplate.ItemTemplate>
+                                    </HierarchicalDataTemplate>
+                                </HierarchicalDataTemplate.ItemTemplate>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+
+                    <TreeView Visibility="Visible">
+                        <TreeViewItem
+                            Header="Employee1"
+                            IsSelected="True">
+                            <TreeViewItem Header="Jesper Aaberg" />
+                            <TreeViewItem Header="Employee Number">
+                                <TreeViewItem Header="12345" />
+                            </TreeViewItem>
+                            <TreeViewItem Header="Work Days">
+                                <TreeViewItem Header="Monday" />
+                                <TreeViewItem Header="Tuesday" />
+                                <TreeViewItem Header="Thursday" />
+                            </TreeViewItem>
+                        </TreeViewItem>
+                        <TreeViewItem Header="Employee2">
+                            <TreeViewItem Header="Dominik Paiha" />
+                            <TreeViewItem Header="Employee Number">
+                                <TreeViewItem Header="98765" />
+                            </TreeViewItem>
+                            <TreeViewItem Header="Work Days">
+                                <TreeViewItem Header="Tuesday" />
+                                <TreeViewItem Header="Wednesday" />
+                                <TreeViewItem Header="Friday" />
+                            </TreeViewItem>
+                        </TreeViewItem>
+                    </TreeView>
+                </Grid>
+            </controls:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

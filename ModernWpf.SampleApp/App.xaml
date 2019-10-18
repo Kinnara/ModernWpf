@@ -1,0 +1,225 @@
+﻿<Application
+    x:Class="ModernWpf.SampleApp.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:modern="http://www.modernwpf.com"
+    xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <modern:ThemeResources
+                    LightSource="/ThemeResources/Light.xaml"
+                    DarkSource="/ThemeResources/Dark.xaml"
+                    HighContrastSource="/ThemeResources/HighContrast.xaml"
+                    RequestedTheme="{x:Null}"
+                    AccentColor="{x:Null}" />
+                <modern:XamlControlsResources />
+            </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <common:EnumValuesConverter x:Key="EnumValuesConverter" />
+
+            <Style TargetType="controls:SimpleStackPanel">
+                <Setter Property="Spacing" Value="12" />
+            </Style>
+
+            <Style x:Key="OptionsPanelStyle" TargetType="controls:SimpleStackPanel">
+                <Setter Property="Spacing" Value="12" />
+                <Style.Resources>
+                    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                        <Setter Property="MinWidth" Value="200" />
+                    </Style>
+                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                        <Setter Property="MinWidth" Value="200" />
+                    </Style>
+                    <Style TargetType="DatePicker" BasedOn="{StaticResource {x:Type DatePicker}}">
+                        <Setter Property="MinWidth" Value="200" />
+                    </Style>
+                </Style.Resources>
+            </Style>
+
+            <Style x:Key="OutputTextBlockStyle" BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
+                <Setter Property="Margin" Value="8,8,0,0" />
+            </Style>
+
+            <Thickness x:Key="ControlPageContentMargin">24,0,24,20</Thickness>
+
+            <Style x:Key="PageStyle" TargetType="Page">
+                <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
+                <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+            </Style>
+
+            <Style TargetType="controls:TransitionFrameEx">
+                <Setter Property="DefaultNavigationInTransition">
+                    <Setter.Value>
+                        <modern:NavigationInTransition>
+                            <modern:NavigationInTransition.Backward>
+                                <modern:FadeTransition Mode="FadeIn" />
+                            </modern:NavigationInTransition.Backward>
+                            <modern:NavigationInTransition.Forward>
+                                <modern:SlideTransition Mode="SlideUp" />
+                            </modern:NavigationInTransition.Forward>
+                        </modern:NavigationInTransition>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="DefaultNavigationOutTransition">
+                    <Setter.Value>
+                        <modern:NavigationOutTransition>
+                            <modern:NavigationOutTransition.Backward>
+                                <modern:SlideTransition Mode="SlideDown" />
+                            </modern:NavigationOutTransition.Backward>
+                            <modern:NavigationOutTransition.Forward>
+                                <modern:FadeTransition Mode="FadeOut" />
+                            </modern:NavigationOutTransition.Forward>
+                        </modern:NavigationOutTransition>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="ScrollableContentDialogStyle" TargetType="modern:ContentDialog">
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+                <Style.Resources>
+                    <Thickness x:Key="ContentDialogContentMargin">24,0,24,0</Thickness>
+                    <Thickness x:Key="ContentDialogContentScrollViewerMargin">-24,0,-24,0</Thickness>
+                    <Thickness x:Key="ContentDialogTitleMargin">24,0,24,12</Thickness>
+                </Style.Resources>
+            </Style>
+
+            <sys:Double x:Key="GridViewItemMinWidth">44</sys:Double>
+            <sys:Double x:Key="GridViewItemMinHeight">44</sys:Double>
+
+            <Style TargetType="ListViewItem" x:Key="GridViewItemExpanded">
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+                <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                <Setter Property="KeyboardNavigation.TabNavigation" Value="Local" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,0,4,4" />
+                <Setter Property="MinWidth" Value="{DynamicResource GridViewItemMinWidth}" />
+                <Setter Property="MinHeight" Value="{DynamicResource GridViewItemMinHeight}" />
+                <Setter Property="AllowDrop" Value="False" />
+                <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+                <Setter Property="modern:FrameworkElementHelper.FocusVisualMargin" Value="-2" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ListViewItem">
+                            <Border
+                                x:Name="ContentBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding modern:ControlHelper.CornerRadius}"
+                                SnapsToDevicePixels="True">
+                                <!--<VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="FocusStates">
+                                        <VisualState x:Name="Focused">
+                                            <Storyboard>
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderRectangle" Storyboard.TargetProperty="Visibility">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Unfocused" />
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>-->
+                                <Grid>
+                                    <ContentPresenter
+                                        x:Name="ContentPresenter"
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        Margin="{TemplateBinding Padding}"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    <Rectangle
+                                        x:Name="BorderRectangle"
+                                        IsHitTestVisible="False"
+                                        Stroke="{DynamicResource SystemControlHighlightListAccentLowBrush}"
+                                        StrokeThickness="2"
+                                        Opacity="0" />
+                                    <Border
+                                        x:Name="MultiSelectSquare"
+                                        Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                        Width="20"
+                                        Height="20"
+                                        Margin="0,2,2,0"
+                                        VerticalAlignment="Top"
+                                        HorizontalAlignment="Right"
+                                        Visibility="Collapsed">
+                                        <modern:FontIcon
+                                            x:Name="MultiSelectCheck"
+                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                            Glyph="&#xE73E;"
+                                            FontSize="16"
+                                            Foreground="{DynamicResource SystemControlForegroundBaseMediumHighBrush}"
+                                            Opacity="0" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="BorderRectangle" Property="Opacity" Value="1" />
+                                    <Setter TargetName="BorderRectangle" Property="Stroke" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
+                                    <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                    <!--<Setter TargetName="ContentBorder" Property="FocusVisualSecondaryBrush" Value="{DynamicResource SystemControlHighlightListLowBrush}" />-->
+                                    <!--<Setter TargetName="ContentBorder" Property="FocusVisualSecondaryThickness" Value="2" />-->
+                                </Trigger>
+                                <!--<Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="BorderRectangle" Property="Opacity" Value="1" />
+                                    <Setter TargetName="BorderRectangle" Property="Stroke" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
+                                    <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                    <Setter TargetName="ContentBorder" Property="FocusVisualSecondaryBrush" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
+                                    <Setter TargetName="ContentBorder" Property="FocusVisualSecondaryThickness" Value="2" />
+                                </Trigger>-->
+                                <!-- Selected -->
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="MultiSelectCheck" Property="Opacity" Value="1" />
+                                    <Setter TargetName="BorderRectangle" Property="Opacity" Value="1" />
+                                    <Setter TargetName="BorderRectangle" Property="Stroke" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+                                    <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                    <!--<Setter TargetName="ContentBorder" Property="FocusVisualSecondaryBrush" Value="{DynamicResource SystemControlHighlightAccentBrush}" />-->
+                                    <!--<Setter TargetName="ContentBorder" Property="FocusVisualSecondaryThickness" Value="2" />-->
+                                    <Setter TargetName="MultiSelectSquare" Property="Visibility" Value="Visible" />
+                                    <Setter TargetName="MultiSelectSquare" Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+                                </Trigger>
+                                <!-- PointerOverSelected -->
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsMouseOver" Value="True" />
+                                        <Condition Property="IsSelected" Value="True" />
+                                    </MultiTrigger.Conditions>
+                                    <Setter TargetName="MultiSelectCheck" Property="Opacity" Value="1" />
+                                    <Setter TargetName="BorderRectangle" Property="Opacity" Value="1" />
+                                    <Setter TargetName="BorderRectangle" Property="Stroke" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
+                                    <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                    <!--<Setter TargetName="ContentBorder" Property="FocusVisualSecondaryBrush" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />-->
+                                    <!--<Setter TargetName="ContentBorder" Property="FocusVisualSecondaryThickness" Value="2" />-->
+                                    <Setter TargetName="MultiSelectSquare" Property="Visibility" Value="Visible" />
+                                    <Setter TargetName="MultiSelectSquare" Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+                                </MultiTrigger>
+                                <!-- PressedSelected -->
+                                <!--<MultiTrigger>
+                                    <Setter TargetName="MultiSelectCheck" Property="Opacity" Value="1" />
+                                    <Setter TargetName="BorderRectangle" Property="Opacity" Value="1" />
+                                    <Setter TargetName="BorderRectangle" Property="Stroke" Value="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
+                                    <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                    <Setter TargetName="ContentBorder" Property="FocusVisualSecondaryBrush" Value="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
+                                    <Setter TargetName="ContentBorder" Property="FocusVisualSecondaryThickness" Value="2" />
+                                    <Setter TargetName="MultiSelectSquare" Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+                                </MultiTrigger>-->
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="ContentBorder" Property="Opacity" Value="{DynamicResource ListViewItemDisabledThemeOpacity}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

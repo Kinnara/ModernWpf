@@ -1,0 +1,48 @@
+﻿<ui:ContentDialog
+    x:Class="ModernWpf.SampleApp.ControlPages.TestContentDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://www.modernwpf.com"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignHeight="756"
+    d:DesignWidth="548"
+    x:Name="dialog"
+    Style="{StaticResource ScrollableContentDialogStyle}"
+    Title="Title"
+    PrimaryButtonText="Yes"
+    SecondaryButtonText="No"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonClick="Dialog_PrimaryButtonClick"
+    SecondaryButtonClick="Dialog_SecondaryButtonClick"
+    CloseButtonClick="Dialog_CloseButtonClick">
+    <controls:SimpleStackPanel
+        Spacing="12"
+        Margin="0,0,0,12">
+        <TextBox
+            ui:ControlHelper.Header="Title"
+            Text="{Binding ElementName=dialog, Path=Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox
+            ui:ControlHelper.Header="PrimaryButtonText"
+            Text="{Binding ElementName=dialog, Path=PrimaryButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox
+            ui:ControlHelper.Header="SecondaryButtonText"
+            Text="{Binding ElementName=dialog, Path=SecondaryButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox
+            ui:ControlHelper.Header="CloseButtonText"
+            Text="{Binding ElementName=dialog, Path=CloseButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <ComboBox
+            ui:ControlHelper.Header="DefaultButton"
+            ItemsSource="{Binding Source={x:Type ui:ContentDialogButton}, Converter={StaticResource EnumValuesConverter}}"
+            SelectedItem="{Binding ElementName=dialog, Path=DefaultButton, Mode=TwoWay}" />
+        <CheckBox
+            Content="FullSizeDesired"
+            IsChecked="{Binding ElementName=dialog, Path=FullSizeDesired, Mode=TwoWay}" />
+        <CheckBox
+            Content="IsShadowEnabled"
+            IsChecked="{Binding ElementName=dialog, Path=IsShadowEnabled, Mode=TwoWay}" />
+    </controls:SimpleStackPanel>
+</ui:ContentDialog>

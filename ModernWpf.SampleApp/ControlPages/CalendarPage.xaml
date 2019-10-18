@@ -1,0 +1,36 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.CalendarPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://www.modernwpf.com"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900">
+
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <controls:ControlExample HeaderText="A basic calendar.">
+                <Calendar
+                    x:Name="calendar"
+                    VerticalAlignment="Top" />
+                <controls:ControlExample.Options>
+                    <controls:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <CheckBox
+                            Content="IsTodayHighlighted"
+                            IsChecked="{Binding ElementName=calendar, Path=IsTodayHighlighted, Mode=TwoWay}" />
+                        <ComboBox
+                            ui:ControlHelper.Header="SelectionMode"
+                            ItemsSource="{Binding Source={x:Type CalendarSelectionMode}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=calendar, Path=SelectionMode, Mode=TwoWay}" />
+                        <CheckBox
+                            Content="IsEnabled"
+                            IsChecked="{Binding ElementName=calendar, Path=IsEnabled, Mode=TwoWay}" />
+                    </controls:SimpleStackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

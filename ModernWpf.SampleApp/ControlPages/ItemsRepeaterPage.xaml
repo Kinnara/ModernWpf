@@ -1,0 +1,181 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.ItemsRepeaterPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://www.modernwpf.com"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900"
+    Loaded="OnLoaded">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="ContactListViewTemplate">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Ellipse
+                    x:Name="Ellipse"
+                    Grid.RowSpan="2"
+                    Width="32"
+                    Height="32"
+                    Margin="6"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Fill="Gray" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding Name}"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Margin="12,6,0,0" />
+                <TextBlock
+                    Grid.Column="1"
+                    Grid.Row="1"
+                    Text="{Binding Company}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Margin="12,0,0,6" />
+            </Grid>
+        </DataTemplate>
+
+        <Style TargetType="controls:ControlExample">
+            <Setter Property="Margin" Value="0" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <TabControl
+            x:Name="tabControl"
+            Padding="{StaticResource ControlPageContentMargin}">
+            <TabItem Header="StackLayout">
+                <controls:ControlExample HeaderText="StackLayout">
+                    <ui:ItemsRepeaterScrollHost>
+                        <ScrollViewer>
+                            <ui:ItemsRepeater
+                                x:Name="repeater1"
+                                ItemTemplate="{StaticResource ContactListViewTemplate}"
+                                ItemsSource="{Binding}">
+                                <ui:ItemsRepeater.Layout>
+                                    <ui:StackLayout x:Name="stackLayout" />
+                                </ui:ItemsRepeater.Layout>
+                            </ui:ItemsRepeater>
+                        </ScrollViewer>
+                    </ui:ItemsRepeaterScrollHost>
+
+                    <controls:ControlExample.Options>
+                        <controls:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                            <TextBox
+                                ui:ControlHelper.Header="Spacing"
+                                Text="{Binding Source={x:Reference stackLayout}, Path=Spacing, Mode=TwoWay}" />
+                        </controls:SimpleStackPanel>
+                    </controls:ControlExample.Options>
+                </controls:ControlExample>
+            </TabItem>
+
+            <TabItem Header="UniformGridLayout">
+                <controls:ControlExample HeaderText="UniformGridLayout">
+                    <ui:ItemsRepeaterScrollHost>
+                        <ScrollViewer>
+                            <ui:ItemsRepeater
+                                x:Name="repeater2"
+                                ItemTemplate="{StaticResource ContactListViewTemplate}"
+                                ItemsSource="{Binding}">
+                                <ui:ItemsRepeater.Layout>
+                                    <ui:UniformGridLayout
+                                        x:Name="uniformGridLayout"
+                                        MinItemWidth="240"
+                                        MinColumnSpacing="24" />
+                                </ui:ItemsRepeater.Layout>
+                            </ui:ItemsRepeater>
+                        </ScrollViewer>
+                    </ui:ItemsRepeaterScrollHost>
+
+                    <controls:ControlExample.Options>
+                        <ScrollViewer Margin="-16">
+                            <controls:SimpleStackPanel
+                                Margin="16"
+                                Style="{StaticResource OptionsPanelStyle}">
+                                <TextBox
+                                    ui:ControlHelper.Header="MinItemWidth"
+                                    Text="{Binding Source={x:Reference uniformGridLayout}, Path=MinItemWidth, Mode=TwoWay}" />
+                                <TextBox
+                                    ui:ControlHelper.Header="MinItemHeight"
+                                    Text="{Binding Source={x:Reference uniformGridLayout}, Path=MinItemHeight, Mode=TwoWay}" />
+                                <TextBox
+                                    ui:ControlHelper.Header="MinRowSpacing"
+                                    Text="{Binding Source={x:Reference uniformGridLayout}, Path=MinRowSpacing, Mode=TwoWay}" />
+                                <TextBox
+                                    ui:ControlHelper.Header="MinColumnSpacing"
+                                    Text="{Binding Source={x:Reference uniformGridLayout}, Path=MinColumnSpacing, Mode=TwoWay}" />
+                                <TextBox
+                                    ui:ControlHelper.Header="MaximumRowsOrColumns"
+                                    Text="{Binding Source={x:Reference uniformGridLayout}, Path=MaximumRowsOrColumns, Mode=TwoWay}" />
+                                <ui:RadioButtons
+                                    Header="ItemsStretch"
+                                    ItemsSource="{Binding Source={x:Type ui:UniformGridLayoutItemsStretch}, Converter={StaticResource EnumValuesConverter}}"
+                                    SelectedItem="{Binding Source={x:Reference uniformGridLayout}, Path=ItemsStretch, Mode=TwoWay}" />
+                                <ui:RadioButtons
+                                    Header="ItemsJustification"
+                                    ItemsSource="{Binding Source={x:Type ui:UniformGridLayoutItemsJustification}, Converter={StaticResource EnumValuesConverter}}"
+                                    SelectedItem="{Binding Source={x:Reference uniformGridLayout}, Path=ItemsJustification, Mode=TwoWay}" />
+                                <ui:RadioButtons
+                                    Header="Orientation"
+                                    ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
+                                    SelectedItem="{Binding Source={x:Reference uniformGridLayout}, Path=Orientation, Mode=TwoWay}" />
+                            </controls:SimpleStackPanel>
+                        </ScrollViewer>
+                    </controls:ControlExample.Options>
+                </controls:ControlExample>
+            </TabItem>
+
+            <TabItem Header="FlowLayout">
+                <controls:ControlExample HeaderText="FlowLayout">
+                    <ui:ItemsRepeaterScrollHost>
+                        <ScrollViewer>
+                            <ui:ItemsRepeater
+                                x:Name="repeater3"
+                                ItemTemplate="{StaticResource ContactListViewTemplate}"
+                                ItemsSource="{Binding}">
+                                <ui:ItemsRepeater.Layout>
+                                    <ui:FlowLayout
+                                        x:Name="flowLayout"
+                                        MinColumnSpacing="24" />
+                                </ui:ItemsRepeater.Layout>
+                            </ui:ItemsRepeater>
+                        </ScrollViewer>
+                    </ui:ItemsRepeaterScrollHost>
+
+                    <controls:ControlExample.Options>
+                        <ScrollViewer Margin="-16">
+                            <controls:SimpleStackPanel
+                                Margin="16"
+                                Style="{StaticResource OptionsPanelStyle}">
+                                <ui:RadioButtons
+                                    Header="Orientation"
+                                    ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
+                                    SelectedItem="{Binding Source={x:Reference flowLayout}, Path=Orientation, Mode=TwoWay}" />
+                                <TextBox
+                                    ui:ControlHelper.Header="MinRowSpacing"
+                                    Text="{Binding Source={x:Reference flowLayout}, Path=MinRowSpacing, Mode=TwoWay}" />
+                                <TextBox
+                                    ui:ControlHelper.Header="MinColumnSpacing"
+                                    Text="{Binding Source={x:Reference flowLayout}, Path=MinColumnSpacing, Mode=TwoWay}" />
+                                <ui:RadioButtons
+                                    Header="LineAlignment"
+                                    ItemsSource="{Binding Source={x:Type ui:FlowLayoutLineAlignment}, Converter={StaticResource EnumValuesConverter}}"
+                                    SelectedItem="{Binding Source={x:Reference flowLayout}, Path=LineAlignment, Mode=TwoWay}" />
+                            </controls:SimpleStackPanel>
+                        </ScrollViewer>
+                    </controls:ControlExample.Options>
+                </controls:ControlExample>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>
