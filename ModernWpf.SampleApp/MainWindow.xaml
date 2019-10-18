@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://www.modernwpf.com"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d"
     Title="Main Window"
     Width="1024"

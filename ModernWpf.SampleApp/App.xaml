@@ -2,7 +2,7 @@
     x:Class="ModernWpf.SampleApp.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:modern="http://www.modernwpf.com"
+    xmlns:modern="http://schemas.modernwpf.com/2019"
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
     xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"

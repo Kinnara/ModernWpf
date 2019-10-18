@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
     xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
-    xmlns:ui="http://www.modernwpf.com"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900">

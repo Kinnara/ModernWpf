@@ -5,7 +5,7 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:ui="http://www.modernwpf.com">
+    xmlns:ui="http://schemas.modernwpf.com/2019">
 
     <Style TargetType="primitives:RadioButtonsListViewItem">
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />

@@ -10,6 +10,6 @@ using System.Windows.Markup;
                                               // app, or any theme specific resource dictionaries)
 )]
 
-[assembly: XmlnsPrefix("http://www.modernwpf.com", "ui")]
-[assembly: XmlnsDefinition("http://www.modernwpf.com", "ModernWpf.Controls")]
-[assembly: XmlnsDefinition("http://www.modernwpf.com", "ModernWpf.Controls.Primitives")]
+[assembly: XmlnsPrefix("http://schemas.modernwpf.com/2019", "ui")]
+[assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Controls")]
+[assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Controls.Primitives")]

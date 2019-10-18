@@ -13,9 +13,9 @@ using System.Windows.Markup;
 
 [assembly: InternalsVisibleTo("ModernWpf.Controls")]
 
-[assembly: XmlnsPrefix("http://www.modernwpf.com", "ui")]
-[assembly: XmlnsDefinition("http://www.modernwpf.com", "ModernWpf")]
-[assembly: XmlnsDefinition("http://www.modernwpf.com", "ModernWpf.Controls")]
-[assembly: XmlnsDefinition("http://www.modernwpf.com", "ModernWpf.Controls.Primitives")]
-[assembly: XmlnsDefinition("http://www.modernwpf.com", "ModernWpf.Markup")]
-[assembly: XmlnsDefinition("http://www.modernwpf.com", "ModernWpf.Media.Animation")]
+[assembly: XmlnsPrefix("http://schemas.modernwpf.com/2019", "ui")]
+[assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf")]
+[assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Controls")]
+[assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Controls.Primitives")]
+[assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Markup")]
+[assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Media.Animation")]
