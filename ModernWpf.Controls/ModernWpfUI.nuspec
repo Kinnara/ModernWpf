@@ -9,6 +9,7 @@
     <description>Modern styles and controls for your WPF applications.</description>
     <tags>WPF XAML Modern Fluent Controls WinUI</tags>    
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
     <projectUrl>https://github.com/Kinnara/ModernWpf</projectUrl>
     <dependencies>
       <group targetFramework=".NETFramework4.5">
