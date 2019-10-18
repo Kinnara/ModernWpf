@@ -19,12 +19,10 @@
 
   <PropertyGroup>
     <PackageId>ModernWpfUI</PackageId>
-    <Version>0.1.191018010</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <Version>0.1.191018012</Version>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
     <Authors>Yimeng Wu</Authors>
-    <Product>Modern WPF UI Library</Product>
-    <Description>TODO</Description>
   </PropertyGroup>
 
   <Target Name="GetDocumentationFile">
@@ -38,7 +36,6 @@
       <NuspecProperties>$(NuspecProperties);id=$(PackageId)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);config=$(Configuration)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);version=$(PackageVersion)</NuspecProperties>
-      <NuspecProperties>$(NuspecProperties);description=$(Description)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);authors=$(Authors)</NuspecProperties>
     </PropertyGroup>
   </Target>

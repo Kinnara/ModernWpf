@@ -3,9 +3,13 @@
   <metadata>
     <id>$id$</id>
     <version>$version$</version>
+    <title>Modern WPF UI Library</title>
     <authors>$authors$</authors>
+    <owners>$authors$</owners>
+    <description>Modern styles and controls for your WPF applications.</description>
+    <tags>WPF XAML Modern Fluent Controls WinUI</tags>    
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <projectUrl>https://github.com/Kinnara/ModernWpf</projectUrl>
     <dependencies>
       <group targetFramework=".NETFramework4.5">
         <dependency id="System.Runtime.WindowsRuntime" version="4.6.0" exclude="Build,Analyzers" />
