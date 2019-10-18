@@ -44,3 +44,9 @@ Modern styles and controls for your WPF applications.
 ```
 
 5. Run the app.
+## Screenshots
+![alt text](docs/images/screenshot2.png "Screenshot 2")
+![alt text](docs/images/Calendar.png "Calendar")
+![alt text](docs/images/ContentDialog.png "ContentDialog")
+![alt text](docs/images/Progress.png "Progress")
+![alt text](docs/images/Nighttime.png "Easily customize colors")
