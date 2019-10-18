@@ -1,6 +1,8 @@
 # Modern WPF UI Library
 Modern styles and controls for your WPF applications.
 
+![alt text](docs/images/screenshot1.png "Screenshot 1")
+
 ## Quick start
 1. Create a new WPF app.
 
