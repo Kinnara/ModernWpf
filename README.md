@@ -9,7 +9,7 @@ Modern styles and controls for your WPF applications.
 2. Install from NuGet `Install-Package ModernWpfUI`.
 
 3. Edit App.xaml to following:
-```
+```xaml
 <Application
     ...
     xmlns:ui="http://schemas.modernwpf.com/2019">
@@ -25,7 +25,7 @@ Modern styles and controls for your WPF applications.
 ```
 
 4. Edit MainWindow.xaml to following:
-```
+```xaml
 <Window
     ...
     xmlns:ui="http://schemas.modernwpf.com/2019"
