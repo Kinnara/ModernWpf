@@ -55,7 +55,8 @@
             x:Name="ContentScrollViewer"
             Grid.ColumnSpan="2"
             PanningMode="VerticalOnly"
-            ui:ScrollViewerHelper.AutoHideScrollBars="True">
+            ui:ScrollViewerHelper.AutoHideScrollBars="True"
+            ui:ThemeManager.RequestedTheme="Dark">
             <Grid VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
