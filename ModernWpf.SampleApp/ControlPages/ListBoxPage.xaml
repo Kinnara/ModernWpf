@@ -5,14 +5,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp.Controls"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900">
 
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <controls:ControlExample HeaderText="A ListBox with items defined inline and its width set.">
+            <local:ControlExample HeaderText="A ListBox with items defined inline and its width set.">
                 <StackPanel HorizontalAlignment="Left">
                     <ListBox
                         x:Name="ListBox1"
@@ -28,7 +28,27 @@
                         Width="100"
                         Margin="0,10,0,0" />
                 </StackPanel>
-            </controls:ControlExample>
+            </local:ControlExample>
+            <local:ControlExample
+                x:Name="Example2"
+                HeaderText="A ListBox with its ItemsSource and Height set.">
+                <local:ControlExample.Example>
+                    <StackPanel>
+                        <ListBox
+                            x:Name="ListBox2"
+                            ItemsSource="{Binding Fonts}"
+                            DisplayMemberPath="Item1"
+                            SelectedValuePath="Item2"
+                            Height="164"
+                            Loaded="ListBox2_Loaded" />
+                        <TextBlock
+                            x:Name="Control2Output"
+                            Text="You can set the font used for this text."
+                            FontFamily="{Binding ElementName=ListBox2, Path=SelectedValue}"
+                            Style="{StaticResource OutputTextBlockStyle}" />
+                    </StackPanel>
+                </local:ControlExample.Example>
+            </local:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

@@ -1,28 +1,44 @@
-﻿using System;
+﻿//*********************************************************
+//
+// Copyright (c) Microsoft. All rights reserved.
+// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
+// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
+// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
+// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
+//
+//*********************************************************
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    /// <summary>
-    /// Interaction logic for ListBoxPage.xaml
-    /// </summary>
     public partial class ListBoxPage
     {
+        private List<Tuple<string, FontFamily>> _fonts = new List<Tuple<string, FontFamily>>()
+        {
+            new Tuple<string, FontFamily>("Arial", new FontFamily("Arial")),
+            new Tuple<string, FontFamily>("Comic Sans MS", new FontFamily("Comic Sans MS")),
+            new Tuple<string, FontFamily>("Courier New", new FontFamily("Courier New")),
+            new Tuple<string, FontFamily>("Segoe UI", new FontFamily("Segoe UI")),
+            new Tuple<string, FontFamily>("Times New Roman", new FontFamily("Times New Roman"))
+        };
+
+        public List<Tuple<string, FontFamily>> Fonts
+        {
+            get { return _fonts; }
+        }
+
         public ListBoxPage()
         {
             InitializeComponent();
+            DataContext = this;
+        }
+
+        private void ListBox2_Loaded(object sender, RoutedEventArgs e)
+        {
+            ListBox2.SelectedIndex = 2;
         }
     }
 }
