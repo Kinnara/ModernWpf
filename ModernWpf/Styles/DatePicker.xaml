@@ -116,7 +116,7 @@
                         </Grid.Resources>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="32" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <ContentPresenter
@@ -162,7 +162,7 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                                MinHeight="32" />
+                                MinHeight="{DynamicResource ComboBoxMinHeight}" />
                             <DatePickerTextBox
                                 x:Name="PART_TextBox"
                                 BorderThickness="{TemplateBinding BorderThickness}"
