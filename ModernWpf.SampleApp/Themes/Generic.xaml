@@ -6,6 +6,8 @@
     <Style TargetType="local:ControlExample">
         <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="Margin" Value="0,16,0,0" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />

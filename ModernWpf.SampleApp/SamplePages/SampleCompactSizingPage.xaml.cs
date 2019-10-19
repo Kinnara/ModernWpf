@@ -13,12 +13,9 @@ using System.Windows.Shapes;
 
 namespace ModernWpf.SampleApp.SamplePages
 {
-    /// <summary>
-    /// Interaction logic for UserControl1.xaml
-    /// </summary>
-    public partial class UserControl1 : UserControl
+    public partial class SampleCompactSizingPage : UserControl
     {
-        public UserControl1()
+        public SampleCompactSizingPage()
         {
             InitializeComponent();
         }

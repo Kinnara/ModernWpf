@@ -117,10 +117,11 @@ namespace ModernWpf.SampleApp
     {
         public ControlPagesData()
         {
-            AddPage(typeof(ControlPalettePage), "Control palette");
+            AddPage(typeof(ControlPalettePage), "Control Palette");
             AddPage(typeof(ThemesPage));
-            AddPage(typeof(ThemeResourcesPage), "Theme resources");
+            AddPage(typeof(ThemeResourcesPage), "Theme Resources");
             AddPage(typeof(CalendarPage));
+            AddPage(typeof(CompactSizingPage), "Compact Sizing");
             AddPage(typeof(ContentDialogPage));
             AddPage(typeof(ContextMenuPage));
             AddPage(typeof(DataGridPage));
@@ -132,7 +133,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(ListBoxPage));
             AddPage(typeof(ListViewPage));
             AddPage(typeof(MenuPage));
-            AddPage(typeof(PageTransitionsPage), "Page transitions");
+            AddPage(typeof(PageTransitionsPage), "Page Transitions");
             AddPage(typeof(PasswordBoxPage));
             AddPage(typeof(ProgressPage));
             AddPage(typeof(RadioButtonsPage));

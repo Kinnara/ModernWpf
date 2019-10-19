@@ -1,0 +1,34 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.SamplePages.SampleCompactSizingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="pack://application:,,,/ModernWpf;component/DensityStyles/Compact.xaml" />
+    </UserControl.Resources>
+
+    <Grid Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
+        <controls:SimpleStackPanel Spacing="4">
+            <TextBlock
+                x:Name="HeaderBlock"
+                Text="Compact Size"
+                FontSize="18" />
+            <TextBox
+                ui:ControlHelper.Header="First Name:"
+                x:Name="txtfirstName" />
+            <TextBox
+                ui:ControlHelper.Header="Last Name:"
+                x:Name="txtLastName" />
+            <PasswordBox ui:ControlHelper.Header="Password:" />
+            <PasswordBox ui:ControlHelper.Header="Confirm Password:" />
+            <DatePicker
+                ui:ControlHelper.Header="Pick a date"
+                HorizontalAlignment="Stretch" />
+        </controls:SimpleStackPanel>
+    </Grid>
+</UserControl>

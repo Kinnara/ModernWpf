@@ -1,0 +1,47 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.CompactSizingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900">
+
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <controls:ControlExample
+                x:Name="Example1"
+                HeaderText="Compact Sizing for controls"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Top"
+                Loaded="Example1_Loaded">
+                <Frame
+                    x:Name="ContentFrame"
+                    JournalOwnership="OwnsJournal"
+                    NavigationUIVisibility="Hidden"
+                    Width="296"
+                    IsTabStop="False" />
+
+                <controls:ControlExample.Options>
+                    <StackPanel>
+                        <TextBlock Text="Fluent Standard and Compact Sizing" />
+                        <RadioButton
+                            Content="Standard"
+                            Tag="StandardSize"
+                            GroupName="ControlSize"
+                            Checked="Standard_Checked"
+                            IsChecked="True" />
+                        <RadioButton
+                            Content="Compact"
+                            Tag="CompactSize"
+                            GroupName="ControlSize"
+                            Checked="Compact_Checked" />
+                    </StackPanel>
+                </controls:ControlExample.Options>
+            </controls:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
