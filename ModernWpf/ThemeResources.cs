@@ -40,11 +40,7 @@ namespace ModernWpf
                 if (_lightSource != value)
                 {
                     _lightSource = value;
-
-                    if (!IsInitializePending)
-                    {
-                        UpdateThemeDictionary();
-                    }
+                    OnThemePropertyChanged();
                 }
             }
         }
@@ -58,11 +54,7 @@ namespace ModernWpf
                 if (_darkSource != value)
                 {
                     _darkSource = value;
-
-                    if (!IsInitializePending)
-                    {
-                        UpdateThemeDictionary();
-                    }
+                    OnThemePropertyChanged();
                 }
             }
         }
@@ -76,11 +68,7 @@ namespace ModernWpf
                 if (_highContrastSource != value)
                 {
                     _highContrastSource = value;
-
-                    if (!IsInitializePending)
-                    {
-                        UpdateThemeDictionary();
-                    }
+                    OnThemePropertyChanged();
                 }
             }
         }
@@ -102,11 +90,7 @@ namespace ModernWpf
                 if (_requestedTheme != value)
                 {
                     _requestedTheme = value;
-
-                    if (!IsInitializePending)
-                    {
-                        UpdateThemeDictionary();
-                    }
+                    OnThemePropertyChanged();
                 }
             }
         }
@@ -123,47 +107,49 @@ namespace ModernWpf
 
                     if (!IsInitializePending)
                     {
-                        UpdateSystemColors();
+                        UpdateDesignTimeSystemColors();
                     }
                 }
             }
         }
 
-        private bool IsInitializePending { get; set; }
+        #region Design Time
 
         private void DesignTimeInit()
         {
-            MergedDictionaries.Add(GetSystemColors());
-            MergedDictionaries.Add(GetThemeDictionary());
+            MergedDictionaries.Add(GetDesignTimeSystemColors());
+            MergedDictionaries.Add(GetDesignTimeThemeDictionary());
+            SystemParameters.StaticPropertyChanged += OnSystemParametersPropertyChanged;
         }
 
-        private void UpdateSystemColors()
+        private void UpdateDesignTimeSystemColors()
         {
-            if (!DesignMode.DesignModeEnabled)
+            if (DesignMode.DesignModeEnabled)
             {
-                return;
-            }
-
-            if (MergedDictionaries.Count >= 1)
-            {
-                MergedDictionaries[0] = GetSystemColors();
+                if (MergedDictionaries.Count >= 1)
+                {
+                    MergedDictionaries[0] = GetDesignTimeSystemColors();
+                }
             }
         }
 
-        private void UpdateThemeDictionary()
+        private void OnThemePropertyChanged()
         {
-            if (!DesignMode.DesignModeEnabled)
+            if (!IsInitializePending && DesignMode.DesignModeEnabled)
             {
-                return;
+                UpdateDesignTimeThemeDictionary();
             }
+        }
 
+        private void UpdateDesignTimeThemeDictionary()
+        {
             if (MergedDictionaries.Count >= 2)
             {
-                MergedDictionaries[1] = GetThemeDictionary();
+                MergedDictionaries[1] = GetDesignTimeThemeDictionary();
             }
         }
 
-        private ResourceDictionary GetSystemColors()
+        private ResourceDictionary GetDesignTimeSystemColors()
         {
             if (AccentColor.HasValue)
             {
@@ -175,7 +161,7 @@ namespace ModernWpf
             }
         }
 
-        private ResourceDictionary GetThemeDictionary()
+        private ResourceDictionary GetDesignTimeThemeDictionary()
         {
             Uri source;
 
@@ -198,6 +184,20 @@ namespace ModernWpf
             return new ResourceDictionary { Source = source };
         }
 
+        private void OnSystemParametersPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(SystemParameters.HighContrast))
+            {
+                UpdateDesignTimeThemeDictionary();
+            }
+        }
+
+        #endregion
+
+        #region ISupportInitialize
+
+        private bool IsInitializePending { get; set; }
+
         void ISupportInitialize.BeginInit()
         {
             BeginInit();
@@ -216,5 +216,7 @@ namespace ModernWpf
                 DesignTimeInit();
             }
         }
+
+        #endregion
     }
 }
