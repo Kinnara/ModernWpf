@@ -1,7 +1,7 @@
 # Modern WPF UI Library
 Modern styles and controls for your WPF applications.
 
-![alt text](docs/images/screenshot1.png "Screenshot 1")
+![Screenshot 1](docs/images/screenshot1.png "Screenshot 1")
 
 ## Quick start
 1. Create a new WPF app.
@@ -45,12 +45,12 @@ Modern styles and controls for your WPF applications.
 
 5. Run the app.
 ## Screenshots
-![alt text](docs/images/screenshot2.png "Screenshot 2")
+![Screenshot 2](docs/images/screenshot2.png "Screenshot 2")
 
-![alt text](docs/images/Calendar.png "Calendar")
+![Calendar](docs/images/Calendar.png "Calendar")
 
-![alt text](docs/images/ContentDialog.png "ContentDialog")
+![ContentDialog](docs/images/ContentDialog.png "ContentDialog")
 
-![alt text](docs/images/Progress.png "Progress")
+![Progress controls](docs/images/Progress.png "Progress controls")
 
-![alt text](docs/images/Nighttime.png "Easily customize colors")
+![Nighttime colors](docs/images/Nighttime.png "Easily customize colors")
