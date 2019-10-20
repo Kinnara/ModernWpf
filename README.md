@@ -1,4 +1,4 @@
-# Modern WPF UI Library
+# ModernWPF UI Library
 Modern styles and controls for your WPF applications.
 
 ![Screenshot 1](docs/images/screenshot1.png "Screenshot 1")
