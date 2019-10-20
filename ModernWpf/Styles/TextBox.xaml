@@ -158,8 +158,7 @@
                             Text="{TemplateBinding primitives:ControlHelper.PlaceholderText}"
                             TextAlignment="{TemplateBinding TextAlignment}"
                             TextWrapping="{TemplateBinding TextWrapping}"
-                            IsHitTestVisible="False"
-                            Visibility="Collapsed" />
+                            IsHitTestVisible="False" />
                         <Button
                             x:Name="DeleteButton"
                             Grid.Row="1"
@@ -207,9 +206,19 @@
                             <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundFocused}" />
                             <!--<Setter TargetName="PART_ContentHost" Property="root:ThemeManager.RequestedTheme" Value="Light" />-->
                         </Trigger>
-                        <Trigger Property="Text" Value="">
-                            <Setter TargetName="PlaceholderTextContentPresenter" Property="Visibility" Value="Visible" />
+                        <Trigger Property="primitives:TextBoxHelper.HasText" Value="True">
+                            <Setter TargetName="PlaceholderTextContentPresenter" Property="Visibility" Value="Collapsed" />
                         </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsKeyboardFocused" Value="True" />
+                                <Condition Property="primitives:TextBoxHelper.HasText" Value="True" />
+                                <Condition Property="IsReadOnly" Value="False" />
+                                <Condition Property="AcceptsReturn" Value="False" />
+                                <Condition Property="TextWrapping" Value="NoWrap" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="primitives:TextBoxHelper.IsDeleteButtonVisible" Value="True" />
+                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

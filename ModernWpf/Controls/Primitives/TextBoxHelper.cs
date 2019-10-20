@@ -35,15 +35,45 @@ namespace ModernWpf.Controls.Primitives
             if ((bool)e.NewValue)
             {
                 textBox.Loaded += OnLoaded;
-                textBox.IsKeyboardFocusedChanged += OnIsKeyboardFocusedChanged;
                 textBox.TextChanged += OnTextChanged;
+                UpdateHasText(textBox);
+
             }
             else
             {
                 textBox.Loaded -= OnLoaded;
-                textBox.IsKeyboardFocusedChanged -= OnIsKeyboardFocusedChanged;
                 textBox.TextChanged -= OnTextChanged;
+                textBox.ClearValue(HasTextPropertyKey);
             }
+        }
+
+        #endregion
+
+        #region HasText
+
+        private static readonly DependencyPropertyKey HasTextPropertyKey =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "HasText",
+                typeof(bool),
+                typeof(TextBoxHelper),
+                null);
+
+        public static readonly DependencyProperty HasTextProperty =
+            HasTextPropertyKey.DependencyProperty;
+
+        public static bool GetHasText(TextBox textBox)
+        {
+            return (bool)textBox.GetValue(HasTextProperty);
+        }
+
+        private static void SetHasText(TextBox textBox, bool value)
+        {
+            textBox.SetValue(HasTextPropertyKey, value);
+        }
+
+        private static void UpdateHasText(TextBox textBox)
+        {
+            SetHasText(textBox, !string.IsNullOrEmpty(textBox.Text));
         }
 
         #endregion
@@ -84,19 +114,42 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        private static void OnLoaded(object sender, RoutedEventArgs e)
+        #region IsDeleteButtonVisible
+
+        public static readonly DependencyProperty IsDeleteButtonVisibleProperty =
+            DependencyProperty.RegisterAttached(
+                "IsDeleteButtonVisible",
+                typeof(bool),
+                typeof(TextBoxHelper),
+                new PropertyMetadata(OnIsDeleteButtonVisibleChanged));
+
+        public static bool GetIsDeleteButtonVisible(TextBox textBox)
         {
-            UpdateVisualStates((TextBox)sender);
+            return (bool)textBox.GetValue(IsDeleteButtonVisibleProperty);
         }
 
-        private static void OnIsKeyboardFocusedChanged(object sender, DependencyPropertyChangedEventArgs e)
+        public static void SetIsDeleteButtonVisible(TextBox textBox, bool value)
         {
-            UpdateVisualStates((TextBox)sender);
+            textBox.SetValue(IsDeleteButtonVisibleProperty, value);
+        }
+
+        private static void OnIsDeleteButtonVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateVisualStates((TextBox)d, (bool)e.NewValue);
+        }
+
+        #endregion
+
+        private static void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            UpdateVisualStates(textBox, GetIsDeleteButtonVisible(textBox));
         }
 
         private static void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            UpdateVisualStates((TextBox)sender);
+            var textBox = (TextBox)sender;
+            UpdateHasText(textBox);
         }
 
         private static void OnDeleteButtonClick(object sender, RoutedEventArgs e)
@@ -108,10 +161,9 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private static void UpdateVisualStates(TextBox textBox)
+        private static void UpdateVisualStates(TextBox textBox, bool isDeleteButtonVisible)
         {
-            bool buttonVisible = textBox.IsKeyboardFocused && !string.IsNullOrEmpty(textBox.Text);
-            VisualStateManager.GoToState(textBox, buttonVisible ? ButtonVisibleState : ButtonCollapsedState, true);
+            VisualStateManager.GoToState(textBox, isDeleteButtonVisible ? ButtonVisibleState : ButtonCollapsedState, true);
         }
     }
 }

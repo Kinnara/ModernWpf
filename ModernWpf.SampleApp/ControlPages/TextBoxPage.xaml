@@ -16,8 +16,10 @@
             <controls:ControlExample HeaderText="A TextBox.">
                 <TextBox
                     x:Name="textBox"
+                    Width="300"
+                    HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    ui:ControlHelper.Header="TextBox"
+                    ui:ControlHelper.Header="Control header"
                     ui:ControlHelper.PlaceholderText="Placeholder text" />
 
                 <controls:ControlExample.Options>
@@ -25,6 +27,9 @@
                         <Button
                             Content="Clear clipboard"
                             Click="ClearClipboard" />
+                        <CheckBox
+                            Content="AcceptsReturn"
+                            IsChecked="{Binding ElementName=textBox, Path=AcceptsReturn, Mode=TwoWay}" />
                         <CheckBox
                             Content="IsReadOnly"
                             IsChecked="{Binding ElementName=textBox, Path=IsReadOnly, Mode=TwoWay}" />
@@ -43,6 +48,10 @@
                         <TextBox
                             ui:ControlHelper.Header="PlaceholderText"
                             Text="{Binding ElementName=textBox, Path=(ui:ControlHelper.PlaceholderText), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <ComboBox
+                            ui:ControlHelper.Header="TextWrapping"
+                            ItemsSource="{Binding Source={x:Type TextWrapping}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=textBox, Path=TextWrapping, Mode=TwoWay}" />
                         <ComboBox
                             ui:ControlHelper.Header="HorizontalScrollBarVisibility"
                             ItemsSource="{Binding Source={x:Type ScrollBarVisibility}, Converter={StaticResource EnumValuesConverter}}"
