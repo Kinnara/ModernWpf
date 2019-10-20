@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 
@@ -8,6 +10,12 @@ namespace ModernWpf
     public class ThemeResources : ResourceDictionary, ISupportInitialize
     {
         private static ThemeResources _current;
+
+        private readonly Dictionary<string, ResourceDictionary> _themeDictionaries = new Dictionary<string, ResourceDictionary>();
+
+        private ResourceDictionary _lightResources;
+        private ResourceDictionary _darkResources;
+        private ResourceDictionary _highContrastResources;
 
         public ThemeResources()
         {
@@ -28,48 +36,6 @@ namespace ModernWpf
                 }
 
                 _current = value;
-            }
-        }
-
-        private Uri _lightSource = ThemeManager.DefaultLightSource;
-        public Uri LightSource
-        {
-            get => _lightSource;
-            set
-            {
-                if (_lightSource != value)
-                {
-                    _lightSource = value;
-                    OnThemePropertyChanged();
-                }
-            }
-        }
-
-        private Uri _darkSource = ThemeManager.DefaultDarkSource;
-        public Uri DarkSource
-        {
-            get => _darkSource;
-            set
-            {
-                if (_darkSource != value)
-                {
-                    _darkSource = value;
-                    OnThemePropertyChanged();
-                }
-            }
-        }
-
-        private Uri _highContrastSource = ThemeManager.DefaultHighContrastSource;
-        public Uri HighContrastSource
-        {
-            get => _highContrastSource;
-            set
-            {
-                if (_highContrastSource != value)
-                {
-                    _highContrastSource = value;
-                    OnThemePropertyChanged();
-                }
             }
         }
 
@@ -96,6 +62,9 @@ namespace ModernWpf
         }
 
         private Color? _accentColor;
+        /// <summary>
+        /// Gets or sets the accent color of the app.
+        /// </summary>
         public Color? AccentColor
         {
             get => _accentColor;
@@ -117,8 +86,8 @@ namespace ModernWpf
 
         private void DesignTimeInit()
         {
-            MergedDictionaries.Add(GetDesignTimeSystemColors());
-            MergedDictionaries.Add(GetDesignTimeThemeDictionary());
+            UpdateDesignTimeSystemColors();
+            UpdateDesignTimeThemeDictionary();
             SystemParameters.StaticPropertyChanged += OnSystemParametersPropertyChanged;
         }
 
@@ -126,9 +95,15 @@ namespace ModernWpf
         {
             if (DesignMode.DesignModeEnabled)
             {
-                if (MergedDictionaries.Count >= 1)
+                var rd = GetDesignTimeSystemColors();
+                if (MergedDictionaries.Count == 0)
                 {
-                    MergedDictionaries[0] = GetDesignTimeSystemColors();
+                    MergedDictionaries.Add(rd);
+                }
+                else
+                {
+                    MergedDictionaries[0] = rd;
+
                 }
             }
         }
@@ -143,10 +118,7 @@ namespace ModernWpf
 
         private void UpdateDesignTimeThemeDictionary()
         {
-            if (MergedDictionaries.Count >= 2)
-            {
-                MergedDictionaries[1] = GetDesignTimeThemeDictionary();
-            }
+            ApplyApplicationTheme(RequestedTheme ?? ApplicationTheme.Light);
         }
 
         private ResourceDictionary GetDesignTimeSystemColors()
@@ -159,29 +131,6 @@ namespace ModernWpf
             {
                 return new ResourceDictionary { Source = PackUriHelper.GetAbsoluteUri("DesignTime/SystemColors.xaml") };
             }
-        }
-
-        private ResourceDictionary GetDesignTimeThemeDictionary()
-        {
-            Uri source;
-
-            if (SystemParameters.HighContrast)
-            {
-                source = HighContrastSource;
-            }
-            else
-            {
-                if (RequestedTheme == ApplicationTheme.Dark)
-                {
-                    source = DarkSource;
-                }
-                else
-                {
-                    source = LightSource;
-                }
-            }
-
-            return new ResourceDictionary { Source = source };
         }
 
         private void OnSystemParametersPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -209,6 +158,15 @@ namespace ModernWpf
             EndInit();
             IsInitializePending = false;
 
+            for (int i = MergedDictionaries.Count - 1; i >= 0; i--)
+            {
+                if (MergedDictionaries[i] is ThemeDictionary td)
+                {
+                    _themeDictionaries[td.Key] = td;
+                    MergedDictionaries.RemoveAt(i);
+                }
+            }
+
             ThemeManager.Current.Initialize();
 
             if (DesignMode.DesignModeEnabled)
@@ -218,5 +176,95 @@ namespace ModernWpf
         }
 
         #endregion
+
+        internal void ApplyApplicationTheme(ApplicationTheme? appTheme)
+        {
+            Debug.Assert(appTheme.HasValue);
+            if (appTheme.HasValue)
+            {
+                ElementTheme theme = ElementTheme.Default;
+                switch (appTheme.Value)
+                {
+                    case ApplicationTheme.Light:
+                        theme = ElementTheme.Light;
+                        break;
+                    case ApplicationTheme.Dark:
+                        theme = ElementTheme.Dark;
+                        break;
+                }
+
+                Debug.Assert(theme != ElementTheme.Default);
+                UpdateThemeResources(this, theme, DesignMode.DesignModeEnabled);
+            }
+        }
+
+        internal void UpdateThemeResources(ResourceDictionary target, ElementTheme theme, bool isDesignTime = false)
+        {
+            int insertIndex = isDesignTime ? 1 : 0;
+
+            if (SystemParameters.HighContrast)
+            {
+                target.MergedDictionaries.RemoveIfNotNull(_lightResources);
+                target.MergedDictionaries.RemoveIfNotNull(_darkResources);
+
+                if (_highContrastResources == null)
+                {
+                    _highContrastResources = GetThemeDictionary(ThemeManager.HighContrastKey, ThemeManager.DefaultHighContrastResources);
+                }
+
+                target.MergedDictionaries.Insert(insertIndex, _highContrastResources);
+            }
+            else
+            {
+                if (_highContrastResources != null)
+                {
+                    target.MergedDictionaries.RemoveIfNotNull(_highContrastResources);
+                }
+
+                if (theme == ElementTheme.Light)
+                {
+                    target.MergedDictionaries.RemoveIfNotNull(_darkResources);
+
+                    if (_lightResources == null)
+                    {
+                        _lightResources = GetThemeDictionary(ThemeManager.LightKey, ThemeManager.DefaultLightResources);
+                    }
+
+                    target.MergedDictionaries.Insert(insertIndex, _lightResources);
+                }
+                else if (theme == ElementTheme.Dark)
+                {
+                    target.MergedDictionaries.RemoveIfNotNull(_lightResources);
+
+                    if (_darkResources == null)
+                    {
+                        _darkResources = GetThemeDictionary(ThemeManager.DarkKey, ThemeManager.DefaultDarkResources);
+                    }
+
+                    target.MergedDictionaries.Insert(insertIndex, _darkResources);
+                }
+                else // Default
+                {
+                    target.MergedDictionaries.RemoveIfNotNull(_lightResources);
+                    target.MergedDictionaries.RemoveIfNotNull(_darkResources);
+                }
+            }
+        }
+
+        private ResourceDictionary GetThemeDictionary(string key, ResourceDictionary defaultResources)
+        {
+            ResourceDictionary themeDictionary;
+
+            if (_themeDictionaries.TryGetValue(key, out themeDictionary))
+            {
+                themeDictionary.MergedDictionaries.Insert(0, defaultResources);
+            }
+            else
+            {
+                themeDictionary = defaultResources;
+            }
+
+            return themeDictionary;
+        }
     }
 }

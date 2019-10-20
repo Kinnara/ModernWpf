@@ -101,36 +101,10 @@ namespace ModernWpf
 
         private void ApplyApplicationTheme()
         {
-            if (!_applicationStarted)
+            if (_applicationStarted)
             {
-                return;
-            }
-
-            var resources = Application.Current.Resources;
-            if (SystemParameters.HighContrast)
-            {
-                resources.MergedDictionaries.Remove(LightSource);
-                resources.MergedDictionaries.Remove(DarkSource);
-                resources.MergedDictionaries.Insert(1, HighContrastSource);
-                //InitializeDefaultHighContrastResources(resources);
-            }
-            else
-            {
-                resources.MergedDictionaries.Remove(HighContrastSource);
-                Debug.Assert(ActualApplicationTheme.HasValue);
-                switch (ActualApplicationTheme)
-                {
-                    case ModernWpf.ApplicationTheme.Light:
-                        resources.MergedDictionaries.Remove(DarkSource);
-                        resources.MergedDictionaries.Insert(1, LightSource);
-                        InitializeDefaultLightResources(resources);
-                        break;
-                    case ModernWpf.ApplicationTheme.Dark:
-                        resources.MergedDictionaries.Remove(LightSource);
-                        resources.MergedDictionaries.Insert(1, DarkSource);
-                        InitializeDefaultDarkResources(resources);
-                        break;
-                }
+                Debug.Assert(ThemeResources.Current != null);
+                ThemeResources.Current.ApplyApplicationTheme(ActualApplicationTheme);
             }
         }
 
@@ -184,31 +158,19 @@ namespace ModernWpf
             {
                 UpdateAccentColors();
 
-                if (ResourceDictionaryCache.TryGetDictionary(LightSource, out ResourceDictionary light))
+                if (_defaultLightResources != null)
                 {
-                    var defaultResources = FindDictionary(light, DefaultLightSource);
-                    if (defaultResources != null)
-                    {
-                        ColorsHelper.UpdateBrushes(defaultResources);
-                    }
+                    ColorsHelper.UpdateBrushes(_defaultLightResources);
                 }
 
-                if (ResourceDictionaryCache.TryGetDictionary(DarkSource, out ResourceDictionary dark))
+                if (_defaultDarkResources != null)
                 {
-                    var defaultResources = FindDictionary(dark, DefaultDarkSource);
-                    if (defaultResources != null)
-                    {
-                        ColorsHelper.UpdateBrushes(defaultResources);
-                    }
+                    ColorsHelper.UpdateBrushes(_defaultDarkResources);
                 }
 
-                if (ResourceDictionaryCache.TryGetDictionary(HighContrastSource, out ResourceDictionary highContrast))
+                if (_defaultHighContrastResources != null)
                 {
-                    var defaultResources = FindDictionary(highContrast, DefaultHighContrastSource);
-                    if (defaultResources != null)
-                    {
-                        ColorsHelper.UpdateBrushes(defaultResources);
-                    }
+                    ColorsHelper.UpdateBrushes(_defaultHighContrastResources);
                 }
             }
         }
@@ -288,62 +250,9 @@ namespace ModernWpf
 
         private static void ApplyRequestedTheme(FrameworkElement element)
         {
-            Uri lightSource;
-            Uri darkSource;
-            Uri highContrastSource;
-
-            if (Current != null)
-            {
-                lightSource = Current.LightSource;
-                darkSource = Current.DarkSource;
-                highContrastSource = Current.HighContrastSource;
-            }
-            //else if (DesignTimeThemeResources.Current is DesignTimeThemeResources designTimeResources)
-            //{
-            //    lightSource = designTimeResources.LightSource;
-            //    darkSource = designTimeResources.DarkSource;
-            //    highContrastSource = DefaultHighContrastSource;
-            //}
-            else
-            {
-                lightSource = DefaultLightSource;
-                darkSource = DefaultDarkSource;
-                highContrastSource = DefaultHighContrastSource;
-            }
-
-            var requestedTheme = GetRequestedTheme(element);
             var resources = element.Resources;
-            var useCache = true;
-
-            if (SystemParameters.HighContrast)
-            {
-                resources.MergedDictionaries.Remove(lightSource);
-                resources.MergedDictionaries.Remove(darkSource);
-                resources.MergedDictionaries.AddFirst(highContrastSource, useCache);
-                //InitializeDefaultHighContrastResources(resources);
-            }
-            else
-            {
-                resources.MergedDictionaries.Remove(highContrastSource);
-
-                switch (requestedTheme)
-                {
-                    case ElementTheme.Light:
-                        resources.MergedDictionaries.Remove(darkSource);
-                        resources.MergedDictionaries.AddFirst(lightSource, useCache);
-                        InitializeDefaultLightResources(resources);
-                        break;
-                    case ElementTheme.Dark:
-                        resources.MergedDictionaries.Remove(lightSource);
-                        resources.MergedDictionaries.AddFirst(darkSource, useCache);
-                        InitializeDefaultDarkResources(resources);
-                        break;
-                    default:
-                        resources.MergedDictionaries.Remove(lightSource);
-                        resources.MergedDictionaries.Remove(darkSource);
-                        break;
-                }
-            }
+            var requestedTheme = GetRequestedTheme(element);
+            ThemeResources.Current.UpdateThemeResources(resources, requestedTheme);
 
             if (element is Window window)
             {
@@ -599,17 +508,11 @@ namespace ModernWpf
 
         private static ResourceDictionary _defaultDarkResources;
         internal static ResourceDictionary DefaultDarkResources =>
-            GetDefaultResources(ref _defaultDarkResources, DefaultLightSource);
+            GetDefaultResources(ref _defaultDarkResources, DefaultDarkSource);
 
-        //private static ResourceDictionary _defaultHighContrastResources;
-        //internal static ResourceDictionary DefaultHighContrastResources =>
-        //    GetDefaultResources(ref _defaultHighContrastResources, DefaultHighContrastSource);
-
-        internal Uri LightSource { get; set; } = DefaultLightSource;
-
-        internal Uri DarkSource { get; set; } = DefaultDarkSource;
-
-        internal Uri HighContrastSource { get; set; } = DefaultHighContrastSource;
+        private static ResourceDictionary _defaultHighContrastResources;
+        internal static ResourceDictionary DefaultHighContrastResources =>
+            GetDefaultResources(ref _defaultHighContrastResources, DefaultHighContrastSource);
 
         internal bool UsingSystemTheme => ColorsHelper.SystemColorsSupported && ApplicationTheme == null;
 
@@ -651,37 +554,6 @@ namespace ModernWpf
             return field;
         }
 
-        private static void InitializeDefaultLightResources(ResourceDictionary resources)
-        {
-            InitializeResources(ref _defaultLightResources, resources, DefaultLightSource);
-        }
-
-        private static void InitializeDefaultDarkResources(ResourceDictionary resources)
-        {
-            InitializeResources(ref _defaultDarkResources, resources, DefaultDarkSource);
-        }
-
-        //private static void InitializeDefaultHighContrastResources(ResourceDictionary resources)
-        //{
-        //    InitializeResources(ref _defaultHighContrastResources, resources, DefaultHighContrastSource);
-        //}
-
-        private static void InitializeResources(ref ResourceDictionary field, ResourceDictionary resources, Uri source)
-        {
-            if (field == null)
-            {
-                var result = FindDictionary(resources, source);
-                if (result != null)
-                {
-                    field = result;
-                    if (!ResourceDictionaryCache.TryGetDictionary(source, out _))
-                    {
-                        ResourceDictionaryCache.Add(source, result);
-                    }
-                }
-            }
-        }
-
         private static ResourceDictionary FindDictionary(ResourceDictionary parent, Uri source)
         {
             if (parent.Source == source)
@@ -716,10 +588,6 @@ namespace ModernWpf
         internal void Initialize()
         {
             Debug.Assert(ThemeResources.Current != null);
-
-            LightSource = ThemeResources.Current.LightSource;
-            DarkSource = ThemeResources.Current.DarkSource;
-            HighContrastSource = ThemeResources.Current.HighContrastSource;
 
             if (ReadLocalValue(ApplicationThemeProperty) == DependencyProperty.UnsetValue)
             {
