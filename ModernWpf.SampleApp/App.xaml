@@ -12,7 +12,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources
-                    RequestedTheme="Dark"
+                    RequestedTheme="{x:Null}"
                     AccentColor="{x:Null}">
                     <ResourceDictionary.MergedDictionaries>
                         <ui:ThemeDictionary Key="Light">
