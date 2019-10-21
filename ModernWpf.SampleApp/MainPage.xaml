@@ -12,34 +12,6 @@
     d:DesignWidth="1200"
     d:DesignHeight="900">
 
-    <!--<UserControl.Resources>
-        <ContextMenu
-            x:Key="TabItemContextMenu"
-            Loaded="ContextMenu_Loaded"
-            MenuItem.Checked="ThemeMenuItem_Checked"
-            MenuItem.Unchecked="ThemeMenuItem_Unchecked">
-            <MenuItem
-                Header="Invert theme"
-                Click="InvertTheme" />
-            <Separator />
-            <ui:RadioMenuItem
-                Header="Default"
-                GroupName="Theme"
-                Tag="{x:Static ui:ElementTheme.Default}" />
-            <ui:RadioMenuItem
-                Header="Light"
-                GroupName="Theme"
-                Tag="{x:Static ui:ElementTheme.Light}" />
-            <ui:RadioMenuItem
-                Header="Dark"
-                GroupName="Theme"
-                Tag="{x:Static ui:ElementTheme.Dark}" />
-        </ContextMenu>
-
-        <Style TargetType="TabItem" BasedOn="{StaticResource DefaultTabItemStyle}">
-            <Setter Property="ContextMenu" Value="{StaticResource TabItemContextMenu}" />
-        </Style>
-    </UserControl.Resources>-->
     <UserControl.Resources>
         <common:EqualsConverter
             x:Key="IsDefaultConverter"

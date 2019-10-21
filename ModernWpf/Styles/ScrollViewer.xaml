@@ -72,6 +72,7 @@
     <Style TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}" />
 
     <Style x:Key="TextControlContentHostStyle" TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
+        <Setter Property="primitives:TextControlContentHostHelper.ContentPresenterMargin" Value="-2,0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollViewer">
@@ -96,7 +97,7 @@
                                 Padding="{TemplateBinding Padding}">
                                 <ScrollContentPresenter
                                     x:Name="PART_ScrollContentPresenter"
-                                    Margin="-2,0"
+                                    Margin="{TemplateBinding primitives:TextControlContentHostHelper.ContentPresenterMargin}"
                                     CanContentScroll="{TemplateBinding CanContentScroll}"
                                     CanHorizontallyScroll="False"
                                     CanVerticallyScroll="False"

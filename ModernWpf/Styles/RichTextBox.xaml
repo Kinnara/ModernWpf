@@ -86,6 +86,7 @@
                             x:Name="PART_ContentHost"
                             Grid.Row="1"
                             Style="{DynamicResource TextControlContentHostStyle}"
+                            primitives:TextControlContentHostHelper.ContentPresenterMargin="-5,-1"
                             HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                             VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
                             IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"

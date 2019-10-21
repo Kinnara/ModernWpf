@@ -29,5 +29,15 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             Clipboard.Clear();
         }
+
+        private void OptionsExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            OptionsExpander.Header = "Hide options";
+        }
+
+        private void OptionsExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            OptionsExpander.Header = "Show options";
+        }
     }
 }
