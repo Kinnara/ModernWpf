@@ -43,7 +43,7 @@ Modern styles and controls for your WPF applications.
 </Window>
 ```
 
-5. Run the app.
+5. See [Common Tasks](https://github.com/Kinnara/ModernWpf/wiki/Common-Tasks) for more usage information.
 ## Screenshots
 ![Screenshot 2](docs/images/screenshot2.png "Screenshot 2")
 
