@@ -290,12 +290,7 @@ namespace ModernWpf
 
             if (ThemeDictionaries.TryGetValue(key, out ResourceDictionary themeDictionary))
             {
-                if (themeDictionary.MergedDictionaries.Count > 0 &&
-                    themeDictionary.MergedDictionaries[0] is DefaultThemeResources)
-                {
-                    // Already contains the default theme resources
-                }
-                else
+                if (!ContainsDefaultThemeResources(themeDictionary))
                 {
                     themeDictionary.MergedDictionaries.Insert(0, defaultThemeDictionary);
                 }
@@ -306,6 +301,25 @@ namespace ModernWpf
             }
 
             return themeDictionary;
+        }
+
+        private static bool ContainsDefaultThemeResources(ResourceDictionary dictionary)
+        {
+            if (dictionary is DefaultThemeResources)
+            {
+                return true;
+            }
+
+            foreach (var mergedDictionary in dictionary.MergedDictionaries)
+            {
+                if (mergedDictionary is DefaultThemeResources ||
+                    mergedDictionary != null && ContainsDefaultThemeResources(mergedDictionary))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
