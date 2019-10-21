@@ -513,6 +513,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="0" />
     </Style>
 
     <Style x:Key="DataGridTextBlockComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">

@@ -103,7 +103,7 @@ namespace ModernWpf.Controls.Primitives
         private static void UpdateCornerRadius(ComboBox comboBox, bool isDropDownOpen)
         {
             var textBoxRadius = ControlHelper.GetCornerRadius(comboBox);
-            var popupRadius = (CornerRadius)ResourceLookup(comboBox, (c_overlayCornerRadiusKey));
+            var popupRadius = (CornerRadius)ResourceLookup(comboBox, c_overlayCornerRadiusKey);
 
             if (isDropDownOpen)
             {

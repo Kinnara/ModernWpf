@@ -232,6 +232,7 @@
         <Setter Property="Padding" Value="11,0,6,0" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="0" />
     </Style>
 
 </ResourceDictionary>
