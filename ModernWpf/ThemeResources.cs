@@ -11,8 +11,6 @@ namespace ModernWpf
     {
         private static ThemeResources _current;
 
-        private readonly Dictionary<string, ResourceDictionary> _themeDictionaries = new Dictionary<string, ResourceDictionary>();
-
         private ResourceDictionary _lightResources;
         private ResourceDictionary _darkResources;
         private ResourceDictionary _highContrastResources;
@@ -82,6 +80,17 @@ namespace ModernWpf
             }
         }
 
+        /// <summary>
+        /// Gets a collection of merged resource dictionaries that are specifically keyed
+        /// and composed to address theme scenarios, for example supplying theme values for
+        /// "HighContrast".
+        /// </summary>
+        /// <returns>
+        /// A dictionary of ResourceDictionary theme dictionaries. Each must be keyed with
+        /// **x:Key**.
+        /// </returns>
+        public Dictionary<object, ResourceDictionary> ThemeDictionaries { get; } = new Dictionary<object, ResourceDictionary>();
+
         #region Design Time
 
         private void DesignTimeInit()
@@ -103,7 +112,6 @@ namespace ModernWpf
                 else
                 {
                     MergedDictionaries[0] = rd;
-
                 }
             }
         }
@@ -162,7 +170,7 @@ namespace ModernWpf
             {
                 if (MergedDictionaries[i] is ThemeDictionary td)
                 {
-                    _themeDictionaries[td.Key] = td;
+                    ThemeDictionaries[td.Key] = td;
                     MergedDictionaries.RemoveAt(i);
                 }
             }
@@ -182,34 +190,19 @@ namespace ModernWpf
             Debug.Assert(appTheme.HasValue);
             if (appTheme.HasValue)
             {
-                ElementTheme theme = ElementTheme.Default;
-                switch (appTheme.Value)
-                {
-                    case ApplicationTheme.Light:
-                        theme = ElementTheme.Light;
-                        break;
-                    case ApplicationTheme.Dark:
-                        theme = ElementTheme.Dark;
-                        break;
-                }
-
-                Debug.Assert(theme != ElementTheme.Default);
-                UpdateThemeResources(this, theme, DesignMode.DesignModeEnabled);
+                Update(appTheme.Value);
             }
         }
 
-        internal void UpdateThemeResources(ResourceDictionary target, ElementTheme theme, bool isDesignTime = false)
+        internal void UpdateMergedThemeDictionaries(ResourceDictionary target, ElementTheme theme)
         {
-            int insertIndex = isDesignTime ? 1 : 0;
+            bool containsAppThemeDictionary;
 
             if (SystemParameters.HighContrast)
             {
-                if (_highContrastResources == null)
-                {
-                    _highContrastResources = GetThemeDictionary(ThemeManager.HighContrastKey);
-                }
-
-                target.MergedDictionaries.InsertOrReplace(insertIndex, _highContrastResources);
+                target.MergedDictionaries.RemoveIfNotNull(_lightResources);
+                target.MergedDictionaries.RemoveIfNotNull(_darkResources);
+                containsAppThemeDictionary = false;
             }
             else
             {
@@ -220,7 +213,9 @@ namespace ModernWpf
                         _lightResources = GetThemeDictionary(ThemeManager.LightKey);
                     }
 
-                    target.MergedDictionaries.InsertOrReplace(insertIndex, _lightResources);
+                    target.MergedDictionaries.RemoveIfNotNull(_darkResources);
+                    target.MergedDictionaries.Insert(0, _lightResources);
+                    containsAppThemeDictionary = true;
                 }
                 else if (theme == ElementTheme.Dark)
                 {
@@ -229,12 +224,62 @@ namespace ModernWpf
                         _darkResources = GetThemeDictionary(ThemeManager.DarkKey);
                     }
 
-                    target.MergedDictionaries.InsertOrReplace(insertIndex, _darkResources);
+                    target.MergedDictionaries.RemoveIfNotNull(_lightResources);
+                    target.MergedDictionaries.Insert(0, _darkResources);
+                    containsAppThemeDictionary = true;
                 }
                 else // Default
                 {
                     target.MergedDictionaries.RemoveIfNotNull(_lightResources);
                     target.MergedDictionaries.RemoveIfNotNull(_darkResources);
+                    containsAppThemeDictionary = false;
+                }
+            }
+
+            if (target is ElementThemeResources etr)
+            {
+                etr.ContainsApplicationThemeDictionary = containsAppThemeDictionary;
+            }
+        }
+
+        private void Update(ApplicationTheme theme)
+        {
+            int insertIndex = DesignMode.DesignModeEnabled ? 1 : 0;
+
+            if (SystemParameters.HighContrast)
+            {
+                if (_highContrastResources == null)
+                {
+                    _highContrastResources = GetThemeDictionary(ThemeManager.HighContrastKey);
+                }
+
+                MergedDictionaries.InsertOrReplace(insertIndex, _highContrastResources);
+            }
+            else
+            {
+                MergedDictionaries.RemoveIfNotNull(_highContrastResources);
+
+                if (theme == ApplicationTheme.Light)
+                {
+                    if (_lightResources == null)
+                    {
+                        _lightResources = GetThemeDictionary(ThemeManager.LightKey);
+                    }
+
+                    MergedDictionaries.InsertOrReplace(insertIndex, _lightResources);
+                }
+                else if (theme == ApplicationTheme.Dark)
+                {
+                    if (_darkResources == null)
+                    {
+                        _darkResources = GetThemeDictionary(ThemeManager.DarkKey);
+                    }
+
+                    MergedDictionaries.InsertOrReplace(insertIndex, _darkResources);
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException(nameof(theme));
                 }
             }
         }
@@ -243,7 +288,7 @@ namespace ModernWpf
         {
             ResourceDictionary defaultThemeDictionary = ThemeManager.GetDefaultThemeDictionary(key);
 
-            if (_themeDictionaries.TryGetValue(key, out ResourceDictionary themeDictionary))
+            if (ThemeDictionaries.TryGetValue(key, out ResourceDictionary themeDictionary))
             {
                 if (themeDictionary.MergedDictionaries.Count > 0 &&
                     themeDictionary.MergedDictionaries[0] is DefaultThemeResources)

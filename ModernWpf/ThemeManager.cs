@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -236,15 +235,24 @@ namespace ModernWpf
         private static void OnRequestedThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var element = (FrameworkElement)d;
+
             StartOrStopListeningForHighContrastChanges(element);
-            ApplyRequestedTheme(element);
+
+            if (element.IsInitialized)
+            {
+                ApplyRequestedTheme(element);
+            }
+            else
+            {
+                SetSubscribedToInitialized(element, true);
+            }
         }
 
         private static void ApplyRequestedTheme(FrameworkElement element)
         {
             var resources = element.Resources;
             var requestedTheme = GetRequestedTheme(element);
-            ThemeResources.Current.UpdateThemeResources(resources, requestedTheme);
+            ThemeResources.Current.UpdateMergedThemeDictionaries(resources, requestedTheme);
 
             if (element is Window window)
             {
@@ -298,9 +306,9 @@ namespace ModernWpf
 
         private static void OnActualThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is FrameworkElement fe)
+            if (d is FrameworkElement fe && GetHasThemeResources(fe))
             {
-                ApplyThemeDictionary(fe);
+                UpdateThemeResourcesForElement(fe);
             }
         }
 
@@ -319,78 +327,147 @@ namespace ModernWpf
 
         #endregion
 
-        #region ThemeDictionaries
+        #region HasThemeResources
 
-        internal static IDictionary GetThemeDictionaries(FrameworkElement element)
-        {
-            var value = element.GetValue(ThemeDictionariesProperty) as Dictionary<object, ResourceDictionary>;
-            if (value == null)
-            {
-                value = new Dictionary<object, ResourceDictionary>();
-                SetThemeDictionaries(element, value);
-            }
-            return value;
-        }
-
-        private static void SetThemeDictionaries(FrameworkElement element, IDictionary value)
-        {
-            element.SetValue(ThemeDictionariesPropertyKey, value);
-        }
-
-        private static readonly DependencyPropertyKey ThemeDictionariesPropertyKey =
-            DependencyProperty.RegisterAttachedReadOnly(
-                "ThemeDictionariesInternal",
-                typeof(IDictionary),
+        public static readonly DependencyProperty HasThemeResourcesProperty =
+            DependencyProperty.RegisterAttached(
+                "HasThemeResources",
+                typeof(bool),
                 typeof(ThemeManager),
-                new PropertyMetadata(OnThemeDictionariesChanged));
+                new PropertyMetadata(OnHasThemeResourcesChanged));
 
-        internal static readonly DependencyProperty ThemeDictionariesProperty =
-            ThemeDictionariesPropertyKey.DependencyProperty;
+        public static bool GetHasThemeResources(FrameworkElement element)
+        {
+            return (bool)element.GetValue(HasThemeResourcesProperty);
+        }
 
-        private static void OnThemeDictionariesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public static void SetHasThemeResources(FrameworkElement element, bool value)
+        {
+            element.SetValue(HasThemeResourcesProperty, value);
+        }
+
+        private static void OnHasThemeResourcesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var element = (FrameworkElement)d;
-            element.InvokeOnInitialized(OnThemeDictionariesOwnerInitialized);
-        }
-
-        private static void OnThemeDictionariesOwnerInitialized(FrameworkElement element)
-        {
-            StartOrStopListeningForHighContrastChanges(element);
-            ApplyThemeDictionary(element);
-        }
-
-        private static void ApplyThemeDictionary(FrameworkElement element)
-        {
-            if (element.GetValue(ThemeDictionariesProperty) is Dictionary<object, ResourceDictionary> td)
+            if ((bool)e.NewValue)
             {
-                var md = element.Resources.MergedDictionaries;
-                var actualTheme = GetActualTheme(element);
-
-                td.TryGetValue(LightKey, out ResourceDictionary light);
-                td.TryGetValue(DarkKey, out ResourceDictionary dark);
-                td.TryGetValue(HighContrastKey, out ResourceDictionary highContrast);
-
-                if (SystemParameters.HighContrast)
+                if (element.IsInitialized)
                 {
-                    md.RemoveIfNotNull(light);
-                    md.RemoveIfNotNull(dark);
-                    md.AddIfNotNull(highContrast);
+                    UpdateThemeResourcesForElement(element);
                 }
                 else
                 {
-                    md.RemoveIfNotNull(highContrast);
-
-                    if (actualTheme == ElementTheme.Dark)
-                    {
-                        md.RemoveIfNotNull(light);
-                        md.AddIfNotNull(dark);
-                    }
-                    else
-                    {
-                        md.RemoveIfNotNull(dark);
-                        md.AddIfNotNull(light);
-                    }
+                    SetSubscribedToInitialized(element, true);
                 }
+            }
+            else
+            {
+                UpdateSubscribedToInitialized(element);
+            }
+        }
+
+        private static void UpdateThemeResourcesForElement(FrameworkElement element)
+        {
+            UpdateElementThemeResources(element.Resources, GetEffectiveThemeKey(element));
+        }
+
+        private static void UpdateElementThemeResources(ResourceDictionary resources, string themeKey)
+        {
+            if (resources is ElementThemeResources themeResources)
+            {
+                themeResources.Update(themeKey);
+            }
+
+            foreach (ResourceDictionary dictionary in resources.MergedDictionaries)
+            {
+                UpdateElementThemeResources(dictionary, themeKey);
+            }
+        }
+
+        private static string GetEffectiveThemeKey(FrameworkElement element)
+        {
+            if (SystemParameters.HighContrast)
+            {
+                return HighContrastKey;
+            }
+            else
+            {
+                switch (GetActualTheme(element))
+                {
+                    case ElementTheme.Light:
+                        return LightKey;
+                    case ElementTheme.Dark:
+                        return DarkKey;
+                }
+            }
+
+            throw new InvalidOperationException();
+        }
+
+        #endregion
+
+        #region SubscribedToInitialized
+
+        private static readonly DependencyProperty SubscribedToInitializedProperty =
+            DependencyProperty.RegisterAttached(
+                "SubscribedToInitialized",
+                typeof(bool),
+                typeof(ThemeManager),
+                new PropertyMetadata(default(bool), OnSubscribedToInitializedChanged));
+
+        private static bool GetSubscribedToInitialized(FrameworkElement element)
+        {
+            return (bool)element.GetValue(SubscribedToInitializedProperty);
+        }
+
+        private static void SetSubscribedToInitialized(FrameworkElement element, bool value)
+        {
+            element.SetValue(SubscribedToInitializedProperty, value);
+        }
+
+        private static void OnSubscribedToInitializedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var element = (FrameworkElement)d;
+            if ((bool)e.NewValue)
+            {
+                element.Initialized += OnElementInitialized;
+            }
+            else
+            {
+                element.Initialized -= OnElementInitialized;
+            }
+        }
+
+        private static void UpdateSubscribedToInitialized(FrameworkElement element)
+        {
+            if (ShouldSubscribeToInitialized(element))
+            {
+                SetSubscribedToInitialized(element, true);
+            }
+            else
+            {
+                element.ClearValue(SubscribedToInitializedProperty);
+            }
+        }
+
+        private static bool ShouldSubscribeToInitialized(FrameworkElement element)
+        {
+            return !element.IsInitialized && (GetRequestedTheme(element) != ElementTheme.Default || GetHasThemeResources(element));
+        }
+
+        private static void OnElementInitialized(object sender, EventArgs e)
+        {
+            var element = (FrameworkElement)sender;
+            element.ClearValue(SubscribedToInitializedProperty);
+
+            if (GetRequestedTheme(element) != ElementTheme.Default)
+            {
+                ApplyRequestedTheme(element);
+            }
+
+            if (GetHasThemeResources(element))
+            {
+                UpdateThemeResourcesForElement(element);
             }
         }
 
@@ -418,8 +495,15 @@ namespace ModernWpf
         private static void OnHighContrastChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var element = (FrameworkElement)d;
-            ApplyRequestedTheme(element);
-            ApplyThemeDictionary(element);
+            if (element.IsInitialized)
+            {
+                ApplyRequestedTheme(element);
+                UpdateThemeResourcesForElement(element);
+            }
+            else
+            {
+                SetSubscribedToInitialized(element, true);
+            }
         }
 
         #endregion
@@ -458,14 +542,14 @@ namespace ModernWpf
             }
         }
 
-        private static bool NeedsToListenForHighContrastChanges(FrameworkElement element)
+        private static bool ShouldListenForHighContrastChanges(FrameworkElement element)
         {
-            return GetRequestedTheme(element) != ElementTheme.Default || element.GetValue(ThemeDictionariesProperty) != null;
+            return GetRequestedTheme(element) != ElementTheme.Default || GetHasThemeResources(element);
         }
 
         private static void StartOrStopListeningForHighContrastChanges(FrameworkElement element)
         {
-            if (NeedsToListenForHighContrastChanges(element))
+            if (ShouldListenForHighContrastChanges(element))
             {
                 SetIsListeningForHighContrastChanges(element, true);
             }

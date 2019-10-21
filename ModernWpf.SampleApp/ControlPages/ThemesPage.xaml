@@ -103,7 +103,7 @@
 
             <StackPanel>
                 <TextBlock
-                    Text="Custom theme brush"
+                    Text="App-level custom theme brush"
                     Style="{StaticResource BodyTextBlockStyle}"
                     Margin="0,0,0,4" />
                 <Rectangle
@@ -115,6 +115,35 @@
 
             <StackPanel>
                 <TextBlock
+                    Text="App-level custom theme brush overriden at element level"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Margin="0,0,0,4" />
+                <Rectangle
+                    Width="200"
+                    Height="50"
+                    HorizontalAlignment="Left"
+                    Fill="{DynamicResource CustomThemeBrush}"
+                    ui:ThemeManager.HasThemeResources="True">
+                    <Rectangle.Resources>
+                        <ui:ElementThemeResources>
+                            <ui:ElementThemeResources.ThemeDictionaries>
+                                <ResourceDictionary x:Key="Light">
+                                    <SolidColorBrush x:Key="CustomThemeBrush" Color="DarkRed" />
+                                </ResourceDictionary>
+                                <ResourceDictionary x:Key="Dark">
+                                    <SolidColorBrush x:Key="CustomThemeBrush" Color="Orange" />
+                                </ResourceDictionary>
+                                <ResourceDictionary x:Key="HighContrast">
+                                    <SolidColorBrush x:Key="CustomThemeBrush" Color="DarkBlue" />
+                                </ResourceDictionary>
+                            </ui:ElementThemeResources.ThemeDictionaries>
+                        </ui:ElementThemeResources>
+                    </Rectangle.Resources>
+                </Rectangle>
+            </StackPanel>
+
+            <!--<StackPanel>
+                <TextBlock
                     Text="WindowGlassBrush"
                     Style="{StaticResource BodyTextBlockStyle}"
                     Margin="0,0,0,4" />
@@ -123,30 +152,6 @@
                     Height="50"
                     HorizontalAlignment="Left"
                     Fill="{x:Static SystemParameters.WindowGlassBrush}" />
-            </StackPanel>
-
-            <!--<StackPanel>
-                <TextBlock
-                    Text="App-level theme brush overriden at element level"
-                    Style="{StaticResource BodyTextBlockStyle}"
-                    Margin="0,0,0,4" />
-                <Rectangle
-                    Width="200"
-                    Height="50"
-                    HorizontalAlignment="Left"
-                    Fill="{DynamicResource CustomThemeBrush}">
-                    <ui:ThemeManager.ThemeDictionaries>
-                        <ResourceDictionary x:Key="Light">
-                            <SolidColorBrush x:Key="CustomThemeBrush" Color="Green" />
-                        </ResourceDictionary>
-                        <ResourceDictionary x:Key="Dark">
-                            <SolidColorBrush x:Key="CustomThemeBrush" Color="Orange" />
-                        </ResourceDictionary>
-                        <ResourceDictionary x:Key="HighContrast">
-                            <SolidColorBrush x:Key="CustomThemeBrush" Color="Purple" />
-                        </ResourceDictionary>
-                    </ui:ThemeManager.ThemeDictionaries>
-                </Rectangle>
             </StackPanel>-->
 
             <CheckBox

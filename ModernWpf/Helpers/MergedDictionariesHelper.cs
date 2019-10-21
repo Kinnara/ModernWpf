@@ -71,7 +71,7 @@ namespace ModernWpf
         {
             if (mergedDictionaries.Count > index)
             {
-                mergedDictionaries[0] = item;
+                mergedDictionaries[index] = item;
             }
             else
             {
