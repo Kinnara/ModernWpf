@@ -204,44 +204,32 @@ namespace ModernWpf
 
             if (SystemParameters.HighContrast)
             {
-                target.MergedDictionaries.RemoveIfNotNull(_lightResources);
-                target.MergedDictionaries.RemoveIfNotNull(_darkResources);
-
                 if (_highContrastResources == null)
                 {
                     _highContrastResources = GetThemeDictionary(ThemeManager.HighContrastKey, ThemeManager.DefaultHighContrastResources);
                 }
 
-                target.MergedDictionaries.Insert(insertIndex, _highContrastResources);
+                target.MergedDictionaries.InsertOrReplace(insertIndex, _highContrastResources);
             }
             else
             {
-                if (_highContrastResources != null)
-                {
-                    target.MergedDictionaries.RemoveIfNotNull(_highContrastResources);
-                }
-
                 if (theme == ElementTheme.Light)
                 {
-                    target.MergedDictionaries.RemoveIfNotNull(_darkResources);
-
                     if (_lightResources == null)
                     {
                         _lightResources = GetThemeDictionary(ThemeManager.LightKey, ThemeManager.DefaultLightResources);
                     }
 
-                    target.MergedDictionaries.Insert(insertIndex, _lightResources);
+                    target.MergedDictionaries.InsertOrReplace(insertIndex, _lightResources);
                 }
                 else if (theme == ElementTheme.Dark)
                 {
-                    target.MergedDictionaries.RemoveIfNotNull(_lightResources);
-
                     if (_darkResources == null)
                     {
                         _darkResources = GetThemeDictionary(ThemeManager.DarkKey, ThemeManager.DefaultDarkResources);
                     }
 
-                    target.MergedDictionaries.Insert(insertIndex, _darkResources);
+                    target.MergedDictionaries.InsertOrReplace(insertIndex, _darkResources);
                 }
                 else // Default
                 {

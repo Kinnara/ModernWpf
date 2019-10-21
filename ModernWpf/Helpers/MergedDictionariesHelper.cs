@@ -67,6 +67,18 @@ namespace ModernWpf
             }
         }
 
+        public static void InsertOrReplace(this Collection<ResourceDictionary> mergedDictionaries, int index, ResourceDictionary item)
+        {
+            if (mergedDictionaries.Count > index)
+            {
+                mergedDictionaries[0] = item;
+            }
+            else
+            {
+                mergedDictionaries.Insert(index, item);
+            }
+        }
+
         private static ResourceDictionary GetDictionary(Uri source, bool useCache)
         {
             if (useCache)
