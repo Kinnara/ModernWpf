@@ -3,11 +3,11 @@
   <metadata>
     <id>$id$</id>
     <version>$version$</version>
-    <title>Modern WPF UI Library</title>
+    <title>ModernWPF UI Library</title>
     <authors>$authors$</authors>
     <owners>$authors$</owners>
     <description>Modern styles and controls for your WPF applications.</description>
-    <tags>WPF XAML Modern Fluent Controls WinUI</tags>    
+    <tags>WPF XAML UI Metro Modern Fluent Theme WinUI</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/Kinnara/ModernWpf</projectUrl>
