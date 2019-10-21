@@ -206,7 +206,7 @@ namespace ModernWpf
             {
                 if (_highContrastResources == null)
                 {
-                    _highContrastResources = GetThemeDictionary(ThemeManager.HighContrastKey, ThemeManager.DefaultHighContrastResources);
+                    _highContrastResources = GetThemeDictionary(ThemeManager.HighContrastKey);
                 }
 
                 target.MergedDictionaries.InsertOrReplace(insertIndex, _highContrastResources);
@@ -217,7 +217,7 @@ namespace ModernWpf
                 {
                     if (_lightResources == null)
                     {
-                        _lightResources = GetThemeDictionary(ThemeManager.LightKey, ThemeManager.DefaultLightResources);
+                        _lightResources = GetThemeDictionary(ThemeManager.LightKey);
                     }
 
                     target.MergedDictionaries.InsertOrReplace(insertIndex, _lightResources);
@@ -226,7 +226,7 @@ namespace ModernWpf
                 {
                     if (_darkResources == null)
                     {
-                        _darkResources = GetThemeDictionary(ThemeManager.DarkKey, ThemeManager.DefaultDarkResources);
+                        _darkResources = GetThemeDictionary(ThemeManager.DarkKey);
                     }
 
                     target.MergedDictionaries.InsertOrReplace(insertIndex, _darkResources);
@@ -239,17 +239,25 @@ namespace ModernWpf
             }
         }
 
-        private ResourceDictionary GetThemeDictionary(string key, ResourceDictionary defaultResources)
+        private ResourceDictionary GetThemeDictionary(string key)
         {
-            ResourceDictionary themeDictionary;
+            ResourceDictionary defaultThemeDictionary = ThemeManager.GetDefaultThemeDictionary(key);
 
-            if (_themeDictionaries.TryGetValue(key, out themeDictionary))
+            if (_themeDictionaries.TryGetValue(key, out ResourceDictionary themeDictionary))
             {
-                themeDictionary.MergedDictionaries.Insert(0, defaultResources);
+                if (themeDictionary.MergedDictionaries.Count > 0 &&
+                    themeDictionary.MergedDictionaries[0] is DefaultThemeResources)
+                {
+                    // Already contains the default theme resources
+                }
+                else
+                {
+                    themeDictionary.MergedDictionaries.Insert(0, defaultThemeDictionary);
+                }
             }
             else
             {
-                themeDictionary = defaultResources;
+                themeDictionary = defaultThemeDictionary;
             }
 
             return themeDictionary;

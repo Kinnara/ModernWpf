@@ -40,10 +40,12 @@
 
   <ItemGroup>
     <Compile Remove="DesignTime\DesignTimeThemeResources.cs" />
+    <Compile Remove="Helpers\ResourceDictionaryCache.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="DesignTime\DesignTimeThemeResources.cs" />
+    <None Include="Helpers\ResourceDictionaryCache.cs" />
   </ItemGroup>
 
 </Project>

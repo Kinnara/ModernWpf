@@ -21,6 +21,8 @@ namespace ModernWpf
             Source = BindableSystemParameters.Current
         };
 
+        private static readonly Dictionary<string, ResourceDictionary> _defaultThemeDictionaries = new Dictionary<string, ResourceDictionary>();
+
         private bool _applicationStarted;
 
         #region ApplicationTheme
@@ -158,19 +160,9 @@ namespace ModernWpf
             {
                 UpdateAccentColors();
 
-                if (_defaultLightResources != null)
+                foreach (var themeDictionary in _defaultThemeDictionaries.Values)
                 {
-                    ColorsHelper.UpdateBrushes(_defaultLightResources);
-                }
-
-                if (_defaultDarkResources != null)
-                {
-                    ColorsHelper.UpdateBrushes(_defaultDarkResources);
-                }
-
-                if (_defaultHighContrastResources != null)
-                {
-                    ColorsHelper.UpdateBrushes(_defaultHighContrastResources);
+                    ColorsHelper.UpdateBrushes(themeDictionary);
                 }
             }
         }
@@ -502,17 +494,11 @@ namespace ModernWpf
 
         internal static Uri DefaultHighContrastSource { get; } = GetDefaultSource(HighContrastKey);
 
-        private static ResourceDictionary _defaultLightResources;
-        internal static ResourceDictionary DefaultLightResources =>
-            GetDefaultResources(ref _defaultLightResources, DefaultLightSource);
+        //internal static ResourceDictionary DefaultLightThemeDictionary => GetDefaultThemeDictionary(LightKey);
 
-        private static ResourceDictionary _defaultDarkResources;
-        internal static ResourceDictionary DefaultDarkResources =>
-            GetDefaultResources(ref _defaultDarkResources, DefaultDarkSource);
+        //internal static ResourceDictionary DefaultDarkThemeDictionary => GetDefaultThemeDictionary(DarkKey);
 
-        private static ResourceDictionary _defaultHighContrastResources;
-        internal static ResourceDictionary DefaultHighContrastResources =>
-            GetDefaultResources(ref _defaultHighContrastResources, DefaultHighContrastSource);
+        //internal static ResourceDictionary DefaultHighContrastThemeDictionary => GetDefaultThemeDictionary(HighContrastKey);
 
         internal bool UsingSystemTheme => ColorsHelper.SystemColorsSupported && ApplicationTheme == null;
 
@@ -544,14 +530,14 @@ namespace ModernWpf
             return ModernWpf.ApplicationTheme.Light;
         }
 
-        private static ResourceDictionary GetDefaultResources(ref ResourceDictionary field, Uri source)
+        internal static ResourceDictionary GetDefaultThemeDictionary(string key)
         {
-            if (field == null)
+            if (!_defaultThemeDictionaries.TryGetValue(key, out ResourceDictionary dictionary))
             {
-                field = ResourceDictionaryCache.GetOrCreateDictionary(source);
+                dictionary = new ResourceDictionary { Source = GetDefaultSource(key) };
+                _defaultThemeDictionaries[key] = dictionary;
             }
-
-            return field;
+            return dictionary;
         }
 
         private static ResourceDictionary FindDictionary(ResourceDictionary parent, Uri source)

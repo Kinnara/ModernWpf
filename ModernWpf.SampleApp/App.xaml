@@ -18,18 +18,24 @@
                         <ui:ThemeDictionary Key="Light">
                             <ResourceDictionary.MergedDictionaries>
                                 <ResourceDictionary>
-                                    <SolidColorBrush x:Key="RegionBrush" Color="White" />
+                                    <ResourceDictionary.MergedDictionaries>
+                                        <ui:DefaultThemeResources Key="Light" />
+                                    </ResourceDictionary.MergedDictionaries>
+                                    <SolidColorBrush x:Key="RegionBrush" Color="{StaticResource SystemAltHighColor}" />
                                 </ResourceDictionary>
                                 <presets:PresetResources TargetTheme="Light" />
                             </ResourceDictionary.MergedDictionaries>
                             <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FFF1F1F1" />
-                            <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="#FFFFFFFF" />
+                            <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Red" />
                         </ui:ThemeDictionary>
                         <ui:ThemeDictionary Key="Dark">
                             <ResourceDictionary.MergedDictionaries>
                                 <ResourceDictionary>
-                                    <SolidColorBrush x:Key="RegionBrush" Color="Black" />
+                                    <ResourceDictionary.MergedDictionaries>
+                                        <ui:DefaultThemeResources Key="Dark" />
+                                    </ResourceDictionary.MergedDictionaries>
+                                    <SolidColorBrush x:Key="RegionBrush" Color="{StaticResource SystemAltHighColor}" />
                                 </ResourceDictionary>
                                 <presets:PresetResources TargetTheme="Dark" />
                             </ResourceDictionary.MergedDictionaries>

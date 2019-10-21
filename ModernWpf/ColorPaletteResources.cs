@@ -408,9 +408,7 @@ namespace ModernWpf
                 return;
             }
 
-            var originals = TargetTheme.Value == ApplicationTheme.Dark ?
-                ThemeManager.DefaultDarkResources :
-                ThemeManager.DefaultLightResources;
+            var originals = ThemeManager.GetDefaultThemeDictionary(TargetTheme.Value.ToString());
             var overrides = new ResourceDictionary();
             var originalsToOverrides = new Dictionary<SolidColorBrush, SolidColorBrush>();
 
