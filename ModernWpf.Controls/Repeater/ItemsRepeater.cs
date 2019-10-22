@@ -56,7 +56,7 @@ namespace ModernWpf.Controls
                 throw new Exception("Cannot run layout in the middle of a collection change.");
             }
 
-            if (m_measureCount >= 50)
+            if (m_measureCount >= 50 && m_lastAvailableSize == availableSize)
             {
                 return m_lastDesiredSize;
             }
