@@ -1016,11 +1016,11 @@ namespace ModernWpf.Controls
             Debug.WriteLine($"CurrentState changed to {e.NewState.Name}");
             if (e.NewState.Name == DialogShowingState)
             {
-                Dispatcher.InvokeAsync(() =>
+                Dispatcher.BeginInvoke((Action)(() =>
                 {
                     var tabNavigation = KeyboardNavigation.GetTabNavigation(GetTemplateChild("BackgroundElement"));
                     Debug.Assert(tabNavigation == KeyboardNavigationMode.Cycle);
-                });
+                }));
             }
         }
 #endif

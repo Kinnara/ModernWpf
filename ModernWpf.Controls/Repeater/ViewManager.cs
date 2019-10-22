@@ -778,11 +778,14 @@ namespace ModernWpf.Controls
 
         private void EnsureEventSubscriptions()
         {
-            // TODO
-            m_owner.GotFocus -= OnFocusChanged;
-            m_owner.LostFocus -= OnFocusChanged;
-            m_owner.GotFocus += OnFocusChanged;
-            m_owner.LostFocus += OnFocusChanged;
+            if (!m_gotFocus)
+            {
+                Debug.Assert(!m_lostFocus);
+                m_owner.GotFocus += OnFocusChanged;
+                m_gotFocus = true;
+                m_owner.LostFocus += OnFocusChanged;
+                m_lostFocus = true;
+            }
         }
 
         private void UpdateElementIndex(UIElement element, VirtualizationInfo virtInfo, int index)
@@ -838,6 +841,10 @@ namespace ModernWpf.Controls
         // It has to be an element we own (i.e. a direct child).
         private UIElement m_lastFocusedElement;
         private bool m_isDataSourceStableResetPending;
+
+        // Event tokens
+        private bool m_gotFocus;
+        private bool m_lostFocus;
 
         // Cached generate/clear contexts to avoid cost of creation every time.
         private ElementFactoryGetArgs m_ElementFactoryGetArgs;

@@ -31,10 +31,10 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Dispatcher.InvokeAsync(() =>
+            Dispatcher.BeginInvoke((Action)(() =>
             {
                 ContentScrollViewer.Visibility = Visibility.Visible;
-            }, DispatcherPriority.Background);
+            }), DispatcherPriority.ContextIdle);
         }
     }
 }

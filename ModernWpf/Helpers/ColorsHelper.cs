@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 using Windows.UI.ViewManagement;
 
 namespace ModernWpf
@@ -146,20 +147,20 @@ namespace ModernWpf
                 if (_systemBackground != background)
                 {
                     _systemBackground = background;
-                    Application.Current?.Dispatcher.InvokeAsync(() =>
+                    Application.Current?.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         BackgroundColorChanged?.Invoke(null, EventArgs.Empty);
-                    });
+                    }));
                 }
 
                 var accent = sender.GetColorValue(UIColorType.Accent).ToColor();
                 if (_systemAccent != accent)
                 {
                     _systemAccent = accent;
-                    Application.Current?.Dispatcher.InvokeAsync(() =>
+                    Application.Current?.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         AccentColorChanged?.Invoke(null, EventArgs.Empty);
-                    });
+                    }));
                 }
             };
 

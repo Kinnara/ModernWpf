@@ -109,7 +109,7 @@ namespace ModernWpf.Controls
                 visibleWindow.X = 0.0;
                 visibleWindow.Y = 0.0;
             }
-            else if (HasScrollers())
+            else if (HasScrollers)
             {
                 visibleWindow.X += m_layoutExtent.X + m_expectedViewportShift.X;
                 visibleWindow.Y += m_layoutExtent.Y + m_expectedViewportShift.Y;
@@ -121,7 +121,7 @@ namespace ModernWpf.Controls
         public override Rect GetLayoutRealizationWindow()
         {
             var realizationWindow = GetLayoutVisibleWindow();
-            if (HasScrollers())
+            if (HasScrollers)
             {
                 realizationWindow.X -= m_horizontalCacheBufferPerSide;
                 realizationWindow.Y -= m_verticalCacheBufferPerSide;
@@ -192,7 +192,7 @@ namespace ModernWpf.Controls
 
             EnsureScrollers();
 
-            if (HasScrollers())
+            if (HasScrollers)
             {
                 double maximumHorizontalCacheBufferPerSide = m_maximumHorizontalCacheLength * m_visibleWindow.Width / 2.0;
                 double maximumVerticalCacheBufferPerSide = m_maximumVerticalCacheLength * m_visibleWindow.Height / 2.0;
@@ -337,7 +337,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        private bool HasScrollers() { return m_horizontalScroller != null || m_verticalScroller != null; }
+        private bool HasScrollers => m_horizontalScroller != null || m_verticalScroller != null;
 
         private bool AddScroller(IRepeaterScrollingSurface scroller)
         {
@@ -378,7 +378,7 @@ namespace ModernWpf.Controls
                     m_verticalScroller.GetRelativeViewport(m_owner)) :
                 new Rect();
             var currentVisibleWindow =
-                HasScrollers() ?
+                HasScrollers?
                 new Rect
                 (
                     m_horizontalScroller != null ? horizontalVisibleWindow.X : verticalVisibleWindow.X,
@@ -445,10 +445,10 @@ namespace ModernWpf.Controls
                     // of ViewportManager (referenced by 'this' pointer) is valid because the lifetime of ItemsRepeater
                     // and ViewportManager is the same (see ItemsRepeater::m_viewportManager).
                     // We can't simply hold a strong reference on ViewportManager because it's not a COM object.
-                    .InvokeAsync(() =>
+                    .BeginInvoke((Action)(() =>
                     {
                         OnCacheBuildActionCompleted();
-                    }, DispatcherPriority.ApplicationIdle);
+                    }), DispatcherPriority.ApplicationIdle);
             }
         }
 

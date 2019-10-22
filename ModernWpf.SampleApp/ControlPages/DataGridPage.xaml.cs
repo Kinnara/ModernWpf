@@ -50,11 +50,11 @@ namespace ModernWpf.SampleApp.ControlPages
                 comboBoxColumn.ItemsSource = await _viewModel.GetMountains();
             }
 
-            _ = Dispatcher.InvokeAsync(() =>
+            _ = Dispatcher.BeginInvoke((Action)(() =>
               {
                   _stopwatch.Stop();
                   LoadTimeTextBlock.Text = _stopwatch.ElapsedMilliseconds + " ms";
-              }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+              }), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
         }
 
         private void InvertTheme(object sender, RoutedEventArgs e)
