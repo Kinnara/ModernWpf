@@ -898,7 +898,7 @@
                                             Foreground="{TemplateBinding Foreground}"
                                             IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                             Style="{StaticResource DataGridRowGroupHeaderStyle}"
-                                            primitives:FrameworkElementHelper.FocusVisualMargin="0" />
+                                            primitives:FocusVisualHelper.FocusVisualMargin="0" />
                                         <ContentPresenter
                                             x:Name="ExpandSite"
                                             Margin="{TemplateBinding Padding}"

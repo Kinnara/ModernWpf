@@ -272,7 +272,7 @@
                                 Foreground="{TemplateBinding Foreground}"
                                 IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                 Style="{StaticResource ExpanderDownHeaderStyle}"
-                                primitives:FrameworkElementHelper.FocusVisualMargin="-3" />
+                                primitives:FocusVisualHelper.FocusVisualMargin="-3" />
                             <ContentPresenter
                                 x:Name="ExpandSite"
                                 Margin="{TemplateBinding Padding}"

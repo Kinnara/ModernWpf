@@ -26,7 +26,7 @@
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <!--<Setter Property="ManipulationMode" Value="System,TranslateX" />-->
         <Setter Property="FocusVisualStyle" Value="{DynamicResource EmptyFocusVisual}" />
-        <Setter Property="ui:FrameworkElementHelper.FocusVisualMargin" Value="-7,-3,-7,-3" />
+        <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="-7,-3,-7,-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ToggleSwitch">
@@ -224,7 +224,7 @@
                                     <Control
                                         x:Name="FocusVisual"
                                         Style="{DynamicResource CustomFocusVisual}"
-                                        Margin="{TemplateBinding ui:FrameworkElementHelper.FocusVisualMargin}" />
+                                        Margin="{TemplateBinding ui:FocusVisualHelper.FocusVisualMargin}" />
                                 </Grid>
                                 <ContentPresenter
                                     x:Name="OffContentPresenter"

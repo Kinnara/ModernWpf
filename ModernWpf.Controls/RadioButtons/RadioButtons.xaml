@@ -23,7 +23,7 @@
         <Setter Property="MinWidth" Value="120" />
         <Setter Property="AllowDrop" Value="False" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
-        <Setter Property="ui:FrameworkElementHelper.FocusVisualMargin" Value="-7,-3,4,-3" />
+        <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="-7,-3,4,-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:RadioButtonsListViewItem">

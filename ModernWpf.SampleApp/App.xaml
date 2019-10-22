@@ -140,7 +140,7 @@
                 <Setter Property="MinHeight" Value="{DynamicResource GridViewItemMinHeight}" />
                 <Setter Property="AllowDrop" Value="False" />
                 <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
-                <Setter Property="ui:FrameworkElementHelper.FocusVisualMargin" Value="-2" />
+                <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="-2" />
                 <Setter Property="SnapsToDevicePixels" Value="True" />
                 <Setter Property="Template">
                     <Setter.Value>

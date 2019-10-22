@@ -2,7 +2,6 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
@@ -186,7 +185,7 @@
                                 DataContext="{TemplateBinding Value}"
                                 Height="{DynamicResource SliderHorizontalThumbHeight}"
                                 Width="{DynamicResource SliderHorizontalThumbWidth}"
-                                primitives:FrameworkElementHelper.FocusVisualMargin="-14,-6,-14,-6">
+                                primitives:FocusVisualHelper.FocusVisualMargin="-14,-6,-14,-6">
                                 <Thumb.Resources>
                                     <Style TargetType="ToolTip" BasedOn="{StaticResource SliderAutoToolTipHorizontalStyle}" />
                                 </Thumb.Resources>
@@ -199,7 +198,7 @@
                 x:Name="FocusVisual"
                 Grid.Row="1"
                 Style="{DynamicResource CustomFocusVisual}"
-                Margin="{TemplateBinding primitives:FrameworkElementHelper.FocusVisualMargin}" />
+                Margin="{TemplateBinding primitives:FocusVisualHelper.FocusVisualMargin}" />
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="TickPlacement" Value="TopLeft">
@@ -344,7 +343,7 @@
                                 DataContext="{TemplateBinding Value}"
                                 Width="{DynamicResource SliderVerticalThumbWidth}"
                                 Height="{DynamicResource SliderVerticalThumbHeight}"
-                                primitives:FrameworkElementHelper.FocusVisualMargin="-6,-14,-6,-14">
+                                primitives:FocusVisualHelper.FocusVisualMargin="-6,-14,-6,-14">
                                 <Thumb.Resources>
                                     <Style TargetType="ToolTip" BasedOn="{StaticResource SliderAutoToolTipVerticalStyle}" />
                                 </Thumb.Resources>
@@ -357,7 +356,7 @@
                 x:Name="FocusVisual"
                 Grid.Row="1"
                 Style="{DynamicResource CustomFocusVisual}"
-                Margin="{TemplateBinding primitives:FrameworkElementHelper.FocusVisualMargin}" />
+                Margin="{TemplateBinding primitives:FocusVisualHelper.FocusVisualMargin}" />
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="TickPlacement" Value="TopLeft">
@@ -407,7 +406,7 @@
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <!--<Setter Property="ManipulationMode" Value="None" />-->
         <Setter Property="FocusVisualStyle" Value="{DynamicResource EmptyFocusVisual}" />
-        <Setter Property="primitives:FrameworkElementHelper.FocusVisualMargin" Value="-7,0,-7,0" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-7,0,-7,0" />
         <!--<Setter Property="IsFocusEngagementEnabled" Value="True" />-->
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template" Value="{StaticResource SliderHorizontal}" />

@@ -7,6 +7,127 @@ namespace ModernWpf.Controls.Primitives
 {
     public static class FocusVisualHelper
     {
+        #region FocusVisualPrimaryBrush
+
+        public static Brush GetFocusVisualPrimaryBrush(FrameworkElement element)
+        {
+            return (Brush)element.GetValue(FocusVisualPrimaryBrushProperty);
+        }
+
+        public static void SetFocusVisualPrimaryBrush(FrameworkElement element, Brush value)
+        {
+            element.SetValue(FocusVisualPrimaryBrushProperty, value);
+        }
+
+        public static readonly DependencyProperty FocusVisualPrimaryBrushProperty =
+            DependencyProperty.RegisterAttached(
+                "FocusVisualPrimaryBrush",
+                typeof(Brush),
+                typeof(FocusVisualHelper),
+                null);
+
+        #endregion
+
+        #region FocusVisualSecondaryBrush
+
+        public static Brush GetFocusVisualSecondaryBrush(FrameworkElement element)
+        {
+            return (Brush)element.GetValue(FocusVisualSecondaryBrushProperty);
+        }
+
+        public static void SetFocusVisualSecondaryBrush(FrameworkElement element, Brush value)
+        {
+            element.SetValue(FocusVisualSecondaryBrushProperty, value);
+        }
+
+        public static readonly DependencyProperty FocusVisualSecondaryBrushProperty =
+            DependencyProperty.RegisterAttached(
+                "FocusVisualSecondaryBrush",
+                typeof(Brush),
+                typeof(FocusVisualHelper),
+                null);
+
+        #endregion
+
+        #region FocusVisualPrimaryThickness
+
+        public static Thickness GetFocusVisualPrimaryThickness(FrameworkElement element)
+        {
+            return (Thickness)element.GetValue(FocusVisualPrimaryThicknessProperty);
+        }
+
+        public static void SetFocusVisualPrimaryThickness(FrameworkElement element, Thickness value)
+        {
+            element.SetValue(FocusVisualPrimaryThicknessProperty, value);
+        }
+
+        public static readonly DependencyProperty FocusVisualPrimaryThicknessProperty =
+            DependencyProperty.RegisterAttached(
+                "FocusVisualPrimaryThickness",
+                typeof(Thickness),
+                typeof(FocusVisualHelper),
+                new FrameworkPropertyMetadata(new Thickness(1)));
+
+        #endregion
+
+        #region FocusVisualSecondaryThickness
+
+        public static Thickness GetFocusVisualSecondaryThickness(FrameworkElement element)
+        {
+            return (Thickness)element.GetValue(FocusVisualSecondaryThicknessProperty);
+        }
+
+        public static void SetFocusVisualSecondaryThickness(FrameworkElement element, Thickness value)
+        {
+            element.SetValue(FocusVisualSecondaryThicknessProperty, value);
+        }
+
+        public static readonly DependencyProperty FocusVisualSecondaryThicknessProperty =
+            DependencyProperty.RegisterAttached(
+                "FocusVisualSecondaryThickness",
+                typeof(Thickness),
+                typeof(FocusVisualHelper),
+                new FrameworkPropertyMetadata(new Thickness(1)));
+
+        #endregion
+
+        #region FocusVisualMargin
+
+        /// <summary>
+        /// Gets the outer margin of the focus visual for a FrameworkElement.
+        /// </summary>
+        /// <param name="element">The element from which to read the property value.</param>
+        /// <returns>
+        /// Provides margin values for the focus visual. The default value is a default Thickness
+        /// with all properties (dimensions) equal to 0.
+        /// </returns>
+        public static Thickness GetFocusVisualMargin(FrameworkElement element)
+        {
+            return (Thickness)element.GetValue(FocusVisualMarginProperty);
+        }
+
+        /// <summary>
+        /// Sets the outer margin of the focus visual for a FrameworkElement.
+        /// </summary>
+        /// <param name="element">The element on which to set the attached property.</param>
+        /// <param name="value">The property value to set.</param>
+        public static void SetFocusVisualMargin(FrameworkElement element, Thickness value)
+        {
+            element.SetValue(FocusVisualMarginProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the FocusVisualMargin dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FocusVisualMarginProperty =
+            DependencyProperty.RegisterAttached(
+                "FocusVisualMargin",
+                typeof(Thickness),
+                typeof(FocusVisualHelper),
+                null);
+
+        #endregion
+
         #region IsSystemFocusVisual
 
         public static bool GetIsSystemFocusVisual(Control control)
@@ -31,11 +152,11 @@ namespace ModernWpf.Controls.Primitives
             var control = (Control)d;
             if ((bool)e.NewValue)
             {
-                control.IsVisibleChanged += OnControlIsVisibleChanged;
+                control.IsVisibleChanged += OnFocusVisualIsVisibleChanged;
             }
             else
             {
-                control.IsVisibleChanged -= OnControlIsVisibleChanged;
+                control.IsVisibleChanged -= OnFocusVisualIsVisibleChanged;
                 control.ClearValue(FrameworkElement.MarginProperty);
             }
         }
@@ -86,26 +207,26 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        private static void OnControlIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private static void OnFocusVisualIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            var control = (Control)sender;
+            var focusVisual = (Control)sender;
             if ((bool)e.NewValue)
             {
-                if ((VisualTreeHelper.GetParent(control) as Adorner)?.AdornedElement is FrameworkElement focusedElement)
+                if ((VisualTreeHelper.GetParent(focusVisual) as Adorner)?.AdornedElement is FrameworkElement focusedElement)
                 {
                     SetIsSystemFocusVisualVisible(focusedElement, true);
-                    control.Margin = FrameworkElementHelper.GetFocusVisualMargin(focusedElement);
-                    SetFocusedElement(control, focusedElement);
+                    focusVisual.Margin = FocusVisualHelper.GetFocusVisualMargin(focusedElement);
+                    SetFocusedElement(focusVisual, focusedElement);
                 }
             }
             else
             {
-                FrameworkElement focusedElement = GetFocusedElement(control);
+                FrameworkElement focusedElement = GetFocusedElement(focusVisual);
                 if (focusedElement != null)
                 {
                     focusedElement.ClearValue(IsSystemFocusVisualVisiblePropertyKey);
-                    control.ClearValue(FrameworkElement.MarginProperty);
-                    control.ClearValue(FocusedElementProperty);
+                    focusVisual.ClearValue(FrameworkElement.MarginProperty);
+                    focusVisual.ClearValue(FocusedElementProperty);
                 }
             }
         }
