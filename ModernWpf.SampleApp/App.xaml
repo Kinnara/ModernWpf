@@ -50,42 +50,6 @@
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Blue" />
                         </ResourceDictionary>
                     </ui:ThemeResources.ThemeDictionaries>
-                    <!--<ResourceDictionary.MergedDictionaries>
-                        <ui:ThemeDictionary Key="Light">
-                            <ResourceDictionary.MergedDictionaries>
-                                <ResourceDictionary>
-                                    <ResourceDictionary.MergedDictionaries>
-                                        <ui:DefaultThemeResources Key="Light" />
-                                    </ResourceDictionary.MergedDictionaries>
-                                    <SolidColorBrush x:Key="RegionBrush" Color="{StaticResource SystemAltHighColor}" />
-                                </ResourceDictionary>
-                                <presets:PresetResources TargetTheme="Light" />
-                            </ResourceDictionary.MergedDictionaries>
-                            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FFF1F1F1" />
-                            <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
-                            <SolidColorBrush x:Key="CustomThemeBrush" Color="Red" />
-                        </ui:ThemeDictionary>
-                        <ui:ThemeDictionary Key="Dark">
-                            <ResourceDictionary.MergedDictionaries>
-                                <ResourceDictionary>
-                                    <ResourceDictionary.MergedDictionaries>
-                                        <ui:DefaultThemeResources Key="Dark" />
-                                    </ResourceDictionary.MergedDictionaries>
-                                    <SolidColorBrush x:Key="RegionBrush" Color="{StaticResource SystemAltHighColor}" />
-                                </ResourceDictionary>
-                                <presets:PresetResources TargetTheme="Dark" />
-                            </ResourceDictionary.MergedDictionaries>
-                            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FF232323" />
-                            <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="#FF282828" />
-                            <SolidColorBrush x:Key="CustomThemeBrush" Color="Yellow" />
-                        </ui:ThemeDictionary>
-                        <ui:ThemeDictionary Key="HighContrast">
-                            <SolidColorBrush x:Key="AppBackgroundBrush" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
-                            <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
-                            <SolidColorBrush x:Key="RegionBrush" Color="Transparent" />
-                            <SolidColorBrush x:Key="CustomThemeBrush" Color="Blue" />
-                        </ui:ThemeDictionary>
-                    </ResourceDictionary.MergedDictionaries>-->
                 </ui:ThemeResources>
                 <ui:XamlControlsResources />
             </ResourceDictionary.MergedDictionaries>

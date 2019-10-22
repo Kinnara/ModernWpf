@@ -8,8 +8,6 @@
 
     <m:StaticResource x:Key="ContentControlThemeFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe MDL2 Assets, /ModernWpf;component/Assets/#Segoe MDL2 Assets</FontFamily>
-    <sys:Double x:Key="ControlContentThemeFontSize">14</sys:Double>
-    <sys:Double x:Key="ContentControlFontSize">14</sys:Double>
     <CornerRadius x:Key="ControlCornerRadius">2,2,2,2</CornerRadius>
     <CornerRadius x:Key="OverlayCornerRadius">4,4,4,4</CornerRadius>
 
@@ -510,7 +508,6 @@
     <sys:Double x:Key="ListViewItemReorderHintThemeOffset">10.0</sys:Double>
     <sys:Double x:Key="ListViewItemSelectedBorderThemeThickness">4</sys:Double>
     <sys:Double x:Key="ListViewItemMinWidth">88</sys:Double>
-    <sys:Double x:Key="ListViewItemMinHeight">40</sys:Double>
     <m:StaticResource x:Key="ListViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="ListViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
     <m:StaticResource x:Key="ListViewItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
@@ -891,14 +888,11 @@
     <SolidColorBrush x:Key="TreeViewItemCheckBoxBorderSelected" Color="{DynamicResource {x:Static SystemColors.ControlTextColorKey}}" />
     <SolidColorBrush x:Key="TreeViewItemCheckGlyphSelected" Color="{DynamicResource {x:Static SystemColors.WindowTextColorKey}}" />
     <Thickness x:Key="TreeViewItemBorderThemeThickness">1</Thickness>
-    <sys:Double x:Key="TreeViewItemMinHeight">32</sys:Double>
 
     <sys:Double x:Key="TextControlThemeMinWidth">64</sys:Double>
-    <sys:Double x:Key="TextControlThemeMinHeight">32</sys:Double>
     <Thickness x:Key="TextControlBorderThemeThickness">1</Thickness>
     <Thickness x:Key="TextControlBorderThemeThicknessFocused">2</Thickness>
     <Thickness x:Key="TextControlMarginThemeThickness">0,9.5,0,9.5</Thickness>
-    <Thickness x:Key="TextControlThemePadding">10,6,6,5</Thickness>
     <Thickness x:Key="HelperButtonThemePadding">0,0,-2,0</Thickness>
     <m:StaticResource x:Key="TextControlForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <m:StaticResource x:Key="TextControlForegroundPointerOver" ResourceKey="SystemControlForegroundBaseHighBrush" />

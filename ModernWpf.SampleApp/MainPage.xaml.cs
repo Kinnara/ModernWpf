@@ -111,6 +111,20 @@ namespace ModernWpf.SampleApp
                 PresetManager.Current.CurrentPreset = (string)menuItem.Header;
             }
         }
+
+        private void SizingMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is MenuItem menuItem)
+            {
+                bool compact = menuItem.Tag as string == "Compact";
+
+                var xcr = Application.Current.Resources.MergedDictionaries.OfType<XamlControlsResources>().FirstOrDefault();
+                if (xcr != null)
+                {
+                    xcr.UseCompactResources = compact;
+                }
+            }
+        }
     }
 
     public class ControlPagesData : List<ControlPageInfo>

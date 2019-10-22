@@ -62,6 +62,16 @@
                 <ui:RadioMenuItem Header="Lavender" />
                 <ui:RadioMenuItem Header="Nighttime" />
             </MenuItem>
+            <MenuItem
+                Header="Sizing"
+                MenuItem.Click="SizingMenuItem_Click">
+                <ui:RadioMenuItem
+                    Header="Standard"
+                    IsChecked="True" />
+                <ui:RadioMenuItem
+                    Header="Compact"
+                    Tag="Compact" />
+            </MenuItem>
         </Menu>
 
         <ListBox

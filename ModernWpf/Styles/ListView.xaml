@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
+    <sys:Double x:Key="ListViewItemMinHeight">40</sys:Double>
     <sys:Double x:Key="GridViewColumnHeaderMinHeight">33</sys:Double>
     <sys:Double x:Key="GridViewItemContainerMinHeight">32</sys:Double>
 

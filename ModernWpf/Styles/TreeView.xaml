@@ -2,8 +2,10 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
+
+    <sys:Double x:Key="TreeViewItemMinHeight">32</sys:Double>
 
     <Style x:Key="ExpandCollapseToggleStyle" TargetType="{x:Type ToggleButton}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
