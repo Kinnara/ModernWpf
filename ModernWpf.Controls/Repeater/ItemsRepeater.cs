@@ -56,6 +56,11 @@ namespace ModernWpf.Controls
                 throw new Exception("Cannot run layout in the middle of a collection change.");
             }
 
+            if (m_measureCount >= 50)
+            {
+                return m_lastDesiredSize;
+            }
+
             m_viewportManager.OnOwnerMeasuring();
 
             m_isLayoutInProgress = true;
@@ -100,6 +105,8 @@ namespace ModernWpf.Controls
 
                 m_viewportManager.SetLayoutExtent(extent);
                 m_lastAvailableSize = availableSize;
+                m_lastDesiredSize = desiredSize;
+                m_measureCount++;
                 return desiredSize;
             }
             finally
@@ -119,6 +126,8 @@ namespace ModernWpf.Controls
             {
                 throw new Exception("Cannot run layout in the middle of a collection change.");
             }
+
+            m_measureCount = 0;
 
             m_isLayoutInProgress = true;
             try
@@ -819,5 +828,9 @@ namespace ModernWpf.Controls
         // See: https://github.com/microsoft/microsoft-ui-xaml/issues/776
         // Solution: Have flag that is only true when DataTemplate exists but it is empty.
         private bool m_isItemTemplateEmpty = false;
+
+        // Workaround for infinite MeasureOverride loop
+        private int m_measureCount;
+        private Size m_lastDesiredSize;
     }
 }
