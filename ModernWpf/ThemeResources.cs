@@ -37,7 +37,6 @@ namespace ModernWpf
             }
         }
 
-        private ApplicationTheme? _requestedTheme;
         /// <summary>
         /// Gets or sets a value that determines the light-dark preference for the overall
         /// theme of an app.
@@ -48,31 +47,34 @@ namespace ModernWpf
         /// </returns>
         public ApplicationTheme? RequestedTheme
         {
-            get => _requestedTheme;
+            get => ThemeManager.Current.ApplicationTheme;
             set
             {
-                if (_requestedTheme != value)
+                if (ThemeManager.Current.ApplicationTheme != value)
                 {
-                    _requestedTheme = value;
-                    OnThemePropertyChanged();
+                    ThemeManager.Current.SetCurrentValue(ThemeManager.ApplicationThemeProperty, value);
+
+                    if (!IsInitializePending && DesignMode.DesignModeEnabled)
+                    {
+                        UpdateDesignTimeThemeDictionary();
+                    }
                 }
             }
         }
 
-        private Color? _accentColor;
         /// <summary>
         /// Gets or sets the accent color of the app.
         /// </summary>
         public Color? AccentColor
         {
-            get => _accentColor;
+            get => ThemeManager.Current.AccentColor;
             set
             {
-                if (_accentColor != value)
+                if (ThemeManager.Current.AccentColor != value)
                 {
-                    _accentColor = value;
+                    ThemeManager.Current.SetCurrentValue(ThemeManager.AccentColorProperty, value);
 
-                    if (!IsInitializePending)
+                    if (!IsInitializePending && DesignMode.DesignModeEnabled)
                     {
                         UpdateDesignTimeSystemColors();
                     }
@@ -95,6 +97,7 @@ namespace ModernWpf
 
         private void DesignTimeInit()
         {
+            Debug.Assert(DesignMode.DesignModeEnabled);
             UpdateDesignTimeSystemColors();
             UpdateDesignTimeThemeDictionary();
             SystemParameters.StaticPropertyChanged += OnSystemParametersPropertyChanged;
@@ -102,35 +105,27 @@ namespace ModernWpf
 
         private void UpdateDesignTimeSystemColors()
         {
-            if (DesignMode.DesignModeEnabled)
+            Debug.Assert(DesignMode.DesignModeEnabled);
+            var rd = GetDesignTimeSystemColors();
+            if (MergedDictionaries.Count == 0)
             {
-                var rd = GetDesignTimeSystemColors();
-                if (MergedDictionaries.Count == 0)
-                {
-                    MergedDictionaries.Add(rd);
-                }
-                else
-                {
-                    MergedDictionaries[0] = rd;
-                }
+                MergedDictionaries.Add(rd);
             }
-        }
-
-        private void OnThemePropertyChanged()
-        {
-            if (!IsInitializePending && DesignMode.DesignModeEnabled)
+            else
             {
-                UpdateDesignTimeThemeDictionary();
+                MergedDictionaries[0] = rd;
             }
         }
 
         private void UpdateDesignTimeThemeDictionary()
         {
+            Debug.Assert(DesignMode.DesignModeEnabled);
             ApplyApplicationTheme(RequestedTheme ?? ApplicationTheme.Light);
         }
 
         private ResourceDictionary GetDesignTimeSystemColors()
         {
+            Debug.Assert(DesignMode.DesignModeEnabled);
             if (AccentColor.HasValue)
             {
                 return new ColorPaletteResources { Accent = AccentColor };

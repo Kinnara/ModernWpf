@@ -22,6 +22,7 @@ namespace ModernWpf
 
         private static readonly Dictionary<string, ResourceDictionary> _defaultThemeDictionaries = new Dictionary<string, ResourceDictionary>();
 
+        private bool _isInitialized;
         private bool _applicationStarted;
 
         #region ApplicationTheme
@@ -85,18 +86,16 @@ namespace ModernWpf
 
         private void UpdateActualApplicationTheme()
         {
-            if (!ColorsHelper.IsInitialized)
+            if (_applicationStarted)
             {
-                return;
-            }
-
-            if (UsingSystemTheme)
-            {
-                ActualApplicationTheme = GetDefaultAppTheme();
-            }
-            else
-            {
-                ActualApplicationTheme = ApplicationTheme ?? ModernWpf.ApplicationTheme.Light;
+                if (UsingSystemTheme)
+                {
+                    ActualApplicationTheme = GetDefaultAppTheme();
+                }
+                else
+                {
+                    ActualApplicationTheme = ApplicationTheme ?? ModernWpf.ApplicationTheme.Light;
+                }
             }
         }
 
@@ -168,18 +167,16 @@ namespace ModernWpf
 
         private void UpdateActualAccentColor()
         {
-            if (!ColorsHelper.IsInitialized)
+            if (ColorsHelper.IsInitialized)
             {
-                return;
-            }
-
-            if (UsingSystemAccentColor)
-            {
-                ActualAccentColor = ColorsHelper.GetSystemAccentColor();
-            }
-            else
-            {
-                ActualAccentColor = AccentColor ?? ColorsHelper.DefaultAccentColor;
+                if (UsingSystemAccentColor)
+                {
+                    ActualAccentColor = ColorsHelper.GetSystemAccentColor();
+                }
+                else
+                {
+                    ActualAccentColor = AccentColor ?? ColorsHelper.DefaultAccentColor;
+                }
             }
         }
 
@@ -572,11 +569,11 @@ namespace ModernWpf
 
         public static ThemeManager Current { get; } = new ThemeManager();
 
-        internal static Uri DefaultLightSource { get; } = GetDefaultSource(LightKey);
+        //internal static Uri DefaultLightSource { get; } = GetDefaultSource(LightKey);
 
-        internal static Uri DefaultDarkSource { get; } = GetDefaultSource(DarkKey);
+        //internal static Uri DefaultDarkSource { get; } = GetDefaultSource(DarkKey);
 
-        internal static Uri DefaultHighContrastSource { get; } = GetDefaultSource(HighContrastKey);
+        //internal static Uri DefaultHighContrastSource { get; } = GetDefaultSource(HighContrastKey);
 
         //internal static ResourceDictionary DefaultLightThemeDictionary => GetDefaultThemeDictionary(LightKey);
 
@@ -588,7 +585,7 @@ namespace ModernWpf
 
         internal bool UsingSystemAccentColor => ColorsHelper.SystemColorsSupported && AccentColor == null;
 
-        internal static Uri GetDefaultSource(string theme)
+        private static Uri GetDefaultSource(string theme)
         {
             return PackUriHelper.GetAbsoluteUri($"ThemeResources/{theme}.xaml");
         }
@@ -657,17 +654,12 @@ namespace ModernWpf
         
         internal void Initialize()
         {
+            if (_isInitialized)
+            {
+                return;
+            }
+
             Debug.Assert(ThemeResources.Current != null);
-
-            if (ReadLocalValue(ApplicationThemeProperty) == DependencyProperty.UnsetValue)
-            {
-                ApplicationTheme = ThemeResources.Current.RequestedTheme;
-            }
-
-            if (ReadLocalValue(AccentColorProperty) == DependencyProperty.UnsetValue)
-            {
-                AccentColor = ThemeResources.Current.AccentColor;
-            }
 
             SystemParameters.StaticPropertyChanged += OnSystemParametersChanged;
 
@@ -675,16 +667,13 @@ namespace ModernWpf
             {
                 Application.Current.Startup += OnApplicationStartup;
             }
+
+            _isInitialized = true;
         }
 
         private void OnApplicationStartup(object sender, StartupEventArgs e)
         {
             _applicationStarted = true;
-            InitializeThemeResources();
-        }
-
-        private void InitializeThemeResources()
-        {
             ColorsHelper.BackgroundColorChanged += OnSystemBackgroundColorChanged;
             ColorsHelper.AccentColorChanged += OnSystemAccentColorChanged;
             ColorsHelper.Initialize();
