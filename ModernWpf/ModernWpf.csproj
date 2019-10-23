@@ -12,15 +12,15 @@
 
   <ItemGroup>
     <Reference Include="Windows">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Windows Kits\10\UnionMetadata\Facade\Windows.WinMD</HintPath>
+      <HintPath>WinMD\Windows.WinMD</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
     </Reference>
     <Reference Include="Windows.Foundation.FoundationContract">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Windows Kits\10\References\Windows.Foundation.FoundationContract\1.0.0.0\Windows.Foundation.FoundationContract.winmd</HintPath>
+      <HintPath>WinMD\Windows.Foundation.FoundationContract.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
     </Reference>
     <Reference Include="Windows.Foundation.UniversalApiContract">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Windows Kits\10\References\Windows.Foundation.UniversalApiContract\1.0.0.0\Windows.Foundation.UniversalApiContract.winmd</HintPath>
+      <HintPath>WinMD\Windows.Foundation.UniversalApiContract.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
     </Reference>
   </ItemGroup>
