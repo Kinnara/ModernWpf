@@ -99,7 +99,7 @@
 
             <!--<Button
                 Content="Open new window"
-                Click="OepnNewWindow" />-->
+                Click="OpenNewWindow" />-->
 
             <StackPanel>
                 <TextBlock

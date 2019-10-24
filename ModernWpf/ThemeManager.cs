@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace ModernWpf
 {
@@ -684,24 +685,24 @@ namespace ModernWpf
 
         private void OnSystemBackgroundColorChanged(object sender, EventArgs e)
         {
-            Dispatcher.BeginInvoke((Action)(() =>
+            Dispatcher.BeginInvoke(() =>
             {
                 if (UsingSystemTheme)
                 {
                     UpdateActualApplicationTheme();
                 }
-            }));
+            });
         }
 
         private void OnSystemAccentColorChanged(object sender, EventArgs e)
         {
-            Dispatcher.BeginInvoke((Action)(() =>
+            Dispatcher.BeginInvoke(() =>
             {
                 if (UsingSystemAccentColor)
                 {
                     UpdateActualAccentColor();
                 }
-            }));
+            });
         }
 
         private void OnSystemParametersChanged(object sender, PropertyChangedEventArgs e)

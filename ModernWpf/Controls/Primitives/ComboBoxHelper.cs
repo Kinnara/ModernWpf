@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -89,10 +90,10 @@ namespace ModernWpf.Controls.Primitives
             // We need to know whether the dropDown opens above or below the ComboBox in order to update corner radius correctly.
             // Sometimes TransformToPoint value is incorrect because popup is not fully opened when this function gets called.
             // Use dispatcher to make sure we get correct VerticalOffset.
-            comboBox.Dispatcher.BeginInvoke((Action)(() =>
+            comboBox.Dispatcher.BeginInvoke(() =>
                 {
                     UpdateCornerRadius(comboBox, /*IsDropDownOpen=*/true);
-                }));
+                });
         }
 
         private static void OnDropDownClosed(object sender, object args)

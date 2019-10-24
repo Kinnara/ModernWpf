@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -32,7 +33,7 @@ namespace ModernWpf.SampleApp.ControlPages
             CustomWindowStyleToggle.IsChecked = GetWindow().Style != null;
         }
 
-        private void OepnNewWindow(object sender, RoutedEventArgs e)
+        private void OpenNewWindow(object sender, RoutedEventArgs e)
         {
             new Window { Title = "New Window" }.Show();
         }

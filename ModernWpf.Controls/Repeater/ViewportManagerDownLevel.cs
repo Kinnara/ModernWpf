@@ -445,10 +445,10 @@ namespace ModernWpf.Controls
                     // of ViewportManager (referenced by 'this' pointer) is valid because the lifetime of ItemsRepeater
                     // and ViewportManager is the same (see ItemsRepeater::m_viewportManager).
                     // We can't simply hold a strong reference on ViewportManager because it's not a COM object.
-                    .BeginInvoke((Action)(() =>
+                    .BeginInvoke(() =>
                     {
                         OnCacheBuildActionCompleted();
-                    }), DispatcherPriority.ApplicationIdle);
+                    }, DispatcherPriority.ApplicationIdle);
             }
         }
 

@@ -297,8 +297,9 @@ namespace ModernWpf.Controls.Primitives
             SetEllipseAnimationWellPosition(progressBar, width * 1.0 / 3.0);
             SetEllipseAnimationEndPosition(progressBar, width * 2.0 / 3.0);
 
-            progressBar.Dispatcher.BeginInvoke(DispatcherPriority.Render,
-                (Action)(() => RestartIndeterminateStoryboard(progressBar)));
+            progressBar.Dispatcher.BeginInvoke(
+                () => RestartIndeterminateStoryboard(progressBar),
+                DispatcherPriority.Render);
         }
 
         private static void RestartIndeterminateStoryboard(ProgressBar progressBar)

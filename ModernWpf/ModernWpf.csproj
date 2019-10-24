@@ -25,6 +25,10 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System.Windows.Presentation" />
+  </ItemGroup>
+
   <ItemGroup>
     <None Remove="Assets\segmdl2.ttf" />
   </ItemGroup>

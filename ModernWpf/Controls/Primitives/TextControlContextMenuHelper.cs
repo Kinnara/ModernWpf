@@ -97,7 +97,7 @@ namespace ModernWpf.Controls.Primitives
             var token = Guid.NewGuid();
             SetToken(contextMenu, token);
 
-            contextMenu.Dispatcher.BeginInvoke((Action)(() =>
+            contextMenu.Dispatcher.BeginInvoke(() =>
             {
                 if (contextMenu.IsOpen && GetToken(contextMenu) == token)
                 {
@@ -110,7 +110,7 @@ namespace ModernWpf.Controls.Primitives
                         contextMenu.IsOpen = false;
                     }
                 }
-            }), DispatcherPriority.Background);
+            }, DispatcherPriority.Background);
         }
 
         private static void OnClosed(object sender, RoutedEventArgs e)

@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ModernWpf.SampleApp.Data;
+using System.Windows.Threading;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
@@ -50,11 +51,11 @@ namespace ModernWpf.SampleApp.ControlPages
                 comboBoxColumn.ItemsSource = await _viewModel.GetMountains();
             }
 
-            _ = Dispatcher.BeginInvoke((Action)(() =>
+            _ = Dispatcher.BeginInvoke(() =>
               {
                   _stopwatch.Stop();
                   LoadTimeTextBlock.Text = _stopwatch.ElapsedMilliseconds + " ms";
-              }), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+              }, DispatcherPriority.ApplicationIdle);
         }
 
         private void InvertTheme(object sender, RoutedEventArgs e)
