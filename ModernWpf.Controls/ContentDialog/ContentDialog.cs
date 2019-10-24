@@ -41,45 +41,6 @@ namespace ModernWpf.Controls
     [StyleTypedProperty(Property = nameof(CloseButtonStyle), StyleTargetType = typeof(Button))]
     public class ContentDialog : ContentControl
     {
-        private const string DialogShowingStatesGroup = "DialogShowingStates";
-        private const string DialogHiddenState = "DialogHidden";
-        private const string DialogShowingState = "DialogShowing";
-        private const string DialogShowingWithoutSmokeLayerState = "DialogShowingWithoutSmokeLayer";
-
-        private const string DialogSizingStatesGroup = "DialogSizingStates";
-        private const string DefaultDialogSizingState = "DefaultDialogSizing";
-        private const string FullDialogSizingState = "FullDialogSizing";
-
-        private const string ButtonsVisibilityStatesGroup = "ButtonsVisibilityStates";
-        private const string AllVisibleState = "AllVisible";
-        private const string NoneVisibleState = "NoneVisible";
-        private const string PrimaryVisibleState = "PrimaryVisible";
-        private const string SecondaryVisibleState = "SecondaryVisible";
-        private const string CloseVisibleState = "CloseVisible";
-        private const string PrimaryAndSecondaryVisibleState = "PrimaryAndSecondaryVisible";
-        private const string PrimaryAndCloseVisibleState = "PrimaryAndCloseVisible";
-        private const string SecondaryAndCloseVisibleState = "SecondaryAndCloseVisible";
-
-        private const string DefaultButtonStatesGroup = "DefaultButtonStates";
-        private const string NoDefaultButtonState = "NoDefaultButton";
-        private const string PrimaryAsDefaultButtonState = "PrimaryAsDefaultButton";
-        private const string SecondaryAsDefaultButtonState = "SecondaryAsDefaultButton";
-        private const string CloseAsDefaultButtonState = "CloseAsDefaultButton";
-
-        private const string DialogBorderStatesGroup = "DialogBorderStates";
-        private const string NoBorderState = "NoBorder";
-        private const string AccentColorBorderState = "AccentColorBorder";
-
-        private static TaskCompletionSource<ContentDialogResult> _tcs;
-
-        private ContentDialogAdorner _adorner;
-        private AdornerLayer _adornerLayer;
-        private Popup _popup;
-        private bool _opening;
-        private bool _isShowing;
-        private ContentDialogResult _result;
-        private readonly DispatcherTimer _closeTimer;
-
         static ContentDialog()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ContentDialog),
@@ -88,11 +49,11 @@ namespace ModernWpf.Controls
 
         public ContentDialog()
         {
-            _closeTimer = new DispatcherTimer
+            m_closeTimer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromSeconds(0.6)
             };
-            _closeTimer.Tick += OnCloseTimerTick;
+            m_closeTimer.Tick += OnCloseTimerTick;
         }
 
         #region Title
@@ -457,17 +418,17 @@ namespace ModernWpf.Controls
 
         private bool IsShowing
         {
-            get => _isShowing;
+            get => m_isShowing;
             set
             {
-                if (_isShowing != value)
+                if (m_isShowing != value)
                 {
-                    _isShowing = value;
-                    _opening = _isShowing;
+                    m_isShowing = value;
+                    m_opening = m_isShowing;
 
-                    if (!_isShowing)
+                    if (!m_isShowing)
                     {
-                        _closeTimer.Start();
+                        m_closeTimer.Start();
                     }
 
                     UpdateDialogShowingStates(true);
@@ -507,7 +468,7 @@ namespace ModernWpf.Controls
 
             EnsureAdornerLayer(cp);
             EnsureAdornerChild(cp, dialogRoot);
-            _adornerLayer.Add(_adorner);
+            m_adornerLayer.Add(m_adorner);
             DisableKeyboardNavigation(cp);
 
             IsShowing = true;
@@ -615,7 +576,7 @@ namespace ModernWpf.Controls
                     {
                         if (!args.Cancel)
                         {
-                            _result = result;
+                            m_result = result;
                             IsShowing = false;
                         }
                     });
@@ -628,7 +589,7 @@ namespace ModernWpf.Controls
                 }
                 else
                 {
-                    _result = result;
+                    m_result = result;
                     IsShowing = false;
                 }
             }
@@ -717,42 +678,42 @@ namespace ModernWpf.Controls
             }
             else
             {
-                _closeTimer.Stop();
+                m_closeTimer.Stop();
                 OnClosed();
             }
         }
 
         private void OnCloseTimerTick(object sender, EventArgs e)
         {
-            _closeTimer.Stop();
+            m_closeTimer.Stop();
             UpdateVisualStates(false);
             OnClosed();
         }
 
         private void OnOpened()
         {
-            if (_opening)
+            if (m_opening)
             {
-                _opening = false;
+                m_opening = false;
                 Opened?.Invoke(this, new ContentDialogOpenedEventArgs());
             }
         }
 
         private void OnClosed()
         {
-            if (_adornerLayer != null)
+            if (m_adornerLayer != null)
             {
-                RestoreKeyboardNavigation(_adorner.AdornedElement);
-                _adornerLayer.Remove(_adorner);
-                _adornerLayer = null;
+                RestoreKeyboardNavigation(m_adorner.AdornedElement);
+                m_adornerLayer.Remove(m_adorner);
+                m_adornerLayer = null;
             }
 
-            if (_tcs != null)
+            if (s_tcs != null)
             {
-                Closed?.Invoke(this, new ContentDialogClosedEventArgs(_result));
-                _tcs.TrySetResult(_result);
-                _tcs = null;
-                _result = ContentDialogResult.None;
+                Closed?.Invoke(this, new ContentDialogClosedEventArgs(m_result));
+                s_tcs.TrySetResult(m_result);
+                s_tcs = null;
+                m_result = ContentDialogResult.None;
             }
         }
 
@@ -846,8 +807,8 @@ namespace ModernWpf.Controls
 
         private void EnsureAdornerLayer(ContentPresenter contentPresenter)
         {
-            _adornerLayer = AdornerLayer.GetAdornerLayer(contentPresenter);
-            if (_adornerLayer == null)
+            m_adornerLayer = AdornerLayer.GetAdornerLayer(contentPresenter);
+            if (m_adornerLayer == null)
             {
                 throw new InvalidOperationException("AdornerLayer not found.");
             }
@@ -855,40 +816,40 @@ namespace ModernWpf.Controls
 
         private void DisconnectAdornerChild()
         {
-            if (_adorner != null)
+            if (m_adorner != null)
             {
-                _adorner.Child = null;
+                m_adorner.Child = null;
             }
         }
 
         private void EnsureAdornerChild(ContentPresenter cp, UIElement child)
         {
-            if (_adorner == null)
+            if (m_adorner == null)
             {
-                _adorner = new ContentDialogAdorner(cp, child);
+                m_adorner = new ContentDialogAdorner(cp, child);
             }
             else
             {
-                _adorner.Child = child;
+                m_adorner.Child = child;
             }
         }
 
         private void AddPopup()
         {
-            if (_popup == null && Container != null && LayoutRoot != null)
+            if (m_popup == null && Container != null && LayoutRoot != null)
             {
                 Container.Child = null;
-                _popup = new Popup { Child = LayoutRoot };
-                Container.Child = _popup;
+                m_popup = new Popup { Child = LayoutRoot };
+                Container.Child = m_popup;
             }
         }
 
         private void RemovePopup()
         {
-            if (_popup != null && Container != null && LayoutRoot != null)
+            if (m_popup != null && Container != null && LayoutRoot != null)
             {
-                _popup.Child = null;
-                _popup = null;
+                m_popup.Child = null;
+                m_popup = null;
                 DisconnectAdornerChild();
                 Container.Child = LayoutRoot;
             }
@@ -909,7 +870,7 @@ namespace ModernWpf.Controls
 
         private static void ThorwIfAlreadyOpen()
         {
-            if (_tcs != null)
+            if (s_tcs != null)
             {
                 throw new InvalidOperationException("Only a single ContentDialog can be open at any time.");
             }
@@ -926,8 +887,8 @@ namespace ModernWpf.Controls
 
         private static Task<ContentDialogResult> CreateAsyncOperation()
         {
-            _tcs = new TaskCompletionSource<ContentDialogResult>();
-            return _tcs.Task;
+            s_tcs = new TaskCompletionSource<ContentDialogResult>();
+            return s_tcs.Task;
         }
 
         private static void DisableKeyboardNavigation(DependencyObject element)
@@ -1024,5 +985,44 @@ namespace ModernWpf.Controls
             }
         }
 #endif
+
+        private const string DialogShowingStatesGroup = "DialogShowingStates";
+        private const string DialogHiddenState = "DialogHidden";
+        private const string DialogShowingState = "DialogShowing";
+        private const string DialogShowingWithoutSmokeLayerState = "DialogShowingWithoutSmokeLayer";
+
+        private const string DialogSizingStatesGroup = "DialogSizingStates";
+        private const string DefaultDialogSizingState = "DefaultDialogSizing";
+        private const string FullDialogSizingState = "FullDialogSizing";
+
+        private const string ButtonsVisibilityStatesGroup = "ButtonsVisibilityStates";
+        private const string AllVisibleState = "AllVisible";
+        private const string NoneVisibleState = "NoneVisible";
+        private const string PrimaryVisibleState = "PrimaryVisible";
+        private const string SecondaryVisibleState = "SecondaryVisible";
+        private const string CloseVisibleState = "CloseVisible";
+        private const string PrimaryAndSecondaryVisibleState = "PrimaryAndSecondaryVisible";
+        private const string PrimaryAndCloseVisibleState = "PrimaryAndCloseVisible";
+        private const string SecondaryAndCloseVisibleState = "SecondaryAndCloseVisible";
+
+        private const string DefaultButtonStatesGroup = "DefaultButtonStates";
+        private const string NoDefaultButtonState = "NoDefaultButton";
+        private const string PrimaryAsDefaultButtonState = "PrimaryAsDefaultButton";
+        private const string SecondaryAsDefaultButtonState = "SecondaryAsDefaultButton";
+        private const string CloseAsDefaultButtonState = "CloseAsDefaultButton";
+
+        private const string DialogBorderStatesGroup = "DialogBorderStates";
+        private const string NoBorderState = "NoBorder";
+        private const string AccentColorBorderState = "AccentColorBorder";
+
+        private static TaskCompletionSource<ContentDialogResult> s_tcs;
+
+        private ContentDialogAdorner m_adorner;
+        private AdornerLayer m_adornerLayer;
+        private Popup m_popup;
+        private bool m_opening;
+        private bool m_isShowing;
+        private ContentDialogResult m_result;
+        private readonly DispatcherTimer m_closeTimer;
     }
 }
