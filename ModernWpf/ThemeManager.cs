@@ -154,20 +154,20 @@ namespace ModernWpf
 
         private void ApplyAccentColor()
         {
-            if (ColorsHelper.IsInitialized)
+            if (ColorsHelper.Current.IsInitialized)
             {
                 UpdateAccentColors();
 
                 foreach (var themeDictionary in _defaultThemeDictionaries.Values)
                 {
-                    ColorsHelper.UpdateBrushes(themeDictionary);
+                    ColorsHelper.Current.UpdateBrushes(themeDictionary);
                 }
             }
         }
 
         private void UpdateActualAccentColor()
         {
-            if (ColorsHelper.IsInitialized)
+            if (ColorsHelper.Current.IsInitialized)
             {
                 if (UsingSystemAccentColor)
                 {
@@ -184,11 +184,11 @@ namespace ModernWpf
         {
             if (UsingSystemAccentColor)
             {
-                ColorsHelper.FetchSystemAccentColors();
+                ColorsHelper.Current.FetchSystemAccentColors();
             }
             else
             {
-                ColorsHelper.SetAccent(ActualAccentColor);
+                ColorsHelper.Current.SetAccent(ActualAccentColor);
             }
         }
 
@@ -651,7 +651,7 @@ namespace ModernWpf
 
             return null;
         }
-        
+
         internal void Initialize()
         {
             if (_isInitialized)
@@ -674,27 +674,34 @@ namespace ModernWpf
         private void OnApplicationStartup(object sender, StartupEventArgs e)
         {
             _applicationStarted = true;
-            ColorsHelper.BackgroundColorChanged += OnSystemBackgroundColorChanged;
-            ColorsHelper.AccentColorChanged += OnSystemAccentColorChanged;
-            ColorsHelper.Initialize();
+            ColorsHelper.Current.BackgroundColorChanged += OnSystemBackgroundColorChanged;
+            ColorsHelper.Current.AccentColorChanged += OnSystemAccentColorChanged;
+            ColorsHelper.Current.Initialize();
+            Application.Current.Resources.MergedDictionaries.Insert(0, ColorsHelper.Current.Colors);
             UpdateActualAccentColor();
             UpdateActualApplicationTheme();
         }
 
         private void OnSystemBackgroundColorChanged(object sender, EventArgs e)
         {
-            if (UsingSystemTheme)
+            Dispatcher.BeginInvoke((Action)(() =>
             {
-                UpdateActualApplicationTheme();
-            }
+                if (UsingSystemTheme)
+                {
+                    UpdateActualApplicationTheme();
+                }
+            }));
         }
 
         private void OnSystemAccentColorChanged(object sender, EventArgs e)
         {
-            if (UsingSystemAccentColor)
+            Dispatcher.BeginInvoke((Action)(() =>
             {
-                UpdateActualAccentColor();
-            }
+                if (UsingSystemAccentColor)
+                {
+                    UpdateActualAccentColor();
+                }
+            }));
         }
 
         private void OnSystemParametersChanged(object sender, PropertyChangedEventArgs e)

@@ -5,12 +5,11 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Threading;
 using Windows.UI.ViewManagement;
 
 namespace ModernWpf
 {
-    internal static class ColorsHelper
+    internal class ColorsHelper
     {
         private const string AccentKey = "SystemAccentColor";
         private const string AccentDark1Key = "SystemAccentColorDark1";
@@ -22,21 +21,29 @@ namespace ModernWpf
 
         internal static readonly Color DefaultAccentColor = Color.FromRgb(0x00, 0x78, 0xD7);
 
-        private static readonly ResourceDictionary _colors = new ResourceDictionary();
-        private static object _uiSettings;
+        private readonly ResourceDictionary _colors = new ResourceDictionary();
+        private object _uiSettings;
 
-        private static Color _systemBackground;
-        private static Color _systemAccent;
+        private Color _systemBackground;
+        private Color _systemAccent;
+
+        private ColorsHelper()
+        {
+        }
 
         public static bool SystemColorsSupported { get; } = Environment.OSVersion.Version.Major >= 10;
 
-        public static bool IsInitialized { get; private set; }
+        public static ColorsHelper Current { get; } = new ColorsHelper();
 
-        public static event EventHandler BackgroundColorChanged;
+        public bool IsInitialized { get; private set; }
 
-        public static event EventHandler AccentColorChanged;
+        public ResourceDictionary Colors => _colors;
 
-        public static void Initialize()
+        public event EventHandler BackgroundColorChanged;
+
+        public event EventHandler AccentColorChanged;
+
+        public void Initialize()
         {
             if (IsInitialized)
             {
@@ -48,12 +55,11 @@ namespace ModernWpf
                 ListenToSystemColorChanges();
             }
 
-            Application.Current.Resources.MergedDictionaries.Insert(0, _colors);
             IsInitialized = true;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void FetchSystemAccentColors()
+        public void FetchSystemAccentColors()
         {
             var uiSettings = new UISettings();
             _colors[AccentKey] = uiSettings.GetColorValue(UIColorType.Accent).ToColor();
@@ -65,7 +71,7 @@ namespace ModernWpf
             _colors[AccentLight3Key] = uiSettings.GetColorValue(UIColorType.AccentLight3).ToColor();
         }
 
-        public static void SetAccent(Color accent)
+        public void SetAccent(Color accent)
         {
             Color color = accent;
             _colors[AccentKey] = color;
@@ -93,7 +99,7 @@ namespace ModernWpf
             colors.Remove(AccentLight3Key);
         }
 
-        public static void UpdateBrushes(ResourceDictionary themeDictionary)
+        public void UpdateBrushes(ResourceDictionary themeDictionary)
         {
             int count = 0;
 
@@ -121,13 +127,7 @@ namespace ModernWpf
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static Color ToColor(this Windows.UI.Color color)
-        {
-            return Color.FromArgb(color.A, color.R, color.G, color.B);
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void ListenToSystemColorChanges()
+        private void ListenToSystemColorChanges()
         {
             var uiSettings = new UISettings();
 
@@ -147,20 +147,14 @@ namespace ModernWpf
                 if (_systemBackground != background)
                 {
                     _systemBackground = background;
-                    Application.Current?.Dispatcher.BeginInvoke((Action)(() =>
-                    {
-                        BackgroundColorChanged?.Invoke(null, EventArgs.Empty);
-                    }));
+                    BackgroundColorChanged?.Invoke(null, EventArgs.Empty);
                 }
 
                 var accent = sender.GetColorValue(UIColorType.Accent).ToColor();
                 if (_systemAccent != accent)
                 {
                     _systemAccent = accent;
-                    Application.Current?.Dispatcher.BeginInvoke((Action)(() =>
-                    {
-                        AccentColorChanged?.Invoke(null, EventArgs.Empty);
-                    }));
+                    AccentColorChanged?.Invoke(null, EventArgs.Empty);
                 }
             };
 
