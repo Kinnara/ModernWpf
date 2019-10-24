@@ -19,7 +19,7 @@
 
   <PropertyGroup>
     <PackageId>ModernWpfUI</PackageId>
-    <Version>0.1.191022005</Version>
+    <Version>0.1.191025002</Version>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <FileVersion>0.1.0.0</FileVersion>
     <Authors>Yimeng Wu</Authors>

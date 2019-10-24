@@ -506,10 +506,7 @@ namespace ModernWpf.Controls
             var owner = ActualOwner;
             if (owner == null)
             {
-                m_appActivatedTcs = new TaskCompletionSource<bool>();
-                Application.Current.Activated += OnApplicationActivated;
-                await m_appActivatedTcs.Task;
-                m_appActivatedTcs = null;
+                await WaitUntilApplicationActivated();
                 owner = ActualOwner;
             }
 
@@ -520,7 +517,20 @@ namespace ModernWpf.Controls
 
             ThrowIfHasOpenDialog(owner);
 
-            var cp = FindContentPresenter(owner) ?? throw new InvalidOperationException("Cound not find the ContentPresenter in the owner window.");
+            var cp = FindContentPresenter(owner);
+            if (cp == null)
+            {
+                if (!owner.IsActive)
+                {
+                    await WaitUntilOwnerActivated(owner);
+                    cp = FindContentPresenter(owner);
+                }
+            }
+
+            if (cp == null)
+            {
+                throw new InvalidOperationException("Cound not find the ContentPresenter in the owner window.");
+            }
 
             UIElement dialogRoot;
             if (Parent != null)
@@ -956,10 +966,36 @@ namespace ModernWpf.Controls
         private void OnApplicationActivated(object sender, EventArgs e)
         {
             Application.Current.Activated -= OnApplicationActivated;
-            if (m_appActivatedTcs != null)
+            if (m_activatedTcs != null)
             {
-                m_appActivatedTcs.TrySetResult(true);
+                m_activatedTcs.TrySetResult(true);
+                m_activatedTcs = null;
             }
+        }
+
+        private void OnOwnerActivated(object sender, EventArgs e)
+        {
+            var owner = (Window)sender;
+            owner.Activated -= OnOwnerActivated;
+            if (m_activatedTcs != null)
+            {
+                m_activatedTcs.TrySetResult(true);
+                m_activatedTcs = null;
+            }
+        }
+
+        private Task WaitUntilApplicationActivated()
+        {
+            m_activatedTcs = new TaskCompletionSource<bool>();
+            Application.Current.Activated += OnApplicationActivated;
+            return m_activatedTcs.Task;
+        }
+
+        private Task WaitUntilOwnerActivated(Window owner)
+        {
+            m_activatedTcs = new TaskCompletionSource<bool>();
+            owner.Activated += OnOwnerActivated;
+            return m_activatedTcs.Task;
         }
 
         private static void OnButtonTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -1140,7 +1176,7 @@ namespace ModernWpf.Controls
         private const string AccentColorBorderState = "AccentColorBorder";
 
         private TaskCompletionSource<ContentDialogResult> m_showTcs;
-        private TaskCompletionSource<bool> m_appActivatedTcs;
+        private TaskCompletionSource<bool> m_activatedTcs;
         private ContentDialogAdorner m_adorner;
         private AdornerLayer m_adornerLayer;
         private Popup m_popup;
