@@ -411,7 +411,11 @@
             <EventTrigger RoutedEvent="Loaded">
                 <BeginStoryboard>
                     <Storyboard>
-                        <animation:FadeInThemeAnimation />
+                        <DoubleAnimation
+                            Storyboard.TargetProperty="Opacity"
+                            From="0"
+                            To="1"
+                            Duration="0:0:0.250" />
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
