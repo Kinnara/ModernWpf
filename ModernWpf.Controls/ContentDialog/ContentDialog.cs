@@ -501,17 +501,26 @@ namespace ModernWpf.Controls
 
         public event TypedEventHandler<ContentDialog, ContentDialogButtonClickEventArgs> CloseButtonClick;
 
-        public Task<ContentDialogResult> ShowAsync()
+        public async Task<ContentDialogResult> ShowAsync()
         {
             var owner = ActualOwner;
             if (owner == null)
             {
-                throw new InvalidOperationException("This ContentDialog doesn't have an owner.");
+                m_appActivatedTcs = new TaskCompletionSource<bool>();
+                Application.Current.Activated += OnApplicationActivated;
+                await m_appActivatedTcs.Task;
+                m_appActivatedTcs = null;
+                owner = ActualOwner;
+            }
+
+            if (owner == null)
+            {
+                throw new InvalidOperationException("Could not find an owner window for this ContentDialog.");
             }
 
             ThrowIfHasOpenDialog(owner);
 
-            var cp = FindContentPresenter(owner) ?? throw new InvalidOperationException("Window ContentPresenter not found."); // TODO: Better message
+            var cp = FindContentPresenter(owner) ?? throw new InvalidOperationException("Cound not find the ContentPresenter in the owner window.");
 
             UIElement dialogRoot;
             if (Parent != null)
@@ -534,7 +543,7 @@ namespace ModernWpf.Controls
             m_openDialogOwner = owner;
             SetOpenDialog(owner, this);
 
-            return CreateAsyncOperation();
+            return await CreateAsyncOperation();
         }
 
         public Task<ContentDialogResult> ShowAsync(ContentDialogPlacement placement)
@@ -944,6 +953,15 @@ namespace ModernWpf.Controls
             Hide();
         }
 
+        private void OnApplicationActivated(object sender, EventArgs e)
+        {
+            Application.Current.Activated -= OnApplicationActivated;
+            if (m_appActivatedTcs != null)
+            {
+                m_appActivatedTcs.TrySetResult(true);
+            }
+        }
+
         private static void OnButtonTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((ContentDialog)d).UpdateButtonsVisibilityStates(true);
@@ -972,11 +990,23 @@ namespace ModernWpf.Controls
 
         private static ContentPresenter FindContentPresenter(Window window)
         {
+            ContentPresenter cp = null;
+
             if (window.Content is UIElement windowContent)
             {
-                return VisualTreeHelper.GetParent(windowContent) as ContentPresenter;
+                cp = VisualTreeHelper.GetParent(windowContent) as ContentPresenter;
             }
-            return null;
+
+            if (cp == null)
+            {
+                var ad = window.FindDescendant<AdornerDecorator>();
+                if (ad != null)
+                {
+                    cp = ad.FindDescendant<ContentPresenter>();
+                }
+            }
+
+            return cp;
         }
 
         private Task<ContentDialogResult> CreateAsyncOperation()
@@ -1110,6 +1140,7 @@ namespace ModernWpf.Controls
         private const string AccentColorBorderState = "AccentColorBorder";
 
         private TaskCompletionSource<ContentDialogResult> m_showTcs;
+        private TaskCompletionSource<bool> m_appActivatedTcs;
         private ContentDialogAdorner m_adorner;
         private AdornerLayer m_adornerLayer;
         private Popup m_popup;
