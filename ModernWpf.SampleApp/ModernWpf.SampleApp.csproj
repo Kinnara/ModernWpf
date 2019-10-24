@@ -7,10 +7,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <Reference Include="System.Windows.Presentation" />
-  </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="BackgroundUI\**" />
     <Compile Remove="ControlPages\ProgressThreadedPage.xaml.cs" />
