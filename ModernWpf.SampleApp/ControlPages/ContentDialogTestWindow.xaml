@@ -1,0 +1,26 @@
+﻿<Window
+    x:Class="ModernWpf.SampleApp.ControlPages.ContentDialogTestWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    mc:Ignorable="d"
+    Title="Content Dialog Test Window"
+    Width="800"
+    Height="600"
+    ui:WindowHelper.UseModernWindowStyle="True">
+    <Grid>
+        <controls:SimpleStackPanel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+            <Button
+                Content="Show content dialog in this window"
+                Click="ShowDialogInThisWindow" />
+            <Button
+                Content="Show content dialog in main window"
+                Click="ShowDialogInMainWindow" />
+        </controls:SimpleStackPanel>
+    </Grid>
+</Window>

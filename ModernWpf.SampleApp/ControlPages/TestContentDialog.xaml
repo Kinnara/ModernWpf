@@ -16,12 +16,13 @@
     SecondaryButtonText="No"
     CloseButtonText="Cancel"
     DefaultButton="Primary"
-    PrimaryButtonClick="Dialog_PrimaryButtonClick"
-    SecondaryButtonClick="Dialog_SecondaryButtonClick"
-    CloseButtonClick="Dialog_CloseButtonClick">
+    PrimaryButtonClick="OnPrimaryButtonClick"
+    SecondaryButtonClick="OnSecondaryButtonClick"
+    CloseButtonClick="OnCloseButtonClick"
+    Closed="OnClosed">
     <controls:SimpleStackPanel
         Spacing="12"
-        Margin="0,0,0,12">
+        Margin="0,0,0,24">
         <TextBox
             ui:ControlHelper.Header="Title"
             Text="{Binding ElementName=dialog, Path=Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -44,5 +45,17 @@
         <CheckBox
             Content="IsShadowEnabled"
             IsChecked="{Binding ElementName=dialog, Path=IsShadowEnabled, Mode=TwoWay}" />
+        <StackPanel>
+            <Button
+                Content="Try to open another ContentDialog"
+                Click="TryOpenAnother" />
+            <TextBlock
+                x:Name="ErrorText"
+                Style="{StaticResource BodyTextBlockStyle}"
+                Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
+                Margin="0,8,0,0"
+                Visibility="Collapsed" />
+        </StackPanel>
+
     </controls:SimpleStackPanel>
 </ui:ContentDialog>

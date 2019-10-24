@@ -8,11 +8,19 @@ namespace ModernWpf.Controls
     /// </summary>
     public sealed class BackRequestedEventArgs : RoutedEventArgs
     {
-        internal BackRequestedEventArgs() : base(WindowHelper.BackRequestedEvent)
+        internal BackRequestedEventArgs() : this(WindowHelper.BackRequestedEvent)
         {
         }
 
-        internal BackRequestedEventArgs(object source) : base(WindowHelper.BackRequestedEvent, source)
+        internal BackRequestedEventArgs(object source) : this(WindowHelper.BackRequestedEvent, source)
+        {
+        }
+
+        internal BackRequestedEventArgs(RoutedEvent routedEvent) : base(routedEvent)
+        {
+        }
+
+        internal BackRequestedEventArgs(RoutedEvent routedEvent, object source) : base(routedEvent, source)
         {
         }
     }

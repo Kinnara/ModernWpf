@@ -9,6 +9,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -406,6 +407,48 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region OpenDialog
+
+        private static readonly DependencyProperty OpenDialogProperty =
+            DependencyProperty.RegisterAttached(
+                "OpenDialog",
+                typeof(ContentDialog),
+                typeof(ContentDialog),
+                new PropertyMetadata(default(ContentDialog), OnOpenDialogChanged));
+
+        private static ContentDialog GetOpenDialog(Window window)
+        {
+            return (ContentDialog)window.GetValue(OpenDialogProperty);
+        }
+
+        private static void SetOpenDialog(Window window, ContentDialog value)
+        {
+            window.SetValue(OpenDialogProperty, value);
+        }
+
+        private static void OnOpenDialogChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var owner = (Window)d;
+
+            var oldValue = (ContentDialog)e.OldValue;
+            if (oldValue != null)
+            {
+                oldValue.UnsubscribeToBackRequested(owner);
+            }
+
+            var newValue = (ContentDialog)e.NewValue;
+            if (newValue != null)
+            {
+                newValue.SubscribeToBackRequested(owner);
+            }
+        }
+
+        #endregion
+
+        public Window Owner { get; set; }
+
+        private Window ActualOwner => Owner ?? Application.Current.MainWindow;
+
         private Border Container { get; set; }
 
         private FrameworkElement LayoutRoot { get; set; }
@@ -428,6 +471,16 @@ namespace ModernWpf.Controls
 
                     if (!m_isShowing)
                     {
+                        if (m_isShowingInPlace)
+                        {
+                            m_isShowingInPlace = false;
+                        }
+                        else if (m_openDialogOwner != null)
+                        {
+                            m_openDialogOwner.ClearValue(OpenDialogProperty);
+                            m_openDialogOwner = null;
+                        }
+
                         m_closeTimer.Start();
                     }
 
@@ -450,9 +503,15 @@ namespace ModernWpf.Controls
 
         public Task<ContentDialogResult> ShowAsync()
         {
-            ThorwIfAlreadyOpen();
+            var owner = ActualOwner;
+            if (owner == null)
+            {
+                throw new InvalidOperationException("This ContentDialog doesn't have an owner.");
+            }
 
-            var cp = FindWindowContentPresenter() ?? throw new InvalidOperationException("Window ContentPresenter not found.");
+            ThrowIfHasOpenDialog(owner);
+
+            var cp = FindContentPresenter(owner) ?? throw new InvalidOperationException("Window ContentPresenter not found."); // TODO: Better message
 
             UIElement dialogRoot;
             if (Parent != null)
@@ -472,17 +531,23 @@ namespace ModernWpf.Controls
             DisableKeyboardNavigation(cp);
 
             IsShowing = true;
+            m_openDialogOwner = owner;
+            SetOpenDialog(owner, this);
+
             return CreateAsyncOperation();
         }
 
         public Task<ContentDialogResult> ShowAsync(ContentDialogPlacement placement)
         {
-            ThorwIfAlreadyOpen();
-
             if (placement == ContentDialogPlacement.InPlace && Parent != null)
             {
+                if (IsShowing)
+                {
+                    ThrowAlreadyOpenException();
+                }
                 RemovePopup();
                 IsShowing = true;
+                m_isShowingInPlace = true;
                 return CreateAsyncOperation();
             }
             else
@@ -549,9 +614,11 @@ namespace ModernWpf.Controls
             }
 
 #if DEBUG
-            var dialogShowingStates = GetTemplateChild(DialogShowingStatesGroup) as VisualStateGroup;
-            dialogShowingStates.CurrentStateChanging += DialogShowingStates_CurrentStateChanging;
-            dialogShowingStates.CurrentStateChanged += DialogShowingStates_CurrentStateChanged;
+            if (GetTemplateChild(DialogShowingStatesGroup) is VisualStateGroup dialogShowingStates)
+            {
+                dialogShowingStates.CurrentStateChanging += DialogShowingStates_CurrentStateChanging;
+                dialogShowingStates.CurrentStateChanged += DialogShowingStates_CurrentStateChanged;
+            }
 #endif
             UpdateVisualStates(false);
 
@@ -708,11 +775,11 @@ namespace ModernWpf.Controls
                 m_adornerLayer = null;
             }
 
-            if (s_tcs != null)
+            if (m_showTcs != null)
             {
                 Closed?.Invoke(this, new ContentDialogClosedEventArgs(m_result));
-                s_tcs.TrySetResult(m_result);
-                s_tcs = null;
+                m_showTcs.TrySetResult(m_result);
+                m_showTcs = null;
                 m_result = ContentDialogResult.None;
             }
         }
@@ -855,6 +922,28 @@ namespace ModernWpf.Controls
             }
         }
 
+        private void SubscribeToBackRequested(Window owner)
+        {
+            var handler = new EventHandler<BackRequestedEventArgs>(OnBackRequested);
+            owner.AddHandler(WindowHelper.InternalBackRequestedEvent, handler);
+            m_backRequestedHandler = handler;
+        }
+
+        private void UnsubscribeToBackRequested(Window owner)
+        {
+            if (m_backRequestedHandler != null)
+            {
+                owner.RemoveHandler(WindowHelper.InternalBackRequestedEvent, m_backRequestedHandler);
+                m_backRequestedHandler = null;
+            }
+        }
+
+        private void OnBackRequested(object sender, BackRequestedEventArgs e)
+        {
+            e.Handled = true;
+            Hide();
+        }
+
         private static void OnButtonTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((ContentDialog)d).UpdateButtonsVisibilityStates(true);
@@ -868,27 +957,32 @@ namespace ModernWpf.Controls
             }
         }
 
-        private static void ThorwIfAlreadyOpen()
+        private void ThrowIfHasOpenDialog(Window owner)
         {
-            if (s_tcs != null)
+            if (GetOpenDialog(owner) != null)
             {
-                throw new InvalidOperationException("Only a single ContentDialog can be open at any time.");
+                ThrowAlreadyOpenException();
             }
         }
 
-        private static ContentPresenter FindWindowContentPresenter()
+        private static void ThrowAlreadyOpenException()
         {
-            if (Application.Current?.MainWindow?.Content is UIElement windowContent)
+            throw new InvalidOperationException("Only a single ContentDialog can be open at any time.");
+        }
+
+        private static ContentPresenter FindContentPresenter(Window window)
+        {
+            if (window.Content is UIElement windowContent)
             {
                 return VisualTreeHelper.GetParent(windowContent) as ContentPresenter;
             }
             return null;
         }
 
-        private static Task<ContentDialogResult> CreateAsyncOperation()
+        private Task<ContentDialogResult> CreateAsyncOperation()
         {
-            s_tcs = new TaskCompletionSource<ContentDialogResult>();
-            return s_tcs.Task;
+            m_showTcs = new TaskCompletionSource<ContentDialogResult>();
+            return m_showTcs.Task;
         }
 
         private static void DisableKeyboardNavigation(DependencyObject element)
@@ -1015,14 +1109,16 @@ namespace ModernWpf.Controls
         private const string NoBorderState = "NoBorder";
         private const string AccentColorBorderState = "AccentColorBorder";
 
-        private static TaskCompletionSource<ContentDialogResult> s_tcs;
-
+        private TaskCompletionSource<ContentDialogResult> m_showTcs;
         private ContentDialogAdorner m_adorner;
         private AdornerLayer m_adornerLayer;
         private Popup m_popup;
         private bool m_opening;
         private bool m_isShowing;
+        private bool m_isShowingInPlace;
+        private Window m_openDialogOwner;
         private ContentDialogResult m_result;
         private readonly DispatcherTimer m_closeTimer;
+        private EventHandler<BackRequestedEventArgs> m_backRequestedHandler;
     }
 }

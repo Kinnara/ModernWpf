@@ -144,7 +144,7 @@ namespace ModernWpf.Controls.Primitives
         public static readonly RoutedEvent BackRequestedEvent =
             EventManager.RegisterRoutedEvent(
                 "BackRequested",
-                RoutingStrategy.Bubble,
+                RoutingStrategy.Tunnel,
                 typeof(EventHandler<BackRequestedEventArgs>),
                 typeof(WindowHelper));
 
@@ -161,6 +161,27 @@ namespace ModernWpf.Controls.Primitives
         private static void RaiseBackRequested(Window window)
         {
             window.RaiseEvent(new BackRequestedEventArgs(window));
+        }
+
+        #endregion
+
+        #region InternalBackRequested
+
+        internal static readonly RoutedEvent InternalBackRequestedEvent =
+            EventManager.RegisterRoutedEvent(
+                "InternalBackRequested",
+                RoutingStrategy.Tunnel,
+                typeof(EventHandler<BackRequestedEventArgs>),
+                typeof(WindowHelper));
+
+        internal static void AddInternalBackRequestedHandler(Window window, EventHandler<BackRequestedEventArgs> handler)
+        {
+            window.AddHandler(InternalBackRequestedEvent, handler);
+        }
+
+        internal static void RemoveInternalBackRequestedHandler(Window window, EventHandler<BackRequestedEventArgs> handler)
+        {
+            window.RemoveHandler(InternalBackRequestedEvent, handler);
         }
 
         #endregion
@@ -202,7 +223,12 @@ namespace ModernWpf.Controls.Primitives
             var backButton = (Button)sender;
             if (backButton.TemplatedParent is Window window)
             {
-                RaiseBackRequested(window);
+                var internalArgs = new BackRequestedEventArgs(InternalBackRequestedEvent, window);
+                window.RaiseEvent(internalArgs);
+                if (!internalArgs.Handled)
+                {
+                    RaiseBackRequested(window);
+                }
             }
         }
 
