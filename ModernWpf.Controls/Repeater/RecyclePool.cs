@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -76,18 +75,18 @@ namespace ModernWpf.Controls
                     // the enter/leave cost during recycling.
                     // TODO: prioritize elements with the same owner to those without an owner.
                     var winrtOwner = owner;
-                    var index = elements.FindIndex(elemInfo => elemInfo.Owner == winrtOwner || elementInfo.Owner == null);
+                    var index = elements.FindIndex(elemInfo => elemInfo.Owner == winrtOwner || elemInfo.Owner == null);
 
                     if (index >= 0)
                     {
                         elementInfo = elements[index];
-                        // elements.erase(iter);
-                        elements.RemoveAt(index);
+                        elements.RemoveAt(index); // elements.erase(iter);
                     }
                     else
                     {
-                        elementInfo = elements.Last();
-                        elements.RemoveAt(elements.Count - 1);
+                        // TODO: Commented out to avoid display issues and exceptions on WPF
+                        //elementInfo = elements[elements.Count - 1];
+                        //elements.RemoveAt(elements.Count - 1);
                     }
 
                     var ownerAsPanel = EnsureOwnerIsPanelOrNull(winrtOwner);
