@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
@@ -337,7 +338,7 @@ namespace ModernWpf.Controls
             {
                 var element = children[i];
                 var virtInfo = TryGetVirtualizationInfo(element);
-                if (virtInfo != null && virtInfo.IsRealized&& virtInfo.Index == index)
+                if (virtInfo != null && virtInfo.IsRealized && virtInfo.Index == index)
                 {
                     result = element;
                 }
@@ -398,6 +399,7 @@ namespace ModernWpf.Controls
 
         internal static VirtualizationInfo CreateAndInitializeVirtualizationInfo(UIElement element)
         {
+            Debug.Assert(TryGetVirtualizationInfo(element) == null);
             var result = new VirtualizationInfo();
             element.SetValue(VirtualizationInfoProperty, result);
             return result;

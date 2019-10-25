@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -341,6 +342,8 @@ namespace ModernWpf.Controls
 
         private bool AddScroller(IRepeaterScrollingSurface scroller)
         {
+            Debug.Assert(!(m_horizontalScroller != null && m_verticalScroller != null));
+
             bool isHorizontallyScrollable = scroller.IsHorizontallyScrollable;
             bool isVerticallyScrollable = scroller.IsVerticallyScrollable;
             bool allScrollersSet = (m_horizontalScroller != null || isHorizontallyScrollable) && (m_verticalScroller != null || isVerticallyScrollable);
@@ -366,6 +369,8 @@ namespace ModernWpf.Controls
 
         private void UpdateViewport()
         {
+            Debug.Assert(!m_managingViewportDisabled);
+
             var previousVisibleWindow = m_visibleWindow;
             var horizontalVisibleWindow =
                 m_horizontalScroller != null ?

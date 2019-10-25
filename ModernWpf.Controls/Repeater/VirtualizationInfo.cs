@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System;
+using System.Diagnostics;
 using System.Windows;
 
 namespace ModernWpf.Controls
@@ -46,6 +47,7 @@ namespace ModernWpf.Controls
 
         public void MoveOwnershipToLayoutFromElementFactory(int index, string uniqueId)
         {
+            Debug.Assert(Owner == ElementOwner.ElementFactory);
             Owner = ElementOwner.Layout;
             Index = index;
             UniqueId = uniqueId;
@@ -53,16 +55,20 @@ namespace ModernWpf.Controls
 
         public void MoveOwnershipToLayoutFromUniqueIdResetPool()
         {
+            Debug.Assert(Owner == ElementOwner.UniqueIdResetPool);
             Owner = ElementOwner.Layout;
         }
 
         public void MoveOwnershipToLayoutFromPinnedPool()
         {
+            Debug.Assert(Owner == ElementOwner.PinnedPool);
+            Debug.Assert(!IsPinned);
             Owner = ElementOwner.Layout;
         }
 
         public void MoveOwnershipToElementFactory()
         {
+            Debug.Assert(Owner != ElementOwner.ElementFactory);
             Owner = ElementOwner.ElementFactory;
             m_pinCounter = 0u;
             Index = -1;
@@ -72,6 +78,7 @@ namespace ModernWpf.Controls
 
         public void MoveOwnershipToUniqueIdResetPoolFromLayout()
         {
+            Debug.Assert(Owner == ElementOwner.Layout);
             Owner = ElementOwner.UniqueIdResetPool;
             // Keep the pinCounter the same. If the container survives the reset
             // it can go on being pinned as if nothing happened.
@@ -82,6 +89,7 @@ namespace ModernWpf.Controls
             // During a unique id reset, some elements might get removed.
             // Their ownership will go from the UniqueIdResetPool to the Animator.
             // The common path though is for ownership to go from Layout to Animator.
+            Debug.Assert(Owner == ElementOwner.Layout || Owner == ElementOwner.UniqueIdResetPool);
             Owner = ElementOwner.Animator;
             Index = -1;
             m_pinCounter = 0u;
@@ -89,6 +97,7 @@ namespace ModernWpf.Controls
 
         public void MoveOwnershipToPinnedPool()
         {
+            Debug.Assert(Owner == ElementOwner.Layout);
             Owner = ElementOwner.PinnedPool;
         }
 
@@ -119,6 +128,7 @@ namespace ModernWpf.Controls
 
         public void UpdateIndex(int newIndex)
         {
+            Debug.Assert(IsRealized);
             Index = newIndex;
         }
 

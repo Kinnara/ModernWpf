@@ -216,6 +216,7 @@ namespace ModernWpf.Controls
                         // SuggestedAnchor will be 1 (used to be 0) and GetAnchorForTargetElement will return 0 (left most item in row). However 0 is not in the
                         // realized range yet. In this case we realize the gap between the target anchor and the suggested anchor.
                         int firstRealizedDataIndex = m_elementManager.GetDataIndexFromRealizedRangeIndex(0);
+                        Debug.Assert(anchorIndex < firstRealizedDataIndex);
                         for (int i = firstRealizedDataIndex - 1; i >= anchorIndex; --i)
                         {
                             m_elementManager.EnsureElementRealized(false /*forward*/, i, layoutId);
@@ -242,6 +243,7 @@ namespace ModernWpf.Controls
                 }
             }
 
+            Debug.Assert(anchorIndex == -1 || m_elementManager.IsIndexValidInData(anchorIndex));
             m_firstRealizedDataIndexInsideRealizationWindow = m_lastRealizedDataIndexInsideRealizationWindow = anchorIndex;
             if (m_elementManager.IsIndexValidInData(anchorIndex))
             {
@@ -422,6 +424,7 @@ namespace ModernWpf.Controls
             m_elementManager.ClearRealizedRange();
             // FlowLayout requires that the anchor is the first element in the row.
             var internalAnchor = m_algorithmCallbacks.Algorithm_GetAnchorForTargetElement(index, availableSize, context);
+            Debug.Assert(internalAnchor.Index <= index);
 
             // No need to set the position of the anchor.
             // (0,0) is fine for now since the extent can
@@ -516,6 +519,7 @@ namespace ModernWpf.Controls
                 int realizedElementCount = m_elementManager.GetRealizedElementCount();
                 if (realizedElementCount > 0)
                 {
+                    Debug.Assert(m_firstRealizedDataIndexInsideRealizationWindow != -1 && m_lastRealizedDataIndexInsideRealizationWindow != -1);
                     int countInLine = 0;
                     var previousElementBounds = m_elementManager.GetLayoutBoundsForDataIndex(m_firstRealizedDataIndexInsideRealizationWindow);
                     var currentLineOffset = OrientationBasedMeasures.MajorStart(previousElementBounds);

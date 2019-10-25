@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -182,10 +183,16 @@ namespace ModernWpf.Controls
             {
                 if (firstRealized != null)
                 {
+                    Debug.Assert(lastRealized != null);
                     OrientationBasedMeasures.SetMajorStart(ref extent, OrientationBasedMeasures.MajorStart(firstRealizedLayoutBounds) - firstRealizedItemIndex * averageElementSize);
                     var remainingItems = itemsCount - lastRealizedItemIndex - 1;
                     OrientationBasedMeasures.SetMajorSize(ref extent, OrientationBasedMeasures.MajorEnd(lastRealizedLayoutBounds) - OrientationBasedMeasures.MajorStart(extent) + (remainingItems * averageElementSize));
                 }
+            }
+            else
+            {
+                Debug.Assert(firstRealizedItemIndex == -1);
+                Debug.Assert(lastRealizedItemIndex == -1);
             }
 
             return extent;

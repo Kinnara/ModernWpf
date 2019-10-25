@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Windows;
 
 namespace ModernWpf.Controls
@@ -81,6 +82,8 @@ namespace ModernWpf.Controls
 
         public void Add(UIElement element, int dataIndex)
         {
+            Debug.Assert(IsVirtualizingContext);
+
             if (m_realizedElements.Count == 0)
             {
                 m_firstRealizedDataIndex = dataIndex;
@@ -92,6 +95,7 @@ namespace ModernWpf.Controls
 
         public void Insert(int realizedIndex, int dataIndex, UIElement element)
         {
+            Debug.Assert(IsVirtualizingContext);
             if (realizedIndex == 0)
             {
                 m_firstRealizedDataIndex = dataIndex;
@@ -104,6 +108,7 @@ namespace ModernWpf.Controls
 
         public void ClearRealizedRange(int realizedIndex, int count)
         {
+            Debug.Assert(IsVirtualizingContext);
             for (int i = 0; i < count; i++)
             {
                 // Clear from the edges so that ItemsRepeater can optimize on maintaining 
@@ -132,6 +137,7 @@ namespace ModernWpf.Controls
             // Remove layout elements that are outside the realized range.
             if (IsDataIndexRealized(startIndex))
             {
+                Debug.Assert(IsVirtualizingContext);
                 int rangeIndex = GetRealizedRangeIndexFromDataIndex(startIndex);
 
                 if (forward)
@@ -147,6 +153,7 @@ namespace ModernWpf.Controls
 
         public void ClearRealizedRange()
         {
+            Debug.Assert(IsVirtualizingContext);
             ClearRealizedRange(0, GetRealizedElementCount());
         }
 
@@ -196,7 +203,8 @@ namespace ModernWpf.Controls
 
         public UIElement GetRealizedElement(int dataIndex)
         {
-            return IsVirtualizingContext?
+            Debug.Assert(IsDataIndexRealized(dataIndex));
+            return IsVirtualizingContext ?
                 GetAt(GetRealizedRangeIndexFromDataIndex(dataIndex)) : m_context.GetOrCreateElementAt(dataIndex, ElementRealizationOptions.ForceCreate | ElementRealizationOptions.SuppressAutoRecycle);
         }
 
@@ -214,12 +222,15 @@ namespace ModernWpf.Controls
                 {
                     Insert(0, dataIndex, element);
                 }
+
+                Debug.Assert(IsDataIndexRealized(dataIndex));
             }
         }
 
         // Does the given window intersect the range of realized elements
         public bool IsWindowConnected(Rect window, ScrollOrientation orientation, bool scrollOrientationSameAsFlow)
         {
+            Debug.Assert(IsVirtualizingContext);
             bool intersects = false;
             if (m_realizedElementLayoutBounds.Count > 0)
             {
@@ -246,6 +257,7 @@ namespace ModernWpf.Controls
 
         public void DataSourceChanged(object source, NotifyCollectionChangedEventArgs args)
         {
+            Debug.Assert(IsVirtualizingContext);
             if (m_realizedElements.Count > 0)
             {
                 switch (args.Action)
@@ -313,6 +325,7 @@ namespace ModernWpf.Controls
 
         public int GetElementDataIndex(UIElement suggestedAnchor)
         {
+            Debug.Assert(suggestedAnchor != null);
             var index = m_realizedElements.IndexOf(suggestedAnchor);
             return
                 index >= 0 ?
@@ -322,18 +335,23 @@ namespace ModernWpf.Controls
 
         public int GetDataIndexFromRealizedRangeIndex(int rangeIndex)
         {
-            return IsVirtualizingContext?
+            Debug.Assert(rangeIndex >= 0 && rangeIndex < GetRealizedElementCount());
+            return IsVirtualizingContext ?
                 rangeIndex + m_firstRealizedDataIndex : rangeIndex;
         }
 
         private int GetRealizedRangeIndexFromDataIndex(int dataIndex)
         {
-            return IsVirtualizingContext?
+            Debug.Assert(IsDataIndexRealized(dataIndex));
+            return IsVirtualizingContext ?
                 dataIndex - m_firstRealizedDataIndex : dataIndex;
         }
 
         private void DiscardElementsOutsideWindow(Rect window, ScrollOrientation orientation)
         {
+            Debug.Assert(IsVirtualizingContext);
+            Debug.Assert(m_realizedElements.Count == m_realizedElementLayoutBounds.Count);
+
             // The following illustration explains the cutoff indices.
             // We will clear all the realized elements from both ends
             // up to the corresponding cutoff index.

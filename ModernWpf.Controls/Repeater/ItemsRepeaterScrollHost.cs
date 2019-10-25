@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -16,6 +17,7 @@ namespace ModernWpf.Controls
     {
         public ItemsRepeaterScrollHost()
         {
+            m_pendingBringIntoView = new BringIntoViewState(this);
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -162,6 +164,20 @@ namespace ModernWpf.Controls
             {
                 if (ScrollViewer is ScrollViewer scrollViewer)
                 {
+
+#if DEBUG
+                    // We should not be registring the same element twice. Even through it is functionally ok,
+                    // we will end up spending more time during arrange than we must.
+                    // However checking if an element is already in the list every time a new element is registered is worse for perf.
+                    // So, I'm leaving an assert here to catch regression in our code but in release builds we run without the check.
+                    var elem = element;
+                    var i = m_candidates.FindIndex(c => c.Element == elem);
+                    if (i >= 0)
+                    {
+                        //Debug.Assert(false);
+                    }
+#endif // _DEBUG
+
                     m_candidates.Add(new CandidateInfo(element));
                     m_isAnchorElementDirty = true;
                 }
@@ -171,10 +187,10 @@ namespace ModernWpf.Controls
         void IRepeaterScrollingSurface.UnregisterAnchorCandidate(UIElement element)
         {
             var elem = element;
-            var it = m_candidates.FindIndex(c => c.Element == elem);
-            if (it >= 0)
+            var i = m_candidates.FindIndex(c => c.Element == elem);
+            if (i >= 0)
             {
-                m_candidates.RemoveAt(it);
+                m_candidates.RemoveAt(i);
                 m_isAnchorElementDirty = true;
             }
         }
@@ -228,10 +244,11 @@ namespace ModernWpf.Controls
         private void ApplyPendingChangeView(ScrollViewer scrollViewer)
         {
             var bringIntoView = m_pendingBringIntoView;
+            Debug.Assert(!bringIntoView.ChangeViewCalled);
 
             bringIntoView.ChangeViewCalled = true;
 
-            var layoutSlot = CachedVisualTreeHelpers.GetLayoutSlot(bringIntoView.TargetElement as FrameworkElement);
+            var layoutSlot = CachedVisualTreeHelpers.GetLayoutSlot((FrameworkElement)bringIntoView.TargetElement);
 
             // Arrange bounds are absolute.
             var arrangeBounds = bringIntoView
@@ -260,13 +277,12 @@ namespace ModernWpf.Controls
                 null,
                 !bringIntoView.Animate);
 
-            // TODO
             //m_pendingBringIntoView = std::move(bringIntoView);
         }
 
         private double TrackElement(UIElement element, Rect previousBounds, ScrollViewer scrollViewer)
         {
-            var bounds = LayoutInformation.GetLayoutSlot(element as FrameworkElement);
+            var bounds = LayoutInformation.GetLayoutSlot((FrameworkElement)element);
             var transformer = element.TransformToVisual(scrollViewer.GetContentTemplateRoot());
             var newBounds = transformer.TransformBounds(new Rect(
                 0.0,
@@ -341,17 +357,16 @@ namespace ModernWpf.Controls
                         scrollViewer.VerticalOffset;
                     double viewportEdgeOffset = verticalOffset + HorizontalAnchorRatio * scrollViewer.ViewportHeight + m_pendingViewportShift;
 
-                    CandidateInfo? bestCandidate = null;
+                    CandidateInfo bestCandidate = null;
                     double bestCandidateDistance = float.MaxValue;
 
-                    for (int index = 0; index < m_candidates.Count; index++)
+                    foreach (var candidate in m_candidates)
                     {
-                        var candidate = m_candidates[index];
                         var element = candidate.Element;
 
                         if (!candidate.IsRelativeBoundsSet)
                         {
-                            var bounds = LayoutInformation.GetLayoutSlot(element as FrameworkElement);
+                            var bounds = LayoutInformation.GetLayoutSlot((FrameworkElement)element);
                             var transformer = element.TransformToVisual(scrollViewer.GetContentTemplateRoot());
                             candidate.RelativeBounds = transformer.TransformBounds(new Rect(
                                 0.0,
@@ -369,10 +384,10 @@ namespace ModernWpf.Controls
                         }
                     }
 
-                    if (bestCandidate.HasValue)
+                    if (bestCandidate != null)
                     {
-                        m_anchorElement = bestCandidate.Value.Element;
-                        m_anchorElementRelativeBounds = bestCandidate.Value.RelativeBounds;
+                        m_anchorElement = bestCandidate.Element;
+                        m_anchorElementRelativeBounds = bestCandidate.RelativeBounds;
                     }
                     else
                     {
@@ -417,7 +432,7 @@ namespace ModernWpf.Controls
 
         private bool HasPendingBringIntoView => m_pendingBringIntoView.TargetElement != null;
 
-        private struct CandidateInfo
+        private class CandidateInfo
         {
             public CandidateInfo(UIElement element)
             {
@@ -432,8 +447,13 @@ namespace ModernWpf.Controls
             public static Rect InvalidBounds = Rect.Empty;
         }
 
-        private struct BringIntoViewState
+        private class BringIntoViewState
         {
+            public BringIntoViewState(UIElement owner)
+            {
+                TargetElement = owner;
+            }
+
             public BringIntoViewState(
                 UIElement targetElement,
                 double alignmentX,
@@ -473,7 +493,6 @@ namespace ModernWpf.Controls
         private UIElement m_anchorElement;
         private Rect m_anchorElementRelativeBounds;
         // Whenever the m_candidates list changes, we set this to true.
-
         private bool m_isAnchorElementDirty = true;
 
         private double m_horizontalEdge;

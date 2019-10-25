@@ -72,8 +72,8 @@ namespace ModernWpf.Controls
             }
 
             // Both First and Last indices need to be valid or default.
-            //Debug.Assert((m_firstRealizedElementIndexHeldByLayout == FirstRealizedElementIndexDefault && m_lastRealizedElementIndexHeldByLayout == LastRealizedElementIndexDefault) ||
-            //    (m_firstRealizedElementIndexHeldByLayout != FirstRealizedElementIndexDefault && m_lastRealizedElementIndexHeldByLayout != LastRealizedElementIndexDefault));
+            Debug.Assert((m_firstRealizedElementIndexHeldByLayout == FirstRealizedElementIndexDefault && m_lastRealizedElementIndexHeldByLayout == LastRealizedElementIndexDefault) ||
+                (m_firstRealizedElementIndexHeldByLayout != FirstRealizedElementIndexDefault && m_lastRealizedElementIndexHeldByLayout != LastRealizedElementIndexDefault));
 
             if (index == m_firstRealizedElementIndexHeldByLayout && index == m_lastRealizedElementIndexHeldByLayout)
             {
@@ -165,6 +165,8 @@ namespace ModernWpf.Controls
             {
                 var elementInfo = m_pinnedPool[i];
                 var virtInfo = elementInfo.VirtualizationInfo;
+
+                Debug.Assert(virtInfo.Owner == ElementOwner.PinnedPool);
 
                 if (!virtInfo.IsPinned)
                 {
@@ -405,6 +407,7 @@ namespace ModernWpf.Controls
             UIElement element = null;
 
             bool cachedFirstLastIndicesInvalid = m_firstRealizedElementIndexHeldByLayout == FirstRealizedElementIndexDefault;
+            Debug.Assert(!cachedFirstLastIndicesInvalid || m_lastRealizedElementIndexHeldByLayout == LastRealizedElementIndexDefault);
 
             bool isRequestedIndexInRealizedRange = (m_firstRealizedElementIndexHeldByLayout <= index && index <= m_lastRealizedElementIndexHeldByLayout);
 
@@ -613,6 +616,12 @@ namespace ModernWpf.Controls
 
             if (moveToPinnedPool)
             {
+# if DEBUG
+                for (int i = 0; i < m_pinnedPool.Count; ++i)
+                {
+                    Debug.Assert(m_pinnedPool[i].PinnedElement != element);
+                }
+#endif
                 m_pinnedPool.Add(new PinnedElementInfo(element));
                 virtInfo.MoveOwnershipToPinnedPool();
             }
@@ -857,6 +866,6 @@ namespace ModernWpf.Controls
         private int m_firstRealizedElementIndexHeldByLayout = FirstRealizedElementIndexDefault;
         private int m_lastRealizedElementIndexHeldByLayout = LastRealizedElementIndexDefault;
         private const int FirstRealizedElementIndexDefault = int.MaxValue;
-        private const int LastRealizedElementIndexDefault = int.MaxValue;
+        private const int LastRealizedElementIndexDefault = int.MinValue;
     }
 }

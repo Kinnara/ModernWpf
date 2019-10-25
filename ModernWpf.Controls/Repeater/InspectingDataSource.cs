@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 
 namespace ModernWpf.Controls
@@ -111,6 +112,7 @@ namespace ModernWpf.Controls
 
         private void ListenToCollectionChanges()
         {
+            Debug.Assert(m_vector != null);
             if (m_vector is INotifyCollectionChanged incc)
             {
                 incc.CollectionChanged += OnCollectionChanged;

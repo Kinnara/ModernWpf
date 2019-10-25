@@ -28,7 +28,6 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            //Debug.Assert(repeater1.VerticalCacheLength == 0);
             DataContext = await Contact.GetContactsAsync();
         }
     }

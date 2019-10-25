@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 
 namespace ModernWpf.Controls
@@ -18,6 +19,8 @@ namespace ModernWpf.Controls
 
         public void Add(UIElement element)
         {
+            Debug.Assert(m_owner.ItemsSourceView.HasKeyIndexMapping);
+
             var virtInfo = ItemsRepeater.GetVirtualizationInfo(element);
             var key = virtInfo.UniqueId;
 
@@ -32,6 +35,8 @@ namespace ModernWpf.Controls
 
         public UIElement Remove(int index)
         {
+            Debug.Assert(m_owner.ItemsSourceView.HasKeyIndexMapping);
+
             // Check if there is already a element in the mapping and if so, use it.
             string key = m_owner.ItemsSourceView.KeyFromIndex(index);
             if (m_elementMap.TryGetValue(key, out UIElement element))
@@ -44,6 +49,7 @@ namespace ModernWpf.Controls
 
         public void Clear()
         {
+            Debug.Assert(m_owner.ItemsSourceView.HasKeyIndexMapping);
             m_elementMap.Clear();
         }
 

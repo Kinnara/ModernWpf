@@ -20,6 +20,8 @@ namespace ModernWpf.SampleApp
         public MainPage()
         {
             InitializeComponent();
+            PagesList.SelectedItem = PagesList.Items.OfType<ControlPageInfo>().FirstOrDefault(
+                x => x.NavigateUri.ToString().Contains("ItemsRepeaterPage"));
             NavigateToSelectedPage();
         }
 
