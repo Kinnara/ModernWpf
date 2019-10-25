@@ -336,7 +336,7 @@ namespace ModernWpf.Controls
                 // sure the repeaters will get a second layout pass to fill any empty space they have.
                 if (Math.Abs(unconstrainedPendingViewportShift) > 1)
                 {
-                    ViewportChanged(this, true /* isFinal */);
+                    ViewportChanged?.Invoke(this, true /* isFinal */);
                 }
             }
 

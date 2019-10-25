@@ -8,12 +8,13 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Markup;
+using System.Windows.Threading;
 using ModernWpf.Automation.Peers;
 
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(ItemTemplate))]
-    public class ItemsRepeater : Panel
+    public class ItemsRepeater : ItemsRepeaterPanel
     {
         internal static readonly Point ClearedElementsArrangePosition = new Point(-10000.0, -10000.0);
         // A convention we use in the ItemsRepeater codebase for an invalid Rect value.
@@ -55,11 +56,6 @@ namespace ModernWpf.Controls
             if (IsProcessingCollectionChange)
             {
                 throw new Exception("Cannot run layout in the middle of a collection change.");
-            }
-
-            if (m_measureCount >= 50 && m_lastAvailableSize == availableSize)
-            {
-                return m_lastDesiredSize;
             }
 
             m_viewportManager.OnOwnerMeasuring();
@@ -106,8 +102,7 @@ namespace ModernWpf.Controls
 
                 m_viewportManager.SetLayoutExtent(extent);
                 m_lastAvailableSize = availableSize;
-                m_lastDesiredSize = desiredSize;
-                m_measureCount++;
+                m_lastChildDesiredSizeChangedCounter = m_childDesiredSizeChangedCounter = 0;
                 return desiredSize;
             }
             finally
@@ -127,8 +122,6 @@ namespace ModernWpf.Controls
             {
                 throw new Exception("Cannot run layout in the middle of a collection change.");
             }
-
-            m_measureCount = 0;
 
             m_isLayoutInProgress = true;
             try
@@ -186,6 +179,8 @@ namespace ModernWpf.Controls
                 m_isLayoutInProgress = false;
             }
         }
+
+        #region Properties
 
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(
@@ -266,6 +261,8 @@ namespace ModernWpf.Controls
             get => (double)GetValue(VerticalCacheLengthProperty);
             set => SetValue(VerticalCacheLengthProperty, value);
         }
+
+        #endregion
 
         public int GetElementIndex(UIElement element)
         {
@@ -793,6 +790,38 @@ namespace ModernWpf.Controls
             return m_layoutContext;
         }
 
+        protected override void OnChildDesiredSizeChanged(UIElement child)
+        {
+            m_childDesiredSizeChangedCounter++;
+            if (m_lastChildDesiredSizeChangedCounter == 0)
+            {
+                m_lastChildDesiredSizeChangedCounter = m_childDesiredSizeChangedCounter;
+                Dispatcher.BeginInvoke(CheckForNewChildDesiredSizeChanges, DispatcherPriority.Background);
+            }
+        }
+
+        private void CheckForNewChildDesiredSizeChanges()
+        {
+            if (m_lastChildDesiredSizeChangedCounter > 0)
+            {
+                Debug.Assert(m_childDesiredSizeChangedCounter > 0);
+                if (m_lastChildDesiredSizeChangedCounter == m_childDesiredSizeChangedCounter)
+                {
+                    m_lastChildDesiredSizeChangedCounter = m_childDesiredSizeChangedCounter = 0;
+
+                    if (IsMeasureValid)
+                    {
+                        InvalidateMeasure();
+                    }
+                }
+                else
+                {
+                    m_lastChildDesiredSizeChangedCounter = m_childDesiredSizeChangedCounter;
+                    Dispatcher.BeginInvoke(CheckForNewChildDesiredSizeChanges, DispatcherPriority.Background);
+                }
+            }
+        }
+
         private bool IsProcessingCollectionChange => m_processingItemsSourceChange != null;
 
         private readonly ViewportManager m_viewportManager;
@@ -832,7 +861,7 @@ namespace ModernWpf.Controls
         private bool m_isItemTemplateEmpty = false;
 
         // Workaround for infinite MeasureOverride loop
-        private int m_measureCount;
-        private Size m_lastDesiredSize;
+        private int m_childDesiredSizeChangedCounter;
+        private int m_lastChildDesiredSizeChangedCounter;
     }
 }
