@@ -9,6 +9,8 @@
 
     <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
     <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
+    <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter8x" Filter="TopLeftValue" Scale="8" />
+    <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter8x" Filter="BottomRightValue" Scale="8" />
 
     <Style x:Key="DefaultThumbStyle" TargetType="Thumb">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -138,12 +140,33 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <ControlTemplate x:Key="ThumbTemplate" TargetType="Thumb">
+    <ControlTemplate x:Key="VerticalThumbTemplate" TargetType="Thumb">
+        <Rectangle
+            x:Name="ThumbVisual"
+            Fill="{TemplateBinding Background}"
+            RadiusX="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter8x}}"
+            RadiusY="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+            SnapsToDevicePixels="True" />
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="ThumbVisual" Property="Fill" Value="{DynamicResource ScrollBarThumbFillPointerOver}" />
+            </Trigger>
+            <Trigger Property="IsDragging" Value="True">
+                <Setter TargetName="ThumbVisual" Property="Fill" Value="{DynamicResource ScrollBarThumbFillPressed}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="ThumbVisual" Property="Fill" Value="{DynamicResource ScrollBarThumbFillDisabled}" />
+                <Setter TargetName="ThumbVisual" Property="Opacity" Value="0" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="HorizontalThumbTemplate" TargetType="Thumb">
         <Rectangle
             x:Name="ThumbVisual"
             Fill="{TemplateBinding Background}"
             RadiusX="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-            RadiusY="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+            RadiusY="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter8x}}"
             SnapsToDevicePixels="True" />
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
@@ -179,9 +202,6 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         SnapsToDevicePixels="true">
-                        <!--<VisualStateManager.CustomVisualStateManager>
-                            <primitives:DebugVisualStateManager />
-                        </VisualStateManager.CustomVisualStateManager>-->
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ConsciousStates">
                                 <VisualStateGroup.Transitions>
@@ -297,7 +317,7 @@
                                             Storyboard.TargetProperty="Opacity"
                                             To="1" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb" Storyboard.TargetProperty="(primitives:ControlHelper.CornerRadius)">
-                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                            <DiscreteObjectKeyFrame KeyTime="{m:KeyTime TimeSpan={StaticResource ScrollBarExpandBeginTime}}">
                                                 <DiscreteObjectKeyFrame.Value>
                                                     <CornerRadius>0</CornerRadius>
                                                 </DiscreteObjectKeyFrame.Value>
@@ -355,7 +375,7 @@
                                     <Thumb
                                         x:Name="VerticalThumb"
                                         Background="{DynamicResource ScrollBarPanningThumbBackground}"
-                                        Template="{StaticResource ThumbTemplate}"
+                                        Template="{StaticResource VerticalThumbTemplate}"
                                         Width="{StaticResource ScrollBarSize}"
                                         MinHeight="{StaticResource ScrollBarSize}"
                                         RenderTransformOrigin="1,0.5"
@@ -532,7 +552,7 @@
                                                     Storyboard.TargetProperty="Opacity"
                                                     To="1" />
                                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="(primitives:ControlHelper.CornerRadius)">
-                                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame KeyTime="{m:KeyTime TimeSpan={StaticResource ScrollBarContractBeginTime}}">
                                                         <DiscreteObjectKeyFrame.Value>
                                                             <CornerRadius>0</CornerRadius>
                                                         </DiscreteObjectKeyFrame.Value>
@@ -589,7 +609,7 @@
                                             <Thumb
                                                 x:Name="HorizontalThumb"
                                                 Background="{DynamicResource ScrollBarPanningThumbBackground}"
-                                                Template="{StaticResource ThumbTemplate}"
+                                                Template="{StaticResource HorizontalThumbTemplate}"
                                                 Height="{StaticResource ScrollBarSize}"
                                                 MinWidth="{StaticResource ScrollBarSize}"
                                                 VerticalAlignment="Bottom"

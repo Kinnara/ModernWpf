@@ -19,6 +19,19 @@ namespace ModernWpf.Controls.Primitives
                 typeof(CornerRadiusFilterKind),
                 typeof(CornerRadiusFilterConverter));
 
+        public double Scale
+        {
+            get => (double)GetValue(ScaleProperty);
+            set => SetValue(ScaleProperty, value);
+        }
+
+        public static readonly DependencyProperty ScaleProperty =
+            DependencyProperty.Register(
+                nameof(Scale),
+                typeof(double),
+                typeof(CornerRadiusFilterConverter),
+                new PropertyMetadata(1.0));
+
         public CornerRadius Convert(CornerRadius radius, CornerRadiusFilterKind filterKind)
         {
             CornerRadius result = radius;
@@ -49,6 +62,16 @@ namespace ModernWpf.Controls.Primitives
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var cornerRadius = (CornerRadius)value;
+
+            var scale = Scale;
+            if (!double.IsNaN(scale))
+            {
+                cornerRadius.TopLeft *= scale;
+                cornerRadius.TopRight *= scale;
+                cornerRadius.BottomRight *= scale;
+                cornerRadius.BottomLeft *= scale;
+            }
+
             var filterType = Filter;
             if (filterType == CornerRadiusFilterKind.TopLeftValue ||
                 filterType == CornerRadiusFilterKind.BottomRightValue)
