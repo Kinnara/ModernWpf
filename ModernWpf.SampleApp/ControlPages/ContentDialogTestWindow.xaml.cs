@@ -13,14 +13,14 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void ShowDialogInThisWindow(object sender, RoutedEventArgs e)
         {
-            new TestContentDialog { Owner = this }.ShowAsync();
+            _ = new TestContentDialog().ShowAsync();
         }
 
         private async void ShowDialogInMainWindow(object sender, RoutedEventArgs e)
         {
             try
             {
-                await new TestContentDialog().ShowAsync();
+                await new TestContentDialog() { Owner = Application.Current.MainWindow }.ShowAsync();
             }
             catch (Exception ex)
             {

@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     Title="Content Dialog Test Window"
     Width="800"
-    Height="600"
+    Height="640"
     ui:WindowHelper.UseModernWindowStyle="True">
     <Grid>
         <controls:SimpleStackPanel
