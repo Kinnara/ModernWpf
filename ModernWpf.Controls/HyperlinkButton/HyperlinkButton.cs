@@ -70,7 +70,10 @@ namespace ModernWpf.Controls
         {
             if (e.Uri.Scheme.IndexOf("http", StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                Process.Start(e.Uri.ToString());
+                Process.Start(new ProcessStartInfo(e.Uri.ToString())
+                {
+                    UseShellExecute = true
+                });
                 e.Handled = true;
             }
         }
