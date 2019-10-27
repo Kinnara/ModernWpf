@@ -92,8 +92,6 @@
                             </Grid>
                             <ContentPresenter
                                 x:Name="ContentPresenter"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
                                 TextElement.Foreground="{TemplateBinding Foreground}"
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"

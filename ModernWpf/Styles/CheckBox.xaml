@@ -64,8 +64,6 @@
                             </Grid>
                             <ContentPresenter
                                 x:Name="ContentPresenter"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                Content="{TemplateBinding Content}"
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
