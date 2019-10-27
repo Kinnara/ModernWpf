@@ -18,14 +18,14 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
         <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
         <Setter Property="TextOptions.TextRenderingMode" Value="Aliased" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:CaptionButton">
                     <Grid
                         x:Name="RootGrid"
-                        Background="{TemplateBinding Background}">
+                        Background="{TemplateBinding Background}"
+                        SnapsToDevicePixels="True">
                         <TextBlock
                             x:Name="Content"
                             Text="{TemplateBinding Content}"
