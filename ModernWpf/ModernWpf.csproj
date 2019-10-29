@@ -14,14 +14,17 @@
     <Reference Include="Windows">
       <HintPath>WinMD\Windows.WinMD</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Windows.Foundation.FoundationContract">
       <HintPath>WinMD\Windows.Foundation.FoundationContract.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Windows.Foundation.UniversalApiContract">
       <HintPath>WinMD\Windows.Foundation.UniversalApiContract.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 
