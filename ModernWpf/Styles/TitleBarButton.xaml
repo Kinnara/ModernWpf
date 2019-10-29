@@ -3,16 +3,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
-    <Style TargetType="primitives:CaptionButton">
-        <Setter Property="Background" Value="{DynamicResource WindowCaptionButtonBackground}" />
+    <Style TargetType="primitives:TitleBarButton">
+        <Setter Property="Background" Value="{DynamicResource TitleBarButtonBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        <Setter Property="MouseOverBackground" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
-        <Setter Property="MouseOverForeground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
+        <Setter Property="InactiveBackground" Value="{DynamicResource TitleBarButtonBackgroundInactive}" />
+        <Setter Property="InactiveForeground" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
+        <Setter Property="HoverBackground" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
+        <Setter Property="HoverForeground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
         <Setter Property="PressedBackground" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
         <Setter Property="PressedForeground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize" Value="10" />
-        <Setter Property="Height" Value="32" />
+        <Setter Property="Height" Value="{DynamicResource DynamicResource}" />
         <Setter Property="Width" Value="46" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -21,7 +23,7 @@
         <Setter Property="TextOptions.TextRenderingMode" Value="Aliased" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="primitives:CaptionButton">
+                <ControlTemplate TargetType="primitives:TitleBarButton">
                     <Grid
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
@@ -36,9 +38,13 @@
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="False">
+                            <Setter Property="Background" TargetName="RootGrid" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=InactiveBackground}" />
+                            <Setter Property="Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=InactiveForeground}" />
+                        </DataTrigger>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" TargetName="RootGrid" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=MouseOverBackground}" />
-                            <Setter Property="Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=MouseOverForeground}" />
+                            <Setter Property="Background" TargetName="RootGrid" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=HoverBackground}" />
+                            <Setter Property="Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=HoverForeground}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
                             <Setter Property="Background" TargetName="RootGrid" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedBackground}" />

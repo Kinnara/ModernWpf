@@ -926,7 +926,8 @@
     <!-- Resources for Window -->
     <SolidColorBrush x:Key="WindowBorder" Color="{m:StaticColor SystemChromeGrayColor}" />
     <SolidColorBrush x:Key="WindowBorderInactive" Color="{m:StaticColor SystemChromeDisabledHighColor}" />
-    <SolidColorBrush x:Key="WindowCaptionButtonBackground" Color="Transparent" />
+    <SolidColorBrush x:Key="TitleBarButtonBackground" Color="Transparent" />
+    <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="Transparent" />
 
     <!-- Resources for AccentButtonStyle -->
     <m:StaticResource x:Key="AccentButtonBackground" ResourceKey="SystemControlForegroundAccentBrush" />

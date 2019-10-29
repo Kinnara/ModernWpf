@@ -945,7 +945,7 @@ namespace ModernWpf.Controls
         private void SubscribeToBackRequested(Window owner)
         {
             var handler = new EventHandler<BackRequestedEventArgs>(OnBackRequested);
-            owner.AddHandler(WindowHelper.InternalBackRequestedEvent, handler);
+            owner.AddHandler(TitleBar.InternalBackRequestedEvent, handler);
             m_backRequestedHandler = handler;
         }
 
@@ -953,7 +953,7 @@ namespace ModernWpf.Controls
         {
             if (m_backRequestedHandler != null)
             {
-                owner.RemoveHandler(WindowHelper.InternalBackRequestedEvent, m_backRequestedHandler);
+                owner.RemoveHandler(TitleBar.InternalBackRequestedEvent, m_backRequestedHandler);
                 m_backRequestedHandler = null;
             }
         }

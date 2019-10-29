@@ -1,5 +1,4 @@
-﻿using ModernWpf.Controls.Primitives;
-using System.Windows;
+﻿using System.Windows;
 
 namespace ModernWpf.Controls
 {
@@ -8,11 +7,11 @@ namespace ModernWpf.Controls
     /// </summary>
     public sealed class BackRequestedEventArgs : RoutedEventArgs
     {
-        internal BackRequestedEventArgs() : this(WindowHelper.BackRequestedEvent)
+        internal BackRequestedEventArgs() : this(TitleBar.BackRequestedEvent)
         {
         }
 
-        internal BackRequestedEventArgs(object source) : this(WindowHelper.BackRequestedEvent, source)
+        internal BackRequestedEventArgs(object source) : this(TitleBar.BackRequestedEvent, source)
         {
         }
 

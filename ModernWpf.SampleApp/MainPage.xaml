@@ -72,6 +72,18 @@
                     Header="Compact"
                     Tag="Compact" />
             </MenuItem>
+            <MenuItem
+                Header="Title Bar"
+                DataContext="{Binding MainWindow, Source={x:Static Application.Current}}">
+                <MenuItem
+                    Header="IsIconVisible"
+                    IsCheckable="True"
+                    IsChecked="{Binding Path=(ui:TitleBar.IsIconVisible), Mode=TwoWay}" />
+                <MenuItem
+                    Header="IsBackButtonVisible"
+                    IsCheckable="True"
+                    IsChecked="{Binding Path=(ui:TitleBar.IsBackButtonVisible), Mode=TwoWay}" />
+            </MenuItem>
         </Menu>
 
         <ListBox

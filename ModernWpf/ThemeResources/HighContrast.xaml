@@ -926,7 +926,8 @@
     <!-- Resources for Window -->
     <SolidColorBrush x:Key="WindowBorder" Color="{DynamicResource {x:Static SystemColors.ActiveCaptionTextColorKey}}" />
     <SolidColorBrush x:Key="WindowBorderInactive" Color="{DynamicResource {x:Static SystemColors.InactiveCaptionTextColorKey}}" />
-    <SolidColorBrush x:Key="WindowCaptionButtonBackground" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}" />
+    <SolidColorBrush x:Key="TitleBarButtonBackground" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}" />
+    <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}" />
 
     <!-- Resources for AccentButtonStyle -->
     <m:StaticResource x:Key="AccentButtonBackground" ResourceKey="SystemControlForegroundAccentBrush" />

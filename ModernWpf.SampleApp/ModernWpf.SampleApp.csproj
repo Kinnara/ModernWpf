@@ -5,6 +5,7 @@
     <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -45,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\AppIcon.ico" />
     <None Remove="Assets\Contacts.txt" />
     <None Remove="Assets\mtns.csv" />
   </ItemGroup>
@@ -65,8 +67,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\AppIcon.ico" />
     <Resource Include="Assets\Contacts.txt" />
     <Resource Include="Assets\mtns.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>

@@ -36,7 +36,7 @@ namespace ModernWpf.SampleApp
             }
         }
         
-        private void Window_BackRequested(object sender, BackRequestedEventArgs e)
+        private void OnBackRequested(object sender, BackRequestedEventArgs e)
         {
             GoBack();
         }
