@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace ModernWpf
 {
-    public class ElementThemeResources : ResourceDictionary, ISupportInitialize
+    public class ElementThemeResources : ResourceDictionary
     {
         /// <summary>
         /// Gets a collection of merged resource dictionaries that are specifically keyed
@@ -43,18 +43,18 @@ namespace ModernWpf
             }
         }
 
-        void ISupportInitialize.EndInit()
-        {
-            EndInit();
+        //void ISupportInitialize.EndInit()
+        //{
+        //    EndInit();
 
-            for (int i = MergedDictionaries.Count - 1; i >= 0; i--)
-            {
-                if (MergedDictionaries[i] is ThemeDictionary td)
-                {
-                    ThemeDictionaries[td.Key] = td;
-                    MergedDictionaries.RemoveAt(i);
-                }
-            }
-        }
+        //    for (int i = MergedDictionaries.Count - 1; i >= 0; i--)
+        //    {
+        //        if (MergedDictionaries[i] is ThemeDictionary td)
+        //        {
+        //            ThemeDictionaries[td.Key] = td;
+        //            MergedDictionaries.RemoveAt(i);
+        //        }
+        //    }
+        //}
     }
 }

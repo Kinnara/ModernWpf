@@ -161,14 +161,14 @@ namespace ModernWpf
             EndInit();
             IsInitializePending = false;
 
-            for (int i = MergedDictionaries.Count - 1; i >= 0; i--)
-            {
-                if (MergedDictionaries[i] is ThemeDictionary td)
-                {
-                    ThemeDictionaries[td.Key] = td;
-                    MergedDictionaries.RemoveAt(i);
-                }
-            }
+            //for (int i = MergedDictionaries.Count - 1; i >= 0; i--)
+            //{
+            //    if (MergedDictionaries[i] is ThemeDictionary td)
+            //    {
+            //        ThemeDictionaries[td.Key] = td;
+            //        MergedDictionaries.RemoveAt(i);
+            //    }
+            //}
 
             ThemeManager.Current.Initialize();
 
