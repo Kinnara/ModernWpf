@@ -146,7 +146,7 @@
                                 <ui:ItemsRepeater.Layout>
                                     <ui:FlowLayout
                                         x:Name="flowLayout"
-                                        MinColumnSpacing="24" />
+                                        MinRowSpacing="24" />
                                 </ui:ItemsRepeater.Layout>
                             </ui:ItemsRepeater>
                         </ScrollViewer>
