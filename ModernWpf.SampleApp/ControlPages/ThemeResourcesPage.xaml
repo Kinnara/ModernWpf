@@ -7,33 +7,108 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
+    xmlns:sc="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
     FontFamily="{DynamicResource ContentControlThemeFontFamily}"
-    FontSize="{DynamicResource ControlContentThemeFontSize}">
+    FontSize="{DynamicResource ControlContentThemeFontSize}"
+    SnapsToDevicePixels="True">
 
     <Page.Resources>
+        <common:SolidColorBrushToColorStringConverter x:Key="SolidColorBrushToColorStringConverter" />
+
+        <CollectionViewSource x:Key="ColorsCvs">
+            <CollectionViewSource.Source>
+                <local:ColorResources />
+            </CollectionViewSource.Source>
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="GroupName" />
+            </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <sc:SortDescription PropertyName="GroupOrder" />
+                <sc:SortDescription PropertyName="Order" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+
         <local:BrushResources x:Key="BrushResources" />
         <local:TextStyles x:Key="TextStyles" />
 
-        <ContextMenu x:Key="BrushContextMenu">
+        <ContextMenu x:Key="ResourceContextMenu">
             <MenuItem
-                Header="Copy key"
+                Header="Copy resource key"
                 Click="CopyKey" />
         </ContextMenu>
 
-        <ContextMenu x:Key="TextStyleContextMenu">
-            <MenuItem
-                Header="Copy style key"
-                Click="CopyKey" />
-        </ContextMenu>
+        <DataTemplate x:Key="ColorTemplate">
+            <StackPanel
+                Background="Transparent"
+                Margin="12,12,0,0"
+                ContextMenu="{StaticResource ResourceContextMenu}"
+                ContextMenuService.IsEnabled="{Binding CanCopyKey}">
+                <Grid
+                    Width="168"
+                    Height="100">
+                    <!--<Rectangle
+                        Fill="{DynamicResource SystemControlBackgroundBaseHighBrush}"
+                        Visibility="{Binding IsAlt, Converter={StaticResource BooleanToVisibilityConverter}}" />-->
+                    <Border
+                        x:Name="Border"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                        BorderThickness="2"
+                        local:ColorResourceHelper.BackgroundColorKey="{Binding Key}" />
+                </Grid>
+                <TextBlock
+                    Text="{Binding SimpleName}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Margin="0,6,0,0" />
+                <TextBlock
+                    Text="{Binding ElementName=Border, Path=Background, Converter={StaticResource SolidColorBrushToColorStringConverter}}"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Margin="0,3,0,0" />
+            </StackPanel>
+        </DataTemplate>
+
+        <Style x:Key="ColorListStyle" TargetType="ItemsControl">
+            <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundAltHighBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
+            <Setter Property="ItemTemplate" Value="{StaticResource ColorTemplate}" />
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <WrapPanel
+                            ItemWidth="180"
+                            ItemHeight="180" />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Key="ColorGroupHeaderTemplate">
+            <TextBlock
+                Text="{Binding Name}"
+                Style="{DynamicResource BaseTextBlockStyle}"
+                Margin="12,12,0,6" />
+        </DataTemplate>
+
+        <Style x:Key="ColorGroupContainerStyle" TargetType="GroupItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupItem">
+                        <StackPanel>
+                            <ContentPresenter x:Name="PART_Header" />
+                            <ItemsPresenter x:Name="ItemsPresenter" />
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <DataTemplate x:Key="BrushTemplate">
             <Grid
                 Margin="12,0"
                 Background="Transparent"
-                ContextMenu="{StaticResource BrushContextMenu}">
+                ContextMenu="{StaticResource ResourceContextMenu}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -68,6 +143,89 @@
     </Page.Resources>
 
     <TabControl>
+
+        <TabItem Header="Color ramp">
+            <ScrollViewer Style="{StaticResource ScrollViewerStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <ItemsControl
+                        Style="{StaticResource ColorListStyle}"
+                        ItemsSource="{Binding Source={StaticResource ColorsCvs}}"
+                        ui:ThemeManager.RequestedTheme="Light">
+                        <ItemsControl.GroupStyle>
+                            <GroupStyle
+                                ContainerStyle="{StaticResource ColorGroupContainerStyle}"
+                                HeaderTemplate="{StaticResource ColorGroupHeaderTemplate}" />
+                        </ItemsControl.GroupStyle>
+                    </ItemsControl>
+
+                    <ItemsControl
+                        Grid.Column="1"
+                        Style="{StaticResource ColorListStyle}"
+                        ItemsSource="{Binding Source={StaticResource ColorsCvs}}"
+                        ui:ThemeManager.RequestedTheme="Dark">
+                        <ItemsControl.GroupStyle>
+                            <GroupStyle
+                                ContainerStyle="{StaticResource ColorGroupContainerStyle}"
+                                HeaderTemplate="{StaticResource ColorGroupHeaderTemplate}" />
+                        </ItemsControl.GroupStyle>
+                    </ItemsControl>
+
+                </Grid>
+            </ScrollViewer>
+        </TabItem>
+
+        <TabItem Header="Accent color palette">
+            <UniformGrid
+                Rows="7"
+                Columns="1">
+                <UniformGrid.Resources>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                    </Style>
+                </UniformGrid.Resources>
+                <Border Background="{DynamicResource SystemAccentColorLight3Brush}">
+                    <TextBlock
+                        Text="SystemAccentColorLight3"
+                        Foreground="Black" />
+                </Border>
+                <Border Background="{DynamicResource SystemAccentColorLight2Brush}">
+                    <TextBlock
+                        Text="SystemAccentColorLight2"
+                        Foreground="Black" />
+                </Border>
+                <Border Background="{DynamicResource SystemAccentColorLight1Brush}">
+                    <TextBlock
+                        Text="SystemAccentColorLight1"
+                        Foreground="Black" />
+                </Border>
+                <Border Background="{DynamicResource SystemControlBackgroundAccentBrush}">
+                    <TextBlock
+                        Text="SystemAccentColor"
+                        Foreground="White" />
+                </Border>
+                <Border Background="{DynamicResource SystemAccentColorDark1Brush}">
+                    <TextBlock
+                        Text="SystemAccentColorDark1"
+                        Foreground="White" />
+                </Border>
+                <Border Background="{DynamicResource SystemAccentColorDark2Brush}">
+                    <TextBlock
+                        Text="SystemAccentColorDark2"
+                        Foreground="White" />
+                </Border>
+                <Border Background="{DynamicResource SystemAccentColorDark3Brush}">
+                    <TextBlock
+                        Text="SystemAccentColorDark3"
+                        Foreground="White" />
+                </Border>
+            </UniformGrid>
+        </TabItem>
 
         <TabItem Header="Brushes">
             <Grid>
@@ -126,7 +284,7 @@
                                 Text="{Binding Text}"
                                 common:StaticResourceHelper.Property="TextBlock.Style"
                                 common:StaticResourceHelper.ResourceKey="{Binding Key}"
-                                ContextMenu="{StaticResource TextStyleContextMenu}"
+                                ContextMenu="{StaticResource ResourceContextMenu}"
                                 Margin="12,0" />
                         </DataTemplate>
                     </ui:ItemsRepeater>

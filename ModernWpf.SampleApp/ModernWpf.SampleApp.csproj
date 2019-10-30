@@ -72,8 +72,4 @@
     <Resource Include="Assets\mtns.csv" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
-
 </Project>
