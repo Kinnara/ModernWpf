@@ -641,11 +641,6 @@ namespace ModernWpf.Controls
             }
 #endif
             UpdateVisualStates(false);
-
-            if (DesignerProperties.GetIsInDesignMode(this))
-            {
-                VisualStateManager.GoToState(this, DialogShowingState, false);
-            }
         }
 
         private void Hide(ContentDialogResult result)
@@ -815,12 +810,12 @@ namespace ModernWpf.Controls
         private void UpdateDialogShowingStates(bool useTransitions)
         {
             string stateName = IsShowing && IsLoaded ? DialogShowingState : DialogHiddenState;
-#if DEBUG
+
             if (DesignerProperties.GetIsInDesignMode(this))
             {
                 stateName = DialogShowingState;
             }
-#endif
+
             VisualStateManager.GoToState(this, stateName, useTransitions);
         }
 
