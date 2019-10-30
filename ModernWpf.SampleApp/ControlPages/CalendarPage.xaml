@@ -17,7 +17,7 @@
                     x:Name="calendar"
                     VerticalAlignment="Top" />
                 <controls:ControlExample.Options>
-                    <controls:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <CheckBox
                             Content="IsTodayHighlighted"
                             IsChecked="{Binding ElementName=calendar, Path=IsTodayHighlighted, Mode=TwoWay}" />
@@ -28,7 +28,7 @@
                         <CheckBox
                             Content="IsEnabled"
                             IsChecked="{Binding ElementName=calendar, Path=IsEnabled, Mode=TwoWay}" />
-                    </controls:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
                 </controls:ControlExample.Options>
             </controls:ControlExample>
         </StackPanel>

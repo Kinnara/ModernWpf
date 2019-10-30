@@ -20,11 +20,11 @@
                     NavigateUri="http://www.microsoft.com" />
 
                 <controls:ControlExample.Options>
-                    <controls:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <CheckBox
                             Content="IsEnabled"
                             IsChecked="{Binding ElementName=Control1, Path=IsEnabled, Mode=TwoWay}" />
-                    </controls:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
                 </controls:ControlExample.Options>
             </controls:ControlExample>
 

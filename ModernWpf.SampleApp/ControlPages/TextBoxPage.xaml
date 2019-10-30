@@ -28,7 +28,7 @@
                         Header="Show options"
                         Expanded="OptionsExpander_Expanded"
                         Collapsed="OptionsExpander_Collapsed">
-                        <controls:SimpleStackPanel
+                        <ui:SimpleStackPanel
                             Style="{StaticResource OptionsPanelStyle}"
                             Margin="0,12,0,0">
                             <Button
@@ -75,7 +75,7 @@
                                 <sys:Double>0.4</sys:Double>
                                 <sys:Double>1</sys:Double>
                             </ComboBox>
-                        </controls:SimpleStackPanel>
+                        </ui:SimpleStackPanel>
                     </Expander>
                 </controls:ControlExample.Options>
             </controls:ControlExample>

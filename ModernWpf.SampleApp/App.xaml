@@ -55,11 +55,11 @@
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <common:EnumValuesConverter x:Key="EnumValuesConverter" />
 
-            <Style TargetType="controls:SimpleStackPanel">
+            <Style TargetType="ui:SimpleStackPanel">
                 <Setter Property="Spacing" Value="12" />
             </Style>
 
-            <Style x:Key="OptionsPanelStyle" TargetType="controls:SimpleStackPanel">
+            <Style x:Key="OptionsPanelStyle" TargetType="ui:SimpleStackPanel">
                 <Setter Property="Spacing" Value="12" />
                 <Style.Resources>
                     <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">

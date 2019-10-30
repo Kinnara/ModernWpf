@@ -51,11 +51,11 @@
             </StatusBar>
 
             <controls:ControlExample.Options>
-                <controls:SimpleStackPanel>
+                <ui:SimpleStackPanel>
                     <CheckBox
                         Content="IsEnabled"
                         IsChecked="{Binding ElementName=statusBar, Path=IsEnabled, Mode=TwoWay}" />
-                </controls:SimpleStackPanel>
+                </ui:SimpleStackPanel>
             </controls:ControlExample.Options>
         </controls:ControlExample>
     </Grid>

@@ -177,7 +177,7 @@
                 <ScrollViewer
                     Margin="-16"
                     Width="300">
-                    <controls:SimpleStackPanel
+                    <ui:SimpleStackPanel
                         Margin="16"
                         Style="{StaticResource OptionsPanelStyle}">
                         <TextBlock
@@ -281,7 +281,7 @@
                             ui:ControlHelper.Header="SelectionMode"
                             ItemsSource="{Binding Source={x:Type DataGridSelectionMode}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=dataGrid, Path=SelectionMode, Mode=TwoWay}" />
-                    </controls:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
                 </ScrollViewer>
             </controls:ControlExample.Options>
         </controls:ControlExample>

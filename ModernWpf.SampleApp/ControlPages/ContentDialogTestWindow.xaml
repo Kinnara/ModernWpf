@@ -12,7 +12,7 @@
     Height="640"
     ui:WindowHelper.UseModernWindowStyle="True">
     <Grid>
-        <controls:SimpleStackPanel
+        <ui:SimpleStackPanel
             HorizontalAlignment="Center"
             VerticalAlignment="Center">
             <Button
@@ -21,6 +21,6 @@
             <Button
                 Content="Show content dialog in main window"
                 Click="ShowDialogInMainWindow" />
-        </controls:SimpleStackPanel>
+        </ui:SimpleStackPanel>
     </Grid>
 </Window>

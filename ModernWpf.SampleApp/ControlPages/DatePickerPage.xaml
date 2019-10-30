@@ -20,7 +20,7 @@
                     ui:ControlHelper.PlaceholderText="Pick a date" />
 
                 <controls:ControlExample.Options>
-                    <controls:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <TextBox
                             ui:ControlHelper.Header="Header"
                             Text="{Binding ElementName=datePicker, Path=(ui:ControlHelper.Header), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -56,7 +56,7 @@
                         <CheckBox
                             Content="IsEnabled"
                             IsChecked="{Binding ElementName=datePicker, Path=IsEnabled, Mode=TwoWay}" />
-                    </controls:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
                 </controls:ControlExample.Options>
             </controls:ControlExample>
         </StackPanel>

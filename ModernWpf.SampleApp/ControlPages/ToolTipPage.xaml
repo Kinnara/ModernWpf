@@ -14,11 +14,11 @@
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
             <controls:ControlExample HeaderText="A button with a simple ToolTip.">
-                <controls:SimpleStackPanel>
+                <ui:SimpleStackPanel>
                     <Button
                         Content="Button with a simple ToolTip."
                         ToolTip="Simple ToolTip" />
-                </controls:SimpleStackPanel>
+                </ui:SimpleStackPanel>
             </controls:ControlExample>
         </StackPanel>
     </ScrollViewer>

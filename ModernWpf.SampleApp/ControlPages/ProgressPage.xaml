@@ -42,14 +42,14 @@
                     HorizontalAlignment="Left" />
 
                 <controls:ControlExample.Options>
-                    <controls:SimpleStackPanel>
+                    <ui:SimpleStackPanel>
                         <ui:ToggleSwitch
                             x:Name="ProgressToggle"
                             Header="Toggle work"
                             OffContent="Do work"
                             OnContent="Working"
                             IsOn="True" />
-                    </controls:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
                 </controls:ControlExample.Options>
             </controls:ControlExample>
         </StackPanel>

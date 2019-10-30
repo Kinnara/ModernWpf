@@ -27,7 +27,7 @@
                 </ui:RadioButtons>
 
                 <controls:ControlExample.Options>
-                    <controls:SimpleStackPanel>
+                    <ui:SimpleStackPanel>
                         <Slider
                             ui:ControlHelper.Header="MaximumColumns"
                             Minimum="1"
@@ -37,7 +37,7 @@
                         <CheckBox
                             Content="IsEnabled"
                             IsChecked="{Binding ElementName=radioButtons, Path=IsEnabled, Mode=TwoWay}" />
-                    </controls:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
                 </controls:ControlExample.Options>
             </controls:ControlExample>
         </StackPanel>

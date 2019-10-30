@@ -104,7 +104,7 @@
                 Navigated="Frame_Navigated" />
 
             <controls:ControlExample.Options>
-                <controls:SimpleStackPanel>
+                <ui:SimpleStackPanel>
                     <TextBlock
                         x:Name="TierTB"
                         Style="{StaticResource BodyTextBlockStyle}" />
@@ -140,7 +140,7 @@
                         Content="Navigate Backward"
                         IsEnabled="{Binding ElementName=frame, Path=CanGoBack}"
                         Click="NavigateBackward" />
-                </controls:SimpleStackPanel>
+                </ui:SimpleStackPanel>
             </controls:ControlExample.Options>
         </controls:ControlExample>
     </ScrollViewer>

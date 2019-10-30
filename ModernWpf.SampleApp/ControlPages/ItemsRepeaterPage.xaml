@@ -70,11 +70,11 @@
                     </ui:ItemsRepeaterScrollHost>
 
                     <controls:ControlExample.Options>
-                        <controls:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                             <TextBox
                                 ui:ControlHelper.Header="Spacing"
                                 Text="{Binding Source={x:Reference stackLayout}, Path=Spacing, Mode=TwoWay}" />
-                        </controls:SimpleStackPanel>
+                        </ui:SimpleStackPanel>
                     </controls:ControlExample.Options>
                 </controls:ControlExample>
             </TabItem>
@@ -99,7 +99,7 @@
 
                     <controls:ControlExample.Options>
                         <ScrollViewer Margin="-16">
-                            <controls:SimpleStackPanel
+                            <ui:SimpleStackPanel
                                 Margin="16"
                                 Style="{StaticResource OptionsPanelStyle}">
                                 <TextBox
@@ -129,7 +129,7 @@
                                     Header="Orientation"
                                     ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
                                     SelectedItem="{Binding Source={x:Reference uniformGridLayout}, Path=Orientation, Mode=TwoWay}" />
-                            </controls:SimpleStackPanel>
+                            </ui:SimpleStackPanel>
                         </ScrollViewer>
                     </controls:ControlExample.Options>
                 </controls:ControlExample>
@@ -154,7 +154,7 @@
 
                     <controls:ControlExample.Options>
                         <ScrollViewer Margin="-16">
-                            <controls:SimpleStackPanel
+                            <ui:SimpleStackPanel
                                 Margin="16"
                                 Style="{StaticResource OptionsPanelStyle}">
                                 <ui:RadioButtons
@@ -171,7 +171,7 @@
                                     Header="LineAlignment"
                                     ItemsSource="{Binding Source={x:Type ui:FlowLayoutLineAlignment}, Converter={StaticResource EnumValuesConverter}}"
                                     SelectedItem="{Binding Source={x:Reference flowLayout}, Path=LineAlignment, Mode=TwoWay}" />
-                            </controls:SimpleStackPanel>
+                            </ui:SimpleStackPanel>
                         </ScrollViewer>
                     </controls:ControlExample.Options>
                 </controls:ControlExample>

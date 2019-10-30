@@ -8,8 +8,6 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
     mc:Ignorable="d"
-    d:DesignWidth="400"
-    d:DesignHeight="300"
     Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}">
 
     <UserControl.Resources>
@@ -28,7 +26,7 @@
             </Setter>
         </Style>
 
-        <Style TargetType="controls:SimpleStackPanel">
+        <Style TargetType="ui:SimpleStackPanel">
             <Setter Property="Spacing" Value="12" />
         </Style>
     </UserControl.Resources>
@@ -47,7 +45,7 @@
         </Border>
 
         <HeaderedContentControl Header="Buttons">
-            <controls:SimpleStackPanel>
+            <ui:SimpleStackPanel>
                 <Button
                     x:Name="Button"
                     Content="Enabled button" />
@@ -65,11 +63,11 @@
                     Style="{DynamicResource AccentButtonStyle}"
                     Content="Disabled accent button"
                     IsEnabled="False" />
-            </controls:SimpleStackPanel>
+            </ui:SimpleStackPanel>
         </HeaderedContentControl>
 
         <HeaderedContentControl Header="Checkbox">
-            <controls:SimpleStackPanel>
+            <ui:SimpleStackPanel>
                 <CheckBox Content="Unchecked" />
                 <CheckBox
                     Content="Checked"
@@ -82,11 +80,11 @@
                     Content="Disabled"
                     IsChecked="True"
                     IsEnabled="False" />
-            </controls:SimpleStackPanel>
+            </ui:SimpleStackPanel>
         </HeaderedContentControl>
 
         <HeaderedContentControl Header="Radio button">
-            <controls:SimpleStackPanel>
+            <ui:SimpleStackPanel>
                 <RadioButton
                     Content="Unchecked"
                     GroupName="Test1" />
@@ -98,11 +96,11 @@
                     Content="Disabled"
                     IsChecked="True"
                     IsEnabled="False" />
-            </controls:SimpleStackPanel>
+            </ui:SimpleStackPanel>
         </HeaderedContentControl>
 
         <HeaderedContentControl Header="Combo box">
-            <controls:SimpleStackPanel>
+            <ui:SimpleStackPanel>
                 <ComboBox Width="200">
                     <ComboBoxItem
                         Content="Item 1"
@@ -119,7 +117,7 @@
                     <ComboBoxItem Content="Editable item 2" />
                     <ComboBoxItem Content="Editable item 3" />
                 </ComboBox>
-            </controls:SimpleStackPanel>
+            </ui:SimpleStackPanel>
         </HeaderedContentControl>
 
         <HeaderedContentControl Header="Textbox">
@@ -130,10 +128,10 @@
         </HeaderedContentControl>
 
         <HeaderedContentControl Header="Toggle switch">
-            <controls:SimpleStackPanel>
+            <ui:SimpleStackPanel>
                 <ui:ToggleSwitch IsOn="False" />
                 <ui:ToggleSwitch IsOn="True" />
-            </controls:SimpleStackPanel>
+            </ui:SimpleStackPanel>
         </HeaderedContentControl>
 
         <HeaderedContentControl Header="Slider">

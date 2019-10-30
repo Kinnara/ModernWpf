@@ -15,12 +15,12 @@
             <TabControl x:Name="tabControl" />
 
             <controls:ControlExample.Options>
-                <controls:SimpleStackPanel>
+                <ui:SimpleStackPanel>
                     <ui:RadioButtons
                         Header="TabStripPlacement"
                         ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
                         SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement, Mode=TwoWay}" />
-                </controls:SimpleStackPanel>
+                </ui:SimpleStackPanel>
             </controls:ControlExample.Options>
         </controls:ControlExample>
     </Grid>

@@ -20,7 +20,7 @@
     SecondaryButtonClick="OnSecondaryButtonClick"
     CloseButtonClick="OnCloseButtonClick"
     Closed="OnClosed">
-    <controls:SimpleStackPanel
+    <ui:SimpleStackPanel
         Spacing="12"
         Margin="0,0,0,24">
         <TextBox
@@ -57,5 +57,5 @@
                 Visibility="Collapsed" />
         </StackPanel>
 
-    </controls:SimpleStackPanel>
+    </ui:SimpleStackPanel>
 </ui:ContentDialog>

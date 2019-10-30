@@ -25,7 +25,7 @@
                 </Grid>
 
                 <controls:ControlExample.Options>
-                    <controls:SimpleStackPanel>
+                    <ui:SimpleStackPanel>
                         <CheckBox
                             Content="IsSnapToTickEnabled"
                             IsChecked="{Binding ElementName=slider, Path=IsSnapToTickEnabled, Mode=TwoWay}" />
@@ -51,7 +51,7 @@
                             Header="Orientation"
                             ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=slider, Path=Orientation, Mode=TwoWay}" />
-                    </controls:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
                 </controls:ControlExample.Options>
             </controls:ControlExample>
         </StackPanel>

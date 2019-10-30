@@ -51,13 +51,13 @@
                     </DockPanel>
 
                     <controls:ControlExample.Options>
-                        <controls:SimpleStackPanel>
+                        <ui:SimpleStackPanel>
                             <ui:RadioButtons
                                 Header="ExpandDirection"
                                 ItemsSource="{Binding Converter={StaticResource EnumValuesConverter}, Source={x:Type ExpandDirection}}"
                                 SelectedItem="{Binding ExpandDirection, ElementName=expander, Mode=TwoWay}"
                                 SelectionChanged="ExpandDirection_SelectionChanged" />
-                        </controls:SimpleStackPanel>
+                        </ui:SimpleStackPanel>
                     </controls:ControlExample.Options>
                 </controls:ControlExample>
             </StackPanel>

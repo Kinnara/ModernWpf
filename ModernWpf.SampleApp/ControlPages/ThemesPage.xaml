@@ -21,7 +21,7 @@
     </UserControl.Resources>
 
     <ScrollViewer>
-        <controls:SimpleStackPanel
+        <ui:SimpleStackPanel
             Spacing="24"
             Margin="{StaticResource ControlPageContentMargin}">
 
@@ -164,6 +164,6 @@
                 Header="HighContrast"
                 IsOn="{Binding HighContrast, Source={x:Static ui:BindableSystemParameters.Current}}"
                 IsEnabled="False" />
-        </controls:SimpleStackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

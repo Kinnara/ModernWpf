@@ -32,7 +32,7 @@
                 </StackPanel>
 
                 <controls:ControlExample.Options>
-                    <controls:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <CheckBox
                             Content="IsOn"
                             IsChecked="{Binding ElementName=toggleSwitch, Path=IsOn, Mode=TwoWay}" />
@@ -45,7 +45,7 @@
                         <TextBox
                             ui:ControlHelper.Header="OffContent"
                             Text="{Binding ElementName=toggleSwitch, Path=OffContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </controls:SimpleStackPanel>
+                    </ui:SimpleStackPanel>
                 </controls:ControlExample.Options>
             </controls:ControlExample>
         </StackPanel>

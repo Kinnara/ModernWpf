@@ -77,7 +77,7 @@
                         VirtualizingPanel.VirtualizationMode="Recycling" />
 
                     <controls:ControlExample.Options>
-                        <controls:SimpleStackPanel>
+                        <ui:SimpleStackPanel>
                             <controls:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView1}}" />
                             <ui:RadioButtons
                                 Header="SelectionMode"
@@ -86,7 +86,7 @@
                             <CheckBox
                                 Content="IsEnabled"
                                 IsChecked="{Binding Source={x:Reference listView1}, Path=IsEnabled, Mode=TwoWay}" />
-                        </controls:SimpleStackPanel>
+                        </ui:SimpleStackPanel>
                     </controls:ControlExample.Options>
                 </controls:ControlExample>
             </TabItem>
@@ -113,7 +113,7 @@
                     </ListView>
 
                     <controls:ControlExample.Options>
-                        <controls:SimpleStackPanel>
+                        <ui:SimpleStackPanel>
                             <!--<controls:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView2}}" />-->
                             <!--<ui:RadioButtons
                                 Header="SelectionMode"
@@ -122,7 +122,7 @@
                             <CheckBox
                                 Content="IsEnabled"
                                 IsChecked="{Binding Source={x:Reference listView2}, Path=IsEnabled, Mode=TwoWay}" />
-                        </controls:SimpleStackPanel>
+                        </ui:SimpleStackPanel>
                     </controls:ControlExample.Options>
                 </controls:ControlExample>
             </TabItem>
@@ -167,7 +167,7 @@
                     </ListView>
 
                     <controls:ControlExample.Options>
-                        <controls:SimpleStackPanel>
+                        <ui:SimpleStackPanel>
                             <CheckBox
                                 Content="AllowsColumnReorder"
                                 IsChecked="{Binding Source={x:Reference gridView}, Path=AllowsColumnReorder, Mode=TwoWay}" />
@@ -179,7 +179,7 @@
                             <CheckBox
                                 Content="IsEnabled"
                                 IsChecked="{Binding Source={x:Reference listView3}, Path=IsEnabled, Mode=TwoWay}" />
-                        </controls:SimpleStackPanel>
+                        </ui:SimpleStackPanel>
                     </controls:ControlExample.Options>
                 </controls:ControlExample>
             </TabItem>

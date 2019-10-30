@@ -10,7 +10,7 @@
     Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}">
 
     <Grid Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
-        <controls:SimpleStackPanel Spacing="16">
+        <ui:SimpleStackPanel Spacing="16">
             <TextBlock
                 x:Name="HeaderBlock"
                 Text="Compact Size"
@@ -26,6 +26,6 @@
             <DatePicker
                 ui:ControlHelper.Header="Pick a date"
                 HorizontalAlignment="Stretch" />
-        </controls:SimpleStackPanel>
+        </ui:SimpleStackPanel>
     </Grid>
 </UserControl>
