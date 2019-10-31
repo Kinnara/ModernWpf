@@ -53,6 +53,7 @@
     <Grid>
         <TabControl
             x:Name="tabControl"
+            Style="{StaticResource TabControlPivotStyle}"
             Padding="{StaticResource ControlPageContentMargin}">
             <TabItem Header="StackLayout">
                 <controls:ControlExample HeaderText="StackLayout">

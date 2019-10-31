@@ -72,6 +72,7 @@
         <Style x:Key="ColorListStyle" TargetType="ItemsControl">
             <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundAltHighBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
+            <Setter Property="IsTabStop" Value="False" />
             <Setter Property="ItemTemplate" Value="{StaticResource ColorTemplate}" />
             <Setter Property="ItemsPanel">
                 <Setter.Value>
@@ -142,7 +143,7 @@
         </Style>
     </Page.Resources>
 
-    <TabControl>
+    <TabControl Style="{StaticResource TabControlPivotStyle}">
 
         <TabItem Header="Color ramp">
             <ScrollViewer Style="{StaticResource ScrollViewerStyle}">

@@ -627,6 +627,35 @@
     <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushSubMenuOpened" ResourceKey="SystemControlTransparentRevealBorderBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
 
+    <!-- Resources for Pivot -->
+    <FontFamily x:Key="PivotHeaderItemFontFamily">XamlAutoFontFamily</FontFamily>
+    <sys:Double x:Key="PivotHeaderItemFontSize">24</sys:Double>
+    <sys:Double x:Key="PivotHeaderItemLockedTranslation">40</sys:Double>
+    <sys:Int32 x:Key="PivotHeaderItemCharacterSpacing">-25</sys:Int32>
+    <Thickness x:Key="PivotHeaderItemMargin">12,0,12,0</Thickness>
+    <Thickness x:Key="PivotItemMargin">12,0,12,0</Thickness>
+    <Thickness x:Key="PivotPortraitThemePadding">12,14,0,13</Thickness>
+    <FontWeight x:Key="PivotHeaderItemThemeFontWeight">350</FontWeight>
+    <m:StaticResource x:Key="PivotBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="PivotHeaderBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="PivotItemBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemBackgroundUnselected" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemBackgroundUnselectedPointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemBackgroundUnselectedPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemBackgroundSelected" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemBackgroundSelectedPointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemBackgroundSelectedPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemForegroundUnselected" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemForegroundUnselectedPointerOver" ResourceKey="SystemControlHighlightAltBaseMediumHighBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemForegroundUnselectedPressed" ResourceKey="SystemControlHighlightAltBaseMediumHighBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemForegroundSelected" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemForegroundSelectedPointerOver" ResourceKey="SystemControlHighlightAltBaseMediumHighBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemForegroundSelectedPressed" ResourceKey="SystemControlHighlightAltBaseMediumHighBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemFocusPipeFill" ResourceKey="SystemControlHighlightAltAccentBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemSelectedPipeFill" ResourceKey="SystemControlHighlightAltAccentBrush" />
+
     <!-- Resources for ProgressBar -->
     <sys:Double x:Key="ProgressBarIndicatorPauseOpacity">0.6</sys:Double>
     <sys:Double x:Key="ProgressBarThemeMinHeight">4</sys:Double>

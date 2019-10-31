@@ -23,8 +23,7 @@
         <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
     </Style>
     <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
-        <!--<Setter Property="FontWeight" Value="SemiLight" />-->
-        <Setter Property="FontWeight" Value="Light" />
+        <Setter Property="FontWeight" Value="350" />
         <Setter Property="FontSize" Value="24" />
         <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
     </Style>

@@ -66,6 +66,7 @@
     <Grid>
         <TabControl
             x:Name="tabControl"
+            Style="{StaticResource TabControlPivotStyle}"
             Padding="{StaticResource ControlPageContentMargin}">
             <TabItem Header="MultiSelect">
                 <controls:ControlExample HeaderText="A Simple ListView with Selection support">
