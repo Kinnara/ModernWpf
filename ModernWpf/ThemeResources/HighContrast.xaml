@@ -959,7 +959,7 @@
     <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}" />
 
     <!-- Resources for AccentButtonStyle -->
-    <m:StaticResource x:Key="AccentButtonBackground" ResourceKey="SystemControlForegroundAccentBrush" />
+    <m:StaticResource x:Key="AccentButtonBackground" ResourceKey="SystemControlBackgroundAccentBrush" />
     <m:StaticResource x:Key="AccentButtonBackgroundPointerOver" ResourceKey="SystemAccentColorLight1Brush" />
     <m:StaticResource x:Key="AccentButtonBackgroundPressed" ResourceKey="SystemAccentColorDark1Brush" />
     <m:StaticResource x:Key="AccentButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
