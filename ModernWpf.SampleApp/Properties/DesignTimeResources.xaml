@@ -1,17 +1,10 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.modernwpf.com/2019">
+    xmlns:designTime="clr-namespace:ModernWpf.SampleApp.DesignTime">
 
     <ResourceDictionary.MergedDictionaries>
-        <!--<ResourceDictionary Source="pack://application:,,,/ModernWpf;component/DesignTime/SystemColors.xaml" />-->
-        <!--<ResourceDictionary Source="/ThemeResources/Light.xaml" />-->
-        <!--<ui:DesignTimeThemeResources
-            LightSource="/ThemeResources/Light.xaml"
-            DarkSource="/ThemeResources/Dark.xaml"
-            HighContrastSource="/ThemeResources/HighContrast.xaml"
-            Theme="Light" />-->
-        <!--<ui:ColorPaletteResources Accent="Red" />-->
+        <designTime:IntellisenseResources Source="/DesignTime/ResourceKeys.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

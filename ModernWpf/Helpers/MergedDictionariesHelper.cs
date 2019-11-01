@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace ModernWpf
@@ -76,6 +75,17 @@ namespace ModernWpf
             else
             {
                 mergedDictionaries.Insert(index, item);
+            }
+        }
+
+        public static void RemoveAll<T> (this Collection<ResourceDictionary> mergedDictionaries) where T : ResourceDictionary
+        {
+            for (int i = mergedDictionaries.Count - 1; i >= 0; i--)
+            {
+                if (mergedDictionaries[i] is T)
+                {
+                    mergedDictionaries.RemoveAt(i);
+                }
             }
         }
 

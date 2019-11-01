@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using ModernWpf.DesignTime;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -675,10 +676,15 @@ namespace ModernWpf
         private void OnApplicationStartup(object sender, StartupEventArgs e)
         {
             _applicationStarted = true;
+
+            var appResources = Application.Current.Resources;
+            appResources.MergedDictionaries.RemoveAll<IntellisenseResourcesBase>();
+
             ColorsHelper.Current.BackgroundColorChanged += OnSystemBackgroundColorChanged;
             ColorsHelper.Current.AccentColorChanged += OnSystemAccentColorChanged;
             ColorsHelper.Current.Initialize();
-            Application.Current.Resources.MergedDictionaries.Insert(0, ColorsHelper.Current.Colors);
+            appResources.MergedDictionaries.Insert(0, ColorsHelper.Current.Colors);
+
             UpdateActualAccentColor();
             UpdateActualApplicationTheme();
         }
