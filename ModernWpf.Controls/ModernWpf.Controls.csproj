@@ -19,7 +19,7 @@
 
   <PropertyGroup>
     <PackageId>ModernWpfUI</PackageId>
-    <Version>0.1.191101006</Version>
+    <Version>0.1.191101009</Version>
   </PropertyGroup>
 
   <Target Name="GetDocumentationFile">

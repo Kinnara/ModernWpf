@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 
 namespace ModernWpf.DesignTime
@@ -10,24 +9,10 @@ namespace ModernWpf.DesignTime
         {
         }
 
-        public new Uri Source
-        {
-            get => base.Source;
-            set
-            {
-                if (DesignMode.DesignModeEnabled)
-                {
-                    Source = value;
-                }
-            }
-        }
-
         void ISupportInitialize.EndInit()
         {
-            if (Source != null)
-            {
-                Source = null;
-            }
+            Clear();
+            MergedDictionaries.Clear();
         }
     }
 }
