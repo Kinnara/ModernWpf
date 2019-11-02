@@ -35,7 +35,7 @@ namespace ModernWpf.SampleApp
                 Settings.Default.Save();
             }
         }
-        
+
         private void OnBackRequested(object sender, BackRequestedEventArgs e)
         {
             GoBack();

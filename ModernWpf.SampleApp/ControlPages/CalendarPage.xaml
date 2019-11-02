@@ -21,13 +21,16 @@
                         <CheckBox
                             Content="IsTodayHighlighted"
                             IsChecked="{Binding ElementName=calendar, Path=IsTodayHighlighted, Mode=TwoWay}" />
+                        <CheckBox
+                            Content="IsEnabled"
+                            IsChecked="{Binding ElementName=calendar, Path=IsEnabled, Mode=TwoWay}" />
                         <ComboBox
                             ui:ControlHelper.Header="SelectionMode"
                             ItemsSource="{Binding Source={x:Type CalendarSelectionMode}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=calendar, Path=SelectionMode, Mode=TwoWay}" />
-                        <CheckBox
-                            Content="IsEnabled"
-                            IsChecked="{Binding ElementName=calendar, Path=IsEnabled, Mode=TwoWay}" />
+                        <Button
+                            Content="Make past dates not selectable"
+                            Click="AddDatesInPastToBlackoutDates" />
                     </ui:SimpleStackPanel>
                 </controls:ControlExample.Options>
             </controls:ControlExample>

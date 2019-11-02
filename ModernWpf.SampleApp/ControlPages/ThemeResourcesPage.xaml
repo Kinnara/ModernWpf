@@ -134,7 +134,7 @@
             </Grid>
         </DataTemplate>
 
-        <Style x:Key="ScrollViewerStyle" TargetType="ScrollViewer">
+        <Style x:Key="ScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
             <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
             <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
             <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
@@ -146,7 +146,10 @@
     <TabControl Style="{StaticResource TabControlPivotStyle}">
 
         <TabItem Header="Color ramp">
-            <ScrollViewer Style="{StaticResource ScrollViewerStyle}">
+            <ScrollViewer
+                Style="{StaticResource ScrollViewerStyle}"
+                Padding="0"
+                ui:ThemeManager.RequestedTheme="Dark">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />

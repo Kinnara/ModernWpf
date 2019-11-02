@@ -9,13 +9,14 @@
     mc:Ignorable="d"
     Icon="Assets/AppIcon.ico"
     Title="ModernWPF Sample App"
-    Width="1024"
-    Height="768"
+    Width="1000"
+    Height="750"
+    WindowStartupLocation="CenterScreen"
     Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
     Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
     ui:WindowHelper.UseModernWindowStyle="True"
     ui:WindowHelper.IsEnabled="True"
-    ui:TitleBar.IsBackButtonVisible="True"
+    ui:TitleBar.IsBackButtonVisible="False"
     ui:TitleBar.IsBackEnabled="{Binding ElementName=RootFrame, Path=CanGoBack}"
     ui:TitleBar.BackRequested="OnBackRequested">
 
