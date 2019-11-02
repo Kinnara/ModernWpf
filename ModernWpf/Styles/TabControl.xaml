@@ -272,7 +272,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
                     <Border
-                        x:Name="Grid"
+                        x:Name="Border"
                         Background="{TemplateBinding Background}"
                         Padding="{TemplateBinding Padding}"
                         SnapsToDevicePixels="True">
@@ -308,7 +308,7 @@
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="False" />
-                                <Condition Property="IsMouseOver" Value="False" />
+                                <Condition SourceName="Border" Property="IsMouseOver" Value="False" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="SelectedPipe" Property="Visibility" Value="Collapsed" />
                         </MultiTrigger>
@@ -316,33 +316,35 @@
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
-                                <Condition Property="IsMouseOver" Value="False" />
+                                <Condition SourceName="Border" Property="IsMouseOver" Value="False" />
                             </MultiTrigger.Conditions>
+                            <Setter Property="Panel.ZIndex" Value="1" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource PivotHeaderItemForegroundSelected}" />
-                            <Setter TargetName="Grid" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundSelected}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundSelected}" />
                         </MultiTrigger>
                         <!-- UnselectedPointerOver -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="False" />
-                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition SourceName="Border" Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource PivotHeaderItemForegroundUnselectedPointerOver}" />
-                            <Setter TargetName="Grid" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundUnselectedPointerOver}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundUnselectedPointerOver}" />
                             <Setter TargetName="SelectedPipe" Property="Visibility" Value="Collapsed" />
                         </MultiTrigger>
                         <!-- SelectedPointerOver -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
-                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition SourceName="Border" Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
+                            <Setter Property="Panel.ZIndex" Value="1" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource PivotHeaderItemForegroundSelectedPointerOver}" />
-                            <Setter TargetName="Grid" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundSelectedPointerOver}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundSelectedPointerOver}" />
                         </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource PivotHeaderItemForegroundDisabled}" />
-                            <Setter TargetName="Grid" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundDisabled}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundDisabled}" />
                             <Setter TargetName="SelectedPipe" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                     </ControlTemplate.Triggers>
