@@ -39,16 +39,11 @@ Modern styles and controls for your WPF applications.
     ...
     xmlns:ui="http://schemas.modernwpf.com/2019"
     ui:WindowHelper.UseModernWindowStyle="True">
-    <Grid>
-        <StackPanel Margin="12">
-            <TextBlock
-                Text="My first ModernWPF app"
-                Style="{StaticResource HeaderTextBlockStyle}" />
-            <Button
-                Content="I am a button"
-                Margin="0,24,0,0" />
-        </StackPanel>
-    </Grid>
+    <ui:SimpleStackPanel Margin="12" Spacing="24">
+        <TextBlock Text="My first ModernWPF app" Style="{StaticResource HeaderTextBlockStyle}" />
+        <Button Content="I am a button" />
+        <Button Content="I am an accent button" Style="{StaticResource AccentButtonStyle}" />
+    </ui:SimpleStackPanel>
 </Window>
 ```
 
