@@ -34,5 +34,6 @@
     <file src="bin\$config$\netcoreapp3.0\ModernWpf.xml" target="lib\netcoreapp3.0\ModernWpf.xml" />
     <file src="bin\$config$\netcoreapp3.0\ModernWpf.Controls.dll" target="lib\netcoreapp3.0\ModernWpf.Controls.dll" />
     <file src="bin\$config$\netcoreapp3.0\ModernWpf.Controls.xml" target="lib\netcoreapp3.0\ModernWpf.Controls.xml" />
+    <file src="readme.txt" target="" />
   </files>
 </package>
