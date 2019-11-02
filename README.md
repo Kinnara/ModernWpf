@@ -10,7 +10,7 @@ Modern styles and controls for your WPF applications.
 
 * Targets .NET Framework 4.5 and .NET Core 3.0. Runs on Windows Vista SP2 and above.
 
-![Screenshot 1](docs/images/screenshot1.png "Screenshot 1")
+![Screenshot 1](docs/images/ControlPalette1.png "Screenshot 1")
 
 ## Quick start
 1. Create a new WPF app.
@@ -55,12 +55,22 @@ Modern styles and controls for your WPF applications.
 5. See [Common Tasks](https://github.com/Kinnara/ModernWpf/wiki/Common-Tasks) for more usage information.
 
 ## Screenshots
-![Screenshot 2](docs/images/screenshot2.png "Screenshot 2")
+![Screenshot 2](docs/images/ControlPalette2.png "Screenshot 2")
 
-![Calendar](docs/images/Calendar.png "Calendar")
+![Nighttime colors](docs/images/Nighttime.png "Easily customize colors")
 
 ![ContentDialog](docs/images/ContentDialog.png "ContentDialog")
 
 ![Progress controls](docs/images/Progress.png "Progress controls")
 
-![Nighttime colors](docs/images/Nighttime.png "Easily customize colors")
+![DataGrid](docs/images/DataGrid.png "DataGrid")
+
+![UniformGridLayout](docs/images/UniformGridLayout.png "UniformGridLayout")
+
+![Calendar](docs/images/Calendar.png "Calendar")
+
+![Menu](docs/images/Menu.png "Menu")
+
+![Color ramp](docs/images/ColorRamp.png "Color ramp")
+
+![Accent color palette](docs/images/AccentColorPalette.png "Accent color palette")
