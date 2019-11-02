@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace ModernWpf.DesignTime
@@ -7,6 +8,18 @@ namespace ModernWpf.DesignTime
     {
         protected IntellisenseResourcesBase()
         {
+        }
+
+        public new Uri Source
+        {
+            get => base.Source;
+            set
+            {
+                if (DesignMode.DesignModeEnabled)
+                {
+                    base.Source = value;
+                }
+            }
         }
 
         void ISupportInitialize.EndInit()
