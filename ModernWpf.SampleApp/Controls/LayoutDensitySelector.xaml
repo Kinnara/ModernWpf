@@ -5,9 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.Controls"
-    mc:Ignorable="d"
-    d:DesignWidth="1200"
-    d:DesignHeight="900">
+    mc:Ignorable="d">
     <StackPanel>
         <TextBlock
             Text="Sizing"

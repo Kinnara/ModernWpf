@@ -1,20 +1,74 @@
 ﻿using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class DataGridHelper
+    public static class DataGridHelper
     {
+        #region IsEnabled
+
+        public static readonly DependencyProperty IsEnabledProperty =
+            DependencyProperty.RegisterAttached(
+                "IsEnabled",
+                typeof(bool),
+                typeof(DataGridHelper),
+                new PropertyMetadata(default(bool), OnIsEnabledChanged));
+
+        public static bool GetIsEnabled(DataGrid dataGrid)
+        {
+            return (bool)dataGrid.GetValue(IsEnabledProperty);
+        }
+
+        public static void SetIsEnabled(DataGrid dataGrid, bool value)
+        {
+            dataGrid.SetValue(IsEnabledProperty, value);
+        }
+
+        private static void OnIsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var dataGrid = (DataGrid)d;
+            if ((bool)e.NewValue)
+            {
+                dataGrid.LoadingRow += OnLoadingRow;
+            }
+            else
+            {
+                dataGrid.LoadingRow -= OnLoadingRow;
+            }
+        }
+
+        #endregion
+
+        private static void OnLoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            Debug.Assert(sender is DataGrid);
+            var row = e.Row;
+
+            if (row.ReadLocalValue(DataGridRowHelper.AreRowDetailsFrozenInternalProperty) == DependencyProperty.UnsetValue)
+            {
+                row.SetBinding(DataGridRowHelper.AreRowDetailsFrozenInternalProperty,
+                    new Binding { Path = new PropertyPath(DataGrid.AreRowDetailsFrozenProperty), Source = sender });
+            }
+
+            if (row.ReadLocalValue(DataGridRowHelper.HeadersVisibilityInternalProperty) == DependencyProperty.UnsetValue)
+            {
+                row.SetBinding(DataGridRowHelper.HeadersVisibilityInternalProperty,
+                    new Binding { Path = new PropertyPath(DataGrid.HeadersVisibilityProperty), Source = sender });
+            }
+        }
+
+        #region Column Styles
+
         #region TextColumnElementStyle
 
         public static readonly DependencyProperty TextColumnElementStyleProperty =
             DependencyProperty.RegisterAttached(
                 "TextColumnElementStyle",
                 typeof(Style),
-                typeof(DataGridHelper),
-                new PropertyMetadata(default(Style), OnTextColumnElementStyleChanged));
+                typeof(DataGridHelper));
 
         public static Style GetTextColumnElementStyle(DataGrid dataGrid)
         {
@@ -26,13 +80,6 @@ namespace ModernWpf.Controls.Primitives
             dataGrid.SetValue(TextColumnElementStyleProperty, value);
         }
 
-        private static void OnTextColumnElementStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var dataGrid = (DataGrid)d;
-            var oldValue = (Style)e.OldValue;
-            var newValue = (Style)e.NewValue;
-        }
-
         #endregion
 
         #region TextColumnEditingElementStyle
@@ -41,8 +88,7 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.RegisterAttached(
                 "TextColumnEditingElementStyle",
                 typeof(Style),
-                typeof(DataGridHelper),
-                new PropertyMetadata(default(Style), OnTextColumnEditingElementStyleChanged));
+                typeof(DataGridHelper));
 
         public static Style GetTextColumnEditingElementStyle(DataGrid dataGrid)
         {
@@ -54,13 +100,6 @@ namespace ModernWpf.Controls.Primitives
             dataGrid.SetValue(TextColumnEditingElementStyleProperty, value);
         }
 
-        private static void OnTextColumnEditingElementStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var dataGrid = (DataGrid)d;
-            var oldValue = (Style)e.OldValue;
-            var newValue = (Style)e.NewValue;
-        }
-
         #endregion
 
         #region TextColumnFontSize
@@ -70,7 +109,7 @@ namespace ModernWpf.Controls.Primitives
                 "TextColumnFontSize",
                 typeof(double),
                 typeof(DataGridHelper),
-                new PropertyMetadata(SystemFonts.MessageFontSize, OnTextColumnFontSizeChanged));
+                new PropertyMetadata(SystemFonts.MessageFontSize));
 
         public static double GetTextColumnFontSize(DataGrid dataGrid)
         {
@@ -82,13 +121,6 @@ namespace ModernWpf.Controls.Primitives
             dataGrid.SetValue(TextColumnFontSizeProperty, value);
         }
 
-        private static void OnTextColumnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var dataGrid = (DataGrid)d;
-            var oldValue = (double)e.OldValue;
-            var newValue = (double)e.NewValue;
-        }
-
         #endregion
 
         #region CheckBoxColumnElementStyle
@@ -97,8 +129,7 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.RegisterAttached(
                 "CheckBoxColumnElementStyle",
                 typeof(Style),
-                typeof(DataGridHelper),
-                new PropertyMetadata(default(Style), OnCheckBoxColumnElementStyleChanged));
+                typeof(DataGridHelper));
 
         public static Style GetCheckBoxColumnElementStyle(DataGrid dataGrid)
         {
@@ -110,13 +141,6 @@ namespace ModernWpf.Controls.Primitives
             dataGrid.SetValue(CheckBoxColumnElementStyleProperty, value);
         }
 
-        private static void OnCheckBoxColumnElementStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var dataGrid = (DataGrid)d;
-            var oldValue = (Style)e.OldValue;
-            var newValue = (Style)e.NewValue;
-        }
-
         #endregion
 
         #region CheckBoxColumnEditingElementStyle
@@ -125,8 +149,7 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.RegisterAttached(
                 "CheckBoxColumnEditingElementStyle",
                 typeof(Style),
-                typeof(DataGridHelper),
-                new PropertyMetadata(default(Style), OnCheckBoxColumnEditingElementStyleChanged));
+                typeof(DataGridHelper));
 
         public static Style GetCheckBoxColumnEditingElementStyle(DataGrid dataGrid)
         {
@@ -138,13 +161,6 @@ namespace ModernWpf.Controls.Primitives
             dataGrid.SetValue(CheckBoxColumnEditingElementStyleProperty, value);
         }
 
-        private static void OnCheckBoxColumnEditingElementStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var dataGrid = (DataGrid)d;
-            var oldValue = (Style)e.OldValue;
-            var newValue = (Style)e.NewValue;
-        }
-
         #endregion
 
         #region ComboBoxColumnElementStyle
@@ -153,8 +169,7 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.RegisterAttached(
                 "ComboBoxColumnElementStyle",
                 typeof(Style),
-                typeof(DataGridHelper),
-                new PropertyMetadata(default(Style), OnComboBoxColumnElementStyleChanged));
+                typeof(DataGridHelper));
 
         public static Style GetComboBoxColumnElementStyle(DataGrid dataGrid)
         {
@@ -166,13 +181,6 @@ namespace ModernWpf.Controls.Primitives
             dataGrid.SetValue(ComboBoxColumnElementStyleProperty, value);
         }
 
-        private static void OnComboBoxColumnElementStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var dataGrid = (DataGrid)d;
-            var oldValue = (Style)e.OldValue;
-            var newValue = (Style)e.NewValue;
-        }
-
         #endregion
 
         #region ComboBoxColumnEditingElementStyle
@@ -181,8 +189,7 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.RegisterAttached(
                 "ComboBoxColumnEditingElementStyle",
                 typeof(Style),
-                typeof(DataGridHelper),
-                new PropertyMetadata(default(Style), OnComboBoxColumnEditingElementStyleChanged));
+                typeof(DataGridHelper));
 
         public static Style GetComboBoxColumnEditingElementStyle(DataGrid dataGrid)
         {
@@ -194,13 +201,6 @@ namespace ModernWpf.Controls.Primitives
             dataGrid.SetValue(ComboBoxColumnEditingElementStyleProperty, value);
         }
 
-        private static void OnComboBoxColumnEditingElementStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var dataGrid = (DataGrid)d;
-            var oldValue = (Style)e.OldValue;
-            var newValue = (Style)e.NewValue;
-        }
-
         #endregion
 
         #region HyperlinkColumnElementStyle
@@ -209,8 +209,7 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.RegisterAttached(
                 "HyperlinkColumnElementStyle",
                 typeof(Style),
-                typeof(DataGridHelper),
-                new PropertyMetadata(default(Style), OnHyperlinkColumnElementStyleChanged));
+                typeof(DataGridHelper));
 
         public static Style GetHyperlinkColumnElementStyle(DataGrid dataGrid)
         {
@@ -222,13 +221,6 @@ namespace ModernWpf.Controls.Primitives
             dataGrid.SetValue(HyperlinkColumnElementStyleProperty, value);
         }
 
-        private static void OnHyperlinkColumnElementStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var dataGrid = (DataGrid)d;
-            var oldValue = (Style)e.OldValue;
-            var newValue = (Style)e.NewValue;
-        }
-
         #endregion
 
         #region HyperlinkColumnEditingElementStyle
@@ -237,8 +229,7 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.RegisterAttached(
                 "HyperlinkColumnEditingElementStyle",
                 typeof(Style),
-                typeof(DataGridHelper),
-                new PropertyMetadata(default(Style), OnHyperlinkColumnEditingElementStyleChanged));
+                typeof(DataGridHelper));
 
         public static Style GetHyperlinkColumnEditingElementStyle(DataGrid dataGrid)
         {
@@ -248,13 +239,6 @@ namespace ModernWpf.Controls.Primitives
         public static void SetHyperlinkColumnEditingElementStyle(DataGrid dataGrid, Style value)
         {
             dataGrid.SetValue(HyperlinkColumnEditingElementStyleProperty, value);
-        }
-
-        private static void OnHyperlinkColumnEditingElementStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var dataGrid = (DataGrid)d;
-            var oldValue = (Style)e.OldValue;
-            var newValue = (Style)e.NewValue;
         }
 
         #endregion
@@ -442,5 +426,7 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
         }
+
+        #endregion
     }
 }
