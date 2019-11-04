@@ -170,6 +170,7 @@
     <Style x:Key="DataGridTextBlockComboBoxStyle" TargetType="ComboBox" />
     <Style x:Key="DefaultContextMenuStyle" TargetType="ContextMenu" />
     <Style x:Key="DefaultDataGridCellStyle" TargetType="DataGridCell" />
+    <Style x:Key="DataGridCellExpanded" TargetType="DataGridCell" />
     <Style x:Key="DefaultDataGridColumnHeaderStyle" TargetType="DataGridColumnHeader" />
     <Style x:Key="DefaultDataGridRowHeaderStyle" TargetType="DataGridRowHeader" />
     <Style x:Key="DefaultDataGridRowStyle" TargetType="DataGridRow" />
