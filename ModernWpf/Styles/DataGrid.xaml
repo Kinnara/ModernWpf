@@ -17,8 +17,35 @@
     <Style x:Key="DefaultDataGridCellStyle" TargetType="DataGridCell">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource DataGridCellBackgroundBrush}" />
-        <!--<Setter Property="BorderBrush" Value="Transparent" />-->
-        <!--<Setter Property="BorderThickness" Value="1" />-->
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="MinHeight" Value="{DynamicResource DataGridRowMinHeight}" />
+        <!--<Setter Property="IsTabStop" Value="False" />-->
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="DataGridCell">
+                    <primitives:DataGridCellPresenter
+                        Background="{TemplateBinding Background}"
+                        CurrencyVisualBrush="{DynamicResource DataGridCurrencyVisualPrimaryBrush}"
+                        CurrencyVisualThickness="1"
+                        FocusVisualPrimaryBrush="{DynamicResource DataGridCellFocusVisualPrimaryBrush}"
+                        FocusVisualPrimaryThickness="2"
+                        FocusVisualSecondaryBrush="{DynamicResource DataGridCellFocusVisualSecondaryBrush}"
+                        FocusVisualSecondaryThickness="1"
+                        IsCurrencyVisualVisible="{TemplateBinding IsSelected}"
+                        IsFocusVisualVisible="{TemplateBinding IsKeyboardFocusWithin}"
+                        MinHeight="{TemplateBinding MinHeight}"
+                        SnapsToDevicePixels="True" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DataGridCellExpanded" TargetType="DataGridCell">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="{DynamicResource DataGridCellBackgroundBrush}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
@@ -74,14 +101,6 @@
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">
                             <Setter TargetName="FocusVisual" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!--<MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="true" />
-                                <Condition Property="Selector.IsSelectionActive" Value="false" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="CurrencyVisual" Property="Opacity" Value="1" />
-                            <Setter TargetName="FocusVisual" Property="Opacity" Value="0" />
-                        </MultiTrigger>-->
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
