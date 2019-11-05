@@ -592,6 +592,34 @@
     <member name="M:ModernWpf.Controls.FlowLayoutState.#ctor">
       <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.FlowLayoutState?text=FlowLayoutState" /> class.</summary>
     </member>
+    <member name="T:ModernWpf.Controls.Flyout">
+      <summary>Represents a control that displays lightweight UI that is either information, or requires user interaction. Unlike a dialog, a Flyout can be light dismissed by clicking or tapping outside of it, pressing the device’s back button, or pressing the ‘Esc’ key.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.Flyout.#ctor">
+      <summary>Initializes a new instance of the Flyout class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Flyout.Content">
+      <summary>Gets or sets the content of the Flyout.</summary>
+      <returns>The content of the Flyout.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.Flyout.ContentProperty">
+      <summary>Gets the identifier for the Content dependency property.</summary>
+      <returns>The identifier for the Content dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Flyout.FlyoutPresenterStyle">
+      <summary>Gets or sets the Style applied to the Flyout content.</summary>
+      <returns>The applied Style for the Flyout content, if present; otherwise, **null**. The default is **null**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.Flyout.FlyoutPresenterStyleProperty">
+      <summary>Gets the identifier for the FlyoutPresenterStyle dependency property.</summary>
+      <returns>The identifier for the FlyoutPresenterStyle dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.FlyoutPresenter">
+      <summary>Displays the content of a Flyout.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.FlyoutPresenter.#ctor">
+      <summary>Initializes a new instance of the FlyoutPresenter class.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.HyperlinkButton">
       <summary>Represents a button control that functions as a hyperlink.</summary>
     </member>
@@ -952,6 +980,76 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     <member name="P:ModernWpf.Controls.ProgressRing.TemplateSettings">
       <summary>Gets an object that provides calculated values that can be referenced as **TemplateBinding** sources when defining templates for a ProgressRing control.</summary>
       <returns>An object that provides calculated values for templates.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.Primitives.FlyoutBase">
+      <summary>Represents the base class for flyout controls, such as Flyout and MenuFlyout.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.Primitives.FlyoutBase.#ctor">
+      <summary>Provides base class initialization behavior for FlyoutBase derived classes.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutBase.AttachedFlyoutProperty">
+      <summary>Identifies the FlyoutBase.AttachedFlyout XAML attached property.</summary>
+      <returns>The identifier for the FlyoutBase.AttachedFlyout XAML attached property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.FlyoutBase.Placement">
+      <summary>Gets or sets the default placement to be used for the flyout, in relation to its placement target.</summary>
+      <returns>A named constant of the enumeration that indicates where the flyout is placed in relation to its placement target. The default is Top.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutBase.PlacementProperty">
+      <summary>Identifies the Placement dependency property.</summary>
+      <returns>The identifier for the Placement dependency property.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.Primitives.FlyoutBase.Closed">
+      <summary>Occurs when the flyout is hidden.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.Primitives.FlyoutBase.Opened">
+      <summary>Occurs when the flyout is shown.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.Primitives.FlyoutBase.Opening">
+      <summary>Occurs before the flyout is shown.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.Primitives.FlyoutBase.CreatePresenter">
+      <summary>When overridden in a derived class, initializes a control to show the flyout content as appropriate for the derived control. Note: This method has no base class implementation and must be overridden in a derived class.</summary>
+      <returns>The control that displays the content of the flyout.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.Primitives.FlyoutBase.GetAttachedFlyout(System.Windows.FrameworkElement)">
+      <summary>Gets the flyout associated with the specified element.</summary>
+      <param name="element">The element for which to get the associated flyout.</param>
+      <returns>The flyout attached to the specified element.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.Primitives.FlyoutBase.Hide">
+      <summary>Closes the flyout.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.Primitives.FlyoutBase.SetAttachedFlyout(System.Windows.FrameworkElement,ModernWpf.Controls.Primitives.FlyoutBase)">
+      <summary>Associates the specified flyout with the specified FrameworkElement.</summary>
+      <param name="element">The element to associate the flyout with.</param>
+      <param name="value">The flyout to associate with the specified element.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.Primitives.FlyoutBase.ShowAt(System.Windows.FrameworkElement)">
+      <summary>Shows the flyout placed in relation to the specified element.</summary>
+      <param name="placementTarget">The element to use as the flyout's placement target.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.Primitives.FlyoutBase.ShowAttachedFlyout(System.Windows.FrameworkElement)">
+      <summary>Shows the flyout associated with the specified element, if any.</summary>
+      <param name="flyoutOwner">The element for which to show the associated flyout.</param>
+    </member>
+    <member name="T:ModernWpf.Controls.Primitives.FlyoutPlacementMode">
+      <summary>Defines constants that specify the preferred location for positioning a FlyoutBase derived control relative to a visual element.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutPlacementMode.Bottom">
+      <summary>The preferred location of the flyout is below the target element.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutPlacementMode.Full">
+      <summary>The preferred location of the flyout is centered on the screen.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutPlacementMode.Left">
+      <summary>The preferred location of the flyout is to the left of the target element.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutPlacementMode.Right">
+      <summary>The preferred location of the flyout is to the right of the target element.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutPlacementMode.Top">
+      <summary>The preferred location of the flyout is above the target element.</summary>
     </member>
     <member name="T:ModernWpf.Controls.Primitives.ProgressRingTemplateSettings">
       <summary>Provides calculated values that can be referenced as **TemplatedParent** sources when defining templates for a ProgressRing control. Not intended for general use.</summary>
