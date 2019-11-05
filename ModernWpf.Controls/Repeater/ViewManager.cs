@@ -688,23 +688,8 @@ namespace ModernWpf.Controls
         private void MoveFocusFromClearedIndex(int clearedIndex)
         {
             UIElement focusedChild = null;
-            if (FindFocusCandidate(clearedIndex, ref focusedChild) is Control focusCandidate)
+            if (FindFocusCandidate(clearedIndex, ref focusedChild) != null)
             {
-                // TODO: Focus
-                //FocusState focusState = FocusState.Programmatic;
-                if (m_lastFocusedElement != null)
-                {
-                    if (m_lastFocusedElement is Control focusedAsControl)
-                    {
-                        //focusState = focusedAsControl.FocusState();
-                    }
-                }
-
-                // If the last focused element has focus, use its focus state, if not use programmatic.
-                //focusState = focusState == FocusState.Unfocused ? FocusState.Programmatic : focusState;
-                //focusCandidate.Focus(focusState);
-                focusCandidate.Focus();
-
                 m_lastFocusedElement = focusedChild;
                 // Add pin to hold the focused element.
                 UpdatePin(focusedChild, true /* addPin */);
@@ -716,7 +701,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        private Control FindFocusCandidate(int clearedIndex, ref UIElement focusedChild)
+        private UIElement FindFocusCandidate(int clearedIndex, ref UIElement focusedChild)
         {
             // Walk through all the children and find elements with index before and after the cleared index.
             // Note that during a delete the next element would now have the same index.
@@ -755,30 +740,30 @@ namespace ModernWpf.Controls
 
             // Find the next element if one exists, if not use the previous element.
             // If the container itself is not focusable, find a descendent that is.
-            Control focusCandidate = null;
+            UIElement focusCandidate = null;
             if (nextElement != null)
             {
                 focusedChild = nextElement as UIElement;
-                focusCandidate = nextElement as Control;
-                if (focusCandidate == null)
+                if (nextElement.Focus())
                 {
-                    //if (FocusManager.FindFirstFocusableElement(nextElement) is DependencyObject firstFocus)
-                    //{
-                    //    focusCandidate = firstFocus as Control;
-                    //}
+                    focusCandidate = nextElement;
+                }
+                else if (nextElement.MoveFocus(new TraversalRequest(FocusNavigationDirection.First)))
+                {
+                    focusCandidate = FocusManager.GetFocusedElement(nextElement) as UIElement;
                 }
             }
 
             if (focusCandidate == null && previousElement != null)
             {
                 focusedChild = previousElement as UIElement;
-                focusCandidate = previousElement as Control;
-                if (previousElement == null)
+                if (previousElement.Focus())
                 {
-                    //if (FocusManager.FindLastFocusableElement(previousElement) is DependencyObject lastFocus)
-                    //{
-                    //    focusCandidate = lastFocus as Control;
-                    //}
+                    focusCandidate = previousElement;
+                }
+                else if (previousElement.MoveFocus(new TraversalRequest(FocusNavigationDirection.Last)))
+                {
+                    focusCandidate = FocusManager.GetFocusedElement(previousElement) as UIElement;
                 }
             }
 
