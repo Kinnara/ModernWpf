@@ -10,7 +10,7 @@ using System.Windows.Markup;
 
 namespace ModernWpf.Controls
 {
-    [ContentProperty(nameof(Templates))]
+    //[ContentProperty(nameof(Templates))]
     public class RecyclingElementFactory : ElementFactory
     {
         public RecyclingElementFactory()
@@ -20,10 +20,10 @@ namespace ModernWpf.Controls
 
         public RecyclePool RecyclePool { get; set; }
 
-        public IDictionary Templates
+        public Dictionary<string, DataTemplate> Templates
         {
-            get => (IDictionary)m_templates;
-            set => m_templates = (IDictionary<string, DataTemplate>)value;
+            get => m_templates;
+            set => m_templates = value;
         }
 
         public event TypedEventHandler<RecyclingElementFactory, SelectTemplateEventArgs> SelectTemplateKey;
@@ -103,7 +103,7 @@ namespace ModernWpf.Controls
             RecyclePool.PutElement(element, key, args.Parent);
         }
 
-        private IDictionary<string, DataTemplate> m_templates;
+        private Dictionary<string, DataTemplate> m_templates;
         private SelectTemplateEventArgs m_args;
     }
 }

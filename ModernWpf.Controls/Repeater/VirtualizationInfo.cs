@@ -62,7 +62,7 @@ namespace ModernWpf.Controls
         public void MoveOwnershipToLayoutFromPinnedPool()
         {
             Debug.Assert(Owner == ElementOwner.PinnedPool);
-            Debug.Assert(!IsPinned);
+            Debug.Assert(IsPinned);
             Owner = ElementOwner.Layout;
         }
 

@@ -3,10 +3,12 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Markup;
 using System.Windows.Media;
 
 namespace ModernWpf.Controls
 {
+    [ContentProperty(nameof(Header))]
     [TemplateVisualState(GroupName = ContentStatesGroup, Name = OffContentState)]
     [TemplateVisualState(GroupName = ContentStatesGroup, Name = OnContentState)]
     [TemplateVisualState(GroupName = ToggleStatesGroup, Name = DraggingState)]

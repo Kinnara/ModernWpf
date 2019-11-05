@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="..\ModernWpf\DesignTime\ResourceKeys.xaml" Link="DesignTime\ResourceKeys.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
+    <ProjectReference Include="..\ModernWpf\ModernWpf.csproj" />
+  </ItemGroup>
+
+</Project>

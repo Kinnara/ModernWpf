@@ -29,6 +29,8 @@ namespace ModernWpf.Controls
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
 
+            SetCurrentValue(LayoutProperty, new StackLayout());
+
             // Initialize the cached layout to the default value
             var layout = Layout as VirtualizingLayout;
             OnLayoutChanged(null, layout);

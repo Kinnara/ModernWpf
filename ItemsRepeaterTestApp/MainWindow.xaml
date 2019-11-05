@@ -1,0 +1,24 @@
+﻿<Window
+    x:Class="ItemsRepeaterTestApp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:ItemsRepeaterTestApp"
+    mc:Ignorable="d"
+    Title="ItemsRepeater Test App"
+    Width="1200"
+    Height="900"
+    WindowStartupLocation="CenterScreen"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    ui:TitleBar.IsBackButtonVisible="{Binding ElementName=RootFrame, Path=CanGoBack}"
+    ui:TitleBar.IsBackEnabled="{Binding ElementName=RootFrame, Path=CanGoBack}"
+    ui:TitleBar.BackRequested="OnBackRequested">
+
+    <Frame
+        x:Name="RootFrame"
+        NavigationUIVisibility="Hidden"
+        IsTabStop="False"
+        Source="/RepeaterTestUIPage.xaml" />
+</Window>
