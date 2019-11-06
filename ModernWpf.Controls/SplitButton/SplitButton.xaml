@@ -245,6 +245,7 @@
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushChecked}" />
                             <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
                             <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
                         </Trigger>
                         <!-- CheckedFlyoutOpen -->
                         <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="CheckedFlyoutOpen">
@@ -253,6 +254,7 @@
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushCheckedPressed}" />
                             <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
                             <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
+                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
                         </Trigger>
                         <!-- CheckedTouchPressed -->
                         <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="CheckedTouchPressed">
@@ -261,6 +263,7 @@
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushCheckedPressed}" />
                             <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
                             <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
+                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
                         </Trigger>
                         <!-- CheckedPrimaryPointerOver -->
                         <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="CheckedPrimaryPointerOver">
@@ -270,6 +273,7 @@
                             <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPointerOver}" />
                             <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
                             <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
                         </Trigger>
                         <!-- CheckedPrimaryPressed -->
                         <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="CheckedPrimaryPressed">
@@ -279,6 +283,7 @@
                             <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
                             <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
                             <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
                         </Trigger>
                         <!-- CheckedSecondaryPointerOver -->
                         <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="CheckedSecondaryPointerOver">
@@ -288,6 +293,7 @@
                             <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundCheckedPointerOver}" />
                             <Setter TargetName="SecondaryButton" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushCheckedPointerOver}" />
                             <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPointerOver}" />
+                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
                         </Trigger>
                         <!-- CheckedSecondaryPressed -->
                         <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="CheckedSecondaryPressed">
@@ -297,6 +303,7 @@
                             <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
                             <Setter TargetName="SecondaryButton" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushCheckedPressed}" />
                             <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
+                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
