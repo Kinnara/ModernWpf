@@ -4,10 +4,11 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
+using System.Windows.Data;
 
 namespace ModernWpf.Controls
 {
-    internal class SharedHelpers
+    internal static class SharedHelpers
     {
         public static bool DoRectsIntersect(
             Rect rect1,
@@ -31,6 +32,11 @@ namespace ModernWpf.Controls
                     oldValue,
                     newValue);
             }
+        }
+
+        public static BindingExpressionBase SetBinding(this FrameworkElement element, DependencyProperty dp, DependencyProperty sourceDP, DependencyObject source)
+        {
+            return element.SetBinding(dp, new Binding { Path = new PropertyPath(sourceDP), Source = source });
         }
     }
 }

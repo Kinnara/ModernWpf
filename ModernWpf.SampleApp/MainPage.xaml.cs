@@ -136,13 +136,13 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(ControlPalettePage), "Control Palette");
             AddPage(typeof(ThemesPage));
             AddPage(typeof(ThemeResourcesPage), "Theme Resources");
+            AddPage(typeof(ButtonsPage));
             AddPage(typeof(CalendarPage));
             AddPage(typeof(CompactSizingPage), "Compact Sizing");
             AddPage(typeof(ContentDialogPage));
             AddPage(typeof(ContextMenuPage));
             AddPage(typeof(DataGridPage));
             AddPage(typeof(DatePickerPage));
-            AddPage(typeof(DropDownButtonPage));
             AddPage(typeof(ExpanderPage));
             AddPage(typeof(FlyoutPage));
             AddPage(typeof(GroupBoxPage));

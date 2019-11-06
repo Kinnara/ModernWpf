@@ -16,7 +16,6 @@ namespace ModernWpf.Controls.Primitives
 
         public VisualStateGroupListener()
         {
-            Debug.Assert(Visibility == Visibility.Collapsed);
         }
 
         #region GroupName

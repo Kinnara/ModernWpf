@@ -352,7 +352,7 @@ namespace ModernWpf.Controls.Primitives
         private Grid m_layoutRoot;
         private Rectangle m_progressBarIndicator;
 
-        bool m_shouldUpdateWidthBasedTemplateSettings = false;
+        private bool m_shouldUpdateWidthBasedTemplateSettings = false;
 
         private const string s_LayoutRootName = "LayoutRoot";
         private const string s_ProgressBarIndicatorName = "ProgressBarIndicator";

@@ -233,12 +233,9 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (m_target is Button button)
+            if (!m_popup.IsOpen)
             {
-                if (button.InputHitTest(e.GetPosition(button)) != null)
-                {
-                    e.Handled = true;
-                }
+                e.Handled = true;
             }
         }
 

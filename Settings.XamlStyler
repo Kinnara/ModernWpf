@@ -37,6 +37,7 @@
 		RowDefinition,
 		ColumnDefinition,
 		primitives:CornerRadiusFilterConverter,
+        ui:CornerRadiusFilterConverter,
 		m:StaticResource
 	",
     "SeparateByGroups": false,

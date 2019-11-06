@@ -21,6 +21,50 @@
     <member name="M:ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.Expand">
       <summary>Displays the control's drop down menu.</summary>
     </member>
+    <member name="T:ModernWpf.Automation.Peers.SplitButtonAutomationPeer">
+      <summary>Exposes SplitButton types to Microsoft UI Automation.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.SplitButtonAutomationPeer.#ctor(ModernWpf.Controls.SplitButton)">
+      <summary>Initializes a new instance of the SplitButtonAutomationPeer class.</summary>
+      <param name="owner">The SplitButton control instance to create the peer for.</param>
+    </member>
+    <member name="P:ModernWpf.Automation.Peers.SplitButtonAutomationPeer.ExpandCollapseState">
+      <summary>Gets the state, expanded or collapsed, of the control.</summary>
+      <returns>A value of the enumeration.</returns>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.SplitButtonAutomationPeer.Collapse">
+      <summary>Hides the control's drop down menu.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.SplitButtonAutomationPeer.Expand">
+      <summary>Displays the control's drop down menu.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.SplitButtonAutomationPeer.Invoke">
+      <summary>Sends a request to click the button associated with the automation peer.</summary>
+    </member>
+    <member name="T:ModernWpf.Automation.Peers.ToggleSplitButtonAutomationPeer">
+      <summary>Exposes ToggleSplitButton types to Microsoft UI Automation.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.ToggleSplitButtonAutomationPeer.#ctor(ModernWpf.Controls.ToggleSplitButton)">
+      <summary>Initializes a new instance of the ToggleSplitButtonAutomationPeer class.</summary>
+      <param name="owner">The ToggleSplitButton control instance to create the peer for.</param>
+    </member>
+    <member name="P:ModernWpf.Automation.Peers.ToggleSplitButtonAutomationPeer.ExpandCollapseState">
+      <summary>Gets the state, expanded or collapsed, of the control.</summary>
+      <returns>A value of the enumeration.</returns>
+    </member>
+    <member name="P:ModernWpf.Automation.Peers.ToggleSplitButtonAutomationPeer.ToggleState">
+      <summary>Gets the toggle state of the control.</summary>
+      <returns>A value of the enumeration.</returns>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.ToggleSplitButtonAutomationPeer.Collapse">
+      <summary>Hides the control's drop down menu.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.ToggleSplitButtonAutomationPeer.Expand">
+      <summary>Displays the control's drop down menu.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.ToggleSplitButtonAutomationPeer.Toggle">
+      <summary>Cycles through the toggle states of a control.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.AnimationContext">
       <summary>Defines constants that specify information about changes to a data collection that is useful for animating data elements.</summary>
     </member>
@@ -1235,6 +1279,42 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Gets or sets the key that identifies the data template.</summary>
       <returns>The key that identifies the data template.</returns>
     </member>
+    <member name="T:ModernWpf.Controls.SplitButton">
+      <summary>Represents a button with two parts that can be invoked separately. One part behaves like a standard button and the other part invokes a flyout.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.SplitButton.#ctor">
+      <summary>Initializes a new instance of the SplitButton class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitButton.Command">
+      <summary>Gets or sets the command to invoke when this button is pressed.</summary>
+      <returns>The command to invoke when this button is pressed. The default is **null**.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitButton.CommandParameter">
+      <summary>Gets or sets the parameter to pass to the Command property.</summary>
+      <returns>The parameter to pass to the Command property. The default is **null**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitButton.CommandParameterProperty">
+      <summary>Identifies the CommandParameter dependency property.</summary>
+      <returns>The identifier for the CommandParameter dependency property.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitButton.CommandProperty">
+      <summary>Identifies the Command dependency property.</summary>
+      <returns>The identifier for the Command dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitButton.Flyout">
+      <summary>Gets or sets the flyout associated with this button.</summary>
+      <returns>The flyout associated with this button. The default is **null**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitButton.FlyoutProperty">
+      <summary>Identifies the Flyout dependency property.</summary>
+      <returns>The identifier for the Flyout dependency property.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.SplitButton.Click">
+      <summary>Occurs when a button control is clicked.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.SplitButtonClickEventArgs">
+      <summary>Provides event data for the SplitButton.Click event.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.StackLayout">
       <summary>Arranges elements into a single line (with spacing) that can be oriented horizontally or vertically.</summary>
     </member>
@@ -1262,6 +1342,22 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     </member>
     <member name="M:ModernWpf.Controls.StackLayoutState.#ctor">
       <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.StackLayoutState?text=StackLayoutState" /> class.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.ToggleSplitButton">
+      <summary>Represents a button with two parts that can be invoked separately. One part behaves like a toggle button and the other part invokes a flyout.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ToggleSplitButton.#ctor">
+      <summary>Initializes a new instance of the ToggleSplitButton class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ToggleSplitButton.IsChecked">
+      <summary>Gets or sets whether the ToggleSplitButton is checked.</summary>
+      <returns>**true** if the ToggleSplitButton is checked; **false** if the ToggleSplitButton is unchecked. The default is **false**.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.ToggleSplitButton.IsCheckedChanged">
+      <summary>Occurs when the value of the IsChecked property is changed.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.ToggleSplitButtonIsCheckedChangedEventArgs">
+      <summary>Provides event data for the ToggleSplitButton.IsCheckedChanged event.</summary>
     </member>
     <member name="T:ModernWpf.Controls.ToggleSwitch">
       <summary>Represents a switch that can be toggled between two states.</summary>
