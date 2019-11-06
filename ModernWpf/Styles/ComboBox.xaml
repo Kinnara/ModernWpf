@@ -200,11 +200,7 @@
         <Setter Property="primitives:ComboBoxHelper.TextBoxStyle" Value="{StaticResource ComboBoxTextBoxStyle}" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-        <!--<Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />-->
-        <!--<Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto" />-->
-        <!--<Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="True" />-->
         <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
-        <!--<Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True" />-->
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
@@ -213,16 +209,8 @@
         <Setter Property="primitives:ComboBoxHelper.KeepInteriorCornersSquare" Value="True" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="primitives:ControlHelper.PlaceholderForeground" Value="{DynamicResource ComboBoxPlaceHolderForeground}" />
-        <!--<Setter Property="UseSystemFocusVisuals" Value="{DynamicResource IsApplicationFocusVisualKindReveal}" />-->
         <Setter Property="FocusVisualStyle" Value="{DynamicResource EmptyFocusVisual}" />
         <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource TextControlValidationErrorTemplate}" />
-        <!--<Setter Property="ItemsPanel">
-            <Setter.Value>
-                <ItemsPanelTemplate>
-                    <CarouselPanel />
-                </ItemsPanelTemplate>
-            </Setter.Value>
-        </Setter>-->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
@@ -514,6 +502,7 @@
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="0" />
+        <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource DataGridTextControlValidationErrorTemplate}" />
     </Style>
 
     <Style x:Key="DataGridTextBlockComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource DefaultComboBoxStyle}">

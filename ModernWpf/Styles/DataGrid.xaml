@@ -943,4 +943,13 @@
         </Setter>
     </Style>
 
+    <ControlTemplate x:Key="DataGridTextControlValidationErrorTemplate">
+        <Grid SnapsToDevicePixels="True">
+            <AdornedElementPlaceholder />
+            <Border
+                BorderBrush="{DynamicResource SystemControlErrorTextForegroundBrush}"
+                BorderThickness="{DynamicResource TextControlBorderThemeThicknessFocused}" />
+        </Grid>
+    </ControlTemplate>
+
 </ResourceDictionary>
