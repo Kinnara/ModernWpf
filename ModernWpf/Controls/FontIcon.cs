@@ -179,63 +179,27 @@ namespace ModernWpf.Controls
             }
         }
 
-        protected override int VisualChildrenCount => 1;
-
-        protected override Visual GetVisualChild(int index)
+        internal override UIElement CreateIcon()
         {
-            if (index == 0)
+            if (_textBlock == null)
             {
-                EnsureLayoutRoot();
-                return _layoutRoot;
+                _textBlock = new TextBlock
+                {
+                    Style = null,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    TextAlignment = TextAlignment.Center,
+                    FontFamily = FontFamily,
+                    FontSize = FontSize,
+                    FontStyle = FontStyle,
+                    FontWeight = FontWeight,
+                    Text = Glyph
+                };
             }
-            else
-            {
-                throw new ArgumentOutOfRangeException(nameof(index));
-            }
+
+            return _textBlock;
         }
 
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            EnsureLayoutRoot();
-            _layoutRoot.Measure(availableSize);
-            return _layoutRoot.DesiredSize;
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            EnsureLayoutRoot();
-            _layoutRoot.Arrange(new Rect(new Point(), finalSize));
-            return finalSize;
-        }
-
-        private void EnsureLayoutRoot()
-        {
-            if (_layoutRoot != null)
-                return;
-
-            _textBlock = new TextBlock
-            {
-                Style = null,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Center,
-                TextAlignment = TextAlignment.Center,
-                FontFamily = FontFamily,
-                FontSize = FontSize,
-                FontStyle = FontStyle,
-                FontWeight = FontWeight,
-                Text = Glyph
-            };
-
-            _layoutRoot = new Grid
-            {
-                SnapsToDevicePixels = true,
-                Children = { _textBlock }
-            };
-
-            AddVisualChild(_layoutRoot);
-        }
-
-        private Grid _layoutRoot;
         private TextBlock _textBlock;
     }
 }

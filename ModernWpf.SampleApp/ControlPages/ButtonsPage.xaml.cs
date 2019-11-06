@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using ModernWpf.Controls;
+using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -26,11 +28,25 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void BulletButton_Click(object sender, RoutedEventArgs e)
         {
+            Button clickedBullet = (Button)sender;
+            SymbolIcon symbol = (SymbolIcon)clickedBullet.Content;
+
+            if (symbol.Symbol == Symbol.List)
+            {
+                mySymbolIcon.Symbol = Symbol.List;
+                myListButton.SetValue(AutomationProperties.NameProperty, "Bullets");
+            }
+            else if (symbol.Symbol == Symbol.Bullets)
+            {
+                mySymbolIcon.Symbol = Symbol.Bullets;
+                myListButton.SetValue(AutomationProperties.NameProperty, "Roman Numerals");
+            }
+
             myListButton.IsChecked = true;
             myListButton.Flyout.Hide();
         }
 
-        private void MyListButton_IsCheckedChanged(ModernWpf.Controls.ToggleSplitButton sender, ModernWpf.Controls.ToggleSplitButtonIsCheckedChangedEventArgs args)
+        private void MyListButton_IsCheckedChanged(ToggleSplitButton sender, ToggleSplitButtonIsCheckedChangedEventArgs args)
         {
 
         }

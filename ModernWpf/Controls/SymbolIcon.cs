@@ -1,0 +1,98 @@
+﻿using System.Windows;
+using System.Windows.Controls;
+
+namespace ModernWpf.Controls
+{
+    /// <summary>
+    /// Represents an icon that uses a glyph from the Segoe MDL2 Assets font as its content.
+    /// </summary>
+    public sealed class SymbolIcon : IconElement
+    {
+        /// <summary>
+        /// Initializes a new instance of the SymbolIcon class.
+        /// </summary>
+        public SymbolIcon()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the SymbolIcon class using the specified symbol.
+        /// </summary>
+        /// <param name="symbol">
+        /// A named constant of the enumeration that specifies the Segoe MDL2 Assets glyph
+        /// to use. The default is **null**.
+        /// </param>
+        public SymbolIcon(Symbol symbol)
+        {
+            Symbol = symbol;
+        }
+
+        #region Symbol
+
+        /// <summary>
+        /// Identifies the Symbol dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SymbolProperty =
+            DependencyProperty.Register(
+                nameof(Symbol),
+                typeof(Symbol),
+                typeof(SymbolIcon),
+                new PropertyMetadata(Symbol.Emoji, OnSymbolChanged));
+
+        /// <summary>
+        /// Gets or sets the Segoe MDL2 Assets glyph used as the icon content.
+        /// </summary>
+        /// <returns>
+        /// A named constant of the numeration that specifies the Segoe MDL2 Assets glyph
+        /// to use.
+        /// </returns>
+        public Symbol Symbol
+        {
+            get => (Symbol)GetValue(SymbolProperty);
+            set => SetValue(SymbolProperty, value);
+        }
+
+        private static void OnSymbolChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((SymbolIcon)d).OnSymbolChanged(e);
+        }
+
+        private void OnSymbolChanged(DependencyPropertyChangedEventArgs e)
+        {
+            if (_textBlock != null)
+            {
+                _textBlock.Text = ConvertToString((Symbol)e.NewValue);
+            }
+        }
+
+        #endregion
+
+        internal override UIElement CreateIcon()
+        {
+            if (_textBlock == null)
+            {
+                _textBlock = new TextBlock
+                {
+                    Style = null,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    TextAlignment = TextAlignment.Center,
+                    FontSize = 20,
+                    FontStyle = FontStyles.Normal,
+                    FontWeight = FontWeights.Normal,
+                    Text = ConvertToString(Symbol)
+                };
+                _textBlock.SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
+            }
+
+            return _textBlock;
+        }
+
+        private static string ConvertToString(Symbol symbol)
+        {
+            return char.ConvertFromUtf32((int)symbol).ToString();
+        }
+
+        private TextBlock _textBlock;
+    }
+}

@@ -1,5 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
@@ -35,5 +37,52 @@ namespace ModernWpf.Controls
             get { return (Brush)GetValue(ForegroundProperty); }
             set { SetValue(ForegroundProperty, value); }
         }
+
+        protected override int VisualChildrenCount => 1;
+
+        protected override Visual GetVisualChild(int index)
+        {
+            if (index == 0)
+            {
+                EnsureLayoutRoot();
+                return _layoutRoot;
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            EnsureLayoutRoot();
+            _layoutRoot.Measure(availableSize);
+            return _layoutRoot.DesiredSize;
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            EnsureLayoutRoot();
+            _layoutRoot.Arrange(new Rect(new Point(), finalSize));
+            return finalSize;
+        }
+
+        private void EnsureLayoutRoot()
+        {
+            if (_layoutRoot != null)
+                return;
+
+            _layoutRoot = new Grid
+            {
+                SnapsToDevicePixels = true,
+                Children = { CreateIcon() }
+            };
+
+            AddVisualChild(_layoutRoot);
+        }
+
+        private Grid _layoutRoot;
+
+        internal abstract UIElement CreateIcon();
     }
 }

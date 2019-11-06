@@ -174,8 +174,9 @@
                         AutomationProperties.Name="Bullets"
                         VerticalAlignment="Top"
                         IsCheckedChanged="MyListButton_IsCheckedChanged">
-                        <!--<SymbolIcon x:Name="mySymbolIcon" Symbol="List"/>-->
-                        <ui:FontIcon Glyph="&#xE14C;" />
+                        <ui:SymbolIcon
+                            x:Name="mySymbolIcon"
+                            Symbol="List" />
                         <ui:ToggleSplitButton.Flyout>
                             <ui:Flyout Placement="Bottom">
                                 <StackPanel Orientation="Horizontal">
@@ -190,14 +191,12 @@
                                     <Button
                                         Click="BulletButton_Click"
                                         AutomationProperties.Name="Bulleted list">
-                                        <!--<SymbolIcon Symbol="List"/>-->
-                                        <ui:FontIcon Glyph="&#xE14C;" />
+                                        <ui:SymbolIcon Symbol="List" />
                                     </Button>
                                     <Button
                                         Click="BulletButton_Click"
                                         AutomationProperties.Name="Roman numerals list">
-                                        <!--<SymbolIcon Symbol="Bullets"/>-->
-                                        <ui:FontIcon Glyph="&#xE133;" />
+                                        <ui:SymbolIcon Symbol="Bullets" />
                                     </Button>
                                 </StackPanel>
                             </ui:Flyout>
