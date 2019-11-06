@@ -12,9 +12,6 @@ namespace ModernWpf.Controls
     /// </summary>
     public class FontIcon : IconElement
     {
-        private Grid _layoutRoot;
-        private TextBlock _textBlock;
-
         /// <summary>
         /// Initializes a new instance of the FontIcon class.
         /// </summary>
@@ -27,11 +24,13 @@ namespace ModernWpf.Controls
         /// The identifier for the FontFamily dependency property.
         /// </summary>
         public static readonly DependencyProperty FontFamilyProperty =
-                TextElement.FontFamilyProperty.AddOwner(
-                        typeof(FontIcon),
-                        new FrameworkPropertyMetadata(new FontFamily("Segoe MDL2 Assets"),
-                            FrameworkPropertyMetadataOptions.Inherits,
-                            OnFontFamilyChanged));
+            DependencyProperty.Register(
+                nameof(FontFamily),
+                typeof(FontFamily),
+                typeof(FontIcon),
+                new FrameworkPropertyMetadata(
+                    new FontFamily("Segoe MDL2 Assets"),
+                    OnFontFamilyChanged));
 
         /// <summary>
         /// Gets or sets the font used to display the icon glyph.
@@ -58,11 +57,11 @@ namespace ModernWpf.Controls
         /// The identifier for the FontSize dependency property.
         /// </summary>
         public static readonly DependencyProperty FontSizeProperty =
-                TextElement.FontSizeProperty.AddOwner(
-                        typeof(FontIcon),
-                        new FrameworkPropertyMetadata(20d,
-                            FrameworkPropertyMetadataOptions.Inherits,
-                            OnFontSizeChanged));
+            DependencyProperty.Register(
+                nameof(FontSize),
+                typeof(double),
+                typeof(FontIcon),
+                new FrameworkPropertyMetadata(20d, OnFontSizeChanged));
 
         /// <summary>
         /// Gets or sets the size of the icon glyph.
@@ -90,11 +89,11 @@ namespace ModernWpf.Controls
         /// The identifier for the FontStyle dependency property.
         /// </summary>
         public static readonly DependencyProperty FontStyleProperty =
-                TextElement.FontStyleProperty.AddOwner(
-                        typeof(FontIcon),
-                        new FrameworkPropertyMetadata(FontStyles.Normal,
-                            FrameworkPropertyMetadataOptions.Inherits,
-                            OnFontStyleChanged));
+            DependencyProperty.Register(
+                nameof(FontStyle),
+                typeof(FontStyle),
+                typeof(FontIcon),
+                new FrameworkPropertyMetadata(FontStyles.Normal, OnFontStyleChanged));
 
         /// <summary>
         /// Gets or sets the font style for the icon glyph.
@@ -123,11 +122,11 @@ namespace ModernWpf.Controls
         /// The identifier for the FontWeight dependency property.
         /// </summary>
         public static readonly DependencyProperty FontWeightProperty =
-                TextElement.FontWeightProperty.AddOwner(
-                        typeof(FontIcon),
-                        new FrameworkPropertyMetadata(FontWeights.Normal,
-                            FrameworkPropertyMetadataOptions.Inherits,
-                            OnFontWeightChanged));
+            DependencyProperty.Register(
+                nameof(FontWeight),
+                typeof(FontWeight),
+                typeof(FontIcon),
+                new FrameworkPropertyMetadata(FontWeights.Normal, OnFontWeightChanged));
 
         /// <summary>
         /// Gets or sets the thickness of the icon glyph.
@@ -154,11 +153,12 @@ namespace ModernWpf.Controls
         /// <summary>
         /// The identifier for the Glyph dependency property.
         /// </summary>
-        public static readonly DependencyProperty GlyphProperty = DependencyProperty.Register(
-            nameof(Glyph),
-            typeof(string),
-            typeof(FontIcon),
-            new PropertyMetadata(string.Empty, OnGlyphChanged));
+        public static readonly DependencyProperty GlyphProperty =
+            DependencyProperty.Register(
+                nameof(Glyph),
+                typeof(string),
+                typeof(FontIcon),
+                new FrameworkPropertyMetadata(string.Empty, OnGlyphChanged));
 
         /// <summary>
         /// Gets or sets the character code that identifies the icon glyph.
@@ -234,5 +234,8 @@ namespace ModernWpf.Controls
 
             AddVisualChild(_layoutRoot);
         }
+
+        private Grid _layoutRoot;
+        private TextBlock _textBlock;
     }
 }

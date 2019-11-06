@@ -302,11 +302,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Resources>
-            <Style TargetType="ui:FontIcon">
-                <Setter Property="FontSize" Value="20" />
-            </Style>
-        </Style.Resources>
     </Style>
 
     <Style TargetType="local:SplitButton" BasedOn="{StaticResource SplitButtonStyle}" />
