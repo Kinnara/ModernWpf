@@ -74,31 +74,47 @@ namespace ModernWpf.Controls.Primitives
 
         private static void OnUseModernWindowStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            bool newValue = (bool)e.NewValue;
+
             if (DesignerProperties.GetIsInDesignMode(d))
             {
                 if (d is Control control)
                 {
-                    if (control.TryFindResource(DefaultWindowStyleKey) is Style style)
+                    if (newValue)
                     {
-                        var dStyle = new Style();
-
-                        foreach (Setter setter in style.Setters)
+                        if (control.TryFindResource(DefaultWindowStyleKey) is Style style)
                         {
-                            if (setter.Property == Control.BackgroundProperty ||
-                                setter.Property == Control.ForegroundProperty)
-                            {
-                                dStyle.Setters.Add(setter);
-                            }
-                        }
+                            var dStyle = new Style();
 
-                        control.Style = dStyle;
+                            foreach (Setter setter in style.Setters)
+                            {
+                                if (setter.Property == Control.BackgroundProperty ||
+                                    setter.Property == Control.ForegroundProperty)
+                                {
+                                    dStyle.Setters.Add(setter);
+                                }
+                            }
+
+                            control.Style = dStyle;
+                        }
+                    }
+                    else
+                    {
+                        control.ClearValue(FrameworkElement.StyleProperty);
                     }
                 }
             }
             else
             {
                 var window = (Window)d;
-                window.SetResourceReference(FrameworkElement.StyleProperty, DefaultWindowStyleKey);
+                if (newValue)
+                {
+                    window.SetResourceReference(FrameworkElement.StyleProperty, DefaultWindowStyleKey);
+                }
+                else
+                {
+                    window.ClearValue(FrameworkElement.StyleProperty);
+                }
             }
         }
 

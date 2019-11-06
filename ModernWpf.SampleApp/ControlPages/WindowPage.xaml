@@ -1,0 +1,29 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.WindowPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900"
+    DataContext="{Binding Source={x:Static Application.Current}, Path=MainWindow}">
+
+    <ScrollViewer>
+        <ui:SimpleStackPanel
+            Spacing="24"
+            Margin="{StaticResource ControlPageContentMargin}">
+
+            <CheckBox
+                Content="Use modern window style"
+                IsChecked="{Binding Path=(ui:WindowHelper.UseModernWindowStyle)}" />
+
+            <ui:RadioButtons
+                Header="ResizeMode"
+                ItemsSource="{Binding Source={x:Type ResizeMode}, Converter={StaticResource EnumValuesConverter}}"
+                SelectedItem="{Binding ResizeMode, Mode=TwoWay}" />
+
+        </ui:SimpleStackPanel>
+    </ScrollViewer>
+</UserControl>

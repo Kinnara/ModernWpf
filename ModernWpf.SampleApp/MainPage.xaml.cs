@@ -163,6 +163,7 @@ namespace ModernWpf.SampleApp
             //AddPage(typeof(ToolBarPage));
             AddPage(typeof(ToolTipPage));
             AddPage(typeof(TreeViewPage));
+            AddPage(typeof(WindowPage));
         }
 
         private void AddPage(Type pageType, string displayName = null)

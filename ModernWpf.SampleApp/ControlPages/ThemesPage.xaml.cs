@@ -28,24 +28,9 @@ namespace ModernWpf.SampleApp.ControlPages
             //    });
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            CustomWindowStyleToggle.IsChecked = GetWindow().Style != null;
-        }
-
         private void OpenNewWindow(object sender, RoutedEventArgs e)
         {
             new Window { Title = "New Window" }.Show();
-        }
-
-        private void CustomWindowStyleToggle_Checked(object sender, RoutedEventArgs e)
-        {
-            GetWindow().Style = (Style)Application.Current.Resources["DefaultWindowStyle"];
-        }
-
-        private void CustomWindowStyleToggle_Unchecked(object sender, RoutedEventArgs e)
-        {
-            GetWindow().Style = null;
         }
 
         private Window GetWindow()

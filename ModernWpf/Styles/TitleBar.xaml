@@ -101,6 +101,13 @@
                         <Trigger Property="IsIconVisible" Value="True">
                             <Setter TargetName="Icon" Property="Visibility" Value="Visible" />
                         </Trigger>
+                        <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="NoResize">
+                            <Setter TargetName="MinimizeButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="MaximizeRestoreButton" Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="CanMinimize">
+                            <Setter TargetName="MaximizeRestoreButton" Property="IsEnabled" Value="False" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
                             <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="&#xE923;" />
                             <Setter TargetName="MaximizeRestoreButton" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />

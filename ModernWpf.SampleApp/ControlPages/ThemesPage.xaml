@@ -13,8 +13,7 @@
     d:DesignWidth="1200"
     d:DesignHeight="900"
     Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
-    Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
-    Loaded="OnLoaded">
+    Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
 
     <UserControl.Resources>
         <local:AppThemeConverter x:Key="AppThemeConverter" />
@@ -155,10 +154,9 @@
             </StackPanel>-->
 
             <CheckBox
-                x:Name="CustomWindowStyleToggle"
                 Content="Use modern window style"
-                Checked="CustomWindowStyleToggle_Checked"
-                Unchecked="CustomWindowStyleToggle_Unchecked" />
+                DataContext="{Binding MainWindow, Source={x:Static Application.Current}}"
+                IsChecked="{Binding Path=(ui:WindowHelper.UseModernWindowStyle)}" />
 
             <ui:ToggleSwitch
                 Header="HighContrast"
