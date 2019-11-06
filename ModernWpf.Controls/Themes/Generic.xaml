@@ -4,6 +4,7 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/ModernWpf.Controls;component/ContentDialog/ContentDialog.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/DropDownButton/DropDownButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/Flyout/FlyoutPresenter.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/HyperlinkButton/HyperlinkButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ProgressRing/ProgressRing.xaml" />

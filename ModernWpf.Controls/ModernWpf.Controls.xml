@@ -4,9 +4,22 @@
     <name>ModernWpf.Controls</name>
   </assembly>
   <members>
-    <member name="T:ModernWpf.Automation.Peers.RepeaterAutomationPeer" />
-    <member name="M:ModernWpf.Automation.Peers.RepeaterAutomationPeer.#ctor(ModernWpf.Controls.ItemsRepeater)">
-      <param name="owner" />
+    <member name="T:ModernWpf.Automation.Peers.DropDownButtonAutomationPeer">
+      <summary>Exposes DropDownButton types to Microsoft UI Automation.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.#ctor(ModernWpf.Controls.DropDownButton)">
+      <summary>Initializes a new instance of the DropDownButtonAutomationPeer class.</summary>
+      <param name="owner">The DropDownButton control instance to create the peer for.</param>
+    </member>
+    <member name="P:ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.ExpandCollapseState">
+      <summary>Gets the state, expanded or collapsed, of the control.</summary>
+      <returns>A value of the enumeration.</returns>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.Collapse">
+      <summary>Hides the control's drop down menu.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.Expand">
+      <summary>Displays the control's drop down menu.</summary>
     </member>
     <member name="T:ModernWpf.Controls.AnimationContext">
       <summary>Defines constants that specify information about changes to a data collection that is useful for animating data elements.</summary>

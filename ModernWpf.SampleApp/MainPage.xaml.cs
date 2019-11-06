@@ -142,6 +142,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(ContextMenuPage));
             AddPage(typeof(DataGridPage));
             AddPage(typeof(DatePickerPage));
+            AddPage(typeof(DropDownButtonPage));
             AddPage(typeof(ExpanderPage));
             AddPage(typeof(FlyoutPage));
             AddPage(typeof(GroupBoxPage));
