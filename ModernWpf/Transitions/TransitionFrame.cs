@@ -376,7 +376,7 @@ namespace ModernWpf.Controls
             NavigationInTransition navigationInTransition = null;
             ITransition newTransition = null;
 
-            if (newElement != null && TransitionsEnabled)
+            if (oldElement != null && newElement != null && TransitionsEnabled)
             {
                 navigationInTransition = TransitionService.GetNavigationInTransition(newElement);
                 TransitionElement newTransitionElement = null;
