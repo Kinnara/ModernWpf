@@ -31,24 +31,27 @@
                             Visibility="Collapsed" />
 
                         <StackPanel Orientation="Horizontal">
-                            <Button
+                            <primitives:TitleBarButton
                                 x:Name="BackButton"
+                                Background="{DynamicResource AccentButtonBackground}"
+                                Foreground="{DynamicResource AccentButtonForeground}"
+                                HoverBackground="{DynamicResource AccentButtonBackgroundPointerOver}"
+                                HoverForeground="{DynamicResource AccentButtonForegroundPointerOver}"
+                                PressedBackground="{DynamicResource AccentButtonBackgroundPressed}"
+                                PressedForeground="{DynamicResource AccentButtonForegroundPressed}"
                                 Width="48"
-                                Height="{DynamicResource TitleBarHeight}"
+                                Height="{TemplateBinding Height}"
                                 Content="&#xE830;"
                                 FontSize="12"
                                 IsEnabled="{TemplateBinding IsBackEnabled}"
-                                Style="{DynamicResource NavigationBackButtonNormalStyle}"
-                                Visibility="Collapsed"
-                                WindowChrome.IsHitTestVisibleInChrome="True"
-                                IsTabStop="False" />
+                                Visibility="Collapsed" />
 
                             <Image
                                 x:Name="Icon"
                                 Source="{TemplateBinding Icon}"
                                 Width="16"
                                 Height="16"
-                                Margin="10,0,-2,0"
+                                Margin="10,0,0,0"
                                 VerticalAlignment="Center"
                                 Visibility="Collapsed" />
                         </StackPanel>
@@ -100,6 +103,7 @@
                         </Trigger>
                         <Trigger Property="IsIconVisible" Value="True">
                             <Setter TargetName="Icon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="Title" Property="Margin" Value="5,0,12,0" />
                         </Trigger>
                         <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="NoResize">
                             <Setter TargetName="MinimizeButton" Property="Visibility" Value="Collapsed" />

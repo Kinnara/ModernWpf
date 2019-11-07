@@ -14,7 +14,7 @@
         <Setter Property="PressedForeground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize" Value="10" />
-        <Setter Property="Height" Value="{DynamicResource DynamicResource}" />
+        <Setter Property="Height" Value="{DynamicResource TitleBarHeight}" />
         <Setter Property="Width" Value="46" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -51,6 +51,7 @@
                             <Setter Property="Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedForeground}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Background" TargetName="RootGrid" Value="{DynamicResource SystemControlDisabledTransparentBrush}" />
                             <Setter Property="Foreground" TargetName="Content" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
