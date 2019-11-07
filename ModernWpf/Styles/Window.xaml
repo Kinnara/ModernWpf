@@ -65,7 +65,9 @@
                                     ButtonStyle="{TemplateBinding local:TitleBar.ButtonStyle}"
                                     IsIconVisible="{TemplateBinding local:TitleBar.IsIconVisible}"
                                     IsBackButtonVisible="{TemplateBinding local:TitleBar.IsBackButtonVisible}"
-                                    IsBackEnabled="{TemplateBinding local:TitleBar.IsBackEnabled}" />
+                                    IsBackEnabled="{TemplateBinding local:TitleBar.IsBackEnabled}"
+                                    BackButtonCommand="{TemplateBinding local:TitleBar.BackButtonCommand}"
+                                    BackButtonCommandParameter="{TemplateBinding local:TitleBar.BackButtonCommandParameter}" />
 
                                 <AdornerDecorator Grid.Row="1">
                                     <ContentPresenter />

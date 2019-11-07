@@ -44,6 +44,8 @@
                                 Content="&#xE830;"
                                 FontSize="12"
                                 IsEnabled="{TemplateBinding IsBackEnabled}"
+                                Command="{TemplateBinding BackButtonCommand}"
+                                CommandParameter="{TemplateBinding BackButtonCommandParameter}"
                                 Visibility="Collapsed" />
 
                             <Image

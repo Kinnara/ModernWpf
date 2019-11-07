@@ -193,6 +193,58 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region BackButtonCommand
+
+        public static readonly DependencyProperty BackButtonCommandProperty =
+            DependencyProperty.RegisterAttached(
+                "BackButtonCommand",
+                typeof(ICommand),
+                typeof(TitleBar));
+
+        public ICommand BackButtonCommand
+        {
+            get => (ICommand)GetValue(BackButtonCommandProperty);
+            set => SetValue(BackButtonCommandProperty, value);
+        }
+
+        public static ICommand GetBackButtonCommand(Window window)
+        {
+            return (ICommand)window.GetValue(BackButtonCommandProperty);
+        }
+
+        public static void SetBackButtonCommand(Window window, ICommand value)
+        {
+            window.SetValue(BackButtonCommandProperty, value);
+        }
+
+        #endregion
+
+        #region BackButtonCommandParameter
+
+        public static readonly DependencyProperty BackButtonCommandParameterProperty =
+            DependencyProperty.RegisterAttached(
+                "BackButtonCommandParameter",
+                typeof(object),
+                typeof(TitleBar));
+
+        public object BackButtonCommandParameter
+        {
+            get => GetValue(BackButtonCommandParameterProperty);
+            set => SetValue(BackButtonCommandParameterProperty, value);
+        }
+
+        public static object GetBackButtonCommandParameter(Window window)
+        {
+            return window.GetValue(BackButtonCommandParameterProperty);
+        }
+
+        public static void SetBackButtonCommandParameter(Window window, object value)
+        {
+            window.SetValue(BackButtonCommandParameterProperty, value);
+        }
+
+        #endregion
+
         #region ButtonStyle
 
         public static readonly DependencyProperty ButtonStyleProperty =
