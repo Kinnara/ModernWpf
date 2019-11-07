@@ -316,7 +316,12 @@ namespace ModernWpf
             var requestedTheme = GetRequestedTheme(window);
             if (requestedTheme == ElementTheme.Default)
             {
-                SetActualTheme(window, Current.ActualApplicationTheme.Value == ModernWpf.ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light);
+                var actualAppTheme = Current.ActualApplicationTheme;
+                if (actualAppTheme.HasValue)
+                {
+                    SetActualTheme(window, actualAppTheme.Value == ModernWpf.ApplicationTheme.Dark ?
+                        ElementTheme.Dark : ElementTheme.Light);
+                }
             }
             else
             {
