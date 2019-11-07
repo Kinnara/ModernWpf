@@ -21,7 +21,10 @@ namespace ModernWpf.Controls
                 nameof(IsChecked),
                 typeof(bool),
                 typeof(ToggleSplitButton),
-                new PropertyMetadata(OnIsCheckedPropertyChanged));
+                new FrameworkPropertyMetadata(
+                    false,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
+                    OnIsCheckedPropertyChanged));
 
         public bool IsChecked
         {

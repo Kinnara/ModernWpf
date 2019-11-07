@@ -103,7 +103,10 @@ namespace ModernWpf.Controls
                 nameof(IsOn),
                 typeof(bool),
                 typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(false, OnIsOnChanged));
+                new FrameworkPropertyMetadata(
+                    false,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
+                    OnIsOnChanged));
 
         private static void OnIsOnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

@@ -160,7 +160,7 @@
 
             <ui:ToggleSwitch
                 Header="HighContrast"
-                IsOn="{Binding HighContrast, Source={x:Static ui:BindableSystemParameters.Current}}"
+                IsOn="{Binding HighContrast, Source={x:Static ui:BindableSystemParameters.Current}, Mode=OneWay}"
                 IsEnabled="False" />
         </ui:SimpleStackPanel>
     </ScrollViewer>
