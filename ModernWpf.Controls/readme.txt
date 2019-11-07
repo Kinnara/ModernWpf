@@ -17,4 +17,13 @@ Don't forget to add the theme resources to your Application resources in App.xam
         </Application.Resources>
     </Application>
 
+To enable themed style for a window, set WindowHelper.UseModernWindowStyle to true:
+
+    <Window
+        ...
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        ui:WindowHelper.UseModernWindowStyle="True">
+        ...
+    </Window>
+
 See https://github.com/Kinnara/ModernWpf for more information.
