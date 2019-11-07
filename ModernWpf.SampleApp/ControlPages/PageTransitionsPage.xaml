@@ -11,7 +11,7 @@
     d:DesignHeight="900">
 
     <UserControl.Resources>
-        <Style x:Key="DrillFrameStyle" TargetType="controls:TransitionFrameEx">
+        <Style x:Key="DrillFrameStyle" TargetType="ui:TransitionFrame">
             <Setter Property="DefaultNavigationInTransition">
                 <Setter.Value>
                     <ui:NavigationInTransition>
@@ -38,7 +38,7 @@
             </Setter>
         </Style>
 
-        <Style x:Key="SlideFromRightFrameStyle" TargetType="controls:TransitionFrameEx">
+        <Style x:Key="SlideFromRightFrameStyle" TargetType="ui:TransitionFrame">
             <Setter Property="DefaultNavigationInTransition">
                 <Setter.Value>
                     <ui:NavigationInTransition>
@@ -65,7 +65,7 @@
             </Setter>
         </Style>
 
-        <Style x:Key="SlideFromLeftFrameStyle" TargetType="controls:TransitionFrameEx">
+        <Style x:Key="SlideFromLeftFrameStyle" TargetType="ui:TransitionFrame">
             <Setter Property="DefaultNavigationInTransition">
                 <Setter.Value>
                     <ui:NavigationInTransition>
@@ -95,7 +95,7 @@
 
     <ScrollViewer Margin="{StaticResource ControlPageContentMargin}">
         <controls:ControlExample HeaderText="Page transitions">
-            <controls:TransitionFrameEx
+            <ui:TransitionFrame
                 x:Name="frame"
                 MinHeight="600"
                 JournalOwnership="OwnsJournal"

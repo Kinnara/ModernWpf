@@ -132,9 +132,45 @@ namespace ModernWpf.Controls
         public TransitionFrame()
             : base()
         {
+            TransitionsEnabled = SystemParameters.ClientAreaAnimation && RenderCapability.Tier > 0;
+
             Navigating += OnNavigating;
             NavigationStopped += OnNavigationStopped;
         }
+
+        #region DefaultNavigationInTransition
+
+        public static readonly DependencyProperty DefaultNavigationInTransitionProperty =
+            DependencyProperty.Register(
+                nameof(DefaultNavigationInTransition),
+                typeof(NavigationInTransition),
+                typeof(TransitionFrame),
+                null);
+
+        public NavigationInTransition DefaultNavigationInTransition
+        {
+            get => (NavigationInTransition)GetValue(DefaultNavigationInTransitionProperty);
+            set => SetValue(DefaultNavigationInTransitionProperty, value);
+        }
+
+        #endregion
+
+        #region DefaultNavigationOutTransition
+
+        public static readonly DependencyProperty DefaultNavigationOutTransitionProperty =
+            DependencyProperty.Register(
+                nameof(DefaultNavigationOutTransition),
+                typeof(NavigationOutTransition),
+                typeof(TransitionFrame),
+                null);
+
+        public NavigationOutTransition DefaultNavigationOutTransition
+        {
+            get => (NavigationOutTransition)GetValue(DefaultNavigationOutTransitionProperty);
+            set => SetValue(DefaultNavigationOutTransitionProperty, value);
+        }
+
+        #endregion
 
         #region TransitionsEnabled
 
@@ -173,8 +209,6 @@ namespace ModernWpf.Controls
         /// <param name="e">The event arguments.</param>
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
         {
-            OnNavigating(e);
-
             // If the current application is not the origin
             // and destination of the navigation, ignore it.
             // e.g. do not play a transition when the 
@@ -203,6 +237,11 @@ namespace ModernWpf.Controls
 
             if (TransitionsEnabled)
             {
+                if (HasDefaultValue(oldElement, TransitionService.NavigationOutTransitionProperty))
+                {
+                    oldElement.SetCurrentValue(TransitionService.NavigationOutTransitionProperty, DefaultNavigationOutTransition);
+                }
+
                 navigationOutTransition = TransitionService.GetNavigationOutTransition(oldElement);
 
                 if (navigationOutTransition != null)
@@ -233,10 +272,6 @@ namespace ModernWpf.Controls
             {
                 _readyToTransitionToNewContent = true;
             }
-        }
-
-        protected virtual void OnNavigating(NavigatingCancelEventArgs e)
-        {
         }
 
         /// <summary>
@@ -378,6 +413,11 @@ namespace ModernWpf.Controls
 
             if (oldElement != null && newElement != null && TransitionsEnabled)
             {
+                if (HasDefaultValue(newElement, TransitionService.NavigationInTransitionProperty))
+                {
+                    newElement.SetCurrentValue(TransitionService.NavigationInTransitionProperty, DefaultNavigationInTransition);
+                }
+
                 navigationInTransition = TransitionService.GetNavigationInTransition(newElement);
                 TransitionElement newTransitionElement = null;
                 if (navigationInTransition != null)
@@ -548,6 +588,11 @@ namespace ModernWpf.Controls
 
                 presenter.IsHitTestVisible = true;
             }
+        }
+
+        private static bool HasDefaultValue(DependencyObject d, DependencyProperty dp)
+        {
+            return DependencyPropertyHelper.GetValueSource(d, dp).BaseValueSource == BaseValueSource.Default;
         }
     }
 }

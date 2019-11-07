@@ -1,11 +1,10 @@
-﻿using ModernWpf.Controls;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Media.Animation;
 
-namespace ModernWpf.SampleApp.Controls
+namespace ModernWpf.Controls
 {
-    public class EmptyTransition : TransitionElement
+    public class SuppressTransition : TransitionElement
     {
         public override ITransition GetTransition(UIElement element, Size containerSize)
         {

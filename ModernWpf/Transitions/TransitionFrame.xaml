@@ -7,6 +7,31 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="NavigationUIVisibility" Value="Hidden" />
+        <Setter Property="DefaultNavigationInTransition">
+            <Setter.Value>
+                <local:NavigationInTransition>
+                    <local:NavigationInTransition.Backward>
+                        <local:FadeTransition Mode="FadeIn" />
+                    </local:NavigationInTransition.Backward>
+                    <local:NavigationInTransition.Forward>
+                        <local:SlideTransition Mode="SlideUp" />
+                    </local:NavigationInTransition.Forward>
+                </local:NavigationInTransition>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="DefaultNavigationOutTransition">
+            <Setter.Value>
+                <local:NavigationOutTransition>
+                    <local:NavigationOutTransition.Backward>
+                        <local:SlideTransition Mode="SlideDown" />
+                    </local:NavigationOutTransition.Backward>
+                    <local:NavigationOutTransition.Forward>
+                        <local:FadeTransition Mode="FadeOut" />
+                    </local:NavigationOutTransition.Forward>
+                </local:NavigationOutTransition>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:TransitionFrame">

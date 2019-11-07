@@ -85,33 +85,6 @@
                 <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
             </Style>
 
-            <Style TargetType="controls:TransitionFrameEx">
-                <Setter Property="DefaultNavigationInTransition">
-                    <Setter.Value>
-                        <ui:NavigationInTransition>
-                            <ui:NavigationInTransition.Backward>
-                                <ui:FadeTransition Mode="FadeIn" />
-                            </ui:NavigationInTransition.Backward>
-                            <ui:NavigationInTransition.Forward>
-                                <ui:SlideTransition Mode="SlideUp" />
-                            </ui:NavigationInTransition.Forward>
-                        </ui:NavigationInTransition>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="DefaultNavigationOutTransition">
-                    <Setter.Value>
-                        <ui:NavigationOutTransition>
-                            <ui:NavigationOutTransition.Backward>
-                                <ui:SlideTransition Mode="SlideDown" />
-                            </ui:NavigationOutTransition.Backward>
-                            <ui:NavigationOutTransition.Forward>
-                                <ui:FadeTransition Mode="FadeOut" />
-                            </ui:NavigationOutTransition.Forward>
-                        </ui:NavigationOutTransition>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
             <Style x:Key="ScrollableContentDialogStyle" TargetType="ui:ContentDialog">
                 <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
                 <Style.Resources>

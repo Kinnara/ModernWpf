@@ -7,7 +7,6 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900">
@@ -99,11 +98,10 @@
             </ListBox.ItemsSource>
         </ListBox>
 
-        <controls:TransitionFrameEx
+        <ui:TransitionFrame
             x:Name="Frame"
             Grid.Row="1"
             Grid.Column="1"
-            NavigationUIVisibility="Hidden"
             Navigated="Frame_Navigated" />
     </Grid>
 </UserControl>
