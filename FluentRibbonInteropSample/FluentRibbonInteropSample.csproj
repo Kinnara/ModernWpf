@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fluent.Ribbon" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
+    <ProjectReference Include="..\ModernWpf\ModernWpf.csproj" />
+  </ItemGroup>
+
+</Project>

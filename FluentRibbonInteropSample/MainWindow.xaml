@@ -1,0 +1,49 @@
+﻿<Fluent:RibbonWindow
+    x:Class="FluentRibbonInteropSample.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:Fluent="urn:fluent-ribbon"
+    Title="My first RibbonWindow"
+    Width="800"
+    Height="600"
+    ui:WindowHelper.IsEnabled="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Fluent:Ribbon Grid.Row="0">
+            <!-- Backstage -->
+            <Fluent:Ribbon.Menu>
+                <Fluent:Backstage />
+            </Fluent:Ribbon.Menu>
+
+            <!-- Tabs -->
+            <Fluent:RibbonTabItem Header="Home">
+                <Fluent:RibbonGroupBox Header="Group">
+                    <Fluent:Button
+                        Header="Green"
+                        Icon="Images/Green.png"
+                        LargeIcon="Images/GreenLarge.png" />
+                    <Fluent:Button
+                        Header="Gray"
+                        Icon="Images/Gray.png"
+                        LargeIcon="Images/GrayLarge.png" />
+                </Fluent:RibbonGroupBox>
+            </Fluent:RibbonTabItem>
+        </Fluent:Ribbon>
+
+        <ui:SimpleStackPanel
+            Grid.Row="1"
+            Spacing="12"
+            Margin="12">
+            <Button
+                Content="Invert theme"
+                Click="InvertTheme" />
+            <Button Content="Show content dialog" Click="ShowContentDialog" />
+            <Calendar />
+        </ui:SimpleStackPanel>
+    </Grid>
+</Fluent:RibbonWindow>
