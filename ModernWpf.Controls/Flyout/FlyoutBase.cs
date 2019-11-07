@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -90,7 +91,8 @@ namespace ModernWpf.Controls.Primitives
                     Child = m_presenter,
                     StaysOpen = false,
                     AllowsTransparency = true,
-                    PopupAnimation = PopupAnimation.Fade
+                    PopupAnimation = PopupAnimation.Fade,
+                    CustomPopupPlacementCallback = PositionPopup
                 };
                 m_popup.Opened += OnPopupOpened;
                 m_popup.Closed += OnPopupClosed;
@@ -101,99 +103,46 @@ namespace ModernWpf.Controls.Primitives
                 m_popup.IsOpen = false;
             }
 
-            var placement = Placement;
-            m_popup.Placement = GetPopupPlacement(placement);
-
-            if (placement == FlyoutPlacementMode.Full)
+            if (Placement == FlyoutPlacementMode.Full &&
+                Window.GetWindow(placementTarget) is Window window)
             {
-                var window = Window.GetWindow(placementTarget);
-                if (window != null)
-                {
-                    m_popup.PlacementTarget = window;
-
-                    m_popup.SetBinding(
-                        FrameworkElement.WidthProperty,
-                        new MultiBinding
-                        {
-                            Converter = s_fullPlacementWidthConverter,
-                            Bindings =
-                            {
-                                new Binding { Path = new PropertyPath(FrameworkElement.ActualWidthProperty), Source = window },
-                                new Binding { Path = new PropertyPath(Control.BorderThicknessProperty), Source = window },
-                            }
-                        });
-
-                    m_popup.SetBinding(
-                        FrameworkElement.HeightProperty,
-                        new MultiBinding
-                        {
-                            Converter = s_fullPlacementHeightConverter,
-                            Bindings =
-                            {
-                                new Binding { Path = new PropertyPath(FrameworkElement.ActualHeightProperty), Source = window },
-                                new Binding { Path = new PropertyPath(Control.BorderThicknessProperty), Source = window },
-                            }
-                        });
-                }
-                else
-                {
-                    m_popup.PlacementTarget = placementTarget;
-                    m_popup.ClearValue(FrameworkElement.WidthProperty);
-                    m_popup.ClearValue(FrameworkElement.HeightProperty);
-                }
-
-                m_popup.ClearValue(Popup.PlacementRectangleProperty);
-                m_popup.ClearValue(Popup.HorizontalOffsetProperty);
-                m_popup.ClearValue(Popup.VerticalOffsetProperty);
-            }
-            else
-            {
-                m_popup.PlacementTarget = placementTarget;
+                m_popup.Placement = PlacementMode.Center;
+                m_popup.PlacementTarget = window;
 
                 m_popup.SetBinding(
-                    Popup.PlacementRectangleProperty,
+                    FrameworkElement.WidthProperty,
                     new MultiBinding
                     {
-                        Converter = s_placementRectangleConverter,
+                        Converter = s_fullPlacementWidthConverter,
                         Bindings =
                         {
-                            new Binding { Path = new PropertyPath(FrameworkElement.ActualWidthProperty), Source = placementTarget },
-                            new Binding { Path = new PropertyPath(FrameworkElement.ActualHeightProperty), Source = placementTarget },
+                            new Binding { Path = new PropertyPath(FrameworkElement.ActualWidthProperty), Source = window },
+                            new Binding { Path = new PropertyPath(Control.BorderThicknessProperty), Source = window },
                         }
                     });
 
-                if (placement == FlyoutPlacementMode.Top ||
-                    placement == FlyoutPlacementMode.Bottom)
-                {
-                    m_popup.ClearValue(Popup.VerticalOffsetProperty);
-                    m_popup.SetBinding(
-                        Popup.HorizontalOffsetProperty,
-                        new MultiBinding
+                m_popup.SetBinding(
+                    FrameworkElement.HeightProperty,
+                    new MultiBinding
+                    {
+                        Converter = s_fullPlacementHeightConverter,
+                        Bindings =
                         {
-                            Converter = s_horizontalOffsetConverter,
-                            Bindings =
-                            {
-                                new Binding { Path = new PropertyPath(FrameworkElement.ActualWidthProperty), Source = placementTarget },
-                                new Binding { Path = new PropertyPath(FrameworkElement.ActualWidthProperty), Source = m_presenter },
-                            }
-                        });
-                }
-                else
-                {
-                    m_popup.ClearValue(Popup.HorizontalOffsetProperty);
-                    m_popup.SetBinding(
-                        Popup.VerticalOffsetProperty,
-                        new MultiBinding
-                        {
-                            Converter = s_verticalOffsetConverter,
-                            Bindings =
-                            {
-                                new Binding { Path = new PropertyPath(FrameworkElement.ActualHeightProperty), Source = placementTarget },
-                                new Binding { Path = new PropertyPath(FrameworkElement.ActualHeightProperty), Source = m_presenter },
-                            }
-                        });
-                }
+                            new Binding { Path = new PropertyPath(FrameworkElement.ActualHeightProperty), Source = window },
+                            new Binding { Path = new PropertyPath(Control.BorderThicknessProperty), Source = window },
+                        }
+                    });
             }
+            else
+            {
+                m_popup.Placement =  PlacementMode.Custom;
+                m_popup.PlacementTarget = placementTarget;
+                m_popup.ClearValue(FrameworkElement.WidthProperty);
+                m_popup.ClearValue(FrameworkElement.HeightProperty);
+            }
+
+            Debug.Assert(m_popup.ReadLocalValue(Popup.PlacementProperty) != DependencyProperty.UnsetValue);
+            Debug.Assert(m_popup.ReadLocalValue(Popup.PlacementTargetProperty) != DependencyProperty.UnsetValue);
 
             m_target = placementTarget;
             Opening?.Invoke(this, s_sharedEventArgs);
@@ -221,10 +170,8 @@ namespace ModernWpf.Controls.Primitives
 
             if (!m_popup.IsOpen)
             {
+                m_popup.ClearValue(Popup.PlacementProperty);
                 m_popup.ClearValue(Popup.PlacementTargetProperty);
-                m_popup.ClearValue(Popup.PlacementRectangleProperty);
-                m_popup.ClearValue(Popup.HorizontalOffsetProperty);
-                m_popup.ClearValue(Popup.VerticalOffsetProperty);
                 m_popup.ClearValue(FrameworkElement.WidthProperty);
                 m_popup.ClearValue(FrameworkElement.HeightProperty);
                 m_target = null;
@@ -239,82 +186,153 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private static PlacementMode GetPopupPlacement(FlyoutPlacementMode flyoutPlacement)
+        private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)
         {
-            switch (flyoutPlacement)
+            var placement = Placement;
+
+            CustomPopupPlacement preferredPlacement = GetPopupPlacement(placement, popupSize, targetSize);
+
+            CustomPopupPlacement? alternativePlacement = null;
+            var alternativePlacementMode = GetAlternativePlacementMode(placement);
+            if (alternativePlacementMode.HasValue)
+            {
+                alternativePlacement = GetPopupPlacement(alternativePlacementMode.Value, popupSize, targetSize);
+            }
+
+            if (alternativePlacement.HasValue)
+            {
+                return new[] { preferredPlacement, alternativePlacement.Value };
+            }
+            else
+            {
+                return new[] { preferredPlacement };
+            }
+        }
+
+        private static CustomPopupPlacement GetPopupPlacement(FlyoutPlacementMode placement, Size popupSize, Size targetSize)
+        {
+            Point point;
+            PopupPrimaryAxis primaryAxis;
+
+            switch (placement)
             {
                 case FlyoutPlacementMode.Top:
-                    return PlacementMode.Top;
+                    point = new Point((targetSize.Width - popupSize.Width) / 2, -popupSize.Height);
+                    point.Y -= s_offset;
+                    primaryAxis = PopupPrimaryAxis.Vertical;
+                    break;
                 case FlyoutPlacementMode.Bottom:
-                    return PlacementMode.Bottom;
+                    point = new Point((targetSize.Width - popupSize.Width) / 2, targetSize.Height);
+                    point.Y += s_offset;
+                    primaryAxis = PopupPrimaryAxis.Vertical;
+                    break;
                 case FlyoutPlacementMode.Left:
-                    return PlacementMode.Left;
+                    point = new Point(-popupSize.Width, (targetSize.Height - popupSize.Height) / 2);
+                    point.X -= s_offset;
+                    primaryAxis = PopupPrimaryAxis.Horizontal;
+                    break;
                 case FlyoutPlacementMode.Right:
-                    return PlacementMode.Right;
+                    point = new Point(targetSize.Width, (targetSize.Height - popupSize.Height) / 2);
+                    point.X += s_offset;
+                    primaryAxis = PopupPrimaryAxis.Horizontal;
+                    break;
                 case FlyoutPlacementMode.Full:
-                    return PlacementMode.Center;
+                    point = new Point((targetSize.Width - popupSize.Width) / 2, (targetSize.Height - popupSize.Height) / 2);
+                    primaryAxis = PopupPrimaryAxis.None;
+                    break;
+                case FlyoutPlacementMode.TopEdgeAlignedLeft:
+                    point = new Point(0, -popupSize.Height);
+                    point.Y -= s_offset;
+                    primaryAxis = PopupPrimaryAxis.Vertical;
+                    break;
+                case FlyoutPlacementMode.TopEdgeAlignedRight:
+                    point = new Point(targetSize.Width - popupSize.Width, -popupSize.Height);
+                    point.Y -= s_offset;
+                    primaryAxis = PopupPrimaryAxis.Vertical;
+                    break;
+                case FlyoutPlacementMode.BottomEdgeAlignedLeft:
+                    point = new Point(0, targetSize.Height);
+                    point.Y += s_offset;
+                    primaryAxis = PopupPrimaryAxis.Vertical;
+                    break;
+                case FlyoutPlacementMode.BottomEdgeAlignedRight:
+                    point = new Point(targetSize.Width - popupSize.Width, targetSize.Height);
+                    point.Y += s_offset;
+                    primaryAxis = PopupPrimaryAxis.Vertical;
+                    break;
+                case FlyoutPlacementMode.LeftEdgeAlignedTop:
+                    point = new Point(-popupSize.Width, 0);
+                    point.X -= s_offset;
+                    primaryAxis = PopupPrimaryAxis.Horizontal;
+                    break;
+                case FlyoutPlacementMode.LeftEdgeAlignedBottom:
+                    point = new Point(-popupSize.Width, targetSize.Height - popupSize.Height);
+                    point.X -= s_offset;
+                    primaryAxis = PopupPrimaryAxis.Horizontal;
+                    break;
+                case FlyoutPlacementMode.RightEdgeAlignedTop:
+                    point = new Point(targetSize.Width, 0);
+                    point.X += s_offset;
+                    primaryAxis = PopupPrimaryAxis.Horizontal;
+                    break;
+                case FlyoutPlacementMode.RightEdgeAlignedBottom:
+                    point = new Point(targetSize.Width, targetSize.Height - popupSize.Height);
+                    point.X += s_offset;
+                    primaryAxis = PopupPrimaryAxis.Horizontal;
+                    break;
+                //case FlyoutPlacementMode.Auto:
                 default:
-                    throw new NotImplementedException();
+                    throw new ArgumentOutOfRangeException(nameof(placement));
+            }
+
+            return new CustomPopupPlacement(point, primaryAxis);
+        }
+
+        private static FlyoutPlacementMode? GetAlternativePlacementMode(FlyoutPlacementMode placement)
+        {
+            switch (placement)
+            {
+                case FlyoutPlacementMode.Top:
+                    return FlyoutPlacementMode.Bottom;
+                case FlyoutPlacementMode.Bottom:
+                    return FlyoutPlacementMode.Top;
+                case FlyoutPlacementMode.Left:
+                    return FlyoutPlacementMode.Right;
+                case FlyoutPlacementMode.Right:
+                    return FlyoutPlacementMode.Left;
+                case FlyoutPlacementMode.Full:
+                    return null;
+                case FlyoutPlacementMode.TopEdgeAlignedLeft:
+                    return FlyoutPlacementMode.BottomEdgeAlignedLeft;
+                case FlyoutPlacementMode.TopEdgeAlignedRight:
+                    return FlyoutPlacementMode.BottomEdgeAlignedRight;
+                case FlyoutPlacementMode.BottomEdgeAlignedLeft:
+                    return FlyoutPlacementMode.TopEdgeAlignedLeft;
+                case FlyoutPlacementMode.BottomEdgeAlignedRight:
+                    return FlyoutPlacementMode.TopEdgeAlignedRight;
+                case FlyoutPlacementMode.LeftEdgeAlignedTop:
+                    return FlyoutPlacementMode.RightEdgeAlignedTop;
+                case FlyoutPlacementMode.LeftEdgeAlignedBottom:
+                    return FlyoutPlacementMode.RightEdgeAlignedBottom;
+                case FlyoutPlacementMode.RightEdgeAlignedTop:
+                    return FlyoutPlacementMode.RightEdgeAlignedTop;
+                case FlyoutPlacementMode.RightEdgeAlignedBottom:
+                    return FlyoutPlacementMode.LeftEdgeAlignedBottom;
+                //case FlyoutPlacementMode.Auto:
+                default:
+                    return null;
             }
         }
 
         private static readonly object s_sharedEventArgs = new object();
-        private static readonly IMultiValueConverter s_placementRectangleConverter = new PlacementRectangleConverter();
-        private static readonly IMultiValueConverter s_horizontalOffsetConverter = new HorizontalOffsetConverter();
-        private static readonly IMultiValueConverter s_verticalOffsetConverter = new VerticalOffsetConverter();
         private static readonly IMultiValueConverter s_fullPlacementWidthConverter = new FullPlacementWidthConverter();
         private static readonly IMultiValueConverter s_fullPlacementHeightConverter = new FullPlacementHeightConverter();
+
+        private const double s_offset = 4;
 
         private Control m_presenter;
         private Popup m_popup;
         private FrameworkElement m_target;
-
-        private class PlacementRectangleConverter : IMultiValueConverter
-        {
-            private const double Margin = 4;
-
-            public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-            {
-                double width = (double)values[0];
-                double height = (double)values[1];
-                return new Rect(new Point(-Margin, -Margin), new Point(width + Margin, height + Margin));
-            }
-
-            public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        private class HorizontalOffsetConverter : IMultiValueConverter
-        {
-            public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-            {
-                double placementTargetWidth = (double)values[0];
-                double popupChildWidth = (double)values[1];
-                return (placementTargetWidth - popupChildWidth) / 2;
-            }
-
-            public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        private class VerticalOffsetConverter : IMultiValueConverter
-        {
-            public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-            {
-                double placementTargetHeight = (double)values[0];
-                double popupChildHeight = (double)values[1];
-                return (placementTargetHeight - popupChildHeight) / 2;
-            }
-
-            public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-            {
-                throw new NotImplementedException();
-            }
-        }
 
         private class FullPlacementWidthConverter : IMultiValueConverter
         {

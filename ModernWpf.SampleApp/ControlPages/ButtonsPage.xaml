@@ -81,7 +81,7 @@
                             Fill="Black"
                             Margin="0" />
                         <ui:SplitButton.Flyout>
-                            <ui:Flyout Placement="Bottom">
+                            <ui:Flyout Placement="BottomEdgeAlignedLeft">
                                 <UniformGrid
                                     Rows="3"
                                     Columns="3">
@@ -178,7 +178,7 @@
                             x:Name="mySymbolIcon"
                             Symbol="List" />
                         <ui:ToggleSplitButton.Flyout>
-                            <ui:Flyout Placement="Bottom">
+                            <ui:Flyout Placement="BottomEdgeAlignedLeft">
                                 <StackPanel Orientation="Horizontal">
                                     <StackPanel.Resources>
                                         <Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
