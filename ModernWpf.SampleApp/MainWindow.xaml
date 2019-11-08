@@ -14,8 +14,8 @@
     WindowStartupLocation="CenterScreen"
     Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
     Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+    ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.UseModernWindowStyle="True"
-    ui:WindowHelper.IsEnabled="True"
     ui:TitleBar.IsBackButtonVisible="False"
     ui:TitleBar.IsBackEnabled="{Binding ElementName=RootFrame, Path=CanGoBack}"
     ui:TitleBar.BackRequested="OnBackRequested">

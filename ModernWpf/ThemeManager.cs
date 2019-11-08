@@ -331,6 +331,62 @@ namespace ModernWpf
 
         #endregion
 
+        #region IsThemeAware
+
+        public static bool GetIsThemeAware(Window window)
+        {
+            return (bool)window.GetValue(IsThemeAwareProperty);
+        }
+
+        public static void SetIsThemeAware(Window window, bool value)
+        {
+            window.SetValue(IsThemeAwareProperty, value);
+        }
+
+        public static readonly DependencyProperty IsThemeAwareProperty =
+            DependencyProperty.RegisterAttached(
+                "IsThemeAware",
+                typeof(bool),
+                typeof(ThemeManager),
+                new PropertyMetadata(OnIsThemeAwareChanged));
+
+        private static void OnIsThemeAwareChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Window window)
+            {
+                if ((bool)e.NewValue)
+                {
+                    window.SetBinding(
+                        InheritedApplicationThemeProperty,
+                        new Binding
+                        {
+                            Path = new PropertyPath(ActualApplicationThemeProperty),
+                            Source = Current
+                        });
+
+                    UpdateWindowActualTheme((Window)d);
+                }
+                else
+                {
+                    window.ClearValue(InheritedApplicationThemeProperty);
+                }
+            }
+        }
+
+        private static readonly DependencyProperty InheritedApplicationThemeProperty =
+            DependencyProperty.RegisterAttached(
+                "InheritedApplicationTheme",
+                typeof(ApplicationTheme?),
+                typeof(ThemeManager),
+                new PropertyMetadata(OnInheritedApplicationThemeChanged));
+
+        private static void OnInheritedApplicationThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateWindowActualTheme((Window)d);
+        }
+
+        #endregion
+
         #region HasThemeResources
 
         public static readonly DependencyProperty HasThemeResourcesProperty =

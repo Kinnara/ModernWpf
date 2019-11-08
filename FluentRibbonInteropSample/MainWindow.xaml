@@ -7,7 +7,7 @@
     Title="My first RibbonWindow"
     Width="800"
     Height="600"
-    ui:WindowHelper.IsEnabled="True">
+    ui:ThemeManager.IsThemeAware="True">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -42,7 +42,9 @@
             <Button
                 Content="Invert theme"
                 Click="InvertTheme" />
-            <Button Content="Show content dialog" Click="ShowContentDialog" />
+            <Button
+                Content="Show content dialog"
+                Click="ShowContentDialog" />
             <Calendar />
         </ui:SimpleStackPanel>
     </Grid>

@@ -1,56 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace ModernWpf.Controls.Primitives
 {
     public static class WindowHelper
     {
-        #region IsEnabled
-
-        public static bool GetIsEnabled(Window window)
-        {
-            return (bool)window.GetValue(IsEnabledProperty);
-        }
-
-        public static void SetIsEnabled(Window window, bool value)
-        {
-            window.SetValue(IsEnabledProperty, value);
-        }
-
-        public static readonly DependencyProperty IsEnabledProperty =
-            DependencyProperty.RegisterAttached(
-                "IsEnabled",
-                typeof(bool),
-                typeof(WindowHelper),
-                new PropertyMetadata(OnIsEnabledChanged));
-
-        private static void OnIsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is Window window)
-            {
-                if ((bool)e.NewValue)
-                {
-                    window.SetBinding(
-                        ApplicationThemeProperty,
-                        new Binding
-                        {
-                            Path = new PropertyPath(ThemeManager.ActualApplicationThemeProperty),
-                            Source = ThemeManager.Current
-                        });
-
-                    ThemeManager.UpdateWindowActualTheme((Window)d);
-                }
-                else
-                {
-                    window.ClearValue(ApplicationThemeProperty);
-                }
-            }
-        }
-
-        #endregion
-
         #region UseModernWindowStyle
 
         private const string DefaultWindowStyleKey = "DefaultWindowStyle";
@@ -116,22 +71,6 @@ namespace ModernWpf.Controls.Primitives
                     window.ClearValue(FrameworkElement.StyleProperty);
                 }
             }
-        }
-
-        #endregion
-
-        #region ApplicationTheme
-
-        private static readonly DependencyProperty ApplicationThemeProperty =
-            DependencyProperty.RegisterAttached(
-                "ApplicationTheme",
-                typeof(ApplicationTheme?),
-                typeof(WindowHelper),
-                new PropertyMetadata(OnApplicationThemeChanged));
-
-        private static void OnApplicationThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ThemeManager.UpdateWindowActualTheme((Window)d);
         }
 
         #endregion

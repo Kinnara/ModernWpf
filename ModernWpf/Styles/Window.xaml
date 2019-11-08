@@ -20,7 +20,7 @@
                     UseAeroCaptionButtons="False" />
             </Setter.Value>
         </Setter>
-        <Setter Property="primitives:WindowHelper.IsEnabled" Value="True" />
+        <Setter Property="root:ThemeManager.IsThemeAware" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Window">
