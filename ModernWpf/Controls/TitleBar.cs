@@ -47,126 +47,6 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region ButtonBackground
-
-        public static readonly DependencyProperty ButtonBackgroundProperty =
-            DependencyProperty.RegisterAttached(
-                "ButtonBackground",
-                typeof(Brush),
-                typeof(TitleBar));
-
-        public static Brush GetButtonBackground(Window window)
-        {
-            return (Brush)window.GetValue(ButtonBackgroundProperty);
-        }
-
-        public static void SetButtonBackground(Window window, Brush value)
-        {
-            window.SetValue(ButtonBackgroundProperty, value);
-        }
-
-        #endregion
-
-        #region ButtonForeground
-
-        public static readonly DependencyProperty ButtonForegroundProperty =
-            DependencyProperty.RegisterAttached(
-                "ButtonForeground",
-                typeof(Brush),
-                typeof(TitleBar));
-
-        public static Brush GetButtonForeground(Window window)
-        {
-            return (Brush)window.GetValue(ButtonForegroundProperty);
-        }
-
-        public static void SetButtonForeground(Window window, Brush value)
-        {
-            window.SetValue(ButtonForegroundProperty, value);
-        }
-
-        #endregion
-
-        #region ButtonHoverBackground
-
-        public static readonly DependencyProperty ButtonHoverBackgroundProperty =
-            DependencyProperty.RegisterAttached(
-                "ButtonHoverBackground",
-                typeof(Brush),
-                typeof(TitleBar));
-
-        public static Brush GetButtonHoverBackground(Window window)
-        {
-            return (Brush)window.GetValue(ButtonHoverBackgroundProperty);
-        }
-
-        public static void SetButtonHoverBackground(Window window, Brush value)
-        {
-            window.SetValue(ButtonHoverBackgroundProperty, value);
-        }
-
-        #endregion
-
-        #region ButtonHoverForeground
-
-        public static readonly DependencyProperty ButtonHoverForegroundProperty =
-            DependencyProperty.RegisterAttached(
-                "ButtonHoverForeground",
-                typeof(Brush),
-                typeof(TitleBar));
-
-        public static Brush GetButtonHoverForeground(Window window)
-        {
-            return (Brush)window.GetValue(ButtonHoverForegroundProperty);
-        }
-
-        public static void SetButtonHoverForeground(Window window, Brush value)
-        {
-            window.SetValue(ButtonHoverForegroundProperty, value);
-        }
-
-        #endregion
-
-        #region ButtonPressedBackground
-
-        public static readonly DependencyProperty ButtonPressedBackgroundProperty =
-            DependencyProperty.RegisterAttached(
-                "ButtonPressedBackground",
-                typeof(Brush),
-                typeof(TitleBar));
-
-        public static Brush GetButtonPressedBackground(Window window)
-        {
-            return (Brush)window.GetValue(ButtonPressedBackgroundProperty);
-        }
-
-        public static void SetButtonPressedBackground(Window window, Brush value)
-        {
-            window.SetValue(ButtonPressedBackgroundProperty, value);
-        }
-
-        #endregion
-
-        #region ButtonPressedForeground
-
-        public static readonly DependencyProperty ButtonPressedForegroundProperty =
-            DependencyProperty.RegisterAttached(
-                "ButtonPressedForeground",
-                typeof(Brush),
-                typeof(TitleBar));
-
-        public static Brush GetButtonPressedForeground(Window window)
-        {
-            return (Brush)window.GetValue(ButtonPressedForegroundProperty);
-        }
-
-        public static void SetButtonPressedForeground(Window window, Brush value)
-        {
-            window.SetValue(ButtonPressedForegroundProperty, value);
-        }
-
-        #endregion
-
         #region InactiveBackground
 
         public static readonly DependencyProperty InactiveBackgroundProperty =
@@ -207,42 +87,22 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region ButtonInactiveBackground
+        #region ButtonStyle
 
-        public static readonly DependencyProperty ButtonInactiveBackgroundProperty =
+        public static readonly DependencyProperty ButtonStyleProperty =
             DependencyProperty.RegisterAttached(
-                "ButtonInactiveBackground",
-                typeof(Brush),
+                "ButtonStyle",
+                typeof(Style),
                 typeof(TitleBar));
 
-        public static Brush GetButtonInactiveBackground(Window window)
+        public static Style GetButtonStyle(Window window)
         {
-            return (Brush)window.GetValue(ButtonInactiveBackgroundProperty);
+            return (Style)window.GetValue(ButtonStyleProperty);
         }
 
-        public static void SetButtonInactiveBackground(Window window, Brush value)
+        public static void SetButtonStyle(Window window, Style value)
         {
-            window.SetValue(ButtonInactiveBackgroundProperty, value);
-        }
-
-        #endregion
-
-        #region ButtonInactiveForeground
-
-        public static readonly DependencyProperty ButtonInactiveForegroundProperty =
-            DependencyProperty.RegisterAttached(
-                "ButtonInactiveForeground",
-                typeof(Brush),
-                typeof(TitleBar));
-
-        public static Brush GetButtonInactiveForeground(Window window)
-        {
-            return (Brush)window.GetValue(ButtonInactiveForegroundProperty);
-        }
-
-        public static void SetButtonInactiveForeground(Window window, Brush value)
-        {
-            window.SetValue(ButtonInactiveForegroundProperty, value);
+            window.SetValue(ButtonStyleProperty, value);
         }
 
         #endregion
@@ -357,6 +217,26 @@ namespace ModernWpf.Controls
         public static void SetBackButtonCommandParameter(Window window, object value)
         {
             window.SetValue(BackButtonCommandParameterProperty, value);
+        }
+
+        #endregion
+
+        #region BackButtonStyle
+
+        public static readonly DependencyProperty BackButtonStyleProperty =
+            DependencyProperty.RegisterAttached(
+                "BackButtonStyle",
+                typeof(Style),
+                typeof(TitleBar));
+
+        public static Style GetBackButtonStyle(Window window)
+        {
+            return (Style)window.GetValue(BackButtonStyleProperty);
+        }
+
+        public static void SetBackButtonStyle(Window window, Style value)
+        {
+            window.SetValue(BackButtonStyleProperty, value);
         }
 
         #endregion

@@ -41,21 +41,6 @@
                         <Color>White</Color>
                     </ComboBox>
 
-                    <ComboBox
-                        ui:ControlHelper.Header="ButtonBackground"
-                        SelectedItem="{Binding Path=(ui:TitleBar.ButtonBackground), Mode=TwoWay, Converter={StaticResource BrushToColorConverter}}">
-                        <Color>Red</Color>
-                        <Color>Green</Color>
-                        <Color>Blue</Color>
-                    </ComboBox>
-
-                    <ComboBox
-                        ui:ControlHelper.Header="ButtonForeground"
-                        SelectedItem="{Binding Path=(ui:TitleBar.ButtonForeground), Mode=TwoWay, Converter={StaticResource BrushToColorConverter}}">
-                        <Color>Black</Color>
-                        <Color>White</Color>
-                    </ComboBox>
-
                     <Button
                         Content="Reset"
                         Click="ResetTitleBar" />

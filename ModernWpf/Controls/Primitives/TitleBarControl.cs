@@ -24,84 +24,6 @@ namespace ModernWpf.Controls.Primitives
             CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, CloseWindow));
         }
 
-        #region ButtonBackground
-
-        public static readonly DependencyProperty ButtonBackgroundProperty =
-            TitleBar.ButtonBackgroundProperty.AddOwner(typeof(TitleBarControl));
-
-        public Brush ButtonBackground
-        {
-            get => (Brush)GetValue(ButtonBackgroundProperty);
-            set => SetValue(ButtonBackgroundProperty, value);
-        }
-
-        #endregion
-
-        #region ButtonForeground
-
-        public static readonly DependencyProperty ButtonForegroundProperty =
-            TitleBar.ButtonForegroundProperty.AddOwner(typeof(TitleBarControl));
-
-        public Brush ButtonForeground
-        {
-            get => (Brush)GetValue(ButtonForegroundProperty);
-            set => SetValue(ButtonForegroundProperty, value);
-        }
-
-        #endregion
-
-        #region ButtonHoverBackground
-
-        public static readonly DependencyProperty ButtonHoverBackgroundProperty =
-            TitleBar.ButtonHoverBackgroundProperty.AddOwner(typeof(TitleBarControl));
-
-        public Brush ButtonHoverBackground
-        {
-            get => (Brush)GetValue(ButtonHoverBackgroundProperty);
-            set => SetValue(ButtonHoverBackgroundProperty, value);
-        }
-
-        #endregion
-
-        #region ButtonHoverForeground
-
-        public static readonly DependencyProperty ButtonHoverForegroundProperty =
-            TitleBar.ButtonHoverForegroundProperty.AddOwner(typeof(TitleBarControl));
-
-        public Brush ButtonHoverForeground
-        {
-            get => (Brush)GetValue(ButtonHoverForegroundProperty);
-            set => SetValue(ButtonHoverForegroundProperty, value);
-        }
-
-        #endregion
-
-        #region ButtonPressedBackground
-
-        public static readonly DependencyProperty ButtonPressedBackgroundProperty =
-            TitleBar.ButtonPressedBackgroundProperty.AddOwner(typeof(TitleBarControl));
-
-        public Brush ButtonPressedBackground
-        {
-            get => (Brush)GetValue(ButtonPressedBackgroundProperty);
-            set => SetValue(ButtonPressedBackgroundProperty, value);
-        }
-
-        #endregion
-
-        #region ButtonPressedForeground
-
-        public static readonly DependencyProperty ButtonPressedForegroundProperty =
-            TitleBar.ButtonPressedForegroundProperty.AddOwner(typeof(TitleBarControl));
-
-        public Brush ButtonPressedForeground
-        {
-            get => (Brush)GetValue(ButtonPressedForegroundProperty);
-            set => SetValue(ButtonPressedForegroundProperty, value);
-        }
-
-        #endregion
-
         #region InactiveBackground
 
         public static readonly DependencyProperty InactiveBackgroundProperty =
@@ -128,28 +50,15 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        #region ButtonInactiveBackground
+        #region ButtonStyle
 
-        public static readonly DependencyProperty ButtonInactiveBackgroundProperty =
-            TitleBar.ButtonInactiveBackgroundProperty.AddOwner(typeof(TitleBarControl));
+        public static readonly DependencyProperty ButtonStyleProperty =
+            TitleBar.ButtonStyleProperty.AddOwner(typeof(TitleBarControl));
 
-        public Brush ButtonInactiveBackground
+        public Style ButtonStyle
         {
-            get => (Brush)GetValue(ButtonInactiveBackgroundProperty);
-            set => SetValue(ButtonInactiveBackgroundProperty, value);
-        }
-
-        #endregion
-
-        #region ButtonInactiveForeground
-
-        public static readonly DependencyProperty ButtonInactiveForegroundProperty =
-            TitleBar.ButtonInactiveForegroundProperty.AddOwner(typeof(TitleBarControl));
-
-        public Brush ButtonInactiveForeground
-        {
-            get => (Brush)GetValue(ButtonInactiveForegroundProperty);
-            set => SetValue(ButtonInactiveForegroundProperty, value);
+            get => (Style)GetValue(ButtonStyleProperty);
+            set => SetValue(ButtonStyleProperty, value);
         }
 
         #endregion
@@ -256,6 +165,19 @@ namespace ModernWpf.Controls.Primitives
         {
             get => GetValue(BackButtonCommandParameterProperty);
             set => SetValue(BackButtonCommandParameterProperty, value);
+        }
+
+        #endregion
+
+        #region BackButtonStyle
+
+        public static readonly DependencyProperty BackButtonStyleProperty =
+            TitleBar.BackButtonStyleProperty.AddOwner(typeof(TitleBarControl));
+
+        public Style BackButtonStyle
+        {
+            get => (Style)GetValue(BackButtonStyleProperty);
+            set => SetValue(BackButtonStyleProperty, value);
         }
 
         #endregion

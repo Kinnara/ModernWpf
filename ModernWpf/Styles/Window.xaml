@@ -5,6 +5,15 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
+    <Style x:Key="BackButtonStyle" TargetType="primitives:TitleBarButton">
+        <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
+        <Setter Property="HoverBackground" Value="{DynamicResource AccentButtonBackgroundPointerOver}" />
+        <Setter Property="HoverForeground" Value="{DynamicResource AccentButtonForegroundPointerOver}" />
+        <Setter Property="PressedBackground" Value="{DynamicResource AccentButtonBackgroundPressed}" />
+        <Setter Property="PressedForeground" Value="{DynamicResource AccentButtonForegroundPressed}" />
+    </Style>
+
     <Style x:Key="DefaultWindowStyle" TargetType="Window">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
@@ -25,14 +34,7 @@
         <Setter Property="local:TitleBar.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="local:TitleBar.InactiveBackground" Value="Transparent" />
         <Setter Property="local:TitleBar.InactiveForeground" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
-        <Setter Property="local:TitleBar.ButtonBackground" Value="{DynamicResource TitleBarButtonBackground}" />
-        <Setter Property="local:TitleBar.ButtonForeground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        <Setter Property="local:TitleBar.ButtonInactiveBackground" Value="{DynamicResource TitleBarButtonBackgroundInactive}" />
-        <Setter Property="local:TitleBar.ButtonInactiveForeground" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
-        <Setter Property="local:TitleBar.ButtonHoverBackground" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
-        <Setter Property="local:TitleBar.ButtonHoverForeground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
-        <Setter Property="local:TitleBar.ButtonPressedBackground" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
-        <Setter Property="local:TitleBar.ButtonPressedForeground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
+        <Setter Property="local:TitleBar.BackButtonStyle" Value="{StaticResource BackButtonStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Window">
@@ -77,19 +79,13 @@
                                     Foreground="{TemplateBinding local:TitleBar.Foreground}"
                                     InactiveBackground="{TemplateBinding local:TitleBar.InactiveBackground}"
                                     InactiveForeground="{TemplateBinding local:TitleBar.InactiveForeground}"
-                                    ButtonBackground="{TemplateBinding local:TitleBar.ButtonBackground}"
-                                    ButtonForeground="{TemplateBinding local:TitleBar.ButtonForeground}"
-                                    ButtonInactiveBackground="{TemplateBinding local:TitleBar.ButtonInactiveBackground}"
-                                    ButtonInactiveForeground="{TemplateBinding local:TitleBar.ButtonInactiveForeground}"
-                                    ButtonHoverBackground="{TemplateBinding local:TitleBar.ButtonHoverBackground}"
-                                    ButtonHoverForeground="{TemplateBinding local:TitleBar.ButtonHoverForeground}"
-                                    ButtonPressedBackground="{TemplateBinding local:TitleBar.ButtonPressedBackground}"
-                                    ButtonPressedForeground="{TemplateBinding local:TitleBar.ButtonPressedForeground}"
+                                    ButtonStyle="{TemplateBinding local:TitleBar.ButtonStyle}"
                                     IsIconVisible="{TemplateBinding local:TitleBar.IsIconVisible}"
                                     IsBackButtonVisible="{TemplateBinding local:TitleBar.IsBackButtonVisible}"
                                     IsBackEnabled="{TemplateBinding local:TitleBar.IsBackEnabled}"
                                     BackButtonCommand="{TemplateBinding local:TitleBar.BackButtonCommand}"
                                     BackButtonCommandParameter="{TemplateBinding local:TitleBar.BackButtonCommandParameter}"
+                                    BackButtonStyle="{TemplateBinding local:TitleBar.BackButtonStyle}"
                                     ExtendViewIntoTitleBar="{TemplateBinding local:TitleBar.ExtendViewIntoTitleBar}"
                                     Panel.ZIndex="1" />
 

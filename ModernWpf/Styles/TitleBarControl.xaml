@@ -31,12 +31,7 @@
 
                         <primitives:TitleBarButton
                             x:Name="BackButton"
-                            Background="{DynamicResource AccentButtonBackground}"
-                            Foreground="{DynamicResource AccentButtonForeground}"
-                            HoverBackground="{DynamicResource AccentButtonBackgroundPointerOver}"
-                            HoverForeground="{DynamicResource AccentButtonForegroundPointerOver}"
-                            PressedBackground="{DynamicResource AccentButtonBackgroundPressed}"
-                            PressedForeground="{DynamicResource AccentButtonForegroundPressed}"
+                            Style="{TemplateBinding BackButtonStyle}"
                             Width="48"
                             Height="{TemplateBinding Height}"
                             Content="&#xE830;"
@@ -81,40 +76,22 @@
                                 x:Name="MinimizeButton"
                                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
                                 Content="&#xE921;"
-                                Background="{TemplateBinding ButtonBackground}"
-                                Foreground="{TemplateBinding ButtonForeground}"
-                                HoverBackground="{TemplateBinding ButtonHoverBackground}"
-                                HoverForeground="{TemplateBinding ButtonHoverForeground}"
-                                PressedBackground="{TemplateBinding ButtonPressedBackground}"
-                                PressedForeground="{TemplateBinding ButtonPressedForeground}"
-                                InactiveBackground="{TemplateBinding ButtonInactiveBackground}"
-                                InactiveForeground="{TemplateBinding ButtonInactiveForeground}" />
+                                Style="{TemplateBinding ButtonStyle}" />
 
                             <primitives:TitleBarButton
                                 x:Name="MaximizeRestoreButton"
                                 Command="{x:Static SystemCommands.MaximizeWindowCommand}"
                                 Content="&#xE922;"
-                                Background="{TemplateBinding ButtonBackground}"
-                                Foreground="{TemplateBinding ButtonForeground}"
-                                HoverBackground="{TemplateBinding ButtonHoverBackground}"
-                                HoverForeground="{TemplateBinding ButtonHoverForeground}"
-                                PressedBackground="{TemplateBinding ButtonPressedBackground}"
-                                PressedForeground="{TemplateBinding ButtonPressedForeground}"
-                                InactiveBackground="{TemplateBinding ButtonInactiveBackground}"
-                                InactiveForeground="{TemplateBinding ButtonInactiveForeground}" />
+                                Style="{TemplateBinding ButtonStyle}" />
 
                             <primitives:TitleBarButton
                                 x:Name="CloseButton"
                                 Command="{x:Static SystemCommands.CloseWindowCommand}"
                                 Content="&#xE106;"
-                                Background="{TemplateBinding ButtonBackground}"
-                                Foreground="{TemplateBinding ButtonForeground}"
+                                Style="{TemplateBinding ButtonStyle}"
                                 HoverBackground="#E81123"
-                                HoverForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
                                 PressedBackground="#F1707A"
-                                PressedForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
-                                InactiveBackground="{TemplateBinding ButtonInactiveBackground}"
-                                InactiveForeground="{TemplateBinding ButtonInactiveForeground}" />
+                                PressedForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}" />
                         </StackPanel>
                     </Grid>
                     <ControlTemplate.Triggers>
