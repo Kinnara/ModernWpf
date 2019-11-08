@@ -134,7 +134,7 @@ namespace ModernWpf.Controls.Primitives
         /// <summary>
         /// Gets or sets a value that indicates whether the back button is enabled or disabled.
         /// </summary>
-        /// <returns>true if the back button is enabled; otherwise, false. The default is false.</returns>
+        /// <returns>true if the back button is enabled; otherwise, false. The default is true.</returns>
         public bool IsBackEnabled
         {
             get => (bool)GetValue(IsBackEnabledProperty);

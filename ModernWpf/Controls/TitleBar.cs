@@ -157,13 +157,14 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 "IsBackEnabled",
                 typeof(bool),
-                typeof(TitleBar));
+                typeof(TitleBar),
+                new PropertyMetadata(true));
 
         /// <summary>
         /// Gets a value that indicates whether the back button is enabled or disabled.
         /// </summary>
         /// <param name="window">The element from which to read the property value.</param>
-        /// <returns>true if the back button is enabled; otherwise, false. The default is false.</returns>
+        /// <returns>true if the back button is enabled; otherwise, false. The default is true.</returns>
         public static bool GetIsBackEnabled(Window window)
         {
             return (bool)window.GetValue(IsBackEnabledProperty);
