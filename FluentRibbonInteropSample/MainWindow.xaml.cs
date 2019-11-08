@@ -16,7 +16,7 @@ namespace FluentRibbonInteropSample
 
         private void InvertTheme(object sender, RoutedEventArgs e)
         {
-            if (ThemeManager.Current.ApplicationTheme == ApplicationTheme.Dark)
+            if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark)
             {
                 ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
                 Fluent.ThemeManager.ChangeThemeBaseColor(Application.Current, "Light");
