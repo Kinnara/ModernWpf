@@ -1,7 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using ModernWpf.Controls.Primitives;
 
-namespace ModernWpf.Controls.Primitives
+namespace ModernWpf.Controls
 {
     public static class FlyoutService
     {
@@ -10,7 +11,7 @@ namespace ModernWpf.Controls.Primitives
                 "Flyout",
                 typeof(FlyoutBase),
                 typeof(FlyoutService),
-                new PropertyMetadata(default(FlyoutBase), OnFlyoutChanged));
+                new PropertyMetadata(OnFlyoutChanged));
 
         public static FlyoutBase GetFlyout(Button button)
         {
