@@ -90,6 +90,7 @@
                                 Content="&#xE106;"
                                 Style="{TemplateBinding ButtonStyle}"
                                 HoverBackground="#E81123"
+                                HoverForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
                                 PressedBackground="#F1707A"
                                 PressedForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}" />
                         </StackPanel>
