@@ -47,7 +47,7 @@ Modern styles and controls for your WPF applications.
 </Window>
 ```
 
-5. See [Common Tasks](https://github.com/Kinnara/ModernWpf/wiki/Common-Tasks) for more usage information.
+5. See [the wiki](https://github.com/Kinnara/ModernWpf/wiki) for more information.
 
 ## Screenshots
 ![Screenshot 2](docs/images/ControlPalette2.png "Screenshot 2")
