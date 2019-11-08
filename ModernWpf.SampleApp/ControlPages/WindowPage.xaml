@@ -24,6 +24,44 @@
                 ItemsSource="{Binding Source={x:Type ResizeMode}, Converter={StaticResource EnumValuesConverter}}"
                 SelectedItem="{Binding ResizeMode, Mode=TwoWay}" />
 
+            <GroupBox Header="Title Bar">
+                <ui:SimpleStackPanel Spacing="12">
+                    <ComboBox
+                        ui:ControlHelper.Header="Background"
+                        SelectedItem="{Binding Path=(ui:TitleBar.Background), Mode=TwoWay, Converter={StaticResource BrushToColorConverter}}">
+                        <Color>Red</Color>
+                        <Color>Green</Color>
+                        <Color>Blue</Color>
+                    </ComboBox>
+
+                    <ComboBox
+                        ui:ControlHelper.Header="Foreground"
+                        SelectedItem="{Binding Path=(ui:TitleBar.Foreground), Mode=TwoWay, Converter={StaticResource BrushToColorConverter}}">
+                        <Color>Black</Color>
+                        <Color>White</Color>
+                    </ComboBox>
+
+                    <ComboBox
+                        ui:ControlHelper.Header="ButtonBackground"
+                        SelectedItem="{Binding Path=(ui:TitleBar.ButtonBackground), Mode=TwoWay, Converter={StaticResource BrushToColorConverter}}">
+                        <Color>Red</Color>
+                        <Color>Green</Color>
+                        <Color>Blue</Color>
+                    </ComboBox>
+
+                    <ComboBox
+                        ui:ControlHelper.Header="ButtonForeground"
+                        SelectedItem="{Binding Path=(ui:TitleBar.ButtonForeground), Mode=TwoWay, Converter={StaticResource BrushToColorConverter}}">
+                        <Color>Black</Color>
+                        <Color>White</Color>
+                    </ComboBox>
+
+                    <Button
+                        Content="Reset"
+                        Click="ResetTitleBar" />
+                </ui:SimpleStackPanel>
+            </GroupBox>
+
         </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

@@ -20,10 +20,29 @@
     ui:TitleBar.IsBackEnabled="{Binding ElementName=RootFrame, Path=CanGoBack}"
     ui:TitleBar.BackRequested="OnBackRequested">
 
-    <Frame
-        x:Name="RootFrame"
-        NavigationUIVisibility="Hidden"
-        IsTabStop="False"
-        Source="/MainPage.xaml" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
 
+        <Grid
+            x:Name="CustomTitleBar"
+            Height="{DynamicResource TitleBarHeight}"
+            Visibility="{Binding Path=(ui:TitleBar.ExtendViewIntoTitleBar), ElementName=Window, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Text="Custom Title Bar" />
+        </Grid>
+
+        <Frame
+            x:Name="RootFrame"
+            Grid.Row="1"
+            NavigationUIVisibility="Hidden"
+            IsTabStop="False"
+            Source="/MainPage.xaml" />
+    </Grid>
 </Window>

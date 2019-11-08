@@ -82,6 +82,10 @@
                     Header="IsBackButtonVisible"
                     IsCheckable="True"
                     IsChecked="{Binding Path=(ui:TitleBar.IsBackButtonVisible), Mode=TwoWay}" />
+                <MenuItem
+                    Header="ExtendViewIntoTitleBar"
+                    IsCheckable="True"
+                    IsChecked="{Binding Path=(ui:TitleBar.ExtendViewIntoTitleBar), Mode=TwoWay}" />
             </MenuItem>
         </Menu>
 

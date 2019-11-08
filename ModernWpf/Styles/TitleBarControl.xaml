@@ -5,19 +5,13 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
-    <Style TargetType="local:TitleBar">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        <Setter Property="InactiveBackground" Value="Transparent" />
-        <Setter Property="InactiveForeground" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
+    <Style TargetType="primitives:TitleBarControl">
         <Setter Property="Height" Value="{DynamicResource TitleBarHeight}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:TitleBar">
-                    <Grid
-                        x:Name="LayoutRoot"
-                        Background="{TemplateBinding Background}">
+                <ControlTemplate TargetType="primitives:TitleBarControl">
+                    <Grid x:Name="LayoutRoot">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -25,29 +19,37 @@
                         </Grid.ColumnDefinitions>
 
                         <Rectangle
+                            x:Name="Background"
+                            Grid.ColumnSpan="3"
+                            Fill="{TemplateBinding Background}" />
+
+                        <Rectangle
                             x:Name="HighContrastCaptionBackground"
                             Grid.ColumnSpan="3"
                             Fill="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
                             Visibility="Collapsed" />
 
-                        <StackPanel Orientation="Horizontal">
-                            <primitives:TitleBarButton
-                                x:Name="BackButton"
-                                Background="{DynamicResource AccentButtonBackground}"
-                                Foreground="{DynamicResource AccentButtonForeground}"
-                                HoverBackground="{DynamicResource AccentButtonBackgroundPointerOver}"
-                                HoverForeground="{DynamicResource AccentButtonForegroundPointerOver}"
-                                PressedBackground="{DynamicResource AccentButtonBackgroundPressed}"
-                                PressedForeground="{DynamicResource AccentButtonForegroundPressed}"
-                                Width="48"
-                                Height="{TemplateBinding Height}"
-                                Content="&#xE830;"
-                                FontSize="12"
-                                IsEnabled="{TemplateBinding IsBackEnabled}"
-                                Command="{TemplateBinding BackButtonCommand}"
-                                CommandParameter="{TemplateBinding BackButtonCommandParameter}"
-                                Visibility="Collapsed" />
+                        <primitives:TitleBarButton
+                            x:Name="BackButton"
+                            Background="{DynamicResource AccentButtonBackground}"
+                            Foreground="{DynamicResource AccentButtonForeground}"
+                            HoverBackground="{DynamicResource AccentButtonBackgroundPointerOver}"
+                            HoverForeground="{DynamicResource AccentButtonForegroundPointerOver}"
+                            PressedBackground="{DynamicResource AccentButtonBackgroundPressed}"
+                            PressedForeground="{DynamicResource AccentButtonForegroundPressed}"
+                            Width="48"
+                            Height="{TemplateBinding Height}"
+                            Content="&#xE830;"
+                            FontSize="12"
+                            IsEnabled="{TemplateBinding IsBackEnabled}"
+                            Command="{TemplateBinding BackButtonCommand}"
+                            CommandParameter="{TemplateBinding BackButtonCommandParameter}"
+                            Visibility="Collapsed" />
 
+                        <StackPanel
+                            x:Name="IconTitlePanel"
+                            Grid.Column="1"
+                            Orientation="Horizontal">
                             <Image
                                 x:Name="Icon"
                                 Source="{TemplateBinding Icon}"
@@ -56,47 +58,63 @@
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
                                 Visibility="Collapsed" />
-                        </StackPanel>
 
-                        <TextBlock
-                            x:Name="Title"
-                            Grid.Column="1"
-                            Margin="12,0,12,0"
-                            VerticalAlignment="Center"
-                            FontSize="12"
-                            Background="{x:Null}"
-                            Foreground="{TemplateBinding Foreground}"
-                            Text="{TemplateBinding Title}"
-                            TextTrimming="CharacterEllipsis">
-                            <TextBlock.RenderTransform>
-                                <TranslateTransform Y="-1" />
-                            </TextBlock.RenderTransform>
-                        </TextBlock>
+                            <TextBlock
+                                x:Name="Title"
+                                Margin="12,0,12,0"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Background="{x:Null}"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding Title}"
+                                TextTrimming="CharacterEllipsis">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform Y="-1" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                        </StackPanel>
 
                         <StackPanel
                             Grid.Column="2"
                             Orientation="Horizontal">
                             <primitives:TitleBarButton
                                 x:Name="MinimizeButton"
-                                Style="{TemplateBinding ButtonStyle}"
                                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
-                                Content="&#xE921;" />
+                                Content="&#xE921;"
+                                Background="{TemplateBinding ButtonBackground}"
+                                Foreground="{TemplateBinding ButtonForeground}"
+                                HoverBackground="{TemplateBinding ButtonHoverBackground}"
+                                HoverForeground="{TemplateBinding ButtonHoverForeground}"
+                                PressedBackground="{TemplateBinding ButtonPressedBackground}"
+                                PressedForeground="{TemplateBinding ButtonPressedForeground}"
+                                InactiveBackground="{TemplateBinding ButtonInactiveBackground}"
+                                InactiveForeground="{TemplateBinding ButtonInactiveForeground}" />
 
                             <primitives:TitleBarButton
                                 x:Name="MaximizeRestoreButton"
-                                Style="{TemplateBinding ButtonStyle}"
                                 Command="{x:Static SystemCommands.MaximizeWindowCommand}"
-                                Content="&#xE922;" />
+                                Content="&#xE922;"
+                                Background="{TemplateBinding ButtonBackground}"
+                                Foreground="{TemplateBinding ButtonForeground}"
+                                HoverBackground="{TemplateBinding ButtonHoverBackground}"
+                                HoverForeground="{TemplateBinding ButtonHoverForeground}"
+                                PressedBackground="{TemplateBinding ButtonPressedBackground}"
+                                PressedForeground="{TemplateBinding ButtonPressedForeground}"
+                                InactiveBackground="{TemplateBinding ButtonInactiveBackground}"
+                                InactiveForeground="{TemplateBinding ButtonInactiveForeground}" />
 
                             <primitives:TitleBarButton
                                 x:Name="CloseButton"
-                                Style="{TemplateBinding ButtonStyle}"
                                 Command="{x:Static SystemCommands.CloseWindowCommand}"
                                 Content="&#xE106;"
+                                Background="{TemplateBinding ButtonBackground}"
+                                Foreground="{TemplateBinding ButtonForeground}"
                                 HoverBackground="#E81123"
                                 HoverForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
                                 PressedBackground="#F1707A"
-                                PressedForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}" />
+                                PressedForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
+                                InactiveBackground="{TemplateBinding ButtonInactiveBackground}"
+                                InactiveForeground="{TemplateBinding ButtonInactiveForeground}" />
                         </StackPanel>
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -106,6 +124,10 @@
                         <Trigger Property="IsIconVisible" Value="True">
                             <Setter TargetName="Icon" Property="Visibility" Value="Visible" />
                             <Setter TargetName="Title" Property="Margin" Value="5,0,12,0" />
+                        </Trigger>
+                        <Trigger Property="ExtendViewIntoTitleBar" Value="True">
+                            <Setter TargetName="Background" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="IconTitlePanel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="NoResize">
                             <Setter TargetName="MinimizeButton" Property="Visibility" Value="Collapsed" />

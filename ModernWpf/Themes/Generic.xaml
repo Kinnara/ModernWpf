@@ -4,7 +4,7 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/ModernWpf;component/Styles/ListViewHeaderItem.xaml" />
-        <ResourceDictionary Source="/ModernWpf;component/Styles/TitleBar.xaml" />
+        <ResourceDictionary Source="/ModernWpf;component/Styles/TitleBarControl.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/Styles/TitleBarButton.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/Transitions/TransitionFrame.xaml" />
     </ResourceDictionary.MergedDictionaries>

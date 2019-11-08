@@ -21,6 +21,18 @@
             </Setter.Value>
         </Setter>
         <Setter Property="root:ThemeManager.IsThemeAware" Value="True" />
+        <Setter Property="local:TitleBar.Background" Value="Transparent" />
+        <Setter Property="local:TitleBar.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="local:TitleBar.InactiveBackground" Value="Transparent" />
+        <Setter Property="local:TitleBar.InactiveForeground" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
+        <Setter Property="local:TitleBar.ButtonBackground" Value="{DynamicResource TitleBarButtonBackground}" />
+        <Setter Property="local:TitleBar.ButtonForeground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="local:TitleBar.ButtonInactiveBackground" Value="{DynamicResource TitleBarButtonBackgroundInactive}" />
+        <Setter Property="local:TitleBar.ButtonInactiveForeground" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
+        <Setter Property="local:TitleBar.ButtonHoverBackground" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
+        <Setter Property="local:TitleBar.ButtonHoverForeground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
+        <Setter Property="local:TitleBar.ButtonPressedBackground" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
+        <Setter Property="local:TitleBar.ButtonPressedForeground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Window">
@@ -58,18 +70,32 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
 
-                                <local:TitleBar
+                                <primitives:TitleBarControl
                                     Icon="{TemplateBinding Icon}"
                                     Title="{TemplateBinding Title}"
-                                    Style="{TemplateBinding local:TitleBar.TitleBarStyle}"
-                                    ButtonStyle="{TemplateBinding local:TitleBar.ButtonStyle}"
+                                    Background="{TemplateBinding local:TitleBar.Background}"
+                                    Foreground="{TemplateBinding local:TitleBar.Foreground}"
+                                    InactiveBackground="{TemplateBinding local:TitleBar.InactiveBackground}"
+                                    InactiveForeground="{TemplateBinding local:TitleBar.InactiveForeground}"
+                                    ButtonBackground="{TemplateBinding local:TitleBar.ButtonBackground}"
+                                    ButtonForeground="{TemplateBinding local:TitleBar.ButtonForeground}"
+                                    ButtonInactiveBackground="{TemplateBinding local:TitleBar.ButtonInactiveBackground}"
+                                    ButtonInactiveForeground="{TemplateBinding local:TitleBar.ButtonInactiveForeground}"
+                                    ButtonHoverBackground="{TemplateBinding local:TitleBar.ButtonHoverBackground}"
+                                    ButtonHoverForeground="{TemplateBinding local:TitleBar.ButtonHoverForeground}"
+                                    ButtonPressedBackground="{TemplateBinding local:TitleBar.ButtonPressedBackground}"
+                                    ButtonPressedForeground="{TemplateBinding local:TitleBar.ButtonPressedForeground}"
                                     IsIconVisible="{TemplateBinding local:TitleBar.IsIconVisible}"
                                     IsBackButtonVisible="{TemplateBinding local:TitleBar.IsBackButtonVisible}"
                                     IsBackEnabled="{TemplateBinding local:TitleBar.IsBackEnabled}"
                                     BackButtonCommand="{TemplateBinding local:TitleBar.BackButtonCommand}"
-                                    BackButtonCommandParameter="{TemplateBinding local:TitleBar.BackButtonCommandParameter}" />
+                                    BackButtonCommandParameter="{TemplateBinding local:TitleBar.BackButtonCommandParameter}"
+                                    ExtendViewIntoTitleBar="{TemplateBinding local:TitleBar.ExtendViewIntoTitleBar}"
+                                    Panel.ZIndex="1" />
 
-                                <AdornerDecorator Grid.Row="1">
+                                <AdornerDecorator
+                                    x:Name="AdornerDecorator"
+                                    Grid.Row="1">
                                     <ContentPresenter />
                                 </AdornerDecorator>
 
@@ -101,6 +127,10 @@
                         <Trigger Property="WindowState" Value="Maximized">
                             <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="0" />
                             <Setter TargetName="HighContrastBorder" Property="BorderThickness" Value="0" />
+                        </Trigger>
+                        <Trigger Property="local:TitleBar.ExtendViewIntoTitleBar" Value="True">
+                            <Setter TargetName="AdornerDecorator" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="AdornerDecorator" Property="Grid.RowSpan" Value="2" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

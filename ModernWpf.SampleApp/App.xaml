@@ -54,6 +54,7 @@
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <common:EnumValuesConverter x:Key="EnumValuesConverter" />
+            <common:BrushToColorConverter x:Key="BrushToColorConverter" />
 
             <Style TargetType="ui:SimpleStackPanel">
                 <Setter Property="Spacing" Value="12" />
