@@ -158,6 +158,20 @@
                 DataContext="{Binding MainWindow, Source={x:Static Application.Current}}"
                 IsChecked="{Binding Path=(ui:WindowHelper.UseModernWindowStyle)}" />
 
+            <TextBox
+                Width="200"
+                HorizontalAlignment="Left"
+                ui:ControlHelper.Header="ActualApplicationTheme"
+                Text="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Mode=OneWay}"
+                IsReadOnly="True" />
+
+            <TextBox
+                Width="200"
+                HorizontalAlignment="Left"
+                ui:ControlHelper.Header="ActualAccentColor"
+                Text="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualAccentColor, Mode=OneWay}"
+                IsReadOnly="True" />
+
             <ui:ToggleSwitch
                 Header="HighContrast"
                 IsOn="{Binding HighContrast, Source={x:Static ui:BindableSystemParameters.Current}, Mode=OneWay}"

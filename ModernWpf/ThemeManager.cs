@@ -62,17 +62,20 @@ namespace ModernWpf
 
         #region ActualApplicationTheme
 
-        internal static readonly DependencyProperty ActualApplicationThemeProperty =
-            DependencyProperty.Register(
+        private static readonly DependencyPropertyKey ActualApplicationThemePropertyKey =
+            DependencyProperty.RegisterReadOnly(
                 nameof(ActualApplicationTheme),
-                typeof(ApplicationTheme?),
+                typeof(ApplicationTheme),
                 typeof(ThemeManager),
-                new PropertyMetadata(OnActualApplicationThemeChanged));
+                new PropertyMetadata(ModernWpf.ApplicationTheme.Light, OnActualApplicationThemeChanged));
 
-        internal ApplicationTheme? ActualApplicationTheme
+        public static readonly DependencyProperty ActualApplicationThemeProperty =
+            ActualApplicationThemePropertyKey.DependencyProperty;
+
+        public ApplicationTheme ActualApplicationTheme
         {
-            get => (ApplicationTheme?)GetValue(ActualApplicationThemeProperty);
-            set => SetValue(ActualApplicationThemeProperty, value);
+            get => (ApplicationTheme)GetValue(ActualApplicationThemeProperty);
+            private set => SetValue(ActualApplicationThemePropertyKey, value);
         }
 
         private static void OnActualApplicationThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -82,22 +85,18 @@ namespace ModernWpf
 
         private void OnActualApplicationThemeChanged(DependencyPropertyChangedEventArgs e)
         {
-            Debug.Assert(e.NewValue != null);
             ApplyApplicationTheme();
         }
 
         private void UpdateActualApplicationTheme()
         {
-            if (_applicationStarted)
+            if (UsingSystemTheme)
             {
-                if (UsingSystemTheme)
-                {
-                    ActualApplicationTheme = GetDefaultAppTheme();
-                }
-                else
-                {
-                    ActualApplicationTheme = ApplicationTheme ?? ModernWpf.ApplicationTheme.Light;
-                }
+                ActualApplicationTheme = GetDefaultAppTheme();
+            }
+            else
+            {
+                ActualApplicationTheme = ApplicationTheme ?? ModernWpf.ApplicationTheme.Light;
             }
         }
 
@@ -136,17 +135,20 @@ namespace ModernWpf
 
         #region ActualAccentColor
 
-        private static readonly DependencyProperty ActualAccentColorProperty =
-            DependencyProperty.Register(
+        private static readonly DependencyPropertyKey ActualAccentColorPropertyKey =
+            DependencyProperty.RegisterReadOnly(
                 nameof(ActualAccentColor),
                 typeof(Color),
                 typeof(ThemeManager),
-                new PropertyMetadata(OnActualAccentColorChanged));
+                new PropertyMetadata(ColorsHelper.DefaultAccentColor, OnActualAccentColorChanged));
 
-        private Color ActualAccentColor
+        public static readonly DependencyProperty ActualAccentColorProperty =
+            ActualAccentColorPropertyKey.DependencyProperty;
+
+        public Color ActualAccentColor
         {
             get => (Color)GetValue(ActualAccentColorProperty);
-            set => SetValue(ActualAccentColorProperty, value);
+            private set => SetValue(ActualAccentColorPropertyKey, value);
         }
 
         private static void OnActualAccentColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -156,7 +158,7 @@ namespace ModernWpf
 
         private void ApplyAccentColor()
         {
-            if (ColorsHelper.Current.IsInitialized)
+            if (_applicationStarted)
             {
                 UpdateAccentColors();
 
@@ -169,16 +171,13 @@ namespace ModernWpf
 
         private void UpdateActualAccentColor()
         {
-            if (ColorsHelper.Current.IsInitialized)
+            if (UsingSystemAccentColor)
             {
-                if (UsingSystemAccentColor)
-                {
-                    ActualAccentColor = ColorsHelper.GetSystemAccentColor();
-                }
-                else
-                {
-                    ActualAccentColor = AccentColor ?? ColorsHelper.DefaultAccentColor;
-                }
+                ActualAccentColor = ColorsHelper.GetSystemAccentColor();
+            }
+            else
+            {
+                ActualAccentColor = AccentColor ?? ColorsHelper.DefaultAccentColor;
             }
         }
 
@@ -316,12 +315,8 @@ namespace ModernWpf
             var requestedTheme = GetRequestedTheme(window);
             if (requestedTheme == ElementTheme.Default)
             {
-                var actualAppTheme = Current.ActualApplicationTheme;
-                if (actualAppTheme.HasValue)
-                {
-                    SetActualTheme(window, actualAppTheme.Value == ModernWpf.ApplicationTheme.Dark ?
-                        ElementTheme.Dark : ElementTheme.Light);
-                }
+                SetActualTheme(window, Current.ActualApplicationTheme == ModernWpf.ApplicationTheme.Dark ?
+                    ElementTheme.Dark : ElementTheme.Light);
             }
             else
             {
@@ -376,9 +371,9 @@ namespace ModernWpf
         private static readonly DependencyProperty InheritedApplicationThemeProperty =
             DependencyProperty.RegisterAttached(
                 "InheritedApplicationTheme",
-                typeof(ApplicationTheme?),
+                typeof(ApplicationTheme),
                 typeof(ThemeManager),
-                new PropertyMetadata(OnInheritedApplicationThemeChanged));
+                new PropertyMetadata(ModernWpf.ApplicationTheme.Light, OnInheritedApplicationThemeChanged));
 
         private static void OnInheritedApplicationThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -736,8 +731,6 @@ namespace ModernWpf
 
         private void OnApplicationStartup(object sender, StartupEventArgs e)
         {
-            _applicationStarted = true;
-
             var appResources = Application.Current.Resources;
             appResources.MergedDictionaries.RemoveAll<IntellisenseResourcesBase>();
 
@@ -748,6 +741,11 @@ namespace ModernWpf
 
             UpdateActualAccentColor();
             UpdateActualApplicationTheme();
+
+            _applicationStarted = true;
+
+            ApplyAccentColor();
+            ApplyApplicationTheme();
         }
 
         private void OnSystemBackgroundColorChanged(object sender, EventArgs e)
