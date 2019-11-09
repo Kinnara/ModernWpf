@@ -546,7 +546,7 @@
     <sys:Double x:Key="MenuFlyoutSeparatorThemeHeight">1</sys:Double>
     <sys:Double x:Key="MenuFlyoutThemeMinHeight">32</sys:Double>
     <Thickness x:Key="MenuFlyoutPresenterBorderThemeThickness">1</Thickness>
-    <Thickness x:Key="MenuFlyoutPresenterThemePadding">1</Thickness>
+    <Thickness x:Key="MenuFlyoutPresenterThemePadding">0,0</Thickness>
     <Thickness x:Key="MenuFlyoutItemChevronMargin">24,0,0,0</Thickness>
     <Thickness x:Key="MenuFlyoutItemThemePadding">11,9,11,10</Thickness>
     <Thickness x:Key="MenuFlyoutItemThemePaddingNarrow">11,4,11,7</Thickness>
@@ -603,9 +603,9 @@
     <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
     <!-- Resources for Windows.UI.Xaml.Controls.MenuFlyoutSubItem -->
     <m:StaticResource x:Key="MenuFlyoutSubItemBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListAccentMediumBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundPressed" ResourceKey="SystemControlHighlightListAccentHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundSubMenuOpened" ResourceKey="SystemControlHighlightListAccentLowBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundSubMenuOpened" ResourceKey="SystemControlHighlightListLowBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
