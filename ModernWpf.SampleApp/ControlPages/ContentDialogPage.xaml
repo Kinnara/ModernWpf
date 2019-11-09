@@ -8,7 +8,8 @@
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
     mc:Ignorable="d"
     d:DesignWidth="1200"
-    d:DesignHeight="900">
+    d:DesignHeight="900"
+    Style="{StaticResource ControlPageStyle}">
 
     <Grid Margin="{StaticResource ControlPageContentMargin}">
         <Grid.ColumnDefinitions>

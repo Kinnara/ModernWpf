@@ -12,8 +12,7 @@
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
-    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
-    Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+    Style="{StaticResource ControlPageStyle}">
 
     <UserControl.Resources>
         <local:AppThemeConverter x:Key="AppThemeConverter" />
@@ -158,24 +157,44 @@
                 DataContext="{Binding MainWindow, Source={x:Static Application.Current}}"
                 IsChecked="{Binding Path=(ui:WindowHelper.UseModernWindowStyle)}" />
 
-            <TextBox
-                Width="200"
-                HorizontalAlignment="Left"
-                ui:ControlHelper.Header="ActualApplicationTheme"
-                Text="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Mode=OneWay}"
-                IsReadOnly="True" />
+            <GroupBox
+                x:Name="InverseAppThemeGroupBox"
+                Header="Inverse app theme"
+                Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                Margin="-24,0,-24,0"
+                Padding="24,0,24,15"
+                ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
+                <GroupBox.Resources>
+                    <Thickness x:Key="GroupBoxHeaderMargin">24,4,24,20</Thickness>
+                </GroupBox.Resources>
+                <ui:SimpleStackPanel Spacing="24">
+                    <TextBox
+                        Width="200"
+                        HorizontalAlignment="Left"
+                        ui:ControlHelper.Header="Actual application theme"
+                        Text="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Mode=OneWay}"
+                        IsReadOnly="True" />
 
-            <TextBox
-                Width="200"
-                HorizontalAlignment="Left"
-                ui:ControlHelper.Header="ActualAccentColor"
-                Text="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualAccentColor, Mode=OneWay}"
-                IsReadOnly="True" />
+                    <TextBox
+                        Width="200"
+                        HorizontalAlignment="Left"
+                        ui:ControlHelper.Header="Actual element theme"
+                        Text="{Binding ElementName=InverseAppThemeGroupBox, Path=(ui:ThemeManager.ActualTheme), Mode=OneWay}"
+                        IsReadOnly="True" />
 
-            <ui:ToggleSwitch
-                Header="HighContrast"
-                IsOn="{Binding HighContrast, Source={x:Static ui:BindableSystemParameters.Current}, Mode=OneWay}"
-                IsEnabled="False" />
+                    <TextBox
+                        Width="200"
+                        HorizontalAlignment="Left"
+                        ui:ControlHelper.Header="Actual accent color"
+                        Text="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualAccentColor, Mode=OneWay}"
+                        IsReadOnly="True" />
+
+                    <ui:ToggleSwitch
+                        Header="High contrast"
+                        IsOn="{Binding HighContrast, Source={x:Static ui:BindableSystemParameters.Current}, Mode=OneWay}"
+                        IsEnabled="False" />
+                </ui:SimpleStackPanel>
+            </GroupBox>
         </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

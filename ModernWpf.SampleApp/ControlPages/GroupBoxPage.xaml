@@ -9,8 +9,7 @@
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
-    Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
-    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}">
+    Style="{StaticResource ControlPageStyle}">
 
     <UserControl.Resources>
         <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">

@@ -132,6 +132,7 @@ namespace ModernWpf.Controls
         public TransitionFrame()
             : base()
         {
+            InheritanceBehavior = InheritanceBehavior.Default;
             TransitionsEnabled = SystemParameters.ClientAreaAnimation && RenderCapability.Tier > 0;
 
             Navigating += OnNavigating;

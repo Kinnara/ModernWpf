@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
-    Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+    Style="{StaticResource ControlPageStyle}"
     Loaded="Page_Loaded">
 
     <ScrollViewer>

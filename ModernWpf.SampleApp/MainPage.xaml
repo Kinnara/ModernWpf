@@ -9,7 +9,8 @@
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
     mc:Ignorable="d"
     d:DesignWidth="1200"
-    d:DesignHeight="900">
+    d:DesignHeight="900"
+    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
 
     <UserControl.Resources>
         <common:EqualsConverter

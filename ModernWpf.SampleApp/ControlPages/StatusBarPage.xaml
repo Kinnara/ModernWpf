@@ -8,7 +8,8 @@
     xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
     mc:Ignorable="d"
     d:DesignWidth="1200"
-    d:DesignHeight="900">
+    d:DesignHeight="900"
+    Style="{StaticResource ControlPageStyle}">
 
     <Grid>
         <controls:ControlExample>

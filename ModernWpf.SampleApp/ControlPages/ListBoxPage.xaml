@@ -8,7 +8,8 @@
     xmlns:local="clr-namespace:ModernWpf.SampleApp.Controls"
     mc:Ignorable="d"
     d:DesignWidth="1200"
-    d:DesignHeight="900">
+    d:DesignHeight="900"
+    Style="{StaticResource ControlPageStyle}">
 
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">

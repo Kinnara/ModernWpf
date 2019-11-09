@@ -9,7 +9,8 @@
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
     mc:Ignorable="d"
     d:DesignWidth="1200"
-    d:DesignHeight="900">
+    d:DesignHeight="900"
+    Style="{StaticResource ControlPageStyle}">
 
     <ui:TransitionService.NavigationInTransition>
         <ui:NavigationInTransition>

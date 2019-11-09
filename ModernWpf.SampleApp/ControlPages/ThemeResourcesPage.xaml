@@ -11,8 +11,7 @@
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
-    FontFamily="{DynamicResource ContentControlThemeFontFamily}"
-    FontSize="{DynamicResource ControlContentThemeFontSize}"
+    Style="{StaticResource PageStyle}"
     SnapsToDevicePixels="True">
 
     <Page.Resources>

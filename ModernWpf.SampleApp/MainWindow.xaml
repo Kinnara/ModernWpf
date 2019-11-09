@@ -38,7 +38,7 @@
                 Text="Custom Title Bar" />
         </Grid>
 
-        <Frame
+        <ui:ThemeAwareFrame
             x:Name="RootFrame"
             Grid.Row="1"
             NavigationUIVisibility="Hidden"

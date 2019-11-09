@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
-    Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+    Style="{StaticResource ControlPageStyle}">
 
     <UserControl.Resources>
         <sys:Double x:Key="SwatchSize">32</sys:Double>
