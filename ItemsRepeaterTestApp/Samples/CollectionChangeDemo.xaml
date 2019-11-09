@@ -8,7 +8,8 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls"
     xmlns:local="clr-namespace:ItemsRepeaterTestApp"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
     <Page.Resources>
         <controls:RecyclePool x:Key="RecyclePool" />
@@ -30,6 +31,7 @@
     <Grid Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Vertical">
@@ -83,5 +85,26 @@
                 </controls:ItemsRepeater>
             </ScrollViewer>
         </controls:ItemsRepeaterScrollHost>
+
+        <controls:ItemsRepeater
+            ItemsSource="{Binding ResettingListItems, Mode=OneWay}"
+            Grid.Row="2"
+            x:Name="ResettingCollectionRepeater">
+            <controls:ItemsRepeater.ItemTemplate>
+                <DataTemplate>
+                    <Grid
+                        Width="300"
+                        HorizontalAlignment="Left">
+                        <Button
+                            Width="140"
+                            Height="40"
+                            HorizontalAlignment="Right"
+                            AutomationProperties.Name="{Binding}"
+                            Click="ResettingCollectionRemoveItemButton_ItemClick"
+                            Content="{Binding}" />
+                    </Grid>
+                </DataTemplate>
+            </controls:ItemsRepeater.ItemTemplate>
+        </controls:ItemsRepeater>
     </Grid>
 </Page>

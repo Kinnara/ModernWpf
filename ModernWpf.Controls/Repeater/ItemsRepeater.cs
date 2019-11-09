@@ -562,29 +562,44 @@ namespace ModernWpf.Controls
                 newValue.CollectionChanged += OnItemsSourceViewChanged;
             }
 
-            if (Layout is Layout layout)
+            var processingChange = false;
+
+            try
             {
-                if (layout is VirtualizingLayout virtualLayout)
+                if (Layout is Layout layout)
                 {
-                    var args = new NotifyCollectionChangedEventArgs(
-                        NotifyCollectionChangedAction.Reset);
-                    //args.Action;
-                    virtualLayout.OnItemsChangedCore(GetLayoutContext(), newValue, args);
-                }
-                else if (layout is NonVirtualizingLayout nonVirtualLayout)
-                {
-                    // Walk through all the elements and make sure they are cleared for
-                    // non-virtualizing layouts.
-                    foreach (UIElement element in Children)
+                    if (layout is VirtualizingLayout virtualLayout)
                     {
-                        if (GetVirtualizationInfo(element).IsRealized)
+                        var args = new NotifyCollectionChangedEventArgs(
+                            NotifyCollectionChangedAction.Reset);
+                        //args.Action;
+                        m_processingItemsSourceChange = args;
+                        processingChange = true;
+
+                        virtualLayout.OnItemsChangedCore(GetLayoutContext(), newValue, args);
+                    }
+                    else if (layout is NonVirtualizingLayout nonVirtualLayout)
+                    {
+                        // Walk through all the elements and make sure they are cleared for
+                        // non-virtualizing layouts.
+                        foreach (UIElement element in Children)
                         {
-                            ClearElementImpl(element);
+                            if (GetVirtualizationInfo(element).IsRealized)
+                            {
+                                ClearElementImpl(element);
+                            }
                         }
                     }
-                }
 
-                InvalidateMeasure();
+                    InvalidateMeasure();
+                }
+            }
+            finally
+            {
+                if (processingChange)
+                {
+                    m_processingItemsSourceChange = null;
+                }
             }
         }
 
