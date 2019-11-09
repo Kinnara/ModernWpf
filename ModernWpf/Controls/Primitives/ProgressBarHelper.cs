@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace ModernWpf.Controls.Primitives
@@ -14,12 +10,41 @@ namespace ModernWpf.Controls.Primitives
     /// Provides calculated values that can be referenced as **TemplatedParent** sources
     /// when defining templates for a ProgressBar control. Not intended for general use.
     /// </summary>
-    public class ProgressBarHelper : DependencyObject
+    public static class ProgressBarHelper
     {
-        private ProgressBarHelper(ProgressBar owner)
+        #region ContainerAnimationStartPosition
+
+        /// <summary>
+        /// Gets the "From" point of the container animation that animates the ProgressBar.
+        /// </summary>
+        /// <param name="progressBar">The element from which to read the property value.</param>
+        /// <returns>
+        /// A double that represents the orientation-specific x- or y-value that is the "From"
+        /// point of the animation.
+        /// </returns>
+        public static double GetContainerAnimationStartPosition(ProgressBar progressBar)
         {
-            m_owner = owner;
+            return (double)progressBar.GetValue(ContainerAnimationStartPositionProperty);
         }
+
+        private static void SetContainerAnimationStartPosition(ProgressBar progressBar, double value)
+        {
+            progressBar.SetValue(ContainerAnimationStartPositionPropertyKey, value);
+        }
+
+        private static readonly DependencyPropertyKey ContainerAnimationStartPositionPropertyKey =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "ContainerAnimationStartPosition",
+                typeof(double),
+                typeof(ProgressBarHelper),
+                null);
+
+        /// <summary>
+        /// Identifies the ContainerAnimationStartPosition dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ContainerAnimationStartPositionProperty = ContainerAnimationStartPositionPropertyKey.DependencyProperty;
+
+        #endregion
 
         #region ContainerAnimationEndPosition
 
@@ -46,48 +71,175 @@ namespace ModernWpf.Controls.Primitives
                 "ContainerAnimationEndPosition",
                 typeof(double),
                 typeof(ProgressBarHelper),
-                new PropertyMetadata(OnContainerAnimationEndPositionPropertyChanged));
+                null);
 
         /// <summary>
         /// Identifies the ContainerAnimationEndPosition dependency property.
         /// </summary>
-        public static readonly DependencyProperty ContainerAnimationEndPositionProperty =
-            ContainerAnimationEndPositionPropertyKey.DependencyProperty;
-
-        private static void OnContainerAnimationEndPositionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var helper = GetHelperInstance((ProgressBar)d);
-            if (helper != null)
-            {
-                helper.Dispatcher.BeginInvoke(
-                    () => helper.RestartIndeterminateStoryboard(),
-                    DispatcherPriority.Render);
-            }
-        }
+        public static readonly DependencyProperty ContainerAnimationEndPositionProperty = ContainerAnimationEndPositionPropertyKey.DependencyProperty;
 
         #endregion
 
-        #region ClipRect
+        #region EllipseAnimationWellPosition
 
-        private static readonly DependencyPropertyKey ClipRectPropertyKey =
+        /// <summary>
+        /// Gets the stopped point of the "Ellipse" animation that animates the ProgressBar.
+        /// </summary>
+        /// <param name="progressBar">The element from which to read the property value.</param>
+        /// <returns>
+        /// The stopped point of the Ellipse animation that animates the ProgressBar. This
+        /// is internally calculated as 1/3 of the ActualWidth of the control.
+        /// </returns>
+        public static double GetEllipseAnimationWellPosition(ProgressBar progressBar)
+        {
+            return (double)progressBar.GetValue(EllipseAnimationWellPositionProperty);
+        }
+
+        private static void SetEllipseAnimationWellPosition(ProgressBar progressBar, double value)
+        {
+            progressBar.SetValue(EllipseAnimationWellPositionPropertyKey, value);
+        }
+
+        private static readonly DependencyPropertyKey EllipseAnimationWellPositionPropertyKey =
             DependencyProperty.RegisterAttachedReadOnly(
-                "ClipRect",
-                typeof(RectangleGeometry),
+                "EllipseAnimationWellPosition",
+                typeof(double),
                 typeof(ProgressBarHelper),
                 null);
 
-        public static readonly DependencyProperty ClipRectProperty =
-            ClipRectPropertyKey.DependencyProperty;
+        /// <summary>
+        /// Identifies the EllipseAnimationWellPosition dependency property.
+        /// </summary>
+        public static readonly DependencyProperty EllipseAnimationWellPositionProperty = EllipseAnimationWellPositionPropertyKey.DependencyProperty;
 
-        public static RectangleGeometry GetClipRect(ProgressBar progressBar)
+        #endregion
+
+        #region EllipseAnimationEndPosition
+
+        /// <summary>
+        /// Gets the "To" point of the "Ellipse" animation that animates the ProgressBar.
+        /// </summary>
+        /// <param name="progressBar">The element from which to read the property value.</param>
+        /// <returns>
+        /// The "To" point of the "Ellipse" animation that animates the ProgressBar. This
+        /// is internally calculated as 2/3 of the ActualWidth of the control.
+        /// </returns>
+        public static double GetEllipseAnimationEndPosition(ProgressBar progressBar)
         {
-            return (RectangleGeometry)progressBar.GetValue(ClipRectProperty);
+            return (double)progressBar.GetValue(EllipseAnimationEndPositionProperty);
         }
 
-        private static void SetClipRect(ProgressBar progressBar, RectangleGeometry value)
+        private static void SetEllipseAnimationEndPosition(ProgressBar progressBar, double value)
         {
-            progressBar.SetValue(ClipRectPropertyKey, value);
+            progressBar.SetValue(EllipseAnimationEndPositionPropertyKey, value);
         }
+
+        private static readonly DependencyPropertyKey EllipseAnimationEndPositionPropertyKey =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "EllipseAnimationEndPosition",
+                typeof(double),
+                typeof(ProgressBarHelper),
+                null);
+
+        /// <summary>
+        /// Identifies the EllipseAnimationEndPosition dependency property.
+        /// </summary>
+        public static readonly DependencyProperty EllipseAnimationEndPositionProperty = EllipseAnimationEndPositionPropertyKey.DependencyProperty;
+
+        #endregion
+
+        #region EllipseDiameter
+
+        /// <summary>
+        /// Gets the template-defined diameter of the "Ellipse" element that is animated
+        /// in a templated ProgressBar.
+        /// </summary>
+        /// <param name="progressBar">The element from which to read the property value.</param>
+        /// <returns>The "Ellipse" element width in pixels.</returns>
+        public static double GetEllipseDiameter(ProgressBar progressBar)
+        {
+            return (double)progressBar.GetValue(EllipseDiameterProperty);
+        }
+
+        private static void SetEllipseDiameter(ProgressBar progressBar, double value)
+        {
+            progressBar.SetValue(EllipseDiameterPropertyKey, value);
+        }
+
+        private static readonly DependencyPropertyKey EllipseDiameterPropertyKey =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "EllipseDiameter",
+                typeof(double),
+                typeof(ProgressBarHelper),
+                null);
+
+        /// <summary>
+        /// Identifies the EllipseDiameter dependency property.
+        /// </summary>
+        public static readonly DependencyProperty EllipseDiameterProperty = EllipseDiameterPropertyKey.DependencyProperty;
+
+        #endregion
+
+        #region EllipseOffset
+
+        /// <summary>
+        /// Gets the template-defined offset position of the "Ellipse" element that is animated
+        /// in a templated ProgressBar.
+        /// </summary>
+        /// <param name="progressBar">The element from which to read the property value.</param>
+        /// <returns>The offset in pixels.</returns>
+        public static double GetEllipseOffset(ProgressBar progressBar)
+        {
+            return (double)progressBar.GetValue(EllipseOffsetProperty);
+        }
+
+        private static void SetEllipseOffset(ProgressBar progressBar, double value)
+        {
+            progressBar.SetValue(EllipseOffsetPropertyKey, value);
+        }
+
+        private static readonly DependencyPropertyKey EllipseOffsetPropertyKey =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "EllipseOffset",
+                typeof(double),
+                typeof(ProgressBarHelper),
+                null);
+
+        /// <summary>
+        /// Identifies the EllipseOffset dependency property.
+        /// </summary>
+        public static readonly DependencyProperty EllipseOffsetProperty = EllipseOffsetPropertyKey.DependencyProperty;
+
+        #endregion
+
+        #region IndicatorLengthDelta
+
+        /// <summary>
+        /// Gets the indicator length delta, which is useful for repositioning transitions.
+        /// </summary>
+        /// <param name="progressBar">The element from which to read the property value.</param>
+        /// <returns>The delta in pixels.</returns>
+        public static double GetIndicatorLengthDelta(ProgressBar progressBar)
+        {
+            return (double)progressBar.GetValue(IndicatorLengthDeltaProperty);
+        }
+
+        private static void SetIndicatorLengthDelta(ProgressBar progressBar, double value)
+        {
+            progressBar.SetValue(IndicatorLengthDeltaPropertyKey, value);
+        }
+
+        private static readonly DependencyPropertyKey IndicatorLengthDeltaPropertyKey =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "IndicatorLengthDelta",
+                typeof(double),
+                typeof(ProgressBarHelper),
+                null);
+
+        /// <summary>
+        /// Identifies the IndicatorLengthDelta dependency property.
+        /// </summary>
+        public static readonly DependencyProperty IndicatorLengthDeltaProperty = IndicatorLengthDeltaPropertyKey.DependencyProperty;
 
         #endregion
 
@@ -113,222 +265,50 @@ namespace ModernWpf.Controls.Primitives
         private static void OnIsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var progressBar = (ProgressBar)d;
+
             if ((bool)e.NewValue)
             {
-                SetHelperInstance(progressBar, new ProgressBarHelper(progressBar));
+                SetContainerAnimationStartPosition(progressBar, -34);
+                SetEllipseDiameter(progressBar, 4);
+                SetEllipseOffset(progressBar, 4);
+                progressBar.SizeChanged += OnSizeChanged;
             }
             else
             {
-                progressBar.ClearValue(HelperInstanceProperty);
+                progressBar.SizeChanged -= OnSizeChanged;
+                progressBar.ClearValue(ContainerAnimationStartPositionPropertyKey);
+                progressBar.ClearValue(ContainerAnimationEndPositionPropertyKey);
+                progressBar.ClearValue(EllipseAnimationWellPositionPropertyKey);
+                progressBar.ClearValue(EllipseAnimationEndPositionPropertyKey);
+                progressBar.ClearValue(EllipseDiameterPropertyKey);
+                progressBar.ClearValue(EllipseOffsetPropertyKey);
+                progressBar.ClearValue(IndicatorLengthDeltaPropertyKey);
             }
         }
 
         #endregion
 
-        #region HelperInstance
-
-        private static readonly DependencyProperty HelperInstanceProperty =
-            DependencyProperty.RegisterAttached(
-                "HelperInstance",
-                typeof(ProgressBarHelper),
-                typeof(ProgressBarHelper),
-                new PropertyMetadata(default(ProgressBarHelper), OnHelperInstanceChanged));
-
-        private static ProgressBarHelper GetHelperInstance(ProgressBar progressBar)
+        private static void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            return (ProgressBarHelper)progressBar.GetValue(HelperInstanceProperty);
+            var progressBar = (ProgressBar)sender;
+
+            double width = e.NewSize.Width;
+            SetContainerAnimationEndPosition(progressBar, 0.4352 * width - 34);
+            SetEllipseAnimationWellPosition(progressBar, width * 1.0 / 3.0);
+            SetEllipseAnimationEndPosition(progressBar, width * 2.0 / 3.0);
+
+            progressBar.Dispatcher.BeginInvoke(
+                () => RestartIndeterminateStoryboard(progressBar),
+                DispatcherPriority.Render);
         }
 
-        private static void SetHelperInstance(ProgressBar progressBar, ProgressBarHelper value)
+        private static void RestartIndeterminateStoryboard(ProgressBar progressBar)
         {
-            progressBar.SetValue(HelperInstanceProperty, value);
-        }
-
-        private static void OnHelperInstanceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (e.OldValue is ProgressBarHelper oldValue)
+            if (progressBar.IsIndeterminate)
             {
-                oldValue.Detach();
-            }
-
-            if (e.NewValue is ProgressBarHelper newValue)
-            {
-                newValue.Attach();
-            }
-        }
-
-        #endregion
-
-        private static readonly DependencyProperty MinimumProperty =
-            RangeBase.MinimumProperty.AddOwner(typeof(ProgressBarHelper), new FrameworkPropertyMetadata(OnRangeBasePropertyChanged));
-
-        private static readonly DependencyProperty MaximumProperty =
-            RangeBase.MaximumProperty.AddOwner(typeof(ProgressBarHelper), new FrameworkPropertyMetadata(OnRangeBasePropertyChanged));
-
-        private static readonly DependencyProperty IsIndeterminateProperty =
-            ProgressBar.IsIndeterminateProperty.AddOwner(typeof(ProgressBarHelper), new FrameworkPropertyMetadata(OnIsIndeterminatePropertyChanged));
-
-        private void Attach()
-        {
-            m_owner.SizeChanged += OnSizeChanged;
-            m_owner.ValueChanged += OnValueChanged;
-            BindingOperations.SetBinding(this, MinimumProperty,
-                new Binding { Path = new PropertyPath(RangeBase.MinimumProperty), Source = m_owner });
-            BindingOperations.SetBinding(this, MaximumProperty,
-                new Binding { Path = new PropertyPath(RangeBase.MaximumProperty), Source = m_owner });
-            BindingOperations.SetBinding(this, IsIndeterminateProperty,
-                new Binding { Path = new PropertyPath(ProgressBar.IsIndeterminateProperty), Source = m_owner });
-
-            if (m_owner.IsLoaded)
-            {
-                OnApplyTemplate();
-            }
-            else
-            {
-                m_owner.Loaded += OnLoaded;
-            }
-        }
-
-        private void Detach()
-        {
-            m_layoutRoot = null;
-            m_progressBarIndicator = null;
-
-            m_owner.Loaded -= OnLoaded;
-            m_owner.SizeChanged -= OnSizeChanged;
-            m_owner.ValueChanged -= OnValueChanged;
-            ClearValue(MinimumProperty);
-            ClearValue(MaximumProperty);
-            ClearValue(IsIndeterminateProperty);
-
-            m_owner.ClearValue(ContainerAnimationEndPositionPropertyKey);
-            m_owner.ClearValue(ClipRectPropertyKey);
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            m_owner.Loaded -= OnLoaded;
-            OnApplyTemplate();
-        }
-
-        private void OnApplyTemplate()
-        {
-            m_layoutRoot = m_owner.GetTemplateChild<Grid>(s_LayoutRootName);
-            m_progressBarIndicator = m_owner.GetTemplateChild<Rectangle>(s_ProgressBarIndicatorName);
-
-            UpdateStates();
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            SetProgressBarIndicatorWidth();
-            if (m_shouldUpdateWidthBasedTemplateSettings)
-            {
-                UpdateWidthBasedTemplateSettings();
-            }
-        }
-
-        private void OnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            SetProgressBarIndicatorWidth();
-        }
-
-        private static void OnRangeBasePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ProgressBarHelper)d).SetProgressBarIndicatorWidth();
-        }
-
-        private static void OnIsIndeterminatePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ProgressBarHelper)d).UpdateStates();
-        }
-
-        private void UpdateStates()
-        {
-            m_shouldUpdateWidthBasedTemplateSettings = false;
-            if (m_owner.IsIndeterminate)
-            {
-                m_shouldUpdateWidthBasedTemplateSettings = true;
-                UpdateWidthBasedTemplateSettings();
-
-            }
-            else if (!m_owner.IsIndeterminate)
-            {
-                SetProgressBarIndicatorWidth();
-            }
-        }
-
-        private void SetProgressBarIndicatorWidth()
-        {
-            var progressBar = m_layoutRoot;
-            if (progressBar != null)
-            {
-                var progressBarIndicator = m_progressBarIndicator;
-                if (progressBarIndicator != null)
+                if (progressBar.Template?.FindName("Indeterminate", progressBar) is VisualState indeterminate)
                 {
-                    double progressBarWidth = progressBar.ActualWidth;
-                    double maximum = m_owner.Maximum;
-                    double minimum = m_owner.Minimum;
-                    var padding = m_owner.Padding;
-
-                    if (Math.Abs(maximum - minimum) > double.Epsilon)
-                    {
-                        double maxIndicatorWidth = progressBarWidth - (padding.Left + padding.Right);
-                        double increment = maxIndicatorWidth / (maximum - minimum);
-                        progressBarIndicator.Width = increment * (m_owner.Value - minimum);
-                    }
-                    else
-                    {
-                        progressBarIndicator.Width = 0; // Error
-                    }
-                }
-            }
-        }
-
-        private void UpdateWidthBasedTemplateSettings()
-        {
-            var progressBarIndicator = m_progressBarIndicator;
-            if (progressBarIndicator != null)
-            {
-                double width, height;
-
-                var progressBar = m_layoutRoot;
-                if (progressBar != null)
-                {
-                    width = progressBar.ActualWidth;
-                    height = progressBar.ActualHeight;
-                }
-                else
-                {
-                    width = 0.0;
-                    height = 0.0;
-                }
-
-                progressBarIndicator.Width = width / 3;
-
-                SetContainerAnimationEndPosition(m_owner, width);
-
-                var padding = m_owner.Padding;
-                var rectangle = new RectangleGeometry();
-                rectangle.Rect = new Rect(
-                    padding.Left,
-                    padding.Top,
-                    width - (padding.Right + padding.Left),
-                    height - (padding.Bottom + padding.Top)
-                    );
-
-                SetClipRect(m_owner, rectangle);
-            }
-        }
-
-        private void RestartIndeterminateStoryboard()
-        {
-            if (m_owner.IsIndeterminate)
-            {
-                var indeterminate = m_owner.GetTemplateChild<VisualState>(s_IndeterminateStateName);
-                if (indeterminate != null)
-                {
-                    var templateRoot = m_owner.GetTemplateRoot();
+                    var templateRoot = progressBar.GetTemplateRoot();
                     if (templateRoot != null)
                     {
                         var storyboard = indeterminate.Storyboard;
@@ -346,16 +326,5 @@ namespace ModernWpf.Controls.Primitives
             storyboard.Remove(containingObject);
             storyboard.Begin(containingObject, HandoffBehavior.SnapshotAndReplace, true);
         }
-
-        private readonly ProgressBar m_owner;
-
-        private Grid m_layoutRoot;
-        private Rectangle m_progressBarIndicator;
-
-        private bool m_shouldUpdateWidthBasedTemplateSettings = false;
-
-        private const string s_LayoutRootName = "LayoutRoot";
-        private const string s_ProgressBarIndicatorName = "ProgressBarIndicator";
-        private const string s_IndeterminateStateName = "Indeterminate";
-}
+    }
 }
