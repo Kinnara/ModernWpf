@@ -186,22 +186,7 @@
                                 AllowsTransparency="True"
                                 Placement="Bottom"
                                 PlacementTarget="{Binding ElementName=PopupPlacementTarget}"
-                                StaysOpen="False">
-                                <Popup.HorizontalOffset>
-                                    <MultiBinding Converter="{StaticResource PopupOffsetConverter}">
-                                        <Binding
-                                            ElementName="PopupPlacementTarget"
-                                            Path="ActualWidth" />
-                                        <Binding
-                                            ElementName="PART_Popup"
-                                            Path="Child.ActualWidth">
-                                            <Binding.FallbackValue>
-                                                <sys:Double>0</sys:Double>
-                                            </Binding.FallbackValue>
-                                        </Binding>
-                                    </MultiBinding>
-                                </Popup.HorizontalOffset>
-                            </Popup>
+                                StaysOpen="False" />
                         </Grid>
                         <ContentPresenter
                             x:Name="DescriptionPresenter"

@@ -16,34 +16,39 @@
         <Setter Property="FontSize" Value="{DynamicResource ToolTipContentThemeFontSize}" />
         <Setter Property="Padding" Value="{DynamicResource ToolTipBorderThemePadding}" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
-        <Setter Property="HasDropShadow" Value="False" />
+        <Setter Property="HasDropShadow" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
         <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToolTip">
-                    <Border
-                        Background="{TemplateBinding Background}"
+                    <local:ThemeShadowChrome
+                        Depth="16"
+                        IsShadowEnabled="{TemplateBinding HasDropShadow}"
                         MaxWidth="320"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Border
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
-                            <ContentPresenter
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                                <ContentPresenter.Resources>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="TextWrapping" Value="Wrap" />
-                                    </Style>
-                                </ContentPresenter.Resources>
-                            </ContentPresenter>
+                            <Border
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                                <ContentPresenter
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                    <ContentPresenter.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="TextWrapping" Value="Wrap" />
+                                        </Style>
+                                    </ContentPresenter.Resources>
+                                </ContentPresenter>
+                            </Border>
                         </Border>
-                    </Border>
+                    </local:ThemeShadowChrome>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

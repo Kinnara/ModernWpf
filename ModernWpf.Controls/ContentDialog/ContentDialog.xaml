@@ -256,15 +256,12 @@
                                 <Grid.RenderTransform>
                                     <ScaleTransform x:Name="ScaleTransform" />
                                 </Grid.RenderTransform>
-                                <Border
+                                <ui:ThemeShadowChrome
                                     x:Name="Shdw"
-                                    Background="{DynamicResource ContentDialogShadowBackground}"
-                                    CornerRadius="{TemplateBinding CornerRadius}"
-                                    Margin="0,9,0,-6">
-                                    <Border.Effect>
-                                        <BlurEffect Radius="32" />
-                                    </Border.Effect>
-                                </Border>
+                                    Depth="64"
+                                    IsShadowEnabled="{TemplateBinding IsShadowEnabled}"
+                                    Margin="{DynamicResource ContentDialogBorderWidth}"
+                                    CornerRadius="{TemplateBinding CornerRadius}" />
                                 <Border
                                     Background="{TemplateBinding Background}"
                                     BorderThickness="{DynamicResource ContentDialogBorderWidth}"
@@ -393,7 +390,6 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsShadowEnabled" Value="False">
-                            <Setter TargetName="Shdw" Property="Effect" Value="{x:Null}" />
                             <Setter TargetName="Shdw" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger SourceName="DialogShowingStatesProxy" Property="CurrentStateName" Value="DialogShowing">

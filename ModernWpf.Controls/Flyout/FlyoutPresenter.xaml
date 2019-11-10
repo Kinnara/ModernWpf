@@ -26,9 +26,6 @@
                         Background="{TemplateBinding Background}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <!--<Border.RenderTransform>
-                            <TranslateTransform x:Name="TranslateTransform" />
-                        </Border.RenderTransform>-->
                         <Border
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -46,23 +43,6 @@
                             </ScrollViewer>
                         </Border>
                     </Border>
-                    <!--<ControlTemplate.Triggers>
-                        <EventTrigger RoutedEvent="Loaded">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Opacity">
-                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
-                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.083" Value="0" />
-                                        <LinearDoubleKeyFrame KeyTime="0:0:0.166" Value="1" />
-                                    </DoubleAnimationUsingKeyFrames>
-                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TranslateTransform" Storyboard.TargetProperty="Y">
-                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="50" />
-                                        <SplineDoubleKeyFrame KeyTime="0:0:0.367" KeySpline="0.1,0.9 0.2,1.0" Value="0" />
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-                    </ControlTemplate.Triggers>-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -17,11 +18,7 @@ namespace ModernWpf.Controls
         #region CornerRadius
 
         public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register(
-                nameof(CornerRadius),
-                typeof(CornerRadius),
-                typeof(FlyoutPresenter),
-                null);
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(FlyoutPresenter));
 
         public CornerRadius CornerRadius
         {

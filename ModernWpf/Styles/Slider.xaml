@@ -57,28 +57,9 @@
         </Setter>
     </Style>
 
-    <Style x:Key="SliderAutoToolTipHorizontalStyle" TargetType="ToolTip" BasedOn="{StaticResource DefaultToolTipStyle}">
+    <Style x:Key="SliderAutoToolTipStyle" TargetType="ToolTip" BasedOn="{StaticResource DefaultToolTipStyle}">
+        <Setter Property="HasDropShadow" Value="False" />
         <Setter Property="primitives:SliderAutoToolTipHelper.IsEnabled" Value="True" />
-        <Style.Triggers>
-            <Trigger Property="primitives:SliderAutoToolTipHelper.SliderAutoToolTipPlacement" Value="TopLeft">
-                <Setter Property="VerticalOffset" Value="-20" />
-            </Trigger>
-            <Trigger Property="primitives:SliderAutoToolTipHelper.SliderAutoToolTipPlacement" Value="BottomRight">
-                <Setter Property="VerticalOffset" Value="20" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="SliderAutoToolTipVerticalStyle" TargetType="ToolTip" BasedOn="{StaticResource DefaultToolTipStyle}">
-        <Setter Property="primitives:SliderAutoToolTipHelper.IsEnabled" Value="True" />
-        <Style.Triggers>
-            <Trigger Property="primitives:SliderAutoToolTipHelper.SliderAutoToolTipPlacement" Value="TopLeft">
-                <Setter Property="HorizontalOffset" Value="-20" />
-            </Trigger>
-            <Trigger Property="primitives:SliderAutoToolTipHelper.SliderAutoToolTipPlacement" Value="BottomRight">
-                <Setter Property="HorizontalOffset" Value="20" />
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
     <ControlTemplate x:Key="SliderHorizontal" TargetType="Slider">
@@ -187,7 +168,7 @@
                                 Width="{DynamicResource SliderHorizontalThumbWidth}"
                                 primitives:FocusVisualHelper.FocusVisualMargin="-14,-6,-14,-6">
                                 <Thumb.Resources>
-                                    <Style TargetType="ToolTip" BasedOn="{StaticResource SliderAutoToolTipHorizontalStyle}" />
+                                    <Style TargetType="ToolTip" BasedOn="{StaticResource SliderAutoToolTipStyle}" />
                                 </Thumb.Resources>
                             </Thumb>
                         </Track.Thumb>
@@ -345,7 +326,7 @@
                                 Height="{DynamicResource SliderVerticalThumbHeight}"
                                 primitives:FocusVisualHelper.FocusVisualMargin="-6,-14,-6,-14">
                                 <Thumb.Resources>
-                                    <Style TargetType="ToolTip" BasedOn="{StaticResource SliderAutoToolTipVerticalStyle}" />
+                                    <Style TargetType="ToolTip" BasedOn="{StaticResource SliderAutoToolTipStyle}" />
                                 </Thumb.Resources>
                             </Thumb>
                         </Track.Thumb>

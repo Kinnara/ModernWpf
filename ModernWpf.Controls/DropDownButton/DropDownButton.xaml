@@ -82,9 +82,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Resources>
-            <PopupAnimation x:Key="{x:Static SystemParameters.MenuPopupAnimationKey}">Slide</PopupAnimation>
-        </Style.Resources>
     </Style>
 
 </ResourceDictionary>
