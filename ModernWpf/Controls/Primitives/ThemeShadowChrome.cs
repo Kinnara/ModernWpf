@@ -14,11 +14,13 @@ namespace ModernWpf.Controls.Primitives
         {
             s_bg1 = new SolidColorBrush(Colors.Black) { Opacity = 0.11 };
             s_bg2 = new SolidColorBrush(Colors.Black) { Opacity = 0.13 };
-            s_bg3 = new SolidColorBrush(Colors.Black) { Opacity = 0.22 };
+            s_bg3 = new SolidColorBrush(Colors.Black) { Opacity = 0.18 };
+            s_bg4 = new SolidColorBrush(Colors.Black) { Opacity = 0.22 };
 
             s_bg1.Freeze();
             s_bg2.Freeze();
             s_bg3.Freeze();
+            s_bg4.Freeze();
         }
 
         public ThemeShadowChrome()
@@ -334,7 +336,7 @@ namespace ModernWpf.Controls.Primitives
                 var effect = (DropShadowEffect)_shadow1.Effect;
                 effect.ShadowDepth = 0.4 * depth + c_shadowMargin;
                 effect.BlurRadius = 0.9 * depth + c_shadowMargin;
-                _shadow1.Background = depth >= 32 ? s_bg3 : s_bg2;
+                _shadow1.Background = depth >= 32 ? s_bg4 : s_bg3;
             }
         }
 
@@ -567,7 +569,7 @@ namespace ModernWpf.Controls.Primitives
         private bool _autoMargin;
         private Thickness _desiredMargin;
 
-        private static readonly Brush s_bg1, s_bg2, s_bg3;
+        private static readonly Brush s_bg1, s_bg2, s_bg3, s_bg4;
         private const double c_shadowMargin = 1;
     }
 }
