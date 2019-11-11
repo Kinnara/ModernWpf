@@ -103,6 +103,11 @@
                     Header="Disabled"
                     Checked="ShadowsDisabled_Checked" />
             </MenuItem>
+            <MenuItem Header="Debug">
+                <MenuItem
+                    Header="Force GC"
+                    Click="ForceGC" />
+            </MenuItem>
         </Menu>
 
         <ListBox

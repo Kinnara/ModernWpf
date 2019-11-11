@@ -3,9 +3,6 @@ using System.Windows.Threading;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    /// <summary>
-    /// Interaction logic for ControlPalettePage.xaml
-    /// </summary>
     public partial class ControlPalettePage
     {
         public ControlPalettePage()
@@ -14,6 +11,10 @@ namespace ModernWpf.SampleApp.ControlPages
 
             ContentScrollViewer.Visibility = Visibility.Collapsed;
             Loaded += OnLoaded;
+        }
+
+        ~ControlPalettePage()
+        {
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

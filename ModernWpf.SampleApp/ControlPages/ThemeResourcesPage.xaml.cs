@@ -18,6 +18,10 @@ namespace ModernWpf.SampleApp.ControlPages
             _scrollViewers = new List<ScrollViewer> { SV1, SV2 };
         }
 
+        ~ThemeResourcesPage()
+        {
+        }
+
         private void OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (_syncingScroll)

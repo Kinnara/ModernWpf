@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace ModernWpf
@@ -78,7 +79,7 @@ namespace ModernWpf
             }
         }
 
-        public static void RemoveAll<T> (this Collection<ResourceDictionary> mergedDictionaries) where T : ResourceDictionary
+        public static void RemoveAll<T>(this Collection<ResourceDictionary> mergedDictionaries) where T : ResourceDictionary
         {
             for (int i = mergedDictionaries.Count - 1; i >= 0; i--)
             {
@@ -87,6 +88,23 @@ namespace ModernWpf
                     mergedDictionaries.RemoveAt(i);
                 }
             }
+        }
+
+        public static void InsertIfNotExists(this Collection<ResourceDictionary> mergedDictionaries, int index, ResourceDictionary item)
+        {
+            if (!mergedDictionaries.Contains(item))
+            {
+                mergedDictionaries.Insert(index, item);
+            }
+        }
+
+        public static void Swap(this Collection<ResourceDictionary> mergedDictionaries, int index1, int index2)
+        {
+            var smallIndex = Math.Min(index1, index2);
+            var largeIndex = Math.Max(index1, index2);
+            var tmp = mergedDictionaries[largeIndex];
+            mergedDictionaries[largeIndex] = mergedDictionaries[smallIndex];
+            mergedDictionaries[smallIndex] = tmp;
         }
 
         //private static ResourceDictionary GetDictionary(Uri source, bool useCache)

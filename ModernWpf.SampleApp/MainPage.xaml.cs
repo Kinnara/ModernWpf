@@ -142,6 +142,12 @@ namespace ModernWpf.SampleApp
         {
             Application.Current.Resources[SystemParameters.DropShadowKey] = false;
         }
+
+        private void ForceGC(object sender, RoutedEventArgs e)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
     }
 
     public class ControlPagesData : List<ControlPageInfo>

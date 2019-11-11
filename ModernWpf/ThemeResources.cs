@@ -180,6 +180,18 @@ namespace ModernWpf
 
         #endregion
 
+        private int MergedThemeDictionaryCount
+        {
+            get
+            {
+                int count = 0;
+                if (IsMerged(_lightResources)) { count++; };
+                if (IsMerged(_darkResources)) { count++; };
+                if (IsMerged(_highContrastResources)) { count++; };
+                return count;
+            }
+        }
+
         internal void ApplyApplicationTheme(ApplicationTheme? appTheme)
         {
             Debug.Assert(appTheme.HasValue);
@@ -203,24 +215,16 @@ namespace ModernWpf
             {
                 if (theme == ElementTheme.Light)
                 {
-                    if (_lightResources == null)
-                    {
-                        _lightResources = GetThemeDictionary(ThemeManager.LightKey);
-                    }
-
+                    EnsureLightResources();
                     target.MergedDictionaries.RemoveIfNotNull(_darkResources);
-                    target.MergedDictionaries.Insert(0, _lightResources);
+                    target.MergedDictionaries.InsertIfNotExists(0, _lightResources);
                     containsAppThemeDictionary = true;
                 }
                 else if (theme == ElementTheme.Dark)
                 {
-                    if (_darkResources == null)
-                    {
-                        _darkResources = GetThemeDictionary(ThemeManager.DarkKey);
-                    }
-
+                    EnsureDarkResources();
                     target.MergedDictionaries.RemoveIfNotNull(_lightResources);
-                    target.MergedDictionaries.Insert(0, _darkResources);
+                    target.MergedDictionaries.InsertIfNotExists(0, _darkResources);
                     containsAppThemeDictionary = true;
                 }
                 else // Default
@@ -239,44 +243,91 @@ namespace ModernWpf
 
         private void Update(ApplicationTheme theme)
         {
-            int insertIndex = DesignMode.DesignModeEnabled ? 1 : 0;
+            int startIndex = DesignMode.DesignModeEnabled ? 1 : 0;
 
             if (SystemParameters.HighContrast)
             {
-                if (_highContrastResources == null)
-                {
-                    _highContrastResources = GetThemeDictionary(ThemeManager.HighContrastKey);
-                }
+                EnsureHighContrastResources();
 
-                MergedDictionaries.InsertOrReplace(insertIndex, _highContrastResources);
+                if (!MergedDictionaries.Contains(_highContrastResources))
+                {
+                    MergedDictionaries.InsertOrReplace(startIndex + MergedThemeDictionaryCount, _highContrastResources);
+                }
+                else
+                {
+                    Debug.Assert(MergedDictionaries[startIndex + MergedThemeDictionaryCount - 1] == _highContrastResources);
+                }
             }
             else
             {
                 MergedDictionaries.RemoveIfNotNull(_highContrastResources);
 
+                ResourceDictionary targetDictionary;
+
                 if (theme == ApplicationTheme.Light)
                 {
-                    if (_lightResources == null)
-                    {
-                        _lightResources = GetThemeDictionary(ThemeManager.LightKey);
-                    }
-
-                    MergedDictionaries.InsertOrReplace(insertIndex, _lightResources);
+                    EnsureLightResources();
+                    targetDictionary = _lightResources;
                 }
                 else if (theme == ApplicationTheme.Dark)
                 {
-                    if (_darkResources == null)
-                    {
-                        _darkResources = GetThemeDictionary(ThemeManager.DarkKey);
-                    }
-
-                    MergedDictionaries.InsertOrReplace(insertIndex, _darkResources);
+                    EnsureDarkResources();
+                    targetDictionary = _darkResources;
                 }
                 else
                 {
                     throw new ArgumentOutOfRangeException(nameof(theme));
                 }
+
+                int targetIndex = startIndex + MergedThemeDictionaryCount - 1;
+                if (targetIndex == 1 && MergedDictionaries[targetIndex] != targetDictionary)
+                {
+                    MergedDictionaries.Swap(startIndex, startIndex + 1);
+                    Debug.Assert(MergedDictionaries[startIndex + 1] == targetDictionary);
+                }
+                else
+                {
+                    Debug.Assert(MergedDictionaries[startIndex] == targetDictionary);
+                }
             }
+        }
+
+        private void EnsureLightResources()
+        {
+            if (_lightResources == null)
+            {
+                _lightResources = GetThemeDictionary(ThemeManager.LightKey);
+                Merge(_lightResources);
+            }
+        }
+
+        private void EnsureDarkResources()
+        {
+            if (_darkResources == null)
+            {
+                _darkResources = GetThemeDictionary(ThemeManager.DarkKey);
+                Merge(_darkResources);
+            }
+        }
+
+        private void EnsureHighContrastResources()
+        {
+            if (_highContrastResources == null)
+            {
+                _highContrastResources = GetThemeDictionary(ThemeManager.HighContrastKey);
+            }
+        }
+
+        private void Merge(ResourceDictionary dictionary)
+        {
+            int insertIndex = DesignMode.DesignModeEnabled ? 1 : 0;
+            MergedDictionaries.Insert(insertIndex, dictionary);
+            Debug.Assert(MergedThemeDictionaryCount >= 1 && MergedThemeDictionaryCount <= 2);
+        }
+
+        private bool IsMerged(ResourceDictionary dictionary)
+        {
+            return dictionary != null && MergedDictionaries.Contains(dictionary);
         }
 
         private ResourceDictionary GetThemeDictionary(string key)

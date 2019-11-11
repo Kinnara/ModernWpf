@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -9,9 +8,6 @@ using System.Windows.Media;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    /// <summary>
-    /// Interaction logic for ThemesPage.xaml
-    /// </summary>
     public partial class ThemesPage : UserControl
     {
         public ThemesPage()
@@ -26,6 +22,10 @@ namespace ModernWpf.SampleApp.ControlPages
             //        Source = Application.Current.MainWindow,
             //        Mode = BindingMode.TwoWay
             //    });
+        }
+
+        ~ThemesPage()
+        {
         }
 
         private void OpenNewWindow(object sender, RoutedEventArgs e)
