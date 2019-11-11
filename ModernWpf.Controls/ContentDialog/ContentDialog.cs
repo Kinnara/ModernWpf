@@ -398,7 +398,7 @@ namespace ModernWpf.Controls
                 nameof(IsShadowEnabled),
                 typeof(bool),
                 typeof(ContentDialog),
-                new FrameworkPropertyMetadata(true));
+                new FrameworkPropertyMetadata(false));
 
         public bool IsShadowEnabled
         {
