@@ -10,27 +10,21 @@ namespace ModernWpf.Controls.Primitives
 {
     public class ThemeShadowChrome : Decorator
     {
+        static ThemeShadowChrome()
+        {
+            s_bg1 = new SolidColorBrush(Colors.Black) { Opacity = 0.11 };
+            s_bg2 = new SolidColorBrush(Colors.Black) { Opacity = 0.13 };
+            s_bg3 = new SolidColorBrush(Colors.Black) { Opacity = 0.22 };
+
+            s_bg1.Freeze();
+            s_bg2.Freeze();
+            s_bg3.Freeze();
+        }
+
         public ThemeShadowChrome()
         {
             _background = new Grid();
             AddVisualChild(_background);
-        }
-
-        private void EnsureShadows()
-        {
-            _shadow1 = new Border
-            {
-                CornerRadius = CornerRadius,
-                Background = Brushes.Black
-            };
-            UpdateShadow1();
-
-            _shadow2 = new Border
-            {
-                CornerRadius = CornerRadius,
-                Background = Brushes.Black
-            };
-            UpdateShadow2();
         }
 
         #region IsShadowEnabled
@@ -66,8 +60,7 @@ namespace ModernWpf.Controls.Primitives
                 }
                 else
                 {
-                    _background.Children.Remove(_shadow2);
-                    _background.Children.Remove(_shadow1);
+                    _background.Children.Clear();
                     _background.Visibility = Visibility.Collapsed;
                 }
 
@@ -156,18 +149,10 @@ namespace ModernWpf.Controls.Primitives
         protected override int VisualChildrenCount =>
             IsShadowEnabled ? Child == null ? 1 : 2 : base.VisualChildrenCount;
 
-        protected override void OnInitialized(EventArgs e)
-        {
-            base.OnInitialized(e);
-
-            _autoMargin = HasDefaultValue(this, MarginProperty);
-
-            OnIsShadowEnabledChanged();
-        }
-
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
             base.OnVisualParentChanged(oldParent);
+
             if (IsInitialized)
             {
                 OnVisualParentChanged();
@@ -193,6 +178,15 @@ namespace ModernWpf.Controls.Primitives
             {
                 return base.GetVisualChild(index);
             }
+        }
+
+        protected override void OnInitialized(EventArgs e)
+        {
+            base.OnInitialized(e);
+
+            _autoMargin = HasDefaultValue(this, MarginProperty);
+
+            OnIsShadowEnabledChanged();
         }
 
         protected override Size MeasureOverride(Size constraint)
@@ -308,19 +302,39 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
+        private void EnsureShadows()
+        {
+            _shadow1 = CreateShadowElement();
+            UpdateShadow1();
+
+            _shadow2 = CreateShadowElement();
+            UpdateShadow2();
+        }
+
+        private Border CreateShadowElement()
+        {
+            return new Border
+            {
+                Background = Brushes.Black,
+                Margin = new Thickness(c_shadowMargin),
+                CornerRadius = CornerRadius,
+                Effect = new DropShadowEffect
+                {
+                    Direction = 270,
+                    Color = Colors.Black
+                }
+            };
+        }
+
         private void UpdateShadow1()
         {
             if (_shadow1 != null)
             {
                 double depth = Depth;
-                _shadow1.Opacity = depth >= 32 ? 0.22 : 0.13;
-                _shadow1.Effect = new DropShadowEffect
-                {
-                    Direction = 270,
-                    ShadowDepth = 0.4 * depth,
-                    BlurRadius = 0.9 * depth,
-                    Color = Colors.Black
-                };
+                var effect = (DropShadowEffect)_shadow1.Effect;
+                effect.ShadowDepth = 0.4 * depth + c_shadowMargin;
+                effect.BlurRadius = 0.9 * depth + c_shadowMargin;
+                _shadow1.Background = depth >= 32 ? s_bg3 : s_bg2;
             }
         }
 
@@ -329,14 +343,10 @@ namespace ModernWpf.Controls.Primitives
             if (_shadow2 != null)
             {
                 double depth = Depth;
-                _shadow2.Opacity = depth >= 32 ? 0.13 : 0.11;
-                _shadow2.Effect = new DropShadowEffect
-                {
-                    Direction = 270,
-                    ShadowDepth = 0.08 * depth,
-                    BlurRadius = 0.22 * depth,
-                    Color = Colors.Black
-                };
+                var effect = (DropShadowEffect)_shadow2.Effect;
+                effect.ShadowDepth = 0.08 * depth + c_shadowMargin;
+                effect.BlurRadius = 0.22 * depth + c_shadowMargin;
+                _shadow2.Background = depth >= 32 ? s_bg2 : s_bg1;
             }
         }
 
@@ -556,5 +566,8 @@ namespace ModernWpf.Controls.Primitives
         private TranslateTransform _transform;
         private bool _autoMargin;
         private Thickness _desiredMargin;
+
+        private static readonly Brush s_bg1, s_bg2, s_bg3;
+        private const double c_shadowMargin = 1;
     }
 }
