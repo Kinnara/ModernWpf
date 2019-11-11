@@ -6,7 +6,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 
-namespace ModernWpf.Controls
+namespace ModernWpf.Controls.Primitives
 {
     public class ThemeShadowChrome : Decorator
     {
@@ -154,7 +154,7 @@ namespace ModernWpf.Controls
         internal double DesiredPopupVerticalOffset => -_desiredMargin.Top;
 
         protected override int VisualChildrenCount =>
-            IsShadowEnabled ? (Child == null ? 1 : 2) : base.VisualChildrenCount;
+            IsShadowEnabled ? Child == null ? 1 : 2 : base.VisualChildrenCount;
 
         protected override void OnInitialized(EventArgs e)
         {

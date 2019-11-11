@@ -25,7 +25,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ContextMenu}">
-                    <local:ThemeShadowChrome
+                    <primitives:ThemeShadowChrome
                         x:Name="Shdw"
                         IsShadowEnabled="{TemplateBinding HasDropShadow}"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
@@ -53,7 +53,7 @@
                                     CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
                             </Grid>
                         </Border>
-                    </local:ThemeShadowChrome>
+                    </primitives:ThemeShadowChrome>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

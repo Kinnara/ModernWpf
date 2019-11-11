@@ -98,7 +98,7 @@
                 PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
                 Placement="Bottom"
                 PlacementTarget="{Binding ElementName=ContentRoot}">
-                <local:ThemeShadowChrome
+                <primitives:ThemeShadowChrome
                     IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
                     CornerRadius="{DynamicResource OverlayCornerRadius}">
                     <Border
@@ -127,7 +127,7 @@
                                 CornerRadius="{DynamicResource OverlayCornerRadius}" />
                         </Grid>
                     </Border>
-                </local:ThemeShadowChrome>
+                </primitives:ThemeShadowChrome>
             </Popup>
         </Grid>
         <ControlTemplate.Triggers>
@@ -308,7 +308,7 @@
                         PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
                         Placement="Right"
                         PlacementTarget="{Binding ElementName=PopupPlacementTarget}">
-                        <local:ThemeShadowChrome
+                        <primitives:ThemeShadowChrome
                             IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
                             CornerRadius="{DynamicResource OverlayCornerRadius}">
                             <Border
@@ -337,7 +337,7 @@
                                         CornerRadius="{DynamicResource OverlayCornerRadius}" />
                                 </Grid>
                             </Border>
-                        </local:ThemeShadowChrome>
+                        </primitives:ThemeShadowChrome>
                     </Popup>
                 </Grid>
             </Border>

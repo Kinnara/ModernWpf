@@ -2,7 +2,6 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
     <Style x:Key="DefaultToolTipStyle" TargetType="ToolTip">
@@ -22,7 +21,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToolTip">
-                    <local:ThemeShadowChrome
+                    <primitives:ThemeShadowChrome
                         Depth="16"
                         IsShadowEnabled="{TemplateBinding HasDropShadow}"
                         MaxWidth="320"
@@ -48,7 +47,7 @@
                                 </ContentPresenter>
                             </Border>
                         </Border>
-                    </local:ThemeShadowChrome>
+                    </primitives:ThemeShadowChrome>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

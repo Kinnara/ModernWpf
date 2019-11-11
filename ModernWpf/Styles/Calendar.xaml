@@ -412,7 +412,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Calendar}">
-                    <local:ThemeShadowChrome
+                    <primitives:ThemeShadowChrome
                         IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
@@ -425,7 +425,7 @@
                                 Style="{TemplateBinding CalendarItemStyle}"
                                 primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
                         </StackPanel>
-                    </local:ThemeShadowChrome>
+                    </primitives:ThemeShadowChrome>
                     <ControlTemplate.Triggers>
                         <EventTrigger RoutedEvent="Loaded">
                             <BeginStoryboard>
