@@ -271,13 +271,18 @@ namespace ModernWpf.Controls.Primitives
                         }
                         else
                         {
-                            var target = popup.PlacementTarget;
-                            if (target != null)
+                            var popupPlacement = popup.Placement;
+                            if (popupPlacement == PlacementMode.Bottom ||
+                                popupPlacement == PlacementMode.Top)
                             {
-                                if (target is Button ||
-                                    target.GetType().Name.Contains("SplitButton"))
+                                var target = popup.PlacementTarget;
+                                if (target != null)
                                 {
-                                    shouldForceLeftAlignWithTarget = true;
+                                    if (target is Button ||
+                                        target.GetType().Name.Contains("SplitButton"))
+                                    {
+                                        shouldForceLeftAlignWithTarget = true;
+                                    }
                                 }
                             }
                         }

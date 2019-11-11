@@ -36,8 +36,8 @@
                 </Button>
                 <controls:ControlExample.Options>
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <ComboBox
-                            ui:ControlHelper.Header="Placement"
+                        <ui:RadioButtons
+                            Header="Placement"
                             ItemsSource="{Binding Source={x:Type ui:FlyoutPlacementMode}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=Flyout1, Path=Placement, Mode=TwoWay}" />
                     </ui:SimpleStackPanel>

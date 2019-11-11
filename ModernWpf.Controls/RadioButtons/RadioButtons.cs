@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Markup;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -152,10 +153,7 @@ namespace ModernWpf.Controls
         #region Header
 
         public static readonly DependencyProperty HeaderProperty =
-            DependencyProperty.Register(
-                nameof(Header),
-                typeof(object),
-                typeof(RadioButtons));
+            ControlHelper.HeaderProperty.AddOwner(typeof(RadioButtons));
 
         public object Header
         {
