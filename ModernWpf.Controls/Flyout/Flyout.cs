@@ -20,22 +20,12 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(Content),
                 typeof(UIElement),
-                typeof(Flyout),
-                new PropertyMetadata(OnContentChanged));
+                typeof(Flyout));
 
         public UIElement Content
         {
             get => (UIElement)GetValue(ContentProperty);
             set => SetValue(ContentProperty, value);
-        }
-
-        private static void OnContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((Flyout)d).OnContentChanged(e);
-        }
-
-        private void OnContentChanged(DependencyPropertyChangedEventArgs e)
-        {
         }
 
         #endregion
@@ -46,22 +36,12 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(FlyoutPresenterStyle),
                 typeof(Style),
-                typeof(Flyout),
-                new PropertyMetadata(OnFlyoutPresenterStyleChanged));
+                typeof(Flyout));
 
         public Style FlyoutPresenterStyle
         {
             get => (Style)GetValue(FlyoutPresenterStyleProperty);
             set => SetValue(FlyoutPresenterStyleProperty, value);
-        }
-
-        private static void OnFlyoutPresenterStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((Flyout)d).OnFlyoutPresenterStyleChanged(e);
-        }
-
-        private void OnFlyoutPresenterStyleChanged(DependencyPropertyChangedEventArgs e)
-        {
         }
 
         #endregion

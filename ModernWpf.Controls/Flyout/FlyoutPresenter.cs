@@ -27,5 +27,22 @@ namespace ModernWpf.Controls
         }
 
         #endregion
+
+        #region IsDefaultShadowEnabled
+
+        public static readonly DependencyProperty IsDefaultShadowEnabledProperty =
+            DependencyProperty.Register(
+                nameof(IsDefaultShadowEnabled),
+                typeof(bool),
+                typeof(FlyoutPresenter),
+                new PropertyMetadata(true));
+
+        public bool IsDefaultShadowEnabled
+        {
+            get => (bool)GetValue(IsDefaultShadowEnabledProperty);
+            set => SetValue(IsDefaultShadowEnabledProperty, value);
+        }
+
+        #endregion
     }
 }

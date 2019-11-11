@@ -113,14 +113,21 @@ namespace ModernWpf.Controls.Primitives
             {
                 EnsurePresenter();
 
-                m_shadowChrome = new ThemeShadowChrome
-                {
-                    Child = m_presenter,
-                    Margin = new Thickness()
-                };
+                m_shadowChrome = new ThemeShadowChrome();
+                m_shadowChrome.BeginInit();
+                m_shadowChrome.Child = m_presenter;
+                m_shadowChrome.Margin = new Thickness();
+
                 m_shadowChrome.SetBinding(ThemeShadowChrome.CornerRadiusProperty, ControlHelper.CornerRadiusProperty, m_presenter);
                 m_shadowChrome.SetBinding(FrameworkElement.MaxWidthProperty, FrameworkElement.MaxWidthProperty, m_presenter);
                 m_shadowChrome.SetBinding(FrameworkElement.MaxHeightProperty, FrameworkElement.MaxHeightProperty, m_presenter);
+
+                if (m_presenter is FlyoutPresenter)
+                {
+                    m_shadowChrome.SetBinding(ThemeShadowChrome.IsShadowEnabledProperty, FlyoutPresenter.IsDefaultShadowEnabledProperty, m_presenter);
+                }
+
+                m_shadowChrome.EndInit();
             }
         }
 
@@ -193,12 +200,20 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_popup.Placement = PlacementMode.Custom;
                 m_popup.PlacementTarget = placementTarget;
-                m_popup.HorizontalOffset = m_shadowChrome.DesiredPopupHorizontalOffset;
-                m_popup.VerticalOffset = m_shadowChrome.DesiredPopupVerticalOffset;
                 m_popup.ClearValue(FrameworkElement.WidthProperty);
                 m_popup.ClearValue(FrameworkElement.HeightProperty);
 
-                m_shadowChrome.Margin = m_shadowChrome.DesiredMargin;
+                if (m_popup.GetBindingExpression(Popup.HorizontalOffsetProperty) == null)
+                {
+                    m_popup.SetBinding(Popup.HorizontalOffsetProperty, ThemeShadowChrome.DesiredPopupHorizontalOffsetProperty, m_shadowChrome);
+                    m_popup.SetBinding(Popup.VerticalOffsetProperty, ThemeShadowChrome.DesiredPopupVerticalOffsetProperty, m_shadowChrome);
+                    m_shadowChrome.SetBinding(FrameworkElement.MarginProperty, ThemeShadowChrome.DesiredMarginProperty, m_shadowChrome);
+                }
+                else
+                {
+                    Debug.Assert(m_popup.GetBindingExpression(Popup.VerticalOffsetProperty) != null);
+                    Debug.Assert(m_shadowChrome.GetBindingExpression(FrameworkElement.MarginProperty) != null);
+                }
             }
         }
 

@@ -142,11 +142,68 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        internal Thickness DesiredMargin => _desiredMargin;
+        #region DesiredMargin
 
-        internal double DesiredPopupHorizontalOffset => -_desiredMargin.Left;
+        internal static readonly DependencyProperty DesiredMarginProperty =
+            DependencyProperty.Register(
+                nameof(DesiredMargin),
+                typeof(Thickness),
+                typeof(ThemeShadowChrome),
+                new PropertyMetadata(new Thickness(), OnDesiredMarginChanged));
 
-        internal double DesiredPopupVerticalOffset => -_desiredMargin.Top;
+        internal Thickness DesiredMargin
+        {
+            get => (Thickness)GetValue(DesiredMarginProperty);
+            private set => SetValue(DesiredMarginProperty, value);
+        }
+
+        private static void OnDesiredMarginChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ThemeShadowChrome)d).OnDesiredMarginChanged(e);
+        }
+
+        private void OnDesiredMarginChanged(DependencyPropertyChangedEventArgs e)
+        {
+            var newValue = (Thickness)e.NewValue;
+            DesiredPopupHorizontalOffset = -newValue.Left;
+            DesiredPopupVerticalOffset = -newValue.Top;
+        }
+
+        #endregion
+
+        #region DesiredPopupHorizontalOffset
+
+        internal static readonly DependencyProperty DesiredPopupHorizontalOffsetProperty =
+            DependencyProperty.Register(
+                nameof(DesiredPopupHorizontalOffset),
+                typeof(double),
+                typeof(ThemeShadowChrome),
+                new PropertyMetadata(0d));
+
+        internal double DesiredPopupHorizontalOffset
+        {
+            get => (double)GetValue(DesiredPopupHorizontalOffsetProperty);
+            private set => SetValue(DesiredPopupHorizontalOffsetProperty, value);
+        }
+
+        #endregion
+
+        #region DesiredPopupVerticalOffset
+
+        internal static readonly DependencyProperty DesiredPopupVerticalOffsetProperty =
+            DependencyProperty.Register(
+                nameof(DesiredPopupVerticalOffset),
+                typeof(double),
+                typeof(ThemeShadowChrome),
+                new PropertyMetadata(0d));
+
+        internal double DesiredPopupVerticalOffset
+        {
+            get => (double)GetValue(DesiredPopupVerticalOffsetProperty);
+            private set => SetValue(DesiredPopupVerticalOffsetProperty, value);
+        }
+
+        #endregion
 
         protected override int VisualChildrenCount =>
             IsShadowEnabled ? Child == null ? 1 : 2 : base.VisualChildrenCount;
@@ -365,7 +422,7 @@ namespace ModernWpf.Controls.Primitives
                 double radius = 0.9 * depth;
                 double offset = 0.4 * depth;
 
-                _desiredMargin = new Thickness(
+                DesiredMargin = new Thickness(
                     radius,
                     radius,
                     radius,
@@ -373,7 +430,7 @@ namespace ModernWpf.Controls.Primitives
             }
             else
             {
-                _desiredMargin = new Thickness();
+                DesiredMargin = new Thickness();
             }
 
             UpdateMargin();
@@ -386,7 +443,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 if (IsShadowEnabled)
                 {
-                    Margin = _desiredMargin;
+                    Margin = DesiredMargin;
                 }
                 else
                 {
@@ -572,7 +629,6 @@ namespace ModernWpf.Controls.Primitives
         private Popup _popup;
         private TranslateTransform _transform;
         private bool _autoMargin;
-        private Thickness _desiredMargin;
 
         private static readonly Brush s_bg1, s_bg2, s_bg3, s_bg4;
         private const double c_shadowMargin = 1;

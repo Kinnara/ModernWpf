@@ -127,6 +127,21 @@ namespace ModernWpf.SampleApp
                 }
             }
         }
+
+        private void ShadowsAuto_Checked(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Resources.Remove(SystemParameters.DropShadowKey);
+        }
+
+        private void ShadowsEnabled_Checked(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Resources[SystemParameters.DropShadowKey] = true;
+        }
+
+        private void ShadowsDisabled_Checked(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Resources[SystemParameters.DropShadowKey] = false;
+        }
     }
 
     public class ControlPagesData : List<ControlPageInfo>

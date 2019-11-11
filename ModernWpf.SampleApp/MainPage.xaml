@@ -88,6 +88,21 @@
                     IsCheckable="True"
                     IsChecked="{Binding Path=(ui:TitleBar.ExtendViewIntoTitleBar), Mode=TwoWay}" />
             </MenuItem>
+            <MenuItem Header="Shadows">
+                <ui:RadioMenuItem
+                    x:Name="ShadowsAuto"
+                    Header="Use system setting"
+                    IsChecked="True"
+                    Checked="ShadowsAuto_Checked" />
+                <ui:RadioMenuItem
+                    x:Name="ShadowsEnabled"
+                    Header="Enabled"
+                    Checked="ShadowsEnabled_Checked" />
+                <ui:RadioMenuItem
+                    x:Name="ShadowsDisabled"
+                    Header="Disabled"
+                    Checked="ShadowsDisabled_Checked" />
+            </MenuItem>
         </Menu>
 
         <ListBox
