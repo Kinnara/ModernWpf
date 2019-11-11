@@ -192,13 +192,9 @@ namespace ModernWpf
             }
         }
 
-        internal void ApplyApplicationTheme(ApplicationTheme? appTheme)
+        internal void ApplyApplicationTheme(ApplicationTheme appTheme)
         {
-            Debug.Assert(appTheme.HasValue);
-            if (appTheme.HasValue)
-            {
-                Update(appTheme.Value);
-            }
+            Update(appTheme);
         }
 
         internal void UpdateMergedThemeDictionaries(ResourceDictionary target, ElementTheme theme)

@@ -100,11 +100,16 @@ namespace ModernWpf
 
         public static void Swap(this Collection<ResourceDictionary> mergedDictionaries, int index1, int index2)
         {
+            if (index1 == index2)
+            {
+                return;
+            }
+
             var smallIndex = Math.Min(index1, index2);
             var largeIndex = Math.Max(index1, index2);
-            var tmp = mergedDictionaries[largeIndex];
-            mergedDictionaries[largeIndex] = mergedDictionaries[smallIndex];
-            mergedDictionaries[smallIndex] = tmp;
+            var tmp = mergedDictionaries[smallIndex];
+            mergedDictionaries.RemoveAt(smallIndex);
+            mergedDictionaries.Insert(largeIndex, tmp);
         }
 
         //private static ResourceDictionary GetDictionary(Uri source, bool useCache)

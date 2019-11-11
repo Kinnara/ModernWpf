@@ -13,6 +13,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources>
                     <ui:ThemeResources.ThemeDictionaries>
+
                         <ResourceDictionary x:Key="Light">
                             <ResourceDictionary.MergedDictionaries>
                                 <ResourceDictionary>
@@ -27,6 +28,7 @@
                             <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Red" />
                         </ResourceDictionary>
+
                         <ResourceDictionary x:Key="Dark">
                             <ResourceDictionary.MergedDictionaries>
                                 <ResourceDictionary>
@@ -41,12 +43,14 @@
                             <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="#FF282828" />
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Yellow" />
                         </ResourceDictionary>
+
                         <ResourceDictionary x:Key="HighContrast">
                             <SolidColorBrush x:Key="AppBackgroundBrush" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
                             <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
                             <SolidColorBrush x:Key="RegionBrush" Color="Transparent" />
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Blue" />
                         </ResourceDictionary>
+
                     </ui:ThemeResources.ThemeDictionaries>
                 </ui:ThemeResources>
                 <ui:XamlControlsResources />
