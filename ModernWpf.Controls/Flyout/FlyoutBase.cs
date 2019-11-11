@@ -397,9 +397,9 @@ namespace ModernWpf.Controls.Primitives
         {
             public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
             {
-                double width = (double)values[0];
+                double windowWidth = (double)values[0];
                 Thickness border = (Thickness)values[1];
-                return width - border.Left - border.Right;
+                return windowWidth - border.Left - border.Right;
             }
 
             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -412,9 +412,11 @@ namespace ModernWpf.Controls.Primitives
         {
             public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
             {
-                double height = (double)values[0];
+                double windowHeight = (double)values[0];
                 Thickness border = (Thickness)values[1];
-                return height - border.Top - border.Bottom;
+                double desiredHeight = windowHeight - border.Top - border.Bottom;
+                double screenHeight = SystemParameters.PrimaryScreenHeight;
+                return Math.Min(desiredHeight, screenHeight * 0.75);
             }
 
             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
