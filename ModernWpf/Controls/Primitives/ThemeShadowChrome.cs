@@ -21,11 +21,17 @@ namespace ModernWpf.Controls.Primitives
             s_bg2.Freeze();
             s_bg3.Freeze();
             s_bg4.Freeze();
+
+            s_bitmapCache = new BitmapCache
+            {
+                SnapsToDevicePixels = true
+            };
+            s_bitmapCache.Freeze();
         }
 
         public ThemeShadowChrome()
         {
-            _background = new Grid();
+            _background = new Grid { CacheMode = s_bitmapCache };
             AddVisualChild(_background);
         }
 
@@ -631,6 +637,7 @@ namespace ModernWpf.Controls.Primitives
         private bool _autoMargin;
 
         private static readonly Brush s_bg1, s_bg2, s_bg3, s_bg4;
+        private static readonly BitmapCache s_bitmapCache;
         private const double c_shadowMargin = 1;
     }
 }

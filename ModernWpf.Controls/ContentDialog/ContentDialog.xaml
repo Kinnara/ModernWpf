@@ -14,7 +14,7 @@
         <Setter Property="PrimaryButtonStyle" Value="{DynamicResource DefaultButtonStyle}" />
         <Setter Property="SecondaryButtonStyle" Value="{DynamicResource DefaultButtonStyle}" />
         <Setter Property="CloseButtonStyle" Value="{DynamicResource DefaultButtonStyle}" />
-        <Setter Property="IsShadowEnabled" Value="False" />
+        <Setter Property="IsShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
         <Setter Property="Template">
