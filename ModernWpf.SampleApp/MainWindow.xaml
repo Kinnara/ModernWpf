@@ -12,7 +12,7 @@
     Width="1000"
     Height="750"
     WindowStartupLocation="CenterScreen"
-    Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
     Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
     ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.UseModernWindowStyle="True"

@@ -25,10 +25,27 @@
                 ItemsSource="{Binding Source={x:Type ResizeMode}, Converter={StaticResource EnumValuesConverter}}"
                 SelectedItem="{Binding ResizeMode, Mode=TwoWay}" />
 
+            <ui:DropDownButton Content="Resize window">
+                <ui:DropDownButton.DropDownMenu>
+                    <ContextMenu MenuItem.Click="ResizeWindow">
+                        <MenuItem
+                            Header="866 × 650"
+                            Tag="866,650" />
+                        <MenuItem
+                            Header="1000 × 750"
+                            Tag="1000,750" />
+                        <MenuItem
+                            Header="1200 × 900"
+                            Tag="1200,900" />
+                    </ContextMenu>
+                </ui:DropDownButton.DropDownMenu>
+            </ui:DropDownButton>
+
             <GroupBox Header="Title Bar">
                 <ui:SimpleStackPanel Spacing="12">
                     <ComboBox
                         ui:ControlHelper.Header="Background"
+                        MinWidth="120"
                         SelectedItem="{Binding Path=(ui:TitleBar.Background), Mode=TwoWay, Converter={StaticResource BrushToColorConverter}}">
                         <Color>Red</Color>
                         <Color>Green</Color>
@@ -37,6 +54,7 @@
 
                     <ComboBox
                         ui:ControlHelper.Header="Foreground"
+                        MinWidth="120"
                         SelectedItem="{Binding Path=(ui:TitleBar.Foreground), Mode=TwoWay, Converter={StaticResource BrushToColorConverter}}">
                         <Color>Black</Color>
                         <Color>White</Color>
