@@ -3,7 +3,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:root="clr-namespace:ModernWpf"
     xmlns:local="clr-namespace:ModernWpf.Controls"
-    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:String x:Key="ChromeClose">&#xE830;</sys:String>
+    <sys:String x:Key="ChromeMinimize">&#xE921;</sys:String>
+    <sys:String x:Key="ChromeMaximize">&#xE922;</sys:String>
+    <sys:String x:Key="ChromeRestore">&#xE923;</sys:String>
+    <sys:String x:Key="ChromeCloseContrast">&#xEF2C;</sys:String>
+    <sys:String x:Key="ChromeMinimizeContrast">&#xEF2D;</sys:String>
+    <sys:String x:Key="ChromeMaximizeContrast">&#xEF2E;</sys:String>
+    <sys:String x:Key="ChromeRestoreContrast">&#xEF2F;</sys:String>
 
     <Style TargetType="primitives:TitleBarControl">
         <Setter Property="Height" Value="{DynamicResource TitleBarHeight}" />
@@ -78,21 +88,21 @@
                             <primitives:TitleBarButton
                                 x:Name="MinimizeButton"
                                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
-                                Content="&#xE921;"
+                                Content="{StaticResource ChromeMinimize}"
                                 IsActive="{TemplateBinding IsActive}"
                                 Style="{TemplateBinding ButtonStyle}" />
 
                             <primitives:TitleBarButton
                                 x:Name="MaximizeRestoreButton"
                                 Command="{x:Static SystemCommands.MaximizeWindowCommand}"
-                                Content="&#xE922;"
+                                Content="{StaticResource ChromeMaximize}"
                                 IsActive="{TemplateBinding IsActive}"
                                 Style="{TemplateBinding ButtonStyle}" />
 
                             <primitives:TitleBarButton
                                 x:Name="CloseButton"
                                 Command="{x:Static SystemCommands.CloseWindowCommand}"
-                                Content="&#xE8BB;"
+                                Content="{StaticResource ChromeClose}"
                                 IsActive="{TemplateBinding IsActive}"
                                 Style="{TemplateBinding ButtonStyle}"
                                 HoverBackground="#E81123"
@@ -121,7 +131,7 @@
                             <Setter TargetName="MaximizeRestoreButton" Property="IsEnabled" Value="False" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
-                            <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="&#xE923;" />
+                            <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeRestore}" />
                             <Setter TargetName="MaximizeRestoreButton" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
                         </DataTrigger>
                         <Trigger Property="IsActive" Value="False">
@@ -133,6 +143,9 @@
                             <Setter TargetName="HighContrastCaptionBackground" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_BackButton" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
                             <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" />
+                            <Setter TargetName="MinimizeButton" Property="Content" Value="{StaticResource ChromeMinimizeContrast}" />
+                            <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeMaximizeContrast}" />
+                            <Setter TargetName="CloseButton" Property="Content" Value="{StaticResource ChromeCloseContrast}" />
                             <Setter TargetName="CloseButton" Property="HoverBackground" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
                             <Setter TargetName="CloseButton" Property="HoverForeground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                             <Setter TargetName="CloseButton" Property="PressedBackground" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
@@ -144,6 +157,13 @@
                                 <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource TemplatedParent}}" Value="False" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" />
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding HighContrast, Source={x:Static root:BindableSystemParameters.Current}}" Value="True" />
+                                <Condition Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeRestoreContrast}" />
                         </MultiDataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
