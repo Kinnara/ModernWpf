@@ -19,23 +19,14 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:TitleBarControl">
-                    <Grid x:Name="LayoutRoot">
+                    <Grid
+                        x:Name="LayoutRoot"
+                        Background="{TemplateBinding Background}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-
-                        <Rectangle
-                            x:Name="Background"
-                            Grid.ColumnSpan="3"
-                            Fill="{TemplateBinding Background}" />
-
-                        <Rectangle
-                            x:Name="HighContrastCaptionBackground"
-                            Grid.ColumnSpan="3"
-                            Fill="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
-                            Visibility="Collapsed" />
 
                         <StackPanel
                             x:Name="PART_LeftSystemOverlay"
@@ -118,7 +109,7 @@
                             <Setter TargetName="Title" Property="Margin" Value="5,0,12,0" />
                         </Trigger>
                         <Trigger Property="ExtendViewIntoTitleBar" Value="True">
-                            <Setter TargetName="Background" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{x:Null}" />
                             <Setter TargetName="IconTitlePanel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="NoResize">
@@ -134,11 +125,9 @@
                         </DataTrigger>
                         <Trigger Property="IsActive" Value="False">
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{Binding InactiveBackground, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <Setter TargetName="HighContrastCaptionBackground" Property="Fill" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
                             <Setter TargetName="Title" Property="Foreground" Value="{Binding InactiveForeground, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Trigger>
                         <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true">
-                            <Setter TargetName="HighContrastCaptionBackground" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_BackButton" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
                             <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" />
                             <Setter TargetName="MinimizeButton" Property="Content" Value="{StaticResource ChromeMinimizeContrast}" />

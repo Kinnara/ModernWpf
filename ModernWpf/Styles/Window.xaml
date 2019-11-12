@@ -28,7 +28,7 @@
                 <WindowChrome
                     CaptionHeight="{DynamicResource TitleBarHeight}"
                     CornerRadius="0"
-                    GlassFrameThickness="1"
+                    GlassFrameThickness="0,1,0,0"
                     UseAeroCaptionButtons="False" />
             </Setter.Value>
         </Setter>
@@ -47,7 +47,6 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
                         <Border.Resources>
-                            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
                             <primitives:WindowPaddingConveter x:Key="WindowPaddingConveter" />
                         </Border.Resources>
                         <Border.Padding>
@@ -60,10 +59,13 @@
                                 <Binding Path="(SystemParameters.WindowCaptionHeight)" />
                             </MultiBinding>
                         </Border.Padding>
-                        <Border
-                            x:Name="HighContrastBorder"
-                            BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}">
-                            <Grid>
+                        <Grid>
+                            <Rectangle
+                                x:Name="HighContrastBackground"
+                                Fill="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
+                                Visibility="Collapsed" />
+
+                            <Grid x:Name="ContentGrid">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
@@ -101,7 +103,7 @@
                                     IsTabStop="false"
                                     Visibility="Collapsed" />
                             </Grid>
-                        </Border>
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <MultiTrigger>
@@ -113,14 +115,15 @@
                         </MultiTrigger>
                         <Trigger Property="IsActive" Value="False">
                             <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource WindowBorderInactive}" />
-                            <Setter TargetName="HighContrastBorder" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                            <Setter TargetName="HighContrastBackground" Property="Fill" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
                         </Trigger>
                         <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true">
-                            <Setter TargetName="HighContrastBorder" Property="BorderThickness" Value="7,0,7,7" />
+                            <Setter TargetName="HighContrastBackground" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="ContentGrid" Property="Margin" Value="7,0,7,7" />
                         </DataTrigger>
                         <Trigger Property="WindowState" Value="Maximized">
                             <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="0" />
-                            <Setter TargetName="HighContrastBorder" Property="BorderThickness" Value="0" />
+                            <Setter TargetName="ContentGrid" Property="Margin" Value="0" />
                         </Trigger>
                         <Trigger Property="local:TitleBar.ExtendViewIntoTitleBar" Value="True">
                             <Setter TargetName="AdornerDecorator" Property="Grid.Row" Value="0" />
