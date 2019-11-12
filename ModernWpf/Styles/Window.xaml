@@ -20,7 +20,7 @@
     <Style x:Key="DefaultWindowStyle" TargetType="Window">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
-        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundAltHighBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource WindowBorder}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="WindowChrome.WindowChrome">
