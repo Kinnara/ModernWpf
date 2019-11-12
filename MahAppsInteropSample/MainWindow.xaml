@@ -1,0 +1,33 @@
+﻿<Window
+    x:Class="MahAppsInteropSample.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:local="clr-namespace:MahAppsInteropSample"
+    mc:Ignorable="d"
+    Title="MahApps.Metro Interop Sample"
+    Height="450"
+    Width="800"
+    ui:WindowHelper.UseModernWindowStyle="True">
+    <ui:SimpleStackPanel
+        Margin="12"
+        Spacing="24">
+
+        <mah:NumericUpDown
+            x:Name="NumberBox"
+            mah:TextBoxHelper.Watermark="Placeholder text"
+            Width="200" />
+
+        <CheckBox
+            IsChecked="{Binding ElementName=NumberBox, Path=HideUpDownButtons}"
+            Content="HideUpDownButtons" />
+
+        <Button
+            Content="Invert theme"
+            Click="InvertTheme" />
+
+    </ui:SimpleStackPanel>
+</Window>

@@ -38,7 +38,8 @@
 		ColumnDefinition,
 		primitives:CornerRadiusFilterConverter,
         ui:CornerRadiusFilterConverter,
-		m:StaticResource
+		m:StaticResource,
+        ui:StaticResource
 	",
     "SeparateByGroups": false,
     "AttributeIndentation": 0,

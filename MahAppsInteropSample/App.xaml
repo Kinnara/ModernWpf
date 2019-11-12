@@ -1,0 +1,120 @@
+﻿<Application
+    x:Class="MahAppsInteropSample.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:local="clr-namespace:MahAppsInteropSample"
+    StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemeResources />
+                <ui:XamlControlsResources />
+            </ResourceDictionary.MergedDictionaries>
+
+            <ui:CornerRadiusFilterConverter x:Key="LeftCornerRadiusFilterConverter" Filter="Left" />
+            <ui:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
+
+            <Thickness x:Key="NumberBoxSpinButtonBorderThickness">0,1,1,1</Thickness>
+
+            <Style x:Key="NumberBoxSpinButtonStyle" TargetType="RepeatButton" BasedOn="{StaticResource DefaultRepeatButtonStyle}">
+                <Setter Property="IsTabStop" Value="False" />
+                <Setter Property="MinWidth" Value="34" />
+                <Setter Property="Height" Value="{DynamicResource TextControlThemeMinHeight}" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Bottom" />
+                <Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
+                <Setter Property="BorderThickness" Value="{DynamicResource NumberBoxSpinButtonBorderThickness}" />
+                <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
+            </Style>
+
+            <Style TargetType="mah:NumericUpDown">
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="ui:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="mah:NumericUpDown">
+                            <Grid
+                                SnapsToDevicePixels="True"
+                                ui:ThemeManager.HasThemeResources="True">
+
+                                <Grid.Resources>
+                                    <ui:ElementThemeResources>
+                                        <ui:ElementThemeResources.ThemeDictionaries>
+                                            <ResourceDictionary x:Key="Light">
+                                                <ResourceDictionary.MergedDictionaries>
+                                                    <ui:DefaultThemeResources Key="Light" />
+                                                </ResourceDictionary.MergedDictionaries>
+                                                <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
+                                                <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
+                                            </ResourceDictionary>
+
+                                            <ResourceDictionary x:Key="Dark">
+                                                <ResourceDictionary.MergedDictionaries>
+                                                    <ui:DefaultThemeResources Key="Dark" />
+                                                </ResourceDictionary.MergedDictionaries>
+                                                <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
+                                                <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
+                                            </ResourceDictionary>
+
+                                            <ResourceDictionary x:Key="HighContrast">
+                                                <ResourceDictionary.MergedDictionaries>
+                                                    <ui:DefaultThemeResources Key="HighContrast" />
+                                                </ResourceDictionary.MergedDictionaries>
+                                                <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
+                                                <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+                                            </ResourceDictionary>
+                                        </ui:ElementThemeResources.ThemeDictionaries>
+                                    </ui:ElementThemeResources>
+                                </Grid.Resources>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox
+                                    x:Name="PART_TextBox"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Stretch"
+                                    ui:ControlHelper.PlaceholderText="{TemplateBinding mah:TextBoxHelper.Watermark}"
+                                    ui:ControlHelper.CornerRadius="{Binding (ui:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
+
+                                <RepeatButton
+                                    x:Name="PART_NumericUp"
+                                    Grid.Column="1"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    Content="&#xE70E;"
+                                    Style="{StaticResource NumberBoxSpinButtonStyle}"
+                                    ui:ControlHelper.CornerRadius="0" />
+
+                                <RepeatButton
+                                    x:Name="PART_NumericDown"
+                                    Grid.Column="2"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    Content="&#xE70D;"
+                                    Style="{StaticResource NumberBoxSpinButtonStyle}"
+                                    ui:ControlHelper.CornerRadius="{Binding (ui:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource RightCornerRadiusFilterConverter}}" />
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="HideUpDownButtons" Value="True">
+                                    <Setter TargetName="PART_NumericDown" Property="Visibility" Value="Collapsed" />
+                                    <Setter TargetName="PART_NumericUp" Property="Visibility" Value="Collapsed" />
+                                    <Setter TargetName="PART_TextBox" Property="ui:ControlHelper.CornerRadius" Value="{Binding (ui:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
