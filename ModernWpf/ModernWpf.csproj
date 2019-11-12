@@ -44,13 +44,11 @@
   <ItemGroup>
     <Compile Remove="DesignTime\DesignTimeThemeResources.cs" />
     <Compile Remove="Helpers\ResourceDictionaryCache.cs" />
-    <Compile Remove="ThemeDictionary.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="DesignTime\DesignTimeThemeResources.cs" />
     <None Include="Helpers\ResourceDictionaryCache.cs" />
-    <None Include="ThemeDictionary.cs" />
   </ItemGroup>
 
 </Project>
