@@ -6,7 +6,7 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <sys:String x:Key="ChromeClose">&#xE830;</sys:String>
+    <sys:String x:Key="ChromeClose">&#xE8BB;</sys:String>
     <sys:String x:Key="ChromeMinimize">&#xE921;</sys:String>
     <sys:String x:Key="ChromeMaximize">&#xE922;</sys:String>
     <sys:String x:Key="ChromeRestore">&#xE923;</sys:String>
