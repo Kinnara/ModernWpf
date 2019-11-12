@@ -191,7 +191,7 @@
 
                     <ui:ToggleSwitch
                         Header="High contrast"
-                        IsOn="{Binding HighContrast, Source={x:Static ui:BindableSystemParameters.Current}, Mode=OneWay}"
+                        IsOn="{Binding Path=(SystemParameters.HighContrast), Mode=OneWay}"
                         IsEnabled="False" />
                 </ui:SimpleStackPanel>
             </GroupBox>

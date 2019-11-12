@@ -278,13 +278,9 @@ namespace ModernWpf
                 int targetIndex = startIndex + MergedThemeDictionaryCount - 1;
                 if (targetIndex == 1 && MergedDictionaries[targetIndex] != targetDictionary)
                 {
-                    MergedDictionaries.Swap(startIndex, startIndex + 1);
-                    Debug.Assert(MergedDictionaries[startIndex + 1] == targetDictionary);
+                    MergedDictionaries.Swap(startIndex, targetIndex);
                 }
-                else
-                {
-                    Debug.Assert(MergedDictionaries[startIndex] == targetDictionary);
-                }
+                Debug.Assert(MergedDictionaries[targetIndex] == targetDictionary);
             }
         }
 

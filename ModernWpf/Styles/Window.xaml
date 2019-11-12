@@ -55,15 +55,9 @@
                                 <Binding
                                     Path="WindowState"
                                     RelativeSource="{RelativeSource TemplatedParent}" />
-                                <Binding
-                                    Path="WindowNonClientFrameThickness"
-                                    Source="{x:Static root:BindableSystemParameters.Current}" />
-                                <Binding
-                                    Path="WindowResizeBorderThickness"
-                                    Source="{x:Static root:BindableSystemParameters.Current}" />
-                                <Binding
-                                    Path="WindowCaptionHeight"
-                                    Source="{x:Static root:BindableSystemParameters.Current}" />
+                                <Binding Path="(SystemParameters.WindowNonClientFrameThickness)" />
+                                <Binding Path="(SystemParameters.WindowResizeBorderThickness)" />
+                                <Binding Path="(SystemParameters.WindowCaptionHeight)" />
                             </MultiBinding>
                         </Border.Padding>
                         <Border
@@ -121,7 +115,7 @@
                             <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource WindowBorderInactive}" />
                             <Setter TargetName="HighContrastBorder" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
                         </Trigger>
-                        <DataTrigger Binding="{Binding HighContrast, Source={x:Static root:BindableSystemParameters.Current}}" Value="true">
+                        <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true">
                             <Setter TargetName="HighContrastBorder" Property="BorderThickness" Value="7,0,7,7" />
                         </DataTrigger>
                         <Trigger Property="WindowState" Value="Maximized">

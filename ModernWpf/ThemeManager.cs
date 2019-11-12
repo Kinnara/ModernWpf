@@ -17,10 +17,7 @@ namespace ModernWpf
         internal const string DarkKey = "Dark";
         internal const string HighContrastKey = "HighContrast";
 
-        private static readonly Binding _highContrastBinding = new Binding(nameof(BindableSystemParameters.HighContrast))
-        {
-            Source = BindableSystemParameters.Current
-        };
+        private static readonly Binding _highContrastBinding = new Binding("(SystemParameters.HighContrast)");
 
         private static readonly Dictionary<string, ResourceDictionary> _defaultThemeDictionaries = new Dictionary<string, ResourceDictionary>();
 
