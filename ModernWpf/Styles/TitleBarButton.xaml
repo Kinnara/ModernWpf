@@ -38,10 +38,10 @@
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="False">
+                        <Trigger Property="IsActive" Value="False">
                             <Setter Property="Background" TargetName="RootGrid" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=InactiveBackground}" />
                             <Setter Property="Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=InactiveForeground}" />
-                        </DataTrigger>
+                        </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Background" TargetName="RootGrid" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=HoverBackground}" />
                             <Setter Property="Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=HoverForeground}" />

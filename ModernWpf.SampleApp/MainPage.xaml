@@ -76,13 +76,14 @@
                 Header="Title Bar"
                 DataContext="{Binding MainWindow, Source={x:Static Application.Current}}">
                 <MenuItem
+                    Header="IsBackButtonVisible"
+                    IsEnabled="False"
+                    IsCheckable="True"
+                    IsChecked="{Binding Path=(ui:TitleBar.IsBackButtonVisible), Mode=OneWay}" />
+                <MenuItem
                     Header="IsIconVisible"
                     IsCheckable="True"
                     IsChecked="{Binding Path=(ui:TitleBar.IsIconVisible), Mode=TwoWay}" />
-                <MenuItem
-                    Header="IsBackButtonVisible"
-                    IsCheckable="True"
-                    IsChecked="{Binding Path=(ui:TitleBar.IsBackButtonVisible), Mode=TwoWay}" />
                 <MenuItem
                     Header="ExtendViewIntoTitleBar"
                     IsCheckable="True"
@@ -103,7 +104,9 @@
                     Header="Disabled"
                     Checked="ShadowsDisabled_Checked" />
             </MenuItem>
-            <MenuItem Header="Debug">
+            <MenuItem
+                Header="Debug"
+                Visibility="Collapsed">
                 <MenuItem
                     Header="Force GC"
                     Click="ForceGC" />

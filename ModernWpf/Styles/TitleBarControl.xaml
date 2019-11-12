@@ -29,17 +29,19 @@
                             Fill="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
                             Visibility="Collapsed" />
 
-                        <primitives:TitleBarButton
-                            x:Name="BackButton"
-                            Style="{TemplateBinding BackButtonStyle}"
-                            Width="48"
-                            Height="{TemplateBinding Height}"
-                            Content="&#xE830;"
-                            FontSize="12"
-                            IsEnabled="{TemplateBinding IsBackEnabled}"
-                            Command="{TemplateBinding BackButtonCommand}"
-                            CommandParameter="{TemplateBinding BackButtonCommandParameter}"
-                            Visibility="Collapsed" />
+                        <StackPanel
+                            x:Name="PART_LeftSystemOverlay"
+                            Orientation="Horizontal">
+                            <primitives:TitleBarButton
+                                x:Name="PART_BackButton"
+                                Style="{TemplateBinding BackButtonStyle}"
+                                Height="{TemplateBinding Height}"
+                                IsEnabled="{TemplateBinding IsBackEnabled}"
+                                Command="{TemplateBinding BackButtonCommand}"
+                                CommandParameter="{TemplateBinding BackButtonCommandParameter}"
+                                IsActive="{TemplateBinding IsActive}"
+                                Visibility="Collapsed" />
+                        </StackPanel>
 
                         <StackPanel
                             x:Name="IconTitlePanel"
@@ -70,24 +72,28 @@
                         </StackPanel>
 
                         <StackPanel
+                            x:Name="PART_RightSystemOverlay"
                             Grid.Column="2"
                             Orientation="Horizontal">
                             <primitives:TitleBarButton
                                 x:Name="MinimizeButton"
                                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
                                 Content="&#xE921;"
+                                IsActive="{TemplateBinding IsActive}"
                                 Style="{TemplateBinding ButtonStyle}" />
 
                             <primitives:TitleBarButton
                                 x:Name="MaximizeRestoreButton"
                                 Command="{x:Static SystemCommands.MaximizeWindowCommand}"
                                 Content="&#xE922;"
+                                IsActive="{TemplateBinding IsActive}"
                                 Style="{TemplateBinding ButtonStyle}" />
 
                             <primitives:TitleBarButton
                                 x:Name="CloseButton"
                                 Command="{x:Static SystemCommands.CloseWindowCommand}"
-                                Content="&#xE106;"
+                                Content="&#xE8BB;"
+                                IsActive="{TemplateBinding IsActive}"
                                 Style="{TemplateBinding ButtonStyle}"
                                 HoverBackground="#E81123"
                                 HoverForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
@@ -97,7 +103,7 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsBackButtonVisible" Value="True">
-                            <Setter TargetName="BackButton" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_BackButton" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="IsIconVisible" Value="True">
                             <Setter TargetName="Icon" Property="Visibility" Value="Visible" />
@@ -118,14 +124,14 @@
                             <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="&#xE923;" />
                             <Setter TargetName="MaximizeRestoreButton" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="False">
+                        <Trigger Property="IsActive" Value="False">
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{Binding InactiveBackground, RelativeSource={RelativeSource TemplatedParent}}" />
                             <Setter TargetName="HighContrastCaptionBackground" Property="Fill" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
                             <Setter TargetName="Title" Property="Foreground" Value="{Binding InactiveForeground, RelativeSource={RelativeSource TemplatedParent}}" />
-                        </DataTrigger>
+                        </Trigger>
                         <DataTrigger Binding="{Binding HighContrast, Source={x:Static root:BindableSystemParameters.Current}}" Value="true">
                             <Setter TargetName="HighContrastCaptionBackground" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="BackButton" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                            <Setter TargetName="PART_BackButton" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
                             <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" />
                             <Setter TargetName="CloseButton" Property="HoverBackground" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
                             <Setter TargetName="CloseButton" Property="HoverForeground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
@@ -135,7 +141,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding HighContrast, Source={x:Static root:BindableSystemParameters.Current}}" Value="True" />
-                                <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource AncestorType=Window}}" Value="False" />
+                                <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource TemplatedParent}}" Value="False" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" />
                         </MultiDataTrigger>

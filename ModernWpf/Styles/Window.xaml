@@ -5,13 +5,16 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
-    <Style x:Key="BackButtonStyle" TargetType="primitives:TitleBarButton">
+    <Style x:Key="TitleBarBackButtonStyle" TargetType="primitives:TitleBarButton">
         <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
         <Setter Property="HoverBackground" Value="{DynamicResource AccentButtonBackgroundPointerOver}" />
         <Setter Property="HoverForeground" Value="{DynamicResource AccentButtonForegroundPointerOver}" />
         <Setter Property="PressedBackground" Value="{DynamicResource AccentButtonBackgroundPressed}" />
         <Setter Property="PressedForeground" Value="{DynamicResource AccentButtonForegroundPressed}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Width" Value="48" />
+        <Setter Property="Content" Value="&#xE830;" />
     </Style>
 
     <Style x:Key="DefaultWindowStyle" TargetType="Window">
@@ -34,7 +37,7 @@
         <Setter Property="local:TitleBar.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="local:TitleBar.InactiveBackground" Value="Transparent" />
         <Setter Property="local:TitleBar.InactiveForeground" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
-        <Setter Property="local:TitleBar.BackButtonStyle" Value="{StaticResource BackButtonStyle}" />
+        <Setter Property="local:TitleBar.BackButtonStyle" Value="{StaticResource TitleBarBackButtonStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Window">
@@ -75,6 +78,7 @@
                                 <primitives:TitleBarControl
                                     Icon="{TemplateBinding Icon}"
                                     Title="{TemplateBinding Title}"
+                                    IsActive="{TemplateBinding IsActive}"
                                     Background="{TemplateBinding local:TitleBar.Background}"
                                     Foreground="{TemplateBinding local:TitleBar.Foreground}"
                                     InactiveBackground="{TemplateBinding local:TitleBar.InactiveBackground}"

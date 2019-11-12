@@ -263,6 +263,78 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region SystemOverlayLeftInset
+
+        internal static readonly DependencyPropertyKey SystemOverlayLeftInsetPropertyKey =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "SystemOverlayLeftInset",
+                typeof(double),
+                typeof(TitleBar),
+                new PropertyMetadata(0d));
+
+        public static readonly DependencyProperty SystemOverlayLeftInsetProperty =
+            SystemOverlayLeftInsetPropertyKey.DependencyProperty;
+
+        public static double GetSystemOverlayLeftInset(Window window)
+        {
+            return (double)window.GetValue(SystemOverlayLeftInsetProperty);
+        }
+
+        internal static void SetSystemOverlayLeftInset(Window window, double value)
+        {
+            window.SetValue(SystemOverlayLeftInsetPropertyKey, value);
+        }
+
+        #endregion
+
+        #region SystemOverlayRightInset
+
+        internal static readonly DependencyPropertyKey SystemOverlayRightInsetPropertyKey =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "SystemOverlayRightInset",
+                typeof(double),
+                typeof(TitleBar),
+                new PropertyMetadata(0d));
+
+        public static readonly DependencyProperty SystemOverlayRightInsetProperty =
+            SystemOverlayRightInsetPropertyKey.DependencyProperty;
+
+        public static double GetSystemOverlayRightInset(Window window)
+        {
+            return (double)window.GetValue(SystemOverlayRightInsetProperty);
+        }
+
+        internal static void SetSystemOverlayRightInset(Window window, double value)
+        {
+            window.SetValue(SystemOverlayRightInsetPropertyKey, value);
+        }
+
+        #endregion
+
+        #region Height
+
+        internal static readonly DependencyPropertyKey HeightPropertyKey =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "Height",
+                typeof(double),
+                typeof(TitleBar),
+                new PropertyMetadata(32d));
+
+        public static readonly DependencyProperty HeightProperty =
+            HeightPropertyKey.DependencyProperty;
+
+        public static double GetHeight(Window window)
+        {
+            return (double)window.GetValue(HeightProperty);
+        }
+
+        internal static void SetHeight(Window window, double value)
+        {
+            window.SetValue(HeightPropertyKey, value);
+        }
+
+        #endregion
+
         #region BackRequested
 
         /// <summary>

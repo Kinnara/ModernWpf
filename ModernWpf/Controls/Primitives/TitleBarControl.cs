@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -6,9 +7,15 @@ using System.Windows.Media;
 namespace ModernWpf.Controls.Primitives
 {
     [TemplatePart(Name = BackButtonName, Type = typeof(Button))]
+    [TemplatePart(Name = LeftSystemOverlayName, Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = RightSystemOverlayName, Type = typeof(FrameworkElement))]
+    [StyleTypedProperty(Property = nameof(ButtonStyle), StyleTargetType = typeof(TitleBarButton))]
+    [StyleTypedProperty(Property = nameof(BackButtonStyle), StyleTargetType = typeof(TitleBarButton))]
     public class TitleBarControl : Control
     {
-        private const string BackButtonName = "BackButton";
+        private const string BackButtonName = "PART_BackButton";
+        private const string LeftSystemOverlayName = "PART_LeftSystemOverlay";
+        private const string RightSystemOverlayName = "PART_RightSystemOverlay";
 
         static TitleBarControl()
         {
@@ -23,6 +30,23 @@ namespace ModernWpf.Controls.Primitives
             CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, RestoreWindow));
             CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, CloseWindow));
         }
+
+        #region IsActive
+
+        public static readonly DependencyProperty IsActiveProperty =
+            DependencyProperty.Register(
+                nameof(IsActive),
+                typeof(bool),
+                typeof(TitleBarControl),
+                new PropertyMetadata(false));
+
+        public bool IsActive
+        {
+            get => (bool)GetValue(IsActiveProperty);
+            set => SetValue(IsActiveProperty, value);
+        }
+
+        #endregion
 
         #region InactiveBackground
 
@@ -197,6 +221,10 @@ namespace ModernWpf.Controls.Primitives
 
         private Button BackButton { get; set; }
 
+        private FrameworkElement LeftSystemOverlay { get; set; }
+
+        private FrameworkElement RightSystemOverlay { get; set; }
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -206,11 +234,46 @@ namespace ModernWpf.Controls.Primitives
                 BackButton.Click -= OnBackButtonClick;
             }
 
+            if (LeftSystemOverlay != null)
+            {
+                LeftSystemOverlay.SizeChanged -= OnLeftSystemOverlaySizeChanged;
+            }
+
+            if (RightSystemOverlay != null)
+            {
+                RightSystemOverlay.SizeChanged -= OnRightSystemOverlaySizeChanged;
+            }
+
             BackButton = GetTemplateChild(BackButtonName) as Button;
+            LeftSystemOverlay = GetTemplateChild(LeftSystemOverlayName) as FrameworkElement;
+            RightSystemOverlay = GetTemplateChild(RightSystemOverlayName) as FrameworkElement;
 
             if (BackButton != null)
             {
                 BackButton.Click += OnBackButtonClick;
+            }
+
+            if (LeftSystemOverlay != null)
+            {
+                LeftSystemOverlay.SizeChanged += OnLeftSystemOverlaySizeChanged;
+                UpdateSystemOverlayLeftInset(LeftSystemOverlay.ActualWidth);
+            }
+
+            if (RightSystemOverlay != null)
+            {
+                RightSystemOverlay.SizeChanged += OnRightSystemOverlaySizeChanged;
+                UpdateSystemOverlayRightInset(RightSystemOverlay.ActualWidth);
+            }
+        }
+
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            base.OnRenderSizeChanged(sizeInfo);
+
+            Debug.Assert(TemplatedParent is Window);
+            if (TemplatedParent is Window window)
+            {
+                TitleBar.SetHeight(window, sizeInfo.NewSize.Height);
             }
         }
 
@@ -224,6 +287,34 @@ namespace ModernWpf.Controls.Primitives
                 {
                     TitleBar.RaiseBackRequested(window);
                 }
+            }
+        }
+
+        private void OnLeftSystemOverlaySizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateSystemOverlayLeftInset(e.NewSize.Width);
+        }
+
+        private void OnRightSystemOverlaySizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateSystemOverlayRightInset(e.NewSize.Width);
+        }
+
+        private void UpdateSystemOverlayLeftInset(double value)
+        {
+            Debug.Assert(TemplatedParent is Window);
+            if (TemplatedParent is Window window)
+            {
+                TitleBar.SetSystemOverlayLeftInset(window, value);
+            }
+        }
+
+        private void UpdateSystemOverlayRightInset(double value)
+        {
+            Debug.Assert(TemplatedParent is Window);
+            if (TemplatedParent is Window window)
+            {
+                TitleBar.SetSystemOverlayRightInset(window, value);
             }
         }
 

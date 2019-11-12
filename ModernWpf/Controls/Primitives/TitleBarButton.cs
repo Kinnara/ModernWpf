@@ -12,6 +12,23 @@ namespace ModernWpf.Controls.Primitives
                 new FrameworkPropertyMetadata(typeof(TitleBarButton)));
         }
 
+        #region IsActive
+
+        public static readonly DependencyProperty IsActiveProperty =
+            DependencyProperty.Register(
+                nameof(IsActive),
+                typeof(bool),
+                typeof(TitleBarButton),
+                new PropertyMetadata(false));
+
+        public bool IsActive
+        {
+            get => (bool)GetValue(IsActiveProperty);
+            set => SetValue(IsActiveProperty, value);
+        }
+
+        #endregion
+
         #region InactiveBackground
 
         public static readonly DependencyProperty InactiveBackgroundProperty =
