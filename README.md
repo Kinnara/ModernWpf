@@ -62,6 +62,8 @@ Modern styles and controls for your WPF applications.
 
 ![UniformGridLayout](docs/images/UniformGridLayout.png "UniformGridLayout")
 
+![Custom title bar](docs/images/CustomTitleBar.png "Custom title bar")
+
 ![Calendar](docs/images/Calendar.png "Calendar")
 
 ![Menu](docs/images/Menu.png "Menu")
