@@ -183,7 +183,8 @@
                         Style="{StaticResource OptionsPanelStyle}">
                         <TextBlock
                             x:Name="LoadTimeTextBlock"
-                            Style="{StaticResource BodyTextBlockStyle}" />
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            MouseLeftButtonUp="LoadTimeTextBlock_MouseLeftButtonUp"/>
                         <controls:LayoutDensitySelector TargetElement="{Binding ElementName=dataGrid}" />
                         <CheckBox
                             x:Name="CheckBoxColumnVisibilityToggle"

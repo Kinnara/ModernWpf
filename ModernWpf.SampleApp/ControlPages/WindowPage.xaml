@@ -37,6 +37,9 @@
                         <MenuItem
                             Header="1200 × 900"
                             Tag="1200,900" />
+                        <MenuItem
+                            Header="1500 × 900"
+                            Tag="1500,900" />
                     </ContextMenu>
                 </ui:DropDownButton.DropDownMenu>
             </ui:DropDownButton>

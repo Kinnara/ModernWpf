@@ -77,7 +77,7 @@
                 x:Name="SettingsButton"
                 Grid.Column="3"
                 IsActive="{Binding ElementName=Window, Path=IsActive}"
-                FontSize="12"
+                FontSize="14"
                 Content="&#xE713;"
                 Click="SettingsButton_Click" />
 

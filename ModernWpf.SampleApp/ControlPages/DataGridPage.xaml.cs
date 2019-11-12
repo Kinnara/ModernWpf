@@ -72,5 +72,10 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             _cvs.GroupDescriptions.Clear();
         }
+
+        private void LoadTimeTextBlock_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            LoadTimeTextBlock.Visibility = Visibility.Collapsed;
+        }
     }
 }
