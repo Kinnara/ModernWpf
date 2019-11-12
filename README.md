@@ -52,7 +52,7 @@ Modern styles and controls for your WPF applications.
 ## Screenshots
 ![Screenshot 2](docs/images/ControlPalette2.png "Screenshot 2")
 
-![Nighttime colors](docs/images/Nighttime.png "Easily customize colors")
+![Easily customize colors](docs/images/Nighttime.png "Easily customize colors")
 
 ![ContentDialog](docs/images/ContentDialog.png "ContentDialog")
 
@@ -69,3 +69,5 @@ Modern styles and controls for your WPF applications.
 ![Color ramp](docs/images/ColorRamp.png "Color ramp")
 
 ![Accent color palette](docs/images/AccentColorPalette.png "Accent color palette")
+
+![High contrast mode](docs/images/HighContrast.png "High contrast mode")
