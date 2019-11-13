@@ -38,6 +38,7 @@
     <Color x:Key="SystemChromeHighColor">#FF767676</Color>
     <Color x:Key="SystemChromeLowColor">#FF171717</Color>
     <Color x:Key="SystemChromeMediumColor">#FF1F1F1F</Color>
+    <Color x:Key="SystemChromeMediumHighColor">#FF323232</Color>
     <Color x:Key="SystemChromeMediumLowColor">#FF2B2B2B</Color>
     <Color x:Key="SystemChromeWhiteColor">#FFFFFFFF</Color>
     <Color x:Key="SystemChromeGrayColor">#FF767676</Color>

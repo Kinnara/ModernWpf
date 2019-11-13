@@ -82,6 +82,7 @@ namespace ModernWpf.SampleApp.ControlPages
             AddColor("ChromeLow", "Chrome");
             AddColor("ChromeMediumLow", "Chrome");
             AddColor("ChromeMedium", "Chrome");
+            AddColor("ChromeMediumHigh", "Chrome");
             AddColor("ChromeHigh", "Chrome");
             AddColor("ChromeAltLow", "Chrome");
             AddColor("ChromeDisabledLow", "Chrome");
