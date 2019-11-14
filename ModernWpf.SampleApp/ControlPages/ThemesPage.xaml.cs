@@ -39,63 +39,6 @@ namespace ModernWpf.SampleApp.ControlPages
         }
     }
 
-    public class AppThemes : List<AppTheme>
-    {
-        public AppThemes()
-        {
-            Add(AppTheme.Default);
-            Add(AppTheme.Light);
-            Add(AppTheme.Dark);
-        }
-    }
-
-    public class AppTheme
-    {
-        public static AppTheme Default { get; } = new AppTheme("Default", null);
-        public static AppTheme Light { get; } = new AppTheme("Light", ApplicationTheme.Light);
-        public static AppTheme Dark { get; } = new AppTheme("Dark", ApplicationTheme.Dark);
-
-        private AppTheme(string name, ApplicationTheme? value)
-        {
-            Name = name;
-            Value = value;
-        }
-
-        public string Name { get; }
-        public ApplicationTheme? Value { get; }
-
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-
-    public class AppThemeConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            switch ((ApplicationTheme?)value)
-            {
-                case ApplicationTheme.Light:
-                    return AppTheme.Light;
-                case ApplicationTheme.Dark:
-                    return AppTheme.Dark;
-                default:
-                    return AppTheme.Default;
-            }
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is AppTheme appTheme)
-            {
-                return appTheme.Value;
-            }
-
-            return AppTheme.Default;
-        }
-    }
-
     public class AccentColors : List<AccentColor>
     {
         public AccentColors()

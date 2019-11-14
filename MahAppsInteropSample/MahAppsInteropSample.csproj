@@ -2,17 +2,45 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0589" />
+    <Compile Include="..\ModernWpf.SampleApp\Common\AppTheme.cs" Link="Common\AppTheme.cs" />
+    <Compile Include="..\ModernWpf.SampleApp\SamplePages\SamplePage1.xaml.cs" Link="SamplePages\SamplePage1.xaml.cs" />
+    <Compile Include="..\ModernWpf.SampleApp\SamplePages\SamplePage2.xaml.cs" Link="SamplePages\SamplePage2.xaml.cs" />
+    <Compile Include="..\ModernWpf.SampleApp\SamplePages\SamplePage3.xaml.cs" Link="SamplePages\SamplePage3.xaml.cs" />
+    <Compile Include="..\ModernWpf.SampleApp\SamplePages\SamplePage4.xaml.cs" Link="SamplePages\SamplePage4.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0605" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
+    <ProjectReference Include="..\ModernWpf.MahApps\ModernWpf.MahApps.csproj" />
     <ProjectReference Include="..\ModernWpf\ModernWpf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="..\ModernWpf.SampleApp\SamplePages\SamplePage1.xaml" Link="SamplePages\SamplePage1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="..\ModernWpf.SampleApp\SamplePages\SamplePage2.xaml" Link="SamplePages\SamplePage2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="..\ModernWpf.SampleApp\SamplePages\SamplePage3.xaml" Link="SamplePages\SamplePage3.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="..\ModernWpf.SampleApp\SamplePages\SamplePage4.xaml" Link="SamplePages\SamplePage4.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\" />
   </ItemGroup>
 
 </Project>

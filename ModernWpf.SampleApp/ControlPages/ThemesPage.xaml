@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
     xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
@@ -15,7 +16,7 @@
     Style="{StaticResource ControlPageStyle}">
 
     <UserControl.Resources>
-        <local:AppThemeConverter x:Key="AppThemeConverter" />
+        <common:AppThemeConverter x:Key="AppThemeConverter" />
     </UserControl.Resources>
 
     <ScrollViewer>
@@ -27,7 +28,7 @@
                 Header="Theme Mode"
                 SelectedItem="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, Mode=TwoWay, Converter={StaticResource AppThemeConverter}}">
                 <ui:RadioButtons.ItemsSource>
-                    <local:AppThemes />
+                    <common:AppThemes />
                 </ui:RadioButtons.ItemsSource>
             </ui:RadioButtons>
 

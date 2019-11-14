@@ -1,0 +1,28 @@
+﻿<Page
+    x:Class="MahAppsInteropSample.SamplePages.SampleSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:MahAppsInteropSample.SamplePages"
+    xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
+    mc:Ignorable="d"
+    Style="{StaticResource PageStyle}">
+
+    <Page.Resources>
+        <common:AppThemeConverter x:Key="AppThemeConverter" />
+    </Page.Resources>
+
+    <ScrollViewer>
+        <Grid Margin="24,0">
+            <GroupBox Header="Theme Mode">
+                <ui:RadioButtons SelectedItem="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, Mode=TwoWay, Converter={StaticResource AppThemeConverter}}">
+                    <ui:RadioButtons.ItemsSource>
+                        <common:AppThemes />
+                    </ui:RadioButtons.ItemsSource>
+                </ui:RadioButtons>
+            </GroupBox>
+        </Grid>
+    </ScrollViewer>
+</Page>

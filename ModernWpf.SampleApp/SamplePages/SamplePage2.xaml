@@ -11,7 +11,7 @@
     d:DesignHeight="900"
     Style="{StaticResource PageStyle}">
 
-    <ScrollViewer>
+    <ScrollViewer Padding="12,0">
         <Grid Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
             <Grid.Resources>
                 <sys:Double x:Key="TileHeight">150</sys:Double>

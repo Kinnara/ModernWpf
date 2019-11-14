@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -13,14 +12,14 @@ namespace ModernWpf.Controls.Primitives
                 typeof(bool),
                 typeof(ScrollViewerHelper));
 
-        public static bool GetAutoHideScrollBars(ScrollViewer scrollViewer)
+        public static bool GetAutoHideScrollBars(DependencyObject element)
         {
-            return (bool)scrollViewer.GetValue(AutoHideScrollBarsProperty);
+            return (bool)element.GetValue(AutoHideScrollBarsProperty);
         }
 
-        public static void SetAutoHideScrollBars(ScrollViewer scrollViewer, bool value)
+        public static void SetAutoHideScrollBars(DependencyObject element, bool value)
         {
-            scrollViewer.SetValue(AutoHideScrollBarsProperty, value);
+            element.SetValue(AutoHideScrollBarsProperty, value);
         }
 
         #endregion

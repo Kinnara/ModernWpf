@@ -19,6 +19,8 @@
         <ResourceDictionary Source="Styles/ListView.xaml" />
         <ResourceDictionary Source="Styles/Menu.xaml" />
         <ResourceDictionary Source="Styles/MenuItem.xaml" />
+        <ResourceDictionary Source="Styles/NavigationBackButton.xaml" />
+        <ResourceDictionary Source="Styles/NavigationView.xaml" />
         <ResourceDictionary Source="Styles/PasswordBox.xaml" />
         <ResourceDictionary Source="Styles/ProgressBar.xaml" />
         <ResourceDictionary Source="Styles/RadioButton.xaml" />

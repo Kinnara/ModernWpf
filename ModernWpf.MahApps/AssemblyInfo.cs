@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Markup;
 
 [assembly: ThemeInfo(
@@ -10,5 +10,5 @@ using System.Windows.Markup;
                                               // app, or any theme specific resource dictionaries)
 )]
 
-[assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Controls")]
-[assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Controls.Primitives")]
+[assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.MahApps")]
+[assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.MahApps.Controls")]
