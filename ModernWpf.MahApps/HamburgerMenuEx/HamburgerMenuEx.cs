@@ -149,13 +149,13 @@ namespace ModernWpf.MahApps.Controls
 
         #endregion
 
-        public event TypedEventHandler<HamburgerMenuEx, HamburgerMenuBackRequestedEventArgs> BackRequested;
+        public event EventHandler<HamburgerMenuBackRequestedEventArgs> BackRequested;
 
-        public event TypedEventHandler<HamburgerMenuEx, HamburgerMenuDisplayModeChangedEventArgs> DisplayModeChanged;
+        public event EventHandler<HamburgerMenuDisplayModeChangedEventArgs> DisplayModeChanged;
 
-        public event TypedEventHandler<HamburgerMenuEx, object> PaneOpened;
+        public event EventHandler PaneOpened;
 
-        public event TypedEventHandler<HamburgerMenuEx, object> PaneClosed;
+        public event EventHandler PaneClosed;
 
         public override void OnApplyTemplate()
         {

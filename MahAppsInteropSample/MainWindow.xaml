@@ -86,8 +86,6 @@
                         </mah:HamburgerMenuIconItem.Icon>
                     </mah:HamburgerMenuIconItem>
 
-                    <mah:HamburgerMenuSeparatorItem />
-
                     <mah:HamburgerMenuIconItem
                         Label="Sample Page 3"
                         Tag="SamplePages/SamplePage3.xaml">

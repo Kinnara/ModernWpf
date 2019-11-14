@@ -20,14 +20,14 @@ namespace MahAppsInteropSample
             Navigate(NavView.SelectedItem);
         }
 
-        private void NavView_BackRequested(HamburgerMenuEx sender, HamburgerMenuBackRequestedEventArgs args)
+        private void NavView_BackRequested(object sender, HamburgerMenuBackRequestedEventArgs e)
         {
             ContentFrame.GoBack();
         }
 
-        private void NavView_ItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs args)
+        private void NavView_ItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
         {
-            if (args.IsItemOptions)
+            if (e.IsItemOptions)
             {
                 Navigate(NavView.SelectedOptionsItem);
             }
@@ -37,14 +37,14 @@ namespace MahAppsInteropSample
             }
         }
 
-        private void NavView_PaneOpened(HamburgerMenuEx sender, object args)
+        private void NavView_PaneOpened(object sender, EventArgs e)
         {
-            UpdateAppTitleBarMargin(sender);
+            UpdateAppTitleBarMargin((HamburgerMenuEx)sender);
         }
 
-        private void NavView_PaneClosed(HamburgerMenuEx sender, object args)
+        private void NavView_PaneClosed(object sender, EventArgs e)
         {
-            UpdateAppTitleBarMargin(sender);
+            UpdateAppTitleBarMargin((HamburgerMenuEx)sender);
         }
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
