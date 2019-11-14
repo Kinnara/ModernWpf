@@ -6,6 +6,7 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Button.xaml" />
+        <ResourceDictionary Source="TextStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <Thickness x:Key="NavigationViewAutoSuggestBoxMargin">10,0,16,0</Thickness>
@@ -106,6 +107,12 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="NavigationViewItemHeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
+        <Setter Property="TextWrapping" Value="NoWrap" />
     </Style>
 
     <Style x:Key="NavigationViewTitleHeaderContentControlTextStyle" TargetType="ContentControl">

@@ -23,7 +23,7 @@
                 <mah:NumericUpDown
                     x:Name="NumberBox"
                     ui:ControlHelper.Header="Control header"
-                    mah:TextBoxHelper.Watermark="Placeholder text"
+                    mah:TextBoxHelper.Watermark="Watermark"
                     Width="200" />
 
                 <sc:ControlExample.Options>

@@ -39,7 +39,8 @@
 		primitives:CornerRadiusFilterConverter,
         ui:CornerRadiusFilterConverter,
 		m:StaticResource,
-        ui:StaticResource
+        ui:StaticResource,
+        local:HamburgerMenuItemStyleSelectorEx
 	",
     "SeparateByGroups": false,
     "AttributeIndentation": 0,

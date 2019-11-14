@@ -15,7 +15,7 @@ namespace MahAppsInteropSample
 
             UpdateAppTitleBarMargin(NavView);
 
-            NavView.SelectedItem = NavViewItems[0];
+            NavView.SelectedItem = NavViewItems.OfType<HamburgerMenuItem>().First();
             Navigate(NavView.SelectedItem);
         }
 

@@ -149,6 +149,22 @@ namespace ModernWpf.MahApps.Controls
 
         #endregion
 
+        #region HeaderItemContainerStyle
+
+        public static readonly DependencyProperty HeaderItemContainerStyleProperty =
+            DependencyProperty.Register(
+                nameof(HeaderItemContainerStyle),
+                typeof(Style),
+                typeof(HamburgerMenuEx));
+
+        public Style HeaderItemContainerStyle
+        {
+            get => (Style)GetValue(HeaderItemContainerStyleProperty);
+            set => SetValue(HeaderItemContainerStyleProperty, value);
+        }
+
+        #endregion
+
         public event EventHandler<HamburgerMenuBackRequestedEventArgs> BackRequested;
 
         public event EventHandler<HamburgerMenuDisplayModeChangedEventArgs> DisplayModeChanged;

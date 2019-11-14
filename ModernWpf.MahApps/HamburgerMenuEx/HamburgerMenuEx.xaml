@@ -12,6 +12,9 @@
     <ui:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
     <ui:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
 
+    <local:HamburgerMenuItemStyleSelectorEx x:Key="HamburgerMenuItemStyleSelector" />
+    <local:HamburgerMenuItemStyleSelectorEx x:Key="HamburgerMenuItemOptionsStyleSelector" IsItemOptions="True" />
+
     <DataTemplate x:Key="HamburgerMenuItem">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -54,8 +57,6 @@
                         MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"
                         Background="{TemplateBinding Background}"
                         SnapsToDevicePixels="True">
-
-                        <VisualStateManager.VisualStateGroups />
 
                         <!-- Wrap SelectionIndicator in a grid so that its offset is 0,0 - this enables the offset animation. -->
                         <Grid
@@ -139,6 +140,41 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="ModernWpf.MahApps.Styles.ListBoxItem.HamburgerMenuHeader" TargetType="ListBoxItem">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="IsEnabled" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Grid SnapsToDevicePixels="True">
+                        <Grid
+                            x:Name="InnerHeaderGrid"
+                            Height="40"
+                            HorizontalAlignment="Left"
+                            Margin="{DynamicResource NavigationViewItemInnerHeaderMargin}">
+                            <TextBlock
+                                x:Name="HeaderText"
+                                VerticalAlignment="Center"
+                                Margin="0,-1,0,-1"
+                                Style="{DynamicResource NavigationViewItemHeaderTextStyle}"
+                                Text="{Binding Label}"
+                                TextWrapping="NoWrap" />
+                        </Grid>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsPaneOpen, RelativeSource={RelativeSource AncestorType=Controls:HamburgerMenu}}" Value="False">
+                            <Setter TargetName="HeaderText" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="InnerHeaderGrid" Property="Height" Value="20" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="ModernWpf.MahApps.Styles.ListBox.HamburgerMenu" BasedOn="{StaticResource DefaultListBoxStyle}" TargetType="{x:Type ListBox}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
@@ -215,7 +251,7 @@
                             AutomationProperties.Name="Menu items"
                             Foreground="{TemplateBinding PaneForeground}"
                             IsTextSearchEnabled="False"
-                            ItemContainerStyleSelector="{DynamicResource HamburgerMenuItemStyleSelector}"
+                            ItemContainerStyleSelector="{StaticResource HamburgerMenuItemStyleSelector}"
                             ItemTemplate="{TemplateBinding ItemTemplate}"
                             ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
                             ItemsSource="{TemplateBinding ItemsSource}"
@@ -234,7 +270,7 @@
                             AutomationProperties.Name="Option items"
                             Foreground="{TemplateBinding PaneForeground}"
                             IsTextSearchEnabled="False"
-                            ItemContainerStyleSelector="{DynamicResource HamburgerMenuItemOptionsStyleSelector}"
+                            ItemContainerStyleSelector="{StaticResource HamburgerMenuItemOptionsStyleSelector}"
                             ItemTemplate="{TemplateBinding OptionsItemTemplate}"
                             ItemTemplateSelector="{TemplateBinding OptionsItemTemplateSelector}"
                             ItemsSource="{TemplateBinding OptionsItemsSource}"
@@ -315,6 +351,7 @@
         <Setter Property="PaneMargin" Value="0 0 0 8" />
         <Setter Property="CompactPaneLength" Value="{DynamicResource NavigationViewCompactPaneLength}" />
         <Setter Property="SeparatorItemContainerStyle" Value="{StaticResource ModernWpf.MahApps.Styles.ListBoxItem.HamburgerMenuSeparator}" />
+        <Setter Property="HeaderItemContainerStyle" Value="{StaticResource ModernWpf.MahApps.Styles.ListBoxItem.HamburgerMenuHeader}" />
         <Setter Property="Template" Value="{StaticResource ModernWpf.MahApps.Templates.HamburgerMenu}" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
     </Style>

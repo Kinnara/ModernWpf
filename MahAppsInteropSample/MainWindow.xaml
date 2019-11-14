@@ -23,7 +23,6 @@
     </Window.Resources>
 
     <Grid>
-
         <Grid
             x:Name="AppTitleBar"
             VerticalAlignment="Top"
@@ -71,6 +70,8 @@
             <mah:HamburgerMenu.ItemsSource>
                 <mah:HamburgerMenuItemCollection x:Name="NavViewItems">
 
+                    <ui:HamburgerMenuHeaderItem Label="Controls" />
+
                     <mah:HamburgerMenuIconItem
                         Label="NumericUpDown"
                         Tag="ControlPages/NumericUpDownPage.xaml">
@@ -79,7 +80,7 @@
                         </mah:HamburgerMenuIconItem.Icon>
                     </mah:HamburgerMenuIconItem>
 
-                    <mah:HamburgerMenuSeparatorItem />
+                    <ui:HamburgerMenuHeaderItem Label="Sample Pages" />
 
                     <mah:HamburgerMenuIconItem
                         Label="Sample Page 1"
