@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -46,7 +46,7 @@
             </Grid>
         </DataTemplate>
 
-        <Style TargetType="controls:ControlExample">
+        <Style TargetType="sc:ControlExample">
             <Setter Property="Margin" Value="0" />
         </Style>
     </UserControl.Resources>
@@ -57,7 +57,7 @@
             Style="{StaticResource TabControlPivotStyle}"
             Padding="{StaticResource ControlPageContentMargin}">
             <TabItem Header="StackLayout">
-                <controls:ControlExample HeaderText="StackLayout">
+                <sc:ControlExample HeaderText="StackLayout">
                     <ui:ItemsRepeaterScrollHost>
                         <ScrollViewer>
                             <ui:ItemsRepeater
@@ -71,18 +71,18 @@
                         </ScrollViewer>
                     </ui:ItemsRepeaterScrollHost>
 
-                    <controls:ControlExample.Options>
+                    <sc:ControlExample.Options>
                         <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                             <TextBox
                                 ui:ControlHelper.Header="Spacing"
                                 Text="{Binding Source={x:Reference stackLayout}, Path=Spacing, Mode=TwoWay}" />
                         </ui:SimpleStackPanel>
-                    </controls:ControlExample.Options>
-                </controls:ControlExample>
+                    </sc:ControlExample.Options>
+                </sc:ControlExample>
             </TabItem>
 
             <TabItem Header="UniformGridLayout">
-                <controls:ControlExample HeaderText="UniformGridLayout">
+                <sc:ControlExample HeaderText="UniformGridLayout">
                     <ui:ItemsRepeaterScrollHost>
                         <ScrollViewer>
                             <ui:ItemsRepeater
@@ -99,7 +99,7 @@
                         </ScrollViewer>
                     </ui:ItemsRepeaterScrollHost>
 
-                    <controls:ControlExample.Options>
+                    <sc:ControlExample.Options>
                         <ScrollViewer Margin="-16">
                             <ui:SimpleStackPanel
                                 Margin="16"
@@ -133,12 +133,12 @@
                                     SelectedItem="{Binding Source={x:Reference uniformGridLayout}, Path=Orientation, Mode=TwoWay}" />
                             </ui:SimpleStackPanel>
                         </ScrollViewer>
-                    </controls:ControlExample.Options>
-                </controls:ControlExample>
+                    </sc:ControlExample.Options>
+                </sc:ControlExample>
             </TabItem>
 
             <TabItem Header="FlowLayout">
-                <controls:ControlExample HeaderText="FlowLayout">
+                <sc:ControlExample HeaderText="FlowLayout">
                     <ui:ItemsRepeaterScrollHost>
                         <ScrollViewer>
                             <ui:ItemsRepeater
@@ -154,7 +154,7 @@
                         </ScrollViewer>
                     </ui:ItemsRepeaterScrollHost>
 
-                    <controls:ControlExample.Options>
+                    <sc:ControlExample.Options>
                         <ScrollViewer Margin="-16">
                             <ui:SimpleStackPanel
                                 Margin="16"
@@ -175,8 +175,8 @@
                                     SelectedItem="{Binding Source={x:Reference flowLayout}, Path=LineAlignment, Mode=TwoWay}" />
                             </ui:SimpleStackPanel>
                         </ScrollViewer>
-                    </controls:ControlExample.Options>
-                </controls:ControlExample>
+                    </sc:ControlExample.Options>
+                </sc:ControlExample>
             </TabItem>
         </TabControl>
     </Grid>

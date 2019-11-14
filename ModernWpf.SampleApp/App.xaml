@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:presets="clr-namespace:ModernWpf.SampleApp.Presets"
     StartupUri="MainWindow.xaml">
@@ -57,7 +57,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <common:EnumValuesConverter x:Key="EnumValuesConverter" />
+            <sc:EnumValuesConverter x:Key="EnumValuesConverter" />
             <common:BrushToColorConverter x:Key="BrushToColorConverter" />
             <common:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
 

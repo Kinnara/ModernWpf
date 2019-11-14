@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     mc:Ignorable="d"
     d:DesignWidth="1200"
@@ -18,7 +18,7 @@
 
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <controls:ControlExample HeaderText="Simple DropDownButton">
+            <sc:ControlExample HeaderText="Simple DropDownButton">
                 <StackPanel
                     x:Name="Control1"
                     Orientation="Horizontal">
@@ -32,9 +32,9 @@
                         </ui:DropDownButton.DropDownMenu>
                     </ui:DropDownButton>
                 </StackPanel>
-            </controls:ControlExample>
+            </sc:ControlExample>
 
-            <controls:ControlExample HeaderText="DropDownButton with Icons">
+            <sc:ControlExample HeaderText="DropDownButton with Icons">
                 <StackPanel
                     x:Name="Control2"
                     Orientation="Horizontal">
@@ -63,9 +63,9 @@
                         </ui:DropDownButton.DropDownMenu>
                     </ui:DropDownButton>
                 </StackPanel>
-            </controls:ControlExample>
+            </sc:ControlExample>
 
-            <controls:ControlExample HeaderText="Simple SplitButton">
+            <sc:ControlExample HeaderText="Simple SplitButton">
                 <StackPanel Orientation="Horizontal">
                     <ui:SplitButton
                         x:Name="myColorButton"
@@ -165,9 +165,9 @@
                         </ui:SplitButton.Flyout>
                     </ui:SplitButton>
                 </StackPanel>
-            </controls:ControlExample>
+            </sc:ControlExample>
 
-            <controls:ControlExample HeaderText="Simple ToggleSplitButton">
+            <sc:ControlExample HeaderText="Simple ToggleSplitButton">
                 <StackPanel Orientation="Horizontal">
                     <ui:ToggleSplitButton
                         x:Name="myListButton"
@@ -203,7 +203,7 @@
                         </ui:ToggleSplitButton.Flyout>
                     </ui:ToggleSplitButton>
                 </StackPanel>
-            </controls:ControlExample>
+            </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

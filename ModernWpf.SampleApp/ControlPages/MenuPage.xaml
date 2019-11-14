@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -13,7 +13,7 @@
 
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <controls:ControlExample HeaderText="A simple Menu">
+            <sc:ControlExample HeaderText="A simple Menu">
                 <Menu>
                     <MenuItem Header="File">
                         <MenuItem Header="New" />
@@ -33,8 +33,8 @@
                         <MenuItem Header="About" />
                     </MenuItem>
                 </Menu>
-            </controls:ControlExample>
-            <controls:ControlExample HeaderText="Menu with input gesture texts">
+            </sc:ControlExample>
+            <sc:ControlExample HeaderText="Menu with input gesture texts">
                 <Menu>
                     <MenuItem Header="File">
                         <MenuItem
@@ -72,8 +72,8 @@
                             InputGestureText="Ctrl+I" />
                     </MenuItem>
                 </Menu>
-            </controls:ControlExample>
-            <controls:ControlExample HeaderText="Menu with submenus, seperators, and radio items">
+            </sc:ControlExample>
+            <sc:ControlExample HeaderText="Menu with submenus, seperators, and radio items">
                 <Menu>
                     <MenuItem Header="File">
                         <MenuItem Header="New">
@@ -121,7 +121,7 @@
                         <MenuItem Header="About" />
                     </MenuItem>
                 </Menu>
-            </controls:ControlExample>
+            </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

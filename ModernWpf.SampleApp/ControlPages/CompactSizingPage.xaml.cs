@@ -1,4 +1,4 @@
-﻿using ModernWpf.SampleApp.SamplePages;
+﻿using SamplesCommon.SamplePages;
 using System.Windows;
 using System.Windows.Controls;
 

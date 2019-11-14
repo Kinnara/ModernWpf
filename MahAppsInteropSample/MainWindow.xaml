@@ -8,6 +8,7 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:local="clr-namespace:MahAppsInteropSample"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     Title="MahApps.Metro Interop Sample"
     Width="866"
@@ -71,8 +72,18 @@
                 <mah:HamburgerMenuItemCollection x:Name="NavViewItems">
 
                     <mah:HamburgerMenuIconItem
+                        Label="NumericUpDown"
+                        Tag="ControlPages/NumericUpDownPage.xaml">
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <ui:FontIcon Glyph="&#xEC8F;" />
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
+
+                    <mah:HamburgerMenuSeparatorItem />
+
+                    <mah:HamburgerMenuIconItem
                         Label="Sample Page 1"
-                        Tag="SamplePages/SamplePage1.xaml">
+                        Tag="{x:Static sc:SamplePageSources.SamplePage1}">
                         <mah:HamburgerMenuIconItem.Icon>
                             <ui:SymbolIcon Symbol="Home" />
                         </mah:HamburgerMenuIconItem.Icon>
@@ -80,7 +91,7 @@
 
                     <mah:HamburgerMenuIconItem
                         Label="Sample Page 2"
-                        Tag="SamplePages/SamplePage2.xaml">
+                        Tag="{x:Static sc:SamplePageSources.SamplePage2}">
                         <mah:HamburgerMenuIconItem.Icon>
                             <ui:SymbolIcon Symbol="Keyboard" />
                         </mah:HamburgerMenuIconItem.Icon>
@@ -88,7 +99,7 @@
 
                     <mah:HamburgerMenuIconItem
                         Label="Sample Page 3"
-                        Tag="SamplePages/SamplePage3.xaml">
+                        Tag="{x:Static sc:SamplePageSources.SamplePage3}">
                         <mah:HamburgerMenuIconItem.Icon>
                             <ui:SymbolIcon Symbol="Library" />
                         </mah:HamburgerMenuIconItem.Icon>
@@ -96,7 +107,7 @@
 
                     <mah:HamburgerMenuIconItem
                         Label="Sample Page 4"
-                        Tag="SamplePages/SamplePage4.xaml">
+                        Tag="{x:Static sc:SamplePageSources.SamplePage4}">
                         <mah:HamburgerMenuIconItem.Icon>
                             <ui:SymbolIcon Symbol="Mail" />
                         </mah:HamburgerMenuIconItem.Icon>
@@ -109,7 +120,7 @@
                 <mah:HamburgerMenuItemCollection x:Name="NavViewOptions">
                     <mah:HamburgerMenuIconItem
                         Label="Settings"
-                        Tag="SamplePages/SampleSettingsPage.xaml">
+                        Tag="SettingsPage.xaml">
                         <mah:HamburgerMenuIconItem.Icon>
                             <ui:SymbolIcon Symbol="Setting" />
                         </mah:HamburgerMenuIconItem.Icon>
@@ -122,23 +133,4 @@
                 Navigated="ContentFrame_Navigated" />
         </ui:HamburgerMenuEx>
     </Grid>
-
-    <!--<ui:SimpleStackPanel
-        Margin="12"
-        Spacing="24">
-
-        <mah:NumericUpDown
-            x:Name="NumberBox"
-            mah:TextBoxHelper.Watermark="Placeholder text"
-            Width="200" />
-
-        <CheckBox
-            IsChecked="{Binding ElementName=NumberBox, Path=HideUpDownButtons}"
-            Content="HideUpDownButtons" />
-
-        <Button
-            Content="Invert theme"
-            Click="InvertTheme" />
-
-    </ui:SimpleStackPanel>-->
 </Window>

@@ -5,14 +5,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
     <Grid>
-        <controls:ControlExample>
+        <sc:ControlExample>
             <StatusBar
                 x:Name="statusBar"
                 VerticalAlignment="Bottom">
@@ -51,13 +51,13 @@
                 </StatusBarItem>
             </StatusBar>
 
-            <controls:ControlExample.Options>
+            <sc:ControlExample.Options>
                 <ui:SimpleStackPanel>
                     <CheckBox
                         Content="IsEnabled"
                         IsChecked="{Binding ElementName=statusBar, Path=IsEnabled, Mode=TwoWay}" />
                 </ui:SimpleStackPanel>
-            </controls:ControlExample.Options>
-        </controls:ControlExample>
+            </sc:ControlExample.Options>
+        </sc:ControlExample>
     </Grid>
 </UserControl>

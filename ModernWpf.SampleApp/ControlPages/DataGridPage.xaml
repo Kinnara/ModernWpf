@@ -5,8 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -121,7 +122,7 @@
     <Grid
         x:Name="LayoutRoot"
         Margin="{StaticResource ControlPageContentMargin}">
-        <controls:ControlExample
+        <sc:ControlExample
             HeaderText="DataGrid Sample: Mountains"
             Margin="0">
 
@@ -174,7 +175,7 @@
                 </DataGrid.GroupStyle>
             </DataGrid>
 
-            <controls:ControlExample.Options>
+            <sc:ControlExample.Options>
                 <ScrollViewer
                     Margin="-16"
                     Width="300">
@@ -184,7 +185,7 @@
                         <TextBlock
                             x:Name="LoadTimeTextBlock"
                             Style="{StaticResource BodyTextBlockStyle}"
-                            MouseLeftButtonUp="LoadTimeTextBlock_MouseLeftButtonUp"/>
+                            MouseLeftButtonUp="LoadTimeTextBlock_MouseLeftButtonUp" />
                         <controls:LayoutDensitySelector TargetElement="{Binding ElementName=dataGrid}" />
                         <CheckBox
                             x:Name="CheckBoxColumnVisibilityToggle"
@@ -285,7 +286,7 @@
                             SelectedItem="{Binding ElementName=dataGrid, Path=SelectionMode, Mode=TwoWay}" />
                     </ui:SimpleStackPanel>
                 </ScrollViewer>
-            </controls:ControlExample.Options>
-        </controls:ControlExample>
+            </sc:ControlExample.Options>
+        </sc:ControlExample>
     </Grid>
 </UserControl>

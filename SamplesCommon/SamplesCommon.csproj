@@ -1,20 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
     <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0605" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
-    <ProjectReference Include="..\ModernWpf.MahApps\ModernWpf.MahApps.csproj" />
     <ProjectReference Include="..\ModernWpf\ModernWpf.csproj" />
-    <ProjectReference Include="..\SamplesCommon\SamplesCommon.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,13 +1,10 @@
 ﻿using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
-using ModernWpf.SampleApp.SamplePages;
+using SamplesCommon.SamplePages;
 using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    /// <summary>
-    /// Interaction logic for TabControlPage.xaml
-    /// </summary>
     public partial class TabControlPage
     {
         public TabControlPage()

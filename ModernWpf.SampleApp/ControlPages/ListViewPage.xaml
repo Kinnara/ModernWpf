@@ -5,8 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -59,7 +60,7 @@
             </Grid>
         </DataTemplate>
 
-        <Style TargetType="controls:ControlExample">
+        <Style TargetType="sc:ControlExample">
             <Setter Property="Margin" Value="0" />
         </Style>
     </UserControl.Resources>
@@ -70,7 +71,7 @@
             Style="{StaticResource TabControlPivotStyle}"
             Padding="{StaticResource ControlPageContentMargin}">
             <TabItem Header="MultiSelect">
-                <controls:ControlExample HeaderText="A Simple ListView with Selection support">
+                <sc:ControlExample HeaderText="A Simple ListView with Selection support">
                     <ListView
                         x:Name="listView1"
                         SelectionMode="Multiple"
@@ -78,7 +79,7 @@
                         ItemsSource="{Binding}"
                         VirtualizingPanel.VirtualizationMode="Recycling" />
 
-                    <controls:ControlExample.Options>
+                    <sc:ControlExample.Options>
                         <ui:SimpleStackPanel>
                             <controls:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView1}}" />
                             <ui:RadioButtons
@@ -89,12 +90,12 @@
                                 Content="IsEnabled"
                                 IsChecked="{Binding Source={x:Reference listView1}, Path=IsEnabled, Mode=TwoWay}" />
                         </ui:SimpleStackPanel>
-                    </controls:ControlExample.Options>
-                </controls:ControlExample>
+                    </sc:ControlExample.Options>
+                </sc:ControlExample>
             </TabItem>
 
             <TabItem Header="Grouped">
-                <controls:ControlExample HeaderText="A ListView with Grouped Headers">
+                <sc:ControlExample HeaderText="A ListView with Grouped Headers">
                     <ListView
                         x:Name="listView2"
                         ItemTemplate="{StaticResource ContactListViewTemplate}"
@@ -114,7 +115,7 @@
                         </ListView.GroupStyle>
                     </ListView>
 
-                    <controls:ControlExample.Options>
+                    <sc:ControlExample.Options>
                         <ui:SimpleStackPanel>
                             <!--<controls:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView2}}" />-->
                             <!--<ui:RadioButtons
@@ -125,12 +126,12 @@
                                 Content="IsEnabled"
                                 IsChecked="{Binding Source={x:Reference listView2}, Path=IsEnabled, Mode=TwoWay}" />
                         </ui:SimpleStackPanel>
-                    </controls:ControlExample.Options>
-                </controls:ControlExample>
+                    </sc:ControlExample.Options>
+                </sc:ControlExample>
             </TabItem>
 
             <TabItem Header="GridView">
-                <controls:ControlExample HeaderText="A ListView with GridView as its View">
+                <sc:ControlExample HeaderText="A ListView with GridView as its View">
                     <ListView
                         x:Name="listView3"
                         Style="{StaticResource {x:Static GridView.GridViewStyleKey}}"
@@ -168,7 +169,7 @@
                         </ListView.View>
                     </ListView>
 
-                    <controls:ControlExample.Options>
+                    <sc:ControlExample.Options>
                         <ui:SimpleStackPanel>
                             <CheckBox
                                 Content="AllowsColumnReorder"
@@ -182,8 +183,8 @@
                                 Content="IsEnabled"
                                 IsChecked="{Binding Source={x:Reference listView3}, Path=IsEnabled, Mode=TwoWay}" />
                         </ui:SimpleStackPanel>
-                    </controls:ControlExample.Options>
-                </controls:ControlExample>
+                    </sc:ControlExample.Options>
+                </sc:ControlExample>
             </TabItem>
         </TabControl>
     </Grid>

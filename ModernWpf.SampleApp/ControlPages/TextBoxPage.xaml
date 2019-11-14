@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -14,7 +14,7 @@
 
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <controls:ControlExample HeaderText="A TextBox.">
+            <sc:ControlExample HeaderText="A TextBox.">
                 <TextBox
                     x:Name="textBox"
                     Width="300"
@@ -23,7 +23,7 @@
                     ui:ControlHelper.Header="Control header"
                     ui:ControlHelper.PlaceholderText="Placeholder text" />
 
-                <controls:ControlExample.Options>
+                <sc:ControlExample.Options>
                     <Expander
                         x:Name="OptionsExpander"
                         Header="Show options"
@@ -78,14 +78,14 @@
                             </ComboBox>
                         </ui:SimpleStackPanel>
                     </Expander>
-                </controls:ControlExample.Options>
-            </controls:ControlExample>
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
 
-            <controls:ControlExample HeaderText="A RichTextBox.">
+            <sc:ControlExample HeaderText="A RichTextBox.">
                 <RichTextBox
                     x:Name="richTextBox"
                     ui:ControlHelper.Header="Control header" />
-            </controls:ControlExample>
+            </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

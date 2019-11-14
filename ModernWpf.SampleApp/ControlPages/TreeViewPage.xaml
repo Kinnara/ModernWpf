@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -13,7 +13,7 @@
 
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <controls:ControlExample HeaderText="A simple TreeView">
+            <sc:ControlExample HeaderText="A simple TreeView">
                 <Border
                     Height="400"
                     HorizontalAlignment="Left"
@@ -48,9 +48,9 @@
                         </TreeViewItem>
                     </TreeView>
                 </Border>
-            </controls:ControlExample>
+            </sc:ControlExample>
 
-            <controls:ControlExample Visibility="Collapsed">
+            <sc:ControlExample Visibility="Collapsed">
                 <Grid>
                     <TreeView
                         Visibility="Collapsed"
@@ -106,7 +106,7 @@
                         </TreeViewItem>
                     </TreeView>
                 </Grid>
-            </controls:ControlExample>
+            </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

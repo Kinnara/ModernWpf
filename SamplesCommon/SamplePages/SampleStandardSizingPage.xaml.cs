@@ -11,11 +11,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ModernWpf.SampleApp.SamplePages
+namespace SamplesCommon.SamplePages
 {
-    public partial class SampleCompactSizingPage : UserControl
+    /// <summary>
+    /// Interaction logic for SampleStandardSizingPage.xaml
+    /// </summary>
+    public partial class SampleStandardSizingPage : UserControl
     {
-        public SampleCompactSizingPage()
+        public SampleStandardSizingPage()
         {
             InitializeComponent();
         }

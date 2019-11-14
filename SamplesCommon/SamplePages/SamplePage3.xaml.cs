@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace ModernWpf.SampleApp.SamplePages
+namespace SamplesCommon.SamplePages
 {
     public partial class SamplePage3 : Page
     {

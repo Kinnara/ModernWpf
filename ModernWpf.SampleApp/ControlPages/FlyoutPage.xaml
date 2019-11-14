@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
     mc:Ignorable="d"
     d:DesignHeight="450"
@@ -13,7 +13,7 @@
     Style="{StaticResource ControlPageStyle}">
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <controls:ControlExample
+            <sc:ControlExample
                 HeaderText="A button with a flyout"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center">
@@ -34,15 +34,15 @@
                         </ui:Flyout>
                     </ui:FlyoutService.Flyout>
                 </Button>
-                <controls:ControlExample.Options>
+                <sc:ControlExample.Options>
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <ui:RadioButtons
                             Header="Placement"
                             ItemsSource="{Binding Source={x:Type ui:FlyoutPlacementMode}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=Flyout1, Path=Placement, Mode=TwoWay}" />
                     </ui:SimpleStackPanel>
-                </controls:ControlExample.Options>
-            </controls:ControlExample>
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -95,7 +95,7 @@
     </UserControl.Resources>
 
     <ScrollViewer Margin="{StaticResource ControlPageContentMargin}">
-        <controls:ControlExample HeaderText="Page transitions">
+        <sc:ControlExample HeaderText="Page transitions">
             <ui:TransitionFrame
                 x:Name="frame"
                 MinHeight="600"
@@ -104,7 +104,7 @@
                 TransitionsEnabled="True"
                 Navigated="Frame_Navigated" />
 
-            <controls:ControlExample.Options>
+            <sc:ControlExample.Options>
                 <ui:SimpleStackPanel>
                     <TextBlock
                         x:Name="TierTB"
@@ -142,7 +142,7 @@
                         IsEnabled="{Binding ElementName=frame, Path=CanGoBack}"
                         Click="NavigateBackward" />
                 </ui:SimpleStackPanel>
-            </controls:ControlExample.Options>
-        </controls:ControlExample>
+            </sc:ControlExample.Options>
+        </sc:ControlExample>
     </ScrollViewer>
 </UserControl>

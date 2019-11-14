@@ -1,26 +1,12 @@
-﻿using ModernWpf.Controls;
-using System;
-using System.Collections.Generic;
+﻿using SamplesCommon.SamplePages;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
-using ModernWpf.SampleApp.Controls;
-using ModernWpf.SampleApp.SamplePages;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    /// <summary>
-    /// Interaction logic for PageTransitionsPage.xaml
-    /// </summary>
     public partial class PageTransitionsPage
     {
         public PageTransitionsPage()

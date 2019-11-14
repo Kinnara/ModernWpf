@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -13,7 +13,7 @@
 
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <controls:ControlExample
+            <sc:ControlExample
                 x:Name="Example1"
                 HeaderText="Compact Sizing for controls"
                 HorizontalContentAlignment="Left"
@@ -26,7 +26,7 @@
                     Width="296"
                     IsTabStop="False" />
 
-                <controls:ControlExample.Options>
+                <sc:ControlExample.Options>
                     <StackPanel>
                         <TextBlock Text="Fluent Standard and Compact Sizing" />
                         <RadioButton
@@ -41,8 +41,8 @@
                             GroupName="ControlSize"
                             Checked="Compact_Checked" />
                     </StackPanel>
-                </controls:ControlExample.Options>
-            </controls:ControlExample>
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

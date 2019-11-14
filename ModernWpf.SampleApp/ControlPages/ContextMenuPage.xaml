@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -16,7 +16,7 @@
         <StackPanel
             Margin="{StaticResource ControlPageContentMargin}"
             ButtonBase.Click="LayoutPanel_Click">
-            <controls:ControlExample HeaderText="A ContextMenu with checkable MenuItems and Separator.">
+            <sc:ControlExample HeaderText="A ContextMenu with checkable MenuItems and Separator.">
                 <Button Content="Options">
                     <Button.ContextMenu>
                         <ContextMenu>
@@ -33,8 +33,8 @@
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
-            </controls:ControlExample>
-            <controls:ControlExample HeaderText="A ContextMenu with cascading menus.">
+            </sc:ControlExample>
+            <sc:ControlExample HeaderText="A ContextMenu with cascading menus.">
                 <Button Content="File Options">
                     <Button.ContextMenu>
                         <ContextMenu>
@@ -51,8 +51,8 @@
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
-            </controls:ControlExample>
-            <controls:ControlExample HeaderText="A ContextMenu with icons.">
+            </sc:ControlExample>
+            <sc:ControlExample HeaderText="A ContextMenu with icons.">
                 <Button Content="Edit Options">
                     <Button.ContextMenu>
                         <ContextMenu>
@@ -77,8 +77,8 @@
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
-            </controls:ControlExample>
-            <controls:ControlExample HeaderText="A ContextMenu with icons and InputGestureTexts.">
+            </sc:ControlExample>
+            <sc:ControlExample HeaderText="A ContextMenu with icons and InputGestureTexts.">
                 <Button Content="Edit Options">
                     <Button.ContextMenu>
                         <ContextMenu>
@@ -109,12 +109,12 @@
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
-            </controls:ControlExample>
-            <controls:ControlExample HeaderText="Text control ContextMenu.">
+            </sc:ControlExample>
+            <sc:ControlExample HeaderText="Text control ContextMenu.">
                 <TextBox
                     Text="Some text"
                     MinWidth="150" />
-            </controls:ControlExample>
+            </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

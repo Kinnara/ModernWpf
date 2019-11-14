@@ -11,14 +11,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ModernWpf.SampleApp.SamplePages
+namespace MahAppsInteropSample.ControlPages
 {
     /// <summary>
-    /// Interaction logic for SampleStandardSizingPage.xaml
+    /// Interaction logic for NumericUpDownPage.xaml
     /// </summary>
-    public partial class SampleStandardSizingPage : UserControl
+    public partial class NumericUpDownPage : Page
     {
-        public SampleStandardSizingPage()
+        public NumericUpDownPage()
         {
             InitializeComponent();
         }

@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     d:DesignWidth="1200"
     d:DesignHeight="900"
     mc:Ignorable="d"
@@ -31,7 +31,7 @@
 
         <ScrollViewer>
             <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-                <controls:ControlExample
+                <sc:ControlExample
                     HeaderText="A simple expander."
                     HorizontalContentAlignment="Stretch"
                     VerticalContentAlignment="Stretch">
@@ -50,7 +50,7 @@
                         </Expander>
                     </DockPanel>
 
-                    <controls:ControlExample.Options>
+                    <sc:ControlExample.Options>
                         <ui:SimpleStackPanel>
                             <ui:RadioButtons
                                 Header="ExpandDirection"
@@ -58,8 +58,8 @@
                                 SelectedItem="{Binding ExpandDirection, ElementName=expander, Mode=TwoWay}"
                                 SelectionChanged="ExpandDirection_SelectionChanged" />
                         </ui:SimpleStackPanel>
-                    </controls:ControlExample.Options>
-                </controls:ControlExample>
+                    </sc:ControlExample.Options>
+                </sc:ControlExample>
             </StackPanel>
         </ScrollViewer>
     </Grid>

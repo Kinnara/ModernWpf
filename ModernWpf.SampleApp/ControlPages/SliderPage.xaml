@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -13,7 +13,7 @@
 
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <controls:ControlExample HeaderText="A configurable Slider.">
+            <sc:ControlExample HeaderText="A configurable Slider.">
                 <Grid>
                     <Slider
                         x:Name="slider"
@@ -25,7 +25,7 @@
                         ui:ControlHelper.Header="Header" />
                 </Grid>
 
-                <controls:ControlExample.Options>
+                <sc:ControlExample.Options>
                     <ui:SimpleStackPanel>
                         <CheckBox
                             Content="IsSnapToTickEnabled"
@@ -53,8 +53,8 @@
                             ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=slider, Path=Orientation, Mode=TwoWay}" />
                     </ui:SimpleStackPanel>
-                </controls:ControlExample.Options>
-            </controls:ControlExample>
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

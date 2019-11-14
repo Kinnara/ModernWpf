@@ -1,5 +1,4 @@
 ﻿using MahApps.Metro.Controls;
-using ModernWpf;
 using ModernWpf.MahApps.Controls;
 using System;
 using System.Linq;
@@ -49,8 +48,8 @@ namespace MahAppsInteropSample
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            NavView.SelectedItem = NavViewItems.FirstOrDefault(x => (string)x.Tag == e.Uri.ToString());
-            NavView.SelectedOptionsItem = NavViewOptions.FirstOrDefault(x => (string)x.Tag == e.Uri.ToString());
+            NavView.SelectedItem = NavViewItems.OfType<HamburgerMenuItem>().FirstOrDefault(x => GetNavigateUri(x) == e.Uri);
+            NavView.SelectedOptionsItem = NavViewOptions.OfType<HamburgerMenuItem>().FirstOrDefault(x => GetNavigateUri(x) == e.Uri);
 
             var selectedItem = NavView.SelectedItem ?? NavView.SelectedOptionsItem;
             if (selectedItem is HamburgerMenuItem item)
@@ -87,25 +86,21 @@ namespace MahAppsInteropSample
         {
             if (item is HamburgerMenuItem menuItem)
             {
-                string source = (string)menuItem.Tag;
-                if (ContentFrame.CurrentSource?.ToString() != source)
+                Uri navigateUri = GetNavigateUri(menuItem);
+                if (ContentFrame.CurrentSource != navigateUri)
                 {
-                    ContentFrame.Navigate(new Uri(source, UriKind.Relative));
+                    ContentFrame.Navigate(navigateUri);
                 }
             }
         }
 
-        private void InvertTheme(object sender, RoutedEventArgs e)
+        private Uri GetNavigateUri(HamburgerMenuItemBase item)
         {
-            var tm = ThemeManager.Current;
-            if (tm.ActualApplicationTheme == ApplicationTheme.Dark)
+            if (item.Tag is Uri uri)
             {
-                tm.ApplicationTheme = ApplicationTheme.Light;
+                return uri;
             }
-            else
-            {
-                tm.ApplicationTheme = ApplicationTheme.Dark;
-            }
+            return new Uri((string)item.Tag, UriKind.Relative);
         }
     }
 }

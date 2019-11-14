@@ -1,17 +1,17 @@
 ﻿<Page
-    x:Class="ModernWpf.SampleApp.SamplePages.SamplePage1"
+    x:Class="SamplesCommon.SamplePages.SamplePage2"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:ModernWpf.SampleApp.SamplePages"
+    xmlns:local="clr-namespace:SamplesCommon.SamplePages"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
     Style="{StaticResource PageStyle}">
 
-    <ScrollViewer Padding="18,0">
+    <ScrollViewer Padding="12,0">
         <Grid Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
             <Grid.Resources>
                 <sys:Double x:Key="TileHeight">150</sys:Double>
@@ -19,58 +19,39 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <Grid
-                Grid.Row="1"
-                Grid.Column="1"
-                MinHeight="{StaticResource TileHeight}"
-                Background="DarkGray"
-                Margin="6" />
-            <Grid
-                Grid.Row="1"
-                Grid.Column="2"
-                MinHeight="{StaticResource TileHeight}"
-                Background="LightGray"
-                Margin="6" />
-            <Grid
-                Grid.Row="2"
-                Grid.Column="1"
-                MinHeight="{StaticResource TileHeight}"
-                Background="LightGray"
-                Margin="6" />
-            <Grid
-                Grid.Row="2"
-                Grid.Column="2"
-                MinHeight="{StaticResource TileHeight}"
-                Background="DarkGray"
-                Margin="6" />
-            <Grid
-                x:Name="SourceElement"
+                x:Uid="DestinationElement"
                 Grid.Row="1"
                 Grid.Column="0"
                 MinHeight="{StaticResource TileHeight}"
                 Background="{DynamicResource SystemControlBackgroundAccentBrush}"
-                Margin="6"
-                Grid.RowSpan="2"
-                MinWidth="250" />
+                Margin="12"
+                Width="150"
+                Height="200"
+                VerticalAlignment="Top" />
 
-            <Grid
-                Grid.Row="3"
-                Grid.ColumnSpan="3"
-                Margin="6,12">
+            <StackPanel
+                x:Uid="ContentPanel"
+                Grid.Row="1"
+                Grid.Column="1"
+                MinHeight="200"
+                Margin="12">
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    TextWrapping="Wrap"
+                    Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+                    Margin="0,0,0,12" />
                 <TextBlock
                     TextWrapping="Wrap"
-                    Style="{StaticResource BodyTextBlockStyle}"
                     Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
-            </Grid>
+            </StackPanel>
+
         </Grid>
     </ScrollViewer>
 </Page>

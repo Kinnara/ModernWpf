@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Markup;
 
-namespace ModernWpf.SampleApp.Controls
+namespace SamplesCommon
 {
     [ContentProperty(nameof(Example))]
     public class ControlExample : Control

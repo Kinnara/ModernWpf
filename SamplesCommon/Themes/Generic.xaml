@@ -1,0 +1,78 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:SamplesCommon">
+
+    <Style TargetType="local:ControlExample">
+        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundAltHighBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="Margin" Value="0,16,0,0" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ControlExample">
+                    <Grid SnapsToDevicePixels="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            Style="{DynamicResource SubtitleTextBlockStyle}"
+                            Margin="0,15"
+                            Text="{TemplateBinding HeaderText}" />
+
+                        <Border
+                            Grid.Row="1"
+                            BorderBrush="{DynamicResource SystemControlBackgroundListLowBrush}"
+                            BorderThickness="1"
+                            Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+                            <Grid x:Name="ExampleContainer">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" MaxWidth="320" MinWidth="200" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Example Display -->
+                                <ContentPresenter
+                                    x:Name="ControlPresenter"
+                                    Margin="12"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Content="{TemplateBinding Example}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
+                                <!-- Options Display -->
+                                <Border
+                                    x:Name="OptionsRoot"
+                                    Grid.Column="1"
+                                    Margin="0,12,12,12"
+                                    Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}">
+                                    <ContentPresenter
+                                        x:Name="OptionsPresenter"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Margin="16"
+                                        Content="{TemplateBinding Options}"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Options" Value="{x:Null}">
+                            <Setter TargetName="OptionsRoot" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
