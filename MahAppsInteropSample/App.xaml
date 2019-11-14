@@ -16,19 +16,19 @@
                     <ui:ThemeResources.ThemeDictionaries>
                         <ResourceDictionary x:Key="Light">
                             <ResourceDictionary.MergedDictionaries>
-                                <ResourceDictionary Source="/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
+                                <!--<ResourceDictionary Source="/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />-->
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
                         <ResourceDictionary x:Key="Dark">
                             <ResourceDictionary.MergedDictionaries>
-                                <ResourceDictionary Source="/MahApps.Metro;component/Styles/Themes/Dark.Blue.xaml" />
+                                <!--<ResourceDictionary Source="/MahApps.Metro;component/Styles/Themes/Dark.Blue.xaml" />-->
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
                     </ui:ThemeResources.ThemeDictionaries>
                 </ui:ThemeResources>
 
-                <ResourceDictionary Source="/MahApps.Metro;component/Styles/Controls.xaml" />
-                <ResourceDictionary Source="/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <!--<ResourceDictionary Source="/MahApps.Metro;component/Styles/Controls.xaml" />-->
+                <!--<ResourceDictionary Source="/MahApps.Metro;component/Styles/Fonts.xaml" />-->
 
                 <ui:XamlControlsResources />
 

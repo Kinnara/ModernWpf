@@ -22,6 +22,7 @@ namespace ModernWpf.MahApps.Controls
         public HamburgerMenuEx()
         {
             DefaultStyleKey = typeof(HamburgerMenuEx);
+            SetResourceReference(DefaultItemFocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
         }
 
         #region IsBackButtonVisible
@@ -165,6 +166,28 @@ namespace ModernWpf.MahApps.Controls
 
         #endregion
 
+        #region DefaultItemFocusVisualStyle
+
+        private static readonly DependencyProperty DefaultItemFocusVisualStyleProperty =
+            DependencyProperty.Register(
+                nameof(DefaultItemFocusVisualStyle),
+                typeof(Style),
+                typeof(HamburgerMenuEx),
+                new PropertyMetadata(OnDefaultItemFocusVisualStyleChanged));
+
+        private Style DefaultItemFocusVisualStyle
+        {
+            get => (Style)GetValue(DefaultItemFocusVisualStyleProperty);
+            set => SetValue(DefaultItemFocusVisualStyleProperty, value);
+        }
+
+        private static void OnDefaultItemFocusVisualStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((HamburgerMenuEx)d).ChangeItemFocusVisualStyle();
+        }
+
+        #endregion
+
         public event EventHandler<HamburgerMenuBackRequestedEventArgs> BackRequested;
 
         public event EventHandler<HamburgerMenuDisplayModeChangedEventArgs> DisplayModeChanged;
@@ -177,17 +200,19 @@ namespace ModernWpf.MahApps.Controls
         {
             base.OnApplyTemplate();
 
-            if (m_backButton != null)
+            if (_backButton != null)
             {
-                m_backButton.Click -= OnBackButtonClicked;
+                _backButton.Click -= OnBackButtonClicked;
             }
 
-            m_backButton = GetTemplateChild(c_navViewBackButton) as Button;
+            _backButton = GetTemplateChild(c_navViewBackButton) as Button;
 
-            if (m_backButton != null)
+            if (_backButton != null)
             {
-                m_backButton.Click += OnBackButtonClicked;
+                _backButton.Click += OnBackButtonClicked;
             }
+
+            ChangeItemFocusVisualStyle();
         }
 
         private static void OnDisplayModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -202,7 +227,7 @@ namespace ModernWpf.MahApps.Controls
 
         private static void OnPaneLengthPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((HamburgerMenuEx)d).UpdatePaneLength();
+            ((HamburgerMenuEx)d).OnPaneLengthPropertyChanged(e);
         }
 
         private void OnBackButtonClicked(object sender, RoutedEventArgs e)
@@ -218,6 +243,7 @@ namespace ModernWpf.MahApps.Controls
         private void OnIsPaneOpenChanged(DependencyPropertyChangedEventArgs e)
         {
             UpdatePaneLength();
+            ChangeItemFocusVisualStyle();
 
             if ((bool)e.NewValue)
             {
@@ -229,6 +255,25 @@ namespace ModernWpf.MahApps.Controls
             }
         }
 
-        private Button m_backButton;
+        private void OnPaneLengthPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            UpdatePaneLength();
+            ChangeItemFocusVisualStyle();
+        }
+
+        private void ChangeItemFocusVisualStyle()
+        {
+            if (DefaultItemFocusVisualStyle != null)
+            {
+                var focusVisualStyle = new Style(typeof(Control), DefaultItemFocusVisualStyle);
+                focusVisualStyle.Setters.Add(new Setter(Control.WidthProperty, IsPaneOpen ? OpenPaneLength : CompactPaneLength));
+                focusVisualStyle.Setters.Add(new Setter(Control.HorizontalAlignmentProperty, HorizontalAlignment.Left));
+                focusVisualStyle.Seal();
+
+                SetValue(ItemFocusVisualStylePropertyKey, focusVisualStyle);
+            }
+        }
+
+        private Button _backButton;
     }
 }
