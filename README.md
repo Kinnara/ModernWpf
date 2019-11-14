@@ -56,7 +56,7 @@ Modern styles and controls for your WPF applications.
 
 ![ContentDialog](docs/images/ContentDialog.png "ContentDialog")
 
-![Progress controls](docs/images/Progress.png "Progress controls")
+![MahApps.Metro integration](docs/images/ContentDialog.png "MahApps.Metro integration")
 
 ![DataGrid](docs/images/DataGrid.png "DataGrid")
 
@@ -67,6 +67,8 @@ Modern styles and controls for your WPF applications.
 ![Calendar](docs/images/Calendar.png "Calendar")
 
 ![Menu](docs/images/Menu.png "Menu")
+
+![Progress controls](docs/images/Progress.png "Progress controls")
 
 ![Color ramp](docs/images/ColorRamp.png "Color ramp")
 
