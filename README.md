@@ -56,7 +56,7 @@ Modern styles and controls for your WPF applications.
 
 ![ContentDialog](docs/images/ContentDialog.png "ContentDialog")
 
-![MahApps.Metro integration](docs/images/ContentDialog.png "MahApps.Metro integration")
+![MahApps.Metro integration](docs/images/MahApps.png "MahApps.Metro integration")
 
 ![DataGrid](docs/images/DataGrid.png "DataGrid")
 
