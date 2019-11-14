@@ -49,5 +49,28 @@
                 </sc:ControlExample>
             </StackPanel>
         </TabItem>
+
+        <TabItem Header="Accent colored">
+            <StackPanel Margin="12,0,24,20">
+                <sc:ControlExample HeaderText="A TabControl with accent colored TabStrip background">
+                    <TabControl
+                        x:Name="tabControl3"
+                        ui:ThemeManager.HasThemeResources="True">
+                        <TabControl.Resources>
+                            <ui:ElementThemeResources>
+                                <ui:ElementThemeResources.ThemeDictionaries>
+                                    <ResourceDictionary x:Key="Light">
+                                        <SolidColorBrush x:Key="TabViewBackground" Color="{DynamicResource SystemAccentColorLight2}" />
+                                    </ResourceDictionary>
+                                    <ResourceDictionary x:Key="Dark">
+                                        <SolidColorBrush x:Key="TabViewBackground" Color="{DynamicResource SystemAccentColorDark2}" />
+                                    </ResourceDictionary>
+                                </ui:ElementThemeResources.ThemeDictionaries>
+                            </ui:ElementThemeResources>
+                        </TabControl.Resources>
+                    </TabControl>
+                </sc:ControlExample>
+            </StackPanel>
+        </TabItem>
     </TabControl>
 </UserControl>

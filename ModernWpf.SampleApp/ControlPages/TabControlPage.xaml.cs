@@ -15,6 +15,7 @@ namespace ModernWpf.SampleApp.ControlPages
             {
                 tabControl.Items.Add(CreateNewTab(i));
                 tabControl2.Items.Add(CreateNewTab(i));
+                tabControl3.Items.Add(CreateNewTab(i));
             }
         }
 
