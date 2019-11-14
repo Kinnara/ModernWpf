@@ -6,23 +6,48 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
-    <Grid Margin="{StaticResource ControlPageContentMargin}">
-        <sc:ControlExample HeaderText="A simple TabControl">
-            <TabControl x:Name="tabControl" />
+    <TabControl
+        Style="{StaticResource TabControlPivotStyle}"
+        Margin="12,0,0,0">
+        <TabItem Header="Simple">
+            <StackPanel Margin="12,0,24,20">
+                <sc:ControlExample HeaderText="A simple TabControl">
+                    <TabControl x:Name="tabControl" />
 
-            <sc:ControlExample.Options>
-                <ui:SimpleStackPanel>
-                    <ui:RadioButtons
-                        Header="TabStripPlacement"
-                        ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
-                        SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement, Mode=TwoWay}" />
-                </ui:SimpleStackPanel>
-            </sc:ControlExample.Options>
-        </sc:ControlExample>
-    </Grid>
+                    <sc:ControlExample.Options>
+                        <ui:SimpleStackPanel>
+                            <ui:RadioButtons
+                                Header="TabStripPlacement"
+                                ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
+                                SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement, Mode=TwoWay}" />
+                        </ui:SimpleStackPanel>
+                    </sc:ControlExample.Options>
+                </sc:ControlExample>
+            </StackPanel>
+        </TabItem>
+
+        <TabItem Header="Customized">
+            <StackPanel Margin="12,0,24,20">
+                <sc:ControlExample HeaderText="A customized TabControl">
+                    <TabControl x:Name="tabControl2">
+                        <TabControl.Resources>
+                            <sys:Double x:Key="TabViewItemHeaderFontSize">24</sys:Double>
+                            <sys:Double x:Key="TabViewItemHeaderIconSize">32</sys:Double>
+                        </TabControl.Resources>
+                        <TabControl.ItemContainerStyle>
+                            <Style TargetType="TabItem" BasedOn="{StaticResource DefaultTabItemStyle}">
+                                <Setter Property="FontFamily" Value="Courier New" />
+                            </Style>
+                        </TabControl.ItemContainerStyle>
+                    </TabControl>
+                </sc:ControlExample>
+            </StackPanel>
+        </TabItem>
+    </TabControl>
 </UserControl>
