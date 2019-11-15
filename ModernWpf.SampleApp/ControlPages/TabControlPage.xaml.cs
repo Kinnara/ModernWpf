@@ -1,6 +1,7 @@
 ﻿using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using SamplesCommon.SamplePages;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
@@ -28,6 +29,11 @@ namespace ModernWpf.SampleApp.ControlPages
 
             // The content of the tab is often a frame that contains a page, though it could be any UIElement.
             Frame frame = new Frame();
+
+            frame.Navigated += (s, e) =>
+            {
+                ((Page)frame.Content).Margin = new Thickness(-18, 0, -18, 0);
+            };
 
             switch (index % 3)
             {

@@ -12,65 +12,59 @@
     d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
-    <TabControl
-        Style="{StaticResource TabControlPivotStyle}"
-        Margin="12,0,0,0">
-        <TabItem Header="Simple">
-            <StackPanel Margin="12,0,24,20">
-                <sc:ControlExample HeaderText="A simple TabControl">
-                    <TabControl x:Name="tabControl" />
+    <UserControl.Resources>
+        <Style TargetType="TabControl" BasedOn="{StaticResource DefaultTabControlStyle}">
+            <Setter Property="MinHeight" Value="475" />
+        </Style>
+    </UserControl.Resources>
 
-                    <sc:ControlExample.Options>
-                        <ui:SimpleStackPanel>
-                            <ui:RadioButtons
-                                Header="TabStripPlacement"
-                                ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
-                                SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement, Mode=TwoWay}" />
-                        </ui:SimpleStackPanel>
-                    </sc:ControlExample.Options>
-                </sc:ControlExample>
-            </StackPanel>
-        </TabItem>
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <sc:ControlExample HeaderText="A simple TabControl">
+                <TabControl x:Name="tabControl" />
 
-        <TabItem Header="Customized">
-            <StackPanel Margin="12,0,24,20">
-                <sc:ControlExample HeaderText="A customized TabControl">
-                    <TabControl x:Name="tabControl2">
-                        <TabControl.Resources>
-                            <sys:Double x:Key="TabViewItemHeaderFontSize">24</sys:Double>
-                            <sys:Double x:Key="TabViewItemHeaderIconSize">32</sys:Double>
-                        </TabControl.Resources>
-                        <TabControl.ItemContainerStyle>
-                            <Style TargetType="TabItem" BasedOn="{StaticResource DefaultTabItemStyle}">
-                                <Setter Property="FontFamily" Value="Courier New" />
-                            </Style>
-                        </TabControl.ItemContainerStyle>
-                    </TabControl>
-                </sc:ControlExample>
-            </StackPanel>
-        </TabItem>
+                <sc:ControlExample.Options>
+                    <ui:SimpleStackPanel>
+                        <ui:RadioButtons
+                            Header="TabStripPlacement"
+                            ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement, Mode=TwoWay}" />
+                    </ui:SimpleStackPanel>
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
 
-        <TabItem Header="Accent colored">
-            <StackPanel Margin="12,0,24,20">
-                <sc:ControlExample HeaderText="A TabControl with accent colored TabStrip background">
-                    <TabControl
-                        x:Name="tabControl3"
-                        ui:ThemeManager.HasThemeResources="True">
-                        <TabControl.Resources>
-                            <ui:ElementThemeResources>
-                                <ui:ElementThemeResources.ThemeDictionaries>
-                                    <ResourceDictionary x:Key="Light">
-                                        <SolidColorBrush x:Key="TabViewBackground" Color="{DynamicResource SystemAccentColorLight2}" />
-                                    </ResourceDictionary>
-                                    <ResourceDictionary x:Key="Dark">
-                                        <SolidColorBrush x:Key="TabViewBackground" Color="{DynamicResource SystemAccentColorDark2}" />
-                                    </ResourceDictionary>
-                                </ui:ElementThemeResources.ThemeDictionaries>
-                            </ui:ElementThemeResources>
-                        </TabControl.Resources>
-                    </TabControl>
-                </sc:ControlExample>
-            </StackPanel>
-        </TabItem>
-    </TabControl>
+            <sc:ControlExample HeaderText="A customized TabControl">
+                <TabControl x:Name="tabControl2">
+                    <TabControl.Resources>
+                        <sys:Double x:Key="TabViewItemHeaderFontSize">24</sys:Double>
+                        <sys:Double x:Key="TabViewItemHeaderIconSize">32</sys:Double>
+                    </TabControl.Resources>
+                    <TabControl.ItemContainerStyle>
+                        <Style TargetType="TabItem" BasedOn="{StaticResource DefaultTabItemStyle}">
+                            <Setter Property="FontFamily" Value="Courier New" />
+                        </Style>
+                    </TabControl.ItemContainerStyle>
+                </TabControl>
+            </sc:ControlExample>
+
+            <sc:ControlExample HeaderText="A TabControl with accent colored TabStrip background">
+                <TabControl
+                    x:Name="tabControl3"
+                    ui:ThemeManager.HasThemeResources="True">
+                    <TabControl.Resources>
+                        <ui:ElementThemeResources>
+                            <ui:ElementThemeResources.ThemeDictionaries>
+                                <ResourceDictionary x:Key="Light">
+                                    <SolidColorBrush x:Key="TabViewBackground" Color="{DynamicResource SystemAccentColorLight2}" />
+                                </ResourceDictionary>
+                                <ResourceDictionary x:Key="Dark">
+                                    <SolidColorBrush x:Key="TabViewBackground" Color="{DynamicResource SystemAccentColorDark2}" />
+                                </ResourceDictionary>
+                            </ui:ElementThemeResources.ThemeDictionaries>
+                        </ui:ElementThemeResources>
+                    </TabControl.Resources>
+                </TabControl>
+            </sc:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

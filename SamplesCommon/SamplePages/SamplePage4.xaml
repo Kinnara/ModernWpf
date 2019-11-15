@@ -11,67 +11,67 @@
     d:DesignHeight="900"
     Style="{StaticResource PageStyle}">
 
-    <ScrollViewer Padding="18,0">
-        <Grid Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
-            <Grid.Resources>
-                <sys:Double x:Key="TileHeight">150</sys:Double>
-            </Grid.Resources>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+    <Grid
+        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+        Margin="18,0">
+        <Grid.Resources>
+            <sys:Double x:Key="TileHeight">150</sys:Double>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-            <!--<Grid MinHeight="100" Grid.ColumnSpan="3" Margin="6">
+        <!--<Grid MinHeight="100" Grid.ColumnSpan="3" Margin="6">
             <TextBlock Text="Sample Page 3" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource HeaderTextBlockStyle}" />
         </Grid>-->
 
-            <Grid
-                Grid.Row="1"
-                Grid.Column="0"
-                Grid.RowSpan="2"
-                MinHeight="{StaticResource TileHeight}"
-                Background="LightGray"
-                Margin="6" />
-            <Grid
-                Grid.Row="1"
-                Grid.Column="1"
-                MinHeight="{StaticResource TileHeight}"
-                Background="DarkGray"
-                Margin="6" />
-            <Grid
-                Grid.Row="2"
-                Grid.Column="1"
-                MinHeight="{StaticResource TileHeight}"
-                Background="Gray"
-                Margin="6" />
-            <Grid
-                Grid.Row="1"
-                Grid.Column="2"
-                MinHeight="{StaticResource TileHeight}"
-                Background="LightGray"
-                Margin="6" />
-            <Grid
-                Grid.Row="2"
-                Grid.Column="2"
-                MinHeight="{StaticResource TileHeight}"
-                Background="DarkGray"
-                Margin="6" />
+        <Grid
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.RowSpan="2"
+            MinHeight="{StaticResource TileHeight}"
+            Background="LightGray"
+            Margin="6" />
+        <Grid
+            Grid.Row="1"
+            Grid.Column="1"
+            MinHeight="{StaticResource TileHeight}"
+            Background="DarkGray"
+            Margin="6" />
+        <Grid
+            Grid.Row="2"
+            Grid.Column="1"
+            MinHeight="{StaticResource TileHeight}"
+            Background="Gray"
+            Margin="6" />
+        <Grid
+            Grid.Row="1"
+            Grid.Column="2"
+            MinHeight="{StaticResource TileHeight}"
+            Background="LightGray"
+            Margin="6" />
+        <Grid
+            Grid.Row="2"
+            Grid.Column="2"
+            MinHeight="{StaticResource TileHeight}"
+            Background="DarkGray"
+            Margin="6" />
 
-            <Grid
-                Grid.Row="3"
-                Grid.ColumnSpan="3"
-                Margin="6">
-                <TextBlock
-                    TextWrapping="Wrap"
-                    Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
-            </Grid>
+        <Grid
+            Grid.Row="3"
+            Grid.ColumnSpan="3"
+            Margin="6">
+            <TextBlock
+                TextWrapping="Wrap"
+                Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
         </Grid>
-    </ScrollViewer>
+    </Grid>
 </Page>

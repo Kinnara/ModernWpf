@@ -36,7 +36,7 @@
                             <Grid x:Name="ExampleContainer">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
-                                    <ColumnDefinition Width="Auto" MaxWidth="320" MinWidth="200" />
+                                    <ColumnDefinition x:Name="OptionsColumn" Width="Auto" MaxWidth="320" MinWidth="200" />
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Example Display -->
@@ -68,6 +68,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="Options" Value="{x:Null}">
                             <Setter TargetName="OptionsRoot" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="OptionsColumn" Property="MinWidth" Value="0" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
