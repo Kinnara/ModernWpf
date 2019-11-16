@@ -1,7 +1,10 @@
 ﻿<Project>
   <PropertyGroup>
-    <AssemblyVersion>0.2.0.0</AssemblyVersion>
-    <FileVersion>0.2.0.0</FileVersion>
+    <Version>0.5.0-preview.191116.0</Version>
     <Authors>Yimeng Wu</Authors>
+    <Product>ModernWPF UI Library</Product>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Kinnara/ModernWpf</PackageProjectUrl>
+    <PackageTags>WPF XAML UI Theme Controls Fluent Modern Metro WinUI</PackageTags>
   </PropertyGroup>
 </Project>

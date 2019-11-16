@@ -5,6 +5,7 @@
     <UseWPF>true</UseWPF>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetDocumentationFile</TargetsForTfmSpecificBuildOutput>
     <NuspecFile>$(MSBuildThisFileDirectory)ModernWpfUI.nuspec</NuspecFile>
+    <PackageId>ModernWpfUI</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,11 +17,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <PropertyGroup>
-    <PackageId>ModernWpfUI</PackageId>
-    <Version>0.2.191112003</Version>
-  </PropertyGroup>
 
   <Target Name="GetDocumentationFile">
     <ItemGroup>
@@ -34,6 +30,8 @@
       <NuspecProperties>$(NuspecProperties);config=$(Configuration)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);version=$(PackageVersion)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);authors=$(Authors)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);license=$(PackageLicenseExpression)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);projectUrl=$(PackageProjectUrl)</NuspecProperties>
     </PropertyGroup>
   </Target>
 

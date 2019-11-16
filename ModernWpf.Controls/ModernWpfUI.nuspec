@@ -9,8 +9,8 @@
     <description>Modern styles and controls for your WPF applications.</description>
     <tags>WPF XAML UI Metro Modern Fluent Theme WinUI</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="expression">MIT</license>
-    <projectUrl>https://github.com/Kinnara/ModernWpf</projectUrl>
+    <license type="expression">$license$</license>
+    <projectUrl>$projectUrl$</projectUrl>
     <dependencies>
       <group targetFramework=".NETFramework4.5">
         <dependency id="System.Runtime.WindowsRuntime" version="4.6.0" exclude="Build,Analyzers" />

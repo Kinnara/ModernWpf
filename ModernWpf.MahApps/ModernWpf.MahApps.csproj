@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
     <UseWPF>true</UseWPF>
+    <PackageId>ModernWpfUI.MahApps</PackageId>
+    <Description>Styles to help integrate ModernWPF with MahApps.Metro.</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,7 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ModernWpf\ModernWpf.csproj" />
+    <ProjectReference Include="..\ModernWpf\ModernWpf.csproj">
+      <PrivateAssets>all</PrivateAssets>
+    </ProjectReference>
+    <ProjectReference Include="..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
   </ItemGroup>
 
   <ItemGroup>
