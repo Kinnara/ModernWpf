@@ -299,8 +299,8 @@
                                 VerticalAlignment="Bottom"
                                 HorizontalAlignment="Stretch"
                                 Margin="0,0,0,2"
-                                RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                RadiusX="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                RadiusY="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
