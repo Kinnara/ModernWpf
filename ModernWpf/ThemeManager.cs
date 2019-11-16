@@ -18,11 +18,22 @@ namespace ModernWpf
         internal const string HighContrastKey = "HighContrast";
 
         private static readonly Binding _highContrastBinding = new Binding("(SystemParameters.HighContrast)");
+        private static readonly RoutedEventArgs _actualThemeChangedEventArgs;
 
         private static readonly Dictionary<string, ResourceDictionary> _defaultThemeDictionaries = new Dictionary<string, ResourceDictionary>();
 
         private bool _isInitialized;
         private bool _applicationStarted;
+
+        static ThemeManager()
+        {
+            _actualThemeChangedEventArgs = new RoutedEventArgs(ActualThemeChangedEvent);
+            MenuDropAlignmentHelper.EnsureStandardPopupAlignment();
+        }
+
+        private ThemeManager()
+        {
+        }
 
         #region ApplicationTheme
 
@@ -77,12 +88,9 @@ namespace ModernWpf
 
         private static void OnActualApplicationThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ThemeManager)d).OnActualApplicationThemeChanged(e);
-        }
-
-        private void OnActualApplicationThemeChanged(DependencyPropertyChangedEventArgs e)
-        {
-            ApplyApplicationTheme();
+            var tm = (ThemeManager)d;
+            tm.ApplyApplicationTheme();
+            tm.ActualApplicationThemeChanged?.Invoke(tm, null);
         }
 
         private void UpdateActualApplicationTheme()
@@ -150,7 +158,9 @@ namespace ModernWpf
 
         private static void OnActualAccentColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ThemeManager)d).ApplyAccentColor();
+            var tm = (ThemeManager)d;
+            tm.ApplyAccentColor();
+            tm.ActualAccentColorChanged?.Invoke(tm, null);
         }
 
         private void ApplyAccentColor()
@@ -301,9 +311,14 @@ namespace ModernWpf
 
         private static void OnActualThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is FrameworkElement fe && GetHasThemeResources(fe))
+            if (d is FrameworkElement fe)
             {
-                UpdateThemeResourcesForElement(fe);
+                if (GetHasThemeResources(fe))
+                {
+                    UpdateThemeResourcesForElement(fe);
+                }
+
+                RaiseActualThemeChanged(fe);
             }
         }
 
@@ -319,6 +334,32 @@ namespace ModernWpf
             {
                 SetActualTheme(window, requestedTheme);
             }
+        }
+
+        #endregion
+
+        #region ActualThemeChanged
+
+        public static readonly RoutedEvent ActualThemeChangedEvent =
+            EventManager.RegisterRoutedEvent(
+                "ActualThemeChanged",
+                RoutingStrategy.Direct,
+                typeof(RoutedEventHandler),
+                typeof(ThemeManager));
+
+        public static void AddActualThemeChangedHandler(FrameworkElement element, RoutedEventHandler handler)
+        {
+            element.AddHandler(ActualThemeChangedEvent, handler);
+        }
+
+        public static void RemoveActualThemeChangedHandler(FrameworkElement element, RoutedEventHandler handler)
+        {
+            element.RemoveHandler(ActualThemeChangedEvent, handler);
+        }
+
+        private static void RaiseActualThemeChanged(FrameworkElement element)
+        {
+            element.RaiseEvent(_actualThemeChangedEventArgs);
         }
 
         #endregion
@@ -525,26 +566,16 @@ namespace ModernWpf
 
         #endregion
 
-        #region HighContrast
+        #region ElementHighContrast
 
-        //private static bool GetHighContrast(FrameworkElement element)
-        //{
-        //    return (bool)element.GetValue(HighContrastProperty);
-        //}
-
-        //private static void SetHighContrast(FrameworkElement element, bool value)
-        //{
-        //    element.SetValue(HighContrastProperty, value);
-        //}
-
-        private static readonly DependencyProperty HighContrastProperty =
+        private static readonly DependencyProperty ElementHighContrastProperty =
             DependencyProperty.RegisterAttached(
-                "HighContrast",
+                "ElementHighContrast",
                 typeof(bool),
                 typeof(ThemeManager),
-                new PropertyMetadata(OnHighContrastChanged));
+                new PropertyMetadata(OnElementHighContrastChanged));
 
-        private static void OnHighContrastChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnElementHighContrastChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var element = (FrameworkElement)d;
             if (element.IsInitialized)
@@ -585,12 +616,12 @@ namespace ModernWpf
 
             if ((bool)e.OldValue)
             {
-                element.ClearValue(HighContrastProperty);
+                element.ClearValue(ElementHighContrastProperty);
             }
 
             if ((bool)e.NewValue)
             {
-                element.SetBinding(HighContrastProperty, _highContrastBinding);
+                element.SetBinding(ElementHighContrastProperty, _highContrastBinding);
             }
         }
 
@@ -613,36 +644,24 @@ namespace ModernWpf
 
         #endregion
 
-        static ThemeManager()
-        {
-            MenuDropAlignmentHelper.EnsureStandardPopupAlignment();
-        }
-
-        private ThemeManager()
-        {
-        }
-
         public static ThemeManager Current { get; } = new ThemeManager();
-
-        //internal static Uri DefaultLightSource { get; } = GetDefaultSource(LightKey);
-
-        //internal static Uri DefaultDarkSource { get; } = GetDefaultSource(DarkKey);
-
-        //internal static Uri DefaultHighContrastSource { get; } = GetDefaultSource(HighContrastKey);
-
-        //internal static ResourceDictionary DefaultLightThemeDictionary => GetDefaultThemeDictionary(LightKey);
-
-        //internal static ResourceDictionary DefaultDarkThemeDictionary => GetDefaultThemeDictionary(DarkKey);
-
-        //internal static ResourceDictionary DefaultHighContrastThemeDictionary => GetDefaultThemeDictionary(HighContrastKey);
 
         internal bool UsingSystemTheme => ColorsHelper.SystemColorsSupported && ApplicationTheme == null;
 
         internal bool UsingSystemAccentColor => ColorsHelper.SystemColorsSupported && AccentColor == null;
 
-        private static Uri GetDefaultSource(string theme)
+        public TypedEventHandler<ThemeManager, object> ActualApplicationThemeChanged;
+
+        public TypedEventHandler<ThemeManager, object> ActualAccentColorChanged;
+
+        internal static ResourceDictionary GetDefaultThemeDictionary(string key)
         {
-            return PackUriHelper.GetAbsoluteUri($"ThemeResources/{theme}.xaml");
+            if (!_defaultThemeDictionaries.TryGetValue(key, out ResourceDictionary dictionary))
+            {
+                dictionary = new ResourceDictionary { Source = GetDefaultSource(key) };
+                _defaultThemeDictionaries[key] = dictionary;
+            }
+            return dictionary;
         }
 
         private static ApplicationTheme GetDefaultAppTheme()
@@ -666,14 +685,9 @@ namespace ModernWpf
             return ModernWpf.ApplicationTheme.Light;
         }
 
-        internal static ResourceDictionary GetDefaultThemeDictionary(string key)
+        private static Uri GetDefaultSource(string theme)
         {
-            if (!_defaultThemeDictionaries.TryGetValue(key, out ResourceDictionary dictionary))
-            {
-                dictionary = new ResourceDictionary { Source = GetDefaultSource(key) };
-                _defaultThemeDictionaries[key] = dictionary;
-            }
-            return dictionary;
+            return PackUriHelper.GetAbsoluteUri($"ThemeResources/{theme}.xaml");
         }
 
         private static ResourceDictionary FindDictionary(ResourceDictionary parent, Uri source)
