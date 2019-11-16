@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 
 namespace ModernWpf
 {
-    public class ElementThemeResources : ResourceDictionary
+    public class ResourceDictionaryEx : ResourceDictionary
     {
         /// <summary>
         /// Gets a collection of merged resource dictionaries that are specifically keyed
@@ -42,19 +41,5 @@ namespace ModernWpf
                 }
             }
         }
-
-        //void ISupportInitialize.EndInit()
-        //{
-        //    EndInit();
-
-        //    for (int i = MergedDictionaries.Count - 1; i >= 0; i--)
-        //    {
-        //        if (MergedDictionaries[i] is ThemeDictionary td)
-        //        {
-        //            ThemeDictionaries[td.Key] = td;
-        //            MergedDictionaries.RemoveAt(i);
-        //        }
-        //    }
-        //}
     }
 }

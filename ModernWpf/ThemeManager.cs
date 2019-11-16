@@ -466,7 +466,7 @@ namespace ModernWpf
 
         private static void UpdateElementThemeResources(ResourceDictionary resources, string themeKey)
         {
-            if (resources is ElementThemeResources themeResources)
+            if (resources is ResourceDictionaryEx themeResources)
             {
                 themeResources.Update(themeKey);
             }

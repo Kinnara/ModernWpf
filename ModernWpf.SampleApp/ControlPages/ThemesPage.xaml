@@ -124,8 +124,8 @@
                     Fill="{DynamicResource CustomThemeBrush}"
                     ui:ThemeManager.HasThemeResources="True">
                     <Rectangle.Resources>
-                        <ui:ElementThemeResources>
-                            <ui:ElementThemeResources.ThemeDictionaries>
+                        <ui:ResourceDictionaryEx>
+                            <ui:ResourceDictionaryEx.ThemeDictionaries>
                                 <ResourceDictionary x:Key="Light">
                                     <SolidColorBrush x:Key="CustomThemeBrush" Color="DarkRed" />
                                 </ResourceDictionary>
@@ -135,8 +135,8 @@
                                 <ResourceDictionary x:Key="HighContrast">
                                     <SolidColorBrush x:Key="CustomThemeBrush" Color="DarkBlue" />
                                 </ResourceDictionary>
-                            </ui:ElementThemeResources.ThemeDictionaries>
-                        </ui:ElementThemeResources>
+                            </ui:ResourceDictionaryEx.ThemeDictionaries>
+                        </ui:ResourceDictionaryEx>
                     </Rectangle.Resources>
                 </Rectangle>
             </StackPanel>

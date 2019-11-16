@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
@@ -7,7 +6,7 @@ using System.Windows.Media;
 
 namespace ModernWpf
 {
-    public class ThemeResources : ResourceDictionary, ISupportInitialize
+    public class ThemeResources : ResourceDictionaryEx, ISupportInitialize
     {
         private static ThemeResources _current;
 
@@ -81,17 +80,6 @@ namespace ModernWpf
                 }
             }
         }
-
-        /// <summary>
-        /// Gets a collection of merged resource dictionaries that are specifically keyed
-        /// and composed to address theme scenarios, for example supplying theme values for
-        /// "HighContrast".
-        /// </summary>
-        /// <returns>
-        /// A dictionary of ResourceDictionary theme dictionaries. Each must be keyed with
-        /// **x:Key**.
-        /// </returns>
-        public Dictionary<object, ResourceDictionary> ThemeDictionaries { get; } = new Dictionary<object, ResourceDictionary>();
 
         #region Design Time
 
@@ -231,7 +219,7 @@ namespace ModernWpf
                 }
             }
 
-            if (target is ElementThemeResources etr)
+            if (target is ResourceDictionaryEx etr)
             {
                 etr.ContainsApplicationThemeDictionary = containsAppThemeDictionary;
             }
