@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
-    <ProjectReference Include="..\ModernWpf\ModernWpf.csproj" />
+    <ProjectReference Include="..\..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
+    <ProjectReference Include="..\..\ModernWpf\ModernWpf.csproj" />
   </ItemGroup>
 
 </Project>

@@ -17,17 +17,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0F1BC12B-7013-4238-8001-39C8F53E9363}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ItemsRepeaterTestApp", "ItemsRepeaterTestApp\ItemsRepeaterTestApp.csproj", "{AF1BD7FD-5513-4425-86AD-75CBF18E1D93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ItemsRepeaterTestApp", "test\ItemsRepeaterTestApp\ItemsRepeaterTestApp.csproj", "{AF1BD7FD-5513-4425-86AD-75CBF18E1D93}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentRibbonInteropSample", "FluentRibbonInteropSample\FluentRibbonInteropSample.csproj", "{EE0EF4B6-3F56-4FD8-A4BA-5997D4B9440F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FluentRibbonSample", "samples\FluentRibbonSample\FluentRibbonSample.csproj", "{EE0EF4B6-3F56-4FD8-A4BA-5997D4B9440F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MahAppsInteropSample", "MahAppsInteropSample\MahAppsInteropSample.csproj", "{1D1EAFD7-9517-40B4-9207-22E0707A6032}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MahAppsSample", "samples\MahAppsSample\MahAppsSample.csproj", "{1D1EAFD7-9517-40B4-9207-22E0707A6032}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModernWpf.MahApps", "ModernWpf.MahApps\ModernWpf.MahApps.csproj", "{8E21BED1-FB1B-417A-A8C1-48782C621E94}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{A96F98E9-18B5-4863-8F28-9B7BDF70A128}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamplesCommon", "SamplesCommon\SamplesCommon.csproj", "{DE27C3CE-E9E9-48D2-A4A1-5846E550462E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SamplesCommon", "samples\SamplesCommon\SamplesCommon.csproj", "{DE27C3CE-E9E9-48D2-A4A1-5846E550462E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

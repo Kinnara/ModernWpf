@@ -70,7 +70,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
     <ProjectReference Include="..\ModernWpf\ModernWpf.csproj" />
-    <ProjectReference Include="..\SamplesCommon\SamplesCommon.csproj" />
+    <ProjectReference Include="..\samples\SamplesCommon\SamplesCommon.csproj" />
   </ItemGroup>
 
   <ItemGroup>
