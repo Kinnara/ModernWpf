@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace ModernWpf.DesignTime
 {
-    public static class DesignTimeThemeManager
+    public static class Design
     {
         #region RequestedTheme
 
@@ -20,7 +20,7 @@ namespace ModernWpf.DesignTime
         public static readonly DependencyProperty RequestedThemeProperty = DependencyProperty.RegisterAttached(
             "RequestedTheme",
             typeof(ElementTheme),
-            typeof(DesignTimeThemeManager),
+            typeof(Design),
             new PropertyMetadata(ElementTheme.Default, OnRequestedThemeChanged));
 
         private static void OnRequestedThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
