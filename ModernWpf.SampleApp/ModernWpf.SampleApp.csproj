@@ -41,24 +41,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="BackgroundUI\**" />
-    <Compile Remove="ControlPages\ProgressThreadedPage.xaml.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Assets\AppIcon.ico" />
     <None Remove="Assets\Contacts.txt" />
     <None Remove="Assets\mtns.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Remove="ControlPages\ProgressThreadedPage.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="BackgroundUI\**" />
-    <None Include="ControlPages\ProgressThreadedPage.xaml" />
-    <None Include="ControlPages\ProgressThreadedPage.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>
