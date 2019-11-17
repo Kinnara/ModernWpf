@@ -2,7 +2,7 @@
 using ModernWpf.Controls;
 using System.Windows;
 
-namespace FluentRibbonInteropSample
+namespace FluentRibbonSample
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

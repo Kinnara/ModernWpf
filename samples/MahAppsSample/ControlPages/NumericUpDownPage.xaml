@@ -1,10 +1,10 @@
 ﻿<Page
-    x:Class="MahAppsInteropSample.ControlPages.NumericUpDownPage"
+    x:Class="MahAppsSample.ControlPages.NumericUpDownPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MahAppsInteropSample.ControlPages"
+    xmlns:local="clr-namespace:MahAppsSample.ControlPages"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"

@@ -35,8 +35,8 @@
                         ui:ThemeManager.HasThemeResources="True">
 
                         <Grid.Resources>
-                            <ui:ElementThemeResources>
-                                <ui:ElementThemeResources.ThemeDictionaries>
+                            <ui:ResourceDictionaryEx>
+                                <ui:ResourceDictionaryEx.ThemeDictionaries>
                                     <ResourceDictionary x:Key="Light">
                                         <ResourceDictionary.MergedDictionaries>
                                             <ui:DefaultThemeResources Key="Light" />
@@ -60,8 +60,8 @@
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
                                     </ResourceDictionary>
-                                </ui:ElementThemeResources.ThemeDictionaries>
-                            </ui:ElementThemeResources>
+                                </ui:ResourceDictionaryEx.ThemeDictionaries>
+                            </ui:ResourceDictionaryEx>
                         </Grid.Resources>
 
                         <Grid.ColumnDefinitions>

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Navigation;
 
-namespace MahAppsInteropSample
+namespace MahAppsSample
 {
     public partial class MainWindow : Window
     {

@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 namespace MahAppsSample.ControlPages
 {
     /// <summary>
-    /// Interaction logic for NumericUpDownPage.xaml
+    /// Interaction logic for FlipViewPage.xaml
     /// </summary>
-    public partial class NumericUpDownPage : Page
+    public partial class FlipViewPage : Page
     {
-        public NumericUpDownPage()
+        public FlipViewPage()
         {
             InitializeComponent();
         }
