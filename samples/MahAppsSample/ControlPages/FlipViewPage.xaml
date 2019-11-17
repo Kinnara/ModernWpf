@@ -15,7 +15,47 @@
 
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <sc:ControlExample />
+            <sc:ControlExample
+                x:Name="Example1"
+                HeaderText="A simple FlipView with items declared inline.">
+                <sc:ControlExample.Example>
+                    <mah:FlipView
+                        x:Name="FlipView1"
+                        MaxWidth="400"
+                        Height="270"
+                        HorizontalAlignment="Left">
+                        <Image
+                            Source="/Assets/SampleMedia/cliff.jpg"
+                            AutomationProperties.Name="Cliff" />
+                        <Image
+                            Source="/Assets/SampleMedia/grapes.jpg"
+                            AutomationProperties.Name="Grapes" />
+                        <Image
+                            Source="/Assets/SampleMedia/rainier.jpg"
+                            AutomationProperties.Name="Rainier" />
+                        <Image
+                            Source="/Assets/SampleMedia/sunset.jpg"
+                            AutomationProperties.Name="Sunset" />
+                        <Image
+                            Source="/Assets/SampleMedia/valley.jpg"
+                            AutomationProperties.Name="Valley" />
+                    </mah:FlipView>
+                </sc:ControlExample.Example>
+                <sc:ControlExample.Options>
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <CheckBox
+                            Content="CircularNavigation"
+                            IsChecked="{Binding ElementName=FlipView1, Path=CircularNavigation}" />
+                        <CheckBox
+                            Content="IsNavigationEnabled"
+                            IsChecked="{Binding ElementName=FlipView1, Path=IsNavigationEnabled}" />
+                        <ComboBox
+                            ui:ControlHelper.Header="Orientation"
+                            ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=FlipView1, Path=Orientation, Mode=TwoWay}" />
+                    </ui:SimpleStackPanel>
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </Page>

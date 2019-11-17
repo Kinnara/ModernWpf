@@ -465,7 +465,21 @@
     <SolidColorBrush x:Key="DataGridRowSelectedUnfocusedBackground" Color="{m:DynamicColor SystemAccentColor}" />
     <m:StaticResource x:Key="DataGridRowSelectedForeground" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
 
-    <!-- Resources for Windows.UI.Xaml.Controls.FlyoutPresenter -->
+    <!-- Resources for FlipView -->
+    <Thickness x:Key="FlipViewButtonBorderThemeThickness">0</Thickness>
+    <m:StaticResource x:Key="FlipViewBackground" ResourceKey="SystemControlPageBackgroundListLowBrush" />
+    <m:StaticResource x:Key="FlipViewNextPreviousButtonBackground" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
+    <m:StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightBaseMediumBrush" />
+    <m:StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPressed" ResourceKey="SystemControlHighlightBaseMediumHighBrush" />
+    <m:StaticResource x:Key="FlipViewNextPreviousArrowForeground" ResourceKey="SystemControlForegroundAltMediumHighBrush" />
+    <m:StaticResource x:Key="FlipViewNextPreviousArrowForegroundPointerOver" ResourceKey="SystemControlHighlightAltAltMediumHighBrush" />
+    <m:StaticResource x:Key="FlipViewNextPreviousArrowForegroundPressed" ResourceKey="SystemControlHighlightAltAltMediumHighBrush" />
+    <m:StaticResource x:Key="FlipViewNextPreviousButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="FlipViewNextPreviousButtonBorderBrushPointerOver" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="FlipViewNextPreviousButtonBorderBrushPressed" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="FlipViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
+
+    <!-- Resources for FlyoutPresenter -->
     <sys:Double x:Key="FlyoutThemeMaxHeight">758</sys:Double>
     <sys:Double x:Key="FlyoutThemeMaxWidth">456</sys:Double>
     <sys:Double x:Key="FlyoutThemeMinHeight">40</sys:Double>

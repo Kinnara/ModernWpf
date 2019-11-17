@@ -7,6 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\**" />
+    <Resource Include="Assets\**" />    
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Remove="Assets\SampleMedia\**" />
+    <Content Include="Assets\SampleMedia\**" />
+    <Content Update="Assets\SampleMedia\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0605" />
   </ItemGroup>
 

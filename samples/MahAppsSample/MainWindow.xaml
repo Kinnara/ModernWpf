@@ -10,7 +10,7 @@
     xmlns:local="clr-namespace:MahAppsSample"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
-    Title="MahApps.Metro Interop Sample"
+    Title="MahApps.Metro Integration Sample"
     Width="866"
     Height="650"
     WindowStartupLocation="CenterScreen"
@@ -71,6 +71,17 @@
                 <mah:HamburgerMenuItemCollection x:Name="NavViewItems">
 
                     <ui:HamburgerMenuHeaderItem Label="Controls" />
+
+                    <mah:HamburgerMenuIconItem
+                        Label="FlipView"
+                        Tag="ControlPages/FlipViewPage.xaml">
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <Image
+                                Width="72"
+                                Height="72"
+                                Source="/Assets/FlipView.png" />
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
 
                     <mah:HamburgerMenuIconItem
                         Label="NumericUpDown"
