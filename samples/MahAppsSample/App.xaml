@@ -31,7 +31,7 @@
                 <ResourceDictionary Source="/MahApps.Metro;component/Styles/Fonts.xaml" />
 
                 <ui:XamlControlsResources />
-                <ResourceDictionary Source="/ModernWpf.MahApps;component/ControlsResources.xaml" />
+                <ResourceDictionary Source="/ModernWpf.MahApps;component/Styles/Controls.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Thickness x:Key="ControlPageContentMargin">24,0,24,20</Thickness>

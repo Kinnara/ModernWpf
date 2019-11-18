@@ -19,11 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="HamburgerMenuEx\HamburgerMenuEx.xaml">
+    <Page Update="Themes\HamburgerMenuEx.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="NumericUpDown\NumericUpDown.xaml">
+    <Page Update="Styles\Controls.NumericUpDown.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
