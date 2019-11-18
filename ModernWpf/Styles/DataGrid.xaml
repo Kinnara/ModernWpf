@@ -597,14 +597,14 @@
                                     Background="{DynamicResource DataGridDetailsPresenterBackgroundBrush}">
                                     <DataGridDetailsPresenter
                                         x:Name="DetailsPresenter"
-                                        SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding Path=(primitives:DataGridRowHelper.AreRowDetailsFrozen), ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource TemplatedParent}}"
+                                        SelectiveScrollingGrid.SelectiveScrollingOrientation="{TemplateBinding primitives:DataGridRowHelper.AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}}"
                                         Visibility="{TemplateBinding DetailsVisibility}" />
                                 </Border>
                                 <DataGridRowHeader
                                     x:Name="RowHeader"
                                     Grid.RowSpan="2"
                                     SelectiveScrollingGrid.SelectiveScrollingOrientation="Vertical"
-                                    Visibility="{Binding Path=(primitives:DataGridRowHelper.HeadersVisibility), ConverterParameter={x:Static DataGridHeadersVisibility.Row}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    Visibility="{TemplateBinding primitives:DataGridRowHelper.HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Row}, Converter={x:Static DataGrid.HeadersVisibilityConverter}}" />
                             </SelectiveScrollingGrid>
                         </Border>
                     </Grid>
@@ -792,7 +792,7 @@
                                             Orientation="Vertical"
                                             ViewportSize="{TemplateBinding ViewportHeight}"
                                             Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                                            Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
+                                            Value="{TemplateBinding VerticalOffset}" />
                                         <Grid
                                             Grid.Row="2"
                                             Grid.Column="1">
@@ -807,7 +807,7 @@
                                                 Orientation="Horizontal"
                                                 ViewportSize="{TemplateBinding ViewportWidth}"
                                                 Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
-                                                Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                Value="{TemplateBinding HorizontalOffset}" />
                                         </Grid>
                                     </Grid>
                                 </ControlTemplate>

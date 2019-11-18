@@ -76,7 +76,7 @@
                             HorizontalAlignment="Stretch"
                             ui:ControlHelper.Header="{TemplateBinding ui:ControlHelper.Header}"
                             ui:ControlHelper.PlaceholderText="{TemplateBinding mah:TextBoxHelper.Watermark}"
-                            ui:ControlHelper.CornerRadius="{Binding (ui:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
+                            ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
 
                         <RepeatButton
                             x:Name="PART_NumericUp"
@@ -92,7 +92,7 @@
                             FontSize="{TemplateBinding FontSize}"
                             Content="&#xE70D;"
                             Style="{StaticResource NumberBoxSpinButtonStyle}"
-                            ui:ControlHelper.CornerRadius="{Binding (ui:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource RightCornerRadiusFilterConverter}}" />
+                            ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}" />
                     </Grid>
 
                     <ControlTemplate.Triggers>

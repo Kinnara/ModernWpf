@@ -70,8 +70,8 @@
                                 Height="24"
                                 Fill="{DynamicResource NavigationViewSelectionIndicatorForeground}"
                                 Opacity="0.0"
-                                RadiusX="{Binding (ui:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                RadiusY="{Binding (ui:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                RadiusX="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                RadiusY="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                         </Grid>
 
                         <ContentPresenter

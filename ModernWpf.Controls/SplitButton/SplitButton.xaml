@@ -132,12 +132,12 @@
                         <Border
                             x:Name="PrimaryBackgroundGrid"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
+                            CornerRadius="{TemplateBinding CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
 
                         <Border
                             x:Name="SecondaryBackgroundGrid"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                            CornerRadius="{TemplateBinding CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}"
                             Grid.Column="2" />
 
                         <Border

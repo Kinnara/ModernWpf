@@ -298,7 +298,7 @@
                             Grid.Row="1"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
-                            IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}"
+                            IsReadOnly="{TemplateBinding IsReadOnly}"
                             Style="{TemplateBinding primitives:ComboBoxHelper.TextBoxStyle}"
                             Margin="0,0,0,0"
                             Padding="{DynamicResource ComboBoxEditableTextPadding}"

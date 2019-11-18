@@ -158,7 +158,7 @@
                             Minimum="0.0"
                             Maximum="{TemplateBinding ScrollableWidth}"
                             ViewportSize="{TemplateBinding ViewportWidth}"
-                            Value="{Binding Path=HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                            Value="{TemplateBinding HorizontalOffset}"
                             Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
                             Cursor="Arrow" />
                         <!-- Vertical Scroll Bar -->
@@ -169,7 +169,7 @@
                             Minimum="0.0"
                             Maximum="{TemplateBinding ScrollableHeight}"
                             ViewportSize="{TemplateBinding ViewportHeight}"
-                            Value="{Binding Path=VerticalOffset, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                            Value="{TemplateBinding VerticalOffset}"
                             Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
                             Cursor="Arrow" />
                         <!-- Right Bottom Corner -->

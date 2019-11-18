@@ -31,8 +31,8 @@
                         BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid x:Name="AnimationRoot">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition SharedSizeGroup="{Binding Visibility, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemCheckColumnGroup}" Width="Auto" />
-                                <ColumnDefinition SharedSizeGroup="{Binding Visibility, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemIconColumnGroup}" Width="Auto" />
+                                <ColumnDefinition SharedSizeGroup="{TemplateBinding Visibility, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemCheckColumnGroup}" Width="Auto" />
+                                <ColumnDefinition SharedSizeGroup="{TemplateBinding Visibility, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemIconColumnGroup}" Width="Auto" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
