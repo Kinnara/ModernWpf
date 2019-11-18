@@ -11,7 +11,7 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Thickness x:Key="ComboBoxTopHeaderMargin">0,0,0,4</Thickness>
-    <Thickness x:Key="ComboBoxPadding">12,5,0,7</Thickness>
+    <Thickness x:Key="ComboBoxPadding">12,6,0,6</Thickness>
     <Thickness x:Key="ComboBoxEditableTextPadding">11,5,32,6</Thickness>
     <sys:Double x:Key="ComboBoxMinHeight">32</sys:Double>
 
