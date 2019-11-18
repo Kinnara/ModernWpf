@@ -11,8 +11,8 @@
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     Title="MahApps.Metro Integration"
-    Width="866"
-    Height="650"
+    Width="1366"
+    Height="768"
     WindowStartupLocation="CenterScreen"
     ui:WindowHelper.UseModernWindowStyle="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True">
@@ -71,6 +71,14 @@
                 <mah:HamburgerMenuItemCollection x:Name="NavViewItems">
 
                     <ui:HamburgerMenuHeaderItem Label="Controls" />
+
+                    <mah:HamburgerMenuIconItem
+                        Label="Overview"
+                        Tag="ControlPages/ControlsPage.xaml">
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <ui:FontIcon Glyph="&#xE71D;" />
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
 
                     <mah:HamburgerMenuIconItem
                         Label="Theme"

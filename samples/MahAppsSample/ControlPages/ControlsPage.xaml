@@ -1,0 +1,218 @@
+﻿<Page
+    x:Class="MahAppsSample.ControlPages.ControlsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MahAppsSample.ControlPages"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    mc:Ignorable="d"
+    Style="{StaticResource PageStyle}"
+    Background="Transparent">
+
+    <ui:SimpleStackPanel
+        Orientation="Horizontal"
+        Spacing="40"
+        Margin="24,0,24,50">
+
+        <StackPanel>
+            <TextBlock
+                Text="Buttons"
+                Style="{StaticResource BaseTextBlockStyle}"
+                Margin="0,0,0,20" />
+            <Button Content="Enabled button" />
+            <Button
+                Content="Disabled button"
+                IsEnabled="False"
+                Margin="0,15,0,0" />
+            <ToggleButton
+                Content="Toggle button"
+                IsChecked="True"
+                Margin="0,15,0,0" />
+            <ui:DropDownButton
+                Content="Drop down button"
+                Margin="0,15,0,0" />
+            <ui:SplitButton
+                Content="Split button"
+                Margin="0,15,0,25" />
+
+            <TextBlock
+                Text="Checkbox"
+                Style="{StaticResource BaseTextBlockStyle}"
+                Margin="0,0,0,15" />
+            <CheckBox Content="Unchecked" />
+            <CheckBox
+                Content="Checked"
+                IsChecked="True"
+                Margin="0,8,0,0" />
+            <CheckBox
+                Content="Third state"
+                IsChecked="{x:Null}"
+                IsThreeState="True"
+                Margin="0,8,0,0" />
+            <CheckBox
+                Content="Disabled"
+                IsChecked="True"
+                IsEnabled="False"
+                Margin="0,8,0,20" />
+
+            <TextBlock
+                Text="Radio button"
+                Style="{StaticResource BaseTextBlockStyle}"
+                Margin="0,0,0,14" />
+            <RadioButton Content="Unchecked" />
+            <RadioButton
+                Content="Checked"
+                IsChecked="True"
+                Margin="0,8,0,0" />
+            <RadioButton
+                Content="Disabled"
+                IsChecked="True"
+                IsEnabled="False"
+                Margin="0,8,0,0" />
+        </StackPanel>
+
+        <StackPanel Width="296">
+            <TextBlock
+                Text="Date picker"
+                Style="{StaticResource BaseTextBlockStyle}"
+                Margin="0,0,0,11" />
+            <DatePicker
+                ui:ControlHelper.Header="Label title"
+                ui:ControlHelper.PlaceholderText="mm/dd/yyyy"
+                HorizontalAlignment="Stretch" />
+            <DatePicker
+                ui:ControlHelper.Header="Disabled"
+                ui:ControlHelper.PlaceholderText="mm/dd/yyyy"
+                HorizontalAlignment="Stretch"
+                IsEnabled="False"
+                Margin="0,18,0,20" />
+            <TextBlock
+                Text="Time picker"
+                Style="{StaticResource BaseTextBlockStyle}"
+                Margin="0,0,0,11" />
+            <ui:SimpleTimePicker
+                Header="Label title"
+                HorizontalAlignment="Stretch" />
+            <Calendar Margin="0,31,0,0" />
+        </StackPanel>
+
+        <StackPanel Width="241">
+            <TextBlock
+                Text="Combo box"
+                Style="{StaticResource BaseTextBlockStyle}"
+                Margin="0,0,0,11" />
+            <ComboBox
+                ui:ControlHelper.Header="Label title"
+                ui:ControlHelper.PlaceholderText="Placeholder text"
+                HorizontalAlignment="Stretch" />
+            <ComboBox
+                ui:ControlHelper.Header="Disabled"
+                ui:ControlHelper.PlaceholderText="Placeholder text"
+                HorizontalAlignment="Stretch"
+                IsEnabled="False"
+                Margin="0,17,0,0" />
+
+            <Grid Margin="0,31,0,0">
+                <ListBox
+                    SelectedIndex="0"
+                    Margin="0,6">
+                    <ListBoxItem Content="Microsoft" />
+                    <ListBoxItem Content="Windows" />
+                    <ListBoxItem Content="Office" />
+                </ListBox>
+                <Border
+                    BorderBrush="{DynamicResource SystemControlForegroundChromeHighBrush}"
+                    BorderThickness="1"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    IsHitTestVisible="False" />
+            </Grid>
+
+            <Grid
+                Width="148"
+                HorizontalAlignment="Left"
+                Margin="0,31,0,0">
+                <ListBox
+                    SelectedIndex="0"
+                    Margin="0,6">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
+                            <Setter Property="Padding" Value="12,5,12,8" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBoxItem Content="Microsoft" />
+                    <ListBoxItem Content="Windows" />
+                    <ListBoxItem Content="Office" />
+                </ListBox>
+                <Border
+                    BorderBrush="{DynamicResource SystemControlForegroundChromeHighBrush}"
+                    BorderThickness="1"
+                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                    IsHitTestVisible="False" />
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Width="265">
+            <TextBlock
+                Text="Textbox"
+                Style="{StaticResource BaseTextBlockStyle}"
+                Margin="0,0,0,11" />
+            <TextBox
+                ui:ControlHelper.Header="Label title"
+                ui:ControlHelper.PlaceholderText="Placeholder text" />
+            <TextBox
+                ui:ControlHelper.Header="Disabled"
+                ui:ControlHelper.PlaceholderText="Placeholder text"
+                IsEnabled="False"
+                Margin="0,17,0,0" />
+            <PasswordBox
+                ui:ControlHelper.Header="Password"
+                ui:ControlHelper.PlaceholderText="Placeholder text"
+                Margin="0,17,0,25" />
+
+            <TextBlock
+                Text="Toggle switch"
+                Style="{StaticResource BaseTextBlockStyle}"
+                Margin="0,0,0,14" />
+            <Grid Margin="0,0,0,25">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="12" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ui:ToggleSwitch
+                    Grid.Row="0"
+                    Grid.Column="0" />
+                <ui:ToggleSwitch
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    IsOn="True" />
+                <ui:ToggleSwitch
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    OffContent="Disabled Off"
+                    IsEnabled="False" />
+                <ui:ToggleSwitch
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    OnContent="Disabled On"
+                    IsOn="True"
+                    IsEnabled="False" />
+            </Grid>
+
+            <TextBlock
+                Text="Slider"
+                Style="{StaticResource BaseTextBlockStyle}"
+                Margin="0,0,0,14" />
+            <Slider
+                ui:ControlHelper.Header="Control Header"
+                Value="50"
+                Maximum="100" />
+        </StackPanel>
+
+    </ui:SimpleStackPanel>
+</Page>

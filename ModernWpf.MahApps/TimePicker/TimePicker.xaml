@@ -303,7 +303,7 @@
                                 BorderThickness="{DynamicResource DateTimeFlyoutBorderThickness}"
                                 CornerRadius="{DynamicResource OverlayCornerRadius}"
                                 Padding="{DynamicResource DateTimeFlyoutBorderPadding}"
-                                MinWidth="{DynamicResource TimePickerThemeMinWidth}">
+                                MinWidth="{Binding ActualWidth, ElementName=PART_Button}">
                                 <Grid x:Name="ContentPanel">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
