@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MahAppsSample.ControlPages"
     xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     Style="{StaticResource PageStyle}"
     Background="Transparent">
@@ -15,7 +16,7 @@
         Spacing="40"
         Margin="24,0,24,50">
 
-        <StackPanel>
+        <sc:NonClippingStackPanel>
             <TextBlock
                 Text="Buttons"
                 Style="{StaticResource BaseTextBlockStyle}"
@@ -70,9 +71,9 @@
                 IsChecked="True"
                 IsEnabled="False"
                 Margin="0,8,0,0" />
-        </StackPanel>
+        </sc:NonClippingStackPanel>
 
-        <StackPanel Width="296">
+        <sc:NonClippingStackPanel Width="296">
             <TextBlock
                 Text="Date picker"
                 Style="{StaticResource BaseTextBlockStyle}"
@@ -95,9 +96,9 @@
                 Header="Label title"
                 HorizontalAlignment="Stretch" />
             <Calendar Margin="0,31,0,0" />
-        </StackPanel>
+        </sc:NonClippingStackPanel>
 
-        <StackPanel Width="241">
+        <sc:NonClippingStackPanel Width="241">
             <TextBlock
                 Text="Combo box"
                 Style="{StaticResource BaseTextBlockStyle}"
@@ -150,9 +151,25 @@
                     CornerRadius="{DynamicResource ControlCornerRadius}"
                     IsHitTestVisible="False" />
             </Grid>
-        </StackPanel>
 
-        <StackPanel Width="265">
+            <Button
+                Content="Button with flyout"
+                Margin="0,31,0,0">
+                <ui:FlyoutService.Flyout>
+                    <ui:Flyout Placement="BottomEdgeAlignedLeft">
+                        <StackPanel>
+                            <TextBlock
+                                Style="{StaticResource BaseTextBlockStyle}"
+                                Text="All items will be removed. Do you want to continue?"
+                                Margin="0,0,0,12" />
+                            <Button Content="Yes, empty my cart" />
+                        </StackPanel>
+                    </ui:Flyout>
+                </ui:FlyoutService.Flyout>
+            </Button>
+        </sc:NonClippingStackPanel>
+
+        <sc:NonClippingStackPanel Width="265">
             <TextBlock
                 Text="Textbox"
                 Style="{StaticResource BaseTextBlockStyle}"
@@ -209,10 +226,10 @@
                 Style="{StaticResource BaseTextBlockStyle}"
                 Margin="0,0,0,14" />
             <Slider
-                ui:ControlHelper.Header="Control Header"
+                ui:ControlHelper.Header="Label title"
                 Value="50"
                 Maximum="100" />
-        </StackPanel>
+        </sc:NonClippingStackPanel>
 
     </ui:SimpleStackPanel>
 </Page>
