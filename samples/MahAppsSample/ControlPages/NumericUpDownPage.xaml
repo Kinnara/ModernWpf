@@ -16,29 +16,44 @@
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
             <sc:ControlExample
-                HeaderText="NumericUpDown (experimental)"
+                HeaderText="NumericUpDown"
                 HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Top">
 
                 <mah:NumericUpDown
                     x:Name="NumberBox"
                     ui:ControlHelper.Header="Control header"
-                    mah:TextBoxHelper.Watermark="Watermark"
-                    Width="200" />
+                    ui:ControlHelper.PlaceholderText="Placeholder text"
+                    MinWidth="242" />
 
                 <sc:ControlExample.Options>
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <CheckBox
+                            IsChecked="{Binding ElementName=NumberBox, Path=IsReadOnly}"
+                            Content="IsReadOnly" />
+
+                        <CheckBox
+                            IsChecked="{Binding ElementName=NumberBox, Path=IsEnabled}"
+                            Content="IsEnabled" />
+
+                        <CheckBox
                             IsChecked="{Binding ElementName=NumberBox, Path=HideUpDownButtons}"
                             Content="HideUpDownButtons" />
+
+                        <Slider
+                            ui:ControlHelper.Header="UpDownButtonsWidth"
+                            Minimum="34"
+                            Maximum="50"
+                            AutoToolTipPlacement="TopLeft"
+                            Value="{Binding ElementName=NumberBox, Path=UpDownButtonsWidth, Mode=TwoWay}" />
 
                         <TextBox
                             ui:ControlHelper.Header="Header"
                             Text="{Binding ElementName=NumberBox, Path=(ui:ControlHelper.Header), UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBox
-                            ui:ControlHelper.Header="Watermark"
-                            Text="{Binding ElementName=NumberBox, Path=(mah:TextBoxHelper.Watermark), UpdateSourceTrigger=PropertyChanged}" />
+                            ui:ControlHelper.Header="PlaceholderText"
+                            Text="{Binding ElementName=NumberBox, Path=(ui:ControlHelper.PlaceholderText), UpdateSourceTrigger=PropertyChanged}" />
 
                         <Button
                             Content="Invert theme"

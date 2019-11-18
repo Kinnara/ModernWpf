@@ -32,8 +32,6 @@
 
                 <ui:XamlControlsResources />
                 <ResourceDictionary Source="/ModernWpf.MahApps;component/ControlsResources.xaml" />
-
-                <ResourceDictionary Source="Styles/NumericUpDown.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Thickness x:Key="ControlPageContentMargin">24,0,24,20</Thickness>
