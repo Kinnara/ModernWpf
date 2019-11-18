@@ -7,7 +7,6 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -186,7 +185,7 @@
                             x:Name="LoadTimeTextBlock"
                             Style="{StaticResource BodyTextBlockStyle}"
                             MouseLeftButtonUp="LoadTimeTextBlock_MouseLeftButtonUp" />
-                        <controls:LayoutDensitySelector TargetElement="{Binding ElementName=dataGrid}" />
+                        <sc:LayoutDensitySelector TargetElement="{Binding ElementName=dataGrid}" />
                         <CheckBox
                             x:Name="CheckBoxColumnVisibilityToggle"
                             Content="Show CheckBox Column" />

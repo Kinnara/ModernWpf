@@ -7,7 +7,6 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -81,7 +80,7 @@
 
                     <sc:ControlExample.Options>
                         <ui:SimpleStackPanel>
-                            <controls:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView1}}" />
+                            <sc:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView1}}" />
                             <ui:RadioButtons
                                 Header="SelectionMode"
                                 ItemsSource="{Binding Source={x:Type SelectionMode}, Converter={StaticResource EnumValuesConverter}}"
@@ -174,7 +173,7 @@
                             <CheckBox
                                 Content="AllowsColumnReorder"
                                 IsChecked="{Binding Source={x:Reference gridView}, Path=AllowsColumnReorder, Mode=TwoWay}" />
-                            <controls:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView3}}" />
+                            <sc:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView3}}" />
                             <!--<ui:RadioButtons
                                 Header="SelectionMode"
                                 ItemsSource="{Binding Source={x:Type SelectionMode}, Converter={StaticResource EnumValuesConverter}}"

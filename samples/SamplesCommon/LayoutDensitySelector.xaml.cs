@@ -1,13 +1,9 @@
-﻿using ModernWpf;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ModernWpf.SampleApp.Controls
+namespace SamplesCommon
 {
-    /// <summary>
-    /// Interaction logic for LayoutDensitySelector.xaml
-    /// </summary>
     public partial class LayoutDensitySelector : UserControl
     {
         private ResourceDictionary _compactResources;

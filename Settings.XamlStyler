@@ -71,7 +71,7 @@
     "ReorderCanvasChildren": false,
     "ReorderSetters": 0,
     "FormatMarkupExtension": true,
-    "NoNewLineMarkupExtensions": "x:Bind, Binding",
+    "NoNewLineMarkupExtensions": "x:Bind, Binding, TemplateBinding",
     "ThicknessSeparator": 2,
     "ThicknessAttributes": "Margin, Padding, BorderThickness, ThumbnailClipMargin",
     "FormatOnSave": true,

@@ -465,6 +465,20 @@
     <SolidColorBrush x:Key="DataGridRowSelectedUnfocusedBackground" Color="{m:DynamicColor SystemAccentColor}" />
     <m:StaticResource x:Key="DataGridRowSelectedForeground" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
 
+    <Thickness x:Key="DatePickerHeaderThemeMargin">0,0,0,4</Thickness>
+    <Thickness x:Key="DateTimeFlyoutBorderThickness">1</Thickness>
+    <Thickness x:Key="DateTimeFlyoutBorderPadding">0</Thickness>
+    <Thickness x:Key="DateTimeFlyoutButtonBorderThickness">0</Thickness>
+
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+
     <!-- Resources for FlipView -->
     <Thickness x:Key="FlipViewButtonBorderThemeThickness">0</Thickness>
     <m:StaticResource x:Key="FlipViewBackground" ResourceKey="SystemControlPageBackgroundListLowBrush" />
@@ -544,6 +558,16 @@
     <m:StaticResource x:Key="ListViewItemPlaceholderBackground" ResourceKey="SystemControlDisabledChromeDisabledHighBrush" />
     <sys:Boolean x:Key="ListViewItemSelectionCheckMarkVisualEnabled">True</sys:Boolean>
     <!--<ListViewItemPresenterCheckMode x:Key="ListViewItemCheckMode">Inline</ListViewItemPresenterCheckMode>-->
+
+    <!-- Resources for LoopingSelector -->
+    <m:StaticResource x:Key="LoopingSelectorButtonBackground" ResourceKey="SystemControlBackgroundChromeMediumBrush" />
+    <!-- Resources for LoopingSelectorItem -->
+    <m:StaticResource x:Key="LoopingSelectorItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="LoopingSelectorItemForegroundSelected" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="LoopingSelectorItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="LoopingSelectorItemForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="LoopingSelectorItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+    <m:StaticResource x:Key="LoopingSelectorItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
 
     <!-- Resources for MenuBar -->
     <m:StaticResource x:Key="MenuBarBackground" ResourceKey="SystemControlTransparentBrush" />
@@ -916,6 +940,38 @@
     <m:StaticResource x:Key="ThumbBorderBrush" ResourceKey="SystemControlHighlightTransparentBrush" />
     <m:StaticResource x:Key="ThumbBorderBrushPointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
     <m:StaticResource x:Key="ThumbBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+
+    <!-- Resources for TimePicker -->
+    <sys:Double x:Key="TimePickerSelectorThemeMinWidth">80</sys:Double>
+    <sys:Double x:Key="TimePickerSpacerThemeWidth">1</sys:Double>
+    <Thickness x:Key="TimePickerBorderThemeThickness">1</Thickness>
+    <Thickness x:Key="TimePickerHeaderThemeMargin">0,0,0,4</Thickness>
+    <Thickness x:Key="TimePickerFirstHostThemeMargin">0,0,20,0</Thickness>
+    <Thickness x:Key="TimePickerThirdHostThemeMargin">20,0,0,0</Thickness>
+    <FontWeight x:Key="TimePickerHeaderThemeFontWeight">Normal</FontWeight>
+    <m:StaticResource x:Key="TimePickerSpacerFill" ResourceKey="SystemControlForegroundBaseLowBrush" />
+    <m:StaticResource x:Key="TimePickerSpacerFillDisabled" ResourceKey="SystemControlDisabledBaseLowBrush" />
+    <m:StaticResource x:Key="TimePickerHeaderForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="TimePickerHeaderForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrush" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumHighBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrushPressed" ResourceKey="SystemControlHighlightBaseMediumBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledBaseLowBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackground" ResourceKey="SystemControlBackgroundAltMediumLowBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundPointerOver" ResourceKey="SystemControlPageBackgroundAltMediumBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundPressed" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundFocused" ResourceKey="SystemControlHighlightListAccentLowBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundPointerOver" ResourceKey="SystemControlHighlightBaseHighBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundPressed" ResourceKey="SystemControlHighlightBaseHighBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundFocused" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterBackground" ResourceKey="SystemControlTransientBackgroundBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterSpacerFill" ResourceKey="SystemControlForegroundBaseLowBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterHighlightFill" ResourceKey="SystemControlHighlightListAccentLowBrush" />
+    <m:StaticResource x:Key="TimePickerLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
 
     <!-- Resources for ToggleButton -->
     <Thickness x:Key="ToggleButtonBorderThemeThickness">1</Thickness>

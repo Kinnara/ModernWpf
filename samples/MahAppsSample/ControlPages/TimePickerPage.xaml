@@ -1,0 +1,58 @@
+﻿<Page
+    x:Class="MahAppsSample.ControlPages.TimePickerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:MahAppsSample.ControlPages"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Style="{StaticResource PageStyle}">
+
+    <Page.Resources>
+        <Style TargetType="sc:ControlExample">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer>
+        <StackPanel
+            x:Name="ContentPanel"
+            Margin="{StaticResource ControlPageContentMargin}">
+            <sc:ControlExample HeaderText="A simple TimePicker.">
+                <ui:SimpleTimePicker />
+                <sc:ControlExample.Options>
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <sc:LayoutDensitySelector TargetElement="{Binding ElementName=ContentPanel}" />
+                    </ui:SimpleStackPanel>
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
+            <sc:ControlExample HeaderText="A TimePicker with a header and minute increments specified.">
+                <ui:SimpleTimePicker
+                    Header="Arrival time"
+                    SourceMinutes="{x:Static mah:TimePicker.IntervalOf15}" />
+            </sc:ControlExample>
+            <sc:ControlExample HeaderText="A TimePicker using a 24-hour clock.">
+                <ui:SimpleTimePicker
+                    Header="24 hour clock"
+                    Culture="zh-CN" />
+            </sc:ControlExample>
+            <sc:ControlExample HeaderText="API in action">
+                <ui:SimpleTimePicker x:Name="TimePicker" />
+                <sc:ControlExample.Options>
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <ComboBox
+                            ui:ControlHelper.Header="PickerVisibility"
+                            ItemsSource="{Binding Source={x:Type mah:TimePartVisibility}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=TimePicker, Path=PickerVisibility, Mode=TwoWay}" />
+                    </ui:SimpleStackPanel>
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

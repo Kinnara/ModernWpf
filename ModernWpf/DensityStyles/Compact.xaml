@@ -22,4 +22,16 @@
     <sys:Double x:Key="GridViewColumnHeaderMinHeight">25</sys:Double>
     <sys:Double x:Key="GridViewItemContainerMinHeight">24</sys:Double>
     <sys:Double x:Key="DataGridRowMinHeight">24</sys:Double>
+
+    <!-- CompactDatePickerTimePickerFlyout.xaml -->
+    <sys:Double x:Key="TimePickerFlyoutPresenterItemHeight">32</sys:Double>
+    <sys:Double x:Key="TimePickerFlyoutPresenterHighlightHeight">32</sys:Double>
+    <sys:Double x:Key="TimePickerFlyoutPresenterAcceptDismissHostGridHeight">33</sys:Double>
+    <sys:Double x:Key="TimePickerPopupVerticalOffset">16</sys:Double>
+    <Thickness x:Key="TimePickerFlyoutPresenterItemPadding">0,0,0,1</Thickness>
+    <sys:Double x:Key="DatePickerFlyoutPresenterItemHeight">32</sys:Double>
+    <sys:Double x:Key="DatePickerFlyoutPresenterHighlightHeight">32</sys:Double>
+    <sys:Double x:Key="DatePickerFlyoutPresenterAcceptDismissHostGridHeight">33</sys:Double>
+    <Thickness x:Key="DatePickerFlyoutPresenterItemPadding">0,0,0,1</Thickness>
+    <Thickness x:Key="DatePickerFlyoutPresenterMonthPadding">9,0,0,1</Thickness>
 </ResourceDictionary>

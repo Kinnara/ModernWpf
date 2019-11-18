@@ -77,8 +77,7 @@
                         Tag="ControlPages/FlipViewPage.xaml">
                         <mah:HamburgerMenuIconItem.Icon>
                             <Image
-                                Width="72"
-                                Height="72"
+                                Stretch="None"
                                 Source="/Assets/FlipView.png" />
                         </mah:HamburgerMenuIconItem.Icon>
                     </mah:HamburgerMenuIconItem>
@@ -88,6 +87,16 @@
                         Tag="ControlPages/NumericUpDownPage.xaml">
                         <mah:HamburgerMenuIconItem.Icon>
                             <ui:FontIcon Glyph="&#xEC8F;" />
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
+
+                    <mah:HamburgerMenuIconItem
+                        Label="TimePicker"
+                        Tag="ControlPages/TimePickerPage.xaml">
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <Image
+                                Stretch="None"
+                                Source="/Assets/TimePicker.png" />
                         </mah:HamburgerMenuIconItem.Icon>
                     </mah:HamburgerMenuIconItem>
 
