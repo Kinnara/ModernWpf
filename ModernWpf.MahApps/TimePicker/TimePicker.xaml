@@ -115,7 +115,6 @@
         <Setter Property="PickerVisibility" Value="HourMinute" />
         <Setter Property="MinutesItemStringFormat" Value="D2" />
         <Setter Property="SecondsItemStringFormat" Value="D2" />
-        <Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SimpleTimePicker">
