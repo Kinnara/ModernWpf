@@ -112,13 +112,17 @@
     <GroupBox Header="Choose your accent color">
         <StackPanel>
             <ListView
-                x:Name="AccentColorSelector"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 SelectionMode="Single"
                 SelectedValuePath="Color"
                 SelectedValue="{Binding AccentColor, Source={x:Static ui:ThemeManager.Current}, Mode=TwoWay}"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                <ListView.Template>
+                    <ControlTemplate TargetType="ListView">
+                        <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    </ControlTemplate>
+                </ListView.Template>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid
