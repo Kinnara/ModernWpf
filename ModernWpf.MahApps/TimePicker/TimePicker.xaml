@@ -110,7 +110,7 @@
         <Setter Property="Foreground" Value="{DynamicResource TimePickerButtonForeground}" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource EmptyFocusVisual}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="PickerVisibility" Value="HourMinute" />
         <Setter Property="MinutesItemStringFormat" Value="D2" />
@@ -162,7 +162,7 @@
                                                     <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TimePickerButtonForegroundDisabled}" />
                                                 </Trigger>
                                                 <!-- Focused -->
-                                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                                <Trigger Property="ui:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
                                                     <Setter TargetName="Border" Property="Background" Value="{DynamicResource TimePickerButtonBackgroundFocused}" />
                                                     <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TimePickerButtonForegroundFocused}" />
                                                 </Trigger>
