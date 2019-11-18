@@ -11,9 +11,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemeResources
-                    RequestedTheme="Light"
-                    AccentColor="{x:Null}">
+                <ui:ThemeResources>
                     <ui:ThemeResources.ThemeDictionaries>
                         <ResourceDictionary x:Key="Light">
                             <ResourceDictionary.MergedDictionaries>
@@ -28,6 +26,7 @@
                     </ui:ThemeResources.ThemeDictionaries>
                 </ui:ThemeResources>
 
+                <ui:MahAppsColorPaletteResources />
                 <ResourceDictionary Source="/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="/MahApps.Metro;component/Styles/Fonts.xaml" />
 

@@ -43,53 +43,8 @@
                 <sys:String>Nighttime</sys:String>
             </ComboBox>
 
-            <TextBlock
-                Text="Choose your accent color"
-                Style="{StaticResource SubtitleTextBlockStyle}" />
-            <ListView
-                x:Name="AccentColorSelector"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                SelectionMode="Single"
-                SelectedValuePath="Color"
-                SelectedValue="{Binding AccentColor, Source={x:Static ui:ThemeManager.Current}, Mode=TwoWay}"
-                ScrollViewer.VerticalScrollBarVisibility="Disabled">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid
-                            Rows="6"
-                            Columns="8" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemsSource>
-                    <local:AccentColors />
-                </ListView.ItemsSource>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem" BasedOn="{StaticResource GridViewItemExpanded}">
-                        <Setter Property="Margin" Value="0,0,2,3" />
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Rectangle
-                            Fill="{Binding Brush}"
-                            ToolTipService.InitialShowDelay="1000"
-                            ToolTipService.BetweenShowDelay="500">
-                            <Rectangle.ToolTip>
-                                <ToolTip Content="{Binding Name}" />
-                            </Rectangle.ToolTip>
-                        </Rectangle>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.Resources>
-                    <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="{DynamicResource SystemBaseHighColor}" />
-                    <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{DynamicResource SystemBaseHighColor}" />
-                    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{DynamicResource SystemBaseHighColor}" />
-                    <SolidColorBrush x:Key="SystemControlForegroundBaseMediumHighBrush" Color="{DynamicResource SystemAltHighColor}" />
-                </ListView.Resources>
-            </ListView>
+
+            <sc:AccentColorPicker />
 
             <!--<ui:RadioButtons
                 x:Name="WindowThemeSelector"

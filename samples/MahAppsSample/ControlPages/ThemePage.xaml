@@ -1,0 +1,63 @@
+﻿<Page
+    x:Class="MahAppsSample.ControlPages.ThemePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:local="clr-namespace:MahAppsSample.ControlPages"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Style="{StaticResource PageStyle}">
+
+    <Page.Resources>
+        <DataTemplate x:Key="BrushTemplate">
+            <Grid
+                Margin="8"
+                Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                    BorderThickness="1"
+                    sc:DynamicResourceHelper.Property="Border.Background"
+                    sc:DynamicResourceHelper.ResourceKey="{Binding}"
+                    Width="126"
+                    Height="51"
+                    VerticalAlignment="Center" />
+
+                <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding}"
+                    VerticalAlignment="Center"
+                    Margin="12,0,0,0" />
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <sc:AccentColorPicker />
+
+            <GroupBox
+                Header="MahApps.Metro brushes"
+                Style="{StaticResource MahApps.Styles.GroupBox}">
+                <ItemsControl ItemTemplate="{StaticResource BrushTemplate}">
+                    <sys:String>Theme.ShowcaseBrush</sys:String>
+                    <sys:String>MahApps.Brushes.AccentBase</sys:String>
+                    <sys:String>MahApps.Brushes.Accent</sys:String>
+                    <sys:String>MahApps.Brushes.Accent2</sys:String>
+                    <sys:String>MahApps.Brushes.Accent3</sys:String>
+                    <sys:String>MahApps.Brushes.Accent4</sys:String>
+                    <sys:String>MahApps.Brushes.Highlight</sys:String>
+                </ItemsControl>
+            </GroupBox>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
