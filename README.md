@@ -10,7 +10,7 @@ Modern styles and controls for your WPF applications.
 
 * Targets .NET Framework 4.5 and .NET Core 3.0. Runs on Windows Vista SP2 and above.
 
-![Screenshot 1](docs/images/ControlPalette1.png "Screenshot 1")
+![Styled MahApps HamburgerMenu (Light)](docs/images/Controls.Light.png "Styled MahApps HamburgerMenu (Light)")
 
 ## Quick start
 1. Create a new WPF app.
@@ -50,17 +50,17 @@ Modern styles and controls for your WPF applications.
 5. See [the wiki](https://github.com/Kinnara/ModernWpf/wiki) for more information.
 
 ## Screenshots
-![Screenshot 2](docs/images/ControlPalette2.png "Screenshot 2")
+![Styled MahApps HamburgerMenu (Dark)](docs/images/Controls.Dark.png "Styled MahApps HamburgerMenu (Dark)")
+
+![Control Palette](docs/images/ControlPalette1.png "Control Palette")
 
 ![Easily customize colors](docs/images/Nighttime.png "Easily customize colors")
 
 ![ContentDialog](docs/images/ContentDialog.png "ContentDialog")
 
-![MahApps.Metro integration](docs/images/MahApps.png "MahApps.Metro integration")
-
 ![DataGrid](docs/images/DataGrid.png "DataGrid")
 
-![UniformGridLayout](docs/images/UniformGridLayout.png "UniformGridLayout")
+![ItemsRepeater - UniformGridLayout](docs/images/UniformGridLayout.png "ItemsRepeater - UniformGridLayout")
 
 ![Custom title bar](docs/images/CustomTitleBar.png "Custom title bar")
 
