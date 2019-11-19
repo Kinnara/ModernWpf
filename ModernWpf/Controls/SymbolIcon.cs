@@ -67,25 +67,21 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        internal override UIElement CreateIcon()
+        internal override void InitializeChildren()
         {
-            if (_textBlock == null)
+            _textBlock = new TextBlock
             {
-                _textBlock = new TextBlock
-                {
-                    Style = null,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    TextAlignment = TextAlignment.Center,
-                    FontSize = 20,
-                    FontStyle = FontStyles.Normal,
-                    FontWeight = FontWeights.Normal,
-                    Text = ConvertToString(Symbol)
-                };
-                _textBlock.SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
-            }
-
-            return _textBlock;
+                Style = null,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Center,
+                TextAlignment = TextAlignment.Center,
+                FontSize = 20,
+                FontStyle = FontStyles.Normal,
+                FontWeight = FontWeights.Normal,
+                Text = ConvertToString(Symbol)
+            };
+            _textBlock.SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
+            Children.Add(_textBlock);
         }
 
         private static string ConvertToString(Symbol symbol)

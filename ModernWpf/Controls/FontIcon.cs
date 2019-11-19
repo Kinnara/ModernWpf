@@ -1,8 +1,6 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Media;
 
 namespace ModernWpf.Controls
@@ -179,25 +177,21 @@ namespace ModernWpf.Controls
             }
         }
 
-        internal override UIElement CreateIcon()
+        internal override void InitializeChildren()
         {
-            if (_textBlock == null)
+            _textBlock = new TextBlock
             {
-                _textBlock = new TextBlock
-                {
-                    Style = null,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    TextAlignment = TextAlignment.Center,
-                    FontFamily = FontFamily,
-                    FontSize = FontSize,
-                    FontStyle = FontStyle,
-                    FontWeight = FontWeight,
-                    Text = Glyph
-                };
-            }
-
-            return _textBlock;
+                Style = null,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Center,
+                TextAlignment = TextAlignment.Center,
+                FontFamily = FontFamily,
+                FontSize = FontSize,
+                FontStyle = FontStyle,
+                FontWeight = FontWeight,
+                Text = Glyph
+            };
+            Children.Add(_textBlock);
         }
 
         private TextBlock _textBlock;

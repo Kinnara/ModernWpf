@@ -38,6 +38,17 @@ namespace ModernWpf.Controls
             set { SetValue(ForegroundProperty, value); }
         }
 
+        internal UIElementCollection Children
+        {
+            get
+            {
+                EnsureLayoutRoot();
+                return _layoutRoot.Children;
+            }
+        }
+
+        internal abstract void InitializeChildren();
+
         protected override int VisualChildrenCount => 1;
 
         protected override Visual GetVisualChild(int index)
@@ -75,14 +86,12 @@ namespace ModernWpf.Controls
             _layoutRoot = new Grid
             {
                 SnapsToDevicePixels = true,
-                Children = { CreateIcon() }
             };
+            InitializeChildren();
 
             AddVisualChild(_layoutRoot);
         }
 
         private Grid _layoutRoot;
-
-        internal abstract UIElement CreateIcon();
     }
 }
