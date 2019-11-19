@@ -49,6 +49,12 @@ Modern styles and controls for your WPF applications.
 
 5. See [the wiki](https://github.com/Kinnara/ModernWpf/wiki) for more information.
 
+## Packages
+| NuGet Package | Latest Versions |
+| --- | --- |
+| [ModernWpfUI][NuGet] | [![latest stable version](https://img.shields.io/nuget/v/ModernWpfUI)][NuGet] |
+| [ModernWpfUI.MahApps][NuGet.MahApps] | [![latest stable version](https://img.shields.io/nuget/v/ModernWpfUI.MahApps)][NuGet.MahApps] |
+
 ## Screenshots
 ![Styled MahApps HamburgerMenu (Dark)](docs/images/Controls.Dark.png "Styled MahApps HamburgerMenu (Dark)")
 
@@ -75,3 +81,6 @@ Modern styles and controls for your WPF applications.
 ![Accent color palette](docs/images/AccentColorPalette.png "Accent color palette")
 
 ![High contrast mode](docs/images/HighContrast.png "High contrast mode")
+
+[NuGet]: https://www.nuget.org/packages/ModernWpfUI/
+[NuGet.MahApps]: https://www.nuget.org/packages/ModernWpfUI.MahApps/
