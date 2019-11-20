@@ -50,7 +50,12 @@ namespace ModernWpf.Controls
 
         internal override void InitializeChildren()
         {
-            _path = new Path();
+            _path = new Path
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Stretch
+            };
+
             ApplyForeground();
             ApplyData();
 

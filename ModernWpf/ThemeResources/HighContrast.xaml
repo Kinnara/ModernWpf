@@ -192,6 +192,86 @@
     <SolidColorBrush x:Key="ListViewItemRevealBorderBrushPressed" Color="Transparent" />
     <SolidColorBrush x:Key="GridViewItemRevealBorderBrush" Color="Transparent" />
 
+    <!-- Resources for AppBarButton -->
+    <m:StaticResource x:Key="AppBarButtonBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+    <m:StaticResource x:Key="AppBarButtonBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+    <m:StaticResource x:Key="AppBarButtonBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="AppBarButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
+    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForegroundPressed" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
+    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="AppBarButtonBackgroundSubMenuOpened" ResourceKey="SystemControlHighlightListAccentLowBrush" />
+    <m:StaticResource x:Key="AppBarButtonForegroundSubMenuOpened" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
+    <m:StaticResource x:Key="AppBarButtonBorderBrushSubMenuOpened" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonSubItemChevronForeground" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
+    <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundSubMenuOpened" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+
+    <!-- Resources for AppBarToggleButton -->
+    <m:StaticResource x:Key="AppBarToggleButtonBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundChecked" ResourceKey="SystemControlHighlightAccentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundCheckedPointerOver" ResourceKey="SystemControlHighlightAccentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundCheckedPressed" ResourceKey="SystemControlHighlightAccentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundCheckedDisabled" ResourceKey="SystemControlDisabledAccentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlay" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlayPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlayPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundChecked" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundCheckedDisabled" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushChecked" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushCheckedPointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushCheckedPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushCheckedDisabled" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundChecked" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+
+    <m:StaticResource x:Key="AppBarSeparatorForeground" ResourceKey="SystemControlForegroundBaseMediumLowBrush" />
+
     <!-- Resources for Button -->
     <Thickness x:Key="ButtonBorderThemeThickness">1</Thickness>
     <m:StaticResource x:Key="ButtonBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />

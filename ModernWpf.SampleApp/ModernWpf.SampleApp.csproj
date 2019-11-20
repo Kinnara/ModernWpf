@@ -41,9 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Assets\AppIcon.ico" />
-    <None Remove="Assets\Contacts.txt" />
-    <None Remove="Assets\mtns.csv" />
+    <None Remove="Assets\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,9 +57,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\AppIcon.ico" />
-    <Resource Include="Assets\Contacts.txt" />
-    <Resource Include="Assets\mtns.csv" />
+    <Resource Include="Assets\**" />
   </ItemGroup>
 
 </Project>

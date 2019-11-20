@@ -1,0 +1,150 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.AppBarButtonPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900"
+    Style="{StaticResource ControlPageStyle}">
+
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <sc:ControlExample
+                x:Name="Example1"
+                HeaderText="An AppBarButton with a symbol icon.">
+                <StackPanel Orientation="Horizontal">
+                    <!-- App bar button with symbol icon. -->
+                    <ui:AppBarButton
+                        x:Name="Button1"
+                        Label="SymbolIcon"
+                        Click="AppBarButton_Click">
+                        <ui:AppBarButton.Icon>
+                            <ui:SymbolIcon Symbol="Like" />
+                        </ui:AppBarButton.Icon>
+                    </ui:AppBarButton>
+                    <TextBlock
+                        x:Name="Control1Output"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+                <sc:ControlExample.Options>
+                    <CheckBox
+                        Content="IsCompact"
+                        IsChecked="{Binding ElementName=Button1, Path=IsCompact}" />
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
+            <sc:ControlExample
+                x:Name="Example2"
+                HeaderText="An AppBarButton with a bitmap icon.">
+                <StackPanel Orientation="Horizontal">
+                    <!-- App bar button with bitmap icon. -->
+                    <ui:AppBarButton
+                        x:Name="Button2"
+                        Label="BitmapIcon"
+                        Click="AppBarButton_Click">
+                        <ui:AppBarButton.Icon>
+                            <ui:BitmapIcon UriSource="pack://application:,,,/ModernWpf.SampleApp;component/Assets/Slices2.png" />
+                        </ui:AppBarButton.Icon>
+                    </ui:AppBarButton>
+                    <TextBlock
+                        x:Name="Control2Output"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+                <sc:ControlExample.Options>
+                    <CheckBox
+                        Content="IsCompact"
+                        IsChecked="{Binding ElementName=Button2, Path=IsCompact}" />
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
+            <sc:ControlExample
+                x:Name="Example3"
+                HeaderText="An AppBarButton with a font icon.">
+                <StackPanel Orientation="Horizontal">
+                    <!-- App bar button with font icon. -->
+                    <ui:AppBarButton
+                        x:Name="Button3"
+                        Label="FontIcon"
+                        Click="AppBarButton_Click">
+                        <ui:AppBarButton.Icon>
+                            <ui:FontIcon
+                                FontFamily="Candara"
+                                Glyph="&#x03A3;" />
+                        </ui:AppBarButton.Icon>
+                    </ui:AppBarButton>
+                    <TextBlock
+                        x:Name="Control3Output"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+                <sc:ControlExample.Options>
+                    <CheckBox
+                        Content="IsCompact"
+                        IsChecked="{Binding ElementName=Button3, Path=IsCompact}" />
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
+            <sc:ControlExample
+                x:Name="Example4"
+                HeaderText="An AppBarButton with a path icon.">
+                <StackPanel Orientation="Horizontal">
+                    <!-- App bar button with path icon. -->
+                    <ui:AppBarButton
+                        x:Name="Button4"
+                        Label="PathIcon"
+                        Click="AppBarButton_Click">
+                        <ui:AppBarButton.Icon>
+                            <ui:PathIcon Data="F1 M 20,20L 24,10L 24,24L 5,24" />
+                        </ui:AppBarButton.Icon>
+                    </ui:AppBarButton>
+                    <TextBlock
+                        x:Name="Control4Output"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+                <sc:ControlExample.Options>
+                    <CheckBox
+                        Content="IsCompact"
+                        IsChecked="{Binding ElementName=Button4, Path=IsCompact}" />
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
+            <sc:ControlExample HeaderText="AppBarButtons separated by AppBarSeparators.">
+                <sc:ControlExample.Example>
+                    <ScrollViewer
+                        VerticalScrollBarVisibility="Disabled"
+                        HorizontalScrollBarVisibility="Hidden">
+                        <StackPanel
+                            x:Name="Control1"
+                            Orientation="Horizontal">
+                            <ui:AppBarButton Label="Attach Camera">
+                                <ui:AppBarButton.Icon>
+                                    <ui:SymbolIcon Symbol="AttachCamera" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                            <ui:AppBarSeparator />
+                            <ui:AppBarButton Label="Like">
+                                <ui:AppBarButton.Icon>
+                                    <ui:SymbolIcon Symbol="Like" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                            <ui:AppBarButton Label="Dislike">
+                                <ui:AppBarButton.Icon>
+                                    <ui:SymbolIcon Symbol="Dislike" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                            <ui:AppBarSeparator />
+                            <ui:AppBarButton Label="Orientation">
+                                <ui:AppBarButton.Icon>
+                                    <ui:SymbolIcon Symbol="Orientation" />
+                                </ui:AppBarButton.Icon>
+                            </ui:AppBarButton>
+                        </StackPanel>
+                    </ScrollViewer>
+                </sc:ControlExample.Example>
+            </sc:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

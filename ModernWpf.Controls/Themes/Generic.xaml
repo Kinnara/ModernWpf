@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/ModernWpf.Controls;component/AppBarButton/AppBarButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ContentDialog/ContentDialog.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/DropDownButton/DropDownButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/Flyout/FlyoutPresenter.xaml" />
