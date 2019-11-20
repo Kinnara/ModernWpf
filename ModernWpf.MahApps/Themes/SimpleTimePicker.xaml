@@ -90,10 +90,14 @@
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                <Condition Binding="{Binding IsItemMouseOverEnabled, RelativeSource={RelativeSource AncestorType=local:DateTimeComponentSelector}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource LoopingSelectorItemBackgroundPointerOver}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource LoopingSelectorItemForegroundPointerOver}" />
-                        </Trigger>
+                        </MultiDataTrigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource LoopingSelectorItemForegroundSelected}" />
                         </Trigger>

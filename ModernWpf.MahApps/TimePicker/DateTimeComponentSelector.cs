@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace ModernWpf.MahApps.Controls
 {
@@ -19,6 +20,26 @@ namespace ModernWpf.MahApps.Controls
             SetResourceReference(ItemHeightProperty, "TimePickerFlyoutPresenterItemHeight");
             UpdateHeight();
         }
+
+        #region IsItemMouseOverEnabled
+
+        private static readonly DependencyPropertyKey IsItemMouseOverEnabledPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(IsItemMouseOverEnabled),
+                typeof(bool),
+                typeof(DateTimeComponentSelector),
+                new PropertyMetadata(true));
+
+        public static readonly DependencyProperty IsItemMouseOverEnabledProperty =
+            IsItemMouseOverEnabledPropertyKey.DependencyProperty;
+
+        public bool IsItemMouseOverEnabled
+        {
+            get => (bool)GetValue(IsItemMouseOverEnabledProperty);
+            private set => SetValue(IsItemMouseOverEnabledPropertyKey, value);
+        }
+
+        #endregion
 
         #region ItemHeight
 
@@ -144,6 +165,27 @@ namespace ModernWpf.MahApps.Controls
             }
         }
 
+        protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnPreviewMouseWheel(e);
+
+            DisableItemMouseOver();
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            if (_ignoreNextMouseMove)
+            {
+                _ignoreNextMouseMove = false;
+            }
+            else if (!IsItemMouseOverEnabled)
+            {
+                ClearValue(IsItemMouseOverEnabledPropertyKey);
+            }
+        }
+
         private void OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (e.VerticalChange != 0)
@@ -153,6 +195,8 @@ namespace ModernWpf.MahApps.Controls
                 {
                     SetCurrentValue(SelectedIndexProperty, (int)e.VerticalOffset + PaddingItemsCount);
                 }
+
+                DisableItemMouseOver();
             }
         }
 
@@ -171,11 +215,27 @@ namespace ModernWpf.MahApps.Controls
             Height = ItemHeight * (PaddingItemsCount * 2 + 1);
         }
 
+        private void DisableItemMouseOver()
+        {
+            if (_ignoreNextMouseMove)
+            {
+                return;
+            }
+
+            _ignoreNextMouseMove = true;
+
+            if (IsItemMouseOverEnabled)
+            {
+                IsItemMouseOverEnabled = false;
+            }
+        }
+
         private ScrollViewer _scrollViewer;
         private RepeatButton _upButton;
         private RepeatButton _downButton;
 
         private SelectionChangedEventArgs _deferredSelectionChangedEventArgs;
+        private bool _ignoreNextMouseMove;
     }
 
     public class DateTimeComponentSelectorItem : ListBoxItem
