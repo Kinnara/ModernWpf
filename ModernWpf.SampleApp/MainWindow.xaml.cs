@@ -3,15 +3,13 @@ using ModernWpf.SampleApp.Helpers;
 using ModernWpf.SampleApp.Properties;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
 
 namespace ModernWpf.SampleApp
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow
     {
         public MainWindow()
@@ -96,6 +94,7 @@ namespace ModernWpf.SampleApp
             }
         }
 
+        [Conditional("DEBUG")]
         private void SubscribeToResourcesChanged()
         {
             Type t = typeof(FrameworkElement);
