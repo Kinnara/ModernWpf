@@ -1,0 +1,264 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style TargetType="local:AppBarButton">
+        <Setter Property="Background" Value="{DynamicResource AppBarButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource AppBarButtonForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Width" Value="68" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <!--<Setter Property="AllowFocusOnInteraction" Value="False" />-->
+        <!--<Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />-->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:AppBarButton">
+                    <Border
+                        x:Name="Root"
+                        MinWidth="{TemplateBinding MinWidth}"
+                        MaxWidth="{TemplateBinding MaxWidth}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <Rectangle
+                                x:Name="AppBarButtonInnerBorder"
+                                StrokeThickness="1"
+                                Stroke="{TemplateBinding BorderBrush}" />
+                            <Grid
+                                x:Name="ContentRoot"
+                                MinHeight="{DynamicResource AppBarThemeMinHeight}">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Viewbox
+                                    x:Name="ContentViewbox"
+                                    Height="{DynamicResource AppBarButtonContentHeight}"
+                                    Margin="{DynamicResource AppBarButtonContentViewboxCollapsedMargin}"
+                                    HorizontalAlignment="Stretch">
+                                    <ContentPresenter
+                                        x:Name="Content"
+                                        Content="{TemplateBinding Icon}"
+                                        TextElement.Foreground="{TemplateBinding Foreground}" />
+                                </Viewbox>
+                                <TextBlock
+                                    x:Name="TextLabel"
+                                    Grid.Row="1"
+                                    Text="{TemplateBinding Label}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    FontSize="12"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    TextAlignment="Center"
+                                    TextWrapping="Wrap"
+                                    Margin="{DynamicResource AppBarButtonTextLabelMargin}" />
+                                <TextBlock
+                                    x:Name="OverflowTextLabel"
+                                    Text="{TemplateBinding Label}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    FontSize="{DynamicResource ControlContentThemeFontSize}"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    TextAlignment="Left"
+                                    TextWrapping="NoWrap"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    Margin="12,0,12,0"
+                                    Padding="{DynamicResource AppBarButtonOverflowTextLabelPadding}"
+                                    Visibility="Collapsed" />
+                                <!--<TextBlock
+                                    x:Name="KeyboardAcceleratorTextLabel"
+                                    Grid.Column="1"
+                                    Style="{DynamicResource CaptionTextBlockStyle}"
+                                    Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
+                                    MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.KeyboardAcceleratorTextMinWidth}"
+                                    Margin="24,0,12,0"
+                                    Foreground="{DynamicResource AppBarButtonKeyboardAcceleratorTextForeground}"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Visibility="Collapsed" />-->
+                                <ui:FontIcon
+                                    x:Name="SubItemChevron"
+                                    Grid.Column="2"
+                                    Glyph="&#xE0E3;"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="12"
+                                    Foreground="{DynamicResource MenuFlyoutSubItemChevron}"
+                                    Margin="12,0,12,0"
+                                    Visibility="Collapsed" />
+
+                            </Grid>
+
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!--#region ApplicationViewStates-->
+                        <!-- Compact -->
+                        <Trigger Property="ApplicationViewState" Value="Compact">
+                            <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!-- LabelOnRight -->
+                        <Trigger Property="ApplicationViewState" Value="LabelOnRight">
+                            <Setter TargetName="ContentViewbox" Property="Margin" Value="{DynamicResource AppBarButtonContentViewboxMargin}" />
+                            <Setter TargetName="ContentRoot" Property="MinHeight" Value="{DynamicResource AppBarThemeCompactHeight}" />
+                            <Setter TargetName="TextLabel" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="TextLabel" Property="Grid.Column" Value="1" />
+                            <Setter TargetName="TextLabel" Property="TextAlignment" Value="Left" />
+                            <Setter TargetName="TextLabel" Property="Margin" Value="{DynamicResource AppBarButtonTextLabelOnRightMargin}" />
+                            <Setter Property="Width" Value="NaN" />
+                        </Trigger>
+                        <!-- LabelCollapsed -->
+                        <Trigger Property="ApplicationViewState" Value="LabelCollapsed">
+                            <Setter TargetName="ContentRoot" Property="MinHeight" Value="{DynamicResource AppBarThemeCompactHeight}" />
+                            <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!-- Overflow -->
+                        <Trigger Property="ApplicationViewState" Value="Overflow">
+                            <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
+                            <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <!-- OverflowWithToggleButtons -->
+                        <Trigger Property="ApplicationViewState" Value="OverflowWithToggleButtons">
+                            <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
+                            <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
+                        </Trigger>
+                        <!-- OverflowWithMenuIcons -->
+                        <Trigger Property="ApplicationViewState" Value="OverflowWithMenuIcons">
+                            <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
+                            <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
+                            <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
+                            <Setter TargetName="ContentViewbox" Property="Width" Value="16" />
+                            <Setter TargetName="ContentViewbox" Property="Height" Value="16" />
+                            <Setter TargetName="ContentViewbox" Property="Margin" Value="12,0,12,0" />
+                            <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
+                        </Trigger>
+                        <!-- OverflowWithToggleButtonsAndMenuIcons -->
+                        <Trigger Property="ApplicationViewState" Value="OverflowWithToggleButtonsAndMenuIcons">
+                            <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
+                            <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
+                            <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
+                            <Setter TargetName="ContentViewbox" Property="Width" Value="16" />
+                            <Setter TargetName="ContentViewbox" Property="Height" Value="16" />
+                            <Setter TargetName="ContentViewbox" Property="Margin" Value="38,0,12,0" />
+                            <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="76,0,12,0" />
+                        </Trigger>
+                        <!--#endregion-->
+                        <!--#region CommonStates-->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsInOverflow" Value="False" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
+                            <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
+                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />-->
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsInOverflow" Value="False" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                            <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />-->
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundDisabled}" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushDisabled}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarButtonBorderBrushDisabled}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarButtonForegroundDisabled}" />
+                            <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundDisabled}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundDisabled}" />
+                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundDisabled}" />-->
+                        </Trigger>
+                        <!-- OverflowPointerOver -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsInOverflow" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
+                            <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
+                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />-->
+                            <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPointerOver}" />
+                        </MultiTrigger>
+                        <!-- OverflowPressed -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsInOverflow" Value="True" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                            <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />-->
+                            <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPressed}" />
+                        </MultiTrigger>
+                        <!-- OverflowSubMenuOpened -->
+                        <!--<MultiTrigger>
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundSubMenuOpened}" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushSubMenuOpened}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarButtonBorderBrushSubMenuOpened}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarButtonForegroundSubMenuOpened}" />
+                            <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundSubMenuOpened}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundSubMenuOpened}" />
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened}" />
+                            <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundSubMenuOpened}" />
+                        </MultiTrigger>-->
+                        <!--#endregion-->
+                        <Trigger Property="ToolBar.IsOverflowItem" Value="True">
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="Width" Value="NaN" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="ToolBar.IsOverflowItem" Value="True" />
+                                <Condition Property="HasFlyout" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

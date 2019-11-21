@@ -246,15 +246,18 @@ namespace ModernWpf.Controls.Primitives
 
         private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)
         {
-            var placement = Placement;
+            return PositionPopup(Placement, popupSize, targetSize, s_offset);
+        }
 
-            CustomPopupPlacement preferredPlacement = GetPopupPlacement(placement, popupSize, targetSize);
+        internal static CustomPopupPlacement[] PositionPopup(FlyoutPlacementMode placement, Size popupSize, Size targetSize, double offset = 0)
+        {
+            CustomPopupPlacement preferredPlacement = GetPopupPlacement(placement, popupSize, targetSize, offset);
 
             CustomPopupPlacement? alternativePlacement = null;
             var alternativePlacementMode = GetAlternativePlacementMode(placement);
             if (alternativePlacementMode.HasValue)
             {
-                alternativePlacement = GetPopupPlacement(alternativePlacementMode.Value, popupSize, targetSize);
+                alternativePlacement = GetPopupPlacement(alternativePlacementMode.Value, popupSize, targetSize, offset);
             }
 
             if (alternativePlacement.HasValue)
@@ -267,7 +270,7 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private static CustomPopupPlacement GetPopupPlacement(FlyoutPlacementMode placement, Size popupSize, Size targetSize)
+        private static CustomPopupPlacement GetPopupPlacement(FlyoutPlacementMode placement, Size popupSize, Size targetSize, double offset)
         {
             Point point;
             PopupPrimaryAxis primaryAxis;
@@ -276,22 +279,22 @@ namespace ModernWpf.Controls.Primitives
             {
                 case FlyoutPlacementMode.Top:
                     point = new Point((targetSize.Width - popupSize.Width) / 2, -popupSize.Height);
-                    point.Y -= s_offset;
+                    point.Y -= offset;
                     primaryAxis = PopupPrimaryAxis.Vertical;
                     break;
                 case FlyoutPlacementMode.Bottom:
                     point = new Point((targetSize.Width - popupSize.Width) / 2, targetSize.Height);
-                    point.Y += s_offset;
+                    point.Y += offset;
                     primaryAxis = PopupPrimaryAxis.Vertical;
                     break;
                 case FlyoutPlacementMode.Left:
                     point = new Point(-popupSize.Width, (targetSize.Height - popupSize.Height) / 2);
-                    point.X -= s_offset;
+                    point.X -= offset;
                     primaryAxis = PopupPrimaryAxis.Horizontal;
                     break;
                 case FlyoutPlacementMode.Right:
                     point = new Point(targetSize.Width, (targetSize.Height - popupSize.Height) / 2);
-                    point.X += s_offset;
+                    point.X += offset;
                     primaryAxis = PopupPrimaryAxis.Horizontal;
                     break;
                 case FlyoutPlacementMode.Full:
@@ -300,42 +303,42 @@ namespace ModernWpf.Controls.Primitives
                     break;
                 case FlyoutPlacementMode.TopEdgeAlignedLeft:
                     point = new Point(0, -popupSize.Height);
-                    point.Y -= s_offset;
+                    point.Y -= offset;
                     primaryAxis = PopupPrimaryAxis.Vertical;
                     break;
                 case FlyoutPlacementMode.TopEdgeAlignedRight:
                     point = new Point(targetSize.Width - popupSize.Width, -popupSize.Height);
-                    point.Y -= s_offset;
+                    point.Y -= offset;
                     primaryAxis = PopupPrimaryAxis.Vertical;
                     break;
                 case FlyoutPlacementMode.BottomEdgeAlignedLeft:
                     point = new Point(0, targetSize.Height);
-                    point.Y += s_offset;
+                    point.Y += offset;
                     primaryAxis = PopupPrimaryAxis.Vertical;
                     break;
                 case FlyoutPlacementMode.BottomEdgeAlignedRight:
                     point = new Point(targetSize.Width - popupSize.Width, targetSize.Height);
-                    point.Y += s_offset;
+                    point.Y += offset;
                     primaryAxis = PopupPrimaryAxis.Vertical;
                     break;
                 case FlyoutPlacementMode.LeftEdgeAlignedTop:
                     point = new Point(-popupSize.Width, 0);
-                    point.X -= s_offset;
+                    point.X -= offset;
                     primaryAxis = PopupPrimaryAxis.Horizontal;
                     break;
                 case FlyoutPlacementMode.LeftEdgeAlignedBottom:
                     point = new Point(-popupSize.Width, targetSize.Height - popupSize.Height);
-                    point.X -= s_offset;
+                    point.X -= offset;
                     primaryAxis = PopupPrimaryAxis.Horizontal;
                     break;
                 case FlyoutPlacementMode.RightEdgeAlignedTop:
                     point = new Point(targetSize.Width, 0);
-                    point.X += s_offset;
+                    point.X += offset;
                     primaryAxis = PopupPrimaryAxis.Horizontal;
                     break;
                 case FlyoutPlacementMode.RightEdgeAlignedBottom:
                     point = new Point(targetSize.Width, targetSize.Height - popupSize.Height);
-                    point.X += s_offset;
+                    point.X += offset;
                     primaryAxis = PopupPrimaryAxis.Horizontal;
                     break;
                 //case FlyoutPlacementMode.Auto:

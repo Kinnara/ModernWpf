@@ -1,0 +1,33 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style TargetType="local:AppBarSeparator">
+        <Setter Property="Foreground" Value="{DynamicResource AppBarSeparatorForeground}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:AppBarSeparator">
+                    <Grid
+                        x:Name="SeparatorRectangle"
+                        Width="1"
+                        Height="20"
+                        Background="{TemplateBinding Foreground}"
+                        Margin="16,12,15,12"
+                        VerticalAlignment="Top"
+                        SnapsToDevicePixels="True" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ApplicationViewState" Value="Overflow">
+                            <Setter TargetName="SeparatorRectangle" Property="Width" Value="NaN" />
+                            <Setter TargetName="SeparatorRectangle" Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter TargetName="SeparatorRectangle" Property="Height" Value="1" />
+                            <Setter TargetName="SeparatorRectangle" Property="Margin" Value="12,4,12,4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

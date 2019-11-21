@@ -11,6 +11,13 @@
     d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
+    <UserControl.Resources>
+        <Style TargetType="sc:ControlExample">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+        </Style>
+    </UserControl.Resources>
+
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
             <sc:ControlExample
@@ -32,9 +39,15 @@
                         VerticalAlignment="Center" />
                 </StackPanel>
                 <sc:ControlExample.Options>
-                    <CheckBox
-                        Content="IsCompact"
-                        IsChecked="{Binding ElementName=Button1, Path=IsCompact}" />
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <CheckBox
+                            Content="IsCompact"
+                            IsChecked="{Binding ElementName=Button1, Path=IsCompact}" />
+                        <ComboBox
+                            ui:ControlHelper.Header="LabelPosition"
+                            ItemsSource="{Binding Source={x:Type ui:CommandBarLabelPosition}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=Button1, Path=LabelPosition, Mode=TwoWay}" />
+                    </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
             <sc:ControlExample
@@ -55,11 +68,6 @@
                         Margin="8,0,0,0"
                         VerticalAlignment="Center" />
                 </StackPanel>
-                <sc:ControlExample.Options>
-                    <CheckBox
-                        Content="IsCompact"
-                        IsChecked="{Binding ElementName=Button2, Path=IsCompact}" />
-                </sc:ControlExample.Options>
             </sc:ControlExample>
             <sc:ControlExample
                 x:Name="Example3"
@@ -81,11 +89,6 @@
                         Margin="8,0,0,0"
                         VerticalAlignment="Center" />
                 </StackPanel>
-                <sc:ControlExample.Options>
-                    <CheckBox
-                        Content="IsCompact"
-                        IsChecked="{Binding ElementName=Button3, Path=IsCompact}" />
-                </sc:ControlExample.Options>
             </sc:ControlExample>
             <sc:ControlExample
                 x:Name="Example4"
@@ -105,11 +108,6 @@
                         Margin="8,0,0,0"
                         VerticalAlignment="Center" />
                 </StackPanel>
-                <sc:ControlExample.Options>
-                    <CheckBox
-                        Content="IsCompact"
-                        IsChecked="{Binding ElementName=Button4, Path=IsCompact}" />
-                </sc:ControlExample.Options>
             </sc:ControlExample>
             <sc:ControlExample HeaderText="AppBarButtons separated by AppBarSeparators.">
                 <sc:ControlExample.Example>

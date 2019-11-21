@@ -1,0 +1,125 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.SimpleToolBarPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900"
+    Style="{StaticResource ControlPageStyle}">
+
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <sc:ControlExample
+                HeaderText="A SimpleToolBar with labels on the side free floating in a page"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Top">
+                <ui:SimpleToolBar
+                    x:Name="ToolBar1"
+                    DefaultLabelPosition="Right">
+                    <ui:AppBarButton
+                        x:Name="addButton"
+                        Label="Add">
+                        <ui:AppBarButton.Icon>
+                            <ui:SymbolIcon Symbol="Add" />
+                        </ui:AppBarButton.Icon>
+                    </ui:AppBarButton>
+                    <ui:AppBarButton
+                        x:Name="shareButton"
+                        Label="Share">
+                        <ui:AppBarButton.Icon>
+                            <ui:SymbolIcon Symbol="ReShare" />
+                        </ui:AppBarButton.Icon>
+                    </ui:AppBarButton>
+                    <ui:AppBarButton
+                        x:Name="editButton"
+                        Label="Edit">
+                        <ui:AppBarButton.Icon>
+                            <ui:SymbolIcon Symbol="Edit" />
+                        </ui:AppBarButton.Icon>
+                    </ui:AppBarButton>
+
+                    <!--#region Overflow-->
+                    <ui:AppBarButton
+                        Label="Settings"
+                        ToolBar.OverflowMode="Always">
+                        <ui:AppBarButton.Icon>
+                            <ui:SymbolIcon Symbol="Setting" />
+                        </ui:AppBarButton.Icon>
+                        <!--<ui:AppBarButton.Flyout>
+                            <ui:Flyout>
+                                <Rectangle
+                                    Width="200"
+                                    Height="200"
+                                    Fill="Gray" />
+                            </ui:Flyout>
+                        </ui:AppBarButton.Flyout>-->
+                    </ui:AppBarButton>
+
+                    <ui:AppBarButton
+                        Label="Button 1"
+                        ToolBar.OverflowMode="Always">
+                        <ui:AppBarButton.Icon>
+                            <ui:SymbolIcon Symbol="Add" />
+                        </ui:AppBarButton.Icon>
+                    </ui:AppBarButton>
+
+                    <ui:AppBarButton
+                        Label="Button 2"
+                        ToolBar.OverflowMode="Always">
+                        <ui:AppBarButton.Icon>
+                            <ui:SymbolIcon Symbol="Delete" />
+                        </ui:AppBarButton.Icon>
+                    </ui:AppBarButton>
+
+                    <ui:AppBarSeparator ToolBar.OverflowMode="Always" />
+
+                    <ui:AppBarButton
+                        Label="Button 3"
+                        ToolBar.OverflowMode="Always">
+                        <ui:AppBarButton.Icon>
+                            <ui:SymbolIcon Symbol="FontDecrease" />
+                        </ui:AppBarButton.Icon>
+                    </ui:AppBarButton>
+
+                    <ui:AppBarButton
+                        Label="Button 4"
+                        ToolBar.OverflowMode="Always">
+                        <ui:AppBarButton.Icon>
+                            <ui:SymbolIcon Symbol="FontIncrease" />
+                        </ui:AppBarButton.Icon>
+                    </ui:AppBarButton>
+
+                    <ui:AppBarSeparator ToolBar.OverflowMode="Always" />
+
+                    <ui:AppBarToggleButton
+                        IsChecked="True"
+                        Label="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, StringFormat='IsChecked = {0}'}"
+                        ToolBar.OverflowMode="Always">
+                        <ui:AppBarToggleButton.Icon>
+                            <ui:SymbolIcon />
+                        </ui:AppBarToggleButton.Icon>
+                    </ui:AppBarToggleButton>
+                    <!--#endregion-->
+                </ui:SimpleToolBar>
+
+                <sc:ControlExample.Options>
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <ComboBox
+                            ui:ControlHelper.Header="DefaultLabelPosition"
+                            ItemsSource="{Binding Source={x:Type ui:CommandBarDefaultLabelPosition}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=ToolBar1, Path=DefaultLabelPosition, Mode=TwoWay}" />
+                        <ComboBox
+                            ui:ControlHelper.Header="OverflowButtonVisibility"
+                            ItemsSource="{Binding Source={x:Type Visibility}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=ToolBar1, Path=OverflowButtonVisibility, Mode=TwoWay}" />
+                    </ui:SimpleStackPanel>
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
