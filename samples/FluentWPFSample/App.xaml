@@ -1,0 +1,44 @@
+﻿<Application
+    x:Class="FluentWPFSample.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:FluentWPFSample"
+    StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- FluentWPF Controls -->
+                <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Controls.xaml" />
+
+                <ui:ThemeResources>
+                    <ui:ThemeResources.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Light">
+                            <ResourceDictionary.MergedDictionaries>
+                                <!-- 1. FluentWPF theme resources -->
+                                <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Colors.Light.xaml" />
+                                <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Brushes.xaml" />
+                                <!-- 2. ModernWPF theme resources -->
+                                <ui:DefaultThemeResources Key="Light" />
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="Dark">
+                            <ResourceDictionary.MergedDictionaries>
+                                <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Colors.Dark.xaml" />
+                                <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Brushes.xaml" />
+                                <ui:DefaultThemeResources Key="Dark" />
+                            </ResourceDictionary.MergedDictionaries>
+                            <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource SystemBaseHighColor}" />
+                        </ResourceDictionary>
+                    </ui:ThemeResources.ThemeDictionaries>
+                </ui:ThemeResources>
+
+                <!-- ModernWPF controls resources -->
+                <ui:XamlControlsResources />
+                <!-- ModernWPF resources for MahApps -->
+                <ResourceDictionary Source="/ModernWpf.MahApps;component/Styles/Controls.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

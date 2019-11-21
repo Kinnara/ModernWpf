@@ -1,0 +1,107 @@
+﻿<fw:AcrylicWindow
+    x:Name="Window"
+    x:Class="FluentWPFSample.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:local="clr-namespace:FluentWPFSample"
+    mc:Ignorable="d"
+    Title="FluentWPF Sample"
+    Width="800"
+    Height="600"
+    ExtendViewIntoTitleBar="True"
+    ui:ThemeManager.IsThemeAware="True"
+    ui:ThemeManager.ActualThemeChanged="Window_ActualThemeChanged">
+
+    <Window.Resources>
+        <sc:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
+    </Window.Resources>
+
+    <Grid>
+        <ui:HamburgerMenuEx
+            x:Name="NavView"
+            IsBackButtonVisible="True"
+            IsBackEnabled="False"
+            PaneBackground="Transparent"
+            IsPaneOpen="True"
+            SelectedIndex="0">
+
+            <mah:HamburgerMenu.ItemsSource>
+                <mah:HamburgerMenuItemCollection x:Name="NavViewItems">
+
+                    <mah:HamburgerMenuIconItem Label="Sample Item 1">
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <ui:SymbolIcon Symbol="Home" />
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
+
+                    <mah:HamburgerMenuIconItem Label="Sample Item 2">
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <ui:SymbolIcon Symbol="Keyboard" />
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
+
+                    <mah:HamburgerMenuIconItem Label="Sample Item 3">
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <ui:SymbolIcon Symbol="Library" />
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
+
+                    <mah:HamburgerMenuIconItem Label="Sample Item 4">
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <ui:SymbolIcon Symbol="Mail" />
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
+
+                </mah:HamburgerMenuItemCollection>
+            </mah:HamburgerMenu.ItemsSource>
+
+            <Border Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
+                <ui:SimpleStackPanel
+                    Spacing="24"
+                    Margin="24,32,24,0">
+                    <TextBlock
+                        Text="{Binding ElementName=Window, Path=Title}"
+                        Style="{StaticResource HeaderTextBlockStyle}" />
+                    <Border
+                        Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
+                        HorizontalAlignment="Left"
+                        Width="200"
+                        Padding="12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <ui:SimpleStackPanel Spacing="24">
+                            <TextBox
+                                ui:ControlHelper.Header="Application theme"
+                                Text="{Binding ActualApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay}"
+                                IsReadOnly="True" />
+                            <TextBox
+                                ui:ControlHelper.Header="Inherited element theme"
+                                Text="{Binding Path=(ui:ThemeManager.ActualTheme), RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                                IsReadOnly="True" />
+                        </ui:SimpleStackPanel>
+                    </Border>
+                    <Border
+                        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
+                        HorizontalAlignment="Left"
+                        Width="200"
+                        Padding="12"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
+                        <TextBox
+                            ui:ControlHelper.Header="Inverse element theme"
+                            Text="{Binding Path=(ui:ThemeManager.ActualTheme), RelativeSource={RelativeSource Self}, Mode=OneWay}"
+                            IsReadOnly="True" />
+                    </Border>
+                    <Button
+                        Content="Invert theme"
+                        Click="InvertTheme" />
+                </ui:SimpleStackPanel>
+            </Border>
+        </ui:HamburgerMenuEx>
+    </Grid>
+</fw:AcrylicWindow>

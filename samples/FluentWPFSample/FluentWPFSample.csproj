@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentWPF" Version="0.8.0" />
+    <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0605" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
+    <ProjectReference Include="..\..\ModernWpf.MahApps\ModernWpf.MahApps.csproj" />
+    <ProjectReference Include="..\..\ModernWpf\ModernWpf.csproj" />
+    <ProjectReference Include="..\SamplesCommon\SamplesCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="..\..\ModernWpf\DesignTime\ResourceKeys.xaml" Link="DesignTime\ResourceKeys.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Properties\DesignTimeResources.xaml">
+      <ContainsDesignTimeResources>True</ContainsDesignTimeResources>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+</Project>

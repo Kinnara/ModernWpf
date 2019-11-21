@@ -1,0 +1,10 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:designTime="clr-namespace:FluentWPFSample.DesignTime">
+
+    <ResourceDictionary.MergedDictionaries>
+        <designTime:IntellisenseResources Source="/DesignTime/ResourceKeys.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>
