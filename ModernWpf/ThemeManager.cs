@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using ModernWpf.DesignTime;
+﻿using ModernWpf.DesignTime;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -666,23 +665,7 @@ namespace ModernWpf
 
         private static ApplicationTheme GetDefaultAppTheme()
         {
-            try
-            {
-                var personalize = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize");
-                if (personalize != null)
-                {
-                    var appsUseLightTheme = personalize.GetValue("AppsUseLightTheme");
-                    if (appsUseLightTheme is int value && value != 1)
-                    {
-                        return ModernWpf.ApplicationTheme.Dark;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-            }
-
-            return ModernWpf.ApplicationTheme.Light;
+            return ColorsHelper.Current.SystemTheme.GetValueOrDefault(ModernWpf.ApplicationTheme.Light);
         }
 
         private static Uri GetDefaultSource(string theme)
@@ -745,9 +728,8 @@ namespace ModernWpf
             var appResources = Application.Current.Resources;
             appResources.MergedDictionaries.RemoveAll<IntellisenseResourcesBase>();
 
-            ColorsHelper.Current.BackgroundColorChanged += OnSystemBackgroundColorChanged;
+            ColorsHelper.Current.SystemThemeChanged += OnSystemThemeChanged;
             ColorsHelper.Current.AccentColorChanged += OnSystemAccentColorChanged;
-            ColorsHelper.Current.Initialize();
             appResources.MergedDictionaries.Insert(0, ColorsHelper.Current.Colors);
 
             UpdateActualAccentColor();
@@ -759,7 +741,7 @@ namespace ModernWpf
             ApplyApplicationTheme();
         }
 
-        private void OnSystemBackgroundColorChanged(object sender, EventArgs e)
+        private void OnSystemThemeChanged(object sender, EventArgs e)
         {
             Dispatcher.BeginInvoke(() =>
             {

@@ -29,34 +29,23 @@ namespace ModernWpf
 
         private ColorsHelper()
         {
+            if (SystemColorsSupported)
+            {
+                ListenToSystemColorChanges();
+            }
         }
 
         public static bool SystemColorsSupported { get; } = Environment.OSVersion.Version.Major >= 10;
 
         public static ColorsHelper Current { get; } = new ColorsHelper();
 
-        public bool IsInitialized { get; private set; }
-
         public ResourceDictionary Colors => _colors;
 
-        public event EventHandler BackgroundColorChanged;
+        public ApplicationTheme? SystemTheme { get; private set; }
+
+        public event EventHandler SystemThemeChanged;
 
         public event EventHandler AccentColorChanged;
-
-        public void Initialize()
-        {
-            if (IsInitialized)
-            {
-                return;
-            }
-
-            if (SystemColorsSupported)
-            {
-                ListenToSystemColorChanges();
-            }
-
-            IsInitialized = true;
-        }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void FetchSystemAccentColors()
@@ -147,7 +136,8 @@ namespace ModernWpf
                 if (_systemBackground != background)
                 {
                     _systemBackground = background;
-                    BackgroundColorChanged?.Invoke(null, EventArgs.Empty);
+                    UpdateSystemAppTheme();
+                    SystemThemeChanged?.Invoke(null, EventArgs.Empty);
                 }
 
                 var accent = sender.GetColorValue(UIColorType.Accent).ToColor();
@@ -159,6 +149,18 @@ namespace ModernWpf
             };
 
             _uiSettings = uiSettings;
+
+            UpdateSystemAppTheme();
+        }
+
+        private void UpdateSystemAppTheme()
+        {
+            SystemTheme = IsDarkBackground(_systemBackground) ? ApplicationTheme.Dark : ApplicationTheme.Light;
+        }
+
+        private static bool IsDarkBackground(Color color)
+        {
+            return color.R + color.G + color.B < (255 * 3 - color.R - color.G - color.B);
         }
     }
 }
