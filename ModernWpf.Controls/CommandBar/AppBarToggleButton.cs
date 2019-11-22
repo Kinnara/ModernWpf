@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using ModernWpf.Controls.Primitives;
@@ -24,7 +25,6 @@ namespace ModernWpf.Controls
 
         public AppBarToggleButton()
         {
-            this.SetBinding(PrivateIsOverflowItemProperty, ToolBar.IsOverflowItemProperty, this);
             UpdateIsInOverflow();
             UpdateIsCheckedOrIndeterminate();
             UpdateApplicationViewState();
@@ -216,7 +216,8 @@ namespace ModernWpf.Controls
             else
             {
                 CommandBarDefaultLabelPosition defaultLabelPosition;
-                if (Parent is SimpleToolBar)
+
+                if (VisualParent is ToolBarPanel)
                 {
                     defaultLabelPosition = (CommandBarDefaultLabelPosition)GetValue(SimpleToolBar.DefaultLabelPositionProperty);
                 }
@@ -274,21 +275,22 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region PrivateIsOverflowItem
-
-        private static readonly DependencyProperty PrivateIsOverflowItemProperty =
-            DependencyProperty.Register(
-                "PrivateIsOverflowItem",
-                typeof(bool),
-                typeof(AppBarToggleButton),
-                new PropertyMetadata(false, OnPrivateIsOverflowItemChanged));
-
-        private static void OnPrivateIsOverflowItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
-            ((AppBarToggleButton)d).UpdateIsInOverflow();
+            base.OnVisualParentChanged(oldParent);
+
+            UpdateApplicationViewState();
         }
 
-        #endregion
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property == ToolBar.IsOverflowItemProperty)
+            {
+                UpdateIsInOverflow();
+            }
+        }
 
         private static void OnIsCheckedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

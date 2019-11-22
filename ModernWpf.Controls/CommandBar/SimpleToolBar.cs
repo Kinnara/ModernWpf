@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -11,6 +12,10 @@ namespace ModernWpf.Controls
         static SimpleToolBar()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SimpleToolBar), new FrameworkPropertyMetadata(typeof(SimpleToolBar)));
+        }
+
+        public SimpleToolBar()
+        {
         }
 
         #region DefaultLabelPosition
@@ -30,19 +35,41 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region IsDynamicOverflowEnabled
+
+        public static readonly DependencyProperty IsDynamicOverflowEnabledProperty =
+            DependencyProperty.Register(
+                nameof(IsDynamicOverflowEnabled),
+                typeof(bool),
+                typeof(SimpleToolBar),
+                new PropertyMetadata(true));
+
+        public bool IsDynamicOverflowEnabled
+        {
+            get => (bool)GetValue(IsDynamicOverflowEnabledProperty);
+            set => SetValue(IsDynamicOverflowEnabledProperty, value);
+        }
+
+        #endregion
+
         #region OverflowButtonVisibility
 
         public static readonly DependencyProperty OverflowButtonVisibilityProperty =
             DependencyProperty.Register(
                 nameof(OverflowButtonVisibility),
-                typeof(Visibility),
+                typeof(CommandBarOverflowButtonVisibility),
                 typeof(SimpleToolBar),
-                new PropertyMetadata(Visibility.Visible));
+                new PropertyMetadata(CommandBarOverflowButtonVisibility.Auto, OnOverflowButtonVisibilityChanged));
 
-        public Visibility OverflowButtonVisibility
+        public CommandBarOverflowButtonVisibility OverflowButtonVisibility
         {
-            get => (Visibility)GetValue(OverflowButtonVisibilityProperty);
+            get => (CommandBarOverflowButtonVisibility)GetValue(OverflowButtonVisibilityProperty);
             set => SetValue(OverflowButtonVisibilityProperty, value);
+        }
+
+        private static void OnOverflowButtonVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((SimpleToolBar)d).UpdateEffectiveOverflowButtonVisibility();
         }
 
         #endregion
@@ -94,6 +121,68 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region EffectiveOverflowButtonVisibility
+
+        private static readonly DependencyPropertyKey EffectiveOverflowButtonVisibilityPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(EffectiveOverflowButtonVisibility),
+                typeof(Visibility),
+                typeof(SimpleToolBar),
+                new PropertyMetadata(Visibility.Visible, OnEffectiveOverflowButtonVisibilityChanged));
+
+        public static readonly DependencyProperty EffectiveOverflowButtonVisibilityProperty =
+            EffectiveOverflowButtonVisibilityPropertyKey.DependencyProperty;
+
+        public Visibility EffectiveOverflowButtonVisibility
+        {
+            get => (Visibility)GetValue(EffectiveOverflowButtonVisibilityProperty);
+            private set => SetValue(EffectiveOverflowButtonVisibilityPropertyKey, value);
+        }
+
+        private static void OnEffectiveOverflowButtonVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((SimpleToolBar)d).OnEffectiveOverflowButtonVisibilityChanged();
+        }
+
+        private void OnEffectiveOverflowButtonVisibilityChanged()
+        {
+            var layoutRoot = m_layoutRoot;
+            if (layoutRoot != null)
+            {
+                if (layoutRoot.ActualHeight > 0)
+                {
+                    Dispatcher.BeginInvoke(() =>
+                    {
+                        layoutRoot.Height = layoutRoot.ActualHeight;
+                        layoutRoot.UpdateLayout();
+                        layoutRoot.ClearValue(HeightProperty);
+                    });
+                }
+            }
+        }
+
+        private void UpdateEffectiveOverflowButtonVisibility()
+        {
+            bool visible = true;
+
+            switch (OverflowButtonVisibility)
+            {
+                case CommandBarOverflowButtonVisibility.Auto:
+                    if (this.HasLocalValue(HasOverflowItemsProperty))
+                    {
+                        visible = HasOverflowItems;
+                    }
+                    break;
+                case CommandBarOverflowButtonVisibility.Collapsed:
+                    visible = false;
+                    break;
+            }
+
+            EffectiveOverflowButtonVisibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        #endregion
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -104,8 +193,10 @@ namespace ModernWpf.Controls
                 m_overflowPopup.Opened -= OnOverflowPopupOpened;
             }
 
+            m_layoutRoot = this.GetTemplateRoot();
             m_overflowPopup = GetTemplateChild(OverflowPopupName) as Popup;
-            m_overflowPanel = GetTemplateChild(ToolBarOverflowPanelName) as ToolBarOverflowPanel;
+            m_toolBarPanel = GetTemplateChild(ToolBarPanelName) as ToolBarPanel;
+            m_toolBarOverflowPanel = GetTemplateChild(ToolBarOverflowPanelName) as SimpleToolBarOverflowPanel;
 
             if (m_overflowPopup != null)
             {
@@ -119,20 +210,33 @@ namespace ModernWpf.Controls
         {
             base.PrepareContainerForItemOverride(element, item);
 
-            if (element is AppBarButton appBarButton)
+            if (element is AppBarButton ||
+                element is AppBarToggleButton)
             {
-                appBarButton.SetBinding(DefaultLabelPositionProperty, DefaultLabelPositionProperty, this);
+                var appBarElement = (FrameworkElement)element;
+                appBarElement.SetBinding(DefaultLabelPositionProperty, DefaultLabelPositionProperty, this);
             }
         }
 
         protected override void ClearContainerForItemOverride(DependencyObject element, object item)
         {
-            if (element is AppBarButton appBarButton)
+            if (element is AppBarButton ||
+                element is AppBarToggleButton)
             {
-                appBarButton.ClearValue(DefaultLabelPositionProperty);
+                element.ClearValue(DefaultLabelPositionProperty);
             }
 
             base.ClearContainerForItemOverride(element, item);
+        }
+
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property == HasOverflowItemsProperty)
+            {
+                UpdateEffectiveOverflowButtonVisibility();
+            }
         }
 
         private void OnOverflowPopupOpened(object sender, EventArgs e)
@@ -145,10 +249,13 @@ namespace ModernWpf.Controls
             return FlyoutBase.PositionPopup(FlyoutPlacementMode.BottomEdgeAlignedRight, popupSize, targetSize);
         }
 
+        private FrameworkElement m_layoutRoot;
         private Popup m_overflowPopup;
-        private ToolBarOverflowPanel m_overflowPanel;
+        private ToolBarPanel m_toolBarPanel;
+        private SimpleToolBarOverflowPanel m_toolBarOverflowPanel;
 
         private const string OverflowPopupName = "OverflowPopup";
+        private const string ToolBarPanelName = "PART_ToolBarPanel";
         private const string ToolBarOverflowPanelName = "PART_ToolBarOverflowPanel";
     }
 }

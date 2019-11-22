@@ -16,7 +16,6 @@ namespace ModernWpf.Controls
 
         public AppBarSeparator()
         {
-            this.SetBinding(PrivateIsOverflowItemProperty, ToolBar.IsOverflowItemProperty, this);
             UpdateApplicationViewState();
         }
 
@@ -112,21 +111,15 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region PrivateIsOverflowItem
-
-        private static readonly DependencyProperty PrivateIsOverflowItemProperty =
-            DependencyProperty.Register(
-                "PrivateIsOverflowItem",
-                typeof(bool),
-                typeof(AppBarSeparator),
-                new PropertyMetadata(false, OnPrivateIsOverflowItemChanged));
-
-        private static void OnPrivateIsOverflowItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
-            ((AppBarSeparator)d).UpdateIsInOverflow();
-        }
+            base.OnPropertyChanged(e);
 
-        #endregion
+            if (e.Property == ToolBar.IsOverflowItemProperty)
+            {
+                UpdateIsInOverflow();
+            }
+        }
 
         private static void OnOverflowModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

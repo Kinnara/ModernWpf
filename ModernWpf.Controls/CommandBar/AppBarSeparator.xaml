@@ -14,7 +14,7 @@
                         Width="1"
                         Height="20"
                         Background="{TemplateBinding Foreground}"
-                        Margin="16,12,15,12"
+                        Margin="16,10,15,10"
                         VerticalAlignment="Top"
                         SnapsToDevicePixels="True" />
                     <ControlTemplate.Triggers>

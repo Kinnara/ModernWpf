@@ -34,9 +34,18 @@ namespace ModernWpf.Controls
             }
         }
 
-        public static BindingExpressionBase SetBinding(this FrameworkElement element, DependencyProperty dp, DependencyProperty sourceDP, DependencyObject source)
+        public static BindingExpressionBase SetBinding(
+            this FrameworkElement element,
+            DependencyProperty dp,
+            DependencyProperty sourceDP,
+            DependencyObject source)
         {
             return element.SetBinding(dp, new Binding { Path = new PropertyPath(sourceDP), Source = source });
+        }
+
+        public static bool HasLocalValue(this DependencyObject d, DependencyProperty dp)
+        {
+            return d.ReadLocalValue(dp) != DependencyProperty.UnsetValue;
         }
     }
 }

@@ -20,18 +20,6 @@
                     <Grid
                         x:Name="LayoutRoot"
                         SnapsToDevicePixels="True">
-                        <VisualStateManager.VisualStateGroups>
-                            <!--<VisualStateGroup x:Name="DynamicOverflowStates">
-                                <VisualState x:Name="DynamicOverflowDisabled" />
-                                <VisualState x:Name="DynamicOverflowEnabled">
-                                    <VisualState.Setters>
-                                        <Setter Target="ContentControlColumnDefinition.Width" Value="Auto" />
-                                        <Setter Target="PrimaryItemsControlColumnDefinition.Width" Value="*" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>-->
-
-                        </VisualStateManager.VisualStateGroups>
                         <Grid
                             x:Name="ContentRoot"
                             VerticalAlignment="Top"
@@ -43,9 +31,6 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Grid.RenderTransform>
-                                <TranslateTransform x:Name="ContentTransform" />
-                            </Grid.RenderTransform>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition x:Name="ContentControlColumnDefinition" Width="*" />
@@ -83,9 +68,9 @@
                                 Style="{DynamicResource EllipsisButton}"
                                 Padding="{DynamicResource CommandBarMoreButtonMargin}"
                                 MinHeight="{DynamicResource AppBarThemeCompactHeight}"
-                                VerticalAlignment="Center"
+                                VerticalAlignment="Top"
                                 Grid.Column="1"
-                                Visibility="{TemplateBinding OverflowButtonVisibility}"
+                                Visibility="{TemplateBinding EffectiveOverflowButtonVisibility}"
                                 IsChecked="{Binding Path=IsOverflowOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                 ClickMode="Press">
                                 <ui:FontIcon
@@ -149,6 +134,11 @@
                         <!--<Trigger>
                             <Setter TargetName="PrimaryItemsControl" Property="Visibility" Value="Collapsed" />
                         </Trigger>-->
+                        <!-- DynamicOverflowEnabled -->
+                        <Trigger Property="IsDynamicOverflowEnabled" Value="True">
+                            <Setter TargetName="ContentControlColumnDefinition" Property="Width" Value="Auto" />
+                            <Setter TargetName="PrimaryItemsControlColumnDefinition" Property="Width" Value="*" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

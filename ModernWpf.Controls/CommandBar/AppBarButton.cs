@@ -23,7 +23,6 @@ namespace ModernWpf.Controls
 
         public AppBarButton()
         {
-            this.SetBinding(PrivateIsOverflowItemProperty, ToolBar.IsOverflowItemProperty, this);
             UpdateIsInOverflow();
             UpdateApplicationViewState();
         }
@@ -194,7 +193,7 @@ namespace ModernWpf.Controls
         public AppBarElementApplicationViewState ApplicationViewState
         {
             get => (AppBarElementApplicationViewState)GetValue(ApplicationViewStateProperty);
-            internal set => SetValue(ApplicationViewStatePropertyKey, value);
+            private set => SetValue(ApplicationViewStatePropertyKey, value);
         }
 
         internal void UpdateApplicationViewStateInOverflow(bool hasToggleButton, bool hasMenuIcon)
@@ -243,11 +242,12 @@ namespace ModernWpf.Controls
             else
             {
                 CommandBarDefaultLabelPosition defaultLabelPosition;
-                if (Parent is SimpleToolBar)
+
+                if (VisualParent is ToolBarPanel)
                 {
                     defaultLabelPosition = (CommandBarDefaultLabelPosition)GetValue(SimpleToolBar.DefaultLabelPositionProperty);
                 }
-                else
+                else 
                 {
                     defaultLabelPosition = CommandBarDefaultLabelPosition.Bottom;
                 }
@@ -301,21 +301,22 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region PrivateIsOverflowItem
-
-        private static readonly DependencyProperty PrivateIsOverflowItemProperty =
-            DependencyProperty.Register(
-                "PrivateIsOverflowItem",
-                typeof(bool),
-                typeof(AppBarButton),
-                new PropertyMetadata(false, OnPrivateIsOverflowItemChanged));
-
-        private static void OnPrivateIsOverflowItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
-            ((AppBarButton)d).UpdateIsInOverflow();
+            base.OnVisualParentChanged(oldParent);
+
+            UpdateApplicationViewState();
         }
 
-        #endregion
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property == ToolBar.IsOverflowItemProperty)
+            {
+                UpdateIsInOverflow();
+            }
+        }
 
         private static void OnOverflowModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

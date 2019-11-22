@@ -1,0 +1,38 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style TargetType="local:CommandBar">
+        <Setter Property="Background" Value="{DynamicResource CommandBarBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource CommandBarForeground}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:CommandBar">
+                    <local:SimpleToolBar
+                        x:Name="PART_ToolBar"
+                        Background="{TemplateBinding Background}"
+                        Foreground="{TemplateBinding Foreground}"
+                        IsTabStop="{TemplateBinding IsTabStop}"
+                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Header="{TemplateBinding Content}"
+                        HeaderTemplate="{TemplateBinding ContentTemplate}"
+                        HeaderTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                        HeaderStringFormat="{TemplateBinding ContentStringFormat}"
+                        DefaultLabelPosition="{TemplateBinding DefaultLabelPosition}"
+                        IsDynamicOverflowEnabled="{TemplateBinding IsDynamicOverflowEnabled}"
+                        OverflowButtonVisibility="{TemplateBinding OverflowButtonVisibility}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
