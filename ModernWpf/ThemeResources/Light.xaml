@@ -618,8 +618,8 @@
     <Thickness x:Key="FlyoutBorderThemeThickness">1</Thickness>
     <Thickness x:Key="FlyoutBorderThemePadding">0</Thickness>
     <Thickness x:Key="FlyoutContentThemePadding">12,11,12,12</Thickness>
-    <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemControlTransientBackgroundBrush" />
-    <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemControlTransientBorderBrush" />
+    <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
+    <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemControlForegroundChromeHighBrush" />
 
     <!-- Resources for HyperlinkButton -->
     <m:StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="SystemControlHyperlinkTextBrush" />
