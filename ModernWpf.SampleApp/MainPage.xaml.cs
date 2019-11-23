@@ -21,7 +21,7 @@ namespace ModernWpf.SampleApp
         {
             InitializeComponent();
             //PagesList.SelectedItem = PagesList.Items.OfType<ControlPageInfo>().FirstOrDefault(
-            //    x => x.NavigateUri.ToString().Contains(nameof(SimpleToolBarPage)));
+            //    x => x.NavigateUri.ToString().Contains(nameof(CommandBarPage)));
             NavigateToSelectedPage();
         }
 
@@ -164,6 +164,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(ButtonsPage));
             AddPage(typeof(CalendarPage));
             AddPage(typeof(ComboBoxPage));
+            AddPage(typeof(CommandBarPage));
             AddPage(typeof(ContentDialogPage));
             AddPage(typeof(ContextMenuPage));
             AddPage(typeof(DataGridPage));
@@ -179,7 +180,6 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(PasswordBoxPage));
             AddPage(typeof(ProgressPage));
             AddPage(typeof(RadioButtonsPage));
-            AddPage(typeof(SimpleToolBarPage));
             AddPage(typeof(SliderPage));
             //AddPage(typeof(StatusBarPage));
             AddPage(typeof(TabControlPage));

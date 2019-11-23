@@ -128,7 +128,7 @@ namespace ModernWpf.Controls
                 nameof(EffectiveOverflowButtonVisibility),
                 typeof(Visibility),
                 typeof(SimpleToolBar),
-                new PropertyMetadata(Visibility.Visible, OnEffectiveOverflowButtonVisibilityChanged));
+                new PropertyMetadata(Visibility.Collapsed, OnEffectiveOverflowButtonVisibilityChanged));
 
         public static readonly DependencyProperty EffectiveOverflowButtonVisibilityProperty =
             EffectiveOverflowButtonVisibilityPropertyKey.DependencyProperty;
@@ -146,19 +146,7 @@ namespace ModernWpf.Controls
 
         private void OnEffectiveOverflowButtonVisibilityChanged()
         {
-            var layoutRoot = m_layoutRoot;
-            if (layoutRoot != null)
-            {
-                if (layoutRoot.ActualHeight > 0)
-                {
-                    Dispatcher.BeginInvoke(() =>
-                    {
-                        layoutRoot.Height = layoutRoot.ActualHeight;
-                        layoutRoot.UpdateLayout();
-                        layoutRoot.ClearValue(HeightProperty);
-                    });
-                }
-            }
+            InvalidateLayout();
         }
 
         private void UpdateEffectiveOverflowButtonVisibility()
@@ -168,10 +156,7 @@ namespace ModernWpf.Controls
             switch (OverflowButtonVisibility)
             {
                 case CommandBarOverflowButtonVisibility.Auto:
-                    if (this.HasLocalValue(HasOverflowItemsProperty))
-                    {
-                        visible = HasOverflowItems;
-                    }
+                    visible = HasOverflowItems;
                     break;
                 case CommandBarOverflowButtonVisibility.Collapsed:
                     visible = false;
@@ -204,6 +189,8 @@ namespace ModernWpf.Controls
                 m_overflowPopup.Placement = PlacementMode.Custom;
                 m_overflowPopup.Opened += OnOverflowPopupOpened;
             }
+
+            InvalidateLayout();
         }
 
         protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
@@ -236,6 +223,23 @@ namespace ModernWpf.Controls
             if (e.Property == HasOverflowItemsProperty)
             {
                 UpdateEffectiveOverflowButtonVisibility();
+            }
+        }
+
+        private void InvalidateLayout()
+        {
+            var layoutRoot = m_layoutRoot;
+            if (layoutRoot != null)
+            {
+                Dispatcher.BeginInvoke(() =>
+                {
+                    if (layoutRoot.ActualHeight > 0)
+                    {
+                        layoutRoot.Height = layoutRoot.ActualHeight;
+                        layoutRoot.UpdateLayout();
+                        layoutRoot.ClearValue(HeightProperty);
+                    }
+                });
             }
         }
 
