@@ -1264,6 +1264,145 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     <member name="P:ModernWpf.Controls.RecyclingElementFactory.Templates">
       <returns>Gets or sets the collection of data templates, identified by key, that can be applied to the element.</returns>
     </member>
+    <member name="T:ModernWpf.Controls.SelectionModel">
+      <summary>Represents a component that tracks the selection state of items in a data source.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.#ctor">
+      <summary>
+        Initializes a new instance of the <see cref="ModernWpf.Controls.SelectionModel?text=SelectionModel" /> class.
+      </summary>
+    </member>
+    <member name="P:ModernWpf.Controls.SelectionModel.AnchorIndex">
+      <summary>Gets or sets the index of the anchor item of a selected range.</summary>
+      <returns>The index of the anchor item of a selected range.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.SelectionModel.ChildrenRequested">
+      <summary>Occurs when nested items in a multi-level hierarchy are requested.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.ClearSelection">
+      <summary>De-selects all items.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.Deselect(System.Int32)">
+      <summary>De-selects the item at the specified index in a 1-level data structure.</summary>
+      <param name="index">The index of the item to de-select.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.Deselect(System.Int32,System.Int32)">
+      <summary>De-selects the item at the specified index in a 2-level data structure.</summary>
+      <param name="groupIndex">The index of the group the item is in.</param>
+      <param name="itemIndex">The index of the item to de-select.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.DeselectAt(ModernWpf.Controls.IndexPath)">
+      <summary>De-selects the item at the specified index in a multi-level data structure.</summary>
+      <param name="index">The IndexPath that describes the location of the item in the data structure.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.DeselectRange(ModernWpf.Controls.IndexPath,ModernWpf.Controls.IndexPath)">
+      <summary>De-selects all items between the specified start and end locations.</summary>
+      <param name="start">The IndexPath that describes the starting location of the range in the data structure.</param>
+      <param name="end">The IndexPath that describes the ending location of the range in the data structure.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.DeselectRangeFromAnchor(System.Int32)">
+      <summary>De-selects all items between the AnchorIndex and the specified index in a 1-level data structure.</summary>
+      <param name="index">The index of the item at the end of the range.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.DeselectRangeFromAnchor(System.Int32,System.Int32)">
+      <summary>De-selects all items between the AnchorIndex and the specified index in a 2-level data structure.</summary>
+      <param name="groupIndex">The index of the group the item is in.</param>
+      <param name="itemIndex">The index of the item at the end of the range.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.DeselectRangeFromAnchorTo(ModernWpf.Controls.IndexPath)">
+      <summary>De-selects all items between the AnchorIndex and the specified index in a multi-level data structure.</summary>
+      <param name="index">The IndexPath that describes the location of the item at the end of the range.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.IsSelected(System.Int32)">
+      <summary>Retrieves a value that indicates whether the item at the specified index in a 1-level data structure is selected.</summary>
+      <param name="index">The index of the item.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.IsSelected(System.Int32,System.Int32)">
+      <summary>Retrieves a value that indicates whether the item at the specified index in a 2-level data structure is selected.</summary>
+      <param name="groupIndex" />
+      <param name="itemIndex">The index of the item.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.IsSelectedAt(ModernWpf.Controls.IndexPath)">
+      <summary>Retrieves a value that indicates whether the item at the specified index in a multi-level data structure is selected.</summary>
+      <param name="index">The IndexPath that describes the location of the item in the data structure.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.OnPropertyChanged(System.String)">
+      <summary>Called when the value of a selection model property has changed.</summary>
+      <param name="propertyName">The name of the property that has changed.</param>
+    </member>
+    <member name="E:ModernWpf.Controls.SelectionModel.PropertyChanged">
+      <summary>Occurs when the value of a selection model property has changed.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.Select(System.Int32)">
+      <summary>Selects the item at the specified index in a 1-level data structure.</summary>
+      <param name="index">The index of the item to select.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.Select(System.Int32,System.Int32)">
+      <summary>Selects the item at the specified index in a 2-level data structure.</summary>
+      <param name="groupIndex">The index of the group the item is in.</param>
+      <param name="itemIndex">The index of the item to select.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.SelectAll">
+      <summary>Selects all items.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.SelectAt(ModernWpf.Controls.IndexPath)">
+      <summary>Selects the item at the specified index in a multi-level data structure.</summary>
+      <param name="index">The IndexPath that describes the location of the item in the data structure.</param>
+    </member>
+    <member name="P:ModernWpf.Controls.SelectionModel.SelectedIndex">
+      <summary>Gets or sets the index of a single selected item.</summary>
+      <returns>The index of a single selected item.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SelectionModel.SelectedIndices">
+      <summary>Gets the collection of index values for multiple selected items.</summary>
+      <returns>The collection of index values for multiple selected items. The default is an empty collection.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SelectionModel.SelectedItem">
+      <summary>Gets or sets a single selected item.</summary>
+      <returns>The single selected item.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SelectionModel.SelectedItems">
+      <summary>Gets the collection of multiple selected items.</summary>
+      <returns>The collection of multiple selected items. The default is an empty collection.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.SelectionModel.SelectionChanged">
+      <summary>Occurs when the selection has changed.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.SelectRange(ModernWpf.Controls.IndexPath,ModernWpf.Controls.IndexPath)">
+      <summary>Selects all items between the specified start and end locations.</summary>
+      <param name="start">The IndexPath that describes the starting location of the range in the data structure.</param>
+      <param name="end">The IndexPath that describes the ending location of the range in the data structure.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.SelectRangeFromAnchor(System.Int32)">
+      <summary>Selects all items between the AnchorIndex and the specified index in a 1-level data structure.</summary>
+      <param name="index">The index of the item at the end of the range.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.SelectRangeFromAnchor(System.Int32,System.Int32)">
+      <summary>Selects all items between the AnchorIndex and the specified index in a 2-level data structure.</summary>
+      <param name="groupIndex">The index of the group the item is in.</param>
+      <param name="itemIndex">The index of the item at the end of the range.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.SelectRangeFromAnchorTo(ModernWpf.Controls.IndexPath)">
+      <summary>Selects all items between the AnchorIndex and the specified index in a multi-level data structure.</summary>
+      <param name="index">The IndexPath that describes the location of the item in the data structure.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.SetAnchorIndex(System.Int32)">
+      <summary>Sets the index of the anchor item in a selection range in a 1-level data structure.</summary>
+      <param name="index">The index of the anchor item in a selection range.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.SelectionModel.SetAnchorIndex(System.Int32,System.Int32)">
+      <summary>Sets the index of the anchor item in a selection range in a multi-level data structure.</summary>
+      <param name="groupIndex">The index of the group the item is in.</param>
+      <param name="itemIndex">The index of the anchor item.</param>
+    </member>
+    <member name="P:ModernWpf.Controls.SelectionModel.SingleSelect">
+      <summary>Gets or sets a value that indicates whether only one item can be selected at a time.</summary>
+      <returns>true if only one item can be selected at a time; false if more than one item can be selected.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SelectionModel.Source">
+      <summary>Gets or sets the data source for which item selection is tracked.</summary>
+      <returns>The data source for which item selection is tracked. The default is null.</returns>
+    </member>
     <member name="T:ModernWpf.Controls.SelectTemplateEventArgs">
       <summary>Provides data for the <see cref="ModernWpf.Controls.RecyclingElementFactory.SelectTemplateKey?text=RecyclingElementFactory.SelectTemplateKey" /> event.</summary>
     </member>
