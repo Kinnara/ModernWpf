@@ -7,6 +7,11 @@ namespace ModernWpf.Controls
 {
     public class SimpleToolBarOverflowPanel : ToolBarOverflowPanel
     {
+        public SimpleToolBarOverflowPanel()
+        {
+            Loaded += OnLoaded;
+        }
+
         protected override Size MeasureOverride(Size constraint)
         {
             base.MeasureOverride(constraint);
@@ -65,7 +70,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        internal void UpdateChildrenApplicationViewState()
+        private void UpdateChildrenApplicationViewState()
         {
             bool hasToggleButton = false;
             bool hasMenuIcon = false;
@@ -115,6 +120,11 @@ namespace ModernWpf.Controls
                     appBarToggleButton.UpdateApplicationViewStateInOverflow(hasMenuIcon);
                 }
             }
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            UpdateChildrenApplicationViewState();
         }
     }
 }

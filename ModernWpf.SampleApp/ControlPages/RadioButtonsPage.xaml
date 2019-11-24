@@ -17,7 +17,8 @@
             <sc:ControlExample HeaderText="RadioButtons">
                 <ui:RadioButtons
                     x:Name="radioButtons"
-                    MaximumColumns="2">
+                    MaximumColumns="2"
+                    SelectedIndex="0">
                     <sys:String>Red</sys:String>
                     <sys:String>Orange</sys:String>
                     <sys:String>Yellow</sys:String>
