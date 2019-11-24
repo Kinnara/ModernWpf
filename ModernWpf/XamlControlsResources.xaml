@@ -44,6 +44,9 @@
     <Thickness x:Key="TextControlThemePadding">10,5,6,6</Thickness>
     <sys:Double x:Key="TitleBarHeight">32</sys:Double>
 
+    <sys:Int32 x:Key="RadioButtonsColumnSpacing">7</sys:Int32>
+    <sys:Int32 x:Key="RadioButtonsRowSpacing">3</sys:Int32>
+
     <Style x:Key="EmptyFocusVisual">
         <Setter Property="primitives:FocusVisualHelper.IsSystemFocusVisual" Value="True" />
     </Style>
