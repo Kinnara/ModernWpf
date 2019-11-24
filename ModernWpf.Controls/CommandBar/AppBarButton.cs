@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -74,6 +75,7 @@ namespace ModernWpf.Controls
                 typeof(AppBarButton),
                 new PropertyMetadata(OnIconChanged));
 
+        [TypeConverter(typeof(IconElementConverter))]
         public IconElement Icon
         {
             get => (IconElement)GetValue(IconProperty);

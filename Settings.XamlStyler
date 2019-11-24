@@ -40,7 +40,9 @@
         ui:CornerRadiusFilterConverter,
 		m:StaticResource,
         ui:StaticResource,
-        local:HamburgerMenuItemStyleSelectorEx
+        local:HamburgerMenuItemStyleSelectorEx,
+        ui:AppBarButton,
+        ui:AppBarToggleButton
 	",
     "SeparateByGroups": false,
     "AttributeIndentation": 0,

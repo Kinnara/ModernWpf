@@ -19,14 +19,7 @@
                 <sc:ControlExample.Example>
                     <StackPanel Orientation="Horizontal">
                         <!-- App bar button with symbol icon. -->
-                        <ui:AppBarToggleButton
-                            x:Name="Button1"
-                            Label="SymbolIcon"
-                            Click="AppBarButton_Click">
-                            <ui:AppBarToggleButton.Icon>
-                                <ui:SymbolIcon Symbol="Shuffle" />
-                            </ui:AppBarToggleButton.Icon>
-                        </ui:AppBarToggleButton>
+                        <ui:AppBarToggleButton x:Name="Button1" Label="SymbolIcon" Icon="Shuffle" Click="AppBarButton_Click" />
                         <TextBlock
                             x:Name="Control1Output"
                             Margin="8,0,0,0"
@@ -45,10 +38,7 @@
                 <sc:ControlExample.Example>
                     <StackPanel Orientation="Horizontal">
                         <!-- App bar button with bitmap icon. -->
-                        <ui:AppBarToggleButton
-                            x:Name="Button2"
-                            Label="BitmapIcon"
-                            Click="AppBarButton_Click">
+                        <ui:AppBarToggleButton x:Name="Button2" Label="BitmapIcon" Click="AppBarButton_Click">
                             <ui:AppBarToggleButton.Icon>
                                 <ui:BitmapIcon UriSource="pack://application:,,,/ModernWpf.SampleApp;component/Assets/Slices2.png" />
                             </ui:AppBarToggleButton.Icon>
@@ -71,10 +61,7 @@
                 <sc:ControlExample.Example>
                     <StackPanel Orientation="Horizontal">
                         <!-- App bar button with font icon. -->
-                        <ui:AppBarToggleButton
-                            x:Name="Button3"
-                            Label="FontIcon"
-                            Click="AppBarButton_Click">
+                        <ui:AppBarToggleButton x:Name="Button3" Label="FontIcon" Click="AppBarButton_Click">
                             <ui:AppBarToggleButton.Icon>
                                 <ui:FontIcon
                                     FontFamily="Candara"
@@ -99,11 +86,7 @@
                 <sc:ControlExample.Example>
                     <StackPanel Orientation="Horizontal">
                         <!-- App bar button with path icon. -->
-                        <ui:AppBarToggleButton
-                            x:Name="Button4"
-                            Label="PathIcon"
-                            Click="AppBarButton_Click"
-                            IsThreeState="True">
+                        <ui:AppBarToggleButton x:Name="Button4" Label="PathIcon" Click="AppBarButton_Click" IsThreeState="True">
                             <ui:AppBarToggleButton.Icon>
                                 <ui:PathIcon Data="F1 M 20,20L 24,10L 24,24L 5,24" />
                             </ui:AppBarToggleButton.Icon>

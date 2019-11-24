@@ -25,14 +25,7 @@
                 HeaderText="An AppBarButton with a symbol icon.">
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with symbol icon. -->
-                    <ui:AppBarButton
-                        x:Name="Button1"
-                        Label="SymbolIcon"
-                        Click="AppBarButton_Click">
-                        <ui:AppBarButton.Icon>
-                            <ui:SymbolIcon Symbol="Like" />
-                        </ui:AppBarButton.Icon>
-                    </ui:AppBarButton>
+                    <ui:AppBarButton x:Name="Button1" Label="SymbolIcon" Icon="Like" Click="AppBarButton_Click" />
                     <TextBlock
                         x:Name="Control1Output"
                         Margin="8,0,0,0"
@@ -55,10 +48,7 @@
                 HeaderText="An AppBarButton with a bitmap icon.">
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with bitmap icon. -->
-                    <ui:AppBarButton
-                        x:Name="Button2"
-                        Label="BitmapIcon"
-                        Click="AppBarButton_Click">
+                    <ui:AppBarButton x:Name="Button2" Label="BitmapIcon" Click="AppBarButton_Click">
                         <ui:AppBarButton.Icon>
                             <ui:BitmapIcon UriSource="pack://application:,,,/ModernWpf.SampleApp;component/Assets/Slices2.png" />
                         </ui:AppBarButton.Icon>
@@ -74,10 +64,7 @@
                 HeaderText="An AppBarButton with a font icon.">
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with font icon. -->
-                    <ui:AppBarButton
-                        x:Name="Button3"
-                        Label="FontIcon"
-                        Click="AppBarButton_Click">
+                    <ui:AppBarButton x:Name="Button3" Label="FontIcon" Click="AppBarButton_Click">
                         <ui:AppBarButton.Icon>
                             <ui:FontIcon
                                 FontFamily="Candara"
@@ -95,10 +82,7 @@
                 HeaderText="An AppBarButton with a path icon.">
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with path icon. -->
-                    <ui:AppBarButton
-                        x:Name="Button4"
-                        Label="PathIcon"
-                        Click="AppBarButton_Click">
+                    <ui:AppBarButton x:Name="Button4" Label="PathIcon" Click="AppBarButton_Click">
                         <ui:AppBarButton.Icon>
                             <ui:PathIcon Data="F1 M 20,20L 24,10L 24,24L 5,24" />
                         </ui:AppBarButton.Icon>
@@ -117,28 +101,12 @@
                         <StackPanel
                             x:Name="Control1"
                             Orientation="Horizontal">
-                            <ui:AppBarButton Label="Attach Camera">
-                                <ui:AppBarButton.Icon>
-                                    <ui:SymbolIcon Symbol="AttachCamera" />
-                                </ui:AppBarButton.Icon>
-                            </ui:AppBarButton>
+                            <ui:AppBarButton Label="Attach Camera" Icon="AttachCamera" />
                             <ui:AppBarSeparator />
-                            <ui:AppBarButton Label="Like">
-                                <ui:AppBarButton.Icon>
-                                    <ui:SymbolIcon Symbol="Like" />
-                                </ui:AppBarButton.Icon>
-                            </ui:AppBarButton>
-                            <ui:AppBarButton Label="Dislike">
-                                <ui:AppBarButton.Icon>
-                                    <ui:SymbolIcon Symbol="Dislike" />
-                                </ui:AppBarButton.Icon>
-                            </ui:AppBarButton>
+                            <ui:AppBarButton Label="Like" Icon="Like" />
+                            <ui:AppBarButton Label="Dislike" Icon="Dislike" />
                             <ui:AppBarSeparator />
-                            <ui:AppBarButton Label="Orientation">
-                                <ui:AppBarButton.Icon>
-                                    <ui:SymbolIcon Symbol="Orientation" />
-                                </ui:AppBarButton.Icon>
-                            </ui:AppBarButton>
+                            <ui:AppBarButton Label="Orientation" Icon="Orientation" />
                         </StackPanel>
                     </ScrollViewer>
                 </sc:ControlExample.Example>

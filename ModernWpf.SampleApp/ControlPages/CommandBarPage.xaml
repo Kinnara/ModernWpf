@@ -19,60 +19,18 @@
                 HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Top">
                 <ui:CommandBar x:Name="CommandBar1">
-                    <ui:AppBarButton Label="Add">
-                        <ui:AppBarButton.Icon>
-                            <ui:SymbolIcon Symbol="Add" />
-                        </ui:AppBarButton.Icon>
-                    </ui:AppBarButton>
-                    <ui:AppBarButton Label="Share">
-                        <ui:AppBarButton.Icon>
-                            <ui:SymbolIcon Symbol="ReShare" />
-                        </ui:AppBarButton.Icon>
-                    </ui:AppBarButton>
-                    <ui:AppBarButton Label="Edit">
-                        <ui:AppBarButton.Icon>
-                            <ui:SymbolIcon Symbol="Edit" />
-                        </ui:AppBarButton.Icon>
-                    </ui:AppBarButton>
-
+                    <ui:AppBarButton Label="Add" Icon="Add" />
+                    <ui:AppBarButton Label="Share" Icon="ReShare" />
+                    <ui:AppBarButton Label="Edit" Icon="Edit" />
                     <ui:CommandBar.SecondaryCommands>
-                        <ui:AppBarButton Label="Settings">
-                            <ui:AppBarButton.Icon>
-                                <ui:SymbolIcon Symbol="Setting" />
-                            </ui:AppBarButton.Icon>
-                        </ui:AppBarButton>
-
-                        <ui:AppBarButton Label="Button 1">
-                            <ui:AppBarButton.Icon>
-                                <ui:SymbolIcon Symbol="Add" />
-                            </ui:AppBarButton.Icon>
-                        </ui:AppBarButton>
-
-                        <ui:AppBarButton Label="Button 2">
-                            <ui:AppBarButton.Icon>
-                                <ui:SymbolIcon Symbol="Delete" />
-                            </ui:AppBarButton.Icon>
-                        </ui:AppBarButton>
-
+                        <ui:AppBarButton Label="Settings" Icon="Setting" />
+                        <ui:AppBarButton Label="Button 1" Icon="Add" />
+                        <ui:AppBarButton Label="Button 2" Icon="Delete" />
                         <ui:AppBarSeparator />
-
-                        <ui:AppBarButton Label="Button 3">
-                            <ui:AppBarButton.Icon>
-                                <ui:SymbolIcon Symbol="FontDecrease" />
-                            </ui:AppBarButton.Icon>
-                        </ui:AppBarButton>
-
-                        <ui:AppBarButton Label="Button 4">
-                            <ui:AppBarButton.Icon>
-                                <ui:SymbolIcon Symbol="FontIncrease" />
-                            </ui:AppBarButton.Icon>
-                        </ui:AppBarButton>
-
+                        <ui:AppBarButton Label="Button 3" Icon="FontDecrease" />
+                        <ui:AppBarButton Label="Button 4" Icon="FontIncrease" />
                         <ui:AppBarSeparator />
-
-                        <ui:AppBarToggleButton
-                            IsChecked="True"
-                            Label="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, StringFormat='IsChecked = {0}'}">
+                        <ui:AppBarToggleButton IsChecked="True" Label="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, StringFormat='IsChecked = {0}'}">
                             <ui:AppBarToggleButton.Icon>
                                 <ui:SymbolIcon />
                             </ui:AppBarToggleButton.Icon>
