@@ -10,9 +10,6 @@ using System.Windows.Navigation;
 
 namespace ModernWpf.SampleApp
 {
-    /// <summary>
-    /// Interaction logic for MainPage.xaml
-    /// </summary>
     public partial class MainPage
     {
         private bool _ignoreSelectionChange;
@@ -21,7 +18,7 @@ namespace ModernWpf.SampleApp
         {
             InitializeComponent();
             //PagesList.SelectedItem = PagesList.Items.OfType<ControlPageInfo>().FirstOrDefault(
-            //    x => x.NavigateUri.ToString().Contains(nameof(CommandBarPage)));
+            //    x => x.NavigateUri.ToString().Contains(nameof(CommandBarFlyoutPage)));
             NavigateToSelectedPage();
         }
 
@@ -165,6 +162,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(CalendarPage));
             AddPage(typeof(ComboBoxPage));
             AddPage(typeof(CommandBarPage));
+            AddPage(typeof(CommandBarFlyoutPage));
             AddPage(typeof(ContentDialogPage));
             AddPage(typeof(ContextMenuPage));
             AddPage(typeof(DataGridPage));

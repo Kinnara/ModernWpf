@@ -83,4 +83,15 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="CommandBarFlyoutEllipsisButtonStyle" TargetType="ToggleButton" BasedOn="{StaticResource EllipsisButton}">
+        <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlTransparentBrush}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Width" Value="40" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
 </ResourceDictionary>

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -25,6 +27,35 @@ namespace ModernWpf.Controls
             SecondaryCommands = new ObservableCollection<ICommandBarElement>();
             SecondaryCommands.CollectionChanged += SecondaryCommands_CollectionChanged;
         }
+
+        #region CornerRadius
+
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(CommandBar));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
+
+        #region IsOpen
+
+        public static readonly DependencyProperty IsOpenProperty =
+            DependencyProperty.Register(
+                nameof(IsOpen),
+                typeof(bool),
+                typeof(CommandBar));
+
+        public bool IsOpen
+        {
+            get => (bool)GetValue(IsOpenProperty);
+            set => SetValue(IsOpenProperty, value);
+        }
+
+        #endregion
 
         #region PrimaryCommands
 
@@ -50,6 +81,23 @@ namespace ModernWpf.Controls
             {
                 UpdateOverflowModeForSecondaryCommands(e.NewItems.OfType<DependencyObject>());
             }
+        }
+
+        #endregion
+
+        #region CommandBarOverflowPresenterStyle
+
+        public static readonly DependencyProperty CommandBarOverflowPresenterStyleProperty =
+            DependencyProperty.Register(
+                nameof(CommandBarOverflowPresenterStyle),
+                typeof(Style),
+                typeof(CommandBar),
+                null);
+
+        public Style CommandBarOverflowPresenterStyle
+        {
+            get => (Style)GetValue(CommandBarOverflowPresenterStyleProperty);
+            set => SetValue(CommandBarOverflowPresenterStyleProperty, value);
         }
 
         #endregion
@@ -123,9 +171,20 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        public event EventHandler<object> Opened;
+
+        public event EventHandler<object> Closed;
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+
+            if (m_toolBar != null)
+            {
+                m_toolBar.ClearValue(ItemsControl.ItemsSourceProperty);
+                m_toolBar.OverflowOpened -= OnOverflowOpened;
+                m_toolBar.OverflowClosed -= OnOverflowClosed;
+            }
 
             m_toolBar = GetTemplateChild(ToolBarName) as SimpleToolBar;
 
@@ -136,11 +195,23 @@ namespace ModernWpf.Controls
                     new CollectionContainer { Collection = PrimaryCommands },
                     new CollectionContainer { Collection = SecondaryCommands },
                 };
+                m_toolBar.OverflowOpened += OnOverflowOpened;
+                m_toolBar.OverflowClosed += OnOverflowClosed;
             }
+        }
+
+        private void OnOverflowOpened(object sender, EventArgs e)
+        {
+            Opened?.Invoke(this, null);
+        }
+
+        private void OnOverflowClosed(object sender, EventArgs e)
+        {
+            Closed?.Invoke(this, null);
         }
 
         private SimpleToolBar m_toolBar;
 
-        private const string ToolBarName = "PART_ToolBar";
+        internal const string ToolBarName = "PART_ToolBar";
     }
 }

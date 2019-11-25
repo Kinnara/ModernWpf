@@ -29,7 +29,9 @@
                         HeaderStringFormat="{TemplateBinding ContentStringFormat}"
                         DefaultLabelPosition="{TemplateBinding DefaultLabelPosition}"
                         IsDynamicOverflowEnabled="{TemplateBinding IsDynamicOverflowEnabled}"
-                        OverflowButtonVisibility="{TemplateBinding OverflowButtonVisibility}" />
+                        OverflowButtonVisibility="{TemplateBinding OverflowButtonVisibility}"
+                        OverflowPresenterStyle="{TemplateBinding CommandBarOverflowPresenterStyle}"
+                        IsOverflowOpen="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

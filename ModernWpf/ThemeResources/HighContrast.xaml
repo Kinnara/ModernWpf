@@ -517,6 +517,12 @@
     <Thickness x:Key="CommandBarOverflowPresenterBorderDownPadding">0</Thickness>
     <Thickness x:Key="CommandBarOverflowPresenterBorderUpPadding">0</Thickness>
 
+    <!-- Resources for CommandBarFlyout -->
+    <Thickness x:Key="CommandBarFlyoutBorderThemeThickness">1</Thickness>
+    <Thickness x:Key="CommandBarFlyoutBorderUpThemeThickness">1,1,1,0</Thickness>
+    <Thickness x:Key="CommandBarFlyoutBorderDownThemeThickness">1,0,1,1</Thickness>
+    <m:StaticResource x:Key="CommandBarFlyoutButtonBackground" ResourceKey="{x:Static SystemColors.ControlBrushKey}" />
+
     <!-- Resources for ContentDialog -->
     <sys:Double x:Key="ContentDialogMinWidth">320</sys:Double>
     <sys:Double x:Key="ContentDialogMaxWidth">548</sys:Double>

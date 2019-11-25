@@ -7,10 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -448,7 +446,7 @@ namespace ModernWpf.Controls
 
         public Window Owner { get; set; }
 
-        private Window ActualOwner => Owner ?? GetActiveWindow();
+        private Window ActualOwner => Owner ?? SharedHelpers.GetActiveWindow();
 
         private Border Container { get; set; }
 
@@ -1018,19 +1016,6 @@ namespace ModernWpf.Controls
         private static void ThrowAlreadyOpenException()
         {
             throw new InvalidOperationException("Only a single ContentDialog can be open at any time.");
-        }
-
-        private static Window GetActiveWindow()
-        {
-            var active = UnsafeNativeMethods.GetActiveWindow();
-            foreach (Window window in Application.Current.Windows)
-            {
-                if (new WindowInteropHelper(window).Handle == active)
-                {
-                    return window;
-                }
-            }
-            return null;
         }
 
         private static ContentPresenter FindContentPresenter(Window window)

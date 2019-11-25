@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Input;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -28,6 +27,36 @@ namespace ModernWpf.Controls.Primitives
         {
             get => (FlyoutPlacementMode)GetValue(PlacementProperty);
             set => SetValue(PlacementProperty, value);
+        }
+
+        #endregion
+
+        #region AreOpenCloseAnimationsEnabled
+
+        public static readonly DependencyProperty AreOpenCloseAnimationsEnabledProperty =
+            DependencyProperty.Register(
+                nameof(AreOpenCloseAnimationsEnabled),
+                typeof(bool),
+                typeof(FlyoutBase),
+                new PropertyMetadata(true, OnAreOpenCloseAnimationsEnabledChanged));
+
+        public bool AreOpenCloseAnimationsEnabled
+        {
+            get => (bool)GetValue(AreOpenCloseAnimationsEnabledProperty);
+            set => SetValue(AreOpenCloseAnimationsEnabledProperty, value);
+        }
+
+        private static void OnAreOpenCloseAnimationsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FlyoutBase)d).OnAreOpenCloseAnimationsEnabledChanged(e);
+        }
+
+        private void OnAreOpenCloseAnimationsEnabledChanged(DependencyPropertyChangedEventArgs e)
+        {
+            if (m_popup != null)
+            {
+                m_popup.PopupAnimation = (bool)e.NewValue ? PopupAnimation.Fade : PopupAnimation.None;
+            }
         }
 
         #endregion
@@ -61,9 +90,12 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        public event EventHandler<object> Closed;
-        public event EventHandler<object> Opened;
+        internal PopupEx InternalPopup => m_popup;
+
         public event EventHandler<object> Opening;
+        public event EventHandler<object> Opened;
+        public event EventHandler<object> Closed;
+        internal event EventHandler<object> Closing;
 
         public void ShowAt(FrameworkElement placementTarget)
         {
@@ -85,7 +117,7 @@ namespace ModernWpf.Controls.Primitives
             Debug.Assert(m_popup.ReadLocalValue(Popup.PlacementTargetProperty) != DependencyProperty.UnsetValue);
 
             m_target = placementTarget;
-            Opening?.Invoke(this, s_sharedEventArgs);
+            Opening?.Invoke(this, null);
             m_popup.IsOpen = true;
         }
 
@@ -137,19 +169,19 @@ namespace ModernWpf.Controls.Primitives
             {
                 EnsureShadowChrome();
 
-                m_popup = new Popup
+                m_popup = new PopupEx
                 {
                     Child = m_shadowChrome,
                     StaysOpen = false,
                     AllowsTransparency = true,
-                    PopupAnimation = PopupAnimation.Fade,
+                    PopupAnimation = AreOpenCloseAnimationsEnabled ? PopupAnimation.Fade : PopupAnimation.None,
                     CustomPopupPlacementCallback = PositionPopup,
                     HorizontalOffset = 0,
                     VerticalOffset = 0
                 };
                 m_popup.Opened += OnPopupOpened;
+                m_popup.Closing += OnPopupClosing;
                 m_popup.Closed += OnPopupClosed;
-                m_popup.PreviewMouseLeftButtonDown += OnPopupPreviewMouseLeftButtonDown;
             }
         }
 
@@ -219,12 +251,17 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupOpened(object sender, EventArgs e)
         {
-            Opened?.Invoke(this, s_sharedEventArgs);
+            Opened?.Invoke(this, null);
+        }
+
+        private void OnPopupClosing(object sender, EventArgs e)
+        {
+            Closing?.Invoke(this, null);
         }
 
         private void OnPopupClosed(object sender, EventArgs e)
         {
-            Closed?.Invoke(this, s_sharedEventArgs);
+            Closed?.Invoke(this, null);
 
             if (!m_popup.IsOpen)
             {
@@ -233,14 +270,6 @@ namespace ModernWpf.Controls.Primitives
                 m_popup.ClearValue(FrameworkElement.WidthProperty);
                 m_popup.ClearValue(FrameworkElement.HeightProperty);
                 m_target = null;
-            }
-        }
-
-        private void OnPopupPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (!m_popup.IsOpen)
-            {
-                e.Handled = true;
             }
         }
 
@@ -385,14 +414,13 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private static readonly object s_sharedEventArgs = new object();
         private static readonly IMultiValueConverter s_fullPlacementWidthConverter = new FullPlacementWidthConverter();
         private static readonly IMultiValueConverter s_fullPlacementHeightConverter = new FullPlacementHeightConverter();
 
         private const double s_offset = 4;
 
         private Control m_presenter;
-        private Popup m_popup;
+        private PopupEx m_popup;
         private FrameworkElement m_target;
         private ThemeShadowChrome m_shadowChrome;
 

@@ -1,0 +1,53 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.ControlPages.CommandBarFlyoutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    mc:Ignorable="d"
+    d:DesignWidth="1200"
+    d:DesignHeight="900"
+    Style="{StaticResource ControlPageStyle}">
+
+    <UserControl.Resources>
+        <ui:CommandBarFlyout
+            Placement="RightEdgeAlignedTop"
+            x:Key="CommandBarFlyout1">
+            <ui:AppBarButton Label="Share" Icon="Share" ToolTipService.ToolTip="Share" Click="OnElementClicked" />
+            <ui:AppBarButton Label="Save" Icon="Save" ToolTipService.ToolTip="Save" Click="OnElementClicked" />
+            <ui:AppBarButton Label="Delete" Icon="Delete" ToolTipService.ToolTip="Delete" Click="OnElementClicked" />
+            <ui:CommandBarFlyout.SecondaryCommands>
+                <ui:AppBarButton Label="Resize" Click="OnElementClicked" />
+                <ui:AppBarButton Label="Move" Click="OnElementClicked" />
+            </ui:CommandBarFlyout.SecondaryCommands>
+        </ui:CommandBarFlyout>
+    </UserControl.Resources>
+
+    <ScrollViewer>
+        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <sc:ControlExample HeaderText="CommandBarFlyout for commands on an in-app object">
+                <StackPanel>
+                    <TextBlock Text="Click or right click the image to open a CommandBarFlyout" />
+                    <Button
+                        x:Name="myImageButton"
+                        AutomationProperties.Name="mountain"
+                        Padding="0"
+                        Margin="0,12"
+                        Click="MyImageButton_Click"
+                        ContextMenuOpening="MyImageButton_ContextMenuOpening">
+                        <Image
+                            x:Name="Image1"
+                            Height="300"
+                            Source="/Assets/SampleMedia/rainier.jpg" />
+                    </Button>
+                    <TextBlock
+                        x:Name="SelectedOptionText"
+                        Text="" />
+                </StackPanel>
+            </sc:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

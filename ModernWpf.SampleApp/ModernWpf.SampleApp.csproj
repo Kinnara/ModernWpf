@@ -60,4 +60,14 @@
     <Resource Include="Assets\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Remove="Assets\SampleMedia\rainier.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\SampleMedia\rainier.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

@@ -18,6 +18,19 @@ namespace ModernWpf.Controls
         {
         }
 
+        #region CornerRadius
+
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(SimpleToolBar));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
+
         #region DefaultLabelPosition
 
         public static readonly DependencyProperty DefaultLabelPositionProperty =
@@ -168,6 +181,12 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        internal Popup OverflowPopup => m_overflowPopup;
+
+        internal event EventHandler OverflowOpened;
+
+        internal event EventHandler OverflowClosed;
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -176,6 +195,7 @@ namespace ModernWpf.Controls
             {
                 m_overflowPopup.ClearValue(Popup.CustomPopupPlacementCallbackProperty);
                 m_overflowPopup.Opened -= OnOverflowPopupOpened;
+                m_overflowPopup.Closed -= OnOverflowPopupClosed;
             }
 
             m_layoutRoot = this.GetTemplateRoot();
@@ -186,8 +206,8 @@ namespace ModernWpf.Controls
             if (m_overflowPopup != null)
             {
                 m_overflowPopup.CustomPopupPlacementCallback = PositionPopup;
-                m_overflowPopup.Placement = PlacementMode.Custom;
                 m_overflowPopup.Opened += OnOverflowPopupOpened;
+                m_overflowPopup.Closed += OnOverflowPopupClosed;
             }
 
             InvalidateLayout();
@@ -246,6 +266,12 @@ namespace ModernWpf.Controls
         private void OnOverflowPopupOpened(object sender, EventArgs e)
         {
             UpdateOverflowContentMaxHeight();
+            OverflowOpened?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnOverflowPopupClosed(object sender, EventArgs e)
+        {
+            OverflowClosed?.Invoke(this, EventArgs.Empty);
         }
 
         private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)
