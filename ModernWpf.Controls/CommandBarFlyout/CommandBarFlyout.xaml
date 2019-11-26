@@ -1135,13 +1135,11 @@
                                 <Storyboard>
                                     <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterContentRoot" Storyboard.TargetProperty="Opacity">
                                         <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
-                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.050" Value="0" />
-                                        <LinearDoubleKeyFrame KeyTime="0:0:0.300" Value="1" />
+                                        <LinearDoubleKeyFrame KeyTime="0:0:0.250" Value="1" />
                                     </DoubleAnimationUsingKeyFrames>
                                     <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterOverflowContentRoot" Storyboard.TargetProperty="Opacity">
                                         <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
-                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.050" Value="0" />
-                                        <LinearDoubleKeyFrame KeyTime="0:0:0.300" Value="1" />
+                                        <LinearDoubleKeyFrame KeyTime="0:0:0.250" Value="1" />
                                     </DoubleAnimationUsingKeyFrames>
                                 </Storyboard>
                             </BeginStoryboard>
