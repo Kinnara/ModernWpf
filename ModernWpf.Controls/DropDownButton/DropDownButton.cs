@@ -86,6 +86,19 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region Flyout
+
+        public static readonly DependencyProperty FlyoutProperty =
+            FlyoutService.FlyoutProperty.AddOwner(typeof(DropDownButton));
+
+        public FlyoutBase Flyout
+        {
+            get => (FlyoutBase)GetValue(FlyoutProperty);
+            set => SetValue(FlyoutProperty, value);
+        }
+
+        #endregion
+
         protected override void OnClick()
         {
             base.OnClick();

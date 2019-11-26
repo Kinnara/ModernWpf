@@ -71,7 +71,7 @@
                         <ui:DropDownButton.Content>
                             <ui:FontIcon Glyph="&#xE715;" />
                         </ui:DropDownButton.Content>
-                        <ui:FlyoutService.Flyout>
+                        <ui:DropDownButton.Flyout>
                             <ui:CommandBarFlyout Placement="Bottom">
                                 <ui:CommandBarFlyout.SecondaryCommands>
                                     <ui:AppBarButton Label="Send">
@@ -91,7 +91,7 @@
                                     </ui:AppBarButton>
                                 </ui:CommandBarFlyout.SecondaryCommands>
                             </ui:CommandBarFlyout>
-                        </ui:FlyoutService.Flyout>
+                        </ui:DropDownButton.Flyout>
                     </ui:DropDownButton>
                 </StackPanel>
             </sc:ControlExample>
