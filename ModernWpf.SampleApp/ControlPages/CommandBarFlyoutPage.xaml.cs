@@ -1,4 +1,5 @@
 ﻿using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,6 +44,7 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void ShowMenu(bool isTransient)
         {
+            CommandBarFlyout1.ShowMode = isTransient ? FlyoutShowMode.Transient : FlyoutShowMode.Standard;
             CommandBarFlyout1.ShowAt(Image1);
         }
 

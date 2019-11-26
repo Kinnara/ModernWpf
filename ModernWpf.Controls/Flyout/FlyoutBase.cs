@@ -61,6 +61,48 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
+        #region IsOpen
+
+        private static readonly DependencyPropertyKey IsOpenPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(IsOpen),
+                typeof(bool),
+                typeof(FlyoutBase),
+                new PropertyMetadata(false));
+
+        public static readonly DependencyProperty IsOpenProperty =
+            IsOpenPropertyKey.DependencyProperty;
+
+        public bool IsOpen
+        {
+            get => (bool)GetValue(IsOpenProperty);
+            private set => SetValue(IsOpenPropertyKey, value);
+        }
+
+        private void UpdateIsOpen()
+        {
+            IsOpen = m_popup != null && m_popup.IsOpen;
+        }
+
+        #endregion
+
+        #region ShowMode
+
+        public static readonly DependencyProperty ShowModeProperty =
+            DependencyProperty.Register(
+                nameof(ShowMode),
+                typeof(FlyoutShowMode),
+                typeof(FlyoutBase),
+                new PropertyMetadata(FlyoutShowMode.Standard));
+
+        public FlyoutShowMode ShowMode
+        {
+            get => (FlyoutShowMode)GetValue(ShowModeProperty);
+            set => SetValue(ShowModeProperty, value);
+        }
+
+        #endregion
+
         #region AttachedFlyout
 
         public static readonly DependencyProperty AttachedFlyoutProperty =
@@ -182,6 +224,7 @@ namespace ModernWpf.Controls.Primitives
                 m_popup.Opened += OnPopupOpened;
                 m_popup.Closing += OnPopupClosing;
                 m_popup.Closed += OnPopupClosed;
+                m_popup.IsOpenChanged += OnPopupIsOpenChanged;
             }
         }
 
@@ -271,6 +314,11 @@ namespace ModernWpf.Controls.Primitives
                 m_popup.ClearValue(FrameworkElement.HeightProperty);
                 m_target = null;
             }
+        }
+
+        private void OnPopupIsOpenChanged(object sender, EventArgs e)
+        {
+            UpdateIsOpen();
         }
 
         private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)

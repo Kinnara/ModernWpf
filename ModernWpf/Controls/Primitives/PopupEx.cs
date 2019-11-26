@@ -8,9 +8,16 @@ namespace ModernWpf.Controls.Primitives
 {
     public class PopupEx : Popup
     {
+        static PopupEx()
+        {
+            IsOpenProperty.OverrideMetadata(typeof(PopupEx), new FrameworkPropertyMetadata(OnIsOpenPropertyChanged));
+        }
+
         internal bool SuppressFadeAnimation { get; set; }
 
         internal event EventHandler Closing;
+
+        internal event EventHandler IsOpenChanged;
 
         protected override void OnOpened(EventArgs e)
         {
@@ -19,24 +26,6 @@ namespace ModernWpf.Controls.Primitives
             if (PopupAnimation == PopupAnimation.Fade && SuppressFadeAnimation)
             {
                 StopAnimation();
-            }
-        }
-
-        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-
-            if (e.Property == IsOpenProperty)
-            {
-                if (!IsOpen)
-                {
-                    if (PopupAnimation == PopupAnimation.Fade && SuppressFadeAnimation)
-                    {
-                        StopAnimation();
-                    }
-
-                    Closing?.Invoke(this, EventArgs.Empty);
-                }
             }
         }
 
@@ -77,6 +66,26 @@ namespace ModernWpf.Controls.Primitives
             if (!IsOpen)
             {
                 e.Handled = true;
+            }
+        }
+
+        private static void OnIsOpenPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((PopupEx)d).OnIsOpenChanged();
+        }
+
+        private void OnIsOpenChanged()
+        {
+            IsOpenChanged?.Invoke(this, EventArgs.Empty);
+
+            if (!IsOpen)
+            {
+                if (PopupAnimation == PopupAnimation.Fade && SuppressFadeAnimation)
+                {
+                    StopAnimation();
+                }
+
+                Closing?.Invoke(this, EventArgs.Empty);
             }
         }
 

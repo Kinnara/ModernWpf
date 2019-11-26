@@ -137,7 +137,10 @@ namespace ModernWpf.Controls
                     InternalPopup.SuppressFadeAnimation = false;
                 }
 
-                m_commandBar.IsOpen = true;
+                if (ShowMode == FlyoutShowMode.Standard)
+                {
+                    m_commandBar.IsOpen = true;
+                }
             };
 
             Opened += delegate
@@ -195,6 +198,11 @@ namespace ModernWpf.Controls
         protected override Control CreatePresenter()
         {
             var commandBar = new CommandBarFlyoutCommandBar();
+
+            commandBar.Opened += delegate
+            {
+                SetCurrentValue(ShowModeProperty, FlyoutShowMode.Standard);
+            };
 
             SharedHelpers.CopyList(PrimaryCommands, commandBar.PrimaryCommands);
             SharedHelpers.CopyList(SecondaryCommands, commandBar.SecondaryCommands);
