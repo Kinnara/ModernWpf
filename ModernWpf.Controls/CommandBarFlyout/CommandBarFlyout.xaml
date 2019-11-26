@@ -733,6 +733,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ExpansionStates2">
+                                <VisualState x:Name="Default" />
                                 <VisualState x:Name="ExpandedUpWithPrimaryCommands" />
                                 <VisualState x:Name="ExpandedDownWithPrimaryCommands" />
                                 <VisualState x:Name="ExpandedUpWithoutPrimaryCommands" />
@@ -960,12 +961,16 @@
                                 </VisualState>
                             </ui:VisualStateGroupEx>
                             <ui:VisualStateGroupEx x:Name="ExpansionStates2">
+                                <VisualState x:Name="Default" />
                                 <VisualState x:Name="ExpandedUpWithPrimaryCommands" />
                                 <VisualState x:Name="ExpandedDownWithPrimaryCommands" />
                                 <VisualState x:Name="ExpandedUpWithoutPrimaryCommands" />
                                 <VisualState x:Name="ExpandedDownWithoutPrimaryCommands" />
                             </ui:VisualStateGroupEx>
                         </VisualStateManager.VisualStateGroups>
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:DebugVisualStateManager />
+                        </VisualStateManager.CustomVisualStateManager>
                         <Border
                             x:Name="OuterContentRoot"
                             VerticalAlignment="Top"
