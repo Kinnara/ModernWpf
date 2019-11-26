@@ -83,6 +83,216 @@
     <member name="F:ModernWpf.Controls.AnimationContext.None">
       <summary>There was no change.</summary>
     </member>
+    <member name="T:ModernWpf.Controls.AppBarButton">
+      <summary>Represents a templated button control to be displayed in an AppBar.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.AppBarButton.#ctor">
+      <summary>Initializes a new instance of the AppBarButton class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarButton.Icon">
+      <summary>Gets or sets the graphic content of the app bar button.</summary>
+      <returns>The graphic content of the app bar button.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarButton.IconProperty">
+      <summary>Identifies the Icon dependency property.</summary>
+      <returns>The identifier for the Icon dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarButton.IsCompact">
+      <summary>Gets or sets a value that indicates whether the button is shown with no label and reduced padding.</summary>
+      <returns>**true** if the button is shown in its compact state; otherwise, **false**. The default is **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarButton.IsCompactProperty">
+      <summary>Identifies the IsCompact dependency property.</summary>
+      <returns>The identifier for the IsCompact dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarButton.IsInOverflow">
+      <summary>Gets a value that indicates whether this item is in the overflow menu.</summary>
+      <returns>**true** if this item is in the overflow menu; otherwise, **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarButton.IsInOverflowProperty">
+      <summary>Identifies the IsInOverflow dependency property.</summary>
+      <returns>The identifier for the IsInOverflow dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarButton.Label">
+      <summary>Gets or sets the text description displayed on the app bar button.</summary>
+      <returns>The text description displayed on the app bar button.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarButton.LabelPosition">
+      <summary>Gets or sets a value that indicates the placement and visibility of the button's label.</summary>
+      <returns>An enumeration value that specifies the placement and visibility of the button's label. The default is **Default**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarButton.LabelPositionProperty">
+      <summary>Identifies the LabelPosition dependency property.</summary>
+      <returns>The identifier for the LabelPosition dependency property.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarButton.LabelProperty">
+      <summary>Identifies the Label dependency property.</summary>
+      <returns>The identifier for the Label dependency property.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.AppBarSeparator.#ctor">
+      <summary>Initializes a new instance of the AppBarSeparator class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarSeparator.IsCompact">
+      <summary>Gets or sets a value that indicates whether the separator is shown with reduced padding.</summary>
+      <returns>**True** if the separator is shown in its compact state; otherwise, **false**. The default is **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarSeparator.IsCompactProperty">
+      <summary>Identifies the IsCompact dependency property.</summary>
+      <returns>The identifier for the IsCompact dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarSeparator.IsInOverflow">
+      <summary>Gets a value that indicates whether this item is in the overflow menu.</summary>
+      <returns>**true** if this item is in the overflow menu; otherwise, **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarSeparator.IsInOverflowProperty">
+      <summary>Identifies the IsInOverflow dependency property.</summary>
+      <returns>The identifier for the IsInOverflow dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.AppBarToggleButton">
+      <summary>Represents a button control that can switch states and be displayed in an AppBar.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.AppBarToggleButton.#ctor">
+      <summary>Initializes a new instance of the AppBarToggleButton class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarToggleButton.Icon">
+      <summary>Gets or sets the graphic content of the app bar toggle button.</summary>
+      <returns>The graphic content of the app bar toggle button.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarToggleButton.IconProperty">
+      <summary>Identifies the Icon dependency property.</summary>
+      <returns>The identifier for the Icon dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarToggleButton.IsCompact">
+      <summary>Gets or sets a value that indicates whether the button is shown with no label and reduced padding.</summary>
+      <returns>**True** if the button is shown in its compact state; otherwise, **false**. The default is **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarToggleButton.IsCompactProperty">
+      <summary>Identifies the IsCompact dependency property.</summary>
+      <returns>The identifier for the IsCompact dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarToggleButton.IsInOverflow">
+      <summary>Gets a value that indicates whether this item is in the overflow menu.</summary>
+      <returns>**true** if this item is in the overflow menu; otherwise, **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarToggleButton.IsInOverflowProperty">
+      <summary>Identifies the IsInOverflow dependency property.</summary>
+      <returns>The identifier for the IsInOverflow dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarToggleButton.Label">
+      <summary>Gets or sets the text description displayed on the app bar toggle button.</summary>
+      <returns>The text description displayed on the app bar toggle button.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarToggleButton.LabelPosition">
+      <summary>Gets or sets a value that indicates the placement and visibility of the button's label.</summary>
+      <returns>An enumeration value that specifies the placement and visibility of the button's label. The default is **Default**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarToggleButton.LabelPositionProperty">
+      <summary>Identifies the LabelPosition dependency property.</summary>
+      <returns>The identifier for the LabelPosition dependency property.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarToggleButton.LabelProperty">
+      <summary>Identifies the Label dependency property.</summary>
+      <returns>The identifier for the Label dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.CommandBar">
+      <summary>Represents a specialized app bar that provides layout for AppBarButton and related command elements.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.CommandBar.#ctor">
+      <summary>Initializes a new instance of the CommandBar class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBar.CommandBarOverflowPresenterStyle">
+      <summary>Gets or sets the Style applied to the overflow content of the CommandBar.</summary>
+      <returns>The applied Style for the overflow content of the CommandBar, if present; otherwise, **null**. The default is **null**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBar.CommandBarOverflowPresenterStyleProperty">
+      <summary>Identifies the CommandBarOverflowPresenterStyle dependency property.</summary>
+      <returns>The identifier for the CommandBarOverflowPresenterStyle dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBar.DefaultLabelPosition">
+      <summary>Gets or sets a value that indicates the placement and visibility of the labels on the command bar's buttons.</summary>
+      <returns>An enumeration value that indicates the placement and visibility of the labels on the command bar's buttons. The default is **Bottom**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBar.DefaultLabelPositionProperty">
+      <summary>Identifies the DefaultLabelPosition dependency property.</summary>
+      <returns>The identifier for the DefaultLabelPosition dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBar.IsDynamicOverflowEnabled">
+      <summary>Gets or sets a value that indicates whether primary commands automatically move to the overflow menu when space is limited.</summary>
+      <returns>**true** if primary commands automatically move to the overflow menu when space is limited; otherwise, **false**. The default is **true**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBar.IsDynamicOverflowEnabledProperty">
+      <summary>Identifies the IsDynamicOverflowEnabled dependency property.</summary>
+      <returns>The identifier for the IsDynamicOverflowEnabled dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBar.OverflowButtonVisibility">
+      <summary>Gets or sets a value that indicates when a command bar's overflow button is shown.</summary>
+      <returns>An enumeration value that indicates when a command bar's overflow button is shown. The default is **Auto**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBar.OverflowButtonVisibilityProperty">
+      <summary>Identifies the OverflowButtonVisibility dependency property.</summary>
+      <returns>The identifier for the OverflowButtonVisibility dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBar.PrimaryCommands">
+      <summary>Gets the collection of primary command elements for the CommandBar.</summary>
+      <returns>The collection of primary command elements for the CommandBar. The default is an empty collection.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBar.SecondaryCommands">
+      <summary>Gets the collection of secondary command elements for the CommandBar.</summary>
+      <returns>The collection of secondary command elements for the CommandBar. The default is an empty collection.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.CommandBarDefaultLabelPosition">
+      <summary>Defines constants that specify the placement and visibility of AppBarButton labels in a CommandBar.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBarDefaultLabelPosition.Bottom">
+      <summary>App bar button labels are shown below the icon. Labels are visible only when the command bar is open.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBarDefaultLabelPosition.Collapsed">
+      <summary>App bar button labels are always hidden whether the command bar is open or closed.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBarDefaultLabelPosition.Right">
+      <summary>App bar button labels are shown to the right of the icon. Labels are visible even when the command bar is closed.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.CommandBarFlyout">
+      <summary>Represents a specialized flyout that provides layout for AppBarButton and related command elements.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.CommandBarFlyout.#ctor">
+      <summary>Initializes a new instance of the CommandBarFlyout class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBarFlyout.PrimaryCommands">
+      <summary>Gets the collection of primary command elements for the CommandBarFlyout.</summary>
+      <returns>The collection of primary command elements for the CommandBarFlyout. The default is an empty collection.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBarFlyout.SecondaryCommands">
+      <summary>Gets the collection of secondary command elements for the CommandBarFlyout.</summary>
+      <returns>The collection of secondary command elements for the CommandBarFlyout. The default is an empty collection.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.CommandBarLabelPosition">
+      <summary>Defines constants that specify the placement and visibility of an app bar button's label.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBarLabelPosition.Collapsed">
+      <summary>The app bar button's label is always hidden whether the command bar is open or closed.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBarLabelPosition.Default">
+      <summary>The placement and visibility of the app bar button's label is determined by the value of the CommandBar.DefaultLabelPosition property.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.CommandBarOverflowButtonVisibility">
+      <summary>Defines constants that specify when a command bar's overflow button is shown.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBarOverflowButtonVisibility.Auto">
+      <summary>The overflow button automatically hides when there are no secondary commands and the closed state of the CommandBar is the same as the open state.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBarOverflowButtonVisibility.Collapsed">
+      <summary>The overflow button is never shown.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBarOverflowButtonVisibility.Visible">
+      <summary>The overflow button is always shown.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.CommandBarOverflowPresenter">
+      <summary>Displays the overflow content of a CommandBar.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.CommandBarOverflowPresenter.#ctor">
+      <summary>Initializes a new instance of the CommandBarOverflowPresenter class.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.ContentDialog">
       <summary>Represents a dialog box that can be customized to contain checkboxes, hyperlinks, buttons and any other XAML content.</summary>
     </member>
@@ -346,6 +556,12 @@
     </member>
     <member name="F:ModernWpf.Controls.ContentDialogResult.Secondary">
       <summary>The secondary button was tapped by the user.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.DropDownButton">
+      <summary>Represents a button with a chevron intended to open a menu.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.DropDownButton.#ctor">
+      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.DropDownButton?text=DropDownButton" /> class.</summary>
     </member>
     <member name="T:ModernWpf.Controls.ElementAnimationCompleted">
       <param name="sender" />
@@ -691,12 +907,24 @@
       <summary>Identifies the NavigateUri dependency property.</summary>
       <returns>The identifier for the NavigateUri dependency property.</returns>
     </member>
-    <member name="T:ModernWpf.Controls.IElementFactoryShim" />
-    <member name="M:ModernWpf.Controls.IElementFactoryShim.GetElement(ModernWpf.Controls.ElementFactoryGetArgs)">
-      <param name="args" />
+    <member name="T:ModernWpf.Controls.ICommandBarElement">
+      <summary>Defines the compact view for command bar elements.</summary>
     </member>
-    <member name="M:ModernWpf.Controls.IElementFactoryShim.RecycleElement(ModernWpf.Controls.ElementFactoryRecycleArgs)">
-      <param name="args" />
+    <member name="P:ModernWpf.Controls.ICommandBarElement.IsCompact">
+      <summary>Gets or sets a value that indicates whether the element is shown with no label and reduced padding.</summary>
+      <returns>**true** if the element is shown in its compact state; otherwise, **false**. The default is **false**.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.IElementFactory">
+      <summary>Supports the creation and recycling of UIElement objects.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.IElementFactory.GetElement(ModernWpf.Controls.ElementFactoryGetArgs)">
+      <summary>Gets an UIElement object.</summary>
+      <param name="args">An instance of ElementFactoryGetArgs.</param>
+      <returns>A UIElement object.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.IElementFactory.RecycleElement(ModernWpf.Controls.ElementFactoryRecycleArgs)">
+      <summary>Recycles a UIElement that was previously retrieved using GetElement.</summary>
+      <param name="args">An instance of ElementFactoryRecycleArgs.</param>
     </member>
     <member name="T:ModernWpf.Controls.IKeyIndexMapping">
       <summary>Provides methods that support mapping between an item's unique identifier and index.</summary>
@@ -710,6 +938,21 @@
       <summary>Retrieves the unique identifier (key) for the item at the specified index.</summary>
       <param name="index">The index of the item to get the key for.</param>
       <returns>The unique identifier (key) for the item at the specified index.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.IScrollAnchorProvider">
+      <summary>Specifies a contract for a scrolling control that supports scroll anchoring.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.IScrollAnchorProvider.CurrentAnchor">
+      <summary>The currently chosen anchor element to use for scroll anchoring.</summary>
+      <returns>The most recently chosen UIElement for scroll anchoring after a layout pass, or **null**.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.IScrollAnchorProvider.RegisterAnchorCandidate(System.Windows.UIElement)">
+      <summary>Registers a UIElement as a potential scroll anchor candidate.</summary>
+      <param name="element">A UIElement within the subtree of the IScrollAnchorProvider.</param>
+    </member>
+    <member name="M:ModernWpf.Controls.IScrollAnchorProvider.UnregisterAnchorCandidate(System.Windows.UIElement)">
+      <summary>Unregisters a UIElement as a potential scroll anchor candidate.</summary>
+      <param name="element">A UIElement within the subtree of the IScrollAnchorProvider.</param>
     </member>
     <member name="T:ModernWpf.Controls.ItemsRepeater">
       <summary>Represents a data-driven collection control that incorporates a flexible layout system, custom views, and virtualization.</summary>
