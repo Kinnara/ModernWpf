@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls
 {
-    public class RadioButtonsElementFactory : ElementFactory
+    internal class RadioButtonsElementFactory : ElementFactory
     {
         public RadioButtonsElementFactory()
         {

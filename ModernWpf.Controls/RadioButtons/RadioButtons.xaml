@@ -15,6 +15,7 @@
                     <StackPanel SnapsToDevicePixels="True">
                         <ContentPresenter
                             Content="{TemplateBinding Header}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         <local:ItemsRepeater
                             x:Name="InnerRepeater"

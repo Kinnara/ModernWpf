@@ -15,13 +15,13 @@ namespace ModernWpf.Controls.Primitives
         public static readonly DependencyProperty ColumnSpacingProperty =
             DependencyProperty.Register(
                 nameof(ColumnSpacing),
-                typeof(int),
+                typeof(double),
                 typeof(ColumnMajorUniformToLargestGridLayout),
-                new FrameworkPropertyMetadata(0, OnColumnSpacingPropertyChanged));
+                new FrameworkPropertyMetadata(OnColumnSpacingPropertyChanged));
 
-        public int ColumnSpacing
+        public double ColumnSpacing
         {
-            get => (int)GetValue(ColumnSpacingProperty);
+            get => (double)GetValue(ColumnSpacingProperty);
             set => SetValue(ColumnSpacingProperty, value);
         }
 
@@ -43,13 +43,13 @@ namespace ModernWpf.Controls.Primitives
         public static readonly DependencyProperty RowSpacingProperty =
             DependencyProperty.Register(
                 nameof(RowSpacing),
-                typeof(int),
+                typeof(double),
                 typeof(ColumnMajorUniformToLargestGridLayout),
-                new FrameworkPropertyMetadata(0, OnRowSpacingPropertyChanged));
+                new FrameworkPropertyMetadata(OnRowSpacingPropertyChanged));
 
-        public int RowSpacing
+        public double RowSpacing
         {
-            get => (int)GetValue(RowSpacingProperty);
+            get => (double)GetValue(RowSpacingProperty);
             set => SetValue(RowSpacingProperty, value);
         }
 
@@ -66,34 +66,34 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        #region MaximumColumns
+        #region MaxColumns
 
-        public static readonly DependencyProperty MaximumColumnsProperty =
+        public static readonly DependencyProperty MaxColumnsProperty =
             DependencyProperty.Register(
-                nameof(MaximumColumns),
+                nameof(MaxColumns),
                 typeof(int),
                 typeof(ColumnMajorUniformToLargestGridLayout),
-                new FrameworkPropertyMetadata(1, OnMaximumColumnsPropertyChanged),
-                ValidateMaximumColumns);
+                new FrameworkPropertyMetadata(1, OnMaxColumnsPropertyChanged),
+                ValidateMaxColumns);
 
-        public int MaximumColumns
+        public int MaxColumns
         {
-            get => (int)GetValue(MaximumColumnsProperty);
-            set => SetValue(MaximumColumnsProperty, value);
+            get => (int)GetValue(MaxColumnsProperty);
+            set => SetValue(MaxColumnsProperty, value);
         }
 
-        private static void OnMaximumColumnsPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        private static void OnMaxColumnsPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             var owner = (ColumnMajorUniformToLargestGridLayout)sender;
-            owner.OnMaximumColumnsPropertyChanged(args);
+            owner.OnMaxColumnsPropertyChanged(args);
         }
 
-        private void OnMaximumColumnsPropertyChanged(DependencyPropertyChangedEventArgs args)
+        private void OnMaxColumnsPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
             InvalidateMeasure();
         }
 
-        private static bool ValidateMaximumColumns(object value)
+        private static bool ValidateMaxColumns(object value)
         {
             return (int)value > 0;
         }
@@ -105,7 +105,7 @@ namespace ModernWpf.Controls.Primitives
             var children = context.Children;
             if (children != null)
             {
-                var maxColumns = Math.Max(1, MaximumColumns);
+                var maxColumns = Math.Max(1, MaxColumns);
                 Debug.Assert(maxColumns > 0);
                 var maxItemsPerColumn = (int)Math.Ceiling((double)children.Count / (double)maxColumns);
 
@@ -148,7 +148,7 @@ namespace ModernWpf.Controls.Primitives
             var children = context.Children;
             if (children != null)
             {
-                var maxColumns = Math.Max(1, MaximumColumns);
+                var maxColumns = Math.Max(1, MaxColumns);
                 Debug.Assert(maxColumns > 0);
                 var itemCount = children.Count;
                 var minitemsPerColumn = (int)Math.Floor((double)itemCount / (double)maxColumns);

@@ -119,7 +119,8 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(SelectedItem),
                 typeof(object),
-                typeof(RadioButtons));
+                typeof(RadioButtons),
+                new FrameworkPropertyMetadata(OnSelectedItemPropertyChanged));
 
         public object SelectedItem
         {
@@ -127,21 +128,26 @@ namespace ModernWpf.Controls
             set => SetValue(SelectedItemProperty, value);
         }
 
+        private static void OnSelectedItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((RadioButtons)d).UpdateSelectedItem();
+        }
+
         #endregion
 
-        #region MaximumColumns
+        #region MaxColumns
 
-        public static readonly DependencyProperty MaximumColumnsProperty =
+        public static readonly DependencyProperty MaxColumnsProperty =
             DependencyProperty.Register(
-                nameof(MaximumColumns),
+                nameof(MaxColumns),
                 typeof(int),
                 typeof(RadioButtons),
                 new FrameworkPropertyMetadata(1));
 
-        public int MaximumColumns
+        public int MaxColumns
         {
-            get => (int)GetValue(MaximumColumnsProperty);
-            set => SetValue(MaximumColumnsProperty, value);
+            get => (int)GetValue(MaxColumnsProperty);
+            set => SetValue(MaxColumnsProperty, value);
         }
 
         #endregion
@@ -155,6 +161,23 @@ namespace ModernWpf.Controls
         {
             get => GetValue(HeaderProperty);
             set => SetValue(HeaderProperty, value);
+        }
+
+        #endregion
+
+        #region HeaderTemplate
+
+        public static readonly DependencyProperty HeaderTemplateProperty =
+            DependencyProperty.Register(
+                nameof(HeaderTemplate),
+                typeof(DataTemplate),
+                typeof(RadioButtons),
+                null);
+
+        public DataTemplate HeaderTemplate
+        {
+            get => (DataTemplate)GetValue(HeaderTemplateProperty);
+            set => SetValue(HeaderTemplateProperty, value);
         }
 
         #endregion
@@ -185,7 +208,7 @@ namespace ModernWpf.Controls
 
                 if (m_repeater.Layout is ColumnMajorUniformToLargestGridLayout layout)
                 {
-                    layout.ClearValue(ColumnMajorUniformToLargestGridLayout.MaximumColumnsProperty);
+                    layout.ClearValue(ColumnMajorUniformToLargestGridLayout.MaxColumnsProperty);
                 }
             }
 
@@ -201,8 +224,8 @@ namespace ModernWpf.Controls
                 if (m_repeater.Layout is ColumnMajorUniformToLargestGridLayout layout)
                 {
                     BindingOperations.SetBinding(layout,
-                        ColumnMajorUniformToLargestGridLayout.MaximumColumnsProperty,
-                        new Binding { Path = new PropertyPath(MaximumColumnsProperty), Source = this });
+                        ColumnMajorUniformToLargestGridLayout.MaxColumnsProperty,
+                        new Binding { Path = new PropertyPath(MaxColumnsProperty), Source = this });
                 }
             }
 
@@ -263,6 +286,7 @@ namespace ModernWpf.Controls
             var repeater = m_repeater;
             if (repeater != null)
             {
+                UpdateSelectedItem();
                 UpdateSelectedIndex();
                 OnRepeaterCollectionChanged(null, null);
             }
@@ -360,11 +384,11 @@ namespace ModernWpf.Controls
                 {
                     toggleButton.Checked += OnChildChecked;
                     toggleButton.Unchecked += OnChildUnchecked;
-                    //var childHandlers = <ChildHandlers>();
-                    //childHandlers.checkedRevoker = toggleButton.Checked(auto_revoke, { this, RadioButtons.OnChildChecked });
-                    //childHandlers.uncheckedRevoker = toggleButton.Unchecked(auto_revoke, { this, RadioButtons.OnChildUnchecked });
 
-                    //toggleButton.SetValue(s_childHandlersProperty, childHandlers.as< object > ());
+                    if (toggleButton.IsChecked == true)
+                    {
+                        Select(args.Index);
+                    }
                 }
 #if NETCOREAPP3_0
                 var repeater = m_repeater;
@@ -391,21 +415,34 @@ namespace ModernWpf.Controls
                     toggleButton.Checked -= OnChildChecked;
                     toggleButton.Unchecked -= OnChildUnchecked;
                 }
+
+                // If the removed element was the selected one, update selection to -1
+                if (element is ToggleButton elementAsToggle)
+                {
+                    if (elementAsToggle.IsChecked == true)
+                    {
+                        Select(-1);
+                    }
+                }
             }
         }
 
         void OnRepeaterElementIndexChanged(ItemsRepeater sender, ItemsRepeaterElementIndexChangedEventArgs args)
         {
-#if NETCOREAPP3_0
             var element = args.Element;
             if (element != null)
             {
+#if NETCOREAPP3_0
                 element.SetValue(AutomationProperties.PositionInSetProperty, args.NewIndex + 1);
-            }
 #endif
-            if (args.OldIndex == m_selectedIndex)
-            {
-                Select(args.NewIndex);
+                // When the selected item's index changes, update selection to match
+                if (element is ToggleButton elementAsToggle)
+                {
+                    if (elementAsToggle.IsChecked == true)
+                    {
+                        Select(args.NewIndex);
+                    }
+                }
             }
         }
 
@@ -421,10 +458,10 @@ namespace ModernWpf.Controls
                     var count = itemSourceView.Count;
                     for (var index = 0; index < count; index++)
                     {
-                        var radioButton = repeater.TryGetElement(index);
-                        if (radioButton != null)
+                        var element = repeater.TryGetElement(index);
+                        if (element != null)
                         {
-                            radioButton.SetValue(AutomationProperties.SizeOfSetProperty, count);
+                            element.SetValue(AutomationProperties.SizeOfSetProperty, count);
                         }
                     }
                 }
@@ -567,6 +604,16 @@ namespace ModernWpf.Controls
             return false;
         }
 
+        public UIElement ContainerFromIndex(int index)
+        {
+            var repeater = m_repeater;
+            if (repeater != null)
+            {
+                return repeater.TryGetElement(index);
+            }
+            return null;
+        }
+
         private void UpdateItemsSource()
         {
             Select(-1);
@@ -611,14 +658,23 @@ namespace ModernWpf.Controls
             }
         }
 
-        public UIElement ContainerFromIndex(int index)
+        private void UpdateSelectedItem()
         {
-            var repeater = m_repeater;
-            if (repeater != null)
+            if (!m_currentlySelecting)
             {
-                return repeater.TryGetElement(index);
+                var repeater = m_repeater;
+                if (repeater != null)
+                {
+                    var itemsSourceView = repeater.ItemsSourceView;
+                    if (itemsSourceView != null)
+                    {
+                        if (itemsSourceView is InspectingDataSource inspectingDataSource)
+                        {
+                            Select(inspectingDataSource.IndexOf(SelectedItem));
+                        }
+                    }
+                }
             }
-            return null;
         }
 
         int m_selectedIndex = -1;
