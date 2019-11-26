@@ -1,6 +1,7 @@
 ﻿using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,6 +29,16 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             // Do custom logic
             SelectedOptionText.Text = "You clicked: " + (sender as AppBarButton).Label;
+
+            //var command = (ICommandBarElement)sender;
+            //if (CommandBarFlyout1.PrimaryCommands.Contains(command))
+            //{
+            //    CommandBarFlyout1.PrimaryCommands.Remove(command);
+            //}
+            //else if (CommandBarFlyout1.SecondaryCommands.Contains(command))
+            //{
+            //    CommandBarFlyout1.SecondaryCommands.Remove(command);
+            //}
         }
 
         private void ShowMenu(bool isTransient)

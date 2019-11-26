@@ -43,7 +43,6 @@ namespace ModernWpf.Controls
                     // The only exception is buttons with flyouts - in that case, clicking on the button
                     // will just open the flyout rather than executing an action, so we don't want that to
                     // do anything.
-                    int index;
                     RoutedEventHandler closeFlyoutFunc = delegate { Hide(); };
 
                     // TODO
@@ -51,60 +50,67 @@ namespace ModernWpf.Controls
                     {
                         case NotifyCollectionChangedAction.Replace:
                             {
-                                index = args.NewStartingIndex;
-                                var element = source[index];
+                                var element = (ICommandBarElement)args.NewItems[0];
+                                var oldElement = (ICommandBarElement)args.OldItems[0];
                                 var button = element as AppBarButton;
                                 var toggleButton = element as AppBarToggleButton;
 
+                                RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, oldElement);
+                                RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, oldElement);
+                                RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, oldElement);
+
                                 if (button != null && button.Flyout == null)
                                 {
-                                    m_secondaryButtonClickRevokerByIndexMap[index] = new RoutedEventHandlerRevoker(
+                                    m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                                         button, ButtonBase.ClickEvent, closeFlyoutFunc);
-                                    m_secondaryToggleButtonCheckedRevokerByIndexMap.Remove(index);
-                                    m_secondaryToggleButtonUncheckedRevokerByIndexMap.Remove(index);
+                                    RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
+                                    RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
                                 }
                                 else if (toggleButton != null)
                                 {
-                                    m_secondaryButtonClickRevokerByIndexMap.Remove(index);
-                                    m_secondaryToggleButtonCheckedRevokerByIndexMap[index] = new RoutedEventHandlerRevoker(
+                                    RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
+                                    m_secondaryToggleButtonCheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                                         button, ToggleButton.CheckedEvent, closeFlyoutFunc);
-                                    m_secondaryToggleButtonUncheckedRevokerByIndexMap[index] = new RoutedEventHandlerRevoker(
+                                    m_secondaryToggleButtonUncheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                                         button, ToggleButton.UncheckedEvent, closeFlyoutFunc);
                                 }
                                 else
                                 {
-                                    m_secondaryButtonClickRevokerByIndexMap.Remove(index);
-                                    m_secondaryToggleButtonCheckedRevokerByIndexMap.Remove(index);
-                                    m_secondaryToggleButtonUncheckedRevokerByIndexMap.Remove(index);
+                                    RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
+                                    RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
+                                    RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
                                 }
                                 break;
                             }
                         case NotifyCollectionChangedAction.Add:
                             {
-                                index = args.NewStartingIndex;
-                                var element = source[index];
+                                var element = (ICommandBarElement)args.NewItems[0];
                                 var button = element as AppBarButton;
                                 var toggleButton = element as AppBarToggleButton;
 
                                 if (button != null && button.Flyout == null)
                                 {
-                                    m_secondaryButtonClickRevokerByIndexMap[index] = new RoutedEventHandlerRevoker(
+                                    m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                                         button, ButtonBase.ClickEvent, closeFlyoutFunc);
                                 }
                                 else if (toggleButton != null)
                                 {
-                                    m_secondaryToggleButtonCheckedRevokerByIndexMap[index] = new RoutedEventHandlerRevoker(
+                                    m_secondaryToggleButtonCheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                                         button, ToggleButton.CheckedEvent, closeFlyoutFunc);
-                                    m_secondaryToggleButtonUncheckedRevokerByIndexMap[index] = new RoutedEventHandlerRevoker(
+                                    m_secondaryToggleButtonUncheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                                         button, ToggleButton.UncheckedEvent, closeFlyoutFunc);
                                 }
                                 break;
                             }
                         case NotifyCollectionChangedAction.Remove:
-                            index = args.OldStartingIndex;
-                            m_secondaryButtonClickRevokerByIndexMap.Remove(index);
-                            m_secondaryToggleButtonCheckedRevokerByIndexMap.Remove(index);
-                            m_secondaryToggleButtonUncheckedRevokerByIndexMap.Remove(index);
+                            {
+                                var element = (ICommandBarElement)args.OldItems[0];
+                                RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
+                                RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
+                                RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
+                                break;
+                            }
+                        case NotifyCollectionChangedAction.Move:
                             break;
                         case NotifyCollectionChangedAction.Reset:
                             SetSecondaryCommandsToCloseWhenExecuted();
@@ -219,9 +225,9 @@ namespace ModernWpf.Controls
 
         void SetSecondaryCommandsToCloseWhenExecuted()
         {
-            m_secondaryButtonClickRevokerByIndexMap.Clear();
-            m_secondaryToggleButtonCheckedRevokerByIndexMap.Clear();
-            m_secondaryToggleButtonUncheckedRevokerByIndexMap.Clear();
+            RevokeAndClear(m_secondaryButtonClickRevokerByElementMap);
+            RevokeAndClear(m_secondaryToggleButtonCheckedRevokerByElementMap);
+            RevokeAndClear(m_secondaryToggleButtonUncheckedRevokerByElementMap);
 
             RoutedEventHandler closeFlyoutFunc = delegate { Hide(); };
 
@@ -233,24 +239,45 @@ namespace ModernWpf.Controls
 
                 if (button != null)
                 {
-                    m_secondaryButtonClickRevokerByIndexMap[i] = new RoutedEventHandlerRevoker(
+                    m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                         button, ButtonBase.ClickEvent, closeFlyoutFunc);
                 }
                 else if (toggleButton != null)
                 {
-                    m_secondaryToggleButtonCheckedRevokerByIndexMap[i] = new RoutedEventHandlerRevoker(
+                    m_secondaryToggleButtonCheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                         button, ToggleButton.CheckedEvent, closeFlyoutFunc);
-                    m_secondaryToggleButtonUncheckedRevokerByIndexMap[i] = new RoutedEventHandlerRevoker(
+                    m_secondaryToggleButtonUncheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                         button, ToggleButton.UncheckedEvent, closeFlyoutFunc);
                 }
             }
         }
 
+        private static void RevokeAndRemove(IDictionary<ICommandBarElement, RoutedEventHandlerRevoker> map, ICommandBarElement element)
+        {
+            if (map.TryGetValue(element, out var revoker))
+            {
+                revoker.Revoke();
+                map.Remove(element);
+            }
+        }
+
+        private static void RevokeAndClear(IDictionary<ICommandBarElement, RoutedEventHandlerRevoker> map)
+        {
+            foreach (var value in map.Values)
+            {
+                value.Revoke();
+            }
+            map.Clear();
+        }
+
         CommandBarFlyoutCommandBar m_commandBar;
 
-        Dictionary<int, RoutedEventHandlerRevoker> m_secondaryButtonClickRevokerByIndexMap = new Dictionary<int, RoutedEventHandlerRevoker>();
-        Dictionary<int, RoutedEventHandlerRevoker> m_secondaryToggleButtonCheckedRevokerByIndexMap = new Dictionary<int, RoutedEventHandlerRevoker>();
-        Dictionary<int, RoutedEventHandlerRevoker> m_secondaryToggleButtonUncheckedRevokerByIndexMap = new Dictionary<int, RoutedEventHandlerRevoker>();
+        Dictionary<ICommandBarElement, RoutedEventHandlerRevoker> m_secondaryButtonClickRevokerByElementMap =
+            new Dictionary<ICommandBarElement, RoutedEventHandlerRevoker>();
+        Dictionary<ICommandBarElement, RoutedEventHandlerRevoker> m_secondaryToggleButtonCheckedRevokerByElementMap =
+            new Dictionary<ICommandBarElement, RoutedEventHandlerRevoker>();
+        Dictionary<ICommandBarElement, RoutedEventHandlerRevoker> m_secondaryToggleButtonUncheckedRevokerByElementMap =
+            new Dictionary<ICommandBarElement, RoutedEventHandlerRevoker>();
 
         bool m_isClosingAfterCloseAnimation;
     }

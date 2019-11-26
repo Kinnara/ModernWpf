@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Windows;
@@ -35,27 +36,24 @@ namespace ModernWpf.Controls
 
         // TODO
         internal static void ForwardCollectionChange<T>(
-            IList<T> source,
-            IList<T> destination,
+            ObservableCollection<T> source,
+            ObservableCollection<T> destination,
             NotifyCollectionChangedEventArgs args)
         {
-            int index;
             switch (args.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    index = args.NewStartingIndex;
-                    destination.Insert(index, (T)args.NewItems[0]);
+                    destination.Insert(args.NewStartingIndex, (T)args.NewItems[0]);
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    index = args.OldStartingIndex;
-                    destination.RemoveAt(index);
+                    destination.RemoveAt(args.OldStartingIndex);
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    index = args.NewStartingIndex;
-                    destination[index] = (T)args.NewItems[0];
+                    destination[args.NewStartingIndex] = (T)args.NewItems[0];
                     break;
                 case NotifyCollectionChangedAction.Move:
-                    throw new NotImplementedException();
+                    destination.Move(args.OldStartingIndex, args.NewStartingIndex);
+                    break;
                 case NotifyCollectionChangedAction.Reset:
                     CopyList(source, destination);
                     break;
