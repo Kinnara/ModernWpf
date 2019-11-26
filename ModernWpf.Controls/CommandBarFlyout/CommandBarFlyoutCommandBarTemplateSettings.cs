@@ -3,7 +3,7 @@
 
 using System.Windows;
 
-namespace ModernWpf.Controls
+namespace ModernWpf.Controls.Primitives
 {
     public sealed class CommandBarFlyoutCommandBarTemplateSettings : DependencyObject
     {

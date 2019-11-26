@@ -8,7 +8,6 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarToggleButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarSeparator.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/CommandBar.xaml" />
-        <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/SimpleToolBar.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBarFlyout/CommandBarFlyout.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/DropDownButton/DropDownButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/Flyout/FlyoutPresenter.xaml" />

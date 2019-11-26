@@ -1,18 +1,17 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using ModernWpf.Controls.Primitives;
 
-namespace ModernWpf.Controls
+namespace ModernWpf.Controls.Primitives
 {
-    public class SimpleToolBarOverflowPresenter : ContentControl
+    public class CommandBarOverflowPresenter : ContentControl
     {
-        static SimpleToolBarOverflowPresenter()
+        static CommandBarOverflowPresenter()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(SimpleToolBarOverflowPresenter),
-                new FrameworkPropertyMetadata(typeof(SimpleToolBarOverflowPresenter)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(CommandBarOverflowPresenter),
+                new FrameworkPropertyMetadata(typeof(CommandBarOverflowPresenter)));
         }
 
-        public SimpleToolBarOverflowPresenter()
+        public CommandBarOverflowPresenter()
         {
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -21,7 +20,7 @@ namespace ModernWpf.Controls
         #region CornerRadius
 
         public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(SimpleToolBarOverflowPresenter));
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(CommandBarOverflowPresenter));
 
         public CornerRadius CornerRadius
         {
@@ -69,7 +68,7 @@ namespace ModernWpf.Controls
 
         private bool IsPopupOpenDown()
         {
-            if (TemplatedParent is SimpleToolBar toolBar)
+            if (TemplatedParent is CommandBarToolBar toolBar)
             {
                 var popupPoint = PointToScreen(new Point());
                 var toolBarPoint = toolBar.PointToScreen(new Point());

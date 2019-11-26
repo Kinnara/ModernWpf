@@ -423,7 +423,7 @@
 
     <Style x:Key="CommandBarFlyoutAppBarToggleButtonStyle" TargetType="local:AppBarToggleButton" BasedOn="{StaticResource CommandBarFlyoutAppBarToggleButtonStyleBase}" />
 
-    <Style x:Key="CommandBarFlyoutCommandBarOverflowPresenterStyle" TargetType="local:SimpleToolBarOverflowPresenter">
+    <Style x:Key="CommandBarFlyoutCommandBarOverflowPresenterStyle" TargetType="primitives:CommandBarOverflowPresenter">
         <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutButtonBackground}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="MinWidth" Value="136" />
@@ -434,7 +434,7 @@
         <Setter Property="KeyboardNavigation.TabNavigation" Value="Once" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:SimpleToolBarOverflowPresenter">
+                <ControlTemplate TargetType="primitives:CommandBarOverflowPresenter">
                     <Border
                         x:Name="LayoutRoot"
                         Background="{TemplateBinding Background}"
@@ -478,7 +478,7 @@
                         <Border.Resources>
                             <Style TargetType="local:AppBarButton" BasedOn="{StaticResource CommandBarFlyoutAppBarButtonStyle}" />
                             <Style TargetType="local:AppBarToggleButton" BasedOn="{StaticResource CommandBarFlyoutAppBarToggleButtonStyle}" />
-                            <local:CommandBarFlyoutCommandBarTemplateSettings x:Key="FlyoutTemplateSettings" />
+                            <primitives:CommandBarFlyoutCommandBarTemplateSettings x:Key="FlyoutTemplateSettings" />
                             <!--
                                 We'll only provide opening and closing storyboards for RS5 and above,
                                 because we aren't able to suppress the default flyout open/close animations
@@ -865,17 +865,17 @@
                                                     </RectangleGeometry.Transform>
                                                 </RectangleGeometry>
                                             </Grid.Clip>
-                                            <local:SimpleToolBarOverflowPresenter
+                                            <primitives:CommandBarOverflowPresenter
                                                 Grid.Row="1"
                                                 x:Name="SecondaryItemsControl"
                                                 Style="{TemplateBinding OverflowPresenterStyle}"
                                                 BorderBrush="{TemplateBinding BorderBrush}"
                                                 BorderThickness="{DynamicResource CommandBarFlyoutBorderThemeThickness}"
                                                 IsTabStop="False">
-                                                <local:SimpleToolBarOverflowPanel
+                                                <primitives:CommandBarOverflowPanel
                                                     x:Name="PART_ToolBarOverflowPanel"
                                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                            </local:SimpleToolBarOverflowPresenter>
+                                            </primitives:CommandBarOverflowPresenter>
                                         </Grid>
                                     </Border>
                                 </ui:PopupEx>
@@ -939,7 +939,7 @@
                         <Border.Resources>
                             <Style TargetType="local:AppBarButton" BasedOn="{StaticResource CommandBarFlyoutAppBarButtonStyle}" />
                             <Style TargetType="local:AppBarToggleButton" BasedOn="{StaticResource CommandBarFlyoutAppBarToggleButtonStyle}" />
-                            <local:CommandBarFlyoutCommandBarTemplateSettings x:Key="FlyoutTemplateSettings" />
+                            <primitives:CommandBarFlyoutCommandBarTemplateSettings x:Key="FlyoutTemplateSettings" />
                         </Border.Resources>
                         <VisualStateManager.VisualStateGroups>
                             <ui:VisualStateGroupEx x:Name="AvailableCommandsStates">
@@ -1065,17 +1065,17 @@
                                                     <RowDefinition />
                                                     <RowDefinition Height="Auto" />
                                                 </Grid.RowDefinitions>
-                                                <local:SimpleToolBarOverflowPresenter
+                                                <primitives:CommandBarOverflowPresenter
                                                     Grid.Row="1"
                                                     x:Name="SecondaryItemsControl"
                                                     Style="{TemplateBinding OverflowPresenterStyle}"
                                                     BorderBrush="{TemplateBinding BorderBrush}"
                                                     BorderThickness="{DynamicResource CommandBarFlyoutBorderThemeThickness}"
                                                     IsTabStop="False">
-                                                    <local:SimpleToolBarOverflowPanel
+                                                    <primitives:CommandBarOverflowPanel
                                                         x:Name="PART_ToolBarOverflowPanel"
                                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                                </local:SimpleToolBarOverflowPresenter>
+                                                </primitives:CommandBarOverflowPresenter>
                                             </Grid>
                                         </Border>
                                     </ui:ThemeShadowChrome>

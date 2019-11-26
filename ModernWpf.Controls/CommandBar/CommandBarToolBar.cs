@@ -5,23 +5,23 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
 using ModernWpf.Controls.Primitives;
 
-namespace ModernWpf.Controls
+namespace ModernWpf.Controls.Primitives
 {
-    public class SimpleToolBar : ToolBar
+    public class CommandBarToolBar : ToolBar
     {
-        static SimpleToolBar()
+        static CommandBarToolBar()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(SimpleToolBar), new FrameworkPropertyMetadata(typeof(SimpleToolBar)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(CommandBarToolBar), new FrameworkPropertyMetadata(typeof(CommandBarToolBar)));
         }
 
-        public SimpleToolBar()
+        public CommandBarToolBar()
         {
         }
 
         #region CornerRadius
 
         public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(SimpleToolBar));
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(CommandBarToolBar));
 
         public CornerRadius CornerRadius
         {
@@ -37,7 +37,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 nameof(DefaultLabelPosition),
                 typeof(CommandBarDefaultLabelPosition),
-                typeof(SimpleToolBar),
+                typeof(CommandBarToolBar),
                 new PropertyMetadata(CommandBarDefaultLabelPosition.Right));
 
         public CommandBarDefaultLabelPosition DefaultLabelPosition
@@ -54,7 +54,7 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(IsDynamicOverflowEnabled),
                 typeof(bool),
-                typeof(SimpleToolBar),
+                typeof(CommandBarToolBar),
                 new PropertyMetadata(true));
 
         public bool IsDynamicOverflowEnabled
@@ -71,7 +71,7 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(OverflowButtonVisibility),
                 typeof(CommandBarOverflowButtonVisibility),
-                typeof(SimpleToolBar),
+                typeof(CommandBarToolBar),
                 new PropertyMetadata(CommandBarOverflowButtonVisibility.Auto, OnOverflowButtonVisibilityChanged));
 
         public CommandBarOverflowButtonVisibility OverflowButtonVisibility
@@ -82,7 +82,7 @@ namespace ModernWpf.Controls
 
         private static void OnOverflowButtonVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((SimpleToolBar)d).UpdateEffectiveOverflowButtonVisibility();
+            ((CommandBarToolBar)d).UpdateEffectiveOverflowButtonVisibility();
         }
 
         #endregion
@@ -93,7 +93,7 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(OverflowPresenterStyle),
                 typeof(Style),
-                typeof(SimpleToolBar),
+                typeof(CommandBarToolBar),
                 null);
 
         public Style OverflowPresenterStyle
@@ -110,7 +110,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterReadOnly(
                 nameof(OverflowContentMaxHeight),
                 typeof(double),
-                typeof(SimpleToolBar),
+                typeof(CommandBarToolBar),
                 new PropertyMetadata(CalculateOverflowContentMaxHeight()));
 
         public static readonly DependencyProperty OverflowContentMaxHeightProperty =
@@ -140,7 +140,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterReadOnly(
                 nameof(EffectiveOverflowButtonVisibility),
                 typeof(Visibility),
-                typeof(SimpleToolBar),
+                typeof(CommandBarToolBar),
                 new PropertyMetadata(Visibility.Collapsed, OnEffectiveOverflowButtonVisibilityChanged));
 
         public static readonly DependencyProperty EffectiveOverflowButtonVisibilityProperty =
@@ -154,7 +154,7 @@ namespace ModernWpf.Controls
 
         private static void OnEffectiveOverflowButtonVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((SimpleToolBar)d).OnEffectiveOverflowButtonVisibilityChanged();
+            ((CommandBarToolBar)d).OnEffectiveOverflowButtonVisibilityChanged();
         }
 
         private void OnEffectiveOverflowButtonVisibilityChanged()
@@ -201,7 +201,7 @@ namespace ModernWpf.Controls
             m_layoutRoot = this.GetTemplateRoot();
             m_overflowPopup = GetTemplateChild(OverflowPopupName) as Popup;
             m_toolBarPanel = GetTemplateChild(ToolBarPanelName) as ToolBarPanel;
-            m_toolBarOverflowPanel = GetTemplateChild(ToolBarOverflowPanelName) as SimpleToolBarOverflowPanel;
+            m_toolBarOverflowPanel = GetTemplateChild(ToolBarOverflowPanelName) as CommandBarOverflowPanel;
 
             if (m_overflowPopup != null)
             {
@@ -287,7 +287,7 @@ namespace ModernWpf.Controls
         private FrameworkElement m_layoutRoot;
         private Popup m_overflowPopup;
         private ToolBarPanel m_toolBarPanel;
-        private SimpleToolBarOverflowPanel m_toolBarOverflowPanel;
+        private CommandBarOverflowPanel m_toolBarOverflowPanel;
 
         private const string OverflowPopupName = "OverflowPopup";
         private const string ToolBarPanelName = "PART_ToolBarPanel";

@@ -133,7 +133,7 @@ namespace ModernWpf.Controls
         #region DefaultLabelPosition
 
         public static readonly DependencyProperty DefaultLabelPositionProperty =
-            SimpleToolBar.DefaultLabelPositionProperty.AddOwner(typeof(CommandBar));
+            CommandBarToolBar.DefaultLabelPositionProperty.AddOwner(typeof(CommandBar));
 
         public CommandBarDefaultLabelPosition DefaultLabelPosition
         {
@@ -146,7 +146,7 @@ namespace ModernWpf.Controls
         #region IsDynamicOverflowEnabled
 
         public static readonly DependencyProperty IsDynamicOverflowEnabledProperty =
-            SimpleToolBar.IsDynamicOverflowEnabledProperty.AddOwner(typeof(CommandBar),
+            CommandBarToolBar.IsDynamicOverflowEnabledProperty.AddOwner(typeof(CommandBar),
                 new FrameworkPropertyMetadata(OnIsDynamicOverflowEnabledChanged));
 
         public bool IsDynamicOverflowEnabled
@@ -189,7 +189,7 @@ namespace ModernWpf.Controls
         #region OverflowButtonVisibility
 
         public static readonly DependencyProperty OverflowButtonVisibilityProperty =
-            SimpleToolBar.OverflowButtonVisibilityProperty.AddOwner(typeof(CommandBar));
+            CommandBarToolBar.OverflowButtonVisibilityProperty.AddOwner(typeof(CommandBar));
 
         public CommandBarOverflowButtonVisibility OverflowButtonVisibility
         {
@@ -214,7 +214,7 @@ namespace ModernWpf.Controls
                 m_toolBar.OverflowClosed -= OnOverflowClosed;
             }
 
-            m_toolBar = GetTemplateChild(ToolBarName) as SimpleToolBar;
+            m_toolBar = GetTemplateChild(ToolBarName) as CommandBarToolBar;
 
             if (m_toolBar != null)
             {
@@ -265,7 +265,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        private SimpleToolBar m_toolBar;
+        private CommandBarToolBar m_toolBar;
 
         internal const string ToolBarName = "PART_ToolBar";
     }

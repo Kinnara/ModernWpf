@@ -3,11 +3,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
-namespace ModernWpf.Controls
+namespace ModernWpf.Controls.Primitives
 {
-    public class SimpleToolBarOverflowPanel : ToolBarOverflowPanel
+    public class CommandBarOverflowPanel : ToolBarOverflowPanel
     {
-        public SimpleToolBarOverflowPanel()
+        public CommandBarOverflowPanel()
         {
             Loaded += OnLoaded;
         }

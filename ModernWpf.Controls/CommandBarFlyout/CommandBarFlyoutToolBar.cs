@@ -14,7 +14,7 @@ using System.Windows.Media.Animation;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class CommandBarFlyoutToolBar : SimpleToolBar
+    public class CommandBarFlyoutToolBar : CommandBarToolBar
     {
         static CommandBarFlyoutToolBar()
         {

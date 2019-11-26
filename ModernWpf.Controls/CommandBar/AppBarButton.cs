@@ -1,9 +1,7 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -18,7 +16,7 @@ namespace ModernWpf.Controls
             ToolBar.OverflowModeProperty.OverrideMetadata(typeof(AppBarButton),
                 new FrameworkPropertyMetadata(OnOverflowModePropertyChanged));
 
-            SimpleToolBar.DefaultLabelPositionProperty.OverrideMetadata(typeof(AppBarButton),
+            CommandBarToolBar.DefaultLabelPositionProperty.OverrideMetadata(typeof(AppBarButton),
                 new FrameworkPropertyMetadata(OnDefaultLabelPositionPropertyChanged));
         }
 
@@ -247,7 +245,7 @@ namespace ModernWpf.Controls
 
                 if (VisualParent is ToolBarPanel)
                 {
-                    defaultLabelPosition = (CommandBarDefaultLabelPosition)GetValue(SimpleToolBar.DefaultLabelPositionProperty);
+                    defaultLabelPosition = (CommandBarDefaultLabelPosition)GetValue(CommandBarToolBar.DefaultLabelPositionProperty);
                 }
                 else 
                 {
