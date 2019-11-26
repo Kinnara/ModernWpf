@@ -7,6 +7,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
+using System.Windows.Media;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -221,8 +222,9 @@ namespace ModernWpf.Controls
                     {
                         if (oldFocusedElement is UIElement oldFocusedElementAsUIElement)
                         {
+                            var oldElementParent = VisualTreeHelper.GetParent(oldFocusedElementAsUIElement);
                             // If focus is coming from outside the repeater, put focus on the selected item.
-                            if (repeater.GetElementIndex(oldFocusedElementAsUIElement) < 0)
+                            if (repeater != oldElementParent)
                             {
                                 var selectedItem = repeater.TryGetElement(m_selectedIndex);
                                 if (selectedItem != null)
