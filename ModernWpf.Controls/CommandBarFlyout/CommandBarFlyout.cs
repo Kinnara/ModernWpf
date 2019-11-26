@@ -18,8 +18,6 @@ namespace ModernWpf.Controls
     {
         public CommandBarFlyout()
         {
-            AreOpenCloseAnimationsEnabled = true;
-
             PrimaryCommands = new ObservableCollection<ICommandBarElement>();
             SecondaryCommands = new ObservableCollection<ICommandBarElement>();
 
@@ -120,13 +118,20 @@ namespace ModernWpf.Controls
 
             Opening += delegate
             {
-                m_commandBar.IsOpen = true;
-
                 if (m_commandBar.HasOpenAnimation())
                 {
+                    AreOpenCloseAnimationsEnabled = true;
                     InternalPopup.PopupAnimation = PopupAnimation.Fade;
                     InternalPopup.SuppressFadeAnimation = true;
                 }
+                else
+                {
+                    AreOpenCloseAnimationsEnabled = false;
+                    InternalPopup.PopupAnimation = PopupAnimation.None;
+                    InternalPopup.SuppressFadeAnimation = false;
+                }
+
+                m_commandBar.IsOpen = true;
             };
 
             Opened += delegate

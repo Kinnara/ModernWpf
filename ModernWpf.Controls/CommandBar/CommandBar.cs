@@ -63,9 +63,23 @@ namespace ModernWpf.Controls
 
         private void PrimaryCommands_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            UpdateHasPrimaryCommands();
+
             if (e.NewItems != null)
             {
                 UpdateOverflowModeForPrimaryCommands(e.NewItems.OfType<DependencyObject>());
+            }
+        }
+
+        private bool HasPrimaryCommands { get; set; }
+
+        private void UpdateHasPrimaryCommands()
+        {
+            bool value = PrimaryCommands.Count > 0;
+            if (HasPrimaryCommands != value)
+            {
+                HasPrimaryCommands = value;
+                UpdateVisualState();
             }
         }
 
@@ -77,9 +91,23 @@ namespace ModernWpf.Controls
 
         private void SecondaryCommands_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            UpdateHasSecondaryCommands();
+
             if (e.NewItems != null)
             {
                 UpdateOverflowModeForSecondaryCommands(e.NewItems.OfType<DependencyObject>());
+            }
+        }
+
+        private bool HasSecondaryCommands { get; set; }
+
+        private void UpdateHasSecondaryCommands()
+        {
+            bool value = SecondaryCommands.Count > 0;
+            if (HasSecondaryCommands != value)
+            {
+                HasSecondaryCommands = value;
+                UpdateVisualState();
             }
         }
 
@@ -208,6 +236,33 @@ namespace ModernWpf.Controls
         private void OnOverflowClosed(object sender, EventArgs e)
         {
             Closed?.Invoke(this, null);
+        }
+
+        internal void UpdateVisualState(bool useTransitions = true)
+        {
+            if (m_toolBar != null)
+            {
+                string stateName;
+
+                if (HasPrimaryCommands && HasSecondaryCommands)
+                {
+                    stateName = "BothCommands";
+                }
+                else if (HasPrimaryCommands)
+                {
+                    stateName = "PrimaryCommandsOnly";
+                }
+                else if (HasSecondaryCommands)
+                {
+                    stateName = "SecondaryCommandsOnly";
+                }
+                else
+                {
+                    stateName = "BothCommands";
+                }
+
+                VisualStateManager.GoToState(m_toolBar, stateName, useTransitions);
+            }
         }
 
         private SimpleToolBar m_toolBar;

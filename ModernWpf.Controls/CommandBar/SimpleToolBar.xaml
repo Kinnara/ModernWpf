@@ -20,6 +20,25 @@
                     <Grid
                         x:Name="LayoutRoot"
                         SnapsToDevicePixels="True">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="AvailableCommandsStates">
+                                <VisualState x:Name="BothCommands" />
+                                <VisualState x:Name="PrimaryCommandsOnly">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRoot" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="SecondaryCommandsOnly">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PrimaryItemsRoot" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid
                             x:Name="ContentRoot"
                             VerticalAlignment="Top"
@@ -123,17 +142,10 @@
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="EllipsisIcon" Property="Foreground" Value="{DynamicResource CommandBarEllipsisIconForegroundDisabled}" />
                         </Trigger>
-                        <!-- PrimaryCommandsOnly -->
-                        <!--<Trigger>
-                            <Setter TargetName="OverflowContentRoot" Property="Visibility" Value="Collapsed" />
-                        </Trigger>-->
-                        <!-- SecondaryCommandsOnly -->
-                        <!--<Trigger>
-                            <Setter TargetName="PrimaryItemsControl" Property="Visibility" Value="Collapsed" />
-                        </Trigger>-->
                         <!-- DynamicOverflowEnabled -->
                         <Trigger Property="IsDynamicOverflowEnabled" Value="True">
                             <Setter TargetName="ContentControlColumnDefinition" Property="Width" Value="Auto" />

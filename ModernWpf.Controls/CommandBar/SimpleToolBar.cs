@@ -210,6 +210,11 @@ namespace ModernWpf.Controls
                 m_overflowPopup.Closed += OnOverflowPopupClosed;
             }
 
+            if (TemplatedParent is CommandBar commandBar)
+            {
+                commandBar.UpdateVisualState(false);
+            }
+
             InvalidateLayout();
         }
 

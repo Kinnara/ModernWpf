@@ -712,6 +712,26 @@
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="AvailableCommandsStates">
+                                <VisualState x:Name="BothCommands" />
+                                <VisualState x:Name="PrimaryCommandsOnly">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRoot" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="SecondaryCommandsOnly">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PrimaryItemsRoot" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverflowPopup" Storyboard.TargetProperty="Placement">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static PlacementMode.Relative}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
                             <VisualStateGroup x:Name="ExpansionStates2">
                                 <VisualState x:Name="ExpandedUpWithPrimaryCommands" />
                                 <VisualState x:Name="ExpandedDownWithPrimaryCommands" />
@@ -856,7 +876,6 @@
                                                     x:Name="PART_ToolBarOverflowPanel"
                                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                             </local:SimpleToolBarOverflowPresenter>
-                                            <Border Visibility="Collapsed" />
                                         </Grid>
                                     </Border>
                                 </ui:PopupEx>
@@ -871,14 +890,6 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="EllipsisIcon" Property="Foreground" Value="{DynamicResource CommandBarEllipsisIconForegroundDisabled}" />
                         </Trigger>
-                        <!-- PrimaryCommandsOnly -->
-                        <!--<Trigger>
-                            <Setter TargetName="OverflowContentRoot" Property="Visibility" Value="Collapsed" />
-                        </Trigger>-->
-                        <!-- SecondaryCommandsOnly -->
-                        <!--<Trigger>
-                            <Setter TargetName="PrimaryItemsRoot" Property="Visibility" Value="Collapsed" />
-                        </Trigger>-->
                         <!-- ExpandedUpWithPrimaryCommands -->
                         <Trigger SourceName="ExpansionStates2Listener" Property="CurrentStateName" Value="ExpandedUpWithPrimaryCommands">
                             <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderUpThemeThickness}" />
@@ -931,6 +942,23 @@
                             <local:CommandBarFlyoutCommandBarTemplateSettings x:Key="FlyoutTemplateSettings" />
                         </Border.Resources>
                         <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="AvailableCommandsStates">
+                                <VisualState x:Name="BothCommands" />
+                                <VisualState x:Name="PrimaryCommandsOnly">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRoot" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="SecondaryCommandsOnly">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PrimaryItemsRoot" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
                             <VisualStateGroup x:Name="ExpansionStates2">
                                 <VisualState x:Name="ExpandedUpWithPrimaryCommands" />
                                 <VisualState x:Name="ExpandedDownWithPrimaryCommands" />
@@ -1021,61 +1049,40 @@
                                     IsOpen="{Binding Path=IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                     StaysOpen="false"
                                     Focusable="false"
-                                    PopupAnimation="Fade">
-                                    <Border
+                                    PopupAnimation="None">
+                                    <ui:ThemeShadowChrome
                                         x:Name="OuterOverflowContentRoot"
-                                        Width="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=ExpandedWidth}">
-                                        <Border.Clip>
-                                            <RectangleGeometry
-                                                x:Name="OuterOverflowContentRootClip"
-                                                Rect="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=OverflowContentClipRect}">
-                                                <RectangleGeometry.Transform>
-                                                    <TranslateTransform x:Name="OuterOverflowContentRootClipTransform" />
-                                                </RectangleGeometry.Transform>
-                                            </RectangleGeometry>
-                                        </Border.Clip>
-                                        <Grid
+                                        Width="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=ExpandedWidth}"
+                                        IsShadowEnabled="False">
+                                        <Border
                                             x:Name="OverflowContentRoot"
                                             HorizontalAlignment="Stretch"
-                                            Background="{TemplateBinding Background}">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <Grid.Clip>
-                                                <RectangleGeometry
-                                                    x:Name="OverflowContentRootClip"
-                                                    Rect="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=OverflowContentClipRect}">
-                                                    <RectangleGeometry.Transform>
-                                                        <!--
-                                                            If you have a value set by a binding and then animate that value,
-                                                            the animation will clear the binding.  Because of that, we need to have
-                                                            two translate transforms - one that we bind to a property,
-                                                            and another that we can animate.
-                                                        -->
-                                                        <TransformGroup>
-                                                            <TranslateTransform X="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=WidthExpansionDelta}" />
-                                                            <TranslateTransform x:Name="OverflowContentRootClipTransform" />
-                                                        </TransformGroup>
-                                                    </RectangleGeometry.Transform>
-                                                </RectangleGeometry>
-                                            </Grid.Clip>
-                                            <local:SimpleToolBarOverflowPresenter
-                                                Grid.Row="1"
-                                                x:Name="SecondaryItemsControl"
-                                                Style="{TemplateBinding OverflowPresenterStyle}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{DynamicResource CommandBarFlyoutBorderThemeThickness}"
-                                                IsTabStop="False">
-                                                <local:SimpleToolBarOverflowPanel
-                                                    x:Name="PART_ToolBarOverflowPanel"
-                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                            </local:SimpleToolBarOverflowPresenter>
-                                            <Border Visibility="Collapsed" />
-                                        </Grid>
-                                    </Border>
+                                            Background="{TemplateBinding Background}"
+                                            CornerRadius="{Binding ElementName=OuterOverflowContentRoot, Path=CornerRadius}">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <local:SimpleToolBarOverflowPresenter
+                                                    Grid.Row="1"
+                                                    x:Name="SecondaryItemsControl"
+                                                    Style="{TemplateBinding OverflowPresenterStyle}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{DynamicResource CommandBarFlyoutBorderThemeThickness}"
+                                                    IsTabStop="False">
+                                                    <local:SimpleToolBarOverflowPanel
+                                                        x:Name="PART_ToolBarOverflowPanel"
+                                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                </local:SimpleToolBarOverflowPresenter>
+                                            </Grid>
+                                        </Border>
+                                    </ui:ThemeShadowChrome>
                                 </ui:PopupEx>
+                                <ui:VisualStateGroupListener
+                                    x:Name="AvailableCommandsStatesListener"
+                                    GroupName="AvailableCommandsStates" />
                                 <ui:VisualStateGroupListener
                                     x:Name="ExpansionStates2Listener"
                                     GroupName="ExpansionStates2" />
@@ -1087,14 +1094,11 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="EllipsisIcon" Property="Foreground" Value="{DynamicResource CommandBarEllipsisIconForegroundDisabled}" />
                         </Trigger>
-                        <!-- PrimaryCommandsOnly -->
-                        <!--<Trigger>
-                            <Setter TargetName="OverflowContentRoot" Property="Visibility" Value="Collapsed" />
-                        </Trigger>-->
                         <!-- SecondaryCommandsOnly -->
-                        <!--<Trigger>
-                            <Setter TargetName="PrimaryItemsRoot" Property="Visibility" Value="Collapsed" />
-                        </Trigger>-->
+                        <Trigger SourceName="AvailableCommandsStatesListener" Property="CurrentStateName" Value="SecondaryCommandsOnly">
+                            <Setter TargetName="OverflowPopup" Property="Placement" Value="{x:Static PlacementMode.Relative}" />
+                            <Setter TargetName="OuterOverflowContentRoot" Property="IsShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
+                        </Trigger>
                         <!-- ExpandedUpWithPrimaryCommands -->
                         <Trigger SourceName="ExpansionStates2Listener" Property="CurrentStateName" Value="ExpandedUpWithPrimaryCommands">
                             <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderUpThemeThickness}" />
@@ -1127,6 +1131,22 @@
                             <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                             <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Trigger>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterContentRoot" Storyboard.TargetProperty="Opacity">
+                                        <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.050" Value="0" />
+                                        <LinearDoubleKeyFrame KeyTime="0:0:0.300" Value="1" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterOverflowContentRoot" Storyboard.TargetProperty="Opacity">
+                                        <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0.050" Value="0" />
+                                        <LinearDoubleKeyFrame KeyTime="0:0:0.300" Value="1" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

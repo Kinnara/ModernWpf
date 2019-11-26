@@ -65,6 +65,37 @@
                 </StackPanel>
             </sc:ControlExample>
 
+            <sc:ControlExample HeaderText="DropDownButton with CommandBarFlyout">
+                <StackPanel Orientation="Horizontal">
+                    <ui:DropDownButton AutomationProperties.Name="Email">
+                        <ui:DropDownButton.Content>
+                            <ui:FontIcon Glyph="&#xE715;" />
+                        </ui:DropDownButton.Content>
+                        <ui:FlyoutService.Flyout>
+                            <ui:CommandBarFlyout Placement="Bottom">
+                                <ui:CommandBarFlyout.SecondaryCommands>
+                                    <ui:AppBarButton Label="Send">
+                                        <ui:AppBarButton.Icon>
+                                            <ui:FontIcon Glyph="&#xE725;" />
+                                        </ui:AppBarButton.Icon>
+                                    </ui:AppBarButton>
+                                    <ui:AppBarButton Label="Reply">
+                                        <ui:AppBarButton.Icon>
+                                            <ui:FontIcon Glyph="&#xE8CA;" />
+                                        </ui:AppBarButton.Icon>
+                                    </ui:AppBarButton>
+                                    <ui:AppBarButton Label="Reply All">
+                                        <ui:AppBarButton.Icon>
+                                            <ui:FontIcon Glyph="&#xE8C2;" />
+                                        </ui:AppBarButton.Icon>
+                                    </ui:AppBarButton>
+                                </ui:CommandBarFlyout.SecondaryCommands>
+                            </ui:CommandBarFlyout>
+                        </ui:FlyoutService.Flyout>
+                    </ui:DropDownButton>
+                </StackPanel>
+            </sc:ControlExample>
+
             <sc:ControlExample HeaderText="Simple SplitButton">
                 <StackPanel Orientation="Horizontal">
                     <ui:SplitButton
