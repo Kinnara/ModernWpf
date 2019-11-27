@@ -544,7 +544,7 @@
                                             Storyboard.TargetProperty="Opacity"
                                             To="1" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="(primitives:ControlHelper.CornerRadius)">
-                                            <DiscreteObjectKeyFrame KeyTime="{m:KeyTime TimeSpan={StaticResource ScrollBarContractBeginTime}}">
+                                            <DiscreteObjectKeyFrame KeyTime="{m:KeyTime TimeSpan={StaticResource ScrollBarExpandBeginTime}}">
                                                 <DiscreteObjectKeyFrame.Value>
                                                     <CornerRadius>0</CornerRadius>
                                                 </DiscreteObjectKeyFrame.Value>
