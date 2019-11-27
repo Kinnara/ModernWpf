@@ -54,12 +54,12 @@ namespace ModernWpf.Controls
 
         private static void OnFlyoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AppBarButton)d).OnFlyoutChanged((FlyoutBase)e.OldValue, (FlyoutBase)e.NewValue);
+            ((AppBarButton)d).OnFlyoutChanged();
         }
 
-        private void OnFlyoutChanged(FlyoutBase oldFlyout, FlyoutBase newFlyout)
+        private void OnFlyoutChanged()
         {
-            UpdateHasFlyout();
+            //UpdateHasFlyout();
         }
 
         #endregion
@@ -276,27 +276,74 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region HasFlyout
+        //#region HasFlyout
 
-        private static readonly DependencyPropertyKey HasFlyoutPropertyKey =
+        //private static readonly DependencyPropertyKey HasFlyoutPropertyKey =
+        //    DependencyProperty.RegisterReadOnly(
+        //        nameof(HasFlyout),
+        //        typeof(bool),
+        //        typeof(AppBarButton),
+        //        new PropertyMetadata(false));
+
+        //public static readonly DependencyProperty HasFlyoutProperty =
+        //    HasFlyoutPropertyKey.DependencyProperty;
+
+        //public bool HasFlyout
+        //{
+        //    get => (bool)GetValue(HasFlyoutProperty);
+        //    private set => SetValue(HasFlyoutPropertyKey, value);
+        //}
+
+        //private void UpdateHasFlyout()
+        //{
+        //    HasFlyout = Flyout != null;
+        //}
+
+        //#endregion
+
+        #region InputGestureText
+
+        public static readonly DependencyProperty InputGestureTextProperty =
+            DependencyProperty.Register(
+                nameof(InputGestureText),
+                typeof(string),
+                typeof(AppBarButton),
+                new PropertyMetadata(string.Empty, OnInputGestureTextChanged));
+
+        public string InputGestureText
+        {
+            get => (string)GetValue(InputGestureTextProperty);
+            set => SetValue(InputGestureTextProperty, value);
+        }
+
+        private static void OnInputGestureTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AppBarButton)d).UpdateHasInputGestureText();
+        }
+
+        #endregion
+
+        #region HasInputGestureText
+
+        private static readonly DependencyPropertyKey HasInputGestureTextPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                nameof(HasFlyout),
+                nameof(HasInputGestureText),
                 typeof(bool),
                 typeof(AppBarButton),
                 new PropertyMetadata(false));
 
-        public static readonly DependencyProperty HasFlyoutProperty =
-            HasFlyoutPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty HasInputGestureTextProperty =
+            HasInputGestureTextPropertyKey.DependencyProperty;
 
-        public bool HasFlyout
+        public bool HasInputGestureText
         {
-            get => (bool)GetValue(HasFlyoutProperty);
-            private set => SetValue(HasFlyoutPropertyKey, value);
+            get => (bool)GetValue(HasInputGestureTextProperty);
+            private set => SetValue(HasInputGestureTextPropertyKey, value);
         }
 
-        private void UpdateHasFlyout()
+        private void UpdateHasInputGestureText()
         {
-            HasFlyout = Flyout != null;
+            HasInputGestureText = !string.IsNullOrEmpty(InputGestureText);
         }
 
         #endregion

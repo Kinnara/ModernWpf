@@ -14,8 +14,6 @@
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Width" Value="68" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
-        <!--<Setter Property="AllowFocusOnInteraction" Value="False" />-->
-        <!--<Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />-->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarToggleButton">
@@ -99,17 +97,17 @@
                                     Margin="38,0,12,0"
                                     Padding="{DynamicResource AppBarToggleButtonOverflowTextLabelPadding}"
                                     Visibility="Collapsed" />
-                                <!--<TextBlock
+                                <TextBlock
                                     x:Name="KeyboardAcceleratorTextLabel"
                                     Grid.Column="1"
                                     Style="{DynamicResource CaptionTextBlockStyle}"
-                                    Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
-                                    MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.KeyboardAcceleratorTextMinWidth}"
+                                    Text="{TemplateBinding InputGestureText}"
+                                    MinWidth="34"
                                     Margin="24,0,12,0"
                                     Foreground="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForeground}"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
-                                    Visibility="Collapsed" />-->
+                                    Visibility="Collapsed" />
 
                             </Grid>
 
@@ -175,7 +173,7 @@
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundPointerOver}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundPointerOver}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundPointerOver}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver}" />
                         </MultiTrigger>
                         <!-- Pressed -->
                         <MultiTrigger>
@@ -190,7 +188,7 @@
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundPressed}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundPressed}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundPressed}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed}" />
                         </MultiTrigger>
                         <!-- Disabled -->
                         <MultiTrigger>
@@ -205,7 +203,7 @@
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundDisabled}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundDisabled}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundDisabled}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled}" />
                         </MultiTrigger>
                         <!-- Checked -->
                         <MultiTrigger>
@@ -218,7 +216,7 @@
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundChecked}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
@@ -237,7 +235,7 @@
                             <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPointerOver}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
@@ -256,7 +254,7 @@
                             <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPressed}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
@@ -274,7 +272,7 @@
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundCheckedDisabled}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedDisabled}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedDisabled}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
@@ -291,7 +289,7 @@
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundPointerOver}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundPointerOver}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundPointerOver}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver}" />
                         </MultiTrigger>
                         <!-- OverflowPressed -->
                         <MultiTrigger>
@@ -306,7 +304,7 @@
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundPressed}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundPressed}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundPressed}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed}" />
                         </MultiTrigger>
                         <!-- OverflowChecked -->
                         <MultiTrigger>
@@ -337,7 +335,7 @@
                             <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPointerOver}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
@@ -356,11 +354,14 @@
                             <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPressed}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
                         <!--#endregion-->
+                        <Trigger Property="HasInputGestureText" Value="True">
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
+                        </Trigger>
                         <Trigger Property="ToolBar.IsOverflowItem" Value="True">
                             <Setter Property="HorizontalAlignment" Value="Stretch" />
                             <Setter Property="Width" Value="NaN" />

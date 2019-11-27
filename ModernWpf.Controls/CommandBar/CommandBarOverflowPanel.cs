@@ -81,6 +81,11 @@ namespace ModernWpf.Controls.Primitives
             {
                 UIElement child = children[i];
 
+                if (!child.IsVisible)
+                {
+                    continue;
+                }
+
                 if (child is AppBarButton appBarButton)
                 {
                     if (!hasMenuIcon && appBarButton.Icon != null)

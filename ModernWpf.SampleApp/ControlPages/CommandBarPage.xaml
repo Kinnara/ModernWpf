@@ -23,14 +23,14 @@
                     <ui:AppBarButton Label="Share" Icon="ReShare" />
                     <ui:AppBarButton Label="Edit" Icon="Edit" />
                     <ui:CommandBar.SecondaryCommands>
-                        <ui:AppBarButton Label="Settings" Icon="Setting" />
-                        <ui:AppBarButton Label="Button 1" Icon="Add" />
-                        <ui:AppBarButton Label="Button 2" Icon="Delete" />
+                        <ui:AppBarButton Label="Settings" Icon="Setting" InputGestureText="Ctrl+S" />
+                        <ui:AppBarButton Label="Button 1" Icon="Add" InputGestureText="Ctrl+N" />
+                        <ui:AppBarButton Label="Button 2" Icon="Delete" InputGestureText="Delete" />
                         <ui:AppBarSeparator />
-                        <ui:AppBarButton Label="Button 3" Icon="FontDecrease" />
-                        <ui:AppBarButton Label="Button 4" Icon="FontIncrease" />
-                        <ui:AppBarSeparator />
-                        <ui:AppBarToggleButton IsChecked="True" Label="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, StringFormat='IsChecked = {0}'}">
+                        <ui:AppBarButton Label="Button 3" Icon="FontDecrease" InputGestureText="Ctrl+-" />
+                        <ui:AppBarButton Label="Button 4" Icon="FontIncrease" InputGestureText="Ctrl++" />
+                        <ui:AppBarSeparator Visibility="{Binding Source={x:Reference ShowToggleButtonCheckBox}, Path=IsChecked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <ui:AppBarToggleButton Visibility="{Binding Source={x:Reference ShowToggleButtonCheckBox}, Path=IsChecked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Label="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, StringFormat='IsChecked = {0}'}">
                             <ui:AppBarToggleButton.Icon>
                                 <ui:SymbolIcon />
                             </ui:AppBarToggleButton.Icon>
@@ -51,6 +51,9 @@
                             ui:ControlHelper.Header="OverflowButtonVisibility"
                             ItemsSource="{Binding Source={x:Type ui:CommandBarOverflowButtonVisibility}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=CommandBar1, Path=OverflowButtonVisibility, Mode=TwoWay}" />
+                        <CheckBox
+                            x:Name="ShowToggleButtonCheckBox"
+                            Content="Show toggle button in overflow" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

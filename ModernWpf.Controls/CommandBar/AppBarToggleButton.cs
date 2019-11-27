@@ -276,6 +276,53 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region InputGestureText
+
+        public static readonly DependencyProperty InputGestureTextProperty =
+            DependencyProperty.Register(
+                nameof(InputGestureText),
+                typeof(string),
+                typeof(AppBarToggleButton),
+                new PropertyMetadata(string.Empty, OnInputGestureTextChanged));
+
+        public string InputGestureText
+        {
+            get => (string)GetValue(InputGestureTextProperty);
+            set => SetValue(InputGestureTextProperty, value);
+        }
+
+        private static void OnInputGestureTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AppBarToggleButton)d).UpdateHasInputGestureText();
+        }
+
+        #endregion
+
+        #region HasInputGestureText
+
+        private static readonly DependencyPropertyKey HasInputGestureTextPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(HasInputGestureText),
+                typeof(bool),
+                typeof(AppBarToggleButton),
+                new PropertyMetadata(false));
+
+        public static readonly DependencyProperty HasInputGestureTextProperty =
+            HasInputGestureTextPropertyKey.DependencyProperty;
+
+        public bool HasInputGestureText
+        {
+            get => (bool)GetValue(HasInputGestureTextProperty);
+            private set => SetValue(HasInputGestureTextPropertyKey, value);
+        }
+
+        private void UpdateHasInputGestureText()
+        {
+            HasInputGestureText = !string.IsNullOrEmpty(InputGestureText);
+        }
+
+        #endregion
+
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
             base.OnVisualParentChanged(oldParent);

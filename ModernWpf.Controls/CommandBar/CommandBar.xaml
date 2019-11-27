@@ -13,8 +13,6 @@
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Top" />
-        <!--<Setter Property="ClosedDisplayMode" Value="Compact" />-->
-        <!--<Setter Property="ExitDisplayModeOnAccessKeyInvoked" Value="False" />-->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:CommandBarToolBar">
@@ -166,7 +164,6 @@
         <Setter Property="MaxWidth" Value="{DynamicResource CommandBarOverflowMaxWidth}" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-        <!--<Setter Property="AllowFocusOnInteraction" Value="False" />-->
         <Setter Property="KeyboardNavigation.TabNavigation" Value="Once" />
         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="Template">
@@ -179,35 +176,35 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{DynamicResource CommandBarOverflowPresenterBorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
-                        <VisualStateManager.VisualStateGroups>
+                        <!--<VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DisplayModeStates">
                                 <VisualState x:Name="DisplayModeDefault" />
                                 <VisualState x:Name="FullWidthOpenDown" />
                                 <VisualState x:Name="FullWidthOpenUp" />
                             </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
+                        </VisualStateManager.VisualStateGroups>-->
                         <Grid>
                             <ScrollViewer
                                 Content="{TemplateBinding Content}"
                                 HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                 VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
                                 Padding="{DynamicResource CommandBarOverflowPresenterMargin}" />
-                            <ui:VisualStateGroupListener
+                            <!--<ui:VisualStateGroupListener
                                 x:Name="DisplayModeStatesListener"
-                                GroupName="DisplayModeStates" />
+                                GroupName="DisplayModeStates" />-->
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <!-- FullWidthOpenDown -->
-                        <Trigger SourceName="DisplayModeStatesListener" Property="CurrentStateName" Value="FullWidthOpenDown">
+                        <!--<Trigger SourceName="DisplayModeStatesListener" Property="CurrentStateName" Value="FullWidthOpenDown">
                             <Setter TargetName="LayoutRoot" Property="Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderDownPadding}" />
                             <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="{DynamicResource CommandBarOverflowPresenterBorderDownThickness}" />
-                        </Trigger>
+                        </Trigger>-->
                         <!-- FullWidthOpenUp -->
-                        <Trigger SourceName="DisplayModeStatesListener" Property="CurrentStateName" Value="FullWidthOpenUp">
+                        <!--<Trigger SourceName="DisplayModeStatesListener" Property="CurrentStateName" Value="FullWidthOpenUp">
                             <Setter TargetName="LayoutRoot" Property="Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderUpPadding}" />
                             <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="{DynamicResource CommandBarOverflowPresenterBorderUpThickness}" />
-                        </Trigger>
+                        </Trigger>-->
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

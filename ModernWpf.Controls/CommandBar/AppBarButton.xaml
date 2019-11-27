@@ -14,8 +14,6 @@
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Width" Value="68" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
-        <!--<Setter Property="AllowFocusOnInteraction" Value="False" />-->
-        <!--<Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />-->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarButton">
@@ -80,18 +78,18 @@
                                     Margin="12,0,12,0"
                                     Padding="{DynamicResource AppBarButtonOverflowTextLabelPadding}"
                                     Visibility="Collapsed" />
-                                <!--<TextBlock
+                                <TextBlock
                                     x:Name="KeyboardAcceleratorTextLabel"
                                     Grid.Column="1"
                                     Style="{DynamicResource CaptionTextBlockStyle}"
-                                    Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
-                                    MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.KeyboardAcceleratorTextMinWidth}"
+                                    Text="{TemplateBinding InputGestureText}"
+                                    MinWidth="34"
                                     Margin="24,0,12,0"
                                     Foreground="{DynamicResource AppBarButtonKeyboardAcceleratorTextForeground}"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
-                                    Visibility="Collapsed" />-->
-                                <ui:FontIcon
+                                    Visibility="Collapsed" />
+                                <!--<ui:FontIcon
                                     x:Name="SubItemChevron"
                                     Grid.Column="2"
                                     Glyph="&#xE0E3;"
@@ -99,7 +97,7 @@
                                     FontSize="12"
                                     Foreground="{DynamicResource MenuFlyoutSubItemChevron}"
                                     Margin="12,0,12,0"
-                                    Visibility="Collapsed" />
+                                    Visibility="Collapsed" />-->
 
                             </Grid>
 
@@ -178,7 +176,7 @@
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -191,7 +189,7 @@
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />
                         </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundDisabled}" />
@@ -200,7 +198,7 @@
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarButtonForegroundDisabled}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundDisabled}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundDisabled}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundDisabled}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundDisabled}" />
                         </Trigger>
                         <!-- OverflowPointerOver -->
                         <MultiTrigger>
@@ -214,8 +212,8 @@
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />-->
-                            <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPointerOver}" />
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />
+                            <!--<Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPointerOver}" />-->
                         </MultiTrigger>
                         <!-- OverflowPressed -->
                         <MultiTrigger>
@@ -229,8 +227,8 @@
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />-->
-                            <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPressed}" />
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />
+                            <!--<Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPressed}" />-->
                         </MultiTrigger>
                         <!-- OverflowSubMenuOpened -->
                         <!--<MultiTrigger>
@@ -244,17 +242,20 @@
                             <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundSubMenuOpened}" />
                         </MultiTrigger>-->
                         <!--#endregion-->
-                        <Trigger Property="ToolBar.IsOverflowItem" Value="True">
-                            <Setter Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter Property="Width" Value="NaN" />
+                        <Trigger Property="HasInputGestureText" Value="True">
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <MultiTrigger>
+                        <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="ToolBar.IsOverflowItem" Value="True" />
                                 <Condition Property="HasFlyout" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
-                        </MultiTrigger>
+                        </MultiTrigger>-->
+                        <Trigger Property="ToolBar.IsOverflowItem" Value="True">
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="Width" Value="NaN" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

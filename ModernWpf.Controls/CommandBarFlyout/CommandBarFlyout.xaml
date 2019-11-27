@@ -60,18 +60,18 @@
                                 Margin="12,0,12,0"
                                 Padding="0,5,0,7"
                                 Visibility="Collapsed" />
-                            <!--<TextBlock
+                            <TextBlock
                                 x:Name="KeyboardAcceleratorTextLabel"
                                 Grid.Column="1"
                                 Style="{DynamicResource CaptionTextBlockStyle}"
-                                Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
-                                MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.KeyboardAcceleratorTextMinWidth}"
+                                Text="{TemplateBinding InputGestureText}"
+                                MinWidth="34"
                                 Margin="24,0,12,0"
                                 Foreground="{DynamicResource SystemControlBackgroundBaseMediumBrush}"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                Visibility="Collapsed" />-->
-                            <ui:FontIcon
+                                Visibility="Collapsed" />
+                            <!--<ui:FontIcon
                                 x:Name="SubItemChevron"
                                 Grid.Column="2"
                                 Glyph="&#xE76C;"
@@ -80,7 +80,7 @@
                                 Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
                                 Margin="12,0,12,0"
                                 VerticalAlignment="Center"
-                                Visibility="Collapsed" />
+                                Visibility="Collapsed" />-->
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -139,7 +139,7 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                         </Trigger>
                         <!-- OverflowPointerOver -->
                         <MultiTrigger>
@@ -162,17 +162,17 @@
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
                         </MultiTrigger>-->
                         <!-- KeyboardAcceleratorTextVisible -->
-                        <!--<Trigger>
+                        <Trigger Property="HasInputGestureText" Value="True">
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
-                        </Trigger>-->
+                        </Trigger>
                         <!-- HasFlyout -->
-                        <MultiTrigger>
+                        <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="ToolBar.IsOverflowItem" Value="True" />
                                 <Condition Property="HasFlyout" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
-                        </MultiTrigger>
+                        </MultiTrigger>-->
                         <Trigger Property="ToolBar.IsOverflowItem" Value="True">
                             <Setter Property="HorizontalAlignment" Value="Stretch" />
                             <Setter Property="Width" Value="NaN" />
@@ -250,17 +250,17 @@
                                     Margin="38,0,12,0"
                                     Padding="0,5,0,7"
                                     Visibility="Collapsed" />
-                                <!--<TextBlock
+                                <TextBlock
                                     x:Name="KeyboardAcceleratorTextLabel"
                                     Grid.Column="1"
                                     Style="{DynamicResource CaptionTextBlockStyle}"
-                                    Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
-                                    MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.KeyboardAcceleratorTextMinWidth}"
+                                    Text="{TemplateBinding InputGestureText}"
+                                    MinWidth="34"
                                     Margin="24,0,12,0"
                                     Foreground="{DynamicResource SystemControlBackgroundBaseMediumBrush}"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
-                                    Visibility="Collapsed" />-->
+                                    Visibility="Collapsed" />
                             </Grid>
                         </Grid>
                     </Border>
@@ -312,7 +312,7 @@
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                         </MultiTrigger>
                         <!-- Checked -->
                         <MultiTrigger>
@@ -356,7 +356,7 @@
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                            <!--<Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />-->
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
@@ -408,9 +408,9 @@
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
                         <!-- KeyboardAcceleratorTextVisible -->
-                        <!--<Trigger>
+                        <Trigger Property="HasInputGestureText" Value="True">
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
-                        </Trigger>-->
+                        </Trigger>
                         <Trigger Property="ToolBar.IsOverflowItem" Value="True">
                             <Setter Property="HorizontalAlignment" Value="Stretch" />
                             <Setter Property="Width" Value="NaN" />
