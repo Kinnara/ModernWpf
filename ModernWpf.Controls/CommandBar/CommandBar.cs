@@ -209,10 +209,9 @@ namespace ModernWpf.Controls
 
         private void UpdateOverflowModeForSecondaryCommands(IEnumerable<DependencyObject> items)
         {
-            bool isDynamicOverflowEnabled = IsDynamicOverflowEnabled;
             foreach (var item in items)
             {
-                ToolBar.SetOverflowMode(item, isDynamicOverflowEnabled ? OverflowMode.AsNeeded : OverflowMode.Always);
+                ToolBar.SetOverflowMode(item, OverflowMode.Always);
             }
         }
 

@@ -169,7 +169,7 @@
         </HeaderedContentControl>
 
         <HeaderedContentControl Header="Command bar">
-            <ui:CommandBar IsDynamicOverflowEnabled="False">
+            <ui:CommandBar>
                 <ui:AppBarButton Label="Refresh" Icon="Refresh" />
                 <ui:AppBarButton Label="New" Icon="Add" />
                 <ui:AppBarButton Label="Select" Icon="Bullets" />

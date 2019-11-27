@@ -59,9 +59,7 @@
                 HeaderText="A command bar with labels on the bottom"
                 HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Top">
-                <ui:CommandBar
-                    DefaultLabelPosition="Bottom"
-                    IsDynamicOverflowEnabled="False">
+                <ui:CommandBar DefaultLabelPosition="Bottom">
                     <ui:AppBarToggleButton Icon="Shuffle" Label="Shuffle" />
                     <ui:AppBarToggleButton Icon="RepeatAll" Label="Repeat" />
                     <ui:AppBarSeparator />
