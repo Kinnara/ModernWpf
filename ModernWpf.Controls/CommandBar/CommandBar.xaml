@@ -64,8 +64,6 @@
                                     x:Name="ContentControl"
                                     Content="{TemplateBinding Header}"
                                     ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                    ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
-                                    ContentStringFormat="{TemplateBinding HeaderStringFormat}"
                                     Foreground="{TemplateBinding Foreground}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -146,6 +144,9 @@
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="EllipsisIcon" Property="Foreground" Value="{DynamicResource CommandBarEllipsisIconForegroundDisabled}" />
+                        </Trigger>
+                        <Trigger Property="DefaultLabelPosition" Value="Bottom">
+                            <Setter TargetName="MoreButton" Property="VerticalAlignment" Value="Stretch" />
                         </Trigger>
                         <!-- DynamicOverflowEnabled -->
                         <Trigger Property="IsDynamicOverflowEnabled" Value="True">
@@ -235,8 +236,6 @@
                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                         Header="{TemplateBinding Content}"
                         HeaderTemplate="{TemplateBinding ContentTemplate}"
-                        HeaderTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                        HeaderStringFormat="{TemplateBinding ContentStringFormat}"
                         DefaultLabelPosition="{TemplateBinding DefaultLabelPosition}"
                         IsDynamicOverflowEnabled="{TemplateBinding IsDynamicOverflowEnabled}"
                         OverflowButtonVisibility="{TemplateBinding OverflowButtonVisibility}"

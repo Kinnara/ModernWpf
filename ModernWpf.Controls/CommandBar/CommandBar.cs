@@ -12,7 +12,7 @@ using ModernWpf.Controls.Primitives;
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(PrimaryCommands))]
-    public class CommandBar : ContentControl
+    public class CommandBar : Control
     {
         static CommandBar()
         {
@@ -27,6 +27,38 @@ namespace ModernWpf.Controls
             SecondaryCommands = new ObservableCollection<ICommandBarElement>();
             SecondaryCommands.CollectionChanged += SecondaryCommands_CollectionChanged;
         }
+
+        #region Content
+
+        public static readonly DependencyProperty ContentProperty =
+            DependencyProperty.Register(
+                nameof(Content),
+                typeof(object),
+                typeof(CommandBar));
+
+        public object Content
+        {
+            get => (object)GetValue(ContentProperty);
+            set => SetValue(ContentProperty, value);
+        }
+
+        #endregion
+
+        #region ContentTemplate
+
+        public static readonly DependencyProperty ContentTemplateProperty =
+            DependencyProperty.Register(
+                nameof(ContentTemplate),
+                typeof(DataTemplate),
+                typeof(CommandBar));
+
+        public DataTemplate ContentTemplate
+        {
+            get => (DataTemplate)GetValue(ContentTemplateProperty);
+            set => SetValue(ContentTemplateProperty, value);
+        }
+
+        #endregion
 
         #region CornerRadius
 

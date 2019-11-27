@@ -54,6 +54,34 @@
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
+
+            <sc:ControlExample
+                HeaderText="A command bar with labels on the bottom"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Top">
+                <ui:CommandBar
+                    DefaultLabelPosition="Bottom"
+                    IsDynamicOverflowEnabled="False">
+                    <ui:AppBarToggleButton Icon="Shuffle" Label="Shuffle" />
+                    <ui:AppBarToggleButton Icon="RepeatAll" Label="Repeat" />
+                    <ui:AppBarSeparator />
+                    <ui:AppBarButton Icon="Back" Label="Back" />
+                    <ui:AppBarButton Icon="Stop" Label="Stop" />
+                    <ui:AppBarButton Icon="Play" Label="Play" />
+                    <ui:AppBarButton Icon="Forward" Label="Forward" />
+
+                    <ui:CommandBar.SecondaryCommands>
+                        <ui:AppBarButton Label="Like" />
+                        <ui:AppBarButton Label="Dislike" />
+                    </ui:CommandBar.SecondaryCommands>
+
+                    <ui:CommandBar.Content>
+                        <TextBlock
+                            Text="Now playing..."
+                            Margin="12,14" />
+                    </ui:CommandBar.Content>
+                </ui:CommandBar>
+            </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
