@@ -168,6 +168,21 @@
             </ListView>
         </HeaderedContentControl>
 
+        <HeaderedContentControl Header="Command bar">
+            <ui:CommandBar IsDynamicOverflowEnabled="False">
+                <ui:AppBarButton Label="Refresh" Icon="Refresh" />
+                <ui:AppBarButton Label="New" Icon="Add" />
+                <ui:AppBarButton Label="Select" Icon="Bullets" />
+                <ui:CommandBar.SecondaryCommands>
+                    <ui:AppBarButton Label="Share" Icon="Share" />
+                    <ui:AppBarButton Label="Print" Icon="Print" />
+                    <ui:AppBarSeparator />
+                    <ui:AppBarButton Label="Settings" />
+                    <ui:AppBarButton Label="Send feedback" />
+                </ui:CommandBar.SecondaryCommands>
+            </ui:CommandBar>
+        </HeaderedContentControl>
+
         <HeaderedContentControl Header="Calendar">
             <Calendar HorizontalAlignment="Stretch" />
         </HeaderedContentControl>
