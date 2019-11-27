@@ -1057,7 +1057,7 @@
                                     IsOpen="{Binding Path=IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                     StaysOpen="false"
                                     Focusable="false"
-                                    PopupAnimation="None">
+                                    PopupAnimation="Fade">
                                     <ui:ThemeShadowChrome
                                         x:Name="OuterOverflowContentRoot"
                                         Width="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=ExpandedWidth}"
@@ -1133,20 +1133,6 @@
                             <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                             <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                         </DataTrigger>
-                        <EventTrigger RoutedEvent="Loaded">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterContentRoot" Storyboard.TargetProperty="Opacity">
-                                        <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
-                                        <LinearDoubleKeyFrame KeyTime="0:0:0.250" Value="1" />
-                                    </DoubleAnimationUsingKeyFrames>
-                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterOverflowContentRoot" Storyboard.TargetProperty="Opacity">
-                                        <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
-                                        <LinearDoubleKeyFrame KeyTime="0:0:0.250" Value="1" />
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

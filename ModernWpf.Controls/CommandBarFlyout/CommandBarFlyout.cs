@@ -124,16 +124,14 @@ namespace ModernWpf.Controls
 
             Opening += delegate
             {
+                AreOpenCloseAnimationsEnabled = true;
+
                 if (m_commandBar.HasOpenAnimation())
                 {
-                    AreOpenCloseAnimationsEnabled = true;
-                    InternalPopup.PopupAnimation = PopupAnimation.Fade;
                     InternalPopup.SuppressFadeAnimation = true;
                 }
                 else
                 {
-                    AreOpenCloseAnimationsEnabled = false;
-                    InternalPopup.PopupAnimation = PopupAnimation.None;
                     InternalPopup.SuppressFadeAnimation = false;
                 }
 
@@ -150,6 +148,10 @@ namespace ModernWpf.Controls
                     if (m_commandBar.HasOpenAnimation())
                     {
                         m_commandBar.PlayOpenAnimation();
+                    }
+                    else
+                    {
+                        AreOpenCloseAnimationsEnabled = false;
                     }
                 }
             };
