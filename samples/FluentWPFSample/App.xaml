@@ -9,23 +9,26 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <!-- FluentWPF Controls -->
-                <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="/FluentWPF;component/Styles/Controls.xaml" />
 
                 <ui:ThemeResources>
                     <ui:ThemeResources.ThemeDictionaries>
                         <ResourceDictionary x:Key="Light">
                             <ResourceDictionary.MergedDictionaries>
                                 <!-- 1. FluentWPF theme resources -->
-                                <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Colors.Light.xaml" />
-                                <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Brushes.xaml" />
-                                <!-- 2. ModernWPF theme resources -->
+                                <ResourceDictionary Source="/FluentWPF;component/Styles/Colors.Light.xaml" />
+                                <ResourceDictionary Source="/FluentWPF;component/Styles/Brushes.xaml" />
+                                <!-- 2. MahApps theme resources -->
+                                <ResourceDictionary Source="/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
+                                <!-- 3. ModernWPF theme resources -->
                                 <ui:DefaultThemeResources Key="Light" />
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
                         <ResourceDictionary x:Key="Dark">
                             <ResourceDictionary.MergedDictionaries>
-                                <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Colors.Dark.xaml" />
-                                <ResourceDictionary Source="pack://application:,,,/FluentWPF;component/Styles/Brushes.xaml" />
+                                <ResourceDictionary Source="/FluentWPF;component/Styles/Colors.Dark.xaml" />
+                                <ResourceDictionary Source="/FluentWPF;component/Styles/Brushes.xaml" />
+                                <ResourceDictionary Source="/MahApps.Metro;component/Styles/Themes/Dark.Blue.xaml" />
                                 <ui:DefaultThemeResources Key="Dark" />
                             </ResourceDictionary.MergedDictionaries>
                             <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource SystemBaseHighColor}" />
@@ -33,6 +36,11 @@
                     </ui:ThemeResources.ThemeDictionaries>
                 </ui:ThemeResources>
 
+                <!-- MahApps color overrides -->
+                <ui:MahAppsColorPaletteResources />
+                <!-- MahApps controls resources -->
+                <ResourceDictionary Source="/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <!-- ModernWPF controls resources -->
                 <ui:XamlControlsResources />
                 <!-- ModernWPF resources for MahApps -->
