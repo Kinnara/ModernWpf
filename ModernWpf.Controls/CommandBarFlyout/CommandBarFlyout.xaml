@@ -968,9 +968,6 @@
                                 <VisualState x:Name="ExpandedDownWithoutPrimaryCommands" />
                             </ui:VisualStateGroupEx>
                         </VisualStateManager.VisualStateGroups>
-                        <VisualStateManager.CustomVisualStateManager>
-                            <ui:DebugVisualStateManager />
-                        </VisualStateManager.CustomVisualStateManager>
                         <Border
                             x:Name="OuterContentRoot"
                             VerticalAlignment="Top"
