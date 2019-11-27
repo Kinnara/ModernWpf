@@ -34,84 +34,105 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Menu
+        <Grid
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="2">
-            <MenuItem Header="Theme">
-                <ui:RadioMenuItem
-                    Header="Default"
-                    IsChecked="{Binding ApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay, Converter={StaticResource IsDefaultConverter}}"
-                    Checked="Default_Checked" />
-                <ui:RadioMenuItem
-                    Header="Light"
-                    IsChecked="{Binding ApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay, Converter={StaticResource IsLightConverter}}"
-                    Checked="Light_Checked" />
-                <ui:RadioMenuItem
-                    Header="Dark"
-                    IsChecked="{Binding ApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay, Converter={StaticResource IsDarkConverter}}"
-                    Checked="Dark_Checked" />
-            </MenuItem>
-            <MenuItem
-                Header="Presets"
-                MenuItem.Click="PresetMenuItem_Click">
-                <ui:RadioMenuItem
-                    Header="Default"
-                    IsChecked="True" />
-                <ui:RadioMenuItem Header="Forest" />
-                <ui:RadioMenuItem Header="Lavender" />
-                <ui:RadioMenuItem Header="Nighttime" />
-            </MenuItem>
-            <MenuItem
-                Header="Sizing"
-                MenuItem.Click="SizingMenuItem_Click">
-                <ui:RadioMenuItem
-                    Header="Standard"
-                    IsChecked="True" />
-                <ui:RadioMenuItem
-                    Header="Compact"
-                    Tag="Compact" />
-            </MenuItem>
-            <MenuItem
-                Header="Title Bar"
-                DataContext="{Binding MainWindow, Source={x:Static Application.Current}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Menu>
+                <MenuItem Header="Theme">
+                    <ui:RadioMenuItem
+                        Header="Default"
+                        IsChecked="{Binding ApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay, Converter={StaticResource IsDefaultConverter}}"
+                        Checked="Default_Checked" />
+                    <ui:RadioMenuItem
+                        Header="Light"
+                        IsChecked="{Binding ApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay, Converter={StaticResource IsLightConverter}}"
+                        Checked="Light_Checked" />
+                    <ui:RadioMenuItem
+                        Header="Dark"
+                        IsChecked="{Binding ApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay, Converter={StaticResource IsDarkConverter}}"
+                        Checked="Dark_Checked" />
+                </MenuItem>
                 <MenuItem
-                    Header="IsBackButtonVisible"
-                    IsEnabled="False"
-                    IsCheckable="True"
-                    IsChecked="{Binding Path=(ui:TitleBar.IsBackButtonVisible), Mode=OneWay}" />
+                    Header="Presets"
+                    MenuItem.Click="PresetMenuItem_Click">
+                    <ui:RadioMenuItem
+                        Header="Default"
+                        IsChecked="True" />
+                    <ui:RadioMenuItem Header="Forest" />
+                    <ui:RadioMenuItem Header="Lavender" />
+                    <ui:RadioMenuItem Header="Nighttime" />
+                </MenuItem>
                 <MenuItem
-                    Header="IsIconVisible"
-                    IsCheckable="True"
-                    IsChecked="{Binding Path=(ui:TitleBar.IsIconVisible), Mode=TwoWay}" />
+                    Header="Sizing"
+                    MenuItem.Click="SizingMenuItem_Click">
+                    <ui:RadioMenuItem
+                        Header="Standard"
+                        IsChecked="True" />
+                    <ui:RadioMenuItem
+                        Header="Compact"
+                        Tag="Compact" />
+                </MenuItem>
                 <MenuItem
-                    Header="ExtendViewIntoTitleBar"
-                    IsCheckable="True"
-                    IsChecked="{Binding Path=(ui:TitleBar.ExtendViewIntoTitleBar), Mode=TwoWay}" />
-            </MenuItem>
-            <MenuItem Header="Shadows">
-                <ui:RadioMenuItem
-                    x:Name="ShadowsAuto"
-                    Header="Use system setting"
-                    IsChecked="True"
-                    Checked="ShadowsAuto_Checked" />
-                <ui:RadioMenuItem
-                    x:Name="ShadowsEnabled"
-                    Header="Enabled"
-                    Checked="ShadowsEnabled_Checked" />
-                <ui:RadioMenuItem
-                    x:Name="ShadowsDisabled"
-                    Header="Disabled"
-                    Checked="ShadowsDisabled_Checked" />
-            </MenuItem>
-            <MenuItem
-                Header="Debug"
-                Visibility="Collapsed">
+                    Header="Title Bar"
+                    DataContext="{Binding MainWindow, Source={x:Static Application.Current}}">
+                    <MenuItem
+                        Header="IsBackButtonVisible"
+                        IsEnabled="False"
+                        IsCheckable="True"
+                        IsChecked="{Binding Path=(ui:TitleBar.IsBackButtonVisible), Mode=OneWay}" />
+                    <MenuItem
+                        Header="IsIconVisible"
+                        IsCheckable="True"
+                        IsChecked="{Binding Path=(ui:TitleBar.IsIconVisible), Mode=TwoWay}" />
+                    <MenuItem
+                        Header="ExtendViewIntoTitleBar"
+                        IsCheckable="True"
+                        IsChecked="{Binding Path=(ui:TitleBar.ExtendViewIntoTitleBar), Mode=TwoWay}" />
+                </MenuItem>
+                <MenuItem Header="Shadows">
+                    <ui:RadioMenuItem
+                        x:Name="ShadowsAuto"
+                        Header="Use system setting"
+                        IsChecked="True"
+                        Checked="ShadowsAuto_Checked" />
+                    <ui:RadioMenuItem
+                        x:Name="ShadowsEnabled"
+                        Header="Enabled"
+                        Checked="ShadowsEnabled_Checked" />
+                    <ui:RadioMenuItem
+                        x:Name="ShadowsDisabled"
+                        Header="Disabled"
+                        Checked="ShadowsDisabled_Checked" />
+                </MenuItem>
                 <MenuItem
-                    Header="Force GC"
-                    Click="ForceGC" />
-            </MenuItem>
-        </Menu>
+                    Header="Debug"
+                    Visibility="Collapsed">
+                    <MenuItem
+                        Header="Force GC"
+                        Click="ForceGC" />
+                </MenuItem>
+            </Menu>
+
+            <ui:CommandBar
+                Grid.Column="1"
+                Margin="0,0,12,0"
+                Background="Transparent"
+                DefaultLabelPosition="Right">
+                <ui:AppBarButton x:Name="ThemeButton" Click="OnThemeButtonClick" Label="Toggle Theme">
+                    <ui:AppBarButton.Icon>
+                        <ui:FontIcon
+                            Glyph="&#xE771;"
+                            Margin="0,-2,0,0" />
+                    </ui:AppBarButton.Icon>
+                </ui:AppBarButton>
+            </ui:CommandBar>
+        </Grid>
 
         <ListBox
             x:Name="PagesList"

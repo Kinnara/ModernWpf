@@ -145,6 +145,18 @@ namespace ModernWpf.SampleApp
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
+
+        private void OnThemeButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark)
+            {
+                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+            }
+            else
+            {
+                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+            }
+        }
     }
 
     public class ControlPagesData : List<ControlPageInfo>
