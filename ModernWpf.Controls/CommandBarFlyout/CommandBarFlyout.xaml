@@ -21,7 +21,7 @@
         <Setter Property="Width" Value="40" />
         <Setter Property="Height" Value="40" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
-        <!--<Setter Property="AllowFocusOnInteraction" Value="False" />-->
+        <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="0,0,0,2" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarButton">
@@ -182,6 +182,7 @@
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="Width" Value="NaN" />
                 <Setter Property="Height" Value="32" />
+                <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="0" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -199,7 +200,7 @@
         <Setter Property="Width" Value="40" />
         <Setter Property="Height" Value="40" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
-        <!--<Setter Property="AllowFocusOnInteraction" Value="False" />-->
+        <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="0,0,0,2" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarToggleButton">
@@ -423,6 +424,7 @@
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="Width" Value="NaN" />
                 <Setter Property="Height" Value="32" />
+                <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="0" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -1036,10 +1038,8 @@
                                             IsTabStop="False"
                                             Visibility="{TemplateBinding EffectiveOverflowButtonVisibility}"
                                             IsChecked="{Binding Path=IsOverflowOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                            ClickMode="Press">
-                                            <ToggleButton.RenderTransform>
-                                                <TranslateTransform x:Name="MoreButtonTransform" />
-                                            </ToggleButton.RenderTransform>
+                                            ClickMode="Press"
+                                            ui:FocusVisualHelper.FocusVisualMargin="0,0,0,2">
                                             <ui:FontIcon
                                                 x:Name="EllipsisIcon"
                                                 HorizontalAlignment="Center"
@@ -1151,8 +1151,6 @@
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Top" />
-        <!--<Setter Property="ClosedDisplayMode" Value="Compact" />-->
-        <!--<Setter Property="ExitDisplayModeOnAccessKeyInvoked" Value="False" />-->
         <Setter Property="DefaultLabelPosition" Value="Collapsed" />
         <Setter Property="MaxWidth" Value="440" />
         <Setter Property="Height" Value="40" />
