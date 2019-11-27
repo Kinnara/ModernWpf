@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -38,6 +39,9 @@ namespace ModernWpf.SampleApp.ControlPages
         public ComboBoxPage()
         {
             InitializeComponent();
+
+            Combo4.ItemsSource = Enumerable.Range(1, 5000).ToList();
+            Combo4.SelectedIndex = 0;
         }
 
         private void ColorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

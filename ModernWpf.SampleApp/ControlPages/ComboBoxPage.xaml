@@ -88,6 +88,21 @@
                     </StackPanel>
                 </sc:ControlExample.Example>
             </sc:ControlExample>
+
+            <sc:ControlExample HeaderText="A virtualized ComboBox.">
+                <sc:ControlExample.Example>
+                    <ComboBox
+                        x:Name="Combo4"
+                        ui:ControlHelper.Header="Virtualized"
+                        Width="200">
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+                    </ComboBox>
+                </sc:ControlExample.Example>
+            </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
