@@ -173,14 +173,17 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
                         </MultiTrigger>-->
-                        <Trigger Property="ToolBar.IsOverflowItem" Value="True">
-                            <Setter Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter Property="Width" Value="NaN" />
-                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="ToolBar.IsOverflowItem" Value="True">
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="Width" Value="NaN" />
+                <Setter Property="Height" Value="32" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="CommandBarFlyoutAppBarButtonStyle" TargetType="local:AppBarButton" BasedOn="{StaticResource CommandBarFlyoutAppBarButtonStyleBase}" />
@@ -411,14 +414,17 @@
                         <Trigger Property="HasInputGestureText" Value="True">
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <Trigger Property="ToolBar.IsOverflowItem" Value="True">
-                            <Setter Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter Property="Width" Value="NaN" />
-                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="ToolBar.IsOverflowItem" Value="True">
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="Width" Value="NaN" />
+                <Setter Property="Height" Value="32" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="CommandBarFlyoutAppBarToggleButtonStyle" TargetType="local:AppBarToggleButton" BasedOn="{StaticResource CommandBarFlyoutAppBarToggleButtonStyleBase}" />

@@ -252,14 +252,16 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
                         </MultiTrigger>-->
-                        <Trigger Property="ToolBar.IsOverflowItem" Value="True">
-                            <Setter Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter Property="Width" Value="NaN" />
-                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="ToolBar.IsOverflowItem" Value="True">
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="Width" Value="NaN" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>

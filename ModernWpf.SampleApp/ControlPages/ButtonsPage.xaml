@@ -72,7 +72,7 @@
                             <ui:FontIcon Glyph="&#xE715;" />
                         </ui:DropDownButton.Content>
                         <ui:DropDownButton.Flyout>
-                            <ui:CommandBarFlyout Placement="Bottom">
+                            <ui:CommandBarFlyout Placement="BottomEdgeAlignedLeft">
                                 <ui:CommandBarFlyout.SecondaryCommands>
                                     <ui:AppBarButton Label="Send">
                                         <ui:AppBarButton.Icon>

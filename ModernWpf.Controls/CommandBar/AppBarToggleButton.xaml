@@ -362,14 +362,16 @@
                         <Trigger Property="HasInputGestureText" Value="True">
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <Trigger Property="ToolBar.IsOverflowItem" Value="True">
-                            <Setter Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter Property="Width" Value="NaN" />
-                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="ToolBar.IsOverflowItem" Value="True">
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="Width" Value="NaN" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>
