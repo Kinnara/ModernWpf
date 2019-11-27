@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -55,6 +56,48 @@ namespace ModernWpf.Controls.Primitives
                 scrollBar.MouseLeave -= OnMouseLeave;
                 scrollBar.IsEnabledChanged -= OnIsEnabledChanged;
             }
+        }
+
+        #endregion
+
+        #region CollapsedThumbBackgroundColor
+
+        public static readonly DependencyProperty CollapsedThumbBackgroundColorProperty =
+            DependencyProperty.RegisterAttached(
+                "CollapsedThumbBackgroundColor",
+                typeof(Color?),
+                typeof(ScrollBarHelper),
+                new PropertyMetadata(default(Color?)));
+
+        public static Color? GetCollapsedThumbBackgroundColor(ScrollBar scrollBar)
+        {
+            return (Color?)scrollBar.GetValue(CollapsedThumbBackgroundColorProperty);
+        }
+
+        public static void SetCollapsedThumbBackgroundColor(ScrollBar scrollBar, Color? value)
+        {
+            scrollBar.SetValue(CollapsedThumbBackgroundColorProperty, value);
+        }
+
+        #endregion
+
+        #region ExpandedThumbBackgroundColor
+
+        public static readonly DependencyProperty ExpandedThumbBackgroundColorProperty =
+            DependencyProperty.RegisterAttached(
+                "ExpandedThumbBackgroundColor",
+                typeof(Color?),
+                typeof(ScrollBarHelper),
+                new PropertyMetadata(default(Color?)));
+
+        public static Color? GetExpandedThumbBackgroundColor(ScrollBar scrollBar)
+        {
+            return (Color?)scrollBar.GetValue(ExpandedThumbBackgroundColorProperty);
+        }
+
+        public static void SetExpandedThumbBackgroundColor(ScrollBar scrollBar, Color? value)
+        {
+            scrollBar.SetValue(ExpandedThumbBackgroundColorProperty, value);
         }
 
         #endregion

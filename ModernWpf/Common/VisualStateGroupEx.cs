@@ -6,7 +6,7 @@ namespace ModernWpf
     {
         public VisualStateGroupEx()
         {
-            CurrentStateChanged += OnCurrentStateChanged;
+            CurrentStateChanging += OnCurrentStateChanging;
         }
 
         #region CurrentStateName
@@ -29,7 +29,7 @@ namespace ModernWpf
 
         #endregion
 
-        private void OnCurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        private void OnCurrentStateChanging(object sender, VisualStateChangedEventArgs e)
         {
             if (e.NewState != null)
             {
