@@ -90,6 +90,8 @@ namespace ModernWpf.Controls.Primitives
                     EnsureFocusedPrimaryCommand();
                 }
             };
+
+            AddHandler(MouseDownEvent, new MouseButtonEventHandler(OnMouseDown), true);
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -212,124 +214,6 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_closingStoryboard.Completed += ClosingStoryboardCompleted;
                 m_closingStoryboard.CurrentStateInvalidated += ClosingStoryboardCurrentStateInvalidated;
-            }
-        }
-
-        private void OpeningStoryboardCurrentStateInvalidated(object sender, EventArgs e)
-        {
-            var clock = (Clock)sender;
-            m_openingStoryboardState = clock.CurrentState;
-        }
-
-        private void ClosingStoryboardCurrentStateInvalidated(object sender, EventArgs e)
-        {
-            var clock = (Clock)sender;
-            m_closingStoryboardState = clock.CurrentState;
-        }
-
-        private void SecondaryItemsRootPreviewKeyDown(object sender, KeyEventArgs args)
-        {
-            if (args.Handled)
-            {
-                return;
-            }
-
-            switch (args.Key)
-            {
-                case Key.Escape:
-                    {
-                        // In addition to closing the CommandBar if someone hits the escape key,
-                        // we also want to close the whole flyout.
-                        if (OwningFlyout != null && OwningFlyout.TryGetTarget(out var owningFlyout))
-                        {
-                            owningFlyout.Hide();
-                        }
-                        break;
-                    }
-
-                case Key.Down:
-                case Key.Up:
-                    {
-                        if (SecondaryCommands.Count > 1)
-                        {
-                            Control focusedControl = null;
-                            int startIndex = 0;
-                            int endIndex = SecondaryCommands.Count;
-                            int deltaIndex = 1;
-                            int loopCount = 0;
-
-                            if (args.Key == Key.Up)
-                            {
-                                deltaIndex = -1;
-                                startIndex = endIndex - 1;
-                                endIndex = -1;
-                            }
-
-                            do
-                            {
-                                // Give keyboard focus to the previous or next secondary command if possible
-                                for (int index = startIndex; index != endIndex; index += deltaIndex)
-                                {
-                                    var secondaryCommand = SecondaryCommands[index];
-
-                                    if (secondaryCommand is Control secondaryCommandAsControl)
-                                    {
-                                        if (secondaryCommandAsControl.IsFocused)
-                                        {
-                                            focusedControl = secondaryCommandAsControl;
-                                        }
-                                        else if (focusedControl != null && IsControlFocusable(secondaryCommandAsControl, false /*checkTabStop*/) &&
-                                                 focusedControl != secondaryCommandAsControl)
-                                        {
-                                            if (FocusControl(
-                                                    secondaryCommandAsControl /*newFocus*/,
-                                                    focusedControl /*oldFocus*/,
-                                                    true /*updateTabStop*/))
-                                            {
-                                                args.Handled = true;
-                                                return;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (loopCount == 0 && PrimaryCommands.Count > 0)
-                                {
-                                    var moreButton = m_moreButton;
-
-                                    if (deltaIndex == 1 &&
-                                        FocusCommand(
-                                            PrimaryCommands /*commands*/,
-                                            moreButton /*moreButton*/,
-                                            true /*firstCommand*/,
-                                            true /*ensureTabStopUniqueness*/))
-                                    {
-                                        // Being on the last secondary command, keyboard focus was given to the first primary command
-                                        args.Handled = true;
-                                        return;
-                                    }
-                                    else if (deltaIndex == -1 &&
-                                        focusedControl != null &&
-                                        moreButton != null &&
-                                        IsControlFocusable(moreButton, false /*checkTabStop*/) &&
-                                        FocusControl(
-                                            moreButton /*newFocus*/,
-                                            focusedControl /*oldFocus*/,
-                                            true /*updateTabStop*/))
-                                    {
-                                        // Being on the first secondary command, keyboard focus was given to the MoreButton
-                                        args.Handled = true;
-                                        return;
-                                    }
-                                }
-
-                                loopCount++; // Looping again when focus could not be given to a MoreButton going up or primary command going down.
-                            }
-                            while (loopCount < 2 && focusedControl != null);
-                        }
-                        args.Handled = true;
-                        break;
-                    }
             }
         }
 
@@ -792,7 +676,7 @@ namespace ModernWpf.Controls.Primitives
 
                 case Key.Escape:
                     {
-                        if (OwningFlyout != null && OwningFlyout.TryGetTarget(out var owningFlyout))
+                        if (TryGetOwningFlyout(out var owningFlyout))
                         {
                             owningFlyout.Hide();
                             args.Handled = true;
@@ -1102,6 +986,118 @@ namespace ModernWpf.Controls.Primitives
         {
         }
 
+        private void SecondaryItemsRootSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            m_secondaryItemsRootSized = true;
+            UpdateUI();
+        }
+
+        private void SecondaryItemsRootPreviewKeyDown(object sender, KeyEventArgs args)
+        {
+            if (args.Handled)
+            {
+                return;
+            }
+
+            switch (args.Key)
+            {
+                case Key.Escape:
+                    {
+                        // In addition to closing the CommandBar if someone hits the escape key,
+                        // we also want to close the whole flyout.
+                        if (TryGetOwningFlyout(out var owningFlyout))
+                        {
+                            owningFlyout.Hide();
+                        }
+                        break;
+                    }
+
+                case Key.Down:
+                case Key.Up:
+                    {
+                        if (SecondaryCommands.Count > 1)
+                        {
+                            Control focusedControl = null;
+                            int startIndex = 0;
+                            int endIndex = SecondaryCommands.Count;
+                            int deltaIndex = 1;
+                            int loopCount = 0;
+
+                            if (args.Key == Key.Up)
+                            {
+                                deltaIndex = -1;
+                                startIndex = endIndex - 1;
+                                endIndex = -1;
+                            }
+
+                            do
+                            {
+                                // Give keyboard focus to the previous or next secondary command if possible
+                                for (int index = startIndex; index != endIndex; index += deltaIndex)
+                                {
+                                    var secondaryCommand = SecondaryCommands[index];
+
+                                    if (secondaryCommand is Control secondaryCommandAsControl)
+                                    {
+                                        if (secondaryCommandAsControl.IsFocused)
+                                        {
+                                            focusedControl = secondaryCommandAsControl;
+                                        }
+                                        else if (focusedControl != null && IsControlFocusable(secondaryCommandAsControl, false /*checkTabStop*/) &&
+                                                 focusedControl != secondaryCommandAsControl)
+                                        {
+                                            if (FocusControl(
+                                                    secondaryCommandAsControl /*newFocus*/,
+                                                    focusedControl /*oldFocus*/,
+                                                    true /*updateTabStop*/))
+                                            {
+                                                args.Handled = true;
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (loopCount == 0 && PrimaryCommands.Count > 0)
+                                {
+                                    var moreButton = m_moreButton;
+
+                                    if (deltaIndex == 1 &&
+                                        FocusCommand(
+                                            PrimaryCommands /*commands*/,
+                                            moreButton /*moreButton*/,
+                                            true /*firstCommand*/,
+                                            true /*ensureTabStopUniqueness*/))
+                                    {
+                                        // Being on the last secondary command, keyboard focus was given to the first primary command
+                                        args.Handled = true;
+                                        return;
+                                    }
+                                    else if (deltaIndex == -1 &&
+                                        focusedControl != null &&
+                                        moreButton != null &&
+                                        IsControlFocusable(moreButton, false /*checkTabStop*/) &&
+                                        FocusControl(
+                                            moreButton /*newFocus*/,
+                                            focusedControl /*oldFocus*/,
+                                            true /*updateTabStop*/))
+                                    {
+                                        // Being on the first secondary command, keyboard focus was given to the MoreButton
+                                        args.Handled = true;
+                                        return;
+                                    }
+                                }
+
+                                loopCount++; // Looping again when focus could not be given to a MoreButton going up or primary command going down.
+                            }
+                            while (loopCount < 2 && focusedControl != null);
+                        }
+                        args.Handled = true;
+                        break;
+                    }
+            }
+        }
+
         private void OpeningStoryboardCompleted(object sender, EventArgs e)
         {
             m_openingStoryboard.Stop(m_layoutRoot);
@@ -1112,10 +1108,42 @@ namespace ModernWpf.Controls.Primitives
             m_closingStoryboard.Stop(m_layoutRoot);
         }
 
-        private void SecondaryItemsRootSizeChanged(object sender, SizeChangedEventArgs e)
+        private void OpeningStoryboardCurrentStateInvalidated(object sender, EventArgs e)
         {
-            m_secondaryItemsRootSized = true;
-            UpdateUI();
+            var clock = (Clock)sender;
+            m_openingStoryboardState = clock.CurrentState;
+        }
+
+        private void ClosingStoryboardCurrentStateInvalidated(object sender, EventArgs e)
+        {
+            var clock = (Clock)sender;
+            m_closingStoryboardState = clock.CurrentState;
+        }
+
+        private void OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Close the owning flyout if the overflow was closed by MouseDown
+            if (!IsOverflowOpen && e.Handled && e.OriginalSource == this)
+            {
+                if (TryGetOwningFlyout(out var owningFlyout))
+                {
+                    owningFlyout.Hide();
+                }
+            }
+        }
+
+        private bool TryGetOwningFlyout(out CommandBarFlyout flyout)
+        {
+            var reference = OwningFlyout;
+            if (reference != null)
+            {
+                return reference.TryGetTarget(out flyout);
+            }
+            else
+            {
+                flyout = null;
+                return false;
+            }
         }
 
         FrameworkElement m_layoutRoot;
