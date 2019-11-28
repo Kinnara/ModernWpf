@@ -5,8 +5,6 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
 
@@ -49,47 +47,12 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region DropDownMenu
-
-        public static readonly DependencyProperty DropDownMenuProperty =
-            DependencyProperty.Register(
-                nameof(DropDownMenu),
-                typeof(ContextMenu),
-                typeof(DropDownButton),
-                new PropertyMetadata(OnDropDownMenuChanged));
-
-        public ContextMenu DropDownMenu
-        {
-            get => (ContextMenu)GetValue(DropDownMenuProperty);
-            set => SetValue(DropDownMenuProperty, value);
-        }
-
-        private static void OnDropDownMenuChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((DropDownButton)d).OnDropDownMenuChanged((ContextMenu)e.OldValue, (ContextMenu)e.NewValue);
-        }
-
-        private void OnDropDownMenuChanged(ContextMenu oldDropDownMenu, ContextMenu newDropDownMenu)
-        {
-            if (oldDropDownMenu != null)
-            {
-                oldDropDownMenu.Opened -= OnDropDownMenuOpened;
-                oldDropDownMenu.Closed -= OnDropDownMenuClosed;
-            }
-
-            if (newDropDownMenu != null)
-            {
-                newDropDownMenu.Opened += OnDropDownMenuOpened;
-                newDropDownMenu.Closed += OnDropDownMenuClosed;
-            }
-        }
-
-        #endregion
-
         #region Flyout
 
         public static readonly DependencyProperty FlyoutProperty =
-            FlyoutService.FlyoutProperty.AddOwner(typeof(DropDownButton));
+            FlyoutService.FlyoutProperty.AddOwner(
+                typeof(DropDownButton),
+                new FrameworkPropertyMetadata(OnFlyoutPropertyChanged));
 
         public FlyoutBase Flyout
         {
@@ -97,56 +60,49 @@ namespace ModernWpf.Controls
             set => SetValue(FlyoutProperty, value);
         }
 
+        private static void OnFlyoutPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((DropDownButton)d).OnFlyoutPropertyChanged(e);
+        }
+
+        private void OnFlyoutPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            if (e.OldValue is FlyoutBase oldFlyout)
+            {
+                oldFlyout.Opened -= OnFlyoutOpened;
+                oldFlyout.Closed -= OnFlyoutClosed;
+            }
+
+            if (e.NewValue is FlyoutBase newFlyout)
+            {
+                newFlyout.Opened += OnFlyoutOpened;
+                newFlyout.Closed += OnFlyoutClosed;
+            }
+        }
+
         #endregion
 
-        protected override void OnClick()
+        internal bool IsFlyoutOpen => m_isFlyoutOpen;
+
+        internal void OpenFlyout()
         {
-            base.OnClick();
-            OpenDropDownMenu();
+            Flyout?.ShowAt(this);
         }
 
-        protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
+        internal void CloseFlyout()
         {
-            if (m_isDropDownOpen)
-            {
-                e.Handled = true;
-            }
-
-            base.OnPreviewMouseLeftButtonDown(e);
+            Flyout?.Hide();
         }
 
-        internal bool IsDropDownOpen => m_isDropDownOpen;
-
-        internal void OpenDropDownMenu()
+        private void OnFlyoutOpened(object sender, object e)
         {
-            var dropDownMenu = DropDownMenu;
-            if (dropDownMenu != null)
-            {
-                dropDownMenu.Placement = PlacementMode.Bottom;
-                dropDownMenu.PlacementTarget = this;
-                dropDownMenu.PlacementRectangle = new Rect(new Point(0, -4), new Point(RenderSize.Width, RenderSize.Height + 4));
-                dropDownMenu.IsOpen = true;
-            }
-        }
-
-        internal void CloseDropDownMenu()
-        {
-            var dropDownMenu = DropDownMenu;
-            if (dropDownMenu != null)
-            {
-                dropDownMenu.IsOpen = false;
-            }
-        }
-
-        private void OnDropDownMenuOpened(object sender, RoutedEventArgs e)
-        {
-            m_isDropDownOpen = true;
+            m_isFlyoutOpen = true;
             SharedHelpers.RaiseAutomationPropertyChangedEvent(this, ExpandCollapseState.Collapsed, ExpandCollapseState.Expanded);
         }
 
-        private void OnDropDownMenuClosed(object sender, RoutedEventArgs e)
+        private void OnFlyoutClosed(object sender, object e)
         {
-            m_isDropDownOpen = false;
+            m_isFlyoutOpen = false;
             SharedHelpers.RaiseAutomationPropertyChangedEvent(this, ExpandCollapseState.Expanded, ExpandCollapseState.Collapsed);
         }
 
@@ -155,6 +111,6 @@ namespace ModernWpf.Controls
             return new DropDownButtonAutomationPeer(this);
         }
 
-        private bool m_isDropDownOpen;
+        private bool m_isFlyoutOpen;
     }
 }

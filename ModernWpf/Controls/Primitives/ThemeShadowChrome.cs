@@ -150,17 +150,17 @@ namespace ModernWpf.Controls.Primitives
 
         #region DesiredMargin
 
-        internal static readonly DependencyProperty DesiredMarginProperty =
+        private static readonly DependencyProperty DesiredMarginProperty =
             DependencyProperty.Register(
                 nameof(DesiredMargin),
                 typeof(Thickness),
                 typeof(ThemeShadowChrome),
                 new PropertyMetadata(new Thickness(), OnDesiredMarginChanged));
 
-        internal Thickness DesiredMargin
+        private Thickness DesiredMargin
         {
             get => (Thickness)GetValue(DesiredMarginProperty);
-            private set => SetValue(DesiredMarginProperty, value);
+            set => SetValue(DesiredMarginProperty, value);
         }
 
         private static void OnDesiredMarginChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -170,43 +170,41 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnDesiredMarginChanged(DependencyPropertyChangedEventArgs e)
         {
-            var newValue = (Thickness)e.NewValue;
-            DesiredPopupHorizontalOffset = -newValue.Left;
-            DesiredPopupVerticalOffset = -newValue.Top;
+            UpdateDesiredPopupOffsets();
         }
 
         #endregion
 
         #region DesiredPopupHorizontalOffset
 
-        internal static readonly DependencyProperty DesiredPopupHorizontalOffsetProperty =
+        private static readonly DependencyProperty DesiredPopupHorizontalOffsetProperty =
             DependencyProperty.Register(
                 nameof(DesiredPopupHorizontalOffset),
                 typeof(double),
                 typeof(ThemeShadowChrome),
                 new PropertyMetadata(0d));
 
-        internal double DesiredPopupHorizontalOffset
+        private double DesiredPopupHorizontalOffset
         {
             get => (double)GetValue(DesiredPopupHorizontalOffsetProperty);
-            private set => SetValue(DesiredPopupHorizontalOffsetProperty, value);
+            set => SetValue(DesiredPopupHorizontalOffsetProperty, value);
         }
 
         #endregion
 
         #region DesiredPopupVerticalOffset
 
-        internal static readonly DependencyProperty DesiredPopupVerticalOffsetProperty =
+        private static readonly DependencyProperty DesiredPopupVerticalOffsetProperty =
             DependencyProperty.Register(
                 nameof(DesiredPopupVerticalOffset),
                 typeof(double),
                 typeof(ThemeShadowChrome),
                 new PropertyMetadata(0d));
 
-        internal double DesiredPopupVerticalOffset
+        private double DesiredPopupVerticalOffset
         {
             get => (double)GetValue(DesiredPopupVerticalOffsetProperty);
-            private set => SetValue(DesiredPopupVerticalOffsetProperty, value);
+            set => SetValue(DesiredPopupVerticalOffsetProperty, value);
         }
 
         #endregion
@@ -249,7 +247,7 @@ namespace ModernWpf.Controls.Primitives
         {
             base.OnInitialized(e);
 
-            _autoMargin = HasDefaultValue(this, MarginProperty);
+            _shouldUpdateMargin = HasDefaultValue(this, MarginProperty);
 
             OnIsShadowEnabledChanged();
         }
@@ -276,95 +274,49 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnVisualParentChanged()
         {
-            if (_popup != null)
-            {
-                _popup.Opened -= OnPopupOpened;
-                _popup.Closed -= OnPopupClosed;
-                _popup = null;
-
-                if (_transform != null)
-                {
-                    _transform.ClearValue(TranslateTransform.XProperty);
-                    _transform = null;
-                    ClearValue(RenderTransformProperty);
-                }
-            }
-
             if (IsShadowEnabled)
             {
                 PopupControl parentPopupControl = null;
-                Popup popup = null;
-                bool shouldForceLeftAlignWithTarget = false;
 
-                var newParent = VisualParent;
-                if (newParent is ContextMenu contextMenu)
+                var visualParent = VisualParent;
+                if (visualParent is ContextMenu contextMenu)
                 {
                     parentPopupControl = new PopupControl(contextMenu);
-
-                    popup = FindParentPopup(this);
-                    if (popup != null && popup.PlacementTarget != null &&
-                        popup.PlacementTarget.GetType().Name.Contains("DropDownButton"))
-                    {
-                        shouldForceLeftAlignWithTarget = true;
-                    }
                 }
-                else if (newParent is ToolTip toolTip)
+                else if (visualParent is ToolTip toolTip)
                 {
                     parentPopupControl = new PopupControl(toolTip);
                 }
                 else
                 {
-                    popup = FindParentPopup(this);
-                    if (popup != null)
+                    if (FindParentPopup(this) is Popup parentPopup)
                     {
-                        bool shouldManagePosition = true;
+                        bool shouldSetOffsets = true;
+                        bool edgeAlignedLeft = false;
 
                         if (TemplatedParent is MenuItem menuItem)
                         {
-                            shouldManagePosition = false;
+                            shouldSetOffsets = false;
 
                             if (menuItem.Role == MenuItemRole.TopLevelHeader)
                             {
-                                shouldForceLeftAlignWithTarget = true;
+                                edgeAlignedLeft = true;
                             }
                         }
-                        else if (newParent is Calendar)
+                        else if (visualParent is Calendar)
                         {
-                            shouldForceLeftAlignWithTarget = true;
-                        }
-                        else
-                        {
-                            var popupPlacement = popup.Placement;
-                            if (popupPlacement == PlacementMode.Bottom ||
-                                popupPlacement == PlacementMode.Top)
-                            {
-                                var target = popup.PlacementTarget;
-                                if (target != null)
-                                {
-                                    if (target is Button ||
-                                        target.GetType().Name.Contains("SplitButton"))
-                                    {
-                                        shouldForceLeftAlignWithTarget = true;
-                                    }
-                                }
-                            }
+                            edgeAlignedLeft = true;
                         }
 
-                        if (shouldManagePosition)
+                        parentPopupControl = new PopupControl(parentPopup)
                         {
-                            parentPopupControl = new PopupControl(popup);
-                        }
+                            ShouldSetOffsets = shouldSetOffsets,
+                            EdgeAlignedLeft = edgeAlignedLeft
+                        };
                     }
                 }
 
                 SetParentPopupControl(parentPopupControl);
-
-                if (shouldForceLeftAlignWithTarget)
-                {
-                    _popup = popup;
-                    _popup.Opened += OnPopupOpened;
-                    _popup.Closed += OnPopupClosed;
-                }
             }
             else
             {
@@ -440,12 +392,11 @@ namespace ModernWpf.Controls.Primitives
             }
 
             UpdateMargin();
-            PositionParentPopupControl();
         }
 
         private void UpdateMargin()
         {
-            if (_autoMargin)
+            if (_shouldUpdateMargin)
             {
                 if (IsShadowEnabled)
                 {
@@ -462,12 +413,30 @@ namespace ModernWpf.Controls.Primitives
         {
             if (_parentPopupControl != null)
             {
+                _parentPopupControl.Opened -= OnParentPopupControlOpened;
+                _parentPopupControl.Closed -= OnParentPopupControlClosed;
                 _parentPopupControl.Dispose();
             }
 
             _parentPopupControl = value as PopupControl;
 
+            if (_parentPopupControl != null)
+            {
+                _parentPopupControl.Opened += OnParentPopupControlOpened;
+                _parentPopupControl.Closed += OnParentPopupControlClosed;
+            }
+        }
+
+        private void OnParentPopupControlOpened(object sender, EventArgs e)
+        {
+            UpdateDesiredPopupOffsets();
             PositionParentPopupControl();
+        }
+
+        private void OnParentPopupControlClosed(object sender, EventArgs e)
+        {
+            ((PopupControl)sender).ClearOffsets();
+            ResetTransform();
         }
 
         private void PositionParentPopupControl()
@@ -475,48 +444,252 @@ namespace ModernWpf.Controls.Primitives
             if (_parentPopupControl != null)
             {
                 Debug.Assert(IsShadowEnabled);
-                _parentPopupControl.UpdatePosition(DesiredPopupHorizontalOffset, DesiredPopupVerticalOffset);
+                _parentPopupControl.SetOffsets(DesiredPopupHorizontalOffset, DesiredPopupVerticalOffset);
+
+                if (TryGetCustomPlacementMode(out var placement))
+                {
+                    switch (placement)
+                    {
+                        case CustomPopupPlacementMode.TopEdgeAlignedLeft:
+                        case CustomPopupPlacementMode.BottomEdgeAlignedLeft:
+                            EnsureEdgeAligned(true);
+                            break;
+                        case CustomPopupPlacementMode.TopEdgeAlignedRight:
+                        case CustomPopupPlacementMode.BottomEdgeAlignedRight:
+                            EnsureEdgeAligned(false);
+                            break;
+                    }
+                }
+                else if (_parentPopupControl.EdgeAlignedLeft)
+                {
+                    EnsureEdgeAligned(true);
+                }
             }
         }
 
-        private void OnPopupOpened(object sender, EventArgs e)
+        private bool TryGetCustomPlacementMode(out CustomPopupPlacementMode placement)
         {
-            var popup = (Popup)sender;
-            ForceLeftAlignWithTarget(popup);
+            if (TryGetCustomPlacementMode(VisualParent, out placement))
+            {
+                return true;
+            }
+            return false;
         }
 
-        private void OnPopupClosed(object sender, EventArgs e)
+        private bool TryGetCustomPlacementMode(DependencyObject element, out CustomPopupPlacementMode placement)
+        {
+            if (element != null &&
+                element.ReadLocalValue(PopupPlacementHelper.PlacementProperty) != DependencyProperty.UnsetValue)
+            {
+                placement = PopupPlacementHelper.GetPlacement(element);
+                return true;
+            }
+
+            placement = default;
+            return false;
+        }
+
+        private bool TryGetOffsetToTarget(out Vector offset, bool leftEdge)
+        {
+            var popup = _parentPopupControl;
+            if (popup != null)
+            {
+                var target = popup.PlacementTarget;
+                if (target != null)
+                {
+                    if (IsVisible && target.IsVisible)
+                    {
+                        var popupPoint = PointToScreen(new Point(leftEdge ? 0 : ActualWidth, 0));
+                        var targetPoint = target.PointToScreen(new Point(leftEdge ? 0 : target.RenderSize.Width, 0));
+                        offset = popupPoint - targetPoint;
+                        return true;
+                    }
+                }
+            }
+
+            offset = default;
+            return false;
+        }
+
+        private void UpdateDesiredPopupOffsets()
+        {
+            var desiredMargin = DesiredMargin;
+
+            if (TryGetCustomPlacementMode(out var placement))
+            {
+                switch (placement)
+                {
+                    case CustomPopupPlacementMode.Top:
+                        DesiredPopupHorizontalOffset = 0;
+                        DesiredPopupVerticalOffset = CalculateVerticalOffset(false);
+                        break;
+                    case CustomPopupPlacementMode.Bottom:
+                        DesiredPopupHorizontalOffset = 0;
+                        DesiredPopupVerticalOffset = CalculateVerticalOffset(true);
+                        break;
+                    case CustomPopupPlacementMode.Left:
+                        DesiredPopupHorizontalOffset = CalculateHorizontalOffset(false);
+                        DesiredPopupVerticalOffset = 0;
+                        break;
+                    case CustomPopupPlacementMode.Right:
+                        DesiredPopupHorizontalOffset = CalculateHorizontalOffset(true);
+                        DesiredPopupVerticalOffset = 0;
+                        break;
+                    case CustomPopupPlacementMode.TopEdgeAlignedLeft:
+                        DesiredPopupHorizontalOffset = -desiredMargin.Left;
+                        DesiredPopupVerticalOffset = CalculateVerticalOffset(false);
+                        break;
+                    case CustomPopupPlacementMode.TopEdgeAlignedRight:
+                        DesiredPopupHorizontalOffset = desiredMargin.Right;
+                        DesiredPopupVerticalOffset = CalculateVerticalOffset(false);
+                        break;
+                    case CustomPopupPlacementMode.BottomEdgeAlignedLeft:
+                        DesiredPopupHorizontalOffset = -desiredMargin.Left;
+                        DesiredPopupVerticalOffset = CalculateVerticalOffset(true);
+                        break;
+                    case CustomPopupPlacementMode.BottomEdgeAlignedRight:
+                        DesiredPopupHorizontalOffset = desiredMargin.Right;
+                        DesiredPopupVerticalOffset = CalculateVerticalOffset(true);
+                        break;
+                    case CustomPopupPlacementMode.LeftEdgeAlignedTop:
+                        DesiredPopupHorizontalOffset = CalculateHorizontalOffset(false);
+                        DesiredPopupVerticalOffset = -desiredMargin.Top;
+                        break;
+                    case CustomPopupPlacementMode.LeftEdgeAlignedBottom:
+                        DesiredPopupHorizontalOffset = CalculateHorizontalOffset(false);
+                        DesiredPopupVerticalOffset = desiredMargin.Bottom;
+                        break;
+                    case CustomPopupPlacementMode.RightEdgeAlignedTop:
+                        DesiredPopupHorizontalOffset = CalculateHorizontalOffset(false);
+                        DesiredPopupVerticalOffset = -desiredMargin.Top;
+                        break;
+                    case CustomPopupPlacementMode.RightEdgeAlignedBottom:
+                        DesiredPopupHorizontalOffset = CalculateHorizontalOffset(false);
+                        DesiredPopupVerticalOffset = desiredMargin.Bottom;
+                        break;
+                    default:
+                        DesiredPopupHorizontalOffset = 0;
+                        DesiredPopupVerticalOffset = 0;
+                        break;
+                }
+            }
+            else if (_parentPopupControl != null)
+            {
+                switch (_parentPopupControl.Placement)
+                {
+                    case PlacementMode.Bottom:
+                        DesiredPopupHorizontalOffset = -desiredMargin.Left;
+                        DesiredPopupVerticalOffset = CalculateVerticalOffset(true);
+                        break;
+                    case PlacementMode.Center:
+                        DesiredPopupHorizontalOffset = 0;
+                        DesiredPopupVerticalOffset = 0;
+                        break;
+                    case PlacementMode.Right:
+                        DesiredPopupHorizontalOffset = CalculateHorizontalOffset(false);
+                        DesiredPopupVerticalOffset = -desiredMargin.Top;
+                        break;
+                    case PlacementMode.Left:
+                        DesiredPopupHorizontalOffset = CalculateHorizontalOffset(false);
+                        DesiredPopupVerticalOffset = -desiredMargin.Top;
+                        break;
+                    case PlacementMode.Top:
+                        DesiredPopupHorizontalOffset = -desiredMargin.Left;
+                        DesiredPopupVerticalOffset = CalculateVerticalOffset(false);
+                        break;
+                    case PlacementMode.Relative:
+                    case PlacementMode.RelativePoint:
+                        DesiredPopupHorizontalOffset = 0;
+                        DesiredPopupVerticalOffset = 0;
+                        break;
+                    default:
+                        DesiredPopupHorizontalOffset = -desiredMargin.Left;
+                        DesiredPopupVerticalOffset = -desiredMargin.Top;
+                        break;
+                }
+            }
+            else
+            {
+                ClearValue(DesiredPopupHorizontalOffsetProperty);
+                ClearValue(DesiredPopupVerticalOffsetProperty);
+            }
+        }
+
+        private double CalculateHorizontalOffset(bool isOpenRightDesired)
+        {
+            bool isOpenRight = IsPopupOpenRight() ?? isOpenRightDesired;
+            if (isOpenRight)
+            {
+                return -DesiredMargin.Left;
+            }
+            else
+            {
+                return DesiredMargin.Right;
+            }
+        }
+
+        private double CalculateVerticalOffset(bool isOpenDownDesired)
+        {
+            bool isOpenDown = IsPopupOpenDown() ?? isOpenDownDesired;
+            if (isOpenDown)
+            {
+                return -DesiredMargin.Top;
+            }
+            else
+            {
+                return DesiredMargin.Bottom;
+            }
+        }
+
+        private bool? IsPopupOpenRight()
+        {
+            if (TryGetOffsetToTarget(out Vector offset, true))
+            {
+                return offset.X > 0;
+            }
+            return null;
+        }
+
+        private bool? IsPopupOpenDown()
+        {
+            if (TryGetOffsetToTarget(out Vector offset, true))
+            {
+                return offset.Y > 0;
+            }
+            return null;
+        }
+
+        private void EnsureEdgeAligned(bool left)
+        {
+            if (TryGetOffsetToTarget(out var offset, left))
+            {
+                bool shouldTransform = left ? offset.X > 0 : offset.X < 0;
+                if (shouldTransform)
+                {
+                    SetupTransform(-offset.X);
+                }
+                else
+                {
+                    ResetTransform();
+                }
+            }
+        }
+
+        private void SetupTransform(double offsetX)
+        {
+            if (_transform == null)
+            {
+                _transform = new TranslateTransform();
+                RenderTransform = _transform;
+            }
+            _transform.X = offsetX;
+        }
+
+        private void ResetTransform()
         {
             if (_transform != null)
             {
                 _transform.ClearValue(TranslateTransform.XProperty);
-            }
-        }
-
-        private void ForceLeftAlignWithTarget(Popup popup)
-        {
-            var target = popup.PlacementTarget;
-            if (target != null)
-            {
-                var p1 = target.PointToScreen(new Point());
-                var p2 = PointToScreen(new Point());
-                var offsetX = p1.X - p2.X;
-                if (offsetX >= 0)
-                {
-                    if (_transform != null)
-                    {
-                        _transform.ClearValue(TranslateTransform.XProperty);
-                    }
-                }
-                else
-                {
-                    if (_transform == null)
-                    {
-                        _transform = new TranslateTransform();
-                        RenderTransform = _transform;
-                    }
-                    _transform.X = p1.X - p2.X;
-                }
             }
         }
 
@@ -551,35 +724,94 @@ namespace ModernWpf.Controls.Primitives
             private ContextMenu _contextMenu;
             private ToolTip _toolTip;
             private Popup _popup;
-            private bool _shouldUpdatePosition;
 
             public PopupControl(ContextMenu contextMenu)
             {
                 _contextMenu = contextMenu;
-                _shouldUpdatePosition =
+
+                ShouldSetOffsets =
                     HasDefaultValue(contextMenu, ContextMenu.HorizontalOffsetProperty) &&
                     HasDefaultValue(contextMenu, ContextMenu.VerticalOffsetProperty);
+
+                _contextMenu.Opened += OnOpened;
+                _contextMenu.Closed += OnClosed;
             }
 
             public PopupControl(ToolTip toolTip)
             {
                 _toolTip = toolTip;
-                _shouldUpdatePosition =
+
+                ShouldSetOffsets =
                     HasDefaultValue(toolTip, System.Windows.Controls.ToolTip.HorizontalOffsetProperty) &&
                     HasDefaultValue(toolTip, System.Windows.Controls.ToolTip.VerticalOffsetProperty);
+
+                _toolTip.Opened += OnOpened;
+                _toolTip.Closed += OnClosed;
             }
 
             public PopupControl(Popup popup)
             {
                 _popup = popup;
-                _shouldUpdatePosition =
+
+                ShouldSetOffsets =
                     HasDefaultValue(popup, Popup.HorizontalOffsetProperty) &&
                     HasDefaultValue(popup, Popup.VerticalOffsetProperty);
+
+                _popup.Opened += OnOpened;
+                _popup.Closed += OnClosed;
             }
 
-            public void UpdatePosition(double horizontalOffset, double verticalOffset)
+            public bool ShouldSetOffsets { get; set; }
+
+            public bool EdgeAlignedLeft { get; set; }
+
+            public PlacementMode Placement
             {
-                if (_shouldUpdatePosition)
+                get
+                {
+                    if (_contextMenu != null)
+                    {
+                        return _contextMenu.Placement;
+                    }
+                    if (_toolTip != null)
+                    {
+                        return _toolTip.Placement;
+                    }
+                    if (_popup != null)
+                    {
+                        return _popup.Placement;
+                    }
+                    return default;
+                }
+            }
+
+            public UIElement PlacementTarget
+            {
+                get
+                {
+                    if (_contextMenu != null)
+                    {
+                        return _contextMenu.PlacementTarget;
+                    }
+                    if (_toolTip != null)
+                    {
+                        return _toolTip.PlacementTarget;
+                    }
+                    if (_popup != null)
+                    {
+                        return _popup.PlacementTarget;
+                    }
+                    return null;
+                }
+            }
+
+            public event EventHandler Opened;
+
+            public event EventHandler Closed;
+
+            public void SetOffsets(double horizontalOffset, double verticalOffset)
+            {
+                if (ShouldSetOffsets)
                 {
                     if (_contextMenu != null)
                     {
@@ -599,23 +831,41 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
+            public void ClearOffsets()
+            {
+                SetOffsets(0, 0);
+            }
+
             public void Dispose()
             {
-                if (_shouldUpdatePosition)
+                if (_contextMenu != null)
                 {
-                    _shouldUpdatePosition = false;
+                    _contextMenu.Opened -= OnOpened;
+                    _contextMenu.Closed -= OnClosed;
 
-                    if (_contextMenu != null)
+                    if (ShouldSetOffsets)
                     {
                         _contextMenu.ClearValue(ContextMenu.HorizontalOffsetProperty);
                         _contextMenu.ClearValue(ContextMenu.VerticalOffsetProperty);
                     }
-                    else if (_toolTip != null)
+                }
+                else if (_toolTip != null)
+                {
+                    _toolTip.Opened -= OnOpened;
+                    _toolTip.Closed -= OnClosed;
+
+                    if (ShouldSetOffsets)
                     {
                         _toolTip.ClearValue(System.Windows.Controls.ToolTip.HorizontalOffsetProperty);
                         _toolTip.ClearValue(System.Windows.Controls.ToolTip.VerticalOffsetProperty);
                     }
-                    else if (_popup != null)
+                }
+                else if (_popup != null)
+                {
+                    _popup.Opened -= OnOpened;
+                    _popup.Closed -= OnClosed;
+
+                    if (ShouldSetOffsets)
                     {
                         _popup.ClearValue(Popup.HorizontalOffsetProperty);
                         _popup.ClearValue(Popup.VerticalOffsetProperty);
@@ -626,15 +876,24 @@ namespace ModernWpf.Controls.Primitives
                 _toolTip = null;
                 _popup = null;
             }
+
+            private void OnOpened(object sender, EventArgs e)
+            {
+                Opened?.Invoke(this, e);
+            }
+
+            private void OnClosed(object sender, EventArgs e)
+            {
+                Closed?.Invoke(this, e);
+            }
         }
 
         private readonly Grid _background;
         private Border _shadow1;
         private Border _shadow2;
         private PopupControl _parentPopupControl;
-        private Popup _popup;
         private TranslateTransform _transform;
-        private bool _autoMargin;
+        private bool _shouldUpdateMargin;
 
         private static readonly Brush s_bg1, s_bg2, s_bg3, s_bg4;
         private static readonly BitmapCache s_bitmapCache;

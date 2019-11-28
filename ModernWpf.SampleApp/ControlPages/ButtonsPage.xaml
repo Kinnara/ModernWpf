@@ -23,13 +23,13 @@
                     x:Name="Control1"
                     Orientation="Horizontal">
                     <ui:DropDownButton Content="Email">
-                        <ui:DropDownButton.DropDownMenu>
-                            <ContextMenu>
+                        <ui:DropDownButton.Flyout>
+                            <ui:MenuFlyout Placement="BottomEdgeAlignedLeft">
                                 <MenuItem Header="Send" />
                                 <MenuItem Header="Reply" />
                                 <MenuItem Header="Reply All" />
-                            </ContextMenu>
-                        </ui:DropDownButton.DropDownMenu>
+                            </ui:MenuFlyout>
+                        </ui:DropDownButton.Flyout>
                     </ui:DropDownButton>
                 </StackPanel>
             </sc:ControlExample>
@@ -42,8 +42,8 @@
                         <ui:DropDownButton.Content>
                             <ui:FontIcon Glyph="&#xE715;" />
                         </ui:DropDownButton.Content>
-                        <ui:DropDownButton.DropDownMenu>
-                            <ContextMenu Placement="Bottom">
+                        <ui:DropDownButton.Flyout>
+                            <ui:MenuFlyout Placement="BottomEdgeAlignedLeft">
                                 <MenuItem Header="Send">
                                     <MenuItem.Icon>
                                         <ui:FontIcon Glyph="&#xE725;" />
@@ -59,8 +59,8 @@
                                         <ui:FontIcon Glyph="&#xE8C2;" />
                                     </MenuItem.Icon>
                                 </MenuItem>
-                            </ContextMenu>
-                        </ui:DropDownButton.DropDownMenu>
+                            </ui:MenuFlyout>
+                        </ui:DropDownButton.Flyout>
                     </ui:DropDownButton>
                 </StackPanel>
             </sc:ControlExample>

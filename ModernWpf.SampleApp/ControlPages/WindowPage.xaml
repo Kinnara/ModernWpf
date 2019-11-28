@@ -26,22 +26,26 @@
                 SelectedItem="{Binding ResizeMode, Mode=TwoWay}" />
 
             <ui:DropDownButton Content="Resize window">
-                <ui:DropDownButton.DropDownMenu>
-                    <ContextMenu MenuItem.Click="ResizeWindow">
+                <ui:DropDownButton.Flyout>
+                    <ui:MenuFlyout Placement="BottomEdgeAlignedLeft">
                         <MenuItem
                             Header="866 × 650"
-                            Tag="866,650" />
+                            Tag="866,650"
+                            Click="ResizeWindow" />
                         <MenuItem
                             Header="1000 × 750"
-                            Tag="1000,750" />
+                            Tag="1000,750"
+                            Click="ResizeWindow" />
                         <MenuItem
                             Header="1200 × 900"
-                            Tag="1200,900" />
+                            Tag="1200,900"
+                            Click="ResizeWindow" />
                         <MenuItem
                             Header="1500 × 900"
-                            Tag="1500,900" />
-                    </ContextMenu>
-                </ui:DropDownButton.DropDownMenu>
+                            Tag="1500,900"
+                            Click="ResizeWindow" />
+                    </ui:MenuFlyout>
+                </ui:DropDownButton.Flyout>
             </ui:DropDownButton>
 
             <GroupBox Header="Title Bar">

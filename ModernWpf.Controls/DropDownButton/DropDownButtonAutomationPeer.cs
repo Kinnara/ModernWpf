@@ -50,7 +50,7 @@ namespace ModernWpf.Automation.Peers
                 var dropDownButton = GetImpl();
                 if (dropDownButton != null)
                 {
-                    if (dropDownButton.IsDropDownOpen)
+                    if (dropDownButton.IsFlyoutOpen)
                     {
                         currentState = ExpandCollapseState.Expanded;
                     }
@@ -65,7 +65,7 @@ namespace ModernWpf.Automation.Peers
             var dropDownButton = GetImpl();
             if (dropDownButton != null)
             {
-                dropDownButton.OpenDropDownMenu();
+                dropDownButton.OpenFlyout();
             }
         }
 
@@ -74,7 +74,7 @@ namespace ModernWpf.Automation.Peers
             var dropDownButton = GetImpl();
             if (dropDownButton != null)
             {
-                dropDownButton.CloseDropDownMenu();
+                dropDownButton.CloseFlyout();
             }
         }
     }

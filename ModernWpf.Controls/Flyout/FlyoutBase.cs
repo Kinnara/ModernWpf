@@ -51,7 +51,7 @@ namespace ModernWpf.Controls.Primitives
             ((FlyoutBase)d).OnAreOpenCloseAnimationsEnabledChanged(e);
         }
 
-        private void OnAreOpenCloseAnimationsEnabledChanged(DependencyPropertyChangedEventArgs e)
+        internal virtual void OnAreOpenCloseAnimationsEnabledChanged(DependencyPropertyChangedEventArgs e)
         {
             if (m_popup != null)
             {
@@ -76,10 +76,10 @@ namespace ModernWpf.Controls.Primitives
         public bool IsOpen
         {
             get => (bool)GetValue(IsOpenProperty);
-            private set => SetValue(IsOpenPropertyKey, value);
+            internal set => SetValue(IsOpenPropertyKey, value);
         }
 
-        private void UpdateIsOpen()
+        internal virtual void UpdateIsOpen()
         {
             IsOpen = m_popup != null && m_popup.IsOpen;
         }
@@ -146,6 +146,18 @@ namespace ModernWpf.Controls.Primitives
                 throw new ArgumentNullException(nameof(placementTarget));
             }
 
+            ShowAtCore(placementTarget);
+        }
+
+        public void Hide()
+        {
+            HideCore();
+        }
+
+        protected abstract Control CreatePresenter();
+
+        internal virtual void ShowAtCore(FrameworkElement placementTarget)
+        {
             if (m_popup != null &&
                 m_popup.IsOpen &&
                 m_target == placementTarget)
@@ -159,49 +171,51 @@ namespace ModernWpf.Controls.Primitives
             Debug.Assert(m_popup.ReadLocalValue(Popup.PlacementTargetProperty) != DependencyProperty.UnsetValue);
 
             m_target = placementTarget;
-            Opening?.Invoke(this, null);
+            RaiseOpening();
             m_popup.IsOpen = true;
         }
 
-        public void Hide()
+        internal virtual void HideCore()
         {
-            if (m_popup != null)
+            if (m_popup != null && m_popup.IsOpen)
             {
                 m_popup.IsOpen = false;
             }
         }
 
-        protected abstract Control CreatePresenter();
+        internal void RaiseOpening()
+        {
+            Opening?.Invoke(this, null);
+        }
+
+        internal void RaiseOpened()
+        {
+            Opened?.Invoke(this, null);
+        }
+
+        internal void RaiseClosed()
+        {
+            Closed?.Invoke(this, null);
+        }
+
+        internal void BindPlacement(Control presenter)
+        {
+            presenter.SetBinding(
+                PopupPlacementHelper.PlacementProperty,
+                new Binding
+                {
+                    Path = new PropertyPath(PlacementProperty),
+                    Source = this,
+                    Converter = s_placementConverter
+                });
+        }
 
         private void EnsurePresenter()
         {
             if (m_presenter == null)
             {
                 m_presenter = CreatePresenter();
-            }
-        }
-
-        private void EnsureShadowChrome()
-        {
-            if (m_shadowChrome == null)
-            {
-                EnsurePresenter();
-
-                m_shadowChrome = new ThemeShadowChrome();
-                m_shadowChrome.BeginInit();
-                m_shadowChrome.Child = m_presenter;
-                m_shadowChrome.Margin = new Thickness();
-
-                m_shadowChrome.SetBinding(ThemeShadowChrome.CornerRadiusProperty, ControlHelper.CornerRadiusProperty, m_presenter);
-                m_shadowChrome.SetBinding(FrameworkElement.MaxWidthProperty, FrameworkElement.MaxWidthProperty, m_presenter);
-                m_shadowChrome.SetBinding(FrameworkElement.MaxHeightProperty, FrameworkElement.MaxHeightProperty, m_presenter);
-
-                if (m_presenter is FlyoutPresenter)
-                {
-                    m_shadowChrome.SetBinding(ThemeShadowChrome.IsShadowEnabledProperty, FlyoutPresenter.IsDefaultShadowEnabledProperty, m_presenter);
-                }
-
-                m_shadowChrome.EndInit();
+                BindPlacement(m_presenter);
             }
         }
 
@@ -209,17 +223,15 @@ namespace ModernWpf.Controls.Primitives
         {
             if (m_popup == null)
             {
-                EnsureShadowChrome();
+                EnsurePresenter();
 
                 m_popup = new PopupEx
                 {
-                    Child = m_shadowChrome,
+                    Child = m_presenter,
                     StaysOpen = false,
                     AllowsTransparency = true,
                     PopupAnimation = AreOpenCloseAnimationsEnabled ? PopupAnimation.Fade : PopupAnimation.None,
-                    CustomPopupPlacementCallback = PositionPopup,
-                    HorizontalOffset = 0,
-                    VerticalOffset = 0
+                    CustomPopupPlacementCallback = PositionPopup
                 };
                 m_popup.Opened += OnPopupOpened;
                 m_popup.Closing += OnPopupClosing;
@@ -242,8 +254,6 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_popup.Placement = PlacementMode.Center;
                 m_popup.PlacementTarget = window;
-                m_popup.HorizontalOffset = 0;
-                m_popup.VerticalOffset = 0;
 
                 m_popup.SetBinding(
                     FrameworkElement.WidthProperty,
@@ -268,8 +278,6 @@ namespace ModernWpf.Controls.Primitives
                             new Binding { Path = new PropertyPath(Control.BorderThicknessProperty), Source = window },
                         }
                     });
-
-                m_shadowChrome.Margin = new Thickness();
             }
             else
             {
@@ -277,24 +285,12 @@ namespace ModernWpf.Controls.Primitives
                 m_popup.PlacementTarget = placementTarget;
                 m_popup.ClearValue(FrameworkElement.WidthProperty);
                 m_popup.ClearValue(FrameworkElement.HeightProperty);
-
-                if (m_popup.GetBindingExpression(Popup.HorizontalOffsetProperty) == null)
-                {
-                    m_popup.SetBinding(Popup.HorizontalOffsetProperty, ThemeShadowChrome.DesiredPopupHorizontalOffsetProperty, m_shadowChrome);
-                    m_popup.SetBinding(Popup.VerticalOffsetProperty, ThemeShadowChrome.DesiredPopupVerticalOffsetProperty, m_shadowChrome);
-                    m_shadowChrome.SetBinding(FrameworkElement.MarginProperty, ThemeShadowChrome.DesiredMarginProperty, m_shadowChrome);
-                }
-                else
-                {
-                    Debug.Assert(m_popup.GetBindingExpression(Popup.VerticalOffsetProperty) != null);
-                    Debug.Assert(m_shadowChrome.GetBindingExpression(FrameworkElement.MarginProperty) != null);
-                }
             }
         }
 
         private void OnPopupOpened(object sender, EventArgs e)
         {
-            Opened?.Invoke(this, null);
+            RaiseOpened();
         }
 
         private void OnPopupClosing(object sender, EventArgs e)
@@ -304,7 +300,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupClosed(object sender, EventArgs e)
         {
-            Closed?.Invoke(this, null);
+            RaiseClosed();
 
             if (!m_popup.IsOpen)
             {
@@ -321,20 +317,20 @@ namespace ModernWpf.Controls.Primitives
             UpdateIsOpen();
         }
 
-        private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)
+        internal CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)
         {
             return PositionPopup(Placement, popupSize, targetSize, s_offset);
         }
 
         internal static CustomPopupPlacement[] PositionPopup(FlyoutPlacementMode placement, Size popupSize, Size targetSize, double offset = 0)
         {
-            CustomPopupPlacement preferredPlacement = GetPopupPlacement(placement, popupSize, targetSize, offset);
+            CustomPopupPlacement preferredPlacement = CalculatePopupPlacement(placement, popupSize, targetSize, offset);
 
             CustomPopupPlacement? alternativePlacement = null;
             var alternativePlacementMode = GetAlternativePlacementMode(placement);
             if (alternativePlacementMode.HasValue)
             {
-                alternativePlacement = GetPopupPlacement(alternativePlacementMode.Value, popupSize, targetSize, offset);
+                alternativePlacement = CalculatePopupPlacement(alternativePlacementMode.Value, popupSize, targetSize, offset);
             }
 
             if (alternativePlacement.HasValue)
@@ -347,7 +343,7 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private static CustomPopupPlacement GetPopupPlacement(FlyoutPlacementMode placement, Size popupSize, Size targetSize, double offset)
+        private static CustomPopupPlacement CalculatePopupPlacement(FlyoutPlacementMode placement, Size popupSize, Size targetSize, double offset)
         {
             Point point;
             PopupPrimaryAxis primaryAxis;
@@ -464,13 +460,13 @@ namespace ModernWpf.Controls.Primitives
 
         private static readonly IMultiValueConverter s_fullPlacementWidthConverter = new FullPlacementWidthConverter();
         private static readonly IMultiValueConverter s_fullPlacementHeightConverter = new FullPlacementHeightConverter();
+        private static readonly IValueConverter s_placementConverter = new PlacementConverter();
 
         private const double s_offset = 4;
 
         private Control m_presenter;
         private PopupEx m_popup;
         private FrameworkElement m_target;
-        private ThemeShadowChrome m_shadowChrome;
 
         private class FullPlacementWidthConverter : IMultiValueConverter
         {
@@ -499,6 +495,19 @@ namespace ModernWpf.Controls.Primitives
             }
 
             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private class PlacementConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                return (CustomPopupPlacementMode)value;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             {
                 throw new NotImplementedException();
             }
