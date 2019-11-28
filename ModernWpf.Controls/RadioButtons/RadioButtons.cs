@@ -286,8 +286,16 @@ namespace ModernWpf.Controls
             var repeater = m_repeater;
             if (repeater != null)
             {
-                UpdateSelectedItem();
-                UpdateSelectedIndex();
+                m_blockSelecting = false;
+                if (SelectedIndex == -1 && SelectedItem != null)
+                {
+                    UpdateSelectedItem();
+                }
+                else
+                {
+                    UpdateSelectedIndex();
+                }
+
                 OnRepeaterCollectionChanged(null, null);
             }
         }
@@ -471,7 +479,7 @@ namespace ModernWpf.Controls
 
         void Select(int index)
         {
-            if (!m_currentlySelecting && m_selectedIndex != index)
+            if (!m_blockSelecting && !m_currentlySelecting && m_selectedIndex != index)
             {
                 // Calling Select updates the checked state on the radio button being selected
                 // and the radio button being unselected, as well as updates the SelectedIndex
@@ -678,7 +686,12 @@ namespace ModernWpf.Controls
         }
 
         int m_selectedIndex = -1;
-        bool m_currentlySelecting;
+        // This is used to guard against reentrency when calling select, since select changes
+        // the Selected Index/Item which in turn calls select.
+        bool m_currentlySelecting = false;
+        // We block selection before the control has loaded.
+        // This is to ensure that we do not overwrite a provided Selected Index/Item value.
+        bool m_blockSelecting = true;
 
         ItemsRepeater m_repeater;
 

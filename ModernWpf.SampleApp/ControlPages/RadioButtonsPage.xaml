@@ -31,7 +31,7 @@
                 <sc:ControlExample.Options>
                     <ui:SimpleStackPanel>
                         <Slider
-                            ui:ControlHelper.Header="MaximumColumns"
+                            ui:ControlHelper.Header="MaxColumns"
                             Minimum="1"
                             Maximum="5"
                             Value="{Binding ElementName=radioButtons, Path=MaxColumns, Mode=TwoWay}"
