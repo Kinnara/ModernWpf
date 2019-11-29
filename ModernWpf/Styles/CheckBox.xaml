@@ -13,7 +13,7 @@
         <Setter Property="Background" Value="{DynamicResource CheckBoxBackgroundUnchecked}" />
         <Setter Property="Foreground" Value="{DynamicResource CheckBoxForegroundUnchecked}" />
         <Setter Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushUnchecked}" />
-        <Setter Property="Padding" Value="8,5,0,0" />
+        <Setter Property="Padding" Value="8,0,0,0" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -36,14 +36,12 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <Grid>
+                        <Grid VerticalAlignment="Center">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="20" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Grid
-                                VerticalAlignment="Top"
-                                Height="32">
+                            <Grid VerticalAlignment="Top">
                                 <Rectangle
                                     x:Name="NormalRectangle"
                                     Fill="{DynamicResource CheckBoxCheckBackgroundFillUnchecked}"

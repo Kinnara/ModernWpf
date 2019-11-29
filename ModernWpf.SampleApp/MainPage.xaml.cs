@@ -172,6 +172,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(AppBarToggleButtonPage));
             AddPage(typeof(ButtonsPage));
             AddPage(typeof(CalendarPage));
+            //AddPage(typeof(CheckBoxPage));
             AddPage(typeof(ComboBoxPage));
             AddPage(typeof(CommandBarPage));
             AddPage(typeof(CommandBarFlyoutPage));
