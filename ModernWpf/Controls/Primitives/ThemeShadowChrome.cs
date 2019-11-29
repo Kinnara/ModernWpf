@@ -472,6 +472,10 @@ namespace ModernWpf.Controls.Primitives
 
         private bool TryGetCustomPlacementMode(out CustomPopupPlacementMode placement)
         {
+            if (TryGetCustomPlacementMode(_parentPopupControl?.Control, out placement))
+            {
+                return true;
+            }
             if (TryGetCustomPlacementMode(VisualParent, out placement))
             {
                 return true;
@@ -774,6 +778,17 @@ namespace ModernWpf.Controls.Primitives
 
                 _popup.Opened += OnOpened;
                 _popup.Closed += OnClosed;
+            }
+
+            public FrameworkElement Control
+            {
+                get
+                {
+                    return
+                        _contextMenu as FrameworkElement ??
+                        _toolTip as FrameworkElement ??
+                        _popup as FrameworkElement;
+                }
             }
 
             public bool ShouldSetOffsets { get; set; }

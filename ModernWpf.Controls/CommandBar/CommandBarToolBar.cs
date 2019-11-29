@@ -194,6 +194,7 @@ namespace ModernWpf.Controls.Primitives
             if (m_overflowPopup != null)
             {
                 m_overflowPopup.ClearValue(Popup.CustomPopupPlacementCallbackProperty);
+                m_overflowPopup.ClearValue(PopupPlacementHelper.PlacementProperty);
                 m_overflowPopup.Opened -= OnOverflowPopupOpened;
                 m_overflowPopup.Closed -= OnOverflowPopupClosed;
             }
@@ -206,6 +207,7 @@ namespace ModernWpf.Controls.Primitives
             if (m_overflowPopup != null)
             {
                 m_overflowPopup.CustomPopupPlacementCallback = PositionPopup;
+                m_overflowPopup.SetValue(PopupPlacementHelper.PlacementProperty, CustomPopupPlacementMode.BottomEdgeAlignedRight);
                 m_overflowPopup.Opened += OnOverflowPopupOpened;
                 m_overflowPopup.Closed += OnOverflowPopupClosed;
             }
