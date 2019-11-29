@@ -1223,6 +1223,38 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Identifies the <see cref="ModernWpf.Controls.LayoutPanel.Padding?text=Padding" /> dependency property.</summary>
       <returns>The identifier for the <see cref="ModernWpf.Controls.LayoutPanel.Padding?text=Padding" /> dependency property.</returns>
     </member>
+    <member name="T:ModernWpf.Controls.MenuFlyout">
+      <summary>Represents a flyout that displays a menu of commands.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.MenuFlyout.#ctor">
+      <summary>Initializes a new instance of the MenuFlyout class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.MenuFlyout.Items">
+      <summary>Gets the collection used to generate the content of the menu.</summary>
+      <returns>The collection that is used to generate the content of the menu, if it exists; otherwise, **null**. The default is an empty collection.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.MenuFlyout.MenuFlyoutPresenterStyle">
+      <summary>Gets or sets the style that is used when rendering the MenuFlyout.</summary>
+      <returns>The style that is used when rendering the MenuFlyout.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.MenuFlyout.MenuFlyoutPresenterStyleProperty">
+      <summary>Identifies the MenuFlyoutPresenterStyle dependency property.</summary>
+      <returns>The identifier for the MenuFlyoutPresenterStyle dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.MenuFlyoutPresenter">
+      <summary>Displays the content of a MenuFlyout control.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.MenuFlyoutPresenter.#ctor">
+      <summary>Initializes a new instance of the MenuFlyoutPresenter class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.MenuFlyoutPresenter.IsDefaultShadowEnabled">
+      <summary>Gets or sets a value that indicates whether the default shadow effect is shown.</summary>
+      <returns>**true** if the default shadow effect is shown; otherwise, **false**. The default is **true**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.MenuFlyoutPresenter.IsDefaultShadowEnabledProperty">
+      <summary>Identifies the IsDefaultShadowEnabled dependency property.</summary>
+      <returns>The identifier for the IsDefaultShadowEnabled dependency property.</returns>
+    </member>
     <member name="T:ModernWpf.Controls.NonVirtualizingLayout">
       <summary>Represents the base class for an object that sizes and arranges child elements for a host and and does not support virtualization.</summary>
     </member>
