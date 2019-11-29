@@ -555,8 +555,8 @@ namespace ModernWpf.Controls.Primitives
                         UpdateDesiredPopupOffsetsForCustomPlacement(desiredMargin);
                         break;
                     default:
-                        DesiredPopupHorizontalOffset = -desiredMargin.Left;
-                        DesiredPopupVerticalOffset = -desiredMargin.Top;
+                        DesiredPopupHorizontalOffset = CalculateHorizontalOffset(true);
+                        DesiredPopupVerticalOffset = CalculateVerticalOffset(true);
                         break;
                 }
             }
@@ -780,16 +780,10 @@ namespace ModernWpf.Controls.Primitives
                 _popup.Closed += OnClosed;
             }
 
-            public FrameworkElement Control
-            {
-                get
-                {
-                    return
-                        _contextMenu as FrameworkElement ??
-                        _toolTip as FrameworkElement ??
-                        _popup as FrameworkElement;
-                }
-            }
+            public FrameworkElement Control =>
+                _contextMenu as FrameworkElement ??
+                _toolTip as FrameworkElement ??
+                _popup as FrameworkElement;
 
             public bool ShouldSetOffsets { get; set; }
 
