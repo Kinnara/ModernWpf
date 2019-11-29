@@ -31,6 +31,7 @@
                     </Button.ContextMenu>
                 </Button>
             </sc:ControlExample>
+
             <sc:ControlExample HeaderText="A ContextMenu with cascading menus.">
                 <Button Content="File Options">
                     <Button.ContextMenu>
@@ -49,6 +50,7 @@
                     </Button.ContextMenu>
                 </Button>
             </sc:ControlExample>
+
             <sc:ControlExample HeaderText="A ContextMenu with icons.">
                 <Button Content="Edit Options">
                     <Button.ContextMenu>
@@ -75,6 +77,7 @@
                     </Button.ContextMenu>
                 </Button>
             </sc:ControlExample>
+
             <sc:ControlExample HeaderText="A ContextMenu with icons and InputGestureTexts.">
                 <Button Content="Edit Options">
                     <Button.ContextMenu>
@@ -107,6 +110,40 @@
                     </Button.ContextMenu>
                 </Button>
             </sc:ControlExample>
+
+            <sc:ControlExample HeaderText="A context MenuFlyout with icons and InputGestureTexts.">
+                <Button Content="Edit Options">
+                    <ui:ContextFlyoutService.ContextFlyout>
+                        <ui:MenuFlyout>
+                            <MenuItem
+                                Header="Share"
+                                InputGestureText="Ctrl+S">
+                                <MenuItem.Icon>
+                                    <ui:FontIcon Glyph="&#xE72D;" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem
+                                Header="Copy"
+                                InputGestureText="Ctrl+C">
+                                <MenuItem.Icon>
+                                    <ui:FontIcon Glyph="&#xE16F;" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem
+                                Header="Delete"
+                                InputGestureText="Delete">
+                                <MenuItem.Icon>
+                                    <ui:FontIcon Glyph="&#xE107;" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem Header="Rename" />
+                            <MenuItem Header="Select" />
+                        </ui:MenuFlyout>
+                    </ui:ContextFlyoutService.ContextFlyout>
+                </Button>
+            </sc:ControlExample>
+
             <sc:ControlExample HeaderText="Text control ContextMenu.">
                 <TextBox
                     Text="Some text"

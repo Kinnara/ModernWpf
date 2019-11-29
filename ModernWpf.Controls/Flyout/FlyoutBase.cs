@@ -156,6 +156,21 @@ namespace ModernWpf.Controls.Primitives
 
         protected abstract Control CreatePresenter();
 
+        internal void ShowAsContextFlyout(FrameworkElement placementTarget)
+        {
+            if (placementTarget is null)
+            {
+                throw new ArgumentNullException(nameof(placementTarget));
+            }
+
+            ShowAsContextFlyoutCore(placementTarget);
+        }
+
+        internal virtual void ShowAsContextFlyoutCore(FrameworkElement placementTarget)
+        {
+            ShowAtCore(placementTarget);
+        }
+
         internal virtual void ShowAtCore(FrameworkElement placementTarget)
         {
             if (m_popup != null &&

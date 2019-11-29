@@ -60,23 +60,12 @@ namespace ModernWpf.Controls
 
         internal override void ShowAtCore(FrameworkElement placementTarget)
         {
-            if (m_presenter != null &&
-                m_presenter.IsOpen &&
-                m_presenter.PlacementTarget == placementTarget)
-            {
-                return;
-            }
+            Show(placementTarget);
+        }
 
-            EnsurePresenter();
-
-            if (m_presenter.IsOpen)
-            {
-                m_presenter.IsOpen = false;
-            }
-
-            m_presenter.PlacementTarget = placementTarget;
-            RaiseOpening();
-            m_presenter.IsOpen = true;
+        internal override void ShowAsContextFlyoutCore(FrameworkElement placementTarget)
+        {
+            Show(placementTarget, PlacementMode.MousePoint);
         }
 
         internal override void HideCore()
@@ -95,6 +84,28 @@ namespace ModernWpf.Controls
         internal override void OnAreOpenCloseAnimationsEnabledChanged(DependencyPropertyChangedEventArgs e)
         {
             m_presenter?.UpdatePopupAnimation((bool)e.NewValue);
+        }
+
+        private void Show(FrameworkElement placementTarget, PlacementMode placement = PlacementMode.Custom)
+        {
+            if (m_presenter != null &&
+                m_presenter.IsOpen &&
+                m_presenter.PlacementTarget == placementTarget)
+            {
+                return;
+            }
+
+            EnsurePresenter();
+
+            if (m_presenter.IsOpen)
+            {
+                m_presenter.IsOpen = false;
+            }
+
+            m_presenter.PlacementTarget = placementTarget;
+            m_presenter.Placement = placement;
+            RaiseOpening();
+            m_presenter.IsOpen = true;
         }
 
         private void EnsurePresenter()
