@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
-using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -194,7 +193,7 @@ namespace ModernWpf.Controls.Primitives
             if (m_overflowPopup != null)
             {
                 m_overflowPopup.ClearValue(Popup.CustomPopupPlacementCallbackProperty);
-                m_overflowPopup.ClearValue(PopupPlacementHelper.PlacementProperty);
+                m_overflowPopup.ClearValue(CustomPopupPlacementHelper.PlacementProperty);
                 m_overflowPopup.Opened -= OnOverflowPopupOpened;
                 m_overflowPopup.Closed -= OnOverflowPopupClosed;
             }
@@ -206,8 +205,8 @@ namespace ModernWpf.Controls.Primitives
 
             if (m_overflowPopup != null)
             {
-                m_overflowPopup.CustomPopupPlacementCallback = PositionPopup;
-                m_overflowPopup.SetValue(PopupPlacementHelper.PlacementProperty, CustomPopupPlacementMode.BottomEdgeAlignedRight);
+                m_overflowPopup.CustomPopupPlacementCallback = PositionOverflowPopup;
+                m_overflowPopup.SetValue(CustomPopupPlacementHelper.PlacementProperty, CustomPlacementMode.BottomEdgeAlignedRight);
                 m_overflowPopup.Opened += OnOverflowPopupOpened;
                 m_overflowPopup.Closed += OnOverflowPopupClosed;
             }
@@ -281,9 +280,13 @@ namespace ModernWpf.Controls.Primitives
             OverflowClosed?.Invoke(this, EventArgs.Empty);
         }
 
-        private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)
+        private CustomPopupPlacement[] PositionOverflowPopup(Size popupSize, Size targetSize, Point offset)
         {
-            return FlyoutBase.PositionPopup(FlyoutPlacementMode.BottomEdgeAlignedRight, popupSize, targetSize);
+            return CustomPopupPlacementHelper.PositionPopup(
+                CustomPlacementMode.BottomEdgeAlignedRight,
+                popupSize,
+                targetSize,
+                child: m_overflowPopup.Child as FrameworkElement);
         }
 
         private FrameworkElement m_layoutRoot;

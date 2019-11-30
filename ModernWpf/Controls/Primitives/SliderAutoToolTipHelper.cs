@@ -31,12 +31,45 @@ namespace ModernWpf.Controls.Primitives
             var toolTip = (ToolTip)d;
             if ((bool)e.NewValue)
             {
+                if (toolTip.PlacementTarget is Thumb thumb &&
+                    thumb.TemplatedParent is Slider slider)
+                {
+                    SetOriginalCustomPopupPlacementCallback(toolTip, toolTip.CustomPopupPlacementCallback);
+                    toolTip.CustomPopupPlacementCallback = (popupSize, targetSize, offset) => PositionAutoToolTip(slider, toolTip, popupSize, targetSize);
+                }
+
                 toolTip.IsVisibleChanged += OnToolTipIsVisibleChanged;
             }
             else
             {
+                if (toolTip.ReadLocalValue(OriginalCustomPopupPlacementCallbackProperty) != DependencyProperty.UnsetValue)
+                {
+                    toolTip.CustomPopupPlacementCallback = GetOriginalCustomPopupPlacementCallback(toolTip);
+                    toolTip.ClearValue(OriginalCustomPopupPlacementCallbackProperty);
+                }
+
                 toolTip.IsVisibleChanged -= OnToolTipIsVisibleChanged;
             }
+        }
+
+        #endregion
+
+        #region OriginalCustomPopupPlacementCallback
+
+        private static readonly DependencyProperty OriginalCustomPopupPlacementCallbackProperty =
+            DependencyProperty.RegisterAttached(
+                "OriginalCustomPopupPlacementCallback",
+                typeof(CustomPopupPlacementCallback),
+                typeof(SliderAutoToolTipHelper));
+
+        private static CustomPopupPlacementCallback GetOriginalCustomPopupPlacementCallback(ToolTip toolTip)
+        {
+            return (CustomPopupPlacementCallback)toolTip.GetValue(OriginalCustomPopupPlacementCallbackProperty);
+        }
+
+        private static void SetOriginalCustomPopupPlacementCallback(ToolTip toolTip, CustomPopupPlacementCallback value)
+        {
+            toolTip.SetValue(OriginalCustomPopupPlacementCallbackProperty, value);
         }
 
         #endregion
@@ -74,6 +107,60 @@ namespace ModernWpf.Controls.Primitives
             toolTip.PlacementRectangle = new Rect(
                 new Point(-20, -20),
                 new Point(targetSize.Width + 20, targetSize.Height + 20));
+        }
+
+        private static CustomPopupPlacement[] PositionAutoToolTip(
+            Slider slider,
+            ToolTip autoToolTip,
+            Size popupSize,
+            Size targetSize)
+        {
+            Point point;
+            PopupPrimaryAxis primaryAxis;
+
+            switch (slider.AutoToolTipPlacement)
+            {
+                case AutoToolTipPlacement.TopLeft:
+                    if (slider.Orientation == Orientation.Horizontal)
+                    {
+                        // Place popup at top of thumb
+                        point = new Point((targetSize.Width - popupSize.Width) * 0.5, -popupSize.Height);
+                        primaryAxis = PopupPrimaryAxis.Horizontal;
+                    }
+                    else
+                    {
+                        // Place popup at left of thumb
+                        point = new Point(-popupSize.Width, (targetSize.Height - popupSize.Height) * 0.5);
+                        primaryAxis = PopupPrimaryAxis.Vertical;
+                    }
+                    break;
+                case AutoToolTipPlacement.BottomRight:
+                    if (slider.Orientation == Orientation.Horizontal)
+                    {
+                        // Place popup at bottom of thumb
+                        point = new Point((targetSize.Width - popupSize.Width) * 0.5, targetSize.Height);
+                        primaryAxis = PopupPrimaryAxis.Horizontal;
+                    }
+                    else
+                    {
+                        // Place popup at right of thumb
+                        point = new Point(targetSize.Width, (targetSize.Height - popupSize.Height) * 0.5);
+                        primaryAxis = PopupPrimaryAxis.Vertical;
+                    }
+                    break;
+                default:
+                    return new CustomPopupPlacement[] { };
+            }
+
+            if (Helper.TryGetScaleFactors(autoToolTip, out double scaleX, out double scaleY))
+            {
+                var autoToolTipMargin = autoToolTip.Margin;
+                var offsetX = -autoToolTipMargin.Left * scaleX;
+                var offsetY = -autoToolTipMargin.Top * scaleY;
+                point.Offset(offsetX, offsetY);
+            }
+
+            return new CustomPopupPlacement[] { new CustomPopupPlacement(point, primaryAxis) };
         }
     }
 }

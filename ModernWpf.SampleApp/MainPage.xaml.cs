@@ -18,7 +18,7 @@ namespace ModernWpf.SampleApp
         {
             InitializeComponent();
             //PagesList.SelectedItem = PagesList.Items.OfType<ControlPageInfo>().FirstOrDefault(
-            //    x => x.NavigateUri.ToString().Contains(nameof(FlyoutPage)));
+            //    x => x.NavigateUri.ToString().Contains(nameof(PopupPlacementPage)));
             NavigateToSelectedPage();
         }
 
@@ -190,6 +190,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(MenuPage));
             AddPage(typeof(MenuFlyoutPage));
             AddPage(typeof(PasswordBoxPage));
+            //AddPage(typeof(PopupPlacementPage));
             AddPage(typeof(ProgressPage));
             AddPage(typeof(RadioButtonsPage));
             AddPage(typeof(SliderPage));

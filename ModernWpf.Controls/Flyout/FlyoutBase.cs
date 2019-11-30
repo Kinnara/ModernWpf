@@ -216,7 +216,7 @@ namespace ModernWpf.Controls.Primitives
         internal void BindPlacement(Control presenter)
         {
             presenter.SetBinding(
-                PopupPlacementHelper.PlacementProperty,
+                CustomPopupPlacementHelper.PlacementProperty,
                 new Binding
                 {
                     Path = new PropertyPath(PlacementProperty),
@@ -332,145 +332,14 @@ namespace ModernWpf.Controls.Primitives
             UpdateIsOpen();
         }
 
-        internal CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)
+        private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)
         {
-            return PositionPopup(Placement, popupSize, targetSize, s_offset);
+            return PositionPopup(popupSize, targetSize, offset, m_presenter);
         }
 
-        internal static CustomPopupPlacement[] PositionPopup(FlyoutPlacementMode placement, Size popupSize, Size targetSize, double offset = 0)
+        internal CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset, FrameworkElement child)
         {
-            CustomPopupPlacement preferredPlacement = CalculatePopupPlacement(placement, popupSize, targetSize, offset);
-
-            CustomPopupPlacement? alternativePlacement = null;
-            var alternativePlacementMode = GetAlternativePlacementMode(placement);
-            if (alternativePlacementMode.HasValue)
-            {
-                alternativePlacement = CalculatePopupPlacement(alternativePlacementMode.Value, popupSize, targetSize, offset);
-            }
-
-            if (alternativePlacement.HasValue)
-            {
-                return new[] { preferredPlacement, alternativePlacement.Value };
-            }
-            else
-            {
-                return new[] { preferredPlacement };
-            }
-        }
-
-        private static CustomPopupPlacement CalculatePopupPlacement(FlyoutPlacementMode placement, Size popupSize, Size targetSize, double offset)
-        {
-            Point point;
-            PopupPrimaryAxis primaryAxis;
-
-            switch (placement)
-            {
-                case FlyoutPlacementMode.Top:
-                    point = new Point((targetSize.Width - popupSize.Width) / 2, -popupSize.Height);
-                    point.Y -= offset;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
-                    break;
-                case FlyoutPlacementMode.Bottom:
-                    point = new Point((targetSize.Width - popupSize.Width) / 2, targetSize.Height);
-                    point.Y += offset;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
-                    break;
-                case FlyoutPlacementMode.Left:
-                    point = new Point(-popupSize.Width, (targetSize.Height - popupSize.Height) / 2);
-                    point.X -= offset;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
-                    break;
-                case FlyoutPlacementMode.Right:
-                    point = new Point(targetSize.Width, (targetSize.Height - popupSize.Height) / 2);
-                    point.X += offset;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
-                    break;
-                case FlyoutPlacementMode.Full:
-                    point = new Point((targetSize.Width - popupSize.Width) / 2, (targetSize.Height - popupSize.Height) / 2);
-                    primaryAxis = PopupPrimaryAxis.None;
-                    break;
-                case FlyoutPlacementMode.TopEdgeAlignedLeft:
-                    point = new Point(0, -popupSize.Height);
-                    point.Y -= offset;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
-                    break;
-                case FlyoutPlacementMode.TopEdgeAlignedRight:
-                    point = new Point(targetSize.Width - popupSize.Width, -popupSize.Height);
-                    point.Y -= offset;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
-                    break;
-                case FlyoutPlacementMode.BottomEdgeAlignedLeft:
-                    point = new Point(0, targetSize.Height);
-                    point.Y += offset;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
-                    break;
-                case FlyoutPlacementMode.BottomEdgeAlignedRight:
-                    point = new Point(targetSize.Width - popupSize.Width, targetSize.Height);
-                    point.Y += offset;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
-                    break;
-                case FlyoutPlacementMode.LeftEdgeAlignedTop:
-                    point = new Point(-popupSize.Width, 0);
-                    point.X -= offset;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
-                    break;
-                case FlyoutPlacementMode.LeftEdgeAlignedBottom:
-                    point = new Point(-popupSize.Width, targetSize.Height - popupSize.Height);
-                    point.X -= offset;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
-                    break;
-                case FlyoutPlacementMode.RightEdgeAlignedTop:
-                    point = new Point(targetSize.Width, 0);
-                    point.X += offset;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
-                    break;
-                case FlyoutPlacementMode.RightEdgeAlignedBottom:
-                    point = new Point(targetSize.Width, targetSize.Height - popupSize.Height);
-                    point.X += offset;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
-                    break;
-                //case FlyoutPlacementMode.Auto:
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(placement));
-            }
-
-            return new CustomPopupPlacement(point, primaryAxis);
-        }
-
-        private static FlyoutPlacementMode? GetAlternativePlacementMode(FlyoutPlacementMode placement)
-        {
-            switch (placement)
-            {
-                case FlyoutPlacementMode.Top:
-                    return FlyoutPlacementMode.Bottom;
-                case FlyoutPlacementMode.Bottom:
-                    return FlyoutPlacementMode.Top;
-                case FlyoutPlacementMode.Left:
-                    return FlyoutPlacementMode.Right;
-                case FlyoutPlacementMode.Right:
-                    return FlyoutPlacementMode.Left;
-                case FlyoutPlacementMode.Full:
-                    return null;
-                case FlyoutPlacementMode.TopEdgeAlignedLeft:
-                    return FlyoutPlacementMode.BottomEdgeAlignedLeft;
-                case FlyoutPlacementMode.TopEdgeAlignedRight:
-                    return FlyoutPlacementMode.BottomEdgeAlignedRight;
-                case FlyoutPlacementMode.BottomEdgeAlignedLeft:
-                    return FlyoutPlacementMode.TopEdgeAlignedLeft;
-                case FlyoutPlacementMode.BottomEdgeAlignedRight:
-                    return FlyoutPlacementMode.TopEdgeAlignedRight;
-                case FlyoutPlacementMode.LeftEdgeAlignedTop:
-                    return FlyoutPlacementMode.RightEdgeAlignedTop;
-                case FlyoutPlacementMode.LeftEdgeAlignedBottom:
-                    return FlyoutPlacementMode.RightEdgeAlignedBottom;
-                case FlyoutPlacementMode.RightEdgeAlignedTop:
-                    return FlyoutPlacementMode.RightEdgeAlignedTop;
-                case FlyoutPlacementMode.RightEdgeAlignedBottom:
-                    return FlyoutPlacementMode.LeftEdgeAlignedBottom;
-                //case FlyoutPlacementMode.Auto:
-                default:
-                    return null;
-            }
+            return CustomPopupPlacementHelper.PositionPopup((CustomPlacementMode)Placement, popupSize, targetSize, s_offset, child);
         }
 
         private static readonly IMultiValueConverter s_fullPlacementWidthConverter = new FullPlacementWidthConverter();
@@ -519,7 +388,7 @@ namespace ModernWpf.Controls.Primitives
         {
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                return (CustomPopupPlacementMode)value;
+                return (CustomPlacementMode)value;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

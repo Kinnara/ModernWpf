@@ -100,7 +100,7 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private DependencyObject FindPopupRoot(DependencyObject child)
+        private static DependencyObject FindPopupRoot(DependencyObject child)
         {
             var parent = VisualTreeHelper.GetParent(child);
 

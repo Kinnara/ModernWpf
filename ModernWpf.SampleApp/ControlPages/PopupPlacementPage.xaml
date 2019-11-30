@@ -24,9 +24,10 @@
                         x:Name="Popup1"
                         AllowsTransparency="True"
                         Placement="Absolute"
+                        PlacementTarget="{Binding ElementName=Control1}"
                         IsOpen="{Binding ElementName=Control1, Path=IsChecked}">
                         <Border>
-                            <ui:ThemeShadowChrome IsShadowEnabled="True">
+                            <ui:ThemeShadowChrome>
                                 <Border
                                     Background="{DynamicResource SystemControlTransientBackgroundBrush}"
                                     BorderBrush="{DynamicResource SystemControlHighlightAccentBrush}"

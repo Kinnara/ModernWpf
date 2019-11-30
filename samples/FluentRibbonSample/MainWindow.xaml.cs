@@ -37,8 +37,7 @@ namespace FluentRibbonSample
                 PrimaryButtonText = "Yes",
                 SecondaryButtonText = "No",
                 CloseButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Primary,
-                IsShadowEnabled = true
+                DefaultButton = ContentDialogButton.Primary
             };
             await dialog.ShowAsync();
         }

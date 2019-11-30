@@ -108,6 +108,11 @@ namespace ModernWpf.Controls
             m_presenter.IsOpen = true;
         }
 
+        private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)
+        {
+            return PositionPopup(popupSize, targetSize, offset, m_presenter);
+        }
+
         private void EnsurePresenter()
         {
             if (m_presenter == null)
