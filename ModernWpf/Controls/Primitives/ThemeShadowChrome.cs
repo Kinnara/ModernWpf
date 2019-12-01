@@ -577,7 +577,8 @@ namespace ModernWpf.Controls.Primitives
                     }
                     if (_popup != null)
                     {
-                        return _popup.PlacementTarget;
+                        return _popup.PlacementTarget ??
+                            VisualTreeHelper.GetParent(_popup) as UIElement;
                     }
                     return null;
                 }
