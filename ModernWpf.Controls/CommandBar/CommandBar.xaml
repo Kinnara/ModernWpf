@@ -118,9 +118,6 @@
                                         x:Name="SecondaryItemsControl"
                                         Style="{TemplateBinding OverflowPresenterStyle}"
                                         IsTabStop="False">
-                                        <primitives:CommandBarOverflowPresenter.RenderTransform>
-                                            <TranslateTransform x:Name="OverflowContentTransform" />
-                                        </primitives:CommandBarOverflowPresenter.RenderTransform>
                                         <primitives:CommandBarOverflowPanel
                                             x:Name="PART_ToolBarOverflowPanel"
                                             Focusable="true"
@@ -174,10 +171,8 @@
                     <Border
                         x:Name="LayoutRoot"
                         Background="{TemplateBinding Background}"
-                        Padding="{TemplateBinding Padding}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{DynamicResource CommandBarOverflowPresenterBorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        SnapsToDevicePixels="True">
                         <!--<VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DisplayModeStates">
                                 <VisualState x:Name="DisplayModeDefault" />
@@ -185,16 +180,18 @@
                                 <VisualState x:Name="FullWidthOpenUp" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>-->
-                        <Grid>
+                        <Border
+                            Padding="{TemplateBinding Padding}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{DynamicResource CommandBarOverflowPresenterBorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
                             <ScrollViewer
                                 Content="{TemplateBinding Content}"
                                 HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                 VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                Padding="{DynamicResource CommandBarOverflowPresenterMargin}" />
-                            <!--<ui:VisualStateGroupListener
-                                x:Name="DisplayModeStatesListener"
-                                GroupName="DisplayModeStates" />-->
-                        </Grid>
+                                Padding="{DynamicResource CommandBarOverflowPresenterMargin}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
                     </Border>
                     <ControlTemplate.Triggers>
                         <!-- FullWidthOpenDown -->

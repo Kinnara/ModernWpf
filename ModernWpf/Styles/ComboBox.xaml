@@ -365,6 +365,7 @@
                             IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                             PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
                             <primitives:ThemeShadowChrome
+                                x:Name="PopupContentRoot"
                                 MaxHeight="{TemplateBinding MaxDropDownHeight}"
                                 MinWidth="{Binding ActualWidth, ElementName=LayoutRoot}"
                                 IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
@@ -372,22 +373,25 @@
                                 <Border
                                     x:Name="PopupBorder"
                                     Background="{DynamicResource ComboBoxDropDownBackground}"
-                                    BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}"
-                                    BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}"
-                                    Padding="{DynamicResource ComboBoxDropdownBorderPadding}"
                                     HorizontalAlignment="Stretch"
                                     CornerRadius="{DynamicResource OverlayCornerRadius}">
-                                    <ScrollViewer
-                                        x:Name="ScrollViewer"
-                                        Foreground="{DynamicResource ComboBoxDropDownForeground}"
-                                        HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                        VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                        IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}">
-                                        <ItemsPresenter
-                                            Margin="{DynamicResource ComboBoxDropdownContentMargin}"
-                                            KeyboardNavigation.DirectionalNavigation="Contained"
-                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                    </ScrollViewer>
+                                    <Border
+                                        BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}"
+                                        BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}"
+                                        Padding="{DynamicResource ComboBoxDropdownBorderPadding}"
+                                        CornerRadius="{Binding ElementName=PopupBorder, Path=CornerRadius}">
+                                        <ScrollViewer
+                                            x:Name="ScrollViewer"
+                                            Foreground="{DynamicResource ComboBoxDropDownForeground}"
+                                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}">
+                                            <ItemsPresenter
+                                                Margin="{DynamicResource ComboBoxDropdownContentMargin}"
+                                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                        </ScrollViewer>
+                                    </Border>
                                 </Border>
                             </primitives:ThemeShadowChrome>
                         </Popup>
@@ -504,6 +508,19 @@
                             </MultiTrigger.Conditions>
                             <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
                         </MultiTrigger>
+
+                        <EventTrigger
+                            SourceName="PopupContentRoot"
+                            RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PopupContentRoot" Storyboard.TargetProperty="Opacity">
+                                        <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.0" />
+                                        <SplineDoubleKeyFrame KeyTime="0:0:0.383" KeySpline="0.1,0.9 0.2,1.0" Value="1.0" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
