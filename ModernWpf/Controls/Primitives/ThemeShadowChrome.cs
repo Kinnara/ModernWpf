@@ -378,23 +378,15 @@ namespace ModernWpf.Controls.Primitives
                 switch (_parentPopupControl.Placement)
                 {
                     case PlacementMode.Bottom:
+                        EnsureEdgesAligned(CustomPlacementMode.BottomEdgeAlignedLeft);
+                        break;
                     case PlacementMode.Top:
-                        EnsureEdgeAligned(true);
+                        EnsureEdgesAligned(CustomPlacementMode.TopEdgeAlignedLeft);
                         break;
                     case PlacementMode.Custom:
                         if (TryGetCustomPlacementMode(out var customPlacement))
                         {
-                            switch (customPlacement)
-                            {
-                                case CustomPlacementMode.TopEdgeAlignedLeft:
-                                case CustomPlacementMode.BottomEdgeAlignedLeft:
-                                    EnsureEdgeAligned(true);
-                                    break;
-                                case CustomPlacementMode.TopEdgeAlignedRight:
-                                case CustomPlacementMode.BottomEdgeAlignedRight:
-                                    EnsureEdgeAligned(false);
-                                    break;
-                            }
+                            EnsureEdgesAligned(customPlacement, true);
                         }
                         break;
                 }
@@ -427,7 +419,10 @@ namespace ModernWpf.Controls.Primitives
             return false;
         }
 
-        private bool TryGetOffsetToTarget(out Vector offset, bool leftEdge)
+        private bool TryGetOffsetToTarget(
+            InterestPoint targetInterestPoint,
+            InterestPoint childInterestPoint,
+            out Vector offset)
         {
             var popup = _parentPopupControl;
             if (popup != null)
@@ -437,9 +432,9 @@ namespace ModernWpf.Controls.Primitives
                 {
                     if (IsVisible && target.IsVisible)
                     {
-                        var popupPoint = PointToScreen(new Point(leftEdge ? 0 : ActualWidth, 0));
-                        var targetPoint = target.PointToScreen(new Point(leftEdge ? 0 : target.RenderSize.Width, 0));
-                        offset = popupPoint - targetPoint;
+                        Point targetPoint = InterestPointToScreen(target, targetInterestPoint);
+                        Point childPoint = InterestPointToScreen(this, childInterestPoint);
+                        offset = childPoint - targetPoint;
                         return true;
                     }
                 }
@@ -449,37 +444,115 @@ namespace ModernWpf.Controls.Primitives
             return false;
         }
 
-        private void EnsureEdgeAligned(bool left)
+        private Point GetPoint(UIElement element, InterestPoint interestPoint)
         {
-            if (TryGetOffsetToTarget(out var offset, left))
+            switch (interestPoint)
             {
-                bool shouldOffset = left ? offset.X > 0 : offset.X < 0;
-                if (shouldOffset)
-                {
-                    double offsetX = -offset.X;
-
-                    if (Helper.TryGetScaleFactors(this, out double scaleX, out _))
-                    {
-                        offsetX /= scaleX;
-                    }
-
-                    SetupTransform(offsetX);
-                }
-                else
-                {
-                    ResetTransform();
-                }
+                case InterestPoint.TopLeft:
+                    return new Point(0, 0);
+                case InterestPoint.TopRight:
+                    return new Point(element.RenderSize.Width, 0);
+                case InterestPoint.BottomLeft:
+                    return new Point(0, element.RenderSize.Height);
+                case InterestPoint.BottomRight:
+                    return new Point(element.RenderSize.Width, element.RenderSize.Height);
+                case InterestPoint.Center:
+                    return new Point(element.RenderSize.Width / 2, element.RenderSize.Height / 2);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(interestPoint));
             }
         }
 
-        private void SetupTransform(double offsetX)
+        private Point InterestPointToScreen(UIElement element, InterestPoint interestPoint)
+        {
+            var point = element.PointToScreen(GetPoint(element, interestPoint));
+
+            if (Helper.TryGetScaleFactors(this, out double scaleX, out double scaleY))
+            {
+                point.X /= scaleX;
+                point.Y /= scaleY;
+            }
+
+            return point;
+        }
+
+        private void EnsureEdgesAligned(CustomPlacementMode placement, bool suppressVerticalTranslation = false)
+        {
+            Vector offsetToTarget;
+            Vector? translation = null;
+
+            switch (placement)
+            {
+                case CustomPlacementMode.TopEdgeAlignedLeft:
+                    if (TryGetOffsetToTarget(InterestPoint.TopLeft, InterestPoint.BottomLeft, out offsetToTarget))
+                    {
+                        translation = getTranslation(true, true, offsetToTarget);
+                    }
+                    break;
+                case CustomPlacementMode.TopEdgeAlignedRight:
+                    if (TryGetOffsetToTarget(InterestPoint.TopRight, InterestPoint.BottomRight, out offsetToTarget))
+                    {
+                        translation = getTranslation(true, false, offsetToTarget);
+                    }
+                    break;
+                case CustomPlacementMode.BottomEdgeAlignedLeft:
+                    if (TryGetOffsetToTarget(InterestPoint.BottomLeft, InterestPoint.TopLeft, out offsetToTarget))
+                    {
+                        translation = getTranslation(false, true, offsetToTarget);
+                    }
+                    break;
+                case CustomPlacementMode.BottomEdgeAlignedRight:
+                    if (TryGetOffsetToTarget(InterestPoint.BottomRight, InterestPoint.TopRight, out offsetToTarget))
+                    {
+                        translation = getTranslation(false, false, offsetToTarget);
+                    }
+                    break;
+            }
+
+            if (translation.HasValue)
+            {
+                Vector value = translation.Value;
+                if (suppressVerticalTranslation)
+                {
+                    value.Y = 0;
+                }
+                SetupTransform(value);
+            }
+            else
+            {
+                ResetTransform();
+            }
+
+            Vector getTranslation(bool top, bool left, Vector offset)
+            {
+                double offsetX = 0;
+                double offsetY = 0;
+
+                if (left && offset.X > 0 ||
+                    !left && offset.X < 0)
+                {
+                    offsetX = -offset.X;
+                }
+
+                if (top && offset.Y < PopupMargin.Top ||
+                    !top && offset.Y > -PopupMargin.Bottom)
+                {
+                    offsetY = -offset.Y;
+                }
+
+                return new Vector(offsetX, offsetY);
+            }
+        }
+
+        private void SetupTransform(Vector translation)
         {
             if (_transform == null)
             {
                 _transform = new TranslateTransform();
                 RenderTransform = _transform;
             }
-            _transform.X = offsetX;
+            _transform.X = translation.X;
+            _transform.Y = translation.Y;
         }
 
         private void ResetTransform()
@@ -487,6 +560,7 @@ namespace ModernWpf.Controls.Primitives
             if (_transform != null)
             {
                 _transform.ClearValue(TranslateTransform.XProperty);
+                _transform.ClearValue(TranslateTransform.YProperty);
             }
         }
 
@@ -632,6 +706,15 @@ namespace ModernWpf.Controls.Primitives
             {
                 Closed?.Invoke(this, e);
             }
+        }
+
+        private enum InterestPoint
+        {
+            TopLeft = 0,
+            TopRight = 1,
+            BottomLeft = 2,
+            BottomRight = 3,
+            Center = 4,
         }
 
         private readonly Grid _background;
