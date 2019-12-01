@@ -10,6 +10,8 @@
         <ResourceDictionary Source="TextBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <PopupAnimation x:Key="{x:Static SystemParameters.ComboBoxPopupAnimationKey}">None</PopupAnimation>
+
     <Thickness x:Key="ComboBoxTopHeaderMargin">0,0,0,4</Thickness>
     <Thickness x:Key="ComboBoxPadding">12,6,0,6</Thickness>
     <Thickness x:Key="ComboBoxEditableTextPadding">11,5,32,6</Thickness>
@@ -362,28 +364,32 @@
                             PlacementTarget="{Binding ElementName=PopupPlacementTarget}"
                             IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                             PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
-                            <Border
-                                x:Name="PopupBorder"
+                            <primitives:ThemeShadowChrome
                                 MaxHeight="{TemplateBinding MaxDropDownHeight}"
                                 MinWidth="{Binding ActualWidth, ElementName=LayoutRoot}"
-                                Background="{DynamicResource ComboBoxDropDownBackground}"
-                                BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}"
-                                BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}"
-                                Padding="{DynamicResource ComboBoxDropdownBorderPadding}"
-                                HorizontalAlignment="Stretch"
-                                CornerRadius="{DynamicResource OverlayCornerRadius}">
-                                <ScrollViewer
-                                    x:Name="ScrollViewer"
-                                    Foreground="{DynamicResource ComboBoxDropDownForeground}"
-                                    HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                    VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                    IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}">
-                                    <ItemsPresenter
-                                        Margin="{DynamicResource ComboBoxDropdownContentMargin}"
-                                        KeyboardNavigation.DirectionalNavigation="Contained"
-                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                </ScrollViewer>
-                            </Border>
+                                IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
+                                CornerRadius="{Binding ElementName=PopupBorder, Path=CornerRadius}">
+                                <Border
+                                    x:Name="PopupBorder"
+                                    Background="{DynamicResource ComboBoxDropDownBackground}"
+                                    BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}"
+                                    BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}"
+                                    Padding="{DynamicResource ComboBoxDropdownBorderPadding}"
+                                    HorizontalAlignment="Stretch"
+                                    CornerRadius="{DynamicResource OverlayCornerRadius}">
+                                    <ScrollViewer
+                                        x:Name="ScrollViewer"
+                                        Foreground="{DynamicResource ComboBoxDropDownForeground}"
+                                        HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                        VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                        IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}">
+                                        <ItemsPresenter
+                                            Margin="{DynamicResource ComboBoxDropdownContentMargin}"
+                                            KeyboardNavigation.DirectionalNavigation="Contained"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </ScrollViewer>
+                                </Border>
+                            </primitives:ThemeShadowChrome>
                         </Popup>
                     </Grid>
 
