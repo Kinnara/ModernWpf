@@ -122,7 +122,7 @@
                                             x:Name="PART_ToolBarOverflowPanel"
                                             Focusable="true"
                                             FocusVisualStyle="{x:Null}"
-                                            KeyboardNavigation.TabNavigation="Cycle"
+                                            KeyboardNavigation.TabNavigation="Once"
                                             KeyboardNavigation.DirectionalNavigation="Cycle"
                                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                     </primitives:CommandBarOverflowPresenter>

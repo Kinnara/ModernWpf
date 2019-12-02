@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace ModernWpf.Controls.Primitives
@@ -11,6 +12,11 @@ namespace ModernWpf.Controls.Primitives
         static CommandBarToolBar()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(CommandBarToolBar), new FrameworkPropertyMetadata(typeof(CommandBarToolBar)));
+
+            KeyboardNavigation.DirectionalNavigationProperty.OverrideMetadata(typeof(CommandBarToolBar),
+                new FrameworkPropertyMetadata(KeyboardNavigationMode.Contained));
+            KeyboardNavigation.TabNavigationProperty.OverrideMetadata(typeof(CommandBarToolBar),
+                new FrameworkPropertyMetadata(KeyboardNavigationMode.Continue));
         }
 
         public CommandBarToolBar()
@@ -250,6 +256,32 @@ namespace ModernWpf.Controls.Primitives
             {
                 UpdateEffectiveOverflowButtonVisibility();
             }
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Escape:
+                    {
+                        // If focus is within ToolBarOverflowPanel - move focus the the toggle button
+                        ToolBarOverflowPanel overflow = m_toolBarOverflowPanel;
+                        if (overflow != null && overflow.IsKeyboardFocusWithin)
+                        {
+                            MoveFocus(new TraversalRequest(FocusNavigationDirection.Last));
+                        }
+                        else
+                        {
+                            Keyboard.Focus(null);
+                        }
+
+                        // Close the overflow the Esc is pressed
+                        SetCurrentValue(IsOverflowOpenProperty, false);
+                    }
+                    break;
+            }
+
+            base.OnKeyDown(e);
         }
 
         private void InvalidateLayout()

@@ -20,6 +20,9 @@ namespace ModernWpf.Controls.Primitives
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(CommandBarFlyoutToolBar),
                 new FrameworkPropertyMetadata(typeof(CommandBarFlyoutToolBar)));
+
+            IsOverflowOpenProperty.OverrideMetadata(typeof(CommandBarFlyoutToolBar),
+                new FrameworkPropertyMetadata(OnOverflowOpenChanged));
         }
 
         public CommandBarFlyoutToolBar()
@@ -185,15 +188,31 @@ namespace ModernWpf.Controls.Primitives
             UpdateUI(false /* useTransitions */);
         }
 
-        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
         {
-            base.OnPropertyChanged(e);
-
-            if (e.Property == IsOverflowOpenProperty)
+            if (!(bool)e.NewValue)
             {
-                UpdateFlowsFromAndFlowsTo();
-                UpdateUI();
+                if (TryGetOwningFlyout(out var owningFlyout))
+                {
+                    if (owningFlyout.IsOpen)
+                    {
+                        MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+                    }
+                }
             }
+
+            base.OnIsKeyboardFocusWithinChanged(e);
+        }
+
+        private static void OnOverflowOpenChanged(DependencyObject element, DependencyPropertyChangedEventArgs e)
+        {
+            ((CommandBarFlyoutToolBar)element).OnOverflowOpenChanged(e);
+        }
+
+        private void OnOverflowOpenChanged(DependencyPropertyChangedEventArgs e)
+        {
+            UpdateFlowsFromAndFlowsTo();
+            UpdateUI();
         }
 
         void AttachEventHandlers()

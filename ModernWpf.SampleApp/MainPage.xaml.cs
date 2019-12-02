@@ -18,7 +18,7 @@ namespace ModernWpf.SampleApp
         {
             InitializeComponent();
             //PagesList.SelectedItem = PagesList.Items.OfType<ControlPageInfo>().FirstOrDefault(
-            //    x => x.NavigateUri.ToString().Contains(nameof(PopupPlacementPage)));
+            //    x => x.NavigateUri.ToString().EndsWith(nameof(CommandBarFlyoutPage) + ".xaml"));
             NavigateToSelectedPage();
         }
 
