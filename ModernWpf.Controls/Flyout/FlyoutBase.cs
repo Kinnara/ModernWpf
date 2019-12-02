@@ -269,6 +269,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_popup.Placement = PlacementMode.Center;
                 m_popup.PlacementTarget = window;
+                m_popup.ClearValue(Popup.PlacementRectangleProperty);
 
                 m_popup.SetBinding(
                     FrameworkElement.WidthProperty,
@@ -298,9 +299,46 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_popup.Placement = PlacementMode.Custom;
                 m_popup.PlacementTarget = placementTarget;
+                m_popup.PlacementRectangle = GetPlacementRectangle(placementTarget);
                 m_popup.ClearValue(FrameworkElement.WidthProperty);
                 m_popup.ClearValue(FrameworkElement.HeightProperty);
             }
+        }
+
+        internal Rect GetPlacementRectangle(UIElement target)
+        {
+            Rect value = Rect.Empty;
+
+            if (target != null)
+            {
+                Size targetSize = target.RenderSize;
+
+                switch (Placement)
+                {
+                    case FlyoutPlacementMode.Top:
+                    case FlyoutPlacementMode.Bottom:
+                    case FlyoutPlacementMode.TopEdgeAlignedLeft:
+                    case FlyoutPlacementMode.TopEdgeAlignedRight:
+                    case FlyoutPlacementMode.BottomEdgeAlignedLeft:
+                    case FlyoutPlacementMode.BottomEdgeAlignedRight:
+                        value = new Rect(
+                            new Point(0, -s_offset),
+                            new Point(targetSize.Width, targetSize.Height + s_offset));
+                        break;
+                    case FlyoutPlacementMode.Left:
+                    case FlyoutPlacementMode.Right:
+                    case FlyoutPlacementMode.LeftEdgeAlignedTop:
+                    case FlyoutPlacementMode.LeftEdgeAlignedBottom:
+                    case FlyoutPlacementMode.RightEdgeAlignedTop:
+                    case FlyoutPlacementMode.RightEdgeAlignedBottom:
+                        value = new Rect(
+                            new Point(-s_offset, 0),
+                            new Point(targetSize.Width + s_offset, targetSize.Height));
+                        break;
+                }
+            }
+
+            return value;
         }
 
         private void OnPopupOpened(object sender, EventArgs e)
@@ -321,6 +359,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_popup.ClearValue(Popup.PlacementProperty);
                 m_popup.ClearValue(Popup.PlacementTargetProperty);
+                m_popup.ClearValue(Popup.PlacementRectangleProperty);
                 m_popup.ClearValue(FrameworkElement.WidthProperty);
                 m_popup.ClearValue(FrameworkElement.HeightProperty);
                 m_target = null;
@@ -339,7 +378,7 @@ namespace ModernWpf.Controls.Primitives
 
         internal CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset, FrameworkElement child)
         {
-            return CustomPopupPlacementHelper.PositionPopup((CustomPlacementMode)Placement, popupSize, targetSize, s_offset, child);
+            return CustomPopupPlacementHelper.PositionPopup((CustomPlacementMode)Placement, popupSize, targetSize, offset, child);
         }
 
         private static readonly IMultiValueConverter s_fullPlacementWidthConverter = new FullPlacementWidthConverter();

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Media;
 
@@ -8,20 +6,69 @@ namespace ModernWpf
 {
     internal static class Helper
     {
-        public static bool TryGetScaleFactors(Visual visual, out double scaleX, out double scaleY)
+        public static bool TryGetTransformToDevice(Visual visual, out Matrix value)
         {
             var presentationSource = PresentationSource.FromVisual(visual);
             if (presentationSource != null)
             {
-                var transformToDevice = presentationSource.CompositionTarget.TransformToDevice;
-                scaleX = transformToDevice.M11;
-                scaleY = transformToDevice.M22;
+                value = presentationSource.CompositionTarget.TransformToDevice;
                 return true;
             }
 
-            scaleX = default;
-            scaleY = default;
+            value = default;
             return false;
         }
+
+        public static Vector GetOffset(
+            UIElement element1,
+            InterestPoint interestPoint1,
+            UIElement element2,
+            InterestPoint interestPoint2,
+            Rect element2Bounds)
+        {
+            Point point = element1.TranslatePoint(GetPoint(element1, interestPoint1), element2);
+            if (element2Bounds.IsEmpty)
+            {
+                return point - GetPoint(element2, interestPoint2);
+            }
+            else
+            {
+                return point - GetPoint(element2Bounds, interestPoint2);
+            }
+        }
+
+        private static Point GetPoint(UIElement element, InterestPoint interestPoint)
+        {
+            return GetPoint(new Rect(element.RenderSize), interestPoint);
+        }
+
+        private static Point GetPoint(Rect rect, InterestPoint interestPoint)
+        {
+            switch (interestPoint)
+            {
+                case InterestPoint.TopLeft:
+                    return rect.TopLeft;
+                case InterestPoint.TopRight:
+                    return rect.TopRight;
+                case InterestPoint.BottomLeft:
+                    return rect.BottomLeft;
+                case InterestPoint.BottomRight:
+                    return rect.BottomRight;
+                case InterestPoint.Center:
+                    return new Point(rect.Left + rect.Width / 2,
+                                     rect.Top + rect.Height / 2);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(interestPoint));
+            }
+        }
+    }
+
+    internal enum InterestPoint
+    {
+        TopLeft = 0,
+        TopRight = 1,
+        BottomLeft = 2,
+        BottomRight = 3,
+        Center = 4,
     }
 }

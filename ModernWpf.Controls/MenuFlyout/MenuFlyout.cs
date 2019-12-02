@@ -102,8 +102,18 @@ namespace ModernWpf.Controls
                 m_presenter.IsOpen = false;
             }
 
-            m_presenter.PlacementTarget = placementTarget;
             m_presenter.Placement = placement;
+            m_presenter.PlacementTarget = placementTarget;
+
+            if (placement == PlacementMode.Custom)
+            {
+                m_presenter.PlacementRectangle = GetPlacementRectangle(placementTarget);
+            }
+            else
+            {
+                m_presenter.ClearValue(Popup.PlacementRectangleProperty);
+            }
+
             RaiseOpening();
             m_presenter.IsOpen = true;
         }

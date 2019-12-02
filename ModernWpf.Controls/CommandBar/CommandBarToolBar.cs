@@ -286,6 +286,7 @@ namespace ModernWpf.Controls.Primitives
                 CustomPlacementMode.BottomEdgeAlignedRight,
                 popupSize,
                 targetSize,
+                offset,
                 child: m_overflowPopup.Child as FrameworkElement);
         }
 

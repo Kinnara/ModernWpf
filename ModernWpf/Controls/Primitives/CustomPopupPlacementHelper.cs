@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -49,22 +50,22 @@ namespace ModernWpf.Controls.Primitives
             CustomPlacementMode placement,
             Size popupSize,
             Size targetSize,
-            double offset = 0,
+            Point offset,
             FrameworkElement child = null)
         {
-            if (child == null || !Helper.TryGetScaleFactors(child, out double scaleX, out double scaleY))
+            Matrix transformToDevice = default;
+            if (child != null)
             {
-                scaleX = 1;
-                scaleY = 1;
+                Helper.TryGetTransformToDevice(child, out transformToDevice);
             }
 
-            CustomPopupPlacement preferredPlacement = CalculatePopupPlacement(placement, popupSize, targetSize, offset, child, scaleX, scaleY);
+            CustomPopupPlacement preferredPlacement = CalculatePopupPlacement(placement, popupSize, targetSize, offset, child, transformToDevice);
 
             CustomPopupPlacement? alternativePlacement = null;
             var alternativePlacementMode = GetAlternativePlacementMode(placement);
             if (alternativePlacementMode.HasValue)
             {
-                alternativePlacement = CalculatePopupPlacement(alternativePlacementMode.Value, popupSize, targetSize, offset, child, scaleX, scaleY);
+                alternativePlacement = CalculatePopupPlacement(alternativePlacementMode.Value, popupSize, targetSize, offset, child, transformToDevice);
             }
 
             if (alternativePlacement.HasValue)
@@ -81,10 +82,9 @@ namespace ModernWpf.Controls.Primitives
             CustomPlacementMode placement,
             Size popupSize,
             Size targetSize,
-            double offset,
+            Point offset,
             FrameworkElement child = null,
-            double scaleX = 1,
-            double scaleY = 1)
+            Matrix transformToDevice = default)
         {
             Point point;
             PopupPrimaryAxis primaryAxis;
@@ -93,23 +93,19 @@ namespace ModernWpf.Controls.Primitives
             {
                 case CustomPlacementMode.Top:
                     point = new Point((targetSize.Width - popupSize.Width) / 2, -popupSize.Height);
-                    point.Y -= offset;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
+                    primaryAxis = PopupPrimaryAxis.Horizontal;
                     break;
                 case CustomPlacementMode.Bottom:
                     point = new Point((targetSize.Width - popupSize.Width) / 2, targetSize.Height);
-                    point.Y += offset;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
+                    primaryAxis = PopupPrimaryAxis.Horizontal;
                     break;
                 case CustomPlacementMode.Left:
                     point = new Point(-popupSize.Width, (targetSize.Height - popupSize.Height) / 2);
-                    point.X -= offset;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
+                    primaryAxis = PopupPrimaryAxis.Vertical;
                     break;
                 case CustomPlacementMode.Right:
                     point = new Point(targetSize.Width, (targetSize.Height - popupSize.Height) / 2);
-                    point.X += offset;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
+                    primaryAxis = PopupPrimaryAxis.Vertical;
                     break;
                 case CustomPlacementMode.Full:
                     point = new Point((targetSize.Width - popupSize.Width) / 2, (targetSize.Height - popupSize.Height) / 2);
@@ -117,43 +113,35 @@ namespace ModernWpf.Controls.Primitives
                     break;
                 case CustomPlacementMode.TopEdgeAlignedLeft:
                     point = new Point(0, -popupSize.Height);
-                    point.Y -= offset;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
+                    primaryAxis = PopupPrimaryAxis.Horizontal;
                     break;
                 case CustomPlacementMode.TopEdgeAlignedRight:
                     point = new Point(targetSize.Width - popupSize.Width, -popupSize.Height);
-                    point.Y -= offset;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
+                    primaryAxis = PopupPrimaryAxis.Horizontal;
                     break;
                 case CustomPlacementMode.BottomEdgeAlignedLeft:
                     point = new Point(0, targetSize.Height);
-                    point.Y += offset;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
+                    primaryAxis = PopupPrimaryAxis.Horizontal;
                     break;
                 case CustomPlacementMode.BottomEdgeAlignedRight:
                     point = new Point(targetSize.Width - popupSize.Width, targetSize.Height);
-                    point.Y += offset;
-                    primaryAxis = PopupPrimaryAxis.Vertical;
+                    primaryAxis = PopupPrimaryAxis.Horizontal;
                     break;
                 case CustomPlacementMode.LeftEdgeAlignedTop:
                     point = new Point(-popupSize.Width, 0);
-                    point.X -= offset;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
+                    primaryAxis = PopupPrimaryAxis.Vertical;
                     break;
                 case CustomPlacementMode.LeftEdgeAlignedBottom:
                     point = new Point(-popupSize.Width, targetSize.Height - popupSize.Height);
-                    point.X -= offset;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
+                    primaryAxis = PopupPrimaryAxis.Vertical;
                     break;
                 case CustomPlacementMode.RightEdgeAlignedTop:
                     point = new Point(targetSize.Width, 0);
-                    point.X += offset;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
+                    primaryAxis = PopupPrimaryAxis.Vertical;
                     break;
                 case CustomPlacementMode.RightEdgeAlignedBottom:
                     point = new Point(targetSize.Width, targetSize.Height - popupSize.Height);
-                    point.X += offset;
-                    primaryAxis = PopupPrimaryAxis.Horizontal;
+                    primaryAxis = PopupPrimaryAxis.Vertical;
                     break;
                 //case CustomPopupPlacementMode.Auto:
                 default:
@@ -162,8 +150,12 @@ namespace ModernWpf.Controls.Primitives
 
             if (child != null)
             {
-                var childMargin = child.Margin;
-                point.Offset(-childMargin.Left * scaleX, -childMargin.Top * scaleY);
+                Vector childOffset = VisualTreeHelper.GetOffset(child);
+                if (transformToDevice != default)
+                {
+                    childOffset = transformToDevice.Transform(childOffset);
+                }
+                point -= childOffset;
             }
 
             return new CustomPopupPlacement(point, primaryAxis);

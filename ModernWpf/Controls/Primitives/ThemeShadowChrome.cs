@@ -386,7 +386,7 @@ namespace ModernWpf.Controls.Primitives
                     case PlacementMode.Custom:
                         if (TryGetCustomPlacementMode(out var customPlacement))
                         {
-                            EnsureEdgesAligned(customPlacement, true);
+                            EnsureEdgesAligned(customPlacement);
                         }
                         break;
                 }
@@ -432,9 +432,21 @@ namespace ModernWpf.Controls.Primitives
                 {
                     if (IsVisible && target.IsVisible)
                     {
-                        Point targetPoint = InterestPointToScreen(target, targetInterestPoint);
-                        Point childPoint = InterestPointToScreen(this, childInterestPoint);
-                        offset = childPoint - targetPoint;
+                        offset = Helper.GetOffset(this, childInterestPoint, target, targetInterestPoint, popup.PlacementRectangle);
+
+                        Debug.Assert(Math.Abs(offset.X) < 0.5 || Math.Abs(offset.X) >= 1, offset.X.ToString());
+                        Debug.Assert(Math.Abs(offset.Y) < 0.5 || Math.Abs(offset.Y) >= 1, offset.Y.ToString());
+
+                        if (Math.Abs(offset.X) < 0.5)
+                        {
+                            offset.X = Math.Round(offset.X);
+                        }
+
+                        if (Math.Abs(offset.Y) < 0.5)
+                        {
+                            offset.Y = Math.Round(offset.Y);
+                        }
+
                         return true;
                     }
                 }
@@ -444,39 +456,7 @@ namespace ModernWpf.Controls.Primitives
             return false;
         }
 
-        private Point GetPoint(UIElement element, InterestPoint interestPoint)
-        {
-            switch (interestPoint)
-            {
-                case InterestPoint.TopLeft:
-                    return new Point(0, 0);
-                case InterestPoint.TopRight:
-                    return new Point(element.RenderSize.Width, 0);
-                case InterestPoint.BottomLeft:
-                    return new Point(0, element.RenderSize.Height);
-                case InterestPoint.BottomRight:
-                    return new Point(element.RenderSize.Width, element.RenderSize.Height);
-                case InterestPoint.Center:
-                    return new Point(element.RenderSize.Width / 2, element.RenderSize.Height / 2);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(interestPoint));
-            }
-        }
-
-        private Point InterestPointToScreen(UIElement element, InterestPoint interestPoint)
-        {
-            var point = element.PointToScreen(GetPoint(element, interestPoint));
-
-            if (Helper.TryGetScaleFactors(this, out double scaleX, out double scaleY))
-            {
-                point.X /= scaleX;
-                point.Y /= scaleY;
-            }
-
-            return point;
-        }
-
-        private void EnsureEdgesAligned(CustomPlacementMode placement, bool suppressVerticalTranslation = false)
+        private void EnsureEdgesAligned(CustomPlacementMode placement)
         {
             Vector offsetToTarget;
             Vector? translation = null;
@@ -511,12 +491,7 @@ namespace ModernWpf.Controls.Primitives
 
             if (translation.HasValue)
             {
-                Vector value = translation.Value;
-                if (suppressVerticalTranslation)
-                {
-                    value.Y = 0;
-                }
-                SetupTransform(value);
+                SetupTransform(translation.Value);
             }
             else
             {
@@ -658,6 +633,26 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
+            public Rect PlacementRectangle
+            {
+                get
+                {
+                    if (_contextMenu != null)
+                    {
+                        return _contextMenu.PlacementRectangle;
+                    }
+                    if (_toolTip != null)
+                    {
+                        return _toolTip.PlacementRectangle;
+                    }
+                    if (_popup != null)
+                    {
+                        return _popup.PlacementRectangle;
+                    }
+                    return Rect.Empty;
+                }
+            }
+
             public event EventHandler Opened;
 
             public event EventHandler Closed;
@@ -706,15 +701,6 @@ namespace ModernWpf.Controls.Primitives
             {
                 Closed?.Invoke(this, e);
             }
-        }
-
-        private enum InterestPoint
-        {
-            TopLeft = 0,
-            TopRight = 1,
-            BottomLeft = 2,
-            BottomRight = 3,
-            Center = 4,
         }
 
         private readonly Grid _background;

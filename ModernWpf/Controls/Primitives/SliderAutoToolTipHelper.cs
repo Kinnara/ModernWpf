@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -152,12 +153,10 @@ namespace ModernWpf.Controls.Primitives
                     return new CustomPopupPlacement[] { };
             }
 
-            if (Helper.TryGetScaleFactors(autoToolTip, out double scaleX, out double scaleY))
+            if (Helper.TryGetTransformToDevice(autoToolTip, out Matrix transformToDevice))
             {
-                var autoToolTipMargin = autoToolTip.Margin;
-                var offsetX = -autoToolTipMargin.Left * scaleX;
-                var offsetY = -autoToolTipMargin.Top * scaleY;
-                point.Offset(offsetX, offsetY);
+                Vector offset = VisualTreeHelper.GetOffset(autoToolTip);
+                point -= transformToDevice.Transform(offset);
             }
 
             return new CustomPopupPlacement[] { new CustomPopupPlacement(point, primaryAxis) };
