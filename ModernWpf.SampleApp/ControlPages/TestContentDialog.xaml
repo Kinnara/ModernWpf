@@ -20,9 +20,7 @@
     SecondaryButtonClick="OnSecondaryButtonClick"
     CloseButtonClick="OnCloseButtonClick"
     Closed="OnClosed">
-    <ui:SimpleStackPanel
-        Spacing="12"
-        Margin="0,0,0,24">
+    <ui:SimpleStackPanel Spacing="12">
         <TextBox
             ui:ControlHelper.Header="Title"
             Text="{Binding ElementName=dialog, Path=Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -56,6 +54,5 @@
                 Margin="0,8,0,0"
                 Visibility="Collapsed" />
         </StackPanel>
-
     </ui:SimpleStackPanel>
 </ui:ContentDialog>

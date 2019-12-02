@@ -40,8 +40,8 @@
                             ItemsSource="{Binding Fonts}"
                             DisplayMemberPath="Item1"
                             SelectedValuePath="Item2"
-                            Height="164"
-                            Loaded="ListBox2_Loaded" />
+                            SelectedIndex="2"
+                            Height="164" />
                         <TextBlock
                             x:Name="Control2Output"
                             Text="You can set the font used for this text."

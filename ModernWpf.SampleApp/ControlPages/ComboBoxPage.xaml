@@ -53,9 +53,9 @@
                             ItemsSource="{Binding Fonts}"
                             DisplayMemberPath="Item1"
                             SelectedValuePath="Item2"
+                            SelectedIndex="2"
                             ui:ControlHelper.Header="Font"
-                            Width="200"
-                            Loaded="Combo2_Loaded" />
+                            Width="200" />
                         <TextBlock
                             x:Name="Control2Output"
                             Text="You can set the font used for this text."
@@ -72,13 +72,9 @@
                             x:Name="Combo3"
                             IsEditable="True"
                             ItemsSource="{Binding FontSizes}"
+                            SelectedIndex="2"
                             ui:ControlHelper.Header="Font Size"
-                            Width="200"
-                            Loaded="Combo3_Loaded">
-                            <ComboBox.Resources>
-                                <PopupAnimation x:Key="{x:Static SystemParameters.ComboBoxPopupAnimationKey}">None</PopupAnimation>
-                            </ComboBox.Resources>
-                        </ComboBox>
+                            Width="200" />
                         <TextBlock
                             x:Name="Control3Output"
                             Text="You can set the font size used for this text."

@@ -37,48 +37,48 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
+                    <ControlTemplate.Resources>
+                        <Style x:Key="DeleteButtonStyle" TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border
+                                            x:Name="ButtonLayoutGrid"
+                                            BorderBrush="{DynamicResource TextControlButtonBorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            Background="{DynamicResource TextControlButtonBackground}"
+                                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                                            <TextBlock
+                                                x:Name="GlyphElement"
+                                                Foreground="{DynamicResource TextControlButtonForeground}"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                FontStyle="Normal"
+                                                FontSize="12"
+                                                Text="&#xE10A;"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="true">
+                                                <Setter Property="Background" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBackgroundPointerOver}" />
+                                                <Setter Property="BorderBrush" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBorderBrushPointerOver}" />
+                                                <Setter Property="Foreground" TargetName="GlyphElement" Value="{DynamicResource TextControlButtonForegroundPointerOver}" />
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="true">
+                                                <Setter Property="Background" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBackgroundPressed}" />
+                                                <Setter Property="BorderBrush" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBorderBrushPressed}" />
+                                                <Setter Property="Foreground" TargetName="GlyphElement" Value="{DynamicResource TextControlButtonForegroundPressed}" />
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="false">
+                                                <Setter Property="Opacity" TargetName="ButtonLayoutGrid" Value="0" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ControlTemplate.Resources>
                     <Grid SnapsToDevicePixels="True">
-                        <Grid.Resources>
-                            <Style x:Name="DeleteButtonStyle" TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border
-                                                x:Name="ButtonLayoutGrid"
-                                                BorderBrush="{DynamicResource TextControlButtonBorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                Background="{DynamicResource TextControlButtonBackground}"
-                                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
-                                                <TextBlock
-                                                    x:Name="GlyphElement"
-                                                    Foreground="{DynamicResource TextControlButtonForeground}"
-                                                    VerticalAlignment="Center"
-                                                    HorizontalAlignment="Center"
-                                                    FontStyle="Normal"
-                                                    FontSize="12"
-                                                    Text="&#xE10A;"
-                                                    FontFamily="{DynamicResource SymbolThemeFontFamily}" />
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="true">
-                                                    <Setter Property="Background" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBackgroundPointerOver}" />
-                                                    <Setter Property="BorderBrush" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBorderBrushPointerOver}" />
-                                                    <Setter Property="Foreground" TargetName="GlyphElement" Value="{DynamicResource TextControlButtonForegroundPointerOver}" />
-                                                </Trigger>
-                                                <Trigger Property="IsPressed" Value="true">
-                                                    <Setter Property="Background" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBackgroundPressed}" />
-                                                    <Setter Property="BorderBrush" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBorderBrushPressed}" />
-                                                    <Setter Property="Foreground" TargetName="GlyphElement" Value="{DynamicResource TextControlButtonForegroundPressed}" />
-                                                </Trigger>
-                                                <Trigger Property="IsEnabled" Value="false">
-                                                    <Setter Property="Opacity" TargetName="ButtonLayoutGrid" Value="0" />
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Grid.Resources>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ButtonStates">
                                 <VisualState x:Name="ButtonVisible">
@@ -162,7 +162,7 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             Focusable="False"
-                            Style="{DynamicResource DeleteButtonStyle}"
+                            Style="{StaticResource DeleteButtonStyle}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}"
                             Padding="{DynamicResource HelperButtonThemePadding}"

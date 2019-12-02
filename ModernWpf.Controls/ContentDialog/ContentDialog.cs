@@ -632,11 +632,11 @@ namespace ModernWpf.Controls
             }
 
 #if DEBUG
-            if (GetTemplateChild(DialogShowingStatesGroup) is VisualStateGroup dialogShowingStates)
-            {
-                dialogShowingStates.CurrentStateChanging += DialogShowingStates_CurrentStateChanging;
-                dialogShowingStates.CurrentStateChanged += DialogShowingStates_CurrentStateChanged;
-            }
+            //if (GetTemplateChild(DialogShowingStatesGroup) is VisualStateGroup dialogShowingStates)
+            //{
+            //    dialogShowingStates.CurrentStateChanging += DialogShowingStates_CurrentStateChanging;
+            //    dialogShowingStates.CurrentStateChanged += DialogShowingStates_CurrentStateChanged;
+            //}
 #endif
             UpdateVisualStates(false);
         }

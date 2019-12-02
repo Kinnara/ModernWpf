@@ -35,10 +35,5 @@ namespace ModernWpf.SampleApp.ControlPages
             InitializeComponent();
             DataContext = this;
         }
-
-        private void ListBox2_Loaded(object sender, RoutedEventArgs e)
-        {
-            ListBox2.SelectedIndex = 2;
-        }
     }
 }

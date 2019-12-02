@@ -538,6 +538,7 @@
     <Thickness x:Key="ContentDialogButton2HostMargin">0,0,0,0</Thickness>
     <Thickness x:Key="ContentDialogContentMargin">0,0,0,0</Thickness>
     <Thickness x:Key="ContentDialogContentScrollViewerMargin">0,0,0,0</Thickness>
+    <Thickness x:Key="ContentDialogCommandSpaceMargin">0,24,0,0</Thickness>
     <Thickness x:Key="ContentDialogTitleMargin">0,0,0,12</Thickness>
     <Thickness x:Key="ContentDialogPadding">24,18,24,24</Thickness>
     <m:StaticResource x:Key="ContentDialogForeground" ResourceKey="SystemControlPageTextBaseHighBrush" />
@@ -628,6 +629,7 @@
     <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemControlTransientBorderBrush" />
 
     <!-- Resources for HyperlinkButton -->
+    <Thickness x:Key="HyperlinkButtonBorderThemeThickness">0</Thickness>
     <m:StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="SystemControlHyperlinkTextBrush" />
     <m:StaticResource x:Key="HyperlinkButtonForegroundPointerOver" ResourceKey="SystemControlPageTextBaseMediumBrush" />
     <m:StaticResource x:Key="HyperlinkButtonForegroundPressed" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />

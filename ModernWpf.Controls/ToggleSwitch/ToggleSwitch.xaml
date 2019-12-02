@@ -6,7 +6,6 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <Thickness x:Key="ToggleSwitchTopHeaderMargin">0,0,0,0</Thickness>
     <GridLength x:Key="ToggleSwitchPreContentMargin">6</GridLength>
     <GridLength x:Key="ToggleSwitchPostContentMargin">6</GridLength>
 

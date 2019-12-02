@@ -56,30 +56,35 @@ namespace ModernWpf.Controls
         /// </summary>
         private Storyboard _storyboard;
 
+        private ClockState _currentState = ClockState.Stopped;
+
         /// <summary>
         /// The property that identifies the
         /// <see cref="T:System.Windows.Media.Animation.Storyboard"/>
         /// for the
         /// <see cref="T:System.Windows.UIElement"/>.
         /// </summary>
-        protected internal Storyboard Storyboard 
-        { 
+        protected internal Storyboard Storyboard
+        {
             get { return _storyboard; }
             set
             {
-                if(value != _storyboard)
+                if (value != _storyboard)
                 {
                     if (_storyboard != null)
                     {
-                        _storyboard.Completed -= OnCompleted; 
-                    }                        
+                        _storyboard.CurrentStateInvalidated -= OnCurrentStateInvalidated;
+                        _storyboard.Completed -= OnCompleted;
+                    }
 
                     _storyboard = value;
-                    
+                    _currentState = ClockState.Stopped;
+
                     if (_storyboard != null)
                     {
+                        _storyboard.CurrentStateInvalidated += OnCurrentStateInvalidated;
                         _storyboard.Completed += OnCompleted;
-                    }                                                  
+                    }
                 }
             }
         }
@@ -121,7 +126,7 @@ namespace ModernWpf.Controls
         /// </summary>
         public virtual void Begin()
         {
-            Save();           
+            Save();
             Storyboard.Begin(ElementAsFE, true);
         }
 
@@ -216,6 +221,12 @@ namespace ModernWpf.Controls
             }
         }
 
+        private void OnCurrentStateInvalidated(object sender, EventArgs e)
+        {
+            var clock = (Clock)sender;
+            _currentState = clock.CurrentState;
+        }
+
         /// <summary>
         /// Mirrors <see cref="E:System.Windows.Media.Animation.Storyboard.Completed"/>.
         /// </summary>
@@ -257,7 +268,11 @@ namespace ModernWpf.Controls
         /// </summary>
         public void Stop()
         {
-            Storyboard.Stop(ElementAsFE);
+            if (_currentState != ClockState.Stopped)
+            {
+                Storyboard.Stop(ElementAsFE);
+            }
+
             Restore();
         }
     }
