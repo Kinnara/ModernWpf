@@ -433,20 +433,8 @@ namespace ModernWpf.Controls.Primitives
                     if (IsVisible && target.IsVisible)
                     {
                         offset = Helper.GetOffset(this, childInterestPoint, target, targetInterestPoint, popup.PlacementRectangle);
-
                         Debug.Assert(Math.Abs(offset.X) < 0.5 || Math.Abs(offset.X) >= 1, offset.X.ToString());
                         Debug.Assert(Math.Abs(offset.Y) < 0.5 || Math.Abs(offset.Y) >= 1, offset.Y.ToString());
-
-                        if (Math.Abs(offset.X) < 0.5)
-                        {
-                            offset.X = Math.Round(offset.X);
-                        }
-
-                        if (Math.Abs(offset.Y) < 0.5)
-                        {
-                            offset.Y = Math.Round(offset.Y);
-                        }
-
                         return true;
                     }
                 }
@@ -504,13 +492,15 @@ namespace ModernWpf.Controls.Primitives
                 double offsetY = 0;
 
                 if (left && offset.X > 0 ||
-                    !left && offset.X < 0)
+                    !left && offset.X < 0 ||
+                    Math.Abs(offset.X) < 0.5)
                 {
                     offsetX = -offset.X;
                 }
 
                 if (top && offset.Y < PopupMargin.Top ||
-                    !top && offset.Y > -PopupMargin.Bottom)
+                    !top && offset.Y > -PopupMargin.Bottom ||
+                    Math.Abs(offset.Y) < 0.5)
                 {
                     offsetY = -offset.Y;
                 }

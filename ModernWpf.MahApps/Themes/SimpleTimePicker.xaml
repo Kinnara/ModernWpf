@@ -299,107 +299,114 @@
                             VerticalOffset="{DynamicResource TimePickerPopupVerticalOffset}"
                             PopupAnimation="None"
                             StaysOpen="False">
-                            <Border
-                                x:Name="Background"
-                                Background="{DynamicResource TimePickerFlyoutPresenterBackground}"
-                                BorderBrush="{DynamicResource TimePickerFlyoutPresenterBorderBrush}"
-                                BorderThickness="{DynamicResource DateTimeFlyoutBorderThickness}"
-                                CornerRadius="{DynamicResource OverlayCornerRadius}"
-                                Padding="{DynamicResource DateTimeFlyoutBorderPadding}"
-                                MinWidth="{Binding ActualWidth, ElementName=PART_Button}">
-                                <Grid x:Name="ContentPanel">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" x:Name="FirstPickerHostColumn" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" x:Name="SecondPickerHostColumn" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" x:Name="ThirdPickerHostColumn" />
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" x:Name="FourthPickerHostColumn" />
-                                        </Grid.ColumnDefinitions>
-                                        <Rectangle
-                                            x:Name="HighlightRect"
-                                            Fill="{DynamicResource TimePickerFlyoutPresenterHighlightFill}"
-                                            Grid.Column="0"
-                                            Grid.ColumnSpan="7"
-                                            VerticalAlignment="Center"
-                                            Height="{DynamicResource TimePickerFlyoutPresenterHighlightHeight}" />
-                                        <local:DateTimeComponentSelector
-                                            x:Name="PART_HourPicker"
-                                            Grid.Column="0"
-                                            ItemStringFormat="{TemplateBinding HoursItemStringFormat}"
-                                            ItemsSource="{TemplateBinding SourceHours, Converter={StaticResource ItemsConverter}}" />
-                                        <Rectangle
-                                            x:Name="FirstPickerSpacing"
-                                            Fill="{DynamicResource TimePickerFlyoutPresenterSpacerFill}"
-                                            HorizontalAlignment="Center"
-                                            Width="{DynamicResource TimePickerSpacerThemeWidth}"
-                                            Grid.Column="1" />
-                                        <local:DateTimeComponentSelector
-                                            x:Name="PART_MinutePicker"
-                                            Grid.Column="2"
-                                            ItemStringFormat="{TemplateBinding MinutesItemStringFormat}"
-                                            ItemsSource="{TemplateBinding SourceMinutes, Converter={StaticResource ItemsConverter}}" />
-                                        <Rectangle
-                                            x:Name="SecondPickerSpacing"
-                                            Fill="{DynamicResource TimePickerFlyoutPresenterSpacerFill}"
-                                            HorizontalAlignment="Center"
-                                            Width="{DynamicResource TimePickerSpacerThemeWidth}"
-                                            Grid.Column="3" />
-                                        <local:DateTimeComponentSelector
-                                            x:Name="PART_SecondPicker"
-                                            Grid.Column="4"
-                                            ItemStringFormat="{TemplateBinding SecondsItemStringFormat}"
-                                            ItemsSource="{TemplateBinding SourceSeconds, Converter={StaticResource ItemsConverter}}" />
-                                        <Rectangle
-                                            x:Name="ThirdPickerSpacing"
-                                            Fill="{DynamicResource TimePickerFlyoutPresenterSpacerFill}"
-                                            HorizontalAlignment="Center"
-                                            Width="{DynamicResource TimePickerSpacerThemeWidth}"
-                                            Grid.Column="5" />
-                                        <local:DateTimeComponentSelector
-                                            x:Name="PART_AmPmSwitcher"
-                                            Grid.Column="6" />
-                                    </Grid>
-                                    <Grid
-                                        Grid.Row="1"
-                                        Height="{DynamicResource TimePickerFlyoutPresenterAcceptDismissHostGridHeight}"
-                                        x:Name="AcceptDismissHostGrid">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <Rectangle
-                                            Height="{DynamicResource TimePickerSpacerThemeWidth}"
-                                            VerticalAlignment="Top"
-                                            Fill="{DynamicResource TimePickerFlyoutPresenterSpacerFill}"
-                                            Grid.ColumnSpan="2" />
-                                        <Button
-                                            x:Name="AcceptButton"
-                                            Grid.Column="0"
-                                            Content="&#xE8FB;"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            FontSize="16"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"
-                                            Style="{DynamicResource DateTimePickerFlyoutButtonStyle}" />
-                                        <Button
-                                            x:Name="DismissButton"
-                                            Grid.Column="1"
-                                            Content="&#xE711;"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            FontSize="16"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"
-                                            Style="{DynamicResource DateTimePickerFlyoutButtonStyle}" />
-                                    </Grid>
-                                </Grid>
-                            </Border>
+                            <ui:ThemeShadowChrome
+                                MinWidth="{Binding ActualWidth, ElementName=PART_Button}"
+                                IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
+                                CornerRadius="{DynamicResource OverlayCornerRadius}">
+                                <Border
+                                    x:Name="Background"
+                                    Background="{DynamicResource TimePickerFlyoutPresenterBackground}"
+                                    CornerRadius="{DynamicResource OverlayCornerRadius}">
+                                    <Border
+                                        BorderBrush="{DynamicResource TimePickerFlyoutPresenterBorderBrush}"
+                                        BorderThickness="{DynamicResource DateTimeFlyoutBorderThickness}"
+                                        CornerRadius="{DynamicResource OverlayCornerRadius}"
+                                        Padding="{DynamicResource DateTimeFlyoutBorderPadding}">
+                                        <Grid x:Name="ContentPanel">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" x:Name="FirstPickerHostColumn" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" x:Name="SecondPickerHostColumn" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" x:Name="ThirdPickerHostColumn" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" x:Name="FourthPickerHostColumn" />
+                                                </Grid.ColumnDefinitions>
+                                                <Rectangle
+                                                    x:Name="HighlightRect"
+                                                    Fill="{DynamicResource TimePickerFlyoutPresenterHighlightFill}"
+                                                    Grid.Column="0"
+                                                    Grid.ColumnSpan="7"
+                                                    VerticalAlignment="Center"
+                                                    Height="{DynamicResource TimePickerFlyoutPresenterHighlightHeight}" />
+                                                <local:DateTimeComponentSelector
+                                                    x:Name="PART_HourPicker"
+                                                    Grid.Column="0"
+                                                    ItemStringFormat="{TemplateBinding HoursItemStringFormat}"
+                                                    ItemsSource="{TemplateBinding SourceHours, Converter={StaticResource ItemsConverter}}" />
+                                                <Rectangle
+                                                    x:Name="FirstPickerSpacing"
+                                                    Fill="{DynamicResource TimePickerFlyoutPresenterSpacerFill}"
+                                                    HorizontalAlignment="Center"
+                                                    Width="{DynamicResource TimePickerSpacerThemeWidth}"
+                                                    Grid.Column="1" />
+                                                <local:DateTimeComponentSelector
+                                                    x:Name="PART_MinutePicker"
+                                                    Grid.Column="2"
+                                                    ItemStringFormat="{TemplateBinding MinutesItemStringFormat}"
+                                                    ItemsSource="{TemplateBinding SourceMinutes, Converter={StaticResource ItemsConverter}}" />
+                                                <Rectangle
+                                                    x:Name="SecondPickerSpacing"
+                                                    Fill="{DynamicResource TimePickerFlyoutPresenterSpacerFill}"
+                                                    HorizontalAlignment="Center"
+                                                    Width="{DynamicResource TimePickerSpacerThemeWidth}"
+                                                    Grid.Column="3" />
+                                                <local:DateTimeComponentSelector
+                                                    x:Name="PART_SecondPicker"
+                                                    Grid.Column="4"
+                                                    ItemStringFormat="{TemplateBinding SecondsItemStringFormat}"
+                                                    ItemsSource="{TemplateBinding SourceSeconds, Converter={StaticResource ItemsConverter}}" />
+                                                <Rectangle
+                                                    x:Name="ThirdPickerSpacing"
+                                                    Fill="{DynamicResource TimePickerFlyoutPresenterSpacerFill}"
+                                                    HorizontalAlignment="Center"
+                                                    Width="{DynamicResource TimePickerSpacerThemeWidth}"
+                                                    Grid.Column="5" />
+                                                <local:DateTimeComponentSelector
+                                                    x:Name="PART_AmPmSwitcher"
+                                                    Grid.Column="6" />
+                                            </Grid>
+                                            <Grid
+                                                Grid.Row="1"
+                                                Height="{DynamicResource TimePickerFlyoutPresenterAcceptDismissHostGridHeight}"
+                                                x:Name="AcceptDismissHostGrid">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Rectangle
+                                                    Height="{DynamicResource TimePickerSpacerThemeWidth}"
+                                                    VerticalAlignment="Top"
+                                                    Fill="{DynamicResource TimePickerFlyoutPresenterSpacerFill}"
+                                                    Grid.ColumnSpan="2" />
+                                                <Button
+                                                    x:Name="AcceptButton"
+                                                    Grid.Column="0"
+                                                    Content="&#xE8FB;"
+                                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                    FontSize="16"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Style="{DynamicResource DateTimePickerFlyoutButtonStyle}" />
+                                                <Button
+                                                    x:Name="DismissButton"
+                                                    Grid.Column="1"
+                                                    Content="&#xE711;"
+                                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                    FontSize="16"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Style="{DynamicResource DateTimePickerFlyoutButtonStyle}" />
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                </Border>
+                            </ui:ThemeShadowChrome>
                         </Popup>
 
                     </Grid>
