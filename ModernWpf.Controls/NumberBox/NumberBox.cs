@@ -404,7 +404,7 @@ namespace ModernWpf.Controls
 
             if (GetTemplateChild(c_numberBoxTextBoxName) is TextBox textBox)
             {
-                textBox.KeyDown += OnNumberBoxKeyDown;
+                textBox.PreviewKeyDown += OnNumberBoxKeyDown;
                 textBox.KeyUp += OnNumberBoxKeyUp;
                 m_textBox = textBox;
             }
