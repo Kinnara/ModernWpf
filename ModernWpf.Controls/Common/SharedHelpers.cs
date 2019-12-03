@@ -112,5 +112,20 @@ namespace ModernWpf.Controls
             }
             return null;
         }
+
+        public static string SafeSubstring(this string s, int startIndex)
+        {
+            if (s is null)
+            {
+                throw new ArgumentNullException(nameof(s));
+            }
+
+            if (startIndex > s.Length)
+            {
+                return string.Empty;
+            }
+
+            return s.Substring(startIndex);
+        }
     }
 }

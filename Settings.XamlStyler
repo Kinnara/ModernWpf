@@ -38,6 +38,7 @@
 		ColumnDefinition,
 		primitives:CornerRadiusFilterConverter,
         ui:CornerRadiusFilterConverter,
+        StaticResource,
 		m:StaticResource,
         ui:StaticResource,
         local:HamburgerMenuItemStyleSelectorEx,

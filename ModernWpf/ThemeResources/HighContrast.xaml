@@ -860,6 +860,9 @@
     <!-- Resources for NavigationBackButton -->
     <m:StaticResource x:Key="NavigationViewBackButtonBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
 
+    <!-- Resources for NumberBox -->
+    <m:StaticResource x:Key="NumberBoxPopupIndicatorForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+
     <!-- Resources for Pivot -->
     <FontFamily x:Key="PivotHeaderItemFontFamily">XamlAutoFontFamily</FontFamily>
     <sys:Double x:Key="PivotHeaderItemFontSize">24</sys:Double>
