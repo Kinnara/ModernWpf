@@ -723,6 +723,8 @@ namespace ModernWpf.Controls
                     {
                         StepValue(-SmallChange);
                     }
+                    // Only set as handled when we actually changed our state.
+                    args.Handled = true;
                 }
             }
         }
