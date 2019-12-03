@@ -68,6 +68,8 @@
                     Width="200"
                     Header="Control header"
                     PlaceholderText="A + B"
+                    Minimum="0"
+                    Maximum="100"
                     SpinButtonPlacementMode="Compact" />
 
                 <sc:ControlExample.Options>

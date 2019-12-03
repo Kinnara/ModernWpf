@@ -5,6 +5,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
 
@@ -48,6 +49,324 @@ namespace ModernWpf.Controls
             GotFocus += OnNumberBoxGotFocus;
             LostFocus += OnNumberBoxLostFocus;
         }
+
+        #region Minimum
+
+        public static readonly DependencyProperty MinimumProperty =
+            DependencyProperty.Register(
+                nameof(Minimum),
+                typeof(double),
+                typeof(NumberBox),
+                new PropertyMetadata(double.MinValue, OnMinimumPropertyChanged));
+
+        public double Minimum
+        {
+            get => (double)GetValue(MinimumProperty);
+            set => SetValue(MinimumProperty, value);
+        }
+
+        private static void OnMinimumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((NumberBox)sender).OnMinimumPropertyChanged(args);
+        }
+
+        #endregion
+
+        #region Maximum
+
+        public static readonly DependencyProperty MaximumProperty =
+            DependencyProperty.Register(
+                nameof(Maximum),
+                typeof(double),
+                typeof(NumberBox),
+                new PropertyMetadata(double.MaxValue, OnMaximumPropertyChanged));
+
+        public double Maximum
+        {
+            get => (double)GetValue(MaximumProperty);
+            set => SetValue(MaximumProperty, value);
+        }
+
+        private static void OnMaximumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((NumberBox)sender).OnMaximumPropertyChanged(args);
+        }
+
+        #endregion
+
+        #region Value
+
+        public static readonly DependencyProperty ValueProperty =
+            DependencyProperty.Register(
+                nameof(Value),
+                typeof(double),
+                typeof(NumberBox),
+                new PropertyMetadata(0d, OnValuePropertyChanged));
+
+        public double Value
+        {
+            get => (double)GetValue(ValueProperty);
+            set => SetValue(ValueProperty, value);
+        }
+
+        private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((NumberBox)sender).OnValuePropertyChanged(args);
+        }
+
+        #endregion
+
+        #region SmallChange
+
+        public static readonly DependencyProperty SmallChangeProperty =
+            DependencyProperty.Register(
+                nameof(SmallChange),
+                typeof(double),
+                typeof(NumberBox),
+                new PropertyMetadata(1d, OnSmallChangePropertyChanged));
+
+        public double SmallChange
+        {
+            get => (double)GetValue(SmallChangeProperty);
+            set => SetValue(SmallChangeProperty, value);
+        }
+
+        private static void OnSmallChangePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((NumberBox)sender).OnSmallChangePropertyChanged(args);
+        }
+
+        #endregion
+
+        #region LargeChange
+
+        public static readonly DependencyProperty LargeChangeProperty =
+            DependencyProperty.Register(
+                nameof(LargeChange),
+                typeof(double),
+                typeof(NumberBox),
+                new PropertyMetadata(10d));
+
+        public double LargeChange
+        {
+            get => (double)GetValue(LargeChangeProperty);
+            set => SetValue(LargeChangeProperty, value);
+        }
+
+        #endregion
+
+        #region Text
+
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register(
+                nameof(Text),
+                typeof(string),
+                typeof(NumberBox),
+                new PropertyMetadata(string.Empty, OnTextPropertyChanged));
+
+        public string Text
+        {
+            get => (string)GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
+        }
+
+        private static void OnTextPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((NumberBox)sender).OnTextPropertyChanged(args);
+        }
+
+        #endregion
+
+        #region Header
+
+        public static readonly DependencyProperty HeaderProperty =
+            ControlHelper.HeaderProperty.AddOwner(typeof(NumberBox));
+
+        public object Header
+        {
+            get => GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
+        }
+
+        #endregion
+
+        #region HeaderTemplate
+
+        public static readonly DependencyProperty HeaderTemplateProperty =
+            ControlHelper.HeaderTemplateProperty.AddOwner(typeof(NumberBox));
+
+        public DataTemplate HeaderTemplate
+        {
+            get => (DataTemplate)GetValue(HeaderTemplateProperty);
+            set => SetValue(HeaderTemplateProperty, value);
+        }
+
+        #endregion
+
+        #region PlaceholderText
+
+        public static readonly DependencyProperty PlaceholderTextProperty =
+            ControlHelper.PlaceholderTextProperty.AddOwner(typeof(NumberBox));
+
+        public string PlaceholderText
+        {
+            get => (string)GetValue(PlaceholderTextProperty);
+            set => SetValue(PlaceholderTextProperty, value);
+        }
+
+        #endregion
+
+        #region SelectionBrush
+
+        public static readonly DependencyProperty SelectionBrushProperty =
+            DependencyProperty.Register(
+                nameof(SelectionBrush),
+                typeof(Brush),
+                typeof(NumberBox));
+
+        public Brush SelectionBrush
+        {
+            get => (Brush)GetValue(SelectionBrushProperty);
+            set => SetValue(SelectionBrushProperty, value);
+        }
+
+        #endregion
+
+        #region Description
+
+        public static readonly DependencyProperty DescriptionProperty =
+            ControlHelper.DescriptionProperty.AddOwner(typeof(NumberBox));
+
+        public object Description
+        {
+            get => GetValue(DescriptionProperty);
+            set => SetValue(DescriptionProperty, value);
+        }
+
+        #endregion
+
+        #region ValidationMode
+
+        public static readonly DependencyProperty ValidationModeProperty =
+            DependencyProperty.Register(
+                nameof(ValidationMode),
+                typeof(NumberBoxValidationMode),
+                typeof(NumberBox),
+                new PropertyMetadata(OnValidationModePropertyChanged));
+
+        public NumberBoxValidationMode ValidationMode
+        {
+            get => (NumberBoxValidationMode)GetValue(ValidationModeProperty);
+            set => SetValue(ValidationModeProperty, value);
+        }
+
+        private static void OnValidationModePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((NumberBox)sender).OnValidationModePropertyChanged(args);
+        }
+
+        #endregion
+
+        #region SpinButtonPlacementMode
+
+        public static readonly DependencyProperty SpinButtonPlacementModeProperty =
+            DependencyProperty.Register(
+                nameof(SpinButtonPlacementMode),
+                typeof(NumberBoxSpinButtonPlacementMode),
+                typeof(NumberBox),
+                new PropertyMetadata(NumberBoxSpinButtonPlacementMode.Hidden, OnSpinButtonPlacementModePropertyChanged));
+
+        public NumberBoxSpinButtonPlacementMode SpinButtonPlacementMode
+        {
+            get => (NumberBoxSpinButtonPlacementMode)GetValue(SpinButtonPlacementModeProperty);
+            set => SetValue(SpinButtonPlacementModeProperty, value);
+        }
+
+        private static void OnSpinButtonPlacementModePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((NumberBox)sender).OnSpinButtonPlacementModePropertyChanged(args);
+        }
+
+        #endregion
+
+        #region IsWrapEnabled
+
+        public static readonly DependencyProperty IsWrapEnabledProperty =
+            DependencyProperty.Register(
+                nameof(IsWrapEnabled),
+                typeof(bool),
+                typeof(NumberBox),
+                new PropertyMetadata(false, OnIsWrapEnabledPropertyChanged));
+
+        public bool IsWrapEnabled
+        {
+            get => (bool)GetValue(IsWrapEnabledProperty);
+            set => SetValue(IsWrapEnabledProperty, value);
+        }
+
+        private static void OnIsWrapEnabledPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((NumberBox)sender).OnIsWrapEnabledPropertyChanged(args);
+        }
+
+        #endregion
+
+        #region AcceptsExpression
+
+        public static readonly DependencyProperty AcceptsExpressionProperty =
+            DependencyProperty.Register(
+                nameof(AcceptsExpression),
+                typeof(bool),
+                typeof(NumberBox),
+                new PropertyMetadata(false));
+
+        public bool AcceptsExpression
+        {
+            get => (bool)GetValue(AcceptsExpressionProperty);
+            set => SetValue(AcceptsExpressionProperty, value);
+        }
+
+        #endregion
+
+        #region NumberFormatter
+
+        public static readonly DependencyProperty NumberFormatterProperty =
+            DependencyProperty.Register(
+                nameof(NumberFormatter),
+                typeof(INumberBoxNumberFormatter),
+                typeof(NumberBox),
+                new PropertyMetadata(
+                    new DefaultNumberBoxNumberFormatter(),
+                    OnNumberFormatterPropertyChanged),
+                ValidateNumberFormatter);
+
+        public INumberBoxNumberFormatter NumberFormatter
+        {
+            get => (INumberBoxNumberFormatter)GetValue(NumberFormatterProperty);
+            set => SetValue(NumberFormatterProperty, value);
+        }
+
+        private static void OnNumberFormatterPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((NumberBox)sender).OnNumberFormatterPropertyChanged(args);
+        }
+
+        #endregion
+
+        #region CornerRadius
+
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(NumberBox));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
+
+        public event TypedEventHandler<NumberBox, NumberBoxValueChangedEventArgs> ValueChanged;
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -125,86 +444,6 @@ namespace ModernWpf.Controls
             }
         }
 
-        #region Minimum
-
-        public static readonly DependencyProperty MinimumProperty =
-            DependencyProperty.Register(
-                nameof(Minimum),
-                typeof(double),
-                typeof(NumberBox),
-                new PropertyMetadata(double.MinValue, OnMinimumPropertyChanged));
-
-        public double Minimum
-        {
-            get => (double)GetValue(MinimumProperty);
-            set => SetValue(MinimumProperty, value);
-        }
-
-        private static void OnMinimumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnMinimumPropertyChanged(args);
-        }
-
-        private void OnMinimumPropertyChanged(DependencyPropertyChangedEventArgs args)
-        {
-            CoerceMaximum();
-            CoerceValue();
-
-            UpdateSpinButtonEnabled();
-        }
-
-        #endregion
-
-        #region Maximum
-
-        public static readonly DependencyProperty MaximumProperty =
-            DependencyProperty.Register(
-                nameof(Maximum),
-                typeof(double),
-                typeof(NumberBox),
-                new PropertyMetadata(double.MaxValue, OnMaximumPropertyChanged));
-
-        public double Maximum
-        {
-            get => (double)GetValue(MaximumProperty);
-            set => SetValue(MaximumProperty, value);
-        }
-
-        private static void OnMaximumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnMaximumPropertyChanged(args);
-        }
-
-        private void OnMaximumPropertyChanged(DependencyPropertyChangedEventArgs args)
-        {
-            CoerceMinimum();
-            CoerceValue();
-
-            UpdateSpinButtonEnabled();
-        }
-
-        #endregion
-
-        #region Value
-
-        public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register(
-                nameof(Value),
-                typeof(double),
-                typeof(NumberBox),
-                new PropertyMetadata(0d, OnValuePropertyChanged));
-
-        public double Value
-        {
-            get => (double)GetValue(ValueProperty);
-            set => SetValue(ValueProperty, value);
-        }
-
-        private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnValuePropertyChanged(args);
-        }
-
         private void OnValuePropertyChanged(DependencyPropertyChangedEventArgs args)
         {
             // This handler may change Value; don't send extra events in that case.
@@ -242,26 +481,20 @@ namespace ModernWpf.Controls
             }
         }
 
-        #endregion
-
-        #region SmallChange
-
-        public static readonly DependencyProperty SmallChangeProperty =
-            DependencyProperty.Register(
-                nameof(SmallChange),
-                typeof(double),
-                typeof(NumberBox),
-                new PropertyMetadata(1d, OnSmallChangePropertyChanged));
-
-        public double SmallChange
+        private void OnMinimumPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
-            get => (double)GetValue(SmallChangeProperty);
-            set => SetValue(SmallChangeProperty, value);
+            CoerceMaximum();
+            CoerceValue();
+
+            UpdateSpinButtonEnabled();
         }
 
-        private static void OnSmallChangePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        private void OnMaximumPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
-            ((NumberBox)sender).OnSmallChangePropertyChanged(args);
+            CoerceMinimum();
+            CoerceValue();
+
+            UpdateSpinButtonEnabled();
         }
 
         private void OnSmallChangePropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -269,247 +502,9 @@ namespace ModernWpf.Controls
             UpdateSpinButtonEnabled();
         }
 
-        #endregion
-
-        #region LargeChange
-
-        public static readonly DependencyProperty LargeChangeProperty =
-            DependencyProperty.Register(
-                nameof(LargeChange),
-                typeof(double),
-                typeof(NumberBox),
-                new PropertyMetadata(10d, OnLargeChangePropertyChanged));
-
-        public double LargeChange
-        {
-            get => (double)GetValue(LargeChangeProperty);
-            set => SetValue(LargeChangeProperty, value);
-        }
-
-        private static void OnLargeChangePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnLargeChangePropertyChanged(args);
-        }
-
-        private void OnLargeChangePropertyChanged(DependencyPropertyChangedEventArgs args)
-        {
-
-        }
-
-        #endregion
-
-        #region Text
-
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register(
-                nameof(Text),
-                typeof(string),
-                typeof(NumberBox),
-                new PropertyMetadata(string.Empty, OnTextPropertyChanged));
-
-        public string Text
-        {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
-        }
-
-        private static void OnTextPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnTextPropertyChanged(args);
-        }
-
-        private void OnTextPropertyChanged(DependencyPropertyChangedEventArgs args)
-        {
-            if (!m_textUpdating)
-            {
-                UpdateValueToText();
-            }
-        }
-
-        #endregion
-
-        #region Header
-
-        public static readonly DependencyProperty HeaderProperty =
-            ControlHelper.HeaderProperty.AddOwner(typeof(NumberBox));
-
-        public object Header
-        {
-            get => GetValue(HeaderProperty);
-            set => SetValue(HeaderProperty, value);
-        }
-
-        #endregion
-
-        #region HeaderTemplate
-
-        public static readonly DependencyProperty HeaderTemplateProperty =
-            ControlHelper.HeaderTemplateProperty.AddOwner(typeof(NumberBox));
-
-        public DataTemplate HeaderTemplate
-        {
-            get => (DataTemplate)GetValue(HeaderTemplateProperty);
-            set => SetValue(HeaderTemplateProperty, value);
-        }
-
-        #endregion
-
-        #region PlaceholderText
-
-        public static readonly DependencyProperty PlaceholderTextProperty =
-            ControlHelper.PlaceholderTextProperty.AddOwner(typeof(NumberBox));
-
-        public string PlaceholderText
-        {
-            get => (string)GetValue(PlaceholderTextProperty);
-            set => SetValue(PlaceholderTextProperty, value);
-        }
-
-        #endregion
-
-        #region Description
-
-        public static readonly DependencyProperty DescriptionProperty =
-            ControlHelper.DescriptionProperty.AddOwner(typeof(NumberBox));
-
-        public object Description
-        {
-            get => GetValue(DescriptionProperty);
-            set => SetValue(DescriptionProperty, value);
-        }
-
-        #endregion
-
-        #region ValidationMode
-
-        public static readonly DependencyProperty ValidationModeProperty =
-            DependencyProperty.Register(
-                nameof(ValidationMode),
-                typeof(NumberBoxValidationMode),
-                typeof(NumberBox),
-                new PropertyMetadata(OnValidationModePropertyChanged));
-
-        public NumberBoxValidationMode ValidationMode
-        {
-            get => (NumberBoxValidationMode)GetValue(ValidationModeProperty);
-            set => SetValue(ValidationModeProperty, value);
-        }
-
-        private static void OnValidationModePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnValidationModePropertyChanged(args);
-        }
-
-        private void OnValidationModePropertyChanged(DependencyPropertyChangedEventArgs args)
-        {
-            ValidateInput();
-            UpdateSpinButtonEnabled();
-        }
-
-        #endregion
-
-        #region SpinButtonPlacementMode
-
-        public static readonly DependencyProperty SpinButtonPlacementModeProperty =
-            DependencyProperty.Register(
-                nameof(SpinButtonPlacementMode),
-                typeof(NumberBoxSpinButtonPlacementMode),
-                typeof(NumberBox),
-                new PropertyMetadata(NumberBoxSpinButtonPlacementMode.Hidden, OnSpinButtonPlacementModePropertyChanged));
-
-        public NumberBoxSpinButtonPlacementMode SpinButtonPlacementMode
-        {
-            get => (NumberBoxSpinButtonPlacementMode)GetValue(SpinButtonPlacementModeProperty);
-            set => SetValue(SpinButtonPlacementModeProperty, value);
-        }
-
-        private static void OnSpinButtonPlacementModePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnSpinButtonPlacementModePropertyChanged(args);
-        }
-
-        private void OnSpinButtonPlacementModePropertyChanged(DependencyPropertyChangedEventArgs args)
-        {
-            UpdateSpinButtonPlacement();
-        }
-
-        #endregion
-
-        #region IsWrapEnabled
-
-        public static readonly DependencyProperty IsWrapEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsWrapEnabled),
-                typeof(bool),
-                typeof(NumberBox),
-                new PropertyMetadata(false, OnIsWrapEnabledPropertyChanged));
-
-        public bool IsWrapEnabled
-        {
-            get => (bool)GetValue(IsWrapEnabledProperty);
-            set => SetValue(IsWrapEnabledProperty, value);
-        }
-
-        private static void OnIsWrapEnabledPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnIsWrapEnabledPropertyChanged(args);
-        }
-
         private void OnIsWrapEnabledPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
             UpdateSpinButtonEnabled();
-        }
-
-        #endregion
-
-        #region AcceptsExpression
-
-        public static readonly DependencyProperty AcceptsExpressionProperty =
-            DependencyProperty.Register(
-                nameof(AcceptsExpression),
-                typeof(bool),
-                typeof(NumberBox),
-                new PropertyMetadata(false, OnAcceptsExpressionPropertyChanged));
-
-        public bool AcceptsExpression
-        {
-            get => (bool)GetValue(AcceptsExpressionProperty);
-            set => SetValue(AcceptsExpressionProperty, value);
-        }
-
-        private static void OnAcceptsExpressionPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnAcceptsExpressionPropertyChanged(args);
-        }
-
-        private void OnAcceptsExpressionPropertyChanged(DependencyPropertyChangedEventArgs args)
-        {
-
-        }
-
-        #endregion
-
-        #region NumberFormatter
-
-        public static readonly DependencyProperty NumberFormatterProperty =
-            DependencyProperty.Register(
-                nameof(NumberFormatter),
-                typeof(INumberBoxNumberFormatter),
-                typeof(NumberBox),
-                new PropertyMetadata(
-                    new DefaultNumberBoxNumberFormatter(),
-                    OnNumberFormatterPropertyChanged),
-                ValidateNumberFormatter);
-
-        public INumberBoxNumberFormatter NumberFormatter
-        {
-            get => (INumberBoxNumberFormatter)GetValue(NumberFormatterProperty);
-            set => SetValue(NumberFormatterProperty, value);
-        }
-
-        private static void OnNumberFormatterPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnNumberFormatterPropertyChanged(args);
         }
 
         private void OnNumberFormatterPropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -523,22 +518,18 @@ namespace ModernWpf.Controls
             return value is INumberBoxNumberFormatter;
         }
 
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(NumberBox));
-
-        public CornerRadius CornerRadius
+        private void OnSpinButtonPlacementModePropertyChanged(DependencyPropertyChangedEventArgs args)
         {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
+            UpdateSpinButtonPlacement();
         }
 
-        #endregion
-
-        public event TypedEventHandler<NumberBox, NumberBoxValueChangedEventArgs> ValueChanged;
+        private void OnTextPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            if (!m_textUpdating)
+            {
+                UpdateValueToText();
+            }
+        }
 
         void UpdateValueToText()
         {
@@ -547,6 +538,12 @@ namespace ModernWpf.Controls
                 m_textBox.Text = Text;
                 ValidateInput();
             }
+        }
+
+        private void OnValidationModePropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            ValidateInput();
+            UpdateSpinButtonEnabled();
         }
 
         void OnNumberBoxGotFocus(object sender, RoutedEventArgs e)
@@ -581,7 +578,7 @@ namespace ModernWpf.Controls
             var max = Maximum;
             if (Minimum > max)
             {
-                Minimum = max;
+                SetCurrentValue(MinimumProperty, max);
             }
         }
 
@@ -590,7 +587,7 @@ namespace ModernWpf.Controls
             var min = Minimum;
             if (Maximum < min)
             {
-                Maximum = min;
+                SetCurrentValue(MaximumProperty, min);
             }
         }
 
@@ -604,11 +601,11 @@ namespace ModernWpf.Controls
                 var max = Maximum;
                 if (value > max)
                 {
-                    Value = max;
+                    SetCurrentValue(ValueProperty, max);
                 }
                 else
                 {
-                    Value = Minimum;
+                    SetCurrentValue(ValueProperty, Minimum);
                 }
             }
         }
@@ -623,7 +620,7 @@ namespace ModernWpf.Controls
                 // Handles empty TextBox case, set text to current value
                 if (string.IsNullOrEmpty(text))
                 {
-                    Value = double.NaN;
+                    SetCurrentValue(ValueProperty, double.NaN);
                 }
                 else
                 {
@@ -651,7 +648,7 @@ namespace ModernWpf.Controls
                         }
                         else
                         {
-                            Value = value.Value;
+                            SetCurrentValue(ValueProperty, value.Value);
                         }
                     }
                 }
@@ -755,7 +752,7 @@ namespace ModernWpf.Controls
                     }
                 }
 
-                Value = newVal;
+                SetCurrentValue(ValueProperty, newVal); ;
             }
         }
 
@@ -780,7 +777,7 @@ namespace ModernWpf.Controls
                 {
                     m_textUpdating = true;
 
-                    Text = newText;
+                    SetCurrentValue(TextProperty, newText);
 
                     // This places the caret at the end of the text.
                     m_textBox.Select(newText.Length, 0);

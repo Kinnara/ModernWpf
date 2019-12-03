@@ -42,7 +42,6 @@
         <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
         <Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
-        <Setter Property="ui:ControlHelper.PlaceholderForeground" Value="{DynamicResource TextControlPlaceholderForeground}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource TextControlSelectionHighlightColor}" />
         <Setter Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThickness}" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
@@ -176,6 +175,7 @@
                             Grid.Row="1"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
+                            Foreground="{TemplateBinding ui:ControlHelper.PlaceholderForeground}"
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
                             Text="{TemplateBinding ui:ControlHelper.PlaceholderText}"
@@ -238,6 +238,9 @@
                             <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundFocused}" />
                             <!--<Setter TargetName="PART_ContentHost" Property="root:ThemeManager.RequestedTheme" Value="Light" />-->
                         </Trigger>
+                        <Trigger Property="ui:ControlHelper.PlaceholderForeground" Value="{x:Null}">
+                            <Setter TargetName="PlaceholderTextContentPresenter" Property="Foreground" Value="{DynamicResource TextControlPlaceholderForeground}" />
+                        </Trigger>
                         <Trigger Property="ui:TextBoxHelper.HasText" Value="True">
                             <Setter TargetName="PlaceholderTextContentPresenter" Property="Visibility" Value="Collapsed" />
                         </Trigger>
@@ -258,9 +261,9 @@
     </Style>
 
     <Style TargetType="local:NumberBox">
-        <!--<Setter Property="SelectionHighlightColor" Value="{DynamicResource TextControlSelectionHighlightColor}" />-->
-        <!--<Setter Property="SelectionFlyout" Value="{StaticResource TextControlCommandBarSelectionFlyout}" />-->
+        <Setter Property="SelectionBrush" Value="{DynamicResource TextControlSelectionHighlightColor}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NumberBox">
@@ -316,6 +319,7 @@
                             ui:ControlHelper.Header="{TemplateBinding Header}"
                             ui:ControlHelper.HeaderTemplate="{TemplateBinding HeaderTemplate}"
                             ui:ControlHelper.PlaceholderText="{TemplateBinding PlaceholderText}"
+                            SelectionBrush="{TemplateBinding SelectionBrush}"
                             ui:ControlHelper.Description="{TemplateBinding Description}" />
 
                         <Popup
