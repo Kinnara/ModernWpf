@@ -25,7 +25,7 @@
             </sc:ControlExample>
 
             <sc:ControlExample
-                HeaderText="A NumberBox that evaluates expressions."
+                HeaderText="A NumberBox with a spin button."
                 HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Top">
                 <ui:NumberBox
