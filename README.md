@@ -1,4 +1,6 @@
 # ModernWPF UI Library
+[![Gitter](https://badges.gitter.im/ModernWpf/community.svg)](https://gitter.im/ModernWpf/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 Modern styles and controls for your WPF applications.
 
 ## Features
