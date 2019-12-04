@@ -12,7 +12,7 @@ namespace ModernWpf.Controls
         /// </summary>
         public XamlControlsResources()
         {
-            MergedDictionaries.Add(new ResourceDictionary { Source = PackUriHelper.GetAbsoluteUri("XamlControlsResources.xaml") });
+            MergedDictionaries.Add(new ResourceDictionary { Source = PackUriHelper.GetAbsoluteUri("ControlsResources.xaml") });
         }
 
         public bool UseCompactResources

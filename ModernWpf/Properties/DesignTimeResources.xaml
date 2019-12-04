@@ -4,6 +4,6 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/ModernWpf;component/DesignTime/SystemColors.xaml" />
         <ResourceDictionary Source="pack://application:,,,/ModernWpf;component/ThemeResources/Light.xaml" />
-        <ResourceDictionary Source="pack://application:,,,/ModernWpf;component/XamlControlsResources.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/ModernWpf;component/ControlsResources.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
