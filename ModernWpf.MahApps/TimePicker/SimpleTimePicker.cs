@@ -6,9 +6,14 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Markup;
 
 namespace ModernWpf.MahApps.Controls
 {
+    /// <summary>
+    /// Represents a control that allows a user to pick a time value.
+    /// </summary>
+    [ContentProperty(nameof(Header))]
     public class SimpleTimePicker : TimePicker
     {
         private const string ElementAmPmSwitcher = "PART_AmPmSwitcher";
@@ -33,11 +38,28 @@ namespace ModernWpf.MahApps.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SimpleTimePicker), new FrameworkPropertyMetadata(typeof(SimpleTimePicker)));
         }
 
+        /// <summary>
+        /// Initializes a new instance of the SimpleTimePicker class.
+        /// </summary>
+        public SimpleTimePicker()
+        {
+        }
+
         #region CornerRadius
 
+        /// <summary>
+        /// Identifies the CornerRadius dependency property.
+        /// </summary>
         public static readonly DependencyProperty CornerRadiusProperty =
             ControlHelper.CornerRadiusProperty.AddOwner(typeof(SimpleTimePicker));
 
+        /// <summary>
+        /// Gets or sets the radius for the corners of the control's border.
+        /// </summary>
+        /// <returns>
+        /// The degree to which the corners are rounded, expressed as values of the CornerRadius
+        /// structure.
+        /// </returns>
         public CornerRadius CornerRadius
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
@@ -48,9 +70,16 @@ namespace ModernWpf.MahApps.Controls
 
         #region Header
 
+        /// <summary>
+        /// Identifies the Header dependency property.
+        /// </summary>
         public static readonly DependencyProperty HeaderProperty =
             ControlHelper.HeaderProperty.AddOwner(typeof(SimpleTimePicker));
 
+        /// <summary>
+        /// Gets or sets the content for the control's header.
+        /// </summary>
+        /// <returns>The content of the control's header. The default is **null**.</returns>
         public object Header
         {
             get => GetValue(HeaderProperty);
@@ -61,9 +90,19 @@ namespace ModernWpf.MahApps.Controls
 
         #region HeaderTemplate
 
+        /// <summary>
+        /// Identifies the HeaderTemplate dependency property.
+        /// </summary>
         public static readonly DependencyProperty HeaderTemplateProperty =
             ControlHelper.HeaderTemplateProperty.AddOwner(typeof(SimpleTimePicker));
 
+        /// <summary>
+        /// Gets or sets the DataTemplate used to display the content of the control's header.
+        /// </summary>
+        /// <returns>
+        /// The template that specifies the visualization of the header object. The default
+        /// is **null**.
+        /// </returns>
         public DataTemplate HeaderTemplate
         {
             get => (DataTemplate)GetValue(HeaderTemplateProperty);
@@ -72,6 +111,9 @@ namespace ModernWpf.MahApps.Controls
 
         #endregion
 
+        /// <summary>
+        /// Called when the Template's tree has been generated.
+        /// </summary>
         public override void OnApplyTemplate()
         {
             _hourInput = GetTemplateChild(ElementHourPicker) as Selector;

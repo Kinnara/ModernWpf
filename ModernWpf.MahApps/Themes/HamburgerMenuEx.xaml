@@ -229,13 +229,20 @@
                                     Height="{TemplateBinding HamburgerHeight}"
                                     Padding="{TemplateBinding HamburgerMargin}"
                                     AutomationProperties.Name="Main button"
-                                    ContentTemplate="{TemplateBinding HamburgerButtonTemplate}"
                                     Foreground="{TemplateBinding PaneForeground}"
                                     IsTabStop="{TemplateBinding IsTabStop}"
                                     Style="{TemplateBinding HamburgerButtonStyle}"
                                     TabIndex="0"
                                     Visibility="{TemplateBinding HamburgerVisibility}"
-                                    WindowChrome.IsHitTestVisibleInChrome="True" />
+                                    WindowChrome.IsHitTestVisibleInChrome="True">
+                                    <TextBlock
+                                        x:Name="PaneTitleTextBlock"
+                                        Grid.Column="0"
+                                        Text="{TemplateBinding PaneTitle}"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Style="{DynamicResource NavigationViewItemHeaderTextStyle}" />
+                                </Button>
                             </StackPanel>
                             <ContentControl
                                 x:Name="PaneHeaderContent"
@@ -327,6 +334,9 @@
             </Trigger>
             <Trigger Property="Header" Value="{x:Null}">
                 <Setter TargetName="HeaderContent" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="HasPaneTitle" Value="True">
+                <Setter TargetName="HamburgerButton" Property="Width" Value="{Binding OpenPaneLength, RelativeSource={RelativeSource TemplatedParent}}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>

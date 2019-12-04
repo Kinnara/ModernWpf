@@ -42,6 +42,7 @@
 
         <ui:HamburgerMenuEx
             x:Name="NavView"
+            PaneTitle="Pane Title"
             IsBackButtonVisible="True"
             IsPaneOpen="True"
             IsBackEnabled="{Binding ElementName=ContentFrame, Path=CanGoBack}"
