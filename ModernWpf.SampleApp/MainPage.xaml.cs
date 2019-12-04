@@ -18,7 +18,7 @@ namespace ModernWpf.SampleApp
         {
             InitializeComponent();
             //PagesList.SelectedItem = PagesList.Items.OfType<ControlPageInfo>().FirstOrDefault(
-            //    x => x.NavigateUri.ToString().EndsWith(nameof(NumberBoxPage) + ".xaml"));
+            //    x => x.NavigateUri.ToString().EndsWith(nameof(TabControlPage) + ".xaml"));
             NavigateToSelectedPage();
         }
 

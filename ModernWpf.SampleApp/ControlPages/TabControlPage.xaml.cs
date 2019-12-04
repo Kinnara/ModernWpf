@@ -1,8 +1,9 @@
 ﻿using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
-using SamplesCommon.SamplePages;
+using SamplesCommon;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
@@ -25,10 +26,14 @@ namespace ModernWpf.SampleApp.ControlPages
             TabItem newItem = new TabItem();
 
             newItem.Header = $"Document {index}";
-            TabItemHelper.SetIcon(newItem, new FontIcon { Glyph = "\uE130 " });
+            TabItemHelper.SetIcon(newItem, new SymbolIcon(Symbol.Document));
 
             // The content of the tab is often a frame that contains a page, though it could be any UIElement.
-            Frame frame = new Frame();
+            Frame frame = new Frame
+            {
+                NavigationUIVisibility = NavigationUIVisibility.Hidden,
+                IsTabStop = false
+            };
 
             frame.Navigated += (s, e) =>
             {
@@ -38,13 +43,13 @@ namespace ModernWpf.SampleApp.ControlPages
             switch (index % 3)
             {
                 case 0:
-                    frame.Navigate(new SamplePage1());
+                    frame.Navigate(SamplePageSources.SamplePage1);
                     break;
                 case 1:
-                    frame.Navigate(new SamplePage2());
+                    frame.Navigate(SamplePageSources.SamplePage2);
                     break;
                 case 2:
-                    frame.Navigate(new SamplePage3());
+                    frame.Navigate(SamplePageSources.SamplePage3);
                     break;
             }
 

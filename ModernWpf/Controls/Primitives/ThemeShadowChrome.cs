@@ -31,7 +31,11 @@ namespace ModernWpf.Controls.Primitives
 
         public ThemeShadowChrome()
         {
-            _background = new Grid { CacheMode = s_bitmapCache };
+            _background = new Grid
+            {
+                CacheMode = s_bitmapCache,
+                SnapsToDevicePixels = true
+            };
             AddVisualChild(_background);
         }
 
@@ -62,6 +66,7 @@ namespace ModernWpf.Controls.Primitives
                 if (IsShadowEnabled)
                 {
                     EnsureShadows();
+                    Debug.Assert(_background.Children.Count == 0);
                     _background.Children.Add(_shadow1);
                     _background.Children.Add(_shadow2);
                     _background.Visibility = Visibility.Visible;
@@ -294,11 +299,17 @@ namespace ModernWpf.Controls.Primitives
 
         private void EnsureShadows()
         {
-            _shadow1 = CreateShadowElement();
-            UpdateShadow1();
+            if (_shadow1 == null)
+            {
+                _shadow1 = CreateShadowElement();
+                UpdateShadow1();
+            }
 
-            _shadow2 = CreateShadowElement();
-            UpdateShadow2();
+            if (_shadow2 == null)
+            {
+                _shadow2 = CreateShadowElement();
+                UpdateShadow2();
+            }
         }
 
         private Border CreateShadowElement()

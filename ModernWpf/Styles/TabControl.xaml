@@ -26,6 +26,8 @@
     <sys:Double x:Key="TabViewItemScrollButtonHeight">29</sys:Double>
     <Thickness x:Key="TabViewItemScrollButtonPadding">6,4,10,5</Thickness>
 
+    <sys:Double x:Key="TabViewShadowDepth">16</sys:Double>
+
     <primitives:CornerRadiusFilterConverter x:Key="TopCornerRadiusFilterConverter" Filter="Top" />
     <primitives:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
     <primitives:CornerRadiusFilterConverter x:Key="BottomCornerRadiusFilterConverter" Filter="Bottom" />
@@ -44,77 +46,77 @@
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
                     <!-- This item will cover the separator on its left side. -->
-                    <Border
-                        x:Name="LayoutRoot"
-                        Padding="{TemplateBinding Padding}"
-                        Margin="-1,0,0,0"
-                        SnapsToDevicePixels="True">
-                        <Grid>
+                    <primitives:ThemeShadowChrome
+                        x:Name="Shadow"
+                        CornerRadius="{Binding ElementName=TabContainer, Path=CornerRadius}"
+                        Depth="{DynamicResource TabViewShadowDepth}"
+                        IsShadowEnabled="False">
+                        <Border
+                            x:Name="LayoutRoot"
+                            Padding="{TemplateBinding Padding}"
+                            Margin="-1,0,0,0"
+                            SnapsToDevicePixels="True">
+                            <Grid>
 
-                            <Grid.RenderTransform>
-                                <ScaleTransform x:Name="LayoutRootScale" />
-                            </Grid.RenderTransform>
+                                <Border
+                                    x:Name="TabSeparator"
+                                    HorizontalAlignment="Right"
+                                    Width="1"
+                                    BorderBrush="{DynamicResource TabViewItemSeparator}"
+                                    BorderThickness="1"
+                                    Margin="0,6,0,6" />
 
-                            <Border
-                                x:Name="TabSeparator"
-                                HorizontalAlignment="Right"
-                                Width="1"
-                                BorderBrush="{DynamicResource TabViewItemSeparator}"
-                                BorderThickness="1"
-                                Margin="0,6,0,6" />
+                                <Border
+                                    x:Name="TabContainer"
+                                    Grid.Column="1"
+                                    Background="{DynamicResource TabViewItemHeaderBackground}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Padding="{DynamicResource TabViewItemHeaderPadding}"
+                                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}">
+                                    <Grid>
 
-                            <!-- Control.IsTemplateFocusTarget="True" -->
-                            <!-- FocusVisualMargin="{TemplateBinding FocusVisualMargin}" -->
-                            <Border
-                                x:Name="TabContainer"
-                                Grid.Column="1"
-                                Background="{DynamicResource TabViewItemHeaderBackground}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Padding="{DynamicResource TabViewItemHeaderPadding}"
-                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}">
-                                <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
 
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
+                                        <Viewbox
+                                            x:Name="IconBox"
+                                            MaxWidth="{DynamicResource TabViewItemHeaderIconSize}"
+                                            MaxHeight="{DynamicResource TabViewItemHeaderIconSize}"
+                                            Margin="{DynamicResource TabViewItemHeaderIconMargin}">
+                                            <ContentControl
+                                                x:Name="IconControl"
+                                                Content="{TemplateBinding primitives:TabItemHelper.Icon}"
+                                                IsTabStop="False"
+                                                Foreground="{DynamicResource TabViewItemIconForeground}" />
+                                        </Viewbox>
 
-                                    <Viewbox
-                                        x:Name="IconBox"
-                                        MaxWidth="{DynamicResource TabViewItemHeaderIconSize}"
-                                        MaxHeight="{DynamicResource TabViewItemHeaderIconSize}"
-                                        Margin="{DynamicResource TabViewItemHeaderIconMargin}">
-                                        <ContentControl
-                                            x:Name="IconControl"
-                                            Content="{TemplateBinding primitives:TabItemHelper.Icon}"
-                                            IsTabStop="False"
-                                            Foreground="{DynamicResource TabViewItemIconForeground}" />
-                                    </Viewbox>
+                                        <ContentPresenter
+                                            x:Name="ContentPresenter"
+                                            Grid.Column="1"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            ContentSource="Header"
+                                            TextElement.FontWeight="{TemplateBinding FontWeight}"
+                                            TextElement.FontSize="{DynamicResource TabViewItemHeaderFontSize}"
+                                            Focusable="False"
+                                            RecognizesAccessKey="True"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
-                                    <ContentPresenter
-                                        x:Name="ContentPresenter"
-                                        Grid.Column="1"
-                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                        ContentSource="Header"
-                                        TextElement.FontWeight="{TemplateBinding FontWeight}"
-                                        TextElement.FontSize="{DynamicResource TabViewItemHeaderFontSize}"
-                                        Focusable="False"
-                                        RecognizesAccessKey="True"
-                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </Grid>
+                                </Border>
 
-                                </Grid>
-                            </Border>
-
-                            <Control
-                                x:Name="FocusVisual"
-                                Grid.Column="1"
-                                Style="{DynamicResource CustomFocusVisual}"
-                                Margin="{TemplateBinding primitives:FocusVisualHelper.FocusVisualMargin}" />
-                        </Grid>
-                    </Border>
+                                <Control
+                                    x:Name="FocusVisual"
+                                    Grid.Column="1"
+                                    Style="{DynamicResource CustomFocusVisual}"
+                                    Margin="{TemplateBinding primitives:FocusVisualHelper.FocusVisualMargin}" />
+                            </Grid>
+                        </Border>
+                    </primitives:ThemeShadowChrome>
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -123,6 +125,7 @@
                         </Trigger>
                         <!-- Selected -->
                         <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Shadow" Property="IsShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
                             <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundSelected}" />
                             <Setter Property="Panel.ZIndex" Value="1" />
@@ -169,10 +172,7 @@
 
     <Style x:Key="DefaultTabControlStyle" TargetType="{x:Type TabControl}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <!--<Setter Property="VerticalAlignment" Value="Top" />-->
-        <!--<Setter Property="IsTabStop" Value="False" />-->
         <Setter Property="Background" Value="{DynamicResource TabViewBackground}" />
-        <!--<Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />-->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabControl}">
@@ -191,12 +191,13 @@
                         </Grid.RowDefinitions>
                         <Border
                             x:Name="headerPanel"
+                            ClipToBounds="True"
+                            Panel.ZIndex="1"
                             Grid.Row="0"
                             Grid.Column="0"
                             Background="{TemplateBinding Background}"
                             Padding="{DynamicResource TabViewTopHeaderPadding}">
                             <TabPanel
-                                Panel.ZIndex="1"
                                 Background="Transparent"
                                 IsItemsHost="true"
                                 KeyboardNavigation.TabIndex="1" />
