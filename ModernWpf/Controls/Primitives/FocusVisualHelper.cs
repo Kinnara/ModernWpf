@@ -9,79 +9,143 @@ namespace ModernWpf.Controls.Primitives
     {
         #region FocusVisualPrimaryBrush
 
+        /// <summary>
+        /// Gets the brush used to draw the outer border of a HighVisibility focus
+        /// visual for a FrameworkElement.
+        /// </summary>
+        /// <param name="element">The element from which to read the property value.</param>
+        /// <returns>The brush used to draw the outer border of a HighVisibility focus visual.</returns>
         public static Brush GetFocusVisualPrimaryBrush(FrameworkElement element)
         {
             return (Brush)element.GetValue(FocusVisualPrimaryBrushProperty);
         }
 
+        /// <summary>
+        /// Sets the brush used to draw the outer border of a HighVisibility focus
+        /// visual for a FrameworkElement.
+        /// </summary>
+        /// <param name="element">The element on which to set the attached property.</param>
+        /// <param name="value">The property value to set.</param>
         public static void SetFocusVisualPrimaryBrush(FrameworkElement element, Brush value)
         {
             element.SetValue(FocusVisualPrimaryBrushProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the FocusVisualPrimaryBrush dependency property.
+        /// </summary>
         public static readonly DependencyProperty FocusVisualPrimaryBrushProperty =
             DependencyProperty.RegisterAttached(
                 "FocusVisualPrimaryBrush",
                 typeof(Brush),
-                typeof(FocusVisualHelper),
-                null);
+                typeof(FocusVisualHelper));
 
         #endregion
 
         #region FocusVisualSecondaryBrush
 
+        /// <summary>
+        /// Gets the brush used to draw the inner border of a HighVisibility focus
+        /// visual for a FrameworkElement.
+        /// </summary>
+        /// <param name="element">The element from which to read the property value.</param>
+        /// <returns>The brush used to draw the inner border of a HighVisibility focus visual.</returns>
         public static Brush GetFocusVisualSecondaryBrush(FrameworkElement element)
         {
             return (Brush)element.GetValue(FocusVisualSecondaryBrushProperty);
         }
 
+        /// <summary>
+        /// Sets the brush used to draw the inner border of a HighVisibility focus
+        /// visual for a FrameworkElement.
+        /// </summary>
+        /// <param name="element">The element on which to set the attached property.</param>
+        /// <param name="value">The property value to set.</param>
         public static void SetFocusVisualSecondaryBrush(FrameworkElement element, Brush value)
         {
             element.SetValue(FocusVisualSecondaryBrushProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the FocusVisualSecondaryBrush dependency property.
+        /// </summary>
         public static readonly DependencyProperty FocusVisualSecondaryBrushProperty =
             DependencyProperty.RegisterAttached(
                 "FocusVisualSecondaryBrush",
                 typeof(Brush),
-                typeof(FocusVisualHelper),
-                null);
+                typeof(FocusVisualHelper));
 
         #endregion
 
         #region FocusVisualPrimaryThickness
 
+        /// <summary>
+        /// Gets the thickness of the outer border of a HighVisibility focus visual
+        /// for a FrameworkElement.
+        /// </summary>
+        /// <param name="element">The element from which to read the property value.</param>
+        /// <returns>
+        /// The thickness of the outer border of a HighVisibility focus visual. The default
+        /// value is 2.
+        /// </returns>
         public static Thickness GetFocusVisualPrimaryThickness(FrameworkElement element)
         {
             return (Thickness)element.GetValue(FocusVisualPrimaryThicknessProperty);
         }
 
+        /// <summary>
+        /// Sets the thickness of the outer border of a HighVisibility focus visual
+        /// for a FrameworkElement.
+        /// </summary>
+        /// <param name="element">The element on which to set the attached property.</param>
+        /// <param name="value">The property value to set.</param>
         public static void SetFocusVisualPrimaryThickness(FrameworkElement element, Thickness value)
         {
             element.SetValue(FocusVisualPrimaryThicknessProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the FocusVisualPrimaryThickness dependency property.
+        /// </summary>
         public static readonly DependencyProperty FocusVisualPrimaryThicknessProperty =
             DependencyProperty.RegisterAttached(
                 "FocusVisualPrimaryThickness",
                 typeof(Thickness),
                 typeof(FocusVisualHelper),
-                new FrameworkPropertyMetadata(new Thickness(1)));
+                new FrameworkPropertyMetadata(new Thickness(2)));
 
         #endregion
 
         #region FocusVisualSecondaryThickness
 
+        /// <summary>
+        /// Gets the thickness of the inner border of a HighVisibility focus visual
+        /// for a FrameworkElement.
+        /// </summary>
+        /// <param name="element">The element from which to read the property value.</param>
+        /// <returns>
+        /// The thickness of the inner border of a HighVisibility focus visual. The default
+        /// value is 1.
+        /// </returns>
         public static Thickness GetFocusVisualSecondaryThickness(FrameworkElement element)
         {
             return (Thickness)element.GetValue(FocusVisualSecondaryThicknessProperty);
         }
 
+        /// <summary>
+        /// Sets the thickness of the inner border of a HighVisibility focus visual
+        /// for a FrameworkElement.
+        /// </summary>
+        /// <param name="element">The element on which to set the attached property.</param>
+        /// <param name="value">The property value to set.</param>
         public static void SetFocusVisualSecondaryThickness(FrameworkElement element, Thickness value)
         {
             element.SetValue(FocusVisualSecondaryThicknessProperty, value);
         }
 
+        /// <summary>
+        /// Identifies the FocusVisualSecondaryThickness dependency property.
+        /// </summary>
         public static readonly DependencyProperty FocusVisualSecondaryThicknessProperty =
             DependencyProperty.RegisterAttached(
                 "FocusVisualSecondaryThickness",
@@ -124,7 +188,7 @@ namespace ModernWpf.Controls.Primitives
                 "FocusVisualMargin",
                 typeof(Thickness),
                 typeof(FocusVisualHelper),
-                null);
+                new FrameworkPropertyMetadata(new Thickness()));
 
         #endregion
 
@@ -215,7 +279,13 @@ namespace ModernWpf.Controls.Primitives
                 if ((VisualTreeHelper.GetParent(focusVisual) as Adorner)?.AdornedElement is FrameworkElement focusedElement)
                 {
                     SetIsSystemFocusVisualVisible(focusedElement, true);
-                    focusVisual.Margin = FocusVisualHelper.GetFocusVisualMargin(focusedElement);
+
+                    TransferValue(focusedElement, focusVisual, FocusVisualPrimaryBrushProperty);
+                    TransferValue(focusedElement, focusVisual, FocusVisualPrimaryThicknessProperty);
+                    TransferValue(focusedElement, focusVisual, FocusVisualSecondaryBrushProperty);
+                    TransferValue(focusedElement, focusVisual, FocusVisualSecondaryThicknessProperty);                    
+                    focusVisual.Margin = GetFocusVisualMargin(focusedElement);
+
                     SetFocusedElement(focusVisual, focusedElement);
                 }
             }
@@ -225,9 +295,21 @@ namespace ModernWpf.Controls.Primitives
                 if (focusedElement != null)
                 {
                     focusedElement.ClearValue(IsSystemFocusVisualVisiblePropertyKey);
+                    focusVisual.ClearValue(FocusVisualPrimaryBrushProperty);
+                    focusVisual.ClearValue(FocusVisualPrimaryThicknessProperty);
+                    focusVisual.ClearValue(FocusVisualSecondaryBrushProperty);
+                    focusVisual.ClearValue(FocusVisualSecondaryThicknessProperty);
                     focusVisual.ClearValue(FrameworkElement.MarginProperty);
                     focusVisual.ClearValue(FocusedElementProperty);
                 }
+            }
+        }
+
+        private static void TransferValue(DependencyObject source, DependencyObject target, DependencyProperty dp)
+        {
+            if (!Helper.HasDefaultValue(source, dp))
+            {
+                target.SetValue(dp, source.GetValue(dp));
             }
         }
     }

@@ -238,7 +238,7 @@ namespace ModernWpf.Controls
 
             if (TransitionsEnabled)
             {
-                if (HasDefaultValue(oldElement, TransitionService.NavigationOutTransitionProperty))
+                if (Helper.HasDefaultValue(oldElement, TransitionService.NavigationOutTransitionProperty))
                 {
                     oldElement.SetCurrentValue(TransitionService.NavigationOutTransitionProperty, DefaultNavigationOutTransition);
                 }
@@ -414,7 +414,7 @@ namespace ModernWpf.Controls
 
             if (oldElement != null && newElement != null && TransitionsEnabled)
             {
-                if (HasDefaultValue(newElement, TransitionService.NavigationInTransitionProperty))
+                if (Helper.HasDefaultValue(newElement, TransitionService.NavigationInTransitionProperty))
                 {
                     newElement.SetCurrentValue(TransitionService.NavigationInTransitionProperty, DefaultNavigationInTransition);
                 }
@@ -589,11 +589,6 @@ namespace ModernWpf.Controls
 
                 presenter.IsHitTestVisible = true;
             }
-        }
-
-        private static bool HasDefaultValue(DependencyObject d, DependencyProperty dp)
-        {
-            return DependencyPropertyHelper.GetValueSource(d, dp).BaseValueSource == BaseValueSource.Default;
         }
     }
 }

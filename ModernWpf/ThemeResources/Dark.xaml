@@ -1268,17 +1268,19 @@
     <m:StaticResource x:Key="AccentButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
 
     <Style x:Key="HighVisibilityFocusVisual">
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualPrimaryBrush" Value="{StaticResource SystemControlFocusVisualPrimaryBrush}" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualSecondaryBrush" Value="{StaticResource SystemControlFocusVisualSecondaryBrush}" />
         <Setter Property="primitives:FocusVisualHelper.IsSystemFocusVisual" Value="True" />
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
                     <Border
-                        BorderBrush="{StaticResource SystemControlFocusVisualPrimaryBrush}"
-                        BorderThickness="2"
+                        BorderBrush="{TemplateBinding primitives:FocusVisualHelper.FocusVisualPrimaryBrush}"
+                        BorderThickness="{TemplateBinding primitives:FocusVisualHelper.FocusVisualPrimaryThickness}"
                         SnapsToDevicePixels="True">
                         <Border
-                            BorderBrush="{StaticResource SystemControlFocusVisualSecondaryBrush}"
-                            BorderThickness="1" />
+                            BorderBrush="{TemplateBinding primitives:FocusVisualHelper.FocusVisualSecondaryBrush}"
+                            BorderThickness="{TemplateBinding primitives:FocusVisualHelper.FocusVisualSecondaryThickness}" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
