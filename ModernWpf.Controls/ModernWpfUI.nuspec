@@ -7,7 +7,7 @@
     <authors>$authors$</authors>
     <owners>$authors$</owners>
     <description>Modern styles and controls for your WPF applications.</description>
-    <tags>WPF XAML UI Metro Modern Fluent Theme WinUI</tags>
+    <tags>$tags$</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">$license$</license>
     <projectUrl>$projectUrl$</projectUrl>

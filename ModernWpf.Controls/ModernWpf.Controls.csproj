@@ -34,6 +34,7 @@
       <NuspecProperties>$(NuspecProperties);config=$(Configuration)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);version=$(PackageVersion)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);authors=$(Authors)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);tags=$(PackageTags)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);license=$(PackageLicenseExpression)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);projectUrl=$(PackageProjectUrl)</NuspecProperties>
     </PropertyGroup>
