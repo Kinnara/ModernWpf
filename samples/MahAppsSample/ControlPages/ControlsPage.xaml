@@ -11,6 +11,20 @@
     Style="{StaticResource PageStyle}"
     Background="Transparent">
 
+    <Page.Resources>
+        <ui:Flyout
+            x:Key="ExampleFlyout"
+            x:Shared="False"
+            Placement="Bottom">
+            <ui:Flyout.FlyoutPresenterStyle>
+                <Style TargetType="ui:FlyoutPresenter">
+                    <Setter Property="Width" Value="296" />
+                    <Setter Property="Height" Value="64" />
+                </Style>
+            </ui:Flyout.FlyoutPresenterStyle>
+        </ui:Flyout>
+    </Page.Resources>
+
     <ui:SimpleStackPanel
         Orientation="Horizontal"
         Spacing="40"
@@ -32,9 +46,11 @@
                 Margin="0,15,0,0" />
             <ui:DropDownButton
                 Content="Drop down button"
+                Flyout="{StaticResource ExampleFlyout}"
                 Margin="0,15,0,0" />
             <ui:SplitButton
                 Content="Split button"
+                Flyout="{StaticResource ExampleFlyout}"
                 Margin="0,15,0,25" />
 
             <TextBlock
@@ -106,7 +122,12 @@
             <ComboBox
                 ui:ControlHelper.Header="Label title"
                 ui:ControlHelper.PlaceholderText="Placeholder text"
-                HorizontalAlignment="Stretch" />
+                HorizontalAlignment="Stretch">
+                <ComboBoxItem>List item</ComboBoxItem>
+                <ComboBoxItem>List item</ComboBoxItem>
+                <ComboBoxItem>List item</ComboBoxItem>
+                <ComboBoxItem>List item</ComboBoxItem>
+            </ComboBox>
             <ComboBox
                 ui:ControlHelper.Header="Disabled"
                 ui:ControlHelper.PlaceholderText="Placeholder text"
@@ -227,6 +248,7 @@
                 Margin="0,0,0,14" />
             <Slider
                 ui:ControlHelper.Header="Label title"
+                AutoToolTipPlacement="TopLeft"
                 Value="50"
                 Maximum="100" />
         </sc:NonClippingStackPanel>
