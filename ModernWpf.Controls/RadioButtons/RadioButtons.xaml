@@ -177,7 +177,7 @@
                             <ContentPresenter
                                 x:Name="HeaderContentPresenter"
                                 Content="{TemplateBinding Header}"
-                                Margin="0,0,0,4"
+                                Margin="{DynamicResource RadioButtonsHeaderMargin}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </StackPanel>
