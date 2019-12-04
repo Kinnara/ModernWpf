@@ -9,7 +9,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <designTime:IntellisenseResources Source="/DesignTime/ResourceKeys.xaml" />
+                <designTime:IntellisenseResources Source="/ModernWpf;component/DesignTime/DesignTimeResources.xaml" />
                 <ui:ThemeResources RequestedTheme="Light" />
                 <ui:XamlControlsResources />
             </ResourceDictionary.MergedDictionaries>

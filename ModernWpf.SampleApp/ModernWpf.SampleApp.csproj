@@ -45,12 +45,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Include="..\ModernWpf\DesignTime\ResourceKeys.xaml" Link="DesignTime\ResourceKeys.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
     <ProjectReference Include="..\ModernWpf\ModernWpf.csproj" />
     <ProjectReference Include="..\samples\SamplesCommon\SamplesCommon.csproj" />

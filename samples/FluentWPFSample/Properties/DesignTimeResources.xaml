@@ -4,7 +4,7 @@
     xmlns:designTime="clr-namespace:FluentWPFSample.DesignTime">
 
     <ResourceDictionary.MergedDictionaries>
-        <designTime:IntellisenseResources Source="/DesignTime/ResourceKeys.xaml" />
+        <designTime:IntellisenseResources Source="/ModernWpf;component/DesignTime/DesignTimeResources.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>
