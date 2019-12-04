@@ -3,7 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/ModernWpf;component/Styles/ListViewHeaderItem.xaml" />
+        <ResourceDictionary Source="/ModernWpf;component/Themes/ListViewHeaderItem.xaml" />
+        <ResourceDictionary Source="/ModernWpf;component/Themes/ProgressBarPresenter.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/TitleBar/TitleBarButton.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/TitleBar/TitleBarControl.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/Transitions/TransitionFrame.xaml" />

@@ -13,13 +13,31 @@
 
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <sc:ControlExample HeaderText="An indeterminate progress bar.">
+            <sc:ControlExample
+                HeaderText="An indeterminate progress bar."
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Top">
                 <ProgressBar
                     x:Name="progressBar"
                     Width="130"
                     HorizontalAlignment="Left"
                     IsIndeterminate="True" />
+
+                <sc:ControlExample.Options>
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <CheckBox
+                            Content="IsIndeterminate"
+                            IsChecked="{Binding ElementName=progressBar, Path=IsIndeterminate}" />
+                        <Slider
+                            ui:ControlHelper.Header="Width"
+                            AutoToolTipPlacement="TopLeft"
+                            Minimum="130"
+                            Maximum="260"
+                            Value="{Binding ElementName=progressBar, Path=Width}" />
+                    </ui:SimpleStackPanel>
+                </sc:ControlExample.Options>
             </sc:ControlExample>
+
             <sc:ControlExample HeaderText="A determinate progress bar.">
                 <StackPanel Orientation="Horizontal">
                     <ProgressBar
@@ -35,6 +53,7 @@
                         Click="RepeatButton_Click" />
                 </StackPanel>
             </sc:ControlExample>
+
             <sc:ControlExample HeaderText="An indeterminate progress ring.">
                 <ui:ProgressRing
                     IsActive="{Binding IsOn, ElementName=ProgressToggle}"
