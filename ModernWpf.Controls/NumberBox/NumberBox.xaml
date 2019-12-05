@@ -6,6 +6,7 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/ModernWpf;component/Styles/RepeatButton.xaml" />
+        <ResourceDictionary Source="/ModernWpf;component/Styles/TextBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <ui:CornerRadiusFilterConverter x:Key="LeftCornerRadiusFilterConverter" Filter="Left" />
@@ -37,28 +38,7 @@
         </Style.Setters>
     </Style>
 
-    <Style x:Key="NumberBoxTextBoxStyle" TargetType="TextBox">
-        <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
-        <Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
-        <Setter Property="SelectionBrush" Value="{DynamicResource TextControlSelectionHighlightColor}" />
-        <Setter Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThickness}" />
-        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
-        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
-        <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst" />
-        <Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}" />
-        <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
-        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-        <Setter Property="AllowDrop" Value="true" />
-        <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
-        <Setter Property="ContextMenu" Value="{DynamicResource TextControlContextMenu}" />
-        <Setter Property="ui:TextBoxHelper.IsEnabled" Value="True" />
-        <Setter Property="ui:TextBoxCommandsHelper.IsEnabled" Value="True" />
-        <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource TextControlValidationErrorTemplate}" />
+    <Style x:Key="NumberBoxTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
@@ -71,7 +51,8 @@
                                             x:Name="ButtonLayoutGrid"
                                             BorderBrush="{DynamicResource TextControlButtonBorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
-                                            Background="{DynamicResource TextControlButtonBackground}">
+                                            Background="{DynamicResource TextControlButtonBackground}"
+                                            CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}">
                                             <TextBlock
                                                 x:Name="GlyphElement"
                                                 Foreground="{DynamicResource TextControlButtonForeground}"
@@ -155,8 +136,8 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}"
-                            MinWidth="{DynamicResource TextControlThemeMinWidth}"
-                            MinHeight="{DynamicResource TextControlThemeMinHeight}"
+                            MinWidth="{TemplateBinding MinWidth}"
+                            MinHeight="{TemplateBinding MinHeight}"
                             ui:ValidationHelper.IsTemplateValidationAdornerSite="True" />
                         <ScrollViewer
                             x:Name="PART_ContentHost"
@@ -189,7 +170,8 @@
                             Focusable="False"
                             Style="{StaticResource DeleteButtonStyle}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Margin="{DynamicResource HelperButtonThemePadding}"
+                            ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                            Padding="{DynamicResource HelperButtonThemePadding}"
                             IsTabStop="False"
                             Visibility="Collapsed"
                             FontSize="{TemplateBinding FontSize}"
@@ -261,6 +243,7 @@
     </Style>
 
     <Style TargetType="local:NumberBox">
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="SelectionBrush" Value="{DynamicResource TextControlSelectionHighlightColor}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -290,16 +273,25 @@
                             <ui:ResourceDictionaryEx>
                                 <ui:ResourceDictionaryEx.ThemeDictionaries>
                                     <ResourceDictionary x:Key="Light">
+                                        <ResourceDictionary.MergedDictionaries>
+                                            <ui:DefaultThemeResources Key="Light" />
+                                        </ResourceDictionary.MergedDictionaries>
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
                                     </ResourceDictionary>
 
                                     <ResourceDictionary x:Key="Dark">
+                                        <ResourceDictionary.MergedDictionaries>
+                                            <ui:DefaultThemeResources Key="Dark" />
+                                        </ResourceDictionary.MergedDictionaries>
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
                                     </ResourceDictionary>
 
                                     <ResourceDictionary x:Key="HighContrast">
+                                        <ResourceDictionary.MergedDictionaries>
+                                            <ui:DefaultThemeResources Key="HighContrast" />
+                                        </ResourceDictionary.MergedDictionaries>
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
                                     </ResourceDictionary>
@@ -337,6 +329,8 @@
                                 <Border
                                     x:Name="PopupContentRoot"
                                     Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+                                    BorderBrush="{DynamicResource ToolTipBorderBrush}"
+                                    BorderThickness="{DynamicResource ToolTipBorderThemeThickness}"
                                     CornerRadius="{DynamicResource OverlayCornerRadius}">
                                     <Grid>
 
@@ -389,7 +383,6 @@
                         <!-- SpinButtonsPopup -->
                         <DataTrigger Binding="{Binding ElementName=SpinButtonStates, Path=CurrentStateName}" Value="SpinButtonsPopup">
                             <Setter TargetName="InputBox" Property="Style" Value="{StaticResource NumberBoxTextBoxStyle}" />
-                            <Setter TargetName="InputBox" Property="ui:ControlHelper.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                         </DataTrigger>
                         <!-- UpSpinButtonDisabled -->
                         <DataTrigger Binding="{Binding ElementName=UpSpinButtonEnabledStates, Path=CurrentStateName}" Value="UpSpinButtonDisabled">
