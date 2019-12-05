@@ -14,8 +14,7 @@ using System.Windows.Navigation;
 namespace ModernWpf.Controls
 {
     /// <summary>
-    /// Enables navigation transitions for
-    /// <see cref="T:ModernWpf.Controls.PhoneApplicationPage"/>s.
+    /// Enables navigation transitions for pages.
     /// </summary>
     /// <QualityBand>Preview</QualityBand>
     [TemplatePart(Name = FirstTemplatePartName, Type = typeof(ContentPresenter))]

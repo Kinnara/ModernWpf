@@ -7,6 +7,7 @@ using System.Windows.Threading;
 
 namespace ModernWpf.Controls.Primitives
 {
+    [TemplatePart(Name = OverflowPopupName, Type = typeof(Popup)]
     public class CommandBarToolBar : ToolBar
     {
         static CommandBarToolBar()

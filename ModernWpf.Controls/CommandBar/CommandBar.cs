@@ -12,6 +12,7 @@ using ModernWpf.Controls.Primitives;
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(PrimaryCommands))]
+    [TemplatePart(Name = ToolBarName, Type = typeof(CommandBarToolBar))]
     public class CommandBar : Control
     {
         static CommandBar()

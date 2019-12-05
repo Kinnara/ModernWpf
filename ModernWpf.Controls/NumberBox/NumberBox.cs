@@ -23,6 +23,12 @@ namespace ModernWpf.Controls
         public double NewValue { get; }
     }
 
+    [TemplatePart(Name = c_numberBoxDownButtonName, Type = typeof(RepeatButton))]
+    [TemplatePart(Name = c_numberBoxUpButtonName, Type = typeof(RepeatButton))]
+    [TemplatePart(Name = c_numberBoxTextBoxName, Type = typeof(TextBox))]
+    [TemplatePart(Name = c_numberBoxPopupName, Type = typeof(Popup))]
+    [TemplatePart(Name = c_numberBoxPopupDownButtonName, Type = typeof(RepeatButton))]
+    [TemplatePart(Name = c_numberBoxPopupUpButtonName, Type = typeof(RepeatButton))]
     public class NumberBox : Control
     {
         const string c_numberBoxDownButtonName = "DownSpinButton";

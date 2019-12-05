@@ -32,7 +32,7 @@ namespace ModernWpf.Controls
 
         protected override void OnChecked(RoutedEventArgs e)
         {
-            if (_surpressOnChecked)
+            if (m_surpressOnChecked)
             {
                 e.Handled = true;
                 return;
@@ -45,11 +45,11 @@ namespace ModernWpf.Controls
 
         protected override void OnUnchecked(RoutedEventArgs e)
         {
-            if (!_isSafeUncheck)
+            if (!m_isSafeUncheck)
             {
-                _surpressOnChecked = true;
+                m_surpressOnChecked = true;
                 SetCurrentValue(IsCheckedProperty, true);
-                _surpressOnChecked = false;
+                m_surpressOnChecked = false;
                 e.Handled = true;
                 return;
             }
@@ -73,9 +73,9 @@ namespace ModernWpf.Controls
                             if (radioItem != this
                                 && radioItem.GroupName == GroupName)
                             {
-                                radioItem._isSafeUncheck = true;
+                                radioItem.m_isSafeUncheck = true;
                                 radioItem.SetCurrentValue(IsCheckedProperty, false);
-                                radioItem._isSafeUncheck = false;
+                                radioItem.m_isSafeUncheck = false;
                             }
                         }
                     }
@@ -83,7 +83,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        private bool _isSafeUncheck;
-        private bool _surpressOnChecked;
+        private bool m_isSafeUncheck;
+        private bool m_surpressOnChecked;
     }
 }

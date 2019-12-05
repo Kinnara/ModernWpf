@@ -3,6 +3,7 @@ using System.Windows;
 
 namespace ModernWpf.Controls.Primitives
 {
+    [TemplatePart(Name = ToolBarName, Type = typeof(CommandBarFlyoutToolBar))]
     public class CommandBarFlyoutCommandBar : CommandBar
     {
         static CommandBarFlyoutCommandBar()

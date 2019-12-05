@@ -9,6 +9,10 @@ using System.Windows.Threading;
 
 namespace ModernWpf.Controls.Primitives
 {
+    [TemplatePart(Name = s_LayoutRootName, Type = typeof(Grid))]
+    [TemplatePart(Name = s_ProgressBarIndicatorName, Type = typeof(Rectangle))]
+    [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = s_DeterminateStateName)]
+    [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = s_IndeterminateStateName)]
     public class ProgressBarPresenter : RangeBase
     {
         static ProgressBarPresenter()

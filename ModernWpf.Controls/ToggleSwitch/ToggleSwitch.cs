@@ -9,6 +9,11 @@ using System.Windows.Media;
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Header))]
+    [TemplatePart(Name = nameof(HeaderContentPresenter), Type = typeof(ContentPresenter))]
+    [TemplatePart(Name = nameof(SwitchKnobBounds), Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = nameof(SwitchKnob), Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = nameof(KnobTranslateTransform), Type = typeof(TranslateTransform))]
+    [TemplatePart(Name = nameof(SwitchThumb), Type = typeof(Thumb))]
     [TemplateVisualState(GroupName = ContentStatesGroup, Name = OffContentState)]
     [TemplateVisualState(GroupName = ContentStatesGroup, Name = OnContentState)]
     [TemplateVisualState(GroupName = ToggleStatesGroup, Name = DraggingState)]
