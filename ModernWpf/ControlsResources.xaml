@@ -55,6 +55,9 @@
     <sys:Double x:Key="NumberBoxPopupShadowDepth">16</sys:Double>
     <!--#endregion-->
 
+    <sys:Double x:Key="RadioButtonsColumnSpacing">7</sys:Double>
+    <sys:Double x:Key="RadioButtonsRowSpacing">3</sys:Double>
+
     <Style x:Key="EmptyFocusVisual">
         <Setter Property="primitives:FocusVisualHelper.IsSystemFocusVisual" Value="True" />
     </Style>

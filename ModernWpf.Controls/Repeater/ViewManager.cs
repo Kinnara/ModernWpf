@@ -149,7 +149,8 @@ namespace ModernWpf.Controls
         {
             if (virtInfo == null)
             {
-                throw new ArgumentNullException(nameof(virtInfo), "Element is not a child of this ItemsRepeater.");
+                //Element is not a child of this ItemsRepeater.
+                return -1;
             }
 
             return virtInfo.IsRealized || virtInfo.IsInUniqueIdResetPool ? virtInfo.Index : -1;

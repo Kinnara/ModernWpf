@@ -17,8 +17,8 @@
             <sc:ControlExample HeaderText="RadioButtons">
                 <ui:RadioButtons
                     x:Name="radioButtons"
-                    MaximumColumns="2"
-                    SelectedIndex="0">
+                    MaxColumns="2"
+                    SelectedIndex="1">
                     <sys:String>Red</sys:String>
                     <sys:String>Orange</sys:String>
                     <sys:String>Yellow</sys:String>
@@ -31,10 +31,10 @@
                 <sc:ControlExample.Options>
                     <ui:SimpleStackPanel>
                         <Slider
-                            ui:ControlHelper.Header="MaximumColumns"
+                            ui:ControlHelper.Header="MaxColumns"
                             Minimum="1"
                             Maximum="5"
-                            Value="{Binding ElementName=radioButtons, Path=MaximumColumns, Mode=TwoWay}"
+                            Value="{Binding ElementName=radioButtons, Path=MaxColumns, Mode=TwoWay}"
                             AutoToolTipPlacement="TopLeft" />
                         <CheckBox
                             Content="IsEnabled"
