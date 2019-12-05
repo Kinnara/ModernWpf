@@ -111,9 +111,6 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type DatePicker}">
                     <Grid SnapsToDevicePixels="True">
-                        <Grid.Resources>
-                            <primitives:DatePickerPopupOffsetConverter x:Key="PopupOffsetConverter" />
-                        </Grid.Resources>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
