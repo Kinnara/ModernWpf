@@ -52,12 +52,8 @@
             PaneClosed="NavView_PaneClosed">
             <ui:HamburgerMenuEx.Padding>
                 <MultiBinding Converter="{StaticResource TitleBarPaddingConverter}">
-                    <Binding
-                        Path="(ui:TitleBar.ExtendViewIntoTitleBar)"
-                        ElementName="Window" />
-                    <Binding
-                        Path="(ui:TitleBar.Height)"
-                        ElementName="Window" />
+                    <Binding Path="(ui:TitleBar.ExtendViewIntoTitleBar)" ElementName="Window" />
+                    <Binding Path="(ui:TitleBar.Height)" ElementName="Window" />
                 </MultiBinding>
             </ui:HamburgerMenuEx.Padding>
             <ui:HamburgerMenuEx.HeaderTemplate>

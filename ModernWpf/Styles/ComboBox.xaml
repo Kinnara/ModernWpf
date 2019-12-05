@@ -295,6 +295,7 @@
                             x:Name="ToggleButton"
                             IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                             Grid.Row="1"
+                            Grid.Column="0"
                             Grid.ColumnSpan="2"
                             Style="{StaticResource ComboBoxToggleButton}"
                             Background="Transparent" />
@@ -351,19 +352,22 @@
                             Content="{TemplateBinding primitives:ControlHelper.Description}"
                             Visibility="{TemplateBinding primitives:ControlHelper.DescriptionVisibility}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        <Rectangle
-                            x:Name="PopupPlacementTarget"
-                            Grid.Row="1"
-                            Grid.ColumnSpan="2"
-                            Margin="0,1,0,1"
-                            IsHitTestVisible="False" />
                         <Popup
                             x:Name="PART_Popup"
                             AllowsTransparency="True"
                             Placement="Bottom"
-                            PlacementTarget="{Binding ElementName=PopupPlacementTarget}"
+                            PlacementTarget="{Binding ElementName=Background}"
                             IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                             PopupAnimation="{DynamicResource {x:Static SystemParameters.ComboBoxPopupAnimationKey}}">
+                            <Popup.PlacementRectangle>
+                                <MultiBinding>
+                                    <MultiBinding.Converter>
+                                        <primitives:PlacementRectangleConverter Margin="0,1,0,1" />
+                                    </MultiBinding.Converter>
+                                    <Binding ElementName="Background" Path="ActualWidth" />
+                                    <Binding ElementName="Background" Path="ActualHeight" />
+                                </MultiBinding>
+                            </Popup.PlacementRectangle>
                             <primitives:ThemeShadowChrome
                                 x:Name="PopupContentRoot"
                                 MaxHeight="{TemplateBinding MaxDropDownHeight}"

@@ -96,8 +96,7 @@
                 Focusable="false"
                 IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                 PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
-                Placement="Bottom"
-                PlacementTarget="{Binding ElementName=ContentRoot}">
+                Placement="Bottom">
                 <primitives:ThemeShadowChrome
                     IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
                     CornerRadius="{DynamicResource OverlayCornerRadius}">
@@ -249,99 +248,104 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
-        <Grid SnapsToDevicePixels="true">
-            <Rectangle
-                x:Name="PopupPlacementTarget"
-                Margin="4,-1" />
-            <Border
-                x:Name="LayoutRoot"
-                Padding="{TemplateBinding Padding}"
-                Background="{TemplateBinding Background}"
-                BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}">
-                <Grid x:Name="AnimationRoot">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition SharedSizeGroup="MenuItemCheckColumnGroup" Width="Auto" />
-                        <ColumnDefinition SharedSizeGroup="MenuItemIconColumnGroup" Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Viewbox
-                        x:Name="IconRoot"
-                        Grid.Column="1"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Width="16"
-                        Height="16"
-                        Margin="0,0,12,0">
-                        <ContentPresenter
-                            x:Name="IconContent"
-                            ContentSource="Icon"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                    </Viewbox>
+        <Border
+            x:Name="LayoutRoot"
+            Padding="{TemplateBinding Padding}"
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}"
+            SnapsToDevicePixels="True">
+            <Grid x:Name="AnimationRoot">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition SharedSizeGroup="MenuItemCheckColumnGroup" Width="Auto" />
+                    <ColumnDefinition SharedSizeGroup="MenuItemIconColumnGroup" Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Viewbox
+                    x:Name="IconRoot"
+                    Grid.Column="1"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Width="16"
+                    Height="16"
+                    Margin="0,0,12,0">
                     <ContentPresenter
-                        x:Name="ContentPresenter"
-                        Grid.Column="2"
-                        ContentSource="Header"
-                        RecognizesAccessKey="True"
-                        TextElement.Foreground="{TemplateBinding Foreground}"
-                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        x:Name="IconContent"
+                        ContentSource="Icon"
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                    <local:FontIcon
-                        x:Name="SubItemChevron"
-                        Grid.Column="3"
-                        Glyph="&#xE0E3;"
-                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                        FontSize="12"
-                        Foreground="{DynamicResource MenuFlyoutSubItemChevron}"
-                        Margin="{DynamicResource MenuFlyoutItemChevronMargin}">
-                        <UIElement.RenderTransform>
-                            <TranslateTransform Y="1" />
-                        </UIElement.RenderTransform>
-                    </local:FontIcon>
-                    <Popup
-                        x:Name="PART_Popup"
-                        AllowsTransparency="true"
-                        Focusable="false"
-                        IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                        PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
-                        Placement="Right"
-                        PlacementTarget="{Binding ElementName=PopupPlacementTarget}">
-                        <primitives:ThemeShadowChrome
-                            IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
+                </Viewbox>
+                <ContentPresenter
+                    x:Name="ContentPresenter"
+                    Grid.Column="2"
+                    ContentSource="Header"
+                    RecognizesAccessKey="True"
+                    TextElement.Foreground="{TemplateBinding Foreground}"
+                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                <local:FontIcon
+                    x:Name="SubItemChevron"
+                    Grid.Column="3"
+                    Glyph="&#xE0E3;"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                    FontSize="12"
+                    Foreground="{DynamicResource MenuFlyoutSubItemChevron}"
+                    Margin="{DynamicResource MenuFlyoutItemChevronMargin}">
+                    <UIElement.RenderTransform>
+                        <TranslateTransform Y="1" />
+                    </UIElement.RenderTransform>
+                </local:FontIcon>
+                <Popup
+                    x:Name="PART_Popup"
+                    AllowsTransparency="true"
+                    Focusable="false"
+                    IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                    PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+                    Placement="Right"
+                    PlacementTarget="{Binding ElementName=LayoutRoot}">
+                    <Popup.PlacementRectangle>
+                        <MultiBinding>
+                            <MultiBinding.Converter>
+                                <primitives:PlacementRectangleConverter Margin="4,-1" />
+                            </MultiBinding.Converter>
+                            <Binding ElementName="LayoutRoot" Path="ActualWidth" />
+                            <Binding ElementName="LayoutRoot" Path="ActualHeight" />
+                        </MultiBinding>
+                    </Popup.PlacementRectangle>
+                    <primitives:ThemeShadowChrome
+                        IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
+                        CornerRadius="{DynamicResource OverlayCornerRadius}">
+                        <Border
+                            x:Name="SubMenuRoot"
+                            Background="{DynamicResource MenuFlyoutPresenterBackground}"
                             CornerRadius="{DynamicResource OverlayCornerRadius}">
-                            <Border
-                                x:Name="SubMenuRoot"
-                                Background="{DynamicResource MenuFlyoutPresenterBackground}"
-                                CornerRadius="{DynamicResource OverlayCornerRadius}">
-                                <Grid>
-                                    <ScrollViewer
-                                        x:Name="SubMenuScrollViewer"
-                                        Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
-                                                                                      TypeInTargetAssembly={x:Type FrameworkElement}}}"
-                                        Margin="{DynamicResource MenuFlyoutPresenterThemePadding}"
-                                        MinWidth="{DynamicResource FlyoutThemeMinWidth}">
-                                        <ItemsPresenter
-                                            RenderOptions.ClearTypeHint="Enabled"
-                                            Margin="{StaticResource MenuFlyoutScrollerMargin}"
-                                            KeyboardNavigation.DirectionalNavigation="Cycle"
-                                            KeyboardNavigation.TabNavigation="Cycle"
-                                            Grid.IsSharedSizeScope="true"
-                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                    </ScrollViewer>
-                                    <Border
-                                        x:Name="SubMenuBorder"
-                                        BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
-                                        BorderThickness="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}"
-                                        CornerRadius="{DynamicResource OverlayCornerRadius}" />
-                                </Grid>
-                            </Border>
-                        </primitives:ThemeShadowChrome>
-                    </Popup>
-                </Grid>
-            </Border>
-        </Grid>
+                            <Grid>
+                                <ScrollViewer
+                                    x:Name="SubMenuScrollViewer"
+                                    Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
+                                                                                  TypeInTargetAssembly={x:Type FrameworkElement}}}"
+                                    Margin="{DynamicResource MenuFlyoutPresenterThemePadding}"
+                                    MinWidth="{DynamicResource FlyoutThemeMinWidth}">
+                                    <ItemsPresenter
+                                        RenderOptions.ClearTypeHint="Enabled"
+                                        Margin="{StaticResource MenuFlyoutScrollerMargin}"
+                                        KeyboardNavigation.DirectionalNavigation="Cycle"
+                                        KeyboardNavigation.TabNavigation="Cycle"
+                                        Grid.IsSharedSizeScope="true"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </ScrollViewer>
+                                <Border
+                                    x:Name="SubMenuBorder"
+                                    BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
+                                    BorderThickness="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}"
+                                    CornerRadius="{DynamicResource OverlayCornerRadius}" />
+                            </Grid>
+                        </Border>
+                    </primitives:ThemeShadowChrome>
+                </Popup>
+            </Grid>
+        </Border>
         <ControlTemplate.Triggers>
             <Trigger Property="IsSuspendingPopupAnimation" Value="true">
                 <Setter TargetName="PART_Popup" Property="PopupAnimation" Value="None" />

@@ -129,10 +129,6 @@
                                 </Style>
                             </ContentPresenter.Resources>
                         </ContentPresenter>
-                        <Rectangle
-                            x:Name="PopupPlacementTarget"
-                            Margin="0,-4"
-                            Grid.Row="1" />
                         <Grid
                             x:Name="PART_Root"
                             Grid.Row="1">
@@ -182,8 +178,17 @@
                                 x:Name="PART_Popup"
                                 AllowsTransparency="True"
                                 Placement="Bottom"
-                                PlacementTarget="{Binding ElementName=PopupPlacementTarget}"
-                                StaysOpen="False" />
+                                StaysOpen="False">
+                                <Popup.PlacementRectangle>
+                                    <MultiBinding>
+                                        <MultiBinding.Converter>
+                                            <primitives:PlacementRectangleConverter Margin="0,-4" />
+                                        </MultiBinding.Converter>
+                                        <Binding ElementName="PART_Root" Path="ActualWidth" />
+                                        <Binding ElementName="PART_Root" Path="ActualHeight" />
+                                    </MultiBinding>
+                                </Popup.PlacementRectangle>
+                            </Popup>
                         </Grid>
                         <ContentPresenter
                             x:Name="DescriptionPresenter"

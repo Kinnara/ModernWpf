@@ -43,7 +43,8 @@
         ui:StaticResource,
         local:HamburgerMenuItemStyleSelectorEx,
         ui:AppBarButton,
-        ui:AppBarToggleButton
+        ui:AppBarToggleButton,
+        Binding
 	",
     "SeparateByGroups": false,
     "AttributeIndentation": 0,
