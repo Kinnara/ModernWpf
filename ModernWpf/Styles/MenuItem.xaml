@@ -433,7 +433,6 @@
 
     <ContextMenu
         x:Key="TextControlContextMenu"
-        HasDropShadow="False"
         primitives:TextControlContextMenuHelper.IsEnabled="True">
         <ContextMenu.ItemContainerStyle>
             <Style TargetType="MenuItem" BasedOn="{StaticResource DefaultMenuItemStyle}">
@@ -446,30 +445,30 @@
         </ContextMenu.ItemContainerStyle>
         <MenuItem Command="ApplicationCommands.Cut">
             <MenuItem.Icon>
-                <local:FontIcon Glyph="&#xE8C6;" />
+                <local:SymbolIcon Symbol="Cut" />
             </MenuItem.Icon>
         </MenuItem>
         <MenuItem Command="ApplicationCommands.Copy">
             <MenuItem.Icon>
-                <local:FontIcon Glyph="&#xE8C8;" />
+                <local:SymbolIcon Symbol="Copy" />
             </MenuItem.Icon>
         </MenuItem>
         <MenuItem Command="ApplicationCommands.Paste">
             <MenuItem.Icon>
-                <local:FontIcon Glyph="&#xE77F;" />
+                <local:SymbolIcon Symbol="Paste" />
             </MenuItem.Icon>
         </MenuItem>
         <MenuItem Command="ApplicationCommands.Undo">
             <MenuItem.Icon>
-                <local:FontIcon Glyph="&#xE7A7;" />
+                <local:SymbolIcon Symbol="Undo" />
             </MenuItem.Icon>
         </MenuItem>
-        <MenuItem Command="ApplicationCommands.Redo" />
-        <MenuItem Command="ApplicationCommands.SelectAll">
+        <MenuItem Command="ApplicationCommands.Redo">
             <MenuItem.Icon>
-                <local:FontIcon Glyph="&#xE7A6;" />
+                <local:SymbolIcon Symbol="Redo" />
             </MenuItem.Icon>
         </MenuItem>
+        <MenuItem Command="ApplicationCommands.SelectAll" />
     </ContextMenu>
 
 </ResourceDictionary>
