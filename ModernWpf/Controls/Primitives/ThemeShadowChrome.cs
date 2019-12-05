@@ -194,7 +194,7 @@ namespace ModernWpf.Controls.Primitives
             }
             else
             {
-                PopupMargin = new Thickness();
+                ClearValue(PopupMarginProperty);
             }
         }
 
@@ -333,7 +333,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 double depth = Depth;
                 var effect = (DropShadowEffect)_shadow1.Effect;
-                effect.ShadowDepth = 0.4 * depth + c_shadowMargin;
+                effect.ShadowDepth = 0.4 * depth;
                 effect.BlurRadius = 0.9 * depth + c_shadowMargin;
                 _shadow1.Background = depth >= 32 ? s_bg4 : s_bg3;
             }
@@ -345,7 +345,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 double depth = Depth;
                 var effect = (DropShadowEffect)_shadow2.Effect;
-                effect.ShadowDepth = 0.08 * depth + c_shadowMargin;
+                effect.ShadowDepth = 0.08 * depth;
                 effect.BlurRadius = 0.22 * depth + c_shadowMargin;
                 _shadow2.Background = depth >= 32 ? s_bg2 : s_bg1;
             }
@@ -444,8 +444,17 @@ namespace ModernWpf.Controls.Primitives
                     if (IsVisible && target.IsVisible)
                     {
                         offset = Helper.GetOffset(this, childInterestPoint, target, targetInterestPoint, popup.PlacementRectangle);
-                        Debug.Assert(Math.Abs(offset.X) < 0.5 || Math.Abs(offset.X) >= 1, offset.X.ToString());
-                        Debug.Assert(Math.Abs(offset.Y) < 0.5 || Math.Abs(offset.Y) >= 1, offset.Y.ToString());
+
+                        if (Math.Abs(offset.X) < 0.5)
+                        {
+                            offset.X = 0;
+                        }
+
+                        if (Math.Abs(offset.Y) < 0.5)
+                        {
+                            offset.Y = 0;
+                        }
+
                         return true;
                     }
                 }
