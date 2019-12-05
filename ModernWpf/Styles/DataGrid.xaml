@@ -12,8 +12,6 @@
     <sys:String x:Key="RowGroupHeaderIconClosed">&#xE0E3;</sys:String>
     <sys:String x:Key="RowGroupHeaderIconOpened">&#xE0E5;</sys:String>
 
-    <primitives:AreVerticalGridLinesVisibleConverter x:Key="AreVerticalGridLinesVisibleConverter" />
-
     <Style x:Key="DefaultDataGridCellStyle" TargetType="DataGridCell">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource DataGridCellBackgroundBrush}" />
@@ -108,6 +106,25 @@
     </Style>
 
     <!--<Style TargetType="DataGridCell" BasedOn="{StaticResource DefaultDataGridCellStyle}" />-->
+
+    <Style x:Key="DefaultDataGridColumnHeadersPresenterStyle" TargetType="{x:Type DataGridColumnHeadersPresenter}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type DataGridColumnHeadersPresenter}">
+                    <Grid>
+                        <DataGridColumnHeader
+                            IsHitTestVisible="False"
+                            Name="PART_FillerColumnHeader"
+                            SeparatorVisibility="Collapsed" />
+                        <ItemsPresenter />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="DataGridColumnHeadersPresenter" BasedOn="{StaticResource DefaultDataGridColumnHeadersPresenterStyle}" />
 
     <Style x:Key="ColumnHeaderGripperStyle" TargetType="{x:Type Thumb}">
         <Setter Property="Width" Value="8" />
@@ -266,13 +283,6 @@
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridColumnHeaderPressedBackgroundBrush}" />
                         </Trigger>
-                        <MultiDataTrigger>
-                            <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Path=GridLinesVisibility, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource AreVerticalGridLinesVisibleConverter}}" Value="False" />
-                                <Condition Binding="{Binding Path=(primitives:DataGridColumnHeaderHelper.IsLastVisibleColumnHeader), RelativeSource={RelativeSource Self}}" Value="True" />
-                            </MultiDataTrigger.Conditions>
-                            <Setter TargetName="VerticalSeparator" Property="Visibility" Value="Collapsed" />
-                        </MultiDataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -766,9 +776,10 @@
                                             Style="{DynamicResource {ComponentResourceKey ResourceId=DataGridSelectAllButtonStyle,
                                                                                           TypeInTargetAssembly={x:Type DataGrid}}}"
                                             Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.All}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
-                                        <primitives:DataGridColumnHeadersPresenterEx
+                                        <DataGridColumnHeadersPresenter
                                             x:Name="PART_ColumnHeadersPresenter"
                                             Grid.Column="1"
+                                            Grid.ColumnSpan="2"
                                             Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
                                         <Rectangle
                                             x:Name="ColumnHeadersAndRowsSeparator"
