@@ -7,25 +7,25 @@ namespace ModernWpf.Controls.Primitives
 {
     public static class CalendarHelper
     {
-        #region ReleaseMouseCapture
+        #region AutoReleaseMouseCapture
 
-        public static bool GetReleaseMouseCapture(Calendar calendar)
+        public static bool GetAutoReleaseMouseCapture(Calendar calendar)
         {
-            return (bool)calendar.GetValue(ReleaseMouseCaptureProperty);
+            return (bool)calendar.GetValue(AutoReleaseMouseCaptureProperty);
         }
 
-        public static void SetReleaseMouseCapture(Calendar calendar, bool value)
+        public static void SetAutoReleaseMouseCapture(Calendar calendar, bool value)
         {
-            calendar.SetValue(ReleaseMouseCaptureProperty, value);
+            calendar.SetValue(AutoReleaseMouseCaptureProperty, value);
         }
 
-        public static readonly DependencyProperty ReleaseMouseCaptureProperty = DependencyProperty.RegisterAttached(
-            "ReleaseMouseCapture",
+        public static readonly DependencyProperty AutoReleaseMouseCaptureProperty = DependencyProperty.RegisterAttached(
+            "AutoReleaseMouseCapture",
             typeof(bool),
             typeof(CalendarHelper),
-            new PropertyMetadata(OnReleaseMouseCaptureChanged));
+            new PropertyMetadata(OnAutoReleaseMouseCaptureChanged));
 
-        private static void OnReleaseMouseCaptureChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnAutoReleaseMouseCaptureChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var calendar = (Calendar)d;
             if ((bool)e.NewValue)

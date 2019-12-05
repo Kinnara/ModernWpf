@@ -386,7 +386,7 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
-        <Setter Property="primitives:CalendarHelper.ReleaseMouseCapture" Value="True" />
+        <Setter Property="primitives:CalendarHelper.AutoReleaseMouseCapture" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Calendar}">
