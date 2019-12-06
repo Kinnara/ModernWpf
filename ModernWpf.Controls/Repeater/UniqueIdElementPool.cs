@@ -63,10 +63,6 @@ namespace ModernWpf.Controls
             return GetEnumerator();
         }
 
-        // TODO
-        //auto begin() const { return m_elementMap.begin(); }
-        //auto end() const { return m_elementMap.end(); }
-
         private readonly ItemsRepeater m_owner;
         private readonly Dictionary<string, UIElement> m_elementMap = new Dictionary<string, UIElement>();
     }

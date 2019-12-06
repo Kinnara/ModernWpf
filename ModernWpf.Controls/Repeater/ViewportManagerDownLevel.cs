@@ -442,7 +442,6 @@ namespace ModernWpf.Controls
                 m_cacheBuildAction == null)
             {
                 var strongOwner = m_owner;
-                // TODO: RunIdleAsync
                 m_cacheBuildAction = m_owner
                     .Dispatcher
                     // We capture 'owner' (a strong refernce on ItemsRepeater) to make sure ItemsRepeater is still around

@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Automation;
@@ -29,6 +32,9 @@ namespace ModernWpf.Controls
             var items = new List<object>();
             SetValue(ItemsProperty, items);
 
+            // Override normal up/down/left/right behavior -- down should always go to the next item and up to the previous.
+            // left and right should be spacial but contained to the RadioButtons control. We have to attach to PreviewKeyDown
+            // because RadioButton has a key down handler for up and down that gets called before we can intercept. Issue #1634.
             PreviewKeyDown += OnChildPreviewKeyDown;
         }
 
@@ -233,12 +239,13 @@ namespace ModernWpf.Controls
         }
 
         // void OnGettingFocus(object sender, GettingFocusEventArgs args);
-        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs args)
+        // When focus comes from outside the RadioButtons control we will put focus on the selected radio button.
+        protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs args)
         {
-            var repeater = m_repeater;
-            if (repeater != null)
+            if (!m_currentlySettingFocus)
             {
-                if (m_selectedIndex >= 0)
+                var repeater = m_repeater;
+                if (repeater != null)
                 {
                     var oldFocusedElement = args.OldFocus;
                     if (oldFocusedElement != null)
@@ -252,33 +259,36 @@ namespace ModernWpf.Controls
                                 var selectedItem = repeater.TryGetElement(m_selectedIndex);
                                 if (selectedItem != null)
                                 {
-                                    // TODO: TrySetNewFocusedElement
-                                    //var argsAsIGettingFocusEventArgs2 = args as IGettingFocusEventArgs2;
-                                    //if (argsAsIGettingFocusEventArgs2 != null)
-                                    //{
-                                    //    if (args.TrySetNewFocusedElement(selectedItem))
-                                    //    {
-                                    //        args.Handled(true);
-                                    //    }
-                                    //}
+                                    try
+                                    {
+                                        m_currentlySettingFocus = true;
+
+                                        if (selectedItem.Focus())
+                                        {
+                                            args.Handled = true;
+                                        }
+                                    }
+                                    finally
+                                    {
+                                        m_currentlySettingFocus = false;
+                                    }
+                                }
+                            }
+
+                            // On RS3+ Selection follows focus unless control is held down.
+                            else if ((args.KeyboardDevice.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                            {
+                                if (args.NewFocus is UIElement newFocusedElementAsUIE)
+                                {
+                                    Select(repeater.GetElementIndex(newFocusedElementAsUIE));
                                 }
                             }
                         }
                     }
                 }
-
-                // On RS3+ Selection follows focus unless control is held down.
-                if ((args.KeyboardDevice.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
-                {
-                    if (args.NewFocus is UIElement newFocusedElementAsUIE)
-                    {
-                        Select(repeater.GetElementIndex(newFocusedElementAsUIE));
-                        args.Handled = true;
-                    }
-                }
             }
 
-            base.OnGotKeyboardFocus(args);
+            base.OnPreviewGotKeyboardFocus(args);
         }
 
         void OnRepeaterLoaded(object sender, RoutedEventArgs args)
@@ -625,7 +635,6 @@ namespace ModernWpf.Controls
         private void UpdateItemsSource()
         {
             Select(-1);
-            // TODO: m_itemsSourceChanged.revoke();
             var repeater = m_repeater;
             if (repeater != null)
             {
@@ -640,7 +649,7 @@ namespace ModernWpf.Controls
                 var itemsSourceView = repeater.ItemsSourceView;
                 if (itemsSourceView != null)
                 {
-                    itemsSourceView.CollectionChanged -= OnRepeaterCollectionChanged;
+                    itemsSourceView.CollectionChanged += OnRepeaterCollectionChanged;
                 }
             }
         }
@@ -692,6 +701,8 @@ namespace ModernWpf.Controls
         // We block selection before the control has loaded.
         // This is to ensure that we do not overwrite a provided Selected Index/Item value.
         bool m_blockSelecting = true;
+
+        bool m_currentlySettingFocus = false;
 
         ItemsRepeater m_repeater;
 

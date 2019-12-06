@@ -9,7 +9,11 @@ namespace ModernWpf.SampleApp.Presets
 
         public PresetResources()
         {
-            PresetManager.Current.CurrentPresetChanged += OnCurrentPresetChanged; // TODO: Prevent memory leak
+            WeakEventManager<PresetManager, EventArgs>.AddHandler(
+                PresetManager.Current,
+                nameof(PresetManager.CurrentPresetChanged),
+                OnCurrentPresetChanged);
+
             ApplyCurrentPreset();
         }
 

@@ -15,18 +15,21 @@
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
             <sc:ControlExample HeaderText="RadioButtons">
-                <ui:RadioButtons
-                    x:Name="radioButtons"
-                    MaxColumns="2"
-                    SelectedIndex="1">
-                    <sys:String>Red</sys:String>
-                    <sys:String>Orange</sys:String>
-                    <sys:String>Yellow</sys:String>
-                    <sys:String>Green</sys:String>
-                    <sys:String>Blue</sys:String>
-                    <sys:String>Indigo</sys:String>
-                    <sys:String>Violet</sys:String>
-                </ui:RadioButtons>
+                <StackPanel>
+                    <!--<Button Content="Focus me" />-->
+                    <ui:RadioButtons
+                        x:Name="radioButtons"
+                        MaxColumns="2"
+                        SelectedIndex="1">
+                        <sys:String>Red</sys:String>
+                        <sys:String>Orange</sys:String>
+                        <sys:String>Yellow</sys:String>
+                        <sys:String>Green</sys:String>
+                        <sys:String>Blue</sys:String>
+                        <sys:String>Indigo</sys:String>
+                        <sys:String>Violet</sys:String>
+                    </ui:RadioButtons>
+                </StackPanel>
 
                 <sc:ControlExample.Options>
                     <ui:SimpleStackPanel>

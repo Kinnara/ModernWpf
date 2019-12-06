@@ -348,8 +348,8 @@ namespace ModernWpf.Controls
                     context.RecycleElement(tmpElement);
                 }
 
-                // TODO: round
-                averageElementSize = Math.Round(stackLayoutState.TotalElementSize / stackLayoutState.TotalElementsMeasured);
+                Debug.Assert(stackLayoutState.TotalElementsMeasured > 0);
+                averageElementSize = Math.Round(stackLayoutState.TotalElementSize / stackLayoutState.TotalElementsMeasured, MidpointRounding.AwayFromZero);
             }
 
             return averageElementSize;
