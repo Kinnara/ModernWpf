@@ -589,6 +589,8 @@ namespace ModernWpf.Controls
                                 ClearElementImpl(element);
                             }
                         }
+
+                        Children.Clear();
                     }
 
                     InvalidateMeasure();
