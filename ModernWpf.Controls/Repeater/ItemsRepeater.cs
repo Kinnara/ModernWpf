@@ -568,14 +568,14 @@ namespace ModernWpf.Controls
             {
                 if (Layout is Layout layout)
                 {
+                    var args = new NotifyCollectionChangedEventArgs(
+                        NotifyCollectionChangedAction.Reset);
+                    //args.Action;
+                    m_processingItemsSourceChange = args;
+                    processingChange = true;
+
                     if (layout is VirtualizingLayout virtualLayout)
                     {
-                        var args = new NotifyCollectionChangedEventArgs(
-                            NotifyCollectionChangedAction.Reset);
-                        //args.Action;
-                        m_processingItemsSourceChange = args;
-                        processingChange = true;
-
                         virtualLayout.OnItemsChangedCore(GetLayoutContext(), newValue, args);
                     }
                     else if (layout is NonVirtualizingLayout nonVirtualLayout)
@@ -622,28 +622,26 @@ namespace ModernWpf.Controls
                 // so that the cleared elements go back into the old template.
                 if (Layout is Layout layout)
                 {
+                    var args = new NotifyCollectionChangedEventArgs(
+                        NotifyCollectionChangedAction.Reset);
+                    //args.Action;
+
+                    m_processingItemsSourceChange = args;
+                    processingChange = true;
+
                     if (layout is VirtualizingLayout virtualLayout)
                     {
-                        var args = new NotifyCollectionChangedEventArgs(
-                            NotifyCollectionChangedAction.Reset);
-                        //args.Action;
-
-                        m_processingItemsSourceChange = args;
-                        processingChange = true;
-
                         virtualLayout.OnItemsChangedCore(GetLayoutContext(), newValue, args);
                     }
                     else if (layout is NonVirtualizingLayout nonVirtualLayout)
                     {
                         // Walk through all the elements and make sure they are cleared for
                         // non-virtualizing layouts.
-                        var children = Children;
-                        for (int i = 0; i < children.Count; ++i)
+                        foreach (UIElement child in Children)
                         {
-                            var element = children[i];
-                            if (GetVirtualizationInfo(element).IsRealized)
+                            if (GetVirtualizationInfo(child).IsRealized)
                             {
-                                ClearElementImpl(element);
+                                ClearElementImpl(child);
                             }
                         }
                     }
