@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentWPF" Version="0.8.0" />
-    <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0605" />
+    <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0660" />
   </ItemGroup>
 
   <ItemGroup>

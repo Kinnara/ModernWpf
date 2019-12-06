@@ -49,8 +49,8 @@
                         <CheckBox
                             Content="IsNavigationEnabled"
                             IsChecked="{Binding ElementName=FlipView1, Path=IsNavigationEnabled}" />
-                        <ComboBox
-                            ui:ControlHelper.Header="Orientation"
+                        <ui:RadioButtons
+                            Header="Orientation"
                             ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=FlipView1, Path=Orientation, Mode=TwoWay}" />
                     </ui:SimpleStackPanel>

@@ -67,7 +67,7 @@
             <mah:HamburgerMenu.ItemsSource>
                 <mah:HamburgerMenuItemCollection x:Name="NavViewItems">
 
-                    <ui:HamburgerMenuHeaderItem Label="Controls" />
+                    <mah:HamburgerMenuHeaderItem Label="Controls" />
 
                     <mah:HamburgerMenuIconItem
                         Label="Overview"
@@ -113,7 +113,7 @@
                         </mah:HamburgerMenuIconItem.Icon>
                     </mah:HamburgerMenuIconItem>
 
-                    <ui:HamburgerMenuHeaderItem Label="Sample Pages" />
+                    <mah:HamburgerMenuHeaderItem Label="Sample Pages" />
 
                     <mah:HamburgerMenuIconItem
                         Label="Sample Page 1"

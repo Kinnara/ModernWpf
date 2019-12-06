@@ -185,22 +185,6 @@ namespace ModernWpf.MahApps.Controls
 
         #endregion
 
-        #region HeaderItemContainerStyle
-
-        public static readonly DependencyProperty HeaderItemContainerStyleProperty =
-            DependencyProperty.Register(
-                nameof(HeaderItemContainerStyle),
-                typeof(Style),
-                typeof(HamburgerMenuEx));
-
-        public Style HeaderItemContainerStyle
-        {
-            get => (Style)GetValue(HeaderItemContainerStyleProperty);
-            set => SetValue(HeaderItemContainerStyleProperty, value);
-        }
-
-        #endregion
-
         #region DefaultItemFocusVisualStyle
 
         private static readonly DependencyProperty DefaultItemFocusVisualStyleProperty =

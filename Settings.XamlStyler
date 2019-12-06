@@ -41,7 +41,7 @@
         StaticResource,
 		m:StaticResource,
         ui:StaticResource,
-        local:HamburgerMenuItemStyleSelectorEx,
+        Controls:HamburgerMenuItemStyleSelector,
         ui:AppBarButton,
         ui:AppBarToggleButton,
         Binding

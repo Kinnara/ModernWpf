@@ -12,8 +12,8 @@
     <ui:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
     <ui:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
 
-    <local:HamburgerMenuItemStyleSelectorEx x:Key="HamburgerMenuItemStyleSelector" />
-    <local:HamburgerMenuItemStyleSelectorEx x:Key="HamburgerMenuItemOptionsStyleSelector" IsItemOptions="True" />
+    <Controls:HamburgerMenuItemStyleSelector x:Key="HamburgerMenuItemStyleSelector" />
+    <Controls:HamburgerMenuItemStyleSelector x:Key="HamburgerMenuItemOptionsStyleSelector" IsItemOptions="True" />
 
     <DataTemplate x:Key="HamburgerMenuItem">
         <Grid>
