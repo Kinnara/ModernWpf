@@ -105,10 +105,6 @@ namespace ModernWpf.Controls.Primitives
             var children = context.Children;
             if (children != null)
             {
-                var maxColumns = Math.Max(1, MaxColumns);
-                Debug.Assert(maxColumns > 0);
-                var maxItemsPerColumn = (int)Math.Ceiling((double)children.Count / (double)maxColumns);
-
                 Size calculateLargestChildSize()
                 {
                     var largestChildWidth = 0.0;
@@ -130,12 +126,11 @@ namespace ModernWpf.Controls.Primitives
                 };
                 m_largestChildSize = calculateLargestChildSize();
 
-                var actualColumnCount = Math.Min(
-                    maxColumns,
-                    children.Count);
+                m_actualColumnCount = CalculateColumns(children.Count, m_largestChildSize.Width, availableSize.Width);
+                var maxItemsPerColumn = (int)Math.Ceiling((double)children.Count / m_actualColumnCount);
                 return new Size(
-                    (m_largestChildSize.Width * actualColumnCount) +
-                    (ColumnSpacing * (actualColumnCount - 1)),
+                    (m_largestChildSize.Width * m_actualColumnCount) +
+                    (ColumnSpacing * (m_actualColumnCount - 1)),
                     (m_largestChildSize.Height * maxItemsPerColumn) +
                     (RowSpacing * (maxItemsPerColumn - 1))
                 );
@@ -148,11 +143,9 @@ namespace ModernWpf.Controls.Primitives
             var children = context.Children;
             if (children != null)
             {
-                var maxColumns = Math.Max(1, MaxColumns);
-                Debug.Assert(maxColumns > 0);
                 var itemCount = children.Count;
-                var minitemsPerColumn = (int)Math.Floor((double)itemCount / (double)maxColumns);
-                var numberOfColumnsWithExtraElements = (int)(itemCount % maxColumns);
+                var minitemsPerColumn = (int)Math.Floor((double)itemCount / m_actualColumnCount);
+                var numberOfColumnsWithExtraElements = itemCount % m_actualColumnCount;
 
                 var columnSpacing = ColumnSpacing;
                 var rowSpacing = RowSpacing;
@@ -199,6 +192,40 @@ namespace ModernWpf.Controls.Primitives
             return finalSize;
         }
 
+        int CalculateColumns(int childCount, double maxItemWidth, double availableWidth)
+        {
+            /*
+            --------------------------------------------------------------
+            |      |-----------|-----------| | widthNeededForExtraColumn |
+            |                                |                           |
+            |      |------|    |------|      | ColumnSpacing             |
+            | |----|      |----|      |----| | maxItemWidth              |
+            |  O RB        O RB        O RB  |                           |
+            --------------------------------------------------------------
+            */
+
+            // Every column execpt the first takes this ammount of space to fit on screen.
+            var widthNeededForExtraColumn = ColumnSpacing + maxItemWidth;
+            // The number of columns from data and api ignoring available space
+            var requestedColumnCount = Math.Min(MaxColumns, childCount);
+
+            // If columns can be added with effectively 0 extra space return as many columns as needed.
+            if (widthNeededForExtraColumn < double.Epsilon)
+            {
+                return requestedColumnCount;
+            }
+
+            var extraWidthAfterFirstColumn = availableWidth - maxItemWidth;
+            var maxExtraColumns = Math.Max(0.0, Math.Floor(extraWidthAfterFirstColumn / widthNeededForExtraColumn));
+
+            // The smaller of number of columns from data and api and
+            // the number of columns the available space can support
+            var effectiveColumnCount = Math.Min(requestedColumnCount, maxExtraColumns + 1);
+            // return 1 even if there isn't any data
+            return Math.Max(1, (int)effectiveColumnCount);
+        }
+
+        int m_actualColumnCount = 1;
         Size m_largestChildSize;
     }
 }
