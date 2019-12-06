@@ -180,7 +180,10 @@ namespace ModernWpf.Controls
                     _proofingMenuItem.Items.Add(menuItem);
                 }
 
-                _proofingMenuItem.Items.Add(new Separator());
+                if (_proofingMenuItem.HasItems)
+                {
+                    _proofingMenuItem.Items.Add(new Separator());
+                }
 
                 _proofingMenuItem.Items.Add(new MenuItem
                 {
