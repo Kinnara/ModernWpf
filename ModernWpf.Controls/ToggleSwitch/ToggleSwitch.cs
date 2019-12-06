@@ -42,6 +42,9 @@ namespace ModernWpf.Controls
 
         public ToggleSwitch()
         {
+            SetCurrentValue(OffContentProperty, Strings.Resources.ToggleSwitchOff);
+            SetCurrentValue(OnContentProperty, Strings.Resources.ToggleSwitchOn);
+
             IsEnabledChanged += OnIsEnabledChanged;
         }
 
@@ -135,7 +138,7 @@ namespace ModernWpf.Controls
                 nameof(OffContent),
                 typeof(object),
                 typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata("Off", OnOffContentChanged));
+                new FrameworkPropertyMetadata(OnOffContentChanged));
 
         private static void OnOffContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -178,7 +181,7 @@ namespace ModernWpf.Controls
                 nameof(OnContent),
                 typeof(object),
                 typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata("On", OnOnContentChanged));
+                new FrameworkPropertyMetadata(OnOnContentChanged));
 
         private static void OnOnContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

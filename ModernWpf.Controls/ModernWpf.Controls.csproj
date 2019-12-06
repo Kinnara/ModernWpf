@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.0;net45</TargetFrameworks>
     <UseWPF>true</UseWPF>
+    <NeutralLanguage>en-US</NeutralLanguage>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetDocumentationFile</TargetsForTfmSpecificBuildOutput>
     <NuspecFile>$(MSBuildThisFileDirectory)ModernWpfUI.nuspec</NuspecFile>
     <PackageId>ModernWpfUI</PackageId>

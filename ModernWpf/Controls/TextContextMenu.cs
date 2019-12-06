@@ -30,7 +30,7 @@ namespace ModernWpf.Controls
         {
             _proofingMenuItem = new MenuItem
             {
-                Header = "Proofing"
+                Header = Strings.Resources.ProofingMenuItemLabel
             };
             Items.Add(_proofingMenuItem);
             Items.Add(new MenuItem
