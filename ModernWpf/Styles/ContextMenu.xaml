@@ -2,6 +2,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
     <Thickness x:Key="MenuFlyoutScrollerMargin">0,4,0,4</Thickness>
@@ -66,5 +67,7 @@
     </Style>
 
     <Style TargetType="ContextMenu" BasedOn="{StaticResource DefaultContextMenuStyle}" />
+
+    <local:TextContextMenu x:Key="TextControlContextMenu" />
 
 </ResourceDictionary>

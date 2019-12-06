@@ -431,44 +431,4 @@
 
     <Style TargetType="MenuItem" BasedOn="{StaticResource DefaultMenuItemStyle}" />
 
-    <ContextMenu
-        x:Key="TextControlContextMenu"
-        primitives:TextControlContextMenuHelper.IsEnabled="True">
-        <ContextMenu.ItemContainerStyle>
-            <Style TargetType="MenuItem" BasedOn="{StaticResource DefaultMenuItemStyle}">
-                <Style.Triggers>
-                    <Trigger Property="IsEnabled" Value="False">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </ContextMenu.ItemContainerStyle>
-        <MenuItem Command="ApplicationCommands.Cut">
-            <MenuItem.Icon>
-                <local:SymbolIcon Symbol="Cut" />
-            </MenuItem.Icon>
-        </MenuItem>
-        <MenuItem Command="ApplicationCommands.Copy">
-            <MenuItem.Icon>
-                <local:SymbolIcon Symbol="Copy" />
-            </MenuItem.Icon>
-        </MenuItem>
-        <MenuItem Command="ApplicationCommands.Paste">
-            <MenuItem.Icon>
-                <local:SymbolIcon Symbol="Paste" />
-            </MenuItem.Icon>
-        </MenuItem>
-        <MenuItem Command="ApplicationCommands.Undo">
-            <MenuItem.Icon>
-                <local:SymbolIcon Symbol="Undo" />
-            </MenuItem.Icon>
-        </MenuItem>
-        <MenuItem Command="ApplicationCommands.Redo">
-            <MenuItem.Icon>
-                <local:SymbolIcon Symbol="Redo" />
-            </MenuItem.Icon>
-        </MenuItem>
-        <MenuItem Command="ApplicationCommands.SelectAll" />
-    </ContextMenu>
-
 </ResourceDictionary>

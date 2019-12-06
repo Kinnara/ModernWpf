@@ -2,6 +2,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
     <Thickness x:Key="RichEditBoxTopHeaderMargin">0,0,0,4</Thickness>
@@ -44,6 +45,7 @@
         <Setter Property="AllowDrop" Value="true" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
         <Setter Property="ContextMenu" Value="{DynamicResource TextControlContextMenu}" />
+        <Setter Property="local:TextContextMenu.UsingTextContextMenu" Value="True" />
         <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource TextControlValidationErrorTemplate}" />
         <Setter Property="Template">
             <Setter.Value>

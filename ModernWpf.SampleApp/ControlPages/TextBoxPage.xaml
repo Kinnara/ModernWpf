@@ -12,14 +12,59 @@
     d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
+    <UserControl.Resources>
+        <Style TargetType="sc:ControlExample">
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+        </Style>
+    </UserControl.Resources>
+
     <ScrollViewer>
         <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <sc:ControlExample HeaderText="A TextBox.">
+            <sc:ControlExample
+                x:Name="Example1"
+                HeaderText="A simple TextBox.">
+                <TextBox AutomationProperties.Name="simple TextBox" />
+            </sc:ControlExample>
+
+            <sc:ControlExample
+                x:Name="Example2"
+                HeaderText="A TextBox with a header and placeholder text.">
+                <sc:ControlExample.Example>
+                    <TextBox
+                        ui:ControlHelper.Header="Enter your name:"
+                        ui:ControlHelper.PlaceholderText="Name" />
+                </sc:ControlExample.Example>
+            </sc:ControlExample>
+
+            <sc:ControlExample
+                x:Name="Example3"
+                HeaderText="A read-only TextBox with various properties set.">
+                <TextBox
+                    Text="I am super excited to be here!"
+                    IsReadOnly="True"
+                    FontFamily="Arial"
+                    FontSize="24"
+                    FontStyle="Italic"
+                    Foreground="CornflowerBlue"
+                    AutomationProperties.Name="customized TextBox" />
+            </sc:ControlExample>
+
+            <sc:ControlExample
+                x:Name="Example4"
+                HeaderText="A multi-line TextBox with spell checking and custom selection highlight color.">
+                <TextBox
+                    TextWrapping="Wrap"
+                    AcceptsReturn="True"
+                    SpellCheck.IsEnabled="True"
+                    SelectionBrush="Green"
+                    AutomationProperties.Name="multi-line TextBox" />
+            </sc:ControlExample>
+
+            <sc:ControlExample HeaderText="API in action.">
                 <TextBox
                     x:Name="textBox"
                     Width="300"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
                     ui:ControlHelper.Header="Control header"
                     ui:ControlHelper.PlaceholderText="Placeholder text" />
 
@@ -81,10 +126,11 @@
                 </sc:ControlExample.Options>
             </sc:ControlExample>
 
-            <sc:ControlExample HeaderText="A RichTextBox.">
+            <sc:ControlExample HeaderText="A simple RichTextBox.">
                 <RichTextBox
                     x:Name="richTextBox"
-                    ui:ControlHelper.Header="Control header" />
+                    ui:ControlHelper.Header="Control header"
+                    SpellCheck.IsEnabled="True" />
             </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
