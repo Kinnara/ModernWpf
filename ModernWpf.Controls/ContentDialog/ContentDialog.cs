@@ -45,6 +45,9 @@ namespace ModernWpf.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ContentDialog),
                 new FrameworkPropertyMetadata(typeof(ContentDialog)));
+
+            EventManager.RegisterClassHandler(typeof(Window), TitleBar.BackRequestedEvent,
+                new EventHandler<BackRequestedEventArgs>(OnBackRequested));
         }
 
         public ContentDialog()
@@ -412,8 +415,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 "OpenDialog",
                 typeof(ContentDialog),
-                typeof(ContentDialog),
-                new PropertyMetadata(default(ContentDialog), OnOpenDialogChanged));
+                typeof(ContentDialog));
 
         private static ContentDialog GetOpenDialog(Window window)
         {
@@ -423,23 +425,6 @@ namespace ModernWpf.Controls
         private static void SetOpenDialog(Window window, ContentDialog value)
         {
             window.SetValue(OpenDialogProperty, value);
-        }
-
-        private static void OnOpenDialogChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var owner = (Window)d;
-
-            var oldValue = (ContentDialog)e.OldValue;
-            if (oldValue != null)
-            {
-                oldValue.UnsubscribeToBackRequested(owner);
-            }
-
-            var newValue = (ContentDialog)e.NewValue;
-            if (newValue != null)
-            {
-                newValue.SubscribeToBackRequested(owner);
-            }
         }
 
         #endregion
@@ -935,26 +920,17 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void SubscribeToBackRequested(Window owner)
+        private static void OnBackRequested(object sender, BackRequestedEventArgs e)
         {
-            var handler = new EventHandler<BackRequestedEventArgs>(OnBackRequested);
-            owner.AddHandler(TitleBar.InternalBackRequestedEvent, handler);
-            m_backRequestedHandler = handler;
-        }
-
-        private void UnsubscribeToBackRequested(Window owner)
-        {
-            if (m_backRequestedHandler != null)
+            if (e.Source is Window window)
             {
-                owner.RemoveHandler(TitleBar.InternalBackRequestedEvent, m_backRequestedHandler);
-                m_backRequestedHandler = null;
+                var openDialog = GetOpenDialog(window);
+                if (openDialog != null)
+                {
+                    e.Handled = true;
+                    openDialog.Hide();
+                }
             }
-        }
-
-        private void OnBackRequested(object sender, BackRequestedEventArgs e)
-        {
-            e.Handled = true;
-            Hide();
         }
 
         private void OnApplicationActivated(object sender, EventArgs e)
@@ -1180,6 +1156,5 @@ namespace ModernWpf.Controls
         private Window m_openDialogOwner;
         private ContentDialogResult m_result;
         private readonly DispatcherTimer m_closeTimer;
-        private EventHandler<BackRequestedEventArgs> m_backRequestedHandler;
     }
 }
