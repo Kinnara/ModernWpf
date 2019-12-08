@@ -19,7 +19,7 @@ namespace ModernWpf.Controls.Primitives
                 "IsEnabled",
                 typeof(bool),
                 typeof(ScrollBarHelper),
-                new PropertyMetadata(default(bool), OnIsEnabledChanged));
+                new PropertyMetadata(false, OnIsEnabledChanged));
 
         public static bool GetIsEnabled(ScrollBar scrollBar)
         {
@@ -67,7 +67,7 @@ namespace ModernWpf.Controls.Primitives
                 "CollapsedThumbBackgroundColor",
                 typeof(Color?),
                 typeof(ScrollBarHelper),
-                new PropertyMetadata(default(Color?)));
+                new PropertyMetadata((Color?)null));
 
         public static Color? GetCollapsedThumbBackgroundColor(ScrollBar scrollBar)
         {
@@ -88,7 +88,7 @@ namespace ModernWpf.Controls.Primitives
                 "ExpandedThumbBackgroundColor",
                 typeof(Color?),
                 typeof(ScrollBarHelper),
-                new PropertyMetadata(default(Color?)));
+                new PropertyMetadata((Color?)null));
 
         public static Color? GetExpandedThumbBackgroundColor(ScrollBar scrollBar)
         {

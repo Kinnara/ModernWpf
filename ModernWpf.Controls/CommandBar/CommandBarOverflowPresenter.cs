@@ -70,9 +70,8 @@ namespace ModernWpf.Controls.Primitives
         {
             if (TemplatedParent is CommandBarToolBar toolBar)
             {
-                var popupPoint = PointToScreen(new Point());
-                var toolBarPoint = toolBar.PointToScreen(new Point());
-                var verticalOffset = popupPoint.Y - toolBarPoint.Y;
+                var popupTop = TranslatePoint(new Point(0, 0), toolBar);
+                var verticalOffset = popupTop.Y;
                 return verticalOffset > 0;
             }
             return true;

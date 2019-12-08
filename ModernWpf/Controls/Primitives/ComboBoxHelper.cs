@@ -152,9 +152,8 @@ namespace ModernWpf.Controls.Primitives
             {
                 if (GetTemplateChild<TextBox>(c_editableTextName, comboBox) is TextBox textBox)
                 {
-                    var popupPoint = popupBorder.PointToScreen(new Point());
-                    var textBoxPoint = textBox.PointToScreen(new Point());
-                    verticalOffset = popupPoint.Y - textBoxPoint.Y;
+                    var popupTop = popupBorder.TranslatePoint(new Point(0,0), textBox);
+                    verticalOffset = popupTop.Y;
                 }
             }
             return verticalOffset > 0;

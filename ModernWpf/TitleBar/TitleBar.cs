@@ -363,26 +363,5 @@ namespace ModernWpf.Controls
         }
 
         #endregion
-
-        #region InternalBackRequested
-
-        internal static readonly RoutedEvent InternalBackRequestedEvent =
-            EventManager.RegisterRoutedEvent(
-                "InternalBackRequested",
-                RoutingStrategy.Tunnel,
-                typeof(EventHandler<BackRequestedEventArgs>),
-                typeof(TitleBar));
-
-        internal static void AddInternalBackRequestedHandler(Window window, EventHandler<BackRequestedEventArgs> handler)
-        {
-            window.AddHandler(InternalBackRequestedEvent, handler);
-        }
-
-        internal static void RemoveInternalBackRequestedHandler(Window window, EventHandler<BackRequestedEventArgs> handler)
-        {
-            window.RemoveHandler(InternalBackRequestedEvent, handler);
-        }
-
-        #endregion
     }
 }

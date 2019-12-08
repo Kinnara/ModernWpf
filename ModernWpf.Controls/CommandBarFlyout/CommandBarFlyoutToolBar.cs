@@ -414,19 +414,11 @@ namespace ModernWpf.Controls.Primitives
                 // and if there is enough space above, then we'll display it above instead.
                 if (m_secondaryItemsRoot != null)
                 {
-                    try
+                    if (IsVisible && m_secondaryItemsRoot.IsVisible)
                     {
-                        if (IsVisible && m_secondaryItemsRoot.IsVisible)
-                        {
-                            var controlPoint = PointToScreen(new Point());
-                            var overflowPopupPoint = m_secondaryItemsRoot.PointToScreen(new Point());
+                        var overflowPopupTop = m_secondaryItemsRoot.TranslatePoint(new Point(), this);
 
-                            shouldExpandUp = controlPoint.Y > overflowPopupPoint.Y;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        Debug.Assert(false);
+                        shouldExpandUp = overflowPopupTop.Y < 0;
                     }
 
                     //double availableHeight = window.ActualHeight;

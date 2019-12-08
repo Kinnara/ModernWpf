@@ -505,7 +505,7 @@ namespace ModernWpf
                 "SubscribedToInitialized",
                 typeof(bool),
                 typeof(ThemeManager),
-                new PropertyMetadata(default(bool), OnSubscribedToInitializedChanged));
+                new PropertyMetadata(false, OnSubscribedToInitializedChanged));
 
         private static bool GetSubscribedToInitialized(FrameworkElement element)
         {

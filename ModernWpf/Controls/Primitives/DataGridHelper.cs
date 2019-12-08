@@ -15,7 +15,7 @@ namespace ModernWpf.Controls.Primitives
                 "IsEnabled",
                 typeof(bool),
                 typeof(DataGridHelper),
-                new PropertyMetadata(default(bool), OnIsEnabledChanged));
+                new PropertyMetadata(false, OnIsEnabledChanged));
 
         public static bool GetIsEnabled(DataGrid dataGrid)
         {
@@ -267,7 +267,7 @@ namespace ModernWpf.Controls.Primitives
             var dataGrid = (DataGrid)d;
             if ((bool)e.NewValue)
             {
-                SetColumnStylesHelper(dataGrid, new ColumnStylesHelper(dataGrid));
+                dataGrid.SetValue(ColumnStylesHelperProperty, new ColumnStylesHelper(dataGrid));
             }
             else
             {
@@ -284,17 +284,7 @@ namespace ModernWpf.Controls.Primitives
                 "ColumnStylesHelper",
                 typeof(ColumnStylesHelper),
                 typeof(DataGridHelper),
-                new PropertyMetadata(default(ColumnStylesHelper), OnColumnStylesHelperChanged));
-
-        private static ColumnStylesHelper GetColumnStylesHelper(DataGrid dataGrid)
-        {
-            return (ColumnStylesHelper)dataGrid.GetValue(ColumnStylesHelperProperty);
-        }
-
-        private static void SetColumnStylesHelper(DataGrid dataGrid, ColumnStylesHelper value)
-        {
-            dataGrid.SetValue(ColumnStylesHelperProperty, value);
-        }
+                new PropertyMetadata(OnColumnStylesHelperChanged));
 
         private static void OnColumnStylesHelperChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

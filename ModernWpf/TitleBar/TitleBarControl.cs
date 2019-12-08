@@ -281,12 +281,7 @@ namespace ModernWpf.Controls.Primitives
         {
             if (TemplatedParent is Window window)
             {
-                var internalArgs = new BackRequestedEventArgs(TitleBar.InternalBackRequestedEvent, window);
-                window.RaiseEvent(internalArgs);
-                if (!internalArgs.Handled)
-                {
-                    TitleBar.RaiseBackRequested(window);
-                }
+                TitleBar.RaiseBackRequested(window);
             }
         }
 
