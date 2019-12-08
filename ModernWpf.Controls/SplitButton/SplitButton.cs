@@ -331,8 +331,7 @@ namespace ModernWpf.Controls
 
         internal virtual void OnClickPrimary(object sender, RoutedEventArgs e)
         {
-            var eventArgs = new SplitButtonClickEventArgs();
-            Click?.Invoke(this, eventArgs);
+            Click?.Invoke(this, new SplitButtonClickEventArgs());
 
             if (FrameworkElementAutomationPeer.FromElement(this) is AutomationPeer peer)
             {

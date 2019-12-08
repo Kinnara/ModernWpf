@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fluent.Ribbon" Version="7.0.0" />
+    <PackageReference Include="Fluent.Ribbon" Version="7.0.1" />
   </ItemGroup>
 
   <ItemGroup>

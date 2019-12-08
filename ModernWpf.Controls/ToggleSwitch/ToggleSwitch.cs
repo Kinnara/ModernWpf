@@ -14,6 +14,10 @@ namespace ModernWpf.Controls
     [TemplatePart(Name = nameof(SwitchKnob), Type = typeof(FrameworkElement))]
     [TemplatePart(Name = nameof(KnobTranslateTransform), Type = typeof(TranslateTransform))]
     [TemplatePart(Name = nameof(SwitchThumb), Type = typeof(Thumb))]
+    [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = VisualStates.StateNormal)]
+    [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = VisualStates.StateMouseOver)]
+    [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = VisualStates.StatePressed)]
+    [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = VisualStates.StateDisabled)]
     [TemplateVisualState(GroupName = ContentStatesGroup, Name = OffContentState)]
     [TemplateVisualState(GroupName = ContentStatesGroup, Name = OnContentState)]
     [TemplateVisualState(GroupName = ToggleStatesGroup, Name = DraggingState)]
@@ -340,7 +344,7 @@ namespace ModernWpf.Controls
             }
             if (click)
             {
-                IsOn = !IsOn;
+                SetCurrentValue(IsOnProperty, !IsOn);
             }
 
             _wasDragged = false;
@@ -366,19 +370,19 @@ namespace ModernWpf.Controls
 
             if (!IsEnabled)
             {
-                stateName = "Disabled";
+                stateName = VisualStates.StateDisabled;
             }
             else if (IsPressed)
             {
-                stateName = "Pressed";
+                stateName = VisualStates.StatePressed;
             }
             else if (IsMouseOver)
             {
-                stateName = "MouseOver";
+                stateName = VisualStates.StateMouseOver;
             }
             else
             {
-                stateName = "Normal";
+                stateName = VisualStates.StateNormal;
             }
             VisualStateManager.GoToState(this, stateName, useTransitions);
 

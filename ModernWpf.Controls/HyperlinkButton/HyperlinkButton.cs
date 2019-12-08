@@ -9,8 +9,6 @@ namespace ModernWpf.Controls
 {
     public class HyperlinkButton : ButtonBase
     {
-        private readonly Hyperlink _hyperlink;
-
         static HyperlinkButton()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(HyperlinkButton),
@@ -19,13 +17,13 @@ namespace ModernWpf.Controls
 
         public HyperlinkButton()
         {
-            _hyperlink = new Hyperlink
+            m_hyperlink = new Hyperlink
             {
                 NavigateUri = NavigateUri,
                 TargetName = TargetName
             };
-            _hyperlink.RequestNavigate += OnRequestNavigate;
-            AddLogicalChild(_hyperlink);
+            m_hyperlink.RequestNavigate += OnRequestNavigate;
+            AddLogicalChild(m_hyperlink);
         }
 
         public static readonly DependencyProperty NavigateUriProperty =
@@ -41,7 +39,7 @@ namespace ModernWpf.Controls
 
         private static void OnNavigateUriChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((HyperlinkButton)d)._hyperlink.NavigateUri = (Uri)e.NewValue;
+            ((HyperlinkButton)d).m_hyperlink.NavigateUri = (Uri)e.NewValue;
         }
 
         public static readonly DependencyProperty TargetNameProperty =
@@ -57,12 +55,12 @@ namespace ModernWpf.Controls
 
         private static void OnTargetNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((HyperlinkButton)d)._hyperlink.TargetName = (string)e.NewValue;
+            ((HyperlinkButton)d).m_hyperlink.TargetName = (string)e.NewValue;
         }
 
         protected override void OnClick()
         {
-            _hyperlink.DoClick();
+            m_hyperlink.DoClick();
             base.OnClick();
         }
 
@@ -77,5 +75,7 @@ namespace ModernWpf.Controls
                 e.Handled = true;
             }
         }
+
+        private readonly Hyperlink m_hyperlink;
     }
 }

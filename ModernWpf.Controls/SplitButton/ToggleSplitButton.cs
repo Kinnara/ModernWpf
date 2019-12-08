@@ -50,8 +50,7 @@ namespace ModernWpf.Controls
         {
             if (m_hasLoaded)
             {
-                var eventArgs = new ToggleSplitButtonIsCheckedChangedEventArgs();
-                IsCheckedChanged?.Invoke(this, eventArgs);
+                IsCheckedChanged?.Invoke(this, new ToggleSplitButtonIsCheckedChangedEventArgs());
 
                 var peer = FrameworkElementAutomationPeer.FromElement(this);
                 if (peer != null)

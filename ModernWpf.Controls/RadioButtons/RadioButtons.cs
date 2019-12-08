@@ -27,7 +27,7 @@ namespace ModernWpf.Controls
 
         public RadioButtons()
         {
-            ItemTemplate = new RadioButtonsElementFactory();
+            SetCurrentValue(ItemTemplateProperty, new RadioButtonsElementFactory());
 
             var items = new List<object>();
             SetValue(ItemsProperty, items);
@@ -505,8 +505,8 @@ namespace ModernWpf.Controls
                     var newSelectedItem = GetDataAtIndex(m_selectedIndex, true);
                     var previousSelectedItem = GetDataAtIndex(previousSelectedIndex, false);
 
-                    SelectedIndex = m_selectedIndex;
-                    SelectedItem = newSelectedItem;
+                    SetCurrentValue(SelectedIndexProperty, m_selectedIndex);
+                    SetCurrentValue(SelectedItemProperty, newSelectedItem);
                     RaiseEvent(new SelectionChangedEventArgs(SelectionChangedEvent, new[] { previousSelectedItem }, new[] { newSelectedItem }));
                 }
                 finally
@@ -526,7 +526,7 @@ namespace ModernWpf.Controls
                 {
                     if (item is ToggleButton itemAsToggleButton)
                     {
-                        itemAsToggleButton.IsChecked = containerIsChecked;
+                        itemAsToggleButton.SetCurrentValue(ToggleButton.IsCheckedProperty, containerIsChecked);
                     }
                 }
                 if (index >= 0)
