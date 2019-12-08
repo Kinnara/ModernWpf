@@ -1,17 +1,19 @@
-﻿using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public class AppBarToggleButton : ToggleButton, ICommandBarElement
+    public class AppBarToggleButton : ToggleButton, ICommandBarElement, IAppBarElement
     {
         static AppBarToggleButton()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AppBarToggleButton),
                 new FrameworkPropertyMetadata(typeof(AppBarToggleButton)));
+
+            CommandProperty.OverrideMetadata(typeof(AppBarToggleButton),
+                new FrameworkPropertyMetadata(OnCommandPropertyChanged));
 
             IsCheckedProperty.OverrideMetadata(typeof(AppBarToggleButton),
                 new FrameworkPropertyMetadata(OnIsCheckedChanged));
@@ -25,9 +27,6 @@ namespace ModernWpf.Controls
 
         public AppBarToggleButton()
         {
-            UpdateIsInOverflow();
-            UpdateIsCheckedOrIndeterminate();
-            UpdateApplicationViewState();
         }
 
         #region CornerRadius
@@ -46,22 +45,12 @@ namespace ModernWpf.Controls
         #region Icon
 
         public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register(
-                nameof(Icon),
-                typeof(IconElement),
-                typeof(AppBarToggleButton),
-                new PropertyMetadata(OnIconChanged));
+            AppBarElementProperties.IconProperty.AddOwner(typeof(AppBarToggleButton));
 
-        [TypeConverter(typeof(IconElementConverter))]
         public IconElement Icon
         {
             get => (IconElement)GetValue(IconProperty);
             set => SetValue(IconProperty, value);
-        }
-
-        private static void OnIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((AppBarToggleButton)d).UpdateApplicationViewState();
         }
 
         #endregion
@@ -69,11 +58,7 @@ namespace ModernWpf.Controls
         #region Label
 
         public static readonly DependencyProperty LabelProperty =
-            DependencyProperty.Register(
-                nameof(Label),
-                typeof(string),
-                typeof(AppBarToggleButton),
-                new PropertyMetadata(string.Empty));
+            AppBarElementProperties.LabelProperty.AddOwner(typeof(AppBarToggleButton));
 
         public string Label
         {
@@ -86,11 +71,7 @@ namespace ModernWpf.Controls
         #region LabelPosition
 
         public static readonly DependencyProperty LabelPositionProperty =
-            DependencyProperty.Register(
-                nameof(LabelPosition),
-                typeof(CommandBarLabelPosition),
-                typeof(AppBarToggleButton),
-                new PropertyMetadata(CommandBarLabelPosition.Default, OnLabelPositionChanged));
+            AppBarElementProperties.LabelPositionProperty.AddOwner(typeof(AppBarToggleButton));
 
         public CommandBarLabelPosition LabelPosition
         {
@@ -98,21 +79,12 @@ namespace ModernWpf.Controls
             set => SetValue(LabelPositionProperty, value);
         }
 
-        private static void OnLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((AppBarToggleButton)d).UpdateApplicationViewState();
-        }
-
         #endregion
 
         #region IsCompact
 
         public static readonly DependencyProperty IsCompactProperty =
-            DependencyProperty.Register(
-                nameof(IsCompact),
-                typeof(bool),
-                typeof(AppBarToggleButton),
-                new PropertyMetadata(false, OnIsCompactChanged));
+            AppBarElementProperties.IsCompactProperty.AddOwner(typeof(AppBarToggleButton));
 
         public bool IsCompact
         {
@@ -120,80 +92,33 @@ namespace ModernWpf.Controls
             set => SetValue(IsCompactProperty, value);
         }
 
-        private static void OnIsCompactChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((AppBarToggleButton)d).UpdateApplicationViewState();
-        }
-
         #endregion
 
         #region IsInOverflow
 
-        private static readonly DependencyPropertyKey IsInOverflowPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(IsInOverflow),
-                typeof(bool),
-                typeof(AppBarToggleButton),
-                new PropertyMetadata(false, OnIsInOverflowChanged));
-
         public static readonly DependencyProperty IsInOverflowProperty =
-            IsInOverflowPropertyKey.DependencyProperty;
+            AppBarElementProperties.IsInOverflowProperty.AddOwner(typeof(AppBarToggleButton));
 
         public bool IsInOverflow
         {
             get => (bool)GetValue(IsInOverflowProperty);
-            private set => SetValue(IsInOverflowPropertyKey, value);
-        }
-
-        private static void OnIsInOverflowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((AppBarToggleButton)d).UpdateApplicationViewState();
-        }
-
-        private void UpdateIsInOverflow()
-        {
-            IsInOverflow = ToolBar.GetIsOverflowItem(this) || ToolBar.GetOverflowMode(this) == OverflowMode.Always;
         }
 
         #endregion
 
         #region ApplicationViewState
 
-        private static readonly DependencyPropertyKey ApplicationViewStatePropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(ApplicationViewState),
-                typeof(AppBarElementApplicationViewState),
-                typeof(AppBarToggleButton),
-                new PropertyMetadata(AppBarElementApplicationViewState.FullSize));
-
         public static readonly DependencyProperty ApplicationViewStateProperty =
-            ApplicationViewStatePropertyKey.DependencyProperty;
+            AppBarElementProperties.ApplicationViewStateProperty.AddOwner(typeof(AppBarToggleButton));
 
         public AppBarElementApplicationViewState ApplicationViewState
         {
             get => (AppBarElementApplicationViewState)GetValue(ApplicationViewStateProperty);
-            private set => SetValue(ApplicationViewStatePropertyKey, value);
         }
 
-        internal void UpdateApplicationViewStateInOverflow(bool hasMenuIcon)
+        void IAppBarElement.UpdateApplicationViewState()
         {
-            ApplicationViewState = CalculateApplicationViewStateInOverflow(hasMenuIcon);
-        }
-
-        private AppBarElementApplicationViewState CalculateApplicationViewStateInOverflow(bool hasMenuIcon)
-        {
-            AppBarElementApplicationViewState value;
-
-            if (hasMenuIcon)
-            {
-                value = AppBarElementApplicationViewState.OverflowWithMenuIcons;
-            }
-            else
-            {
-                value = AppBarElementApplicationViewState.Overflow;
-            }
-
-            return value;
+            UpdateApplicationViewState();
         }
 
         private void UpdateApplicationViewState()
@@ -202,16 +127,13 @@ namespace ModernWpf.Controls
 
             if (IsInOverflow)
             {
-                switch (ApplicationViewState)
+                if (VisualParent is CommandBarOverflowPanel overflow)
                 {
-                    case AppBarElementApplicationViewState.FullSize:
-                    case AppBarElementApplicationViewState.Compact:
-                    case AppBarElementApplicationViewState.LabelOnRight:
-                    case AppBarElementApplicationViewState.LabelCollapsed:
-                        value = CalculateApplicationViewStateInOverflow(Icon != null);
-                        break;
-                    default:
-                        return;
+                    value = ComputeApplicationViewStateInOverflow(overflow.HasMenuIcon);
+                }
+                else
+                {
+                    value = ComputeApplicationViewStateInOverflow(Icon != null);
                 }
             }
             else
@@ -246,7 +168,13 @@ namespace ModernWpf.Controls
                 }
             }
 
-            ApplicationViewState = value;
+            SetValue(AppBarElementProperties.ApplicationViewStatePropertyKey, value);
+        }
+
+        private AppBarElementApplicationViewState ComputeApplicationViewStateInOverflow(bool hasMenuIcon)
+        {
+            return hasMenuIcon ? AppBarElementApplicationViewState.OverflowWithMenuIcons :
+                                 AppBarElementApplicationViewState.Overflow;
         }
 
         #endregion
@@ -279,11 +207,7 @@ namespace ModernWpf.Controls
         #region InputGestureText
 
         public static readonly DependencyProperty InputGestureTextProperty =
-            DependencyProperty.Register(
-                nameof(InputGestureText),
-                typeof(string),
-                typeof(AppBarToggleButton),
-                new PropertyMetadata(string.Empty, OnInputGestureTextChanged));
+            AppBarElementProperties.InputGestureTextProperty.AddOwner(typeof(AppBarToggleButton));
 
         public string InputGestureText
         {
@@ -291,34 +215,16 @@ namespace ModernWpf.Controls
             set => SetValue(InputGestureTextProperty, value);
         }
 
-        private static void OnInputGestureTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((AppBarToggleButton)d).UpdateHasInputGestureText();
-        }
-
         #endregion
 
         #region HasInputGestureText
 
-        private static readonly DependencyPropertyKey HasInputGestureTextPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(HasInputGestureText),
-                typeof(bool),
-                typeof(AppBarToggleButton),
-                new PropertyMetadata(false));
-
         public static readonly DependencyProperty HasInputGestureTextProperty =
-            HasInputGestureTextPropertyKey.DependencyProperty;
+            AppBarElementProperties.HasInputGestureTextProperty.AddOwner(typeof(AppBarToggleButton));
 
         public bool HasInputGestureText
         {
             get => (bool)GetValue(HasInputGestureTextProperty);
-            private set => SetValue(HasInputGestureTextPropertyKey, value);
-        }
-
-        private void UpdateHasInputGestureText()
-        {
-            HasInputGestureText = !string.IsNullOrEmpty(InputGestureText);
         }
 
         #endregion
@@ -336,8 +242,15 @@ namespace ModernWpf.Controls
 
             if (e.Property == ToolBar.IsOverflowItemProperty)
             {
-                UpdateIsInOverflow();
+                AppBarElementProperties.UpdateIsInOverflow(this);
             }
+        }
+
+        private static void OnCommandPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var button = (AppBarToggleButton)d;
+            button.CoerceValue(LabelProperty);
+            button.CoerceValue(InputGestureTextProperty);
         }
 
         private static void OnIsCheckedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -347,7 +260,7 @@ namespace ModernWpf.Controls
 
         private static void OnOverflowModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AppBarToggleButton)d).UpdateIsInOverflow();
+            AppBarElementProperties.UpdateIsInOverflow(d);
         }
 
         private static void OnDefaultLabelPositionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

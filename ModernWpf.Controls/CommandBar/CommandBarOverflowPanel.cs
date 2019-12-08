@@ -12,6 +12,10 @@ namespace ModernWpf.Controls.Primitives
             Loaded += OnLoaded;
         }
 
+        internal bool HasToggleButton { get; private set; }
+
+        internal bool HasMenuIcon { get; private set; }
+
         protected override Size MeasureOverride(Size constraint)
         {
             base.MeasureOverride(constraint);
@@ -112,17 +116,16 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
+            HasToggleButton = hasToggleButton;
+            HasMenuIcon = hasMenuIcon;
+
             for (int i = 0, count = children.Count; i < count; ++i)
             {
                 UIElement child = children[i];
 
-                if (child is AppBarButton appBarButton)
+                if (child is IAppBarElement element)
                 {
-                    appBarButton.UpdateApplicationViewStateInOverflow(hasToggleButton, hasMenuIcon);
-                }
-                else if (child is AppBarToggleButton appBarToggleButton)
-                {
-                    appBarToggleButton.UpdateApplicationViewStateInOverflow(hasMenuIcon);
+                    element.UpdateApplicationViewState();
                 }
             }
         }

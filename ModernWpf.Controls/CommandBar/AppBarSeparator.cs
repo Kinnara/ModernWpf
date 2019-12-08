@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls
 {
-    public class AppBarSeparator : Control, ICommandBarElement
+    public class AppBarSeparator : Control, ICommandBarElement, IAppBarElement
     {
         static AppBarSeparator()
         {
@@ -16,17 +16,12 @@ namespace ModernWpf.Controls
 
         public AppBarSeparator()
         {
-            UpdateApplicationViewState();
         }
 
         #region IsCompact
 
         public static readonly DependencyProperty IsCompactProperty =
-            DependencyProperty.Register(
-                nameof(IsCompact),
-                typeof(bool),
-                typeof(AppBarSeparator),
-                new PropertyMetadata(false, OnIsCompactChanged));
+            AppBarElementProperties.IsCompactProperty.AddOwner(typeof(AppBarSeparator));
 
         public bool IsCompact
         {
@@ -34,62 +29,31 @@ namespace ModernWpf.Controls
             set => SetValue(IsCompactProperty, value);
         }
 
-        private static void OnIsCompactChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((AppBarSeparator)d).UpdateApplicationViewState();
-        }
-
         #endregion
 
         #region IsInOverflow
 
-        private static readonly DependencyPropertyKey IsInOverflowPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(IsInOverflow),
-                typeof(bool),
-                typeof(AppBarSeparator),
-                new PropertyMetadata(false, OnIsInOverflowChanged));
-
         public static readonly DependencyProperty IsInOverflowProperty =
-            IsInOverflowPropertyKey.DependencyProperty;
+            AppBarElementProperties.IsInOverflowProperty.AddOwner(typeof(AppBarSeparator));
 
         public bool IsInOverflow
         {
             get => (bool)GetValue(IsInOverflowProperty);
-            private set => SetValue(IsInOverflowPropertyKey, value);
-        }
-
-        private static void OnIsInOverflowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((AppBarSeparator)d).UpdateApplicationViewState();
-        }
-
-        private void UpdateIsInOverflow()
-        {
-            IsInOverflow = ToolBar.GetIsOverflowItem(this) || ToolBar.GetOverflowMode(this) == OverflowMode.Always;
         }
 
         #endregion
 
         #region ApplicationViewState
 
-        private static readonly DependencyPropertyKey ApplicationViewStatePropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(ApplicationViewState),
-                typeof(AppBarElementApplicationViewState),
-                typeof(AppBarSeparator),
-                new PropertyMetadata(AppBarElementApplicationViewState.FullSize));
-
         public static readonly DependencyProperty ApplicationViewStateProperty =
-            ApplicationViewStatePropertyKey.DependencyProperty;
+            AppBarElementProperties.ApplicationViewStateProperty.AddOwner(typeof(AppBarSeparator));
 
         public AppBarElementApplicationViewState ApplicationViewState
         {
             get => (AppBarElementApplicationViewState)GetValue(ApplicationViewStateProperty);
-            private set => SetValue(ApplicationViewStatePropertyKey, value);
         }
 
-        private void UpdateApplicationViewState()
+        void IAppBarElement.UpdateApplicationViewState()
         {
             AppBarElementApplicationViewState value;
 
@@ -106,7 +70,7 @@ namespace ModernWpf.Controls
                 value = AppBarElementApplicationViewState.FullSize;
             }
 
-            ApplicationViewState = value;
+            SetValue(AppBarElementProperties.ApplicationViewStatePropertyKey, value);
         }
 
         #endregion
@@ -117,13 +81,13 @@ namespace ModernWpf.Controls
 
             if (e.Property == ToolBar.IsOverflowItemProperty)
             {
-                UpdateIsInOverflow();
+                AppBarElementProperties.UpdateIsInOverflow(this);
             }
         }
 
         private static void OnOverflowModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AppBarSeparator)d).UpdateIsInOverflow();
+            AppBarElementProperties.UpdateIsInOverflow(d);
         }
     }
 }
