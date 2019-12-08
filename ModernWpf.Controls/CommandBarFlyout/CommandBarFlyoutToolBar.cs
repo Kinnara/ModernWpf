@@ -387,6 +387,11 @@ namespace ModernWpf.Controls.Primitives
             UpdateVisualState(useTransitions);
 
             UpdateShadow();
+
+            if (OverflowPopup != null && OverflowPopup.IsOpen)
+            {
+                OverflowPopup.Reposition();
+            }
         }
 
         void UpdateVisualState(

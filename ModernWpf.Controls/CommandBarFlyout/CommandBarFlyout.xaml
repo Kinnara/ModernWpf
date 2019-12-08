@@ -522,34 +522,7 @@
                             Height="{TemplateBinding Height}"
                             Background="{TemplateBinding Background}"
                             CornerRadius="{Binding ElementName=LayoutRoot, Path=CornerRadius}">
-                            <Border.Clip>
-                                <RectangleGeometry
-                                    x:Name="OuterContentRootClip"
-                                    Rect="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=ContentClipRect}">
-                                    <RectangleGeometry.Transform>
-                                        <TranslateTransform x:Name="OuterContentRootClipTransform" />
-                                    </RectangleGeometry.Transform>
-                                </RectangleGeometry>
-                            </Border.Clip>
                             <Grid x:Name="ContentRoot">
-                                <Grid.Clip>
-                                    <RectangleGeometry
-                                        x:Name="ContentRootClip"
-                                        Rect="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=ContentClipRect}">
-                                        <RectangleGeometry.Transform>
-                                            <!--
-                                                If you have a value set by a binding and then animate that value,
-                                                the animation will clear the binding.  Because of that, we need to have
-                                                two translate transforms - one that we bind to a property,
-                                                and another that we can animate.
-                                            -->
-                                            <TransformGroup>
-                                                <TranslateTransform X="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=WidthExpansionDelta}" />
-                                                <TranslateTransform x:Name="ContentRootClipTransform" />
-                                            </TransformGroup>
-                                        </RectangleGeometry.Transform>
-                                    </RectangleGeometry>
-                                </Grid.Clip>
                                 <Border
                                     x:Name="PrimaryItemsRoot"
                                     BorderBrush="{TemplateBinding BorderBrush}"

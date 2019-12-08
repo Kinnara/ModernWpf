@@ -48,6 +48,138 @@
                         Text="" />
                 </StackPanel>
             </sc:ControlExample>
+
+            <sc:ControlExample HeaderText="A command bar flyout with custom zoom UI in the menu">
+                <StackPanel>
+                    <Button Content="Click me">
+                        <ui:FlyoutService.Flyout>
+                            <ui:CommandBarFlyout Placement="RightEdgeAlignedTop">
+                                <ui:AppBarButton Icon="Cut" ToolTipService.ToolTip="Cut" />
+                                <ui:AppBarButton Icon="Copy" ToolTipService.ToolTip="Copy" />
+                                <ui:AppBarButton Icon="Paste" ToolTipService.ToolTip="Paste" />
+                                <!-- Alignment controls -->
+                                <ui:AppBarElementContainer>
+                                    <ui:SplitButton
+                                        ToolTipService.ToolTip="Alignment"
+                                        CornerRadius="0">
+                                        <ui:SplitButton.Resources>
+                                            <!--
+                                                Override default brushes to make the SplitButton
+                                                match other command bar elements.
+                                            -->
+                                            <Style TargetType="ui:SplitButton">
+                                                <Setter Property="Height" Value="38" />
+                                            </Style>
+                                            <SolidColorBrush x:Key="SplitButtonBackground" Color="Transparent" />
+                                            <SolidColorBrush x:Key="SplitButtonBackgroundPressed" Color="{DynamicResource SystemListMediumColor}" />
+                                            <SolidColorBrush x:Key="SplitButtonBackgroundPointerOver" Color="{DynamicResource SystemListLowColor}" />
+                                            <SolidColorBrush x:Key="SplitButtonBorderBrush" Color="Transparent" />
+                                            <SolidColorBrush x:Key="SplitButtonBorderBrushPointerOver" Color="Transparent" />
+                                            <SolidColorBrush x:Key="SplitButtonBorderBrushChecked" Color="Transparent" />
+                                        </ui:SplitButton.Resources>
+                                        <ui:SplitButton.Content>
+                                            <Viewbox
+                                                Width="16"
+                                                Height="16"
+                                                Margin="0,2,0,0">
+                                                <ui:SymbolIcon Symbol="AlignLeft" />
+                                            </Viewbox>
+                                        </ui:SplitButton.Content>
+                                        <ui:SplitButton.Flyout>
+                                            <ui:MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                                <MenuItem Header="Align left">
+                                                    <MenuItem.Icon>
+                                                        <ui:SymbolIcon Symbol="AlignLeft" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem Header="Center">
+                                                    <MenuItem.Icon>
+                                                        <ui:SymbolIcon Symbol="AlignCenter" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem Header="Align right">
+                                                    <MenuItem.Icon>
+                                                        <ui:SymbolIcon Symbol="AlignRight" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                            </ui:MenuFlyout>
+                                        </ui:SplitButton.Flyout>
+                                    </ui:SplitButton>
+                                </ui:AppBarElementContainer>
+                                <!-- end Alignment controls -->
+                                <ui:CommandBarFlyout.SecondaryCommands>
+                                    <!-- Zoom controls -->
+                                    <ui:AppBarElementContainer>
+                                        <ui:AppBarElementContainer.Resources>
+                                            <!--
+                                                Override default brushes to make the Buttons
+                                                match other command bar elements.
+                                            -->
+                                            <SolidColorBrush x:Key="ButtonBackground" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="{DynamicResource SystemListMediumColor}" />
+                                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="{DynamicResource SystemListLowColor}" />
+                                            <SolidColorBrush x:Key="ButtonBorderBrush" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="Transparent" />
+                                            <SolidColorBrush x:Key="ButtonBorderBrushChecked" Color="Transparent" />
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                            </Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+                                                <Setter Property="Height" Value="40" />
+                                                <Setter Property="Width" Value="40" />
+                                            </Style>
+                                        </ui:AppBarElementContainer.Resources>
+                                        <Grid Margin="12,-4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="76" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Viewbox
+                                                Width="16"
+                                                Height="16"
+                                                Margin="0,2,0,0">
+                                                <ui:SymbolIcon Symbol="Zoom" />
+                                            </Viewbox>
+                                            <TextBlock
+                                                Text="Zoom"
+                                                Margin="10,0,0,0"
+                                                Grid.Column="1" />
+                                            <StackPanel
+                                                Orientation="Horizontal"
+                                                Grid.Column="2">
+                                                <Button ToolTipService.ToolTip="Zoom out">
+                                                    <Viewbox
+                                                        Width="16"
+                                                        Height="16">
+                                                        <ui:SymbolIcon Symbol="ZoomOut" />
+                                                    </Viewbox>
+                                                </Button>
+                                                <TextBlock
+                                                    Text="50%"
+                                                    Width="40"
+                                                    TextAlignment="Center" />
+                                                <Button ToolTipService.ToolTip="Zoom in">
+                                                    <Viewbox
+                                                        Width="16"
+                                                        Height="16">
+                                                        <ui:SymbolIcon Symbol="ZoomIn" />
+                                                    </Viewbox>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </ui:AppBarElementContainer>
+                                    <!-- end Zoom controls -->
+                                    <ui:AppBarSeparator />
+                                    <ui:AppBarButton Label="Undo" Icon="Undo" />
+                                    <ui:AppBarButton Label="Redo" Icon="Redo" />
+                                    <ui:AppBarButton Label="Select all" Icon="SelectAll" />
+                                </ui:CommandBarFlyout.SecondaryCommands>
+                            </ui:CommandBarFlyout>
+                        </ui:FlyoutService.Flyout>
+                    </Button>
+                </StackPanel>
+            </sc:ControlExample>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

@@ -25,7 +25,7 @@ namespace ModernWpf.Controls
 
         private static void OnIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((IAppBarElement)d).UpdateApplicationViewState();
+            (d as IAppBarElement)?.UpdateApplicationViewState();
         }
 
         #endregion
@@ -72,7 +72,7 @@ namespace ModernWpf.Controls
 
         private static void OnLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((IAppBarElement)d).UpdateApplicationViewState();
+            (d as IAppBarElement)?.UpdateApplicationViewState();
         }
 
         #endregion
@@ -88,7 +88,7 @@ namespace ModernWpf.Controls
 
         private static void OnIsCompactChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((IAppBarElement)d).UpdateApplicationViewState();
+            (d as IAppBarElement)?.UpdateApplicationViewState();
         }
 
         #endregion
@@ -107,7 +107,7 @@ namespace ModernWpf.Controls
 
         private static void OnIsInOverflowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((IAppBarElement)d).UpdateApplicationViewState();
+            (d as IAppBarElement)?.UpdateApplicationViewState();
         }
 
         public static void UpdateIsInOverflow(DependencyObject element)
