@@ -62,5 +62,22 @@ namespace SamplesCommon
         }
 
         #endregion
+
+        #region MaxContentWidth
+
+        public static readonly DependencyProperty MaxContentWidthProperty =
+            DependencyProperty.Register(
+                nameof(MaxContentWidth),
+                typeof(double),
+                typeof(ControlExample),
+                new PropertyMetadata(1028d));
+
+        public double MaxContentWidth
+        {
+            get => (double)GetValue(MaxContentWidthProperty);
+            set => SetValue(MaxContentWidthProperty, value);
+        }
+
+        #endregion
     }
 }

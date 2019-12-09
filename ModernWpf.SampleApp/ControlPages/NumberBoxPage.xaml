@@ -12,11 +12,8 @@
     Style="{StaticResource ControlPageStyle}">
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <sc:ControlExample
-                HeaderText="A NumberBox that evaluates expressions."
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Top">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
+            <sc:ControlExample HeaderText="A NumberBox that evaluates expressions.">
                 <ui:NumberBox
                     Header="Enter an expression:"
                     Value="NaN"
@@ -24,10 +21,7 @@
                     AcceptsExpression="True" />
             </sc:ControlExample>
 
-            <sc:ControlExample
-                HeaderText="A NumberBox with a spin button."
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Top">
+            <sc:ControlExample HeaderText="A NumberBox with a spin button.">
                 <ui:NumberBox
                     x:Name="NumberBoxSpinButtonPlacementExample"
                     Header="Enter an integer:"
@@ -48,10 +42,7 @@
                 </sc:ControlExample.Options>
             </sc:ControlExample>
 
-            <sc:ControlExample
-                HeaderText="A formatted NumberBox that rounds to the nearest 0.25."
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Top">
+            <sc:ControlExample HeaderText="A formatted NumberBox that rounds to the nearest 0.25.">
                 <ui:NumberBox
                     x:Name="FormattedNumberBox"
                     Value="NaN"
@@ -59,10 +50,7 @@
                     PlaceholderText="0.00" />
             </sc:ControlExample>
 
-            <sc:ControlExample
-                HeaderText="API in action"
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Top">
+            <sc:ControlExample HeaderText="API in action">
                 <ui:NumberBox
                     x:Name="NumberBox1"
                     Width="200"
@@ -112,6 +100,6 @@
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

@@ -8,9 +8,8 @@
         <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
-        <Setter Property="Margin" Value="0,16,0,0" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="IsTabStop" Value="False" />
@@ -22,14 +21,20 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="{TemplateBinding MaxContentWidth}" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
                         <TextBlock
+                            Grid.Column="0"
                             Style="{DynamicResource SubtitleTextBlockStyle}"
                             Margin="0,15"
                             Text="{TemplateBinding HeaderText}" />
 
                         <Border
                             Grid.Row="1"
+                            Grid.Column="0"
                             BorderBrush="{DynamicResource SystemControlBackgroundListLowBrush}"
                             BorderThickness="1"
                             Background="{DynamicResource SystemControlBackgroundAltHighBrush}">

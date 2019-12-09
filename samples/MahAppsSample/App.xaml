@@ -36,6 +36,11 @@
 
             <Thickness x:Key="ControlPageContentMargin">24,0,24,20</Thickness>
 
+            <Style x:Key="ControlPageContentPanelStyle" TargetType="ui:SimpleStackPanel">
+                <Setter Property="Margin" Value="{StaticResource ControlPageContentMargin}" />
+                <Setter Property="Spacing" Value="16" />
+            </Style>
+
             <sc:EnumValuesConverter x:Key="EnumValuesConverter" />
 
             <Style x:Key="PageStyle" TargetType="Page">

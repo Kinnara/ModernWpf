@@ -17,7 +17,7 @@
     </UserControl.Resources>
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="Simple DropDownButton">
                 <StackPanel
                     x:Name="Control1"
@@ -235,6 +235,6 @@
                     </ui:ToggleSplitButton>
                 </StackPanel>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

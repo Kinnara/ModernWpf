@@ -13,17 +13,10 @@
     d:DesignWidth="800"
     Style="{StaticResource PageStyle}">
 
-    <Page.Resources>
-        <Style TargetType="sc:ControlExample">
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Top" />
-        </Style>
-    </Page.Resources>
-
     <ScrollViewer>
-        <StackPanel
+        <ui:SimpleStackPanel
             x:Name="ContentPanel"
-            Margin="{StaticResource ControlPageContentMargin}">
+            Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="A simple TimePicker.">
                 <ui:SimpleTimePicker />
                 <sc:ControlExample.Options>
@@ -53,6 +46,6 @@
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </Page>

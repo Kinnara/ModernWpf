@@ -14,7 +14,7 @@
     Style="{StaticResource PageStyle}">
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample
                 HeaderText="NumericUpDown"
                 HorizontalContentAlignment="Left"
@@ -61,6 +61,6 @@
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </Page>

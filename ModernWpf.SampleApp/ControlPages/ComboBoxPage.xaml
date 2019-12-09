@@ -13,15 +13,8 @@
     Style="{StaticResource ControlPageStyle}"
     DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
-    <UserControl.Resources>
-        <Style TargetType="sc:ControlExample">
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Top" />
-        </Style>
-    </UserControl.Resources>
-
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="A ComboBox with items defined inline and its width set.">
                 <sc:ControlExample.Example>
                     <StackPanel>
@@ -99,6 +92,6 @@
                     </ComboBox>
                 </sc:ControlExample.Example>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

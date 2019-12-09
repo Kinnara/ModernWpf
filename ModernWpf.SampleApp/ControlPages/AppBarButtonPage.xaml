@@ -11,19 +11,14 @@
     d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
-    <UserControl.Resources>
-        <Style TargetType="sc:ControlExample">
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Top" />
-        </Style>
-    </UserControl.Resources>
-
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample
                 x:Name="Example1"
                 HeaderText="An AppBarButton with a symbol icon.">
-                <StackPanel Orientation="Horizontal">
+                <StackPanel
+                    Orientation="Horizontal"
+                    VerticalAlignment="Top">
                     <!-- App bar button with symbol icon. -->
                     <ui:AppBarButton x:Name="Button1" Label="SymbolIcon" Icon="Like" Click="AppBarButton_Click" />
                     <TextBlock
@@ -111,6 +106,6 @@
                     </ScrollViewer>
                 </sc:ControlExample.Example>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

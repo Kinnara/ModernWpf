@@ -12,11 +12,8 @@
     Style="{StaticResource ControlPageStyle}">
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <sc:ControlExample
-                HeaderText="A 2-state CheckBox."
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Top">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
+            <sc:ControlExample HeaderText="A 2-state CheckBox.">
                 <StackPanel>
                     <CheckBox
                         Content="Action Text"
@@ -46,6 +43,6 @@
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

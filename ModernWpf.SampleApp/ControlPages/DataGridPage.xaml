@@ -12,27 +12,6 @@
     d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
-    <ui:TransitionService.NavigationInTransition>
-        <ui:NavigationInTransition>
-            <ui:NavigationInTransition.Backward>
-                <ui:FadeTransition Mode="FadeIn" />
-            </ui:NavigationInTransition.Backward>
-            <ui:NavigationInTransition.Forward>
-                <ui:FadeTransition Mode="FadeIn" />
-            </ui:NavigationInTransition.Forward>
-        </ui:NavigationInTransition>
-    </ui:TransitionService.NavigationInTransition>
-    <ui:TransitionService.NavigationOutTransition>
-        <ui:NavigationOutTransition>
-            <ui:NavigationOutTransition.Backward>
-                <ui:SlideTransition Mode="SlideDown" />
-            </ui:NavigationOutTransition.Backward>
-            <ui:NavigationOutTransition.Forward>
-                <ui:FadeTransition Mode="FadeOut" />
-            </ui:NavigationOutTransition.Forward>
-        </ui:NavigationOutTransition>
-    </ui:TransitionService.NavigationOutTransition>
-
     <UserControl.Resources>
         <CollectionViewSource
             x:Key="cvs"
@@ -123,7 +102,7 @@
         Margin="{StaticResource ControlPageContentMargin}">
         <sc:ControlExample
             HeaderText="DataGrid Sample: Mountains"
-            Margin="0">
+            Style="{StaticResource ControlExampleFullStyle}">
 
             <DataGrid
                 x:Name="dataGrid"

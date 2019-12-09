@@ -12,7 +12,7 @@
     Style="{StaticResource ControlPageStyle}">
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="A button with a simple ToolTip.">
                 <ui:SimpleStackPanel>
                     <Button
@@ -20,6 +20,6 @@
                         ToolTip="Simple ToolTip" />
                 </ui:SimpleStackPanel>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

@@ -16,6 +16,13 @@
     Loaded="OnLoaded">
 
     <UserControl.Resources>
+        <Thickness x:Key="TabItemContentMargin">12,0,12,20</Thickness>
+
+        <Style TargetType="ui:NumberBox">
+            <Setter Property="SpinButtonPlacementMode" Value="Inline" />
+            <Setter Property="Minimum" Value="0" />
+        </Style>
+
         <DataTemplate x:Key="HorizontalBarTemplate">
             <Border
                 Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
@@ -191,26 +198,23 @@
     <Grid>
         <TabControl
             x:Name="tabControl"
-            Style="{StaticResource TabControlPivotStyle}"
-            Padding="{StaticResource ControlPageContentMargin}">
+            Style="{StaticResource TabControlPivotStyle}">
             <TabItem Header="Examples">
-                <TabItem.Resources>
-                    <Style TargetType="sc:ControlExample">
-                        <Setter Property="HorizontalContentAlignment" Value="Left" />
-                        <Setter Property="VerticalContentAlignment" Value="Top" />
-                    </Style>
-                </TabItem.Resources>
                 <ScrollViewer>
-                    <StackPanel>
+                    <ui:SimpleStackPanel
+                        Margin="{StaticResource TabItemContentMargin}"
+                        Spacing="16">
                         <sc:ControlExample HeaderText="Basic, non-interactive items laid out by ItemsRepeater">
-                            <ScrollViewer
-                                HorizontalScrollBarVisibility="Auto"
-                                MaxHeight="500">
-                                <ui:ItemsRepeater
-                                    x:Name="repeater"
-                                    Layout="{StaticResource VerticalStackLayout}"
-                                    ItemTemplate="{StaticResource HorizontalBarTemplate}" />
-                            </ScrollViewer>
+                            <ui:ItemsRepeaterScrollHost MaxHeight="500">
+                                <ScrollViewer
+                                    HorizontalScrollBarVisibility="Auto"
+                                    ui:ScrollViewerHelper.AutoHideScrollBars="True">
+                                    <ui:ItemsRepeater
+                                        x:Name="repeater"
+                                        Layout="{StaticResource VerticalStackLayout}"
+                                        ItemTemplate="{StaticResource HorizontalBarTemplate}" />
+                                </ScrollViewer>
+                            </ui:ItemsRepeaterScrollHost>
                             <sc:ControlExample.Options>
                                 <ui:SimpleStackPanel Spacing="12">
                                     <Button
@@ -310,28 +314,27 @@
                         </sc:ControlExample>
 
                         <sc:ControlExample HeaderText="Laying out nested ItemsRepeaters">
-                            <ScrollViewer>
-                                <ui:ItemsRepeater
-                                    x:Name="outerRepeater"
-                                    VerticalAlignment="Top"
-                                    ItemTemplate="{StaticResource CategoryTemplate}">
+                            <ui:ItemsRepeater
+                                x:Name="outerRepeater"
+                                VerticalAlignment="Top"
+                                ItemTemplate="{StaticResource CategoryTemplate}">
 
-                                    <ui:ItemsRepeater.Layout>
-                                        <ui:StackLayout Orientation="Vertical" />
-                                    </ui:ItemsRepeater.Layout>
+                                <ui:ItemsRepeater.Layout>
+                                    <ui:StackLayout Orientation="Vertical" />
+                                </ui:ItemsRepeater.Layout>
 
-                                </ui:ItemsRepeater>
-                            </ScrollViewer>
+                            </ui:ItemsRepeater>
                         </sc:ControlExample>
 
-                    </StackPanel>
+                    </ui:SimpleStackPanel>
                 </ScrollViewer>
             </TabItem>
 
             <TabItem Header="StackLayout">
                 <sc:ControlExample
                     HeaderText="StackLayout"
-                    Margin="0">
+                    Style="{StaticResource ControlExampleFullStyle}"
+                    Margin="{StaticResource TabItemContentMargin}">
                     <ui:ItemsRepeaterScrollHost>
                         <ScrollViewer>
                             <ui:ItemsRepeater
@@ -346,9 +349,9 @@
 
                     <sc:ControlExample.Options>
                         <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                            <TextBox
-                                ui:ControlHelper.Header="Spacing"
-                                Text="{Binding Source={x:Reference stackLayout}, Path=Spacing, Mode=TwoWay}" />
+                            <ui:NumberBox
+                                Header="Spacing"
+                                Value="{Binding Source={x:Reference stackLayout}, Path=Spacing, Mode=TwoWay}" />
                         </ui:SimpleStackPanel>
                     </sc:ControlExample.Options>
                 </sc:ControlExample>
@@ -357,7 +360,8 @@
             <TabItem Header="UniformGridLayout">
                 <sc:ControlExample
                     HeaderText="UniformGridLayout"
-                    Margin="0">
+                    Style="{StaticResource ControlExampleFullStyle}"
+                    Margin="{StaticResource TabItemContentMargin}">
                     <ui:ItemsRepeaterScrollHost>
                         <ScrollViewer>
                             <ui:ItemsRepeater
@@ -374,25 +378,28 @@
                     </ui:ItemsRepeaterScrollHost>
 
                     <sc:ControlExample.Options>
-                        <ScrollViewer Margin="-16">
+                        <ScrollViewer
+                            Margin="-16"
+                            ui:ScrollViewerHelper.AutoHideScrollBars="True">
                             <ui:SimpleStackPanel
                                 Margin="16"
                                 Style="{StaticResource OptionsPanelStyle}">
-                                <TextBox
-                                    ui:ControlHelper.Header="MinItemWidth"
-                                    Text="{Binding Source={x:Reference uniformGridLayout}, Path=MinItemWidth, Mode=TwoWay}" />
-                                <TextBox
-                                    ui:ControlHelper.Header="MinItemHeight"
-                                    Text="{Binding Source={x:Reference uniformGridLayout}, Path=MinItemHeight, Mode=TwoWay}" />
-                                <TextBox
-                                    ui:ControlHelper.Header="MinRowSpacing"
-                                    Text="{Binding Source={x:Reference uniformGridLayout}, Path=MinRowSpacing, Mode=TwoWay}" />
-                                <TextBox
-                                    ui:ControlHelper.Header="MinColumnSpacing"
-                                    Text="{Binding Source={x:Reference uniformGridLayout}, Path=MinColumnSpacing, Mode=TwoWay}" />
-                                <TextBox
-                                    ui:ControlHelper.Header="MaximumRowsOrColumns"
-                                    Text="{Binding Source={x:Reference uniformGridLayout}, Path=MaximumRowsOrColumns, Mode=TwoWay}" />
+                                <ui:NumberBox
+                                    Header="MinItemWidth"
+                                    Value="{Binding Source={x:Reference uniformGridLayout}, Path=MinItemWidth, Mode=TwoWay}" />
+                                <ui:NumberBox
+                                    Header="MinItemHeight"
+                                    Value="{Binding Source={x:Reference uniformGridLayout}, Path=MinItemHeight, Mode=TwoWay}" />
+                                <ui:NumberBox
+                                    Header="MinRowSpacing"
+                                    Value="{Binding Source={x:Reference uniformGridLayout}, Path=MinRowSpacing, Mode=TwoWay}" />
+                                <ui:NumberBox
+                                    Header="MinColumnSpacing"
+                                    Value="{Binding Source={x:Reference uniformGridLayout}, Path=MinColumnSpacing, Mode=TwoWay}" />
+                                <ui:NumberBox
+                                    Header="MaximumRowsOrColumns"
+                                    Minimum="-1"
+                                    Value="{Binding Source={x:Reference uniformGridLayout}, Path=MaximumRowsOrColumns, Mode=TwoWay}" />
                                 <ui:RadioButtons
                                     Header="ItemsStretch"
                                     ItemsSource="{Binding Source={x:Type ui:UniformGridLayoutItemsStretch}, Converter={StaticResource EnumValuesConverter}}"
@@ -414,7 +421,8 @@
             <TabItem Header="FlowLayout">
                 <sc:ControlExample
                     HeaderText="FlowLayout"
-                    Margin="0">
+                    Style="{StaticResource ControlExampleFullStyle}"
+                    Margin="{StaticResource TabItemContentMargin}">
                     <ui:ItemsRepeaterScrollHost>
                         <ScrollViewer>
                             <ui:ItemsRepeater
@@ -430,7 +438,9 @@
                     </ui:ItemsRepeaterScrollHost>
 
                     <sc:ControlExample.Options>
-                        <ScrollViewer Margin="-16">
+                        <ScrollViewer
+                            Margin="-16"
+                            ui:ScrollViewerHelper.AutoHideScrollBars="True">
                             <ui:SimpleStackPanel
                                 Margin="16"
                                 Style="{StaticResource OptionsPanelStyle}">
@@ -438,12 +448,12 @@
                                     Header="Orientation"
                                     ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
                                     SelectedItem="{Binding Source={x:Reference flowLayout}, Path=Orientation, Mode=TwoWay}" />
-                                <TextBox
+                                <ui:NumberBox
                                     ui:ControlHelper.Header="MinRowSpacing"
-                                    Text="{Binding Source={x:Reference flowLayout}, Path=MinRowSpacing, Mode=TwoWay}" />
-                                <TextBox
+                                    Value="{Binding Source={x:Reference flowLayout}, Path=MinRowSpacing, Mode=TwoWay}" />
+                                <ui:NumberBox
                                     ui:ControlHelper.Header="MinColumnSpacing"
-                                    Text="{Binding Source={x:Reference flowLayout}, Path=MinColumnSpacing, Mode=TwoWay}" />
+                                    Value="{Binding Source={x:Reference flowLayout}, Path=MinColumnSpacing, Mode=TwoWay}" />
                                 <ui:RadioButtons
                                     Header="LineAlignment"
                                     ItemsSource="{Binding Source={x:Type ui:FlowLayoutLineAlignment}, Converter={StaticResource EnumValuesConverter}}"

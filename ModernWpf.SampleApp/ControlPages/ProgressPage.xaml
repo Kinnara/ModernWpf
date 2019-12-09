@@ -12,11 +12,8 @@
     Style="{StaticResource ControlPageStyle}">
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <sc:ControlExample
-                HeaderText="An indeterminate progress bar."
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Top">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
+            <sc:ControlExample HeaderText="An indeterminate progress bar.">
                 <ProgressBar
                     x:Name="progressBar"
                     Width="130"
@@ -72,6 +69,6 @@
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

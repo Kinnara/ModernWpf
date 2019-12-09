@@ -19,7 +19,7 @@
     </UserControl.Resources>
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="A simple TabControl">
                 <TabControl x:Name="tabControl" />
 
@@ -65,6 +65,6 @@
                     </TabControl.Resources>
                 </TabControl>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

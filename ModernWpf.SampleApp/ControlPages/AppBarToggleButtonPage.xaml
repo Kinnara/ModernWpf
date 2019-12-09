@@ -12,7 +12,7 @@
     Style="{StaticResource ControlPageStyle}">
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample
                 x:Name="Example1"
                 HeaderText="An AppBarToggleButton with a symbol icon.">
@@ -103,6 +103,6 @@
                         IsChecked="{Binding ElementName=Button4, Path=IsCompact}" />
                 </sc:ControlExample.Options>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

@@ -60,6 +60,7 @@
         </DataTemplate>
 
         <Style TargetType="sc:ControlExample">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Margin" Value="0" />
         </Style>
     </UserControl.Resources>

@@ -13,7 +13,7 @@
     Title="HyperlinkButtonPage">
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="A hyperlink button that navigates to a URI.">
                 <ui:HyperlinkButton
                     x:Name="Control1"
@@ -35,6 +35,6 @@
                     Content="Go to ListBox"
                     Click="GoToHyperlinkButton_Click" />
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </Page>

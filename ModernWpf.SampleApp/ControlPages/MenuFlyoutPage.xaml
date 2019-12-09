@@ -11,16 +11,9 @@
     d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
-    <UserControl.Resources>
-        <Style TargetType="sc:ControlExample">
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Top" />
-        </Style>
-    </UserControl.Resources>
-
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <sc:ControlExample HeaderText="A MenuFlyout with checkable MenuItems and Separator.">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
+            <sc:ControlExample HeaderText="An AppBarButton with a MenuFlyout.">
                 <StackPanel
                     x:Name="Control1"
                     Orientation="Horizontal">
@@ -154,6 +147,6 @@
                     </ui:FlyoutService.Flyout>
                 </Button>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

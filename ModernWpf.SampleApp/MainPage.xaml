@@ -151,6 +151,27 @@
             x:Name="Frame"
             Grid.Row="1"
             Grid.Column="1"
-            Navigated="Frame_Navigated" />
+            Navigated="Frame_Navigated">
+            <ui:TransitionFrame.DefaultNavigationInTransition>
+                <ui:NavigationInTransition>
+                    <ui:NavigationInTransition.Backward>
+                        <ui:FadeTransition Mode="FadeIn" />
+                    </ui:NavigationInTransition.Backward>
+                    <ui:NavigationInTransition.Forward>
+                        <ui:FadeTransition Mode="FadeIn" />
+                    </ui:NavigationInTransition.Forward>
+                </ui:NavigationInTransition>
+            </ui:TransitionFrame.DefaultNavigationInTransition>
+            <ui:TransitionFrame.DefaultNavigationOutTransition>
+                <ui:NavigationOutTransition>
+                    <ui:NavigationOutTransition.Backward>
+                        <ui:FadeTransition Mode="FadeOut" />
+                    </ui:NavigationOutTransition.Backward>
+                    <ui:NavigationOutTransition.Forward>
+                        <ui:FadeTransition Mode="FadeOut" />
+                    </ui:NavigationOutTransition.Forward>
+                </ui:NavigationOutTransition>
+            </ui:TransitionFrame.DefaultNavigationOutTransition>
+        </ui:TransitionFrame>
     </Grid>
 </UserControl>

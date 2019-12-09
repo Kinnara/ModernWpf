@@ -94,8 +94,10 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer Margin="{StaticResource ControlPageContentMargin}">
-        <sc:ControlExample HeaderText="Page transitions">
+    <ScrollViewer>
+        <sc:ControlExample
+            HeaderText="Page transitions"
+            Margin="{StaticResource ControlPageContentMargin}">
             <ui:TransitionFrame
                 x:Name="frame"
                 MinHeight="600"

@@ -27,7 +27,7 @@
     </UserControl.Resources>
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="CommandBarFlyout for commands on an in-app object">
                 <StackPanel>
                     <TextBlock Text="Click or right click the image to open a CommandBarFlyout" />
@@ -180,6 +180,6 @@
                     </Button>
                 </StackPanel>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

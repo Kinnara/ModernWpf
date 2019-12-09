@@ -4,6 +4,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
@@ -12,7 +13,7 @@
     Style="{StaticResource ControlPageStyle}">
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="A ListBox with items defined inline and its width set.">
                 <StackPanel HorizontalAlignment="Left">
                     <ListBox
@@ -32,7 +33,8 @@
             </sc:ControlExample>
             <sc:ControlExample
                 x:Name="Example2"
-                HeaderText="A ListBox with its ItemsSource and Height set.">
+                HeaderText="A ListBox with its ItemsSource and Height set."
+                HorizontalContentAlignment="Stretch">
                 <sc:ControlExample.Example>
                     <StackPanel>
                         <ListBox
@@ -50,6 +52,6 @@
                     </StackPanel>
                 </sc:ControlExample.Example>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

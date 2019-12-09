@@ -30,7 +30,7 @@
         </VisualStateManager.VisualStateGroups>
 
         <ScrollViewer>
-            <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+            <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
                 <sc:ControlExample
                     HeaderText="A simple expander."
                     HorizontalContentAlignment="Stretch"
@@ -60,7 +60,7 @@
                         </ui:SimpleStackPanel>
                     </sc:ControlExample.Options>
                 </sc:ControlExample>
-            </StackPanel>
+            </ui:SimpleStackPanel>
         </ScrollViewer>
     </Grid>
 </UserControl>

@@ -12,7 +12,7 @@
     Style="{StaticResource ControlPageStyle}">
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="A ContextMenu with checkable MenuItems and Separator.">
                 <Button Content="Options">
                     <Button.ContextMenu>
@@ -149,6 +149,6 @@
                     Text="Some text"
                     MinWidth="150" />
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

@@ -86,6 +86,11 @@
 
             <Thickness x:Key="ControlPageContentMargin">24,0,24,20</Thickness>
 
+            <Style x:Key="ControlPageContentPanelStyle" TargetType="ui:SimpleStackPanel">
+                <Setter Property="Margin" Value="{StaticResource ControlPageContentMargin}" />
+                <Setter Property="Spacing" Value="16" />
+            </Style>
+
             <Style x:Key="PageStyle" TargetType="Page">
                 <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundAltHighBrush}" />
                 <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
@@ -107,6 +112,12 @@
                     <Thickness x:Key="ContentDialogContentScrollViewerMargin">-24,0,-24,0</Thickness>
                     <Thickness x:Key="ContentDialogTitleMargin">24,0,24,12</Thickness>
                 </Style.Resources>
+            </Style>
+
+            <Style x:Key="ControlExampleFullStyle" TargetType="sc:ControlExample">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                <Setter Property="MaxContentWidth" Value="{x:Static sys:Double.PositiveInfinity}" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

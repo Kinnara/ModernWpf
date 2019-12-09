@@ -12,15 +12,8 @@
     d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
-    <UserControl.Resources>
-        <Style TargetType="sc:ControlExample">
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Top" />
-        </Style>
-    </UserControl.Resources>
-
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample
                 x:Name="Example1"
                 HeaderText="A simple TextBox.">
@@ -132,6 +125,6 @@
                     ui:ControlHelper.Header="Control header"
                     SpellCheck.IsEnabled="True" />
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

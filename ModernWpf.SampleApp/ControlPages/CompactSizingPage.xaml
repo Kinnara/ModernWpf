@@ -12,12 +12,10 @@
     Style="{StaticResource ControlPageStyle}">
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample
                 x:Name="Example1"
                 HeaderText="Compact Sizing for controls"
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Top"
                 Loaded="Example1_Loaded">
                 <Frame
                     x:Name="ContentFrame"
@@ -43,6 +41,6 @@
                     </StackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
-        </StackPanel>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>
