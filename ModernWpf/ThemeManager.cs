@@ -22,7 +22,7 @@ namespace ModernWpf
         private static readonly Dictionary<string, ResourceDictionary> _defaultThemeDictionaries = new Dictionary<string, ResourceDictionary>();
 
         private bool _isInitialized;
-        private bool _applicationStarted;
+        private bool _applicationInitialized;
 
         static ThemeManager()
         {
@@ -106,7 +106,7 @@ namespace ModernWpf
 
         private void ApplyApplicationTheme()
         {
-            if (_applicationStarted)
+            if (_applicationInitialized)
             {
                 Debug.Assert(ThemeResources.Current != null);
                 ThemeResources.Current.ApplyApplicationTheme(ActualApplicationTheme);
@@ -164,7 +164,7 @@ namespace ModernWpf
 
         private void ApplyAccentColor()
         {
-            if (_applicationStarted)
+            if (_applicationInitialized)
             {
                 UpdateAccentColors();
 
@@ -717,28 +717,23 @@ namespace ModernWpf
 
             if (Application.Current != null)
             {
-                Application.Current.Startup += OnApplicationStartup;
+                var appResources = Application.Current.Resources;
+                appResources.MergedDictionaries.RemoveAll<IntellisenseResourcesBase>();
+
+                ColorsHelper.Current.SystemThemeChanged += OnSystemThemeChanged;
+                ColorsHelper.Current.AccentColorChanged += OnSystemAccentColorChanged;
+                appResources.MergedDictionaries.Insert(0, ColorsHelper.Current.Colors);
+
+                UpdateActualAccentColor();
+                UpdateActualApplicationTheme();
+
+                _applicationInitialized = true;
+
+                ApplyAccentColor();
+                ApplyApplicationTheme();
             }
 
             _isInitialized = true;
-        }
-
-        private void OnApplicationStartup(object sender, StartupEventArgs e)
-        {
-            var appResources = Application.Current.Resources;
-            appResources.MergedDictionaries.RemoveAll<IntellisenseResourcesBase>();
-
-            ColorsHelper.Current.SystemThemeChanged += OnSystemThemeChanged;
-            ColorsHelper.Current.AccentColorChanged += OnSystemAccentColorChanged;
-            appResources.MergedDictionaries.Insert(0, ColorsHelper.Current.Colors);
-
-            UpdateActualAccentColor();
-            UpdateActualApplicationTheme();
-
-            _applicationStarted = true;
-
-            ApplyAccentColor();
-            ApplyApplicationTheme();
         }
 
         private void OnSystemThemeChanged(object sender, EventArgs e)
