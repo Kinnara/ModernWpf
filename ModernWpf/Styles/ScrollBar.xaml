@@ -332,9 +332,9 @@
                         </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}" />
-                                <RowDefinition Height="0.00001*" />
-                                <RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Rectangle
                                 x:Name="VerticalTrackRect"
@@ -360,6 +360,9 @@
                                 x:Name="PART_Track"
                                 Grid.Row="1"
                                 IsDirectionReversed="true">
+                                <Track.Resources>
+                                    <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarButtonHeightKey}">32</sys:Double>
+                                </Track.Resources>
                                 <Track.DecreaseRepeatButton>
                                     <RepeatButton
                                         x:Name="VerticalLargeDecrease"
@@ -380,7 +383,6 @@
                                         Background="{DynamicResource ScrollBarPanningThumbBackground}"
                                         Template="{StaticResource VerticalThumbTemplate}"
                                         Width="{StaticResource ScrollBarSize}"
-                                        MinHeight="{StaticResource ScrollBarSize}"
                                         RenderTransformOrigin="1,0.5"
                                         primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                                         <Thumb.RenderTransform>
@@ -563,9 +565,9 @@
                                 </VisualStateManager.VisualStateGroups>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition MaxWidth="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}}" />
-                                        <ColumnDefinition Width="0.00001*" />
-                                        <ColumnDefinition MaxWidth="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}}" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <Rectangle
                                         x:Name="HorizontalTrackRect"
@@ -590,6 +592,9 @@
                                     <Track
                                         x:Name="PART_Track"
                                         Grid.Column="1">
+                                        <Track.Resources>
+                                            <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}">32</sys:Double>
+                                        </Track.Resources>
                                         <Track.DecreaseRepeatButton>
                                             <RepeatButton
                                                 x:Name="HorizontalLargeDecrease"
@@ -610,7 +615,6 @@
                                                 Background="{DynamicResource ScrollBarPanningThumbBackground}"
                                                 Template="{StaticResource HorizontalThumbTemplate}"
                                                 Height="{StaticResource ScrollBarSize}"
-                                                MinWidth="{StaticResource ScrollBarSize}"
                                                 VerticalAlignment="Bottom"
                                                 RenderTransformOrigin="0.5,1"
                                                 primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
