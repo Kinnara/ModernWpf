@@ -26,6 +26,7 @@
         <ResourceDictionary Source="Styles/ProgressBar.xaml" />
         <ResourceDictionary Source="Styles/RadioButton.xaml" />
         <ResourceDictionary Source="Styles/RepeatButton.xaml" />
+        <ResourceDictionary Source="Styles/ResizeGrip.xaml" />
         <ResourceDictionary Source="Styles/RichTextBox.xaml" />
         <ResourceDictionary Source="Styles/ScrollBar.xaml" />
         <ResourceDictionary Source="Styles/ScrollViewer.xaml" />
