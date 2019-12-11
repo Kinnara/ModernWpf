@@ -493,44 +493,55 @@ namespace ModernWpf.Controls
             // The view generator is the provider of last resort.
             var data = m_owner.ItemsSourceView.GetAt(index);
 
-            var itemTemplateFactory = m_owner.ItemTemplateShim;
-
-            UIElement element = null;
-            bool itemsSourceContainsElements = false;
-            if (itemTemplateFactory == null)
+            UIElement initElement()
             {
-                element = data as UIElement;
-                // No item template provided and ItemsSource contains objects derived from UIElement.
-                // In this case, just use the data directly as elements.
-                itemsSourceContainsElements = element != null;
-            }
+                var providedElementFactory = m_owner.ItemTemplateShim;
 
-            if (element == null)
-            {
-                if (itemTemplateFactory == null)
+                if (providedElementFactory == null)
                 {
-                    // If no ItemTemplate was provided, use a default 
-                    var factory = XamlReader.Parse("<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'><TextBlock Text='{Binding}'/></DataTemplate>") as DataTemplate;
-                    m_owner.ItemTemplate = factory;
-                    itemTemplateFactory = m_owner.ItemTemplateShim;
+                    if (data is UIElement dataAsElement)
+                    {
+                        return dataAsElement;
+                    }
                 }
 
-                if (m_ElementFactoryGetArgs == null)
+                IElementFactoryShim initElementFactory()
                 {
-                    // Create one.
-                    m_ElementFactoryGetArgs = new ElementFactoryGetArgs();
+                    if (providedElementFactory == null)
+                    {
+                        var factory = XamlReader.Parse("<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'><TextBlock Text='{Binding}'/></DataTemplate>") as DataTemplate;
+                        m_owner.ItemTemplate = factory;
+                        return m_owner.ItemTemplateShim;
+                    }
+                    return providedElementFactory;
                 }
+                var elementFactory = initElementFactory();
 
-                var args = m_ElementFactoryGetArgs;
-                args.Data = data;
-                args.Parent = m_owner;
-                args.Index = index;
+                ElementFactoryGetArgs initArgs()
+                {
+                    if (m_ElementFactoryGetArgs == null)
+                    {
+                        m_ElementFactoryGetArgs = new ElementFactoryGetArgs();
+                    }
+                    return m_ElementFactoryGetArgs;
+                }
+                var args = initArgs();
 
-                element = itemTemplateFactory.GetElement(args);
+                try
+                {
+                    args.Data = data;
+                    args.Parent = m_owner;
+                    args.Index = index;
 
-                args.Data = null;
-                args.Parent = null;
+                    return elementFactory.GetElement(args);
+                }
+                finally
+                {
+                    args.Data = null;
+                    args.Parent = null;
+                }
             }
+            var element = initElement();
 
             var virtInfo = ItemsRepeater.TryGetVirtualizationInfo(element);
             if (virtInfo == null)
@@ -543,11 +554,34 @@ namespace ModernWpf.Controls
                 // which means that the element has been recycled and not created from scratch.
             }
 
-            if (!itemsSourceContainsElements)
+            if (data != element)
             {
-                // Set data context only if no x:Bind was used. ie. No data template component on the root.
-                var elementAsFE = element as FrameworkElement;
-                elementAsFE.DataContext = data;
+                if (element is FrameworkElement elementAsFE)
+                {
+                    // Set data context only if no x:Bind was used. ie. No data template component on the root.
+                    // If the passed in data is a UIElement and is different from the element returned by 
+                    // the template factory then we need to propagate the DataContext.
+                    // Otherwise just set the DataContext on the element as the data.
+                    object initElementDataContext()
+                    {
+                        if (data is FrameworkElement dataAsElement)
+                        {
+                            var dataDataContext = dataAsElement.DataContext;
+                            if (dataDataContext != null)
+                            {
+                                return dataDataContext;
+                            }
+                        }
+                        return data;
+                    }
+                    var elementDataContext = initElementDataContext();
+
+                    elementAsFE.DataContext = elementDataContext;
+                }
+                else
+                {
+                    Debug.Assert(false, "Element returned by factory is not a FrameworkElement!");
+                }
             }
 
             virtInfo.MoveOwnershipToLayoutFromElementFactory(
@@ -555,7 +589,7 @@ namespace ModernWpf.Controls
                 /* uniqueId: */
                 m_owner.ItemsSourceView.HasKeyIndexMapping ?
                 m_owner.ItemsSourceView.KeyFromIndex(index) :
-                string.Empty);
+                        string.Empty);
 
             // The view generator is the only provider that prepares the element.
             var repeater = m_owner;
@@ -617,7 +651,7 @@ namespace ModernWpf.Controls
 
             if (moveToPinnedPool)
             {
-# if DEBUG
+#if DEBUG
                 for (int i = 0; i < m_pinnedPool.Count; ++i)
                 {
                     Debug.Assert(m_pinnedPool[i].PinnedElement != element);
