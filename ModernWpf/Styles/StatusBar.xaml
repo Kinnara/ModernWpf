@@ -2,6 +2,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <Style x:Key="DefaultStatusBarStyle" TargetType="StatusBar">
+        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+    </Style>
+
+    <Style TargetType="StatusBar" BasedOn="{StaticResource DefaultStatusBarStyle}" />
+
     <Style x:Key="{x:Static StatusBar.SeparatorStyleKey}" TargetType="{x:Type Separator}">
         <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
         <Setter Property="MinWidth" Value="1" />
@@ -46,12 +53,5 @@
     </Style>
 
     <Style TargetType="StatusBarItem" BasedOn="{StaticResource DefaultStatusBarItemStyle}" />
-
-    <Style x:Key="DefaultStatusBarStyle" TargetType="StatusBar">
-        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-    </Style>
-
-    <Style TargetType="StatusBar" BasedOn="{StaticResource DefaultStatusBarStyle}" />
 
 </ResourceDictionary>

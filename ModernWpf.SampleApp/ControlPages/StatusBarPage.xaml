@@ -11,25 +11,25 @@
     d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
-    <Grid>
-        <sc:ControlExample>
+    <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
+        <sc:ControlExample HeaderText="A StatusBar.">
             <StatusBar
                 x:Name="statusBar"
                 VerticalAlignment="Bottom">
                 <StatusBarItem>
                     <TextBlock>Downloading File</TextBlock>
                 </StatusBarItem>
+
                 <StatusBarItem>
                     <ProgressBar
                         Width="100"
                         Height="20"
                         x:Name="progressBar1">
                         <ProgressBar.Triggers>
-                            <EventTrigger RoutedEvent="ProgressBar.Loaded">
+                            <EventTrigger RoutedEvent="Loaded">
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <DoubleAnimation
-                                            Storyboard.TargetName="progressBar1"
                                             Storyboard.TargetProperty="Value"
                                             From="0"
                                             To="100"
@@ -40,10 +40,13 @@
                         </ProgressBar.Triggers>
                     </ProgressBar>
                 </StatusBarItem>
+
                 <Separator />
+
                 <StatusBarItem>
                     <TextBlock>Online</TextBlock>
                 </StatusBarItem>
+
                 <StatusBarItem HorizontalAlignment="Right">
                     <ui:FontIcon
                         FontSize="12"
@@ -59,5 +62,5 @@
                 </ui:SimpleStackPanel>
             </sc:ControlExample.Options>
         </sc:ControlExample>
-    </Grid>
+    </ui:SimpleStackPanel>
 </UserControl>
