@@ -114,11 +114,14 @@ namespace ModernWpf.Controls
         {
             base.OnClosed(e);
 
-            _proofingMenuItem.Items.Clear();
-
-            foreach (MenuItem menuItem in Items)
+            if (!IsOpen)
             {
-                menuItem.ClearValue(MenuItem.CommandTargetProperty);
+                _proofingMenuItem.Items.Clear();
+
+                foreach (MenuItem menuItem in Items)
+                {
+                    menuItem.ClearValue(MenuItem.CommandTargetProperty);
+                }
             }
         }
 
