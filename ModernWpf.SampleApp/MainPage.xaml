@@ -7,6 +7,7 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -147,31 +148,25 @@
             </ListBox.ItemsSource>
         </ListBox>
 
-        <ui:TransitionFrame
+        <ui:ThemeAwareFrame
             x:Name="Frame"
             Grid.Row="1"
             Grid.Column="1"
             Navigated="Frame_Navigated">
-            <ui:TransitionFrame.DefaultNavigationInTransition>
-                <ui:NavigationInTransition>
-                    <ui:NavigationInTransition.Backward>
-                        <ui:FadeTransition Mode="FadeIn" />
-                    </ui:NavigationInTransition.Backward>
-                    <ui:NavigationInTransition.Forward>
-                        <ui:FadeTransition Mode="FadeIn" />
-                    </ui:NavigationInTransition.Forward>
-                </ui:NavigationInTransition>
-            </ui:TransitionFrame.DefaultNavigationInTransition>
-            <ui:TransitionFrame.DefaultNavigationOutTransition>
-                <ui:NavigationOutTransition>
-                    <ui:NavigationOutTransition.Backward>
-                        <ui:FadeTransition Mode="FadeOut" />
-                    </ui:NavigationOutTransition.Backward>
-                    <ui:NavigationOutTransition.Forward>
-                        <ui:FadeTransition Mode="FadeOut" />
-                    </ui:NavigationOutTransition.Forward>
-                </ui:NavigationOutTransition>
-            </ui:TransitionFrame.DefaultNavigationOutTransition>
-        </ui:TransitionFrame>
+            <ui:ThemeAwareFrame.Template>
+                <ControlTemplate TargetType="Frame">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}">
+                        <sc:CrossFadeContentControl
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            Content="{TemplateBinding Content}" />
+                    </Border>
+                </ControlTemplate>
+            </ui:ThemeAwareFrame.Template>
+        </ui:ThemeAwareFrame>
     </Grid>
 </UserControl>

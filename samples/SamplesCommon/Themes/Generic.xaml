@@ -81,4 +81,25 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:CrossFadeContentControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:CrossFadeContentControl">
+                    <Grid>
+                        <ContentPresenter
+                            x:Name="FirstContentPresenter"
+                            Content="{x:Null}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        <ContentPresenter
+                            x:Name="SecondContentPresenter"
+                            Content="{x:Null}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

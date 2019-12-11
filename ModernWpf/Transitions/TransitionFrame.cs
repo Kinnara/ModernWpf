@@ -132,7 +132,7 @@ namespace ModernWpf.Controls
             : base()
         {
             InheritanceBehavior = InheritanceBehavior.Default;
-            TransitionsEnabled = SystemParameters.ClientAreaAnimation && RenderCapability.Tier > 0;
+            SetCurrentValue(TransitionsEnabledProperty, SystemParameters.ClientAreaAnimation && RenderCapability.Tier > 0);
 
             Navigating += OnNavigating;
             NavigationStopped += OnNavigationStopped;
