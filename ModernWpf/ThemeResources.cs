@@ -94,21 +94,52 @@ namespace ModernWpf
         private void UpdateDesignTimeSystemColors()
         {
             Debug.Assert(DesignMode.DesignModeEnabled);
-            var rd = GetDesignTimeSystemColors();
+
+            var colors = GetDesignTimeSystemColors();
             if (MergedDictionaries.Count == 0)
             {
-                MergedDictionaries.Add(rd);
+                MergedDictionaries.Add(colors);
             }
             else
             {
-                MergedDictionaries[0] = rd;
+                MergedDictionaries[0] = colors;
             }
+
+            ThemeManager.UpdateThemeBrushes(colors);
         }
 
         private void UpdateDesignTimeThemeDictionary()
         {
             Debug.Assert(DesignMode.DesignModeEnabled);
-            ApplyApplicationTheme(RequestedTheme ?? ApplicationTheme.Light);
+
+            if (SystemParameters.HighContrast)
+            {
+                EnsureHighContrastResources();
+                updateTo(_highContrastResources);
+            }
+            else
+            {
+                var appTheme = RequestedTheme ?? ApplicationTheme.Light;
+                switch (appTheme)
+                {
+                    case ApplicationTheme.Light:
+                        EnsureLightResources();
+                        updateTo(_lightResources);
+                        break;
+                    case ApplicationTheme.Dark:
+                        EnsureDarkResources();
+                        updateTo(_darkResources);
+                        break;
+                }
+            }
+
+            void updateTo(ResourceDictionary themeDictionary)
+            {
+                MergedDictionaries.RemoveIfNotNull(_lightResources);
+                MergedDictionaries.RemoveIfNotNull(_darkResources);
+                MergedDictionaries.RemoveIfNotNull(_highContrastResources);
+                Merge(themeDictionary);
+            }
         }
 
         private ResourceDictionary GetDesignTimeSystemColors()
@@ -146,7 +177,6 @@ namespace ModernWpf
 
         void ISupportInitialize.EndInit()
         {
-            EndInit();
             IsInitializePending = false;
 
             //for (int i = MergedDictionaries.Count - 1; i >= 0; i--)
@@ -158,12 +188,16 @@ namespace ModernWpf
             //    }
             //}
 
-            ThemeManager.Current.Initialize();
-
             if (DesignMode.DesignModeEnabled)
             {
                 DesignTimeInit();
             }
+            else
+            {
+                ThemeManager.Current.Initialize();
+            }
+
+            EndInit();
         }
 
         #endregion

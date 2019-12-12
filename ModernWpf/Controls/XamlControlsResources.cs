@@ -12,7 +12,12 @@ namespace ModernWpf.Controls
         /// </summary>
         public XamlControlsResources()
         {
-            MergedDictionaries.Add(new ResourceDictionary { Source = PackUriHelper.GetAbsoluteUri("ControlsResources.xaml") });
+            MergedDictionaries.Add(ControlsResources);
+
+            if (DesignMode.DesignModeEnabled)
+            {
+                _ = CompactResources;
+            }
         }
 
         public bool UseCompactResources
@@ -23,7 +28,8 @@ namespace ModernWpf.Controls
                 if (_useCompactResources != value)
                 {
                     _useCompactResources = value;
-                    if (_useCompactResources)
+
+                    if (UseCompactResources)
                     {
                         MergedDictionaries.Add(CompactResources);
                     }
@@ -32,6 +38,18 @@ namespace ModernWpf.Controls
                         MergedDictionaries.Remove(CompactResources);
                     };
                 }
+            }
+        }
+
+        internal static ResourceDictionary ControlsResources
+        {
+            get
+            {
+                if (_controlsResources == null)
+                {
+                    _controlsResources = new ResourceDictionary { Source = PackUriHelper.GetAbsoluteUri("ControlsResources.xaml") };
+                }
+                return _controlsResources;
             }
         }
 
@@ -47,7 +65,9 @@ namespace ModernWpf.Controls
             }
         }
 
+        private static ResourceDictionary _controlsResources;
         private static ResourceDictionary _compactResources;
+
         private bool _useCompactResources;
     }
 }

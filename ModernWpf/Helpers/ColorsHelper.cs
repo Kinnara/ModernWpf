@@ -90,6 +90,11 @@ namespace ModernWpf
 
         public void UpdateBrushes(ResourceDictionary themeDictionary)
         {
+            UpdateBrushes(themeDictionary, _colors);
+        }
+
+        public static void UpdateBrushes(ResourceDictionary themeDictionary, ResourceDictionary colors)
+        {
             int count = 0;
 
             foreach (DictionaryEntry entry in themeDictionary)
@@ -97,9 +102,9 @@ namespace ModernWpf
                 if (entry.Value is SolidColorBrush brush)
                 {
                     object colorKey = ThemeResourceHelper.GetColorKey(brush);
-                    if (colorKey != null && _colors.Contains(colorKey))
+                    if (colorKey != null && colors.Contains(colorKey))
                     {
-                        brush.SetCurrentValue(SolidColorBrush.ColorProperty, (Color)_colors[colorKey]);
+                        brush.SetCurrentValue(SolidColorBrush.ColorProperty, (Color)colors[colorKey]);
                         count++;
                     }
                 }

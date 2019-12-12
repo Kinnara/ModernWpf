@@ -28,6 +28,13 @@ namespace ModernWpf
         {
             _actualThemeChangedEventArgs = new RoutedEventArgs(ActualThemeChangedEvent);
             MenuDropAlignmentHelper.EnsureStandardPopupAlignment();
+
+            if (DesignMode.DesignModeEnabled)
+            {
+                _ = GetDefaultThemeDictionary(LightKey);
+                _ = GetDefaultThemeDictionary(DarkKey);
+                _ = GetDefaultThemeDictionary(HighContrastKey);
+            }
         }
 
         private ThemeManager()
@@ -652,6 +659,14 @@ namespace ModernWpf
         public TypedEventHandler<ThemeManager, object> ActualApplicationThemeChanged;
 
         public TypedEventHandler<ThemeManager, object> ActualAccentColorChanged;
+
+        internal static void UpdateThemeBrushes(ResourceDictionary colors)
+        {
+            foreach (var themeDictionary in _defaultThemeDictionaries.Values)
+            {
+                ColorsHelper.UpdateBrushes(themeDictionary, colors);
+            }
+        }
 
         internal static ResourceDictionary GetDefaultThemeDictionary(string key)
         {
