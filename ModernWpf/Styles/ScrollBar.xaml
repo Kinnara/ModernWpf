@@ -149,6 +149,9 @@
             RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
             SnapsToDevicePixels="True" />
         <ControlTemplate.Triggers>
+            <Trigger Property="primitives:ScrollBarThumbHelper.IsExpanded" Value="True">
+                <Setter TargetName="ThumbVisual" Property="Fill" Value="{DynamicResource ScrollBarThumbBackground}" />
+            </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter TargetName="ThumbVisual" Property="Fill" Value="{DynamicResource ScrollBarThumbFillPointerOver}" />
             </Trigger>
@@ -170,6 +173,9 @@
             RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter8x}}"
             SnapsToDevicePixels="True" />
         <ControlTemplate.Triggers>
+            <Trigger Property="primitives:ScrollBarThumbHelper.IsExpanded" Value="True">
+                <Setter TargetName="ThumbVisual" Property="Fill" Value="{DynamicResource ScrollBarThumbBackground}" />
+            </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter TargetName="ThumbVisual" Property="Fill" Value="{DynamicResource ScrollBarThumbFillPointerOver}" />
             </Trigger>
@@ -319,6 +325,9 @@
                                         </DiscreteObjectKeyFrame.Value>
                                     </DiscreteObjectKeyFrame>
                                 </ObjectAnimationUsingKeyFrames>
+                                <BooleanAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb" Storyboard.TargetProperty="(primitives:ScrollBarThumbHelper.IsExpanded)">
+                                    <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="True" />
+                                </BooleanAnimationUsingKeyFrames>
                             </Storyboard>
                         </Border.Resources>
                         <VisualStateManager.VisualStateGroups>
@@ -552,6 +561,9 @@
                                                 </DiscreteObjectKeyFrame.Value>
                                             </DiscreteObjectKeyFrame>
                                         </ObjectAnimationUsingKeyFrames>
+                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="(primitives:ScrollBarThumbHelper.IsExpanded)">
+                                            <DiscreteBooleanKeyFrame KeyTime="0:0:0.5" Value="True" />
+                                        </BooleanAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </Border.Resources>
                                 <VisualStateManager.VisualStateGroups>
