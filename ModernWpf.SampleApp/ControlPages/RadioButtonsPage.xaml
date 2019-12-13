@@ -14,7 +14,7 @@
 
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
-            <sc:ControlExample HeaderText="RadioButtons">
+            <sc:ControlExample HeaderText="A group of radio buttons.">
                 <StackPanel>
                     <!--<Button Content="Focus me" />-->
                     <ui:RadioButtons
@@ -44,6 +44,38 @@
                             IsChecked="{Binding ElementName=radioButtons, Path=IsEnabled, Mode=TwoWay}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
+            </sc:ControlExample>
+
+            <sc:ControlExample HeaderText="Two groups of radio buttons.">
+                <StackPanel>
+                    <ui:RadioButtons
+                        x:Name="BackgroundRadioButtons"
+                        MaxColumns="4"
+                        Header="Background"
+                        SelectedIndex="3">
+                        <sys:String>Green</sys:String>
+                        <sys:String>Yellow</sys:String>
+                        <sys:String>Blue</sys:String>
+                        <sys:String>White</sys:String>
+                    </ui:RadioButtons>
+                    <ui:RadioButtons
+                        x:Name="BorderBrushRadioButtons"
+                        MaxColumns="4"
+                        Header="BorderBrush"
+                        SelectedIndex="1">
+                        <sys:String>Green</sys:String>
+                        <sys:String>Yellow</sys:String>
+                        <sys:String>Blue</sys:String>
+                        <sys:String>White</sys:String>
+                    </ui:RadioButtons>
+                    <Border
+                        x:Name="Control2Output"
+                        BorderThickness="10"
+                        Background="{Binding ElementName=BackgroundRadioButtons, Path=SelectedItem}"
+                        BorderBrush="{Binding ElementName=BorderBrushRadioButtons, Path=SelectedItem}"
+                        Height="50"
+                        Margin="0,10,0,10" />
+                </StackPanel>
             </sc:ControlExample>
         </ui:SimpleStackPanel>
     </ScrollViewer>

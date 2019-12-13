@@ -12,6 +12,7 @@
     Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
     <Grid>
         <ui:SimpleStackPanel
+            Spacing="12"
             HorizontalAlignment="Center"
             VerticalAlignment="Center">
             <Button
