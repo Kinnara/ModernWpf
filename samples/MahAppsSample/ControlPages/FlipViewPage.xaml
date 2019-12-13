@@ -56,6 +56,46 @@
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
+
+            <sc:ControlExample
+                x:Name="Example2"
+                HeaderText="A FlipView showing bound data with a data template.">
+                <sc:ControlExample.Example>
+                    <mah:FlipView
+                        x:Name="FlipView2"
+                        Width="400"
+                        Height="180"
+                        BorderBrush="Black"
+                        BorderThickness="1">
+                        <mah:FlipView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Rectangle
+                                        Width="36"
+                                        Height="36"
+                                        Fill="{Binding}"
+                                        VerticalAlignment="Center" />
+                                    <Border
+                                        Background="#A5FFFFFF"
+                                        Height="60"
+                                        Grid.Row="1">
+                                        <TextBlock
+                                            Text="{Binding}"
+                                            Foreground="Black"
+                                            Padding="12,12"
+                                            Style="{StaticResource TitleTextBlockStyle}"
+                                            HorizontalAlignment="Center" />
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </mah:FlipView.ItemTemplate>
+                    </mah:FlipView>
+                </sc:ControlExample.Example>
+            </sc:ControlExample>
         </ui:SimpleStackPanel>
     </ScrollViewer>
 </Page>

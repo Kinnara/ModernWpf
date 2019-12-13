@@ -29,7 +29,7 @@
                 </Grid>
 
                 <sc:ControlExample.Options>
-                    <ui:SimpleStackPanel>
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <CheckBox
                             Content="IsSnapToTickEnabled"
                             IsChecked="{Binding ElementName=slider, Path=IsSnapToTickEnabled, Mode=TwoWay}" />

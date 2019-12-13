@@ -55,11 +55,9 @@
             </StatusBar>
 
             <sc:ControlExample.Options>
-                <ui:SimpleStackPanel>
-                    <CheckBox
-                        Content="IsEnabled"
-                        IsChecked="{Binding ElementName=statusBar, Path=IsEnabled, Mode=TwoWay}" />
-                </ui:SimpleStackPanel>
+                <CheckBox
+                    Content="IsEnabled"
+                    IsChecked="{Binding ElementName=statusBar, Path=IsEnabled, Mode=TwoWay}" />
             </sc:ControlExample.Options>
         </sc:ControlExample>
     </ui:SimpleStackPanel>

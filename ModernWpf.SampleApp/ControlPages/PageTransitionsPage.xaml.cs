@@ -1,4 +1,5 @@
-﻿using SamplesCommon.SamplePages;
+﻿using SamplesCommon;
+using SamplesCommon.SamplePages;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,12 +15,12 @@ namespace ModernWpf.SampleApp.ControlPages
             InitializeComponent();
 
             TierTB.Text = "Rendering tier: " + (RenderCapability.Tier >> 16);
-            frame.Navigate(new SamplePage1());
+            frame.Navigate(SamplePageSources.SamplePage1);
         }
 
         private void NavigateForward(object sender, RoutedEventArgs e)
         {
-            var pageToNavigateTo = frame.BackStack.Cast<JournalEntry>().Count() % 2 == 1 ? new SamplePage1() as Page : new SamplePage2();
+            var pageToNavigateTo = frame.BackStack.Cast<JournalEntry>().Count() % 2 == 1 ? SamplePageSources.SamplePage1 : SamplePageSources.SamplePage2;
             frame.Navigate(pageToNavigateTo);
         }
 
@@ -30,6 +31,8 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void Frame_Navigated(object sender, NavigationEventArgs e)
         {
+            var page = (FrameworkElement)e.Content;
+            page.Margin = new Thickness(-18, 0, -18, 0);
         }
 
         private void DefaultRB_Checked(object sender, RoutedEventArgs e)
@@ -40,6 +43,11 @@ namespace ModernWpf.SampleApp.ControlPages
         private void DrillRB_Checked(object sender, RoutedEventArgs e)
         {
             frame.Style = (Style)Resources["DrillFrameStyle"];
+        }
+
+        private void SuppressRB_Checked(object sender, RoutedEventArgs e)
+        {
+            frame.Style = (Style)Resources["SuppressFrameStyle"];
         }
 
         private void SlideFromRightRB_Checked(object sender, RoutedEventArgs e)

@@ -1,40 +1,109 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    /// <summary>
-    /// Interaction logic for TreeViewPage.xaml
-    /// </summary>
     public partial class TreeViewPage : UserControl
     {
-        private const int ItemCountInEachLevel = 5;
+        private ObservableCollection<ExplorerItem> DataSource;
 
         public TreeViewPage()
         {
             InitializeComponent();
 
-            DataContext = new TreeViewData();
+            DataSource = GetData();
+            DataContext = DataSource;
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new EmptyAutomationPeer(this);
+        }
+
+        private ObservableCollection<ExplorerItem> GetData()
+        {
+            var list = new ObservableCollection<ExplorerItem>();
+            ExplorerItem folder1 = new ExplorerItem()
+            {
+                Name = "Work Documents",
+                Type = ExplorerItem.ExplorerItemType.Folder,
+                Children =
+                {
+                    new ExplorerItem()
+                    {
+                        Name = "Functional Specifications",
+                        Type = ExplorerItem.ExplorerItemType.Folder,
+                        Children =
+                        {
+                            new ExplorerItem()
+                            {
+                                Name = "TreeView spec",
+                                Type = ExplorerItem.ExplorerItemType.File,
+                              }
+                        }
+                    },
+                    new ExplorerItem()
+                    {
+                        Name = "Feature Schedule",
+                        Type = ExplorerItem.ExplorerItemType.File,
+                    },
+                    new ExplorerItem()
+                    {
+                        Name = "Overall Project Plan",
+                        Type = ExplorerItem.ExplorerItemType.File,
+                    },
+                    new ExplorerItem()
+                    {
+                        Name = "Feature Resources Allocation",
+                        Type = ExplorerItem.ExplorerItemType.File,
+                    }
+                }
+            };
+            ExplorerItem folder2 = new ExplorerItem()
+            {
+                Name = "Personal Folder",
+                Type = ExplorerItem.ExplorerItemType.Folder,
+                Children =
+                        {
+                            new ExplorerItem()
+                            {
+                                Name = "Home Remodel Folder",
+                                Type = ExplorerItem.ExplorerItemType.Folder,
+                                Children =
+                                {
+                                    new ExplorerItem()
+                                    {
+                                        Name = "Contractor Contact Info",
+                                        Type = ExplorerItem.ExplorerItemType.File,
+                                    },
+                                    new ExplorerItem()
+                                    {
+                                        Name = "Paint Color Scheme",
+                                        Type = ExplorerItem.ExplorerItemType.File,
+                                    },
+                                    new ExplorerItem()
+                                    {
+                                        Name = "Flooring Woodgrain type",
+                                        Type = ExplorerItem.ExplorerItemType.File,
+                                    },
+                                    new ExplorerItem()
+                                    {
+                                        Name = "Kitchen Cabinet Style",
+                                        Type = ExplorerItem.ExplorerItemType.File,
+                                    }
+                                }
+                            }
+                        }
+            };
+
+            list.Add(folder1);
+            list.Add(folder2);
+            return list;
         }
 
         private class EmptyAutomationPeer : UserControlAutomationPeer
@@ -48,50 +117,76 @@ namespace ModernWpf.SampleApp.ControlPages
                 return new List<AutomationPeer>();
             }
         }
+    }
 
-        public class TreeViewData : ObservableCollection<TopLevelItemData>
+    public class ExplorerItem : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        public enum ExplorerItemType { Folder, File };
+        public String Name { get; set; }
+        public ExplorerItemType Type { get; set; }
+        private ObservableCollection<ExplorerItem> m_children;
+        public ObservableCollection<ExplorerItem> Children
         {
-            public TreeViewData()
+            get
             {
-                for (int i = 0; i < ItemCountInEachLevel; ++i)
+                if (m_children == null)
                 {
-                    Add(new TopLevelItemData("Item " + i));
+                    m_children = new ObservableCollection<ExplorerItem>();
+                }
+                return m_children;
+            }
+            set
+            {
+                m_children = value;
+            }
+        }
+
+        private bool m_isExpanded;
+        public bool IsExpanded
+        {
+            get { return m_isExpanded; }
+            set
+            {
+                if (m_isExpanded != value)
+                {
+                    m_isExpanded = value;
+                    NotifyPropertyChanged("IsExpanded");
                 }
             }
         }
 
-        public class TopLevelItemData
+        private bool m_isSelected;
+        public bool IsSelected
         {
-            public TopLevelItemData(string title)
-            {
-                Title = title;
+            get { return m_isSelected; }
 
-                for (int i = 0; i < ItemCountInEachLevel; ++i)
+            set
+            {
+                if (m_isSelected != value)
                 {
-                    SecondLevelItems.Add(new SecondLevelItemData("Second Level " + i));
+                    m_isSelected = value;
+                    NotifyPropertyChanged("IsSelected");
                 }
             }
 
-            public string Title { get; set; }
-
-            public ObservableCollection<SecondLevelItemData> SecondLevelItems { get; } = new ObservableCollection<SecondLevelItemData>();
         }
 
-        public class SecondLevelItemData
+        private void NotifyPropertyChanged(String propertyName)
         {
-            public SecondLevelItemData(string title)
-            {
-                Title = title;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 
-                for (int i = 0; i < ItemCountInEachLevel; ++i)
-                {
-                    ThirdLevelItems.Add("Third Level " + i);
-                }
-            }
+    class ExplorerItemTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate FolderTemplate { get; set; }
+        public DataTemplate FileTemplate { get; set; }
 
-            public string Title { get; set; }
-
-            public ObservableCollection<string> ThirdLevelItems { get; } = new ObservableCollection<string>();
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            var explorerItem = (ExplorerItem)item;
+            return explorerItem.Type == ExplorerItem.ExplorerItemType.Folder ? FolderTemplate : FileTemplate;
         }
     }
 }

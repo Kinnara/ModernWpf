@@ -39,6 +39,33 @@
             </Setter>
         </Style>
 
+        <Style x:Key="SuppressFrameStyle" TargetType="ui:TransitionFrame">
+            <Setter Property="DefaultNavigationInTransition">
+                <Setter.Value>
+                    <ui:NavigationInTransition>
+                        <ui:NavigationInTransition.Backward>
+                            <ui:SuppressTransition />
+                        </ui:NavigationInTransition.Backward>
+                        <ui:NavigationInTransition.Forward>
+                            <ui:SuppressTransition />
+                        </ui:NavigationInTransition.Forward>
+                    </ui:NavigationInTransition>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="DefaultNavigationOutTransition">
+                <Setter.Value>
+                    <ui:NavigationOutTransition>
+                        <ui:NavigationOutTransition.Backward>
+                            <ui:SuppressTransition />
+                        </ui:NavigationOutTransition.Backward>
+                        <ui:NavigationOutTransition.Forward>
+                            <ui:SuppressTransition />
+                        </ui:NavigationOutTransition.Forward>
+                    </ui:NavigationOutTransition>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="SlideFromRightFrameStyle" TargetType="ui:TransitionFrame">
             <Setter Property="DefaultNavigationInTransition">
                 <Setter.Value>
@@ -107,42 +134,53 @@
                 Navigated="Frame_Navigated" />
 
             <sc:ControlExample.Options>
-                <ui:SimpleStackPanel>
-                    <TextBlock
-                        x:Name="TierTB"
-                        Style="{StaticResource BodyTextBlockStyle}" />
-                    <TextBlock
-                        Text="Transition modes"
-                        Style="{StaticResource BodyTextBlockStyle}" />
-                    <RadioButton
-                        x:Name="DefaultRB"
-                        Content="Default"
-                        IsChecked="True"
-                        Checked="DefaultRB_Checked" />
-                    <RadioButton
-                        x:Name="DrillRB"
-                        Content="Drill"
-                        Checked="DrillRB_Checked" />
-                    <RadioButton
-                        x:Name="SlideFromRightRB"
-                        Content="Slide from Right"
-                        Checked="SlideFromRightRB_Checked" />
-                    <RadioButton
-                        x:Name="SlideFromLeftRB"
-                        Content="Slide from Left"
-                        Checked="SlideFromLeftRB_Checked" />
-
-                    <TextBlock
-                        Text="Navigate"
-                        Style="{StaticResource BodyTextBlockStyle}" />
-                    <Button
-                        x:Name="NavigateForwardButton"
-                        Content="Navigate Forward"
-                        Click="NavigateForward" />
-                    <Button
-                        Content="Navigate Backward"
-                        IsEnabled="{Binding ElementName=frame, Path=CanGoBack}"
-                        Click="NavigateBackward" />
+                <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                    <StackPanel>
+                        <TextBlock
+                            Text="Transition modes"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Margin="0,0,0,4" />
+                        <RadioButton
+                            x:Name="DefaultRB"
+                            Content="Default"
+                            IsChecked="True"
+                            Checked="DefaultRB_Checked" />
+                        <RadioButton
+                            x:Name="DrillRB"
+                            Content="Drill"
+                            Checked="DrillRB_Checked" />
+                        <RadioButton
+                            x:Name="SuppressRB"
+                            Content="Suppress"
+                            Checked="SuppressRB_Checked" />
+                        <RadioButton
+                            x:Name="SlideFromRightRB"
+                            Content="Slide from Right"
+                            Checked="SlideFromRightRB_Checked" />
+                        <RadioButton
+                            x:Name="SlideFromLeftRB"
+                            Content="Slide from Left"
+                            Checked="SlideFromLeftRB_Checked" />
+                    </StackPanel>
+                    <StackPanel>
+                        <TextBlock
+                            Text="Navigate"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Margin="0,0,0,4" />
+                        <Button
+                            x:Name="NavigateForwardButton"
+                            Content="Navigate Forward"
+                            Click="NavigateForward" />
+                        <Button
+                            Content="Navigate Backward"
+                            IsEnabled="{Binding ElementName=frame, Path=CanGoBack}"
+                            Margin="0,12,0,0"
+                            Click="NavigateBackward" />
+                        <TextBlock
+                            x:Name="TierTB"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Margin="0,8,0,0" />
+                    </StackPanel>
                 </ui:SimpleStackPanel>
             </sc:ControlExample.Options>
         </sc:ControlExample>

@@ -14,11 +14,38 @@
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="A button with a simple ToolTip.">
-                <ui:SimpleStackPanel>
-                    <Button
-                        Content="Button with a simple ToolTip."
-                        ToolTip="Simple ToolTip" />
-                </ui:SimpleStackPanel>
+                <Button
+                    Content="Button with a simple ToolTip."
+                    ToolTip="Simple ToolTip" />
+            </sc:ControlExample>
+
+            <sc:ControlExample HeaderText="A TextBlock with an offset ToolTip.">
+                <sc:ControlExample.Example>
+                    <TextBlock Text="TextBlock with an offset ToolTip.">
+                        <ToolTipService.ToolTip>
+                            <ToolTip
+                                Content="Offset ToolTip."
+                                VerticalOffset="-80" />
+                        </ToolTipService.ToolTip>
+                    </TextBlock>
+                </sc:ControlExample.Example>
+            </sc:ControlExample>
+
+            <sc:ControlExample HeaderText="An Image with a ToolTip using PlacementRect.">
+                <sc:ControlExample.Example>
+                    <Image
+                        x:Name="textBoxToPlace"
+                        Source="/Assets/SampleMedia/cliff.jpg"
+                        Width="400"
+                        Height="266">
+                        <ToolTipService.ToolTip>
+                            <ToolTip
+                                Content="Non-occluding ToolTip."
+                                Placement="Right"
+                                PlacementRectangle="0,0,400,266" />
+                        </ToolTipService.ToolTip>
+                    </Image>
+                </sc:ControlExample.Example>
             </sc:ControlExample>
         </ui:SimpleStackPanel>
     </ScrollViewer>

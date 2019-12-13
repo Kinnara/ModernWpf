@@ -45,7 +45,7 @@
                     <!-- App bar button with bitmap icon. -->
                     <ui:AppBarButton x:Name="Button2" Label="BitmapIcon" Click="AppBarButton_Click">
                         <ui:AppBarButton.Icon>
-                            <ui:BitmapIcon UriSource="pack://application:,,,/ModernWpf.SampleApp;component/Assets/Slices2.png" />
+                            <ui:BitmapIcon UriSource="/ModernWpf.SampleApp;component/Assets/Slices2.png" />
                         </ui:AppBarButton.Icon>
                     </ui:AppBarButton>
                     <TextBlock

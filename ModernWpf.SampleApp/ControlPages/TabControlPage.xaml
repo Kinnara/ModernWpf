@@ -24,12 +24,10 @@
                 <TabControl x:Name="tabControl" />
 
                 <sc:ControlExample.Options>
-                    <ui:SimpleStackPanel>
-                        <ui:RadioButtons
-                            Header="TabStripPlacement"
-                            ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement, Mode=TwoWay}" />
-                    </ui:SimpleStackPanel>
+                    <ui:RadioButtons
+                        Header="TabStripPlacement"
+                        ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
+                        SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement, Mode=TwoWay}" />
                 </sc:ControlExample.Options>
             </sc:ControlExample>
 

@@ -14,7 +14,9 @@
 
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
-            <sc:ControlExample HeaderText="A hyperlink button that navigates to a URI.">
+            <sc:ControlExample
+                HeaderText="A hyperlink button that navigates to a URI."
+                VerticalContentAlignment="Center">
                 <ui:HyperlinkButton
                     x:Name="Control1"
                     Content="Microsoft home page"

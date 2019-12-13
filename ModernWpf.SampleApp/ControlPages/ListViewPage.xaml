@@ -80,7 +80,7 @@
                         VirtualizingPanel.VirtualizationMode="Recycling" />
 
                     <sc:ControlExample.Options>
-                        <ui:SimpleStackPanel>
+                        <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                             <sc:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView1}}" />
                             <ui:RadioButtons
                                 Header="SelectionMode"
@@ -116,7 +116,7 @@
                     </ListView>
 
                     <sc:ControlExample.Options>
-                        <ui:SimpleStackPanel>
+                        <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                             <!--<controls:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView2}}" />-->
                             <!--<ui:RadioButtons
                                 Header="SelectionMode"
@@ -170,7 +170,7 @@
                     </ListView>
 
                     <sc:ControlExample.Options>
-                        <ui:SimpleStackPanel>
+                        <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                             <CheckBox
                                 Content="AllowsColumnReorder"
                                 IsChecked="{Binding Source={x:Reference gridView}, Path=AllowsColumnReorder, Mode=TwoWay}" />

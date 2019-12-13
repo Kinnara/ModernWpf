@@ -27,9 +27,15 @@
                     </StackPanel>
                 </sc:ControlExample.Example>
                 <sc:ControlExample.Options>
-                    <CheckBox
-                        Content="IsCompact"
-                        IsChecked="{Binding ElementName=Button1, Path=IsCompact}" />
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <CheckBox
+                            Content="IsCompact"
+                            IsChecked="{Binding ElementName=Button1, Path=IsCompact}" />
+                        <ComboBox
+                            ui:ControlHelper.Header="LabelPosition"
+                            ItemsSource="{Binding Source={x:Type ui:CommandBarLabelPosition}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=Button1, Path=LabelPosition, Mode=TwoWay}" />
+                    </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
             <sc:ControlExample
@@ -40,7 +46,7 @@
                         <!-- App bar button with bitmap icon. -->
                         <ui:AppBarToggleButton x:Name="Button2" Label="BitmapIcon" Click="AppBarButton_Click">
                             <ui:AppBarToggleButton.Icon>
-                                <ui:BitmapIcon UriSource="pack://application:,,,/ModernWpf.SampleApp;component/Assets/Slices2.png" />
+                                <ui:BitmapIcon UriSource="/ModernWpf.SampleApp;component/Assets/Slices2.png" />
                             </ui:AppBarToggleButton.Icon>
                         </ui:AppBarToggleButton>
                         <TextBlock
@@ -49,11 +55,6 @@
                             VerticalAlignment="Center" />
                     </StackPanel>
                 </sc:ControlExample.Example>
-                <sc:ControlExample.Options>
-                    <CheckBox
-                        Content="IsCompact"
-                        IsChecked="{Binding ElementName=Button2, Path=IsCompact}" />
-                </sc:ControlExample.Options>
             </sc:ControlExample>
             <sc:ControlExample
                 x:Name="Example3"
@@ -74,11 +75,6 @@
                             VerticalAlignment="Center" />
                     </StackPanel>
                 </sc:ControlExample.Example>
-                <sc:ControlExample.Options>
-                    <CheckBox
-                        Content="IsCompact"
-                        IsChecked="{Binding ElementName=Button3, Path=IsCompact}" />
-                </sc:ControlExample.Options>
             </sc:ControlExample>
             <sc:ControlExample
                 x:Name="Example4"
@@ -97,11 +93,6 @@
                             VerticalAlignment="Center" />
                     </StackPanel>
                 </sc:ControlExample.Example>
-                <sc:ControlExample.Options>
-                    <CheckBox
-                        Content="IsCompact"
-                        IsChecked="{Binding ElementName=Button4, Path=IsCompact}" />
-                </sc:ControlExample.Options>
             </sc:ControlExample>
         </ui:SimpleStackPanel>
     </ScrollViewer>

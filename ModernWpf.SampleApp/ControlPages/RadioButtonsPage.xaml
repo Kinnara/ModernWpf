@@ -32,7 +32,7 @@
                 </StackPanel>
 
                 <sc:ControlExample.Options>
-                    <ui:SimpleStackPanel>
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <Slider
                             ui:ControlHelper.Header="MaxColumns"
                             Minimum="1"
