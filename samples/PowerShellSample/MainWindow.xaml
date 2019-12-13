@@ -1,0 +1,32 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:PowerShellSample"
+    Title="PowerShell Sample"
+    Height="450"
+    Width="800"
+    Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ColorPaletteResources Accent="#FF0078D7" />
+                <ResourceDictionary Source="pack://application:,,,/ModernWpf;component/ThemeResources/Dark.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/ModernWpf;component/ControlsResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <ScrollViewer>
+        <ui:SimpleStackPanel
+            Margin="12"
+            Spacing="24">
+            <TextBlock
+                Text="My first ModernWPF app"
+                Style="{StaticResource HeaderTextBlockStyle}" />
+            <Button Content="I am a button" />
+            <Button
+                Content="I am an accent button"
+                Style="{StaticResource AccentButtonStyle}" />
+        </ui:SimpleStackPanel>
+    </ScrollViewer>
+</Window>
