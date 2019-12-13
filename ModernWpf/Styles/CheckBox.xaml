@@ -263,6 +263,7 @@
 
     <Style x:Key="DataGridCheckBoxStyle" TargetType="CheckBox" BasedOn="{StaticResource DefaultCheckBoxStyle}">
         <Setter Property="MinWidth" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
         <Setter Property="Margin" Value="12,0" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
     </Style>
