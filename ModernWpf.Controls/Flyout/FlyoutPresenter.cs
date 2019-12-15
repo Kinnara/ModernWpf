@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -13,6 +15,7 @@ namespace ModernWpf.Controls
 
         public FlyoutPresenter()
         {
+            IsVisibleChanged += OnIsVisibleChanged;
         }
 
         #region CornerRadius
@@ -44,5 +47,27 @@ namespace ModernWpf.Controls
         }
 
         #endregion
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            if (e.Key == Key.Escape)
+            {
+                if (Parent is Popup popup && popup.IsOpen)
+                {
+                    popup.SetCurrentValue(Popup.IsOpenProperty, false);
+                    e.Handled = true;
+                }
+            }
+        }
+
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue)
+            {
+                Focus();
+            }
+        }
     }
 }

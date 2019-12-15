@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -23,6 +24,8 @@ namespace ModernWpf.Controls
         {
             KeyDown += OnSplitButtonKeyDown;
             KeyUp += OnSplitButtonKeyUp;
+
+            InputBindings.Add(new KeyBinding(new OpenFlyoutCommand(this), Key.Down, ModifierKeys.Alt));
         }
 
         #region CornerRadius
@@ -196,8 +199,8 @@ namespace ModernWpf.Controls
         {
             if (oldFlyout != null)
             {
-                newFlyout.Opened -= OnFlyoutOpened;
-                newFlyout.Closed -= OnFlyoutClosed;
+                oldFlyout.Opened -= OnFlyoutOpened;
+                oldFlyout.Closed -= OnFlyoutClosed;
                 ClearValue(FlyoutPlacementProperty);
             }
 
@@ -390,17 +393,17 @@ namespace ModernWpf.Controls
                     args.Handled = true;
                 }
             }
-            else if (key == Key.Down)
-            {
-                bool menuKeyDown = Keyboard.IsKeyDown(Key.Apps);
+            //else if (key == Key.Down)
+            //{
+            //    bool menuKeyDown = Keyboard.Modifiers.HasFlag(ModifierKeys.Alt);
 
-                if (IsEnabled && menuKeyDown)
-                {
-                    // Open the menu on alt-down
-                    OpenFlyout();
-                    args.Handled = true;
-                }
-            }
+            //    if (IsEnabled && menuKeyDown)
+            //    {
+            //        // Open the menu on alt-down
+            //        OpenFlyout();
+            //        args.Handled = true;
+            //    }
+            //}
             else if (key == Key.F4 && IsEnabled)
             {
                 // Open the menu on F4
@@ -437,5 +440,27 @@ namespace ModernWpf.Controls
         private bool m_isKeyDown;
 
         private readonly CornerRadiusFilterConverter m_cornerRadiusFilterConverter = new CornerRadiusFilterConverter();
+
+        private class OpenFlyoutCommand : ICommand
+        {
+            public OpenFlyoutCommand(SplitButton owner)
+            {
+                m_owner = owner;
+            }
+
+            public event EventHandler CanExecuteChanged;
+
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public void Execute(object parameter)
+            {
+                m_owner.OpenFlyout();
+            }
+
+            private readonly SplitButton m_owner;
+        }
     }
 }
