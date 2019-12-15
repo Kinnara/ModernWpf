@@ -70,13 +70,13 @@ namespace ModernWpf
 
         private class NativeMethods
         {
-            [DllImport("Shell32.dll")]
+            [DllImport("Shell32.dll", CharSet = CharSet.Auto)]
             public extern static int ExtractIconEx(string lpszFile, int nIconIndex, IntPtr[] phiconLarge, IntPtr[] phiconSmall, uint nIcons);
 
-            [DllImport("user32.dll", CharSet = CharSet.Auto)]
+            [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
             public extern static bool DestroyIcon(IntPtr hIcon);
 
-            [DllImport("kernel32.dll", EntryPoint = "GetModuleFileName", CharSet = CharSet.Unicode, SetLastError = true)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
             public static extern int GetModuleFileName(HandleRef hModule, StringBuilder buffer, int length);
         }
     }
