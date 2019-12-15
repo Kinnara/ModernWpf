@@ -522,6 +522,11 @@
                             Height="{TemplateBinding Height}"
                             Background="{TemplateBinding Background}"
                             CornerRadius="{Binding ElementName=LayoutRoot, Path=CornerRadius}">
+                            <Border.Clip>
+                                <RectangleGeometry
+                                    x:Name="OuterContentRootClip"
+                                    Rect="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=ContentClipRect}" />
+                            </Border.Clip>
                             <Grid x:Name="ContentRoot">
                                 <Border
                                     x:Name="PrimaryItemsRoot"
