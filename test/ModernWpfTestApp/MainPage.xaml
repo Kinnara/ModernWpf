@@ -1,0 +1,97 @@
+﻿<Page
+    x:Class="ModernWpfTestApp.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:ModernWpfTestApp"
+    mc:Ignorable="d"
+    AutomationProperties.AutomationId="MainPage">
+
+    <Page.Resources>
+        <local:NavigateToTestCommand x:Key="NavigateToTestCommand" />
+    </Page.Resources>
+
+    <Grid Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel
+            Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            Grid.Row="0" />
+        <ScrollViewer
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding Tests}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button
+                            CommandParameter="{Binding}"
+                            Command="{StaticResource NavigateToTestCommand}"
+                            AutomationProperties.Name="{Binding AutomationName}"
+                            FontSize="20"
+                            Margin="0,0,12,12"
+                            VerticalAlignment="Stretch">
+
+                            <Grid Width="250">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="36" />
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Image
+                                    Grid.Column="0"
+                                    Source="{Binding Icon}" />
+
+                                <TextBlock
+                                    Grid.Column="2"
+                                    Text="{Binding Name}" />
+                            </Grid>
+
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        <StackPanel
+            Orientation="Horizontal"
+            Grid.Row="2"
+            HorizontalAlignment="Center">
+            <Button
+                Content="Magic Scale Change"
+                Click="Button_Click" />
+            <CheckBox
+                x:Name="LongAnimationsDisabled"
+                AutomationProperties.AutomationId="LongAnimationsDisabled"
+                Content="Long Animations Disabled"
+                Checked="LongAnimationsDisabled_Checked"
+                Unchecked="LongAnimationsDisabled_Unchecked"
+                Margin="10,0,0,0" />
+
+            <ComboBox
+                x:Name="LanguageChooser"
+                ui:ControlHelper.Header="Languages"
+                AutomationProperties.AutomationId="LanguageChooser"
+                VerticalAlignment="Center"
+                SelectionChanged="LanguageChooser_SelectionChanged" />
+            <ComboBox
+                x:Name="FlowDirectionChooser"
+                ui:ControlHelper.Header="FlowDirection"
+                AutomationProperties.AutomationId="FlowDirectionChooser"
+                VerticalAlignment="Center"
+                SelectionChanged="FlowDirectionChooser_SelectionChanged" />
+
+        </StackPanel>
+    </Grid>
+</Page>
