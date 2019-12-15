@@ -48,7 +48,7 @@
                             Orientation="Horizontal">
                             <Image
                                 x:Name="Icon"
-                                Source="{TemplateBinding Icon}"
+                                Source="{TemplateBinding ActualIcon}"
                                 Width="16"
                                 Height="16"
                                 Margin="10,0,0,0"

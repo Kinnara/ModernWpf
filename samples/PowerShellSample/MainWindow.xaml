@@ -6,7 +6,8 @@
     Title="PowerShell Sample"
     Height="450"
     Width="800"
-    Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}">
+    Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
+    ui:TitleBar.IsIconVisible="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

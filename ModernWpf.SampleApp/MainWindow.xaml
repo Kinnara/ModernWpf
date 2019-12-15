@@ -7,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d"
-    Icon="Assets/AppIcon.ico"
     Title="ModernWPF Sample App"
     Width="1000"
     Height="750"

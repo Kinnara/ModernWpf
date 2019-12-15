@@ -1,8 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -111,12 +114,66 @@ namespace ModernWpf.Controls.Primitives
                 nameof(Icon),
                 typeof(ImageSource),
                 typeof(TitleBarControl),
-                null);
+                new PropertyMetadata(OnIconChanged));
 
         public ImageSource Icon
         {
             get => (ImageSource)GetValue(IconProperty);
             set => SetValue(IconProperty, value);
+        }
+
+        private static void OnIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((TitleBarControl)d).UpdateActualIcon();
+        }
+
+        #endregion
+
+        #region ActualIcon
+
+        private static readonly DependencyPropertyKey ActualIconPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(ActualIcon),
+                typeof(ImageSource),
+                typeof(TitleBarControl),
+                null);
+
+        public static readonly DependencyProperty ActualIconProperty =
+            ActualIconPropertyKey.DependencyProperty;
+
+        public ImageSource ActualIcon
+        {
+            get => (ImageSource)GetValue(ActualIconProperty);
+            private set => SetValue(ActualIconPropertyKey, value);
+        }
+
+        private void UpdateActualIcon()
+        {
+            if (Icon != null)
+            {
+                ActualIcon = Icon;
+            }
+            else
+            {
+                ImageSource actualIcon = null;
+
+                var smallIconHandle = new IntPtr[1];
+                IconHelper.GetDefaultIconHandles(null, smallIconHandle);
+                var smallIcon = smallIconHandle[0];
+                if (smallIcon != IntPtr.Zero)
+                {
+                    try
+                    {
+                        actualIcon = Imaging.CreateBitmapSourceFromHIcon(smallIcon, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    }
+                    finally
+                    {
+                        IconHelper.DestroyIcon(smallIcon);
+                    }
+                }
+
+                ActualIcon = actualIcon;
+            }
         }
 
         #endregion
@@ -264,6 +321,12 @@ namespace ModernWpf.Controls.Primitives
                 RightSystemOverlay.SizeChanged += OnRightSystemOverlaySizeChanged;
                 UpdateSystemOverlayRightInset(RightSystemOverlay.ActualWidth);
             }
+        }
+
+        protected override void OnInitialized(EventArgs e)
+        {
+            UpdateActualIcon();
+            base.OnInitialized(e);
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
