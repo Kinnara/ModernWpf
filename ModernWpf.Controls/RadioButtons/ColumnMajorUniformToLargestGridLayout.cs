@@ -105,7 +105,7 @@ namespace ModernWpf.Controls.Primitives
         protected internal override Size MeasureOverride(NonVirtualizingLayoutContext context, Size availableSize)
         {
             var children = context.Children;
-            if (children != null)
+            if (children != null && children.Count > 0)
             {
                 Size calculateLargestChildSize()
                 {
@@ -190,6 +190,20 @@ namespace ModernWpf.Controls.Primitives
                     index++;
                 }
 
+                if (m_testHooksEnabled)
+                {
+                    //Testhooks setup
+                    if (m_largerColumns != numberOfColumnsWithExtraElements ||
+                        m_columns != column ||
+                        m_rows != minitemsPerColumn)
+                    {
+                        m_largerColumns = numberOfColumnsWithExtraElements;
+                        m_columns = column;
+                        m_rows = minitemsPerColumn;
+
+                        LayoutChanged?.Invoke(this, null);
+                    }
+                }
             }
             return finalSize;
         }
@@ -227,7 +241,37 @@ namespace ModernWpf.Controls.Primitives
             return Math.Max(1, (int)effectiveColumnCount);
         }
 
+        //Testhooks helpers, only function while m_testHooksEnabled == true
+        internal void SetTestHooksEnabled(bool enabled)
+        {
+            m_testHooksEnabled = enabled;
+        }
+
+        internal int GetRows()
+        {
+            return m_rows;
+        }
+
+        internal int GetColumns()
+        {
+            return m_columns;
+        }
+
+        internal int GetLargerColumns()
+        {
+            return m_largerColumns;
+        }
+
+        internal event TypedEventHandler<ColumnMajorUniformToLargestGridLayout, object> LayoutChanged;
+
         int m_actualColumnCount = 1;
         Size m_largestChildSize;
+
+        //Testhooks helpers, only function while m_testHooksEnabled == true
+        bool m_testHooksEnabled = false;
+
+        int m_rows = -1;
+        int m_columns = -1;
+        int m_largerColumns = -1;
     }
 }

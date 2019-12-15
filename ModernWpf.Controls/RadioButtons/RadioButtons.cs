@@ -296,6 +296,11 @@ namespace ModernWpf.Controls
             var repeater = m_repeater;
             if (repeater != null)
             {
+                if (m_testHooksEnabled)
+                {
+                    AttachToLayoutChanged();
+                }
+
                 m_blockSelecting = false;
                 if (SelectedIndex == -1 && SelectedItem != null)
                 {
@@ -694,6 +699,90 @@ namespace ModernWpf.Controls
             }
         }
 
+        // Test Hooks helpers, only function when m_testHooksEnabled == true
+        internal void SetTestHooksEnabled(bool enabled)
+        {
+            if (m_testHooksEnabled != enabled)
+            {
+                m_testHooksEnabled = enabled;
+                if (enabled)
+                {
+                    AttachToLayoutChanged();
+                }
+                else
+                {
+                    DetatchFromLayoutChanged();
+                }
+            }
+        }
+
+        void OnLayoutChanged(ColumnMajorUniformToLargestGridLayout sender, object args)
+        {
+            RadioButtonsTestHooks.NotifyLayoutChanged(this);
+        }
+
+        internal int GetRows()
+        {
+            var layout = GetLayout();
+            if (layout != null)
+            {
+                return layout.GetRows();
+            }
+            return -1;
+        }
+
+        internal int GetColumns()
+        {
+            var layout = GetLayout();
+            if (layout != null)
+            {
+                return layout.GetColumns();
+            }
+            return -1;
+        }
+
+        internal int GetLargerColumns()
+        {
+            var layout = GetLayout();
+            if (layout != null)
+            {
+                return layout.GetLargerColumns();
+            }
+            return -1;
+        }
+
+        void AttachToLayoutChanged()
+        {
+            var layout = GetLayout();
+            if (layout != null)
+            {
+                layout.SetTestHooksEnabled(true);
+                layout.LayoutChanged += OnLayoutChanged;
+            }
+        }
+
+        void DetatchFromLayoutChanged()
+        {
+            var layout = GetLayout();
+            if (layout != null)
+            {
+                layout.SetTestHooksEnabled(false);
+                layout.LayoutChanged -= OnLayoutChanged;
+            }
+        }
+
+        ColumnMajorUniformToLargestGridLayout GetLayout()
+        {
+            if (m_repeater != null)
+            {
+                if (m_repeater.Layout is ColumnMajorUniformToLargestGridLayout customLayout)
+                {
+                    return customLayout;
+                }
+            }
+            return null;
+        }
+
         int m_selectedIndex = -1;
         // This is used to guard against reentrency when calling select, since select changes
         // the Selected Index/Item which in turn calls select.
@@ -705,6 +794,9 @@ namespace ModernWpf.Controls
         bool m_currentlySettingFocus = false;
 
         ItemsRepeater m_repeater;
+
+        //Test hooks helpers, only function while m_testHooksEnabled == true
+        bool m_testHooksEnabled = false;
 
         const string s_repeaterName = "InnerRepeater";
     }
