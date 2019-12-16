@@ -52,8 +52,8 @@ namespace ModernWpf.Controls
         {
             MouseWheel += OnNumberBoxScroll;
 
-            GotFocus += OnNumberBoxGotFocus;
-            LostFocus += OnNumberBoxLostFocus;
+            GotKeyboardFocus += OnNumberBoxGotFocus;
+            LostKeyboardFocus += OnNumberBoxLostFocus;
         }
 
         #region Minimum
