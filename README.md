@@ -72,7 +72,7 @@ Modern styles and controls for your WPF applications.
 
 ![ItemsRepeater - UniformGridLayout](docs/images/UniformGridLayout.png "ItemsRepeater - UniformGridLayout")
 
-![Custom title bar](docs/images/CustomTitleBar.png "Custom title bar")
+![Custom title bar](docs/images/CustomTitleBar.Dark.png "Custom title bar")
 
 ![Calendar](docs/images/Calendar.png "Calendar")
 

@@ -13,12 +13,14 @@
     Width="866"
     Height="487"
     WindowStartupLocation="CenterOwner"
+    Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
     ui:WindowHelper.UseModernWindowStyle="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:TitleBar.IsBackButtonVisible="True"
     ui:TitleBar.Style="{DynamicResource AppTitleBarStyle}"
     ui:TitleBar.ButtonStyle="{DynamicResource AppTitleBarButtonStyle}"
-    ui:TitleBar.BackButtonStyle="{DynamicResource AppTitleBarBackButtonStyle}">
+    ui:TitleBar.BackButtonStyle="{DynamicResource AppTitleBarBackButtonStyle}"
+    ui:ThemeManager.RequestedTheme="Dark">
 
     <Window.Resources>
         <sc:PixelsToGridLengthConverter x:Key="PixelsToGridLength" />
