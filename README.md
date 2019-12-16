@@ -64,6 +64,8 @@ Modern styles and controls for your WPF applications.
 
 ![Easily customize colors](docs/images/Nighttime.png "Easily customize colors")
 
+![NumberBox](docs/images/NumberBox.png "NumberBox")
+
 ![ContentDialog](docs/images/ContentDialog.png "ContentDialog")
 
 ![DataGrid](docs/images/DataGrid.png "DataGrid")
