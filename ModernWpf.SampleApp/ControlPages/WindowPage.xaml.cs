@@ -11,13 +11,6 @@ namespace ModernWpf.SampleApp.ControlPages
             InitializeComponent();
         }
 
-        private void ResetTitleBar(object sender, RoutedEventArgs e)
-        {
-            var w = (Window)DataContext;
-            w.ClearValue(TitleBar.BackgroundProperty);
-            w.ClearValue(TitleBar.ForegroundProperty);
-        }
-
         private void ResizeWindow(object sender, RoutedEventArgs e)
         {
             if (e.OriginalSource is MenuItem menuItem)
@@ -26,6 +19,15 @@ namespace ModernWpf.SampleApp.ControlPages
                 Application.Current.MainWindow.Width = size.Width;
                 Application.Current.MainWindow.Height = size.Height;
             }
+        }
+
+        private void OpenWindow(object sender, RoutedEventArgs e)
+        {
+            var window = new WindowWithCustomTitleBar
+            {
+                Owner = Window.GetWindow(this)
+            };
+            window.ShowDialog();
         }
     }
 }

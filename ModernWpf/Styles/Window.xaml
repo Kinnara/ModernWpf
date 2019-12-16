@@ -51,9 +51,7 @@
                         </Border.Resources>
                         <Border.Padding>
                             <MultiBinding Converter="{StaticResource WindowPaddingConveter}">
-                                <Binding
-                                    Path="WindowState"
-                                    RelativeSource="{RelativeSource TemplatedParent}" />
+                                <Binding Path="WindowState" RelativeSource="{RelativeSource TemplatedParent}" />
                                 <Binding Path="(SystemParameters.WindowNonClientFrameThickness)" />
                                 <Binding Path="(SystemParameters.WindowResizeBorderThickness)" />
                                 <Binding Path="(SystemParameters.WindowCaptionHeight)" />
@@ -79,6 +77,7 @@
                                     Foreground="{TemplateBinding local:TitleBar.Foreground}"
                                     InactiveBackground="{TemplateBinding local:TitleBar.InactiveBackground}"
                                     InactiveForeground="{TemplateBinding local:TitleBar.InactiveForeground}"
+                                    Style="{TemplateBinding local:TitleBar.Style}"
                                     ButtonStyle="{TemplateBinding local:TitleBar.ButtonStyle}"
                                     IsIconVisible="{TemplateBinding local:TitleBar.IsIconVisible}"
                                     IsBackButtonVisible="{TemplateBinding local:TitleBar.IsBackButtonVisible}"

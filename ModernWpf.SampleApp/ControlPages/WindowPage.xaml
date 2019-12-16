@@ -50,26 +50,9 @@
 
             <GroupBox Header="Title Bar">
                 <ui:SimpleStackPanel Spacing="12">
-                    <ComboBox
-                        ui:ControlHelper.Header="Background"
-                        MinWidth="120"
-                        SelectedItem="{Binding Path=(ui:TitleBar.Background), Mode=TwoWay, Converter={StaticResource BrushToColorConverter}}">
-                        <Color>Red</Color>
-                        <Color>Green</Color>
-                        <Color>Blue</Color>
-                    </ComboBox>
-
-                    <ComboBox
-                        ui:ControlHelper.Header="Foreground"
-                        MinWidth="120"
-                        SelectedItem="{Binding Path=(ui:TitleBar.Foreground), Mode=TwoWay, Converter={StaticResource BrushToColorConverter}}">
-                        <Color>Black</Color>
-                        <Color>White</Color>
-                    </ComboBox>
-
                     <Button
-                        Content="Reset"
-                        Click="ResetTitleBar" />
+                        Content="Open window with custom title bar"
+                        Click="OpenWindow" />
                 </ui:SimpleStackPanel>
             </GroupBox>
 

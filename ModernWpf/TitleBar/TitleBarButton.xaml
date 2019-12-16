@@ -28,31 +28,28 @@
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
                         SnapsToDevicePixels="True">
-                        <TextBlock
+                        <ContentPresenter
                             x:Name="Content"
-                            Text="{TemplateBinding Content}"
-                            Foreground="{TemplateBinding Foreground}"
-                            FontFamily="{TemplateBinding FontFamily}"
-                            FontSize="{TemplateBinding FontSize}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Margin="{TemplateBinding Padding}" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsActive" Value="False">
                             <Setter Property="Background" TargetName="RootGrid" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=InactiveBackground}" />
-                            <Setter Property="Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=InactiveForeground}" />
+                            <Setter Property="TextElement.Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=InactiveForeground}" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Background" TargetName="RootGrid" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=HoverBackground}" />
-                            <Setter Property="Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=HoverForeground}" />
+                            <Setter Property="TextElement.Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=HoverForeground}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
                             <Setter Property="Background" TargetName="RootGrid" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedBackground}" />
-                            <Setter Property="Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedForeground}" />
+                            <Setter Property="TextElement.Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedForeground}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Background" TargetName="RootGrid" Value="{DynamicResource SystemControlDisabledTransparentBrush}" />
-                            <Setter Property="Foreground" TargetName="Content" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
+                            <Setter Property="TextElement.Foreground" TargetName="Content" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

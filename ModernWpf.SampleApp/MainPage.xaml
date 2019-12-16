@@ -91,10 +91,6 @@
                         Header="IsIconVisible"
                         IsCheckable="True"
                         IsChecked="{Binding Path=(ui:TitleBar.IsIconVisible), Mode=TwoWay}" />
-                    <MenuItem
-                        Header="ExtendViewIntoTitleBar"
-                        IsCheckable="True"
-                        IsChecked="{Binding Path=(ui:TitleBar.ExtendViewIntoTitleBar), Mode=TwoWay}" />
                 </MenuItem>
                 <MenuItem Header="Shadows">
                     <ui:RadioMenuItem

@@ -1,12 +1,20 @@
-﻿using System;
+﻿using ModernWpf.Controls.Primitives;
+using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
 namespace ModernWpf.Controls
 {
+    [StyleTypedProperty(Property = StylePropertyName, StyleTargetType = typeof(TitleBarControl))]
+    [StyleTypedProperty(Property = ButtonStylePropertyName, StyleTargetType = typeof(TitleBarButton))]
+    [StyleTypedProperty(Property = BackButtonStylePropertyName, StyleTargetType = typeof(TitleBarButton))]
     public static class TitleBar
     {
+        private const string StylePropertyName = "Style";
+        private const string ButtonStylePropertyName = "ButtonStyle";
+        private const string BackButtonStylePropertyName = "BackButtonStyle";
+
         #region Background
 
         public static readonly DependencyProperty BackgroundProperty =
@@ -87,11 +95,31 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region Style
+
+        public static readonly DependencyProperty StyleProperty =
+            DependencyProperty.RegisterAttached(
+                StylePropertyName,
+                typeof(Style),
+                typeof(TitleBar));
+
+        public static Style GetStyle(Window window)
+        {
+            return (Style)window.GetValue(StyleProperty);
+        }
+
+        public static void SetStyle(Window window, Style value)
+        {
+            window.SetValue(StyleProperty, value);
+        }
+
+        #endregion
+
         #region ButtonStyle
 
         public static readonly DependencyProperty ButtonStyleProperty =
             DependencyProperty.RegisterAttached(
-                "ButtonStyle",
+                ButtonStylePropertyName,
                 typeof(Style),
                 typeof(TitleBar));
 
@@ -226,7 +254,7 @@ namespace ModernWpf.Controls
 
         public static readonly DependencyProperty BackButtonStyleProperty =
             DependencyProperty.RegisterAttached(
-                "BackButtonStyle",
+                BackButtonStylePropertyName,
                 typeof(Style),
                 typeof(TitleBar));
 

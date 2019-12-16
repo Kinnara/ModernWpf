@@ -19,78 +19,9 @@
     ui:TitleBar.IsBackEnabled="{Binding ElementName=RootFrame, Path=CanGoBack}"
     ui:TitleBar.BackRequested="OnBackRequested">
 
-    <Window.Resources>
-        <Style x:Key="CustomTitleBarBackButtonStyle" TargetType="ui:TitleBarButton" BasedOn="{StaticResource TitleBarBackButtonStyle}">
-            <Setter Property="ui:ThemeManager.RequestedTheme" Value="Dark" />
-        </Style>
-        <Style x:Key="CustomTitleBarButtonStyle" TargetType="ui:TitleBarButton">
-            <Setter Property="ui:ThemeManager.RequestedTheme" Value="Dark" />
-        </Style>
-    </Window.Resources>
-
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-
-        <Grid
-            x:Name="CustomTitleBar"
-            Background="{DynamicResource SystemControlBackgroundAccentBrush}"
-            Height="{Binding ElementName=Window, Path=(ui:TitleBar.Height)}"
-            ui:ThemeManager.RequestedTheme="Dark"
-            Visibility="Collapsed">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <Rectangle
-                x:Name="LeftSpacer"
-                Width="{Binding ElementName=Window, Path=(ui:TitleBar.SystemOverlayLeftInset)}"
-                Grid.Column="0" />
-
-            <ui:TitleBarButton
-                x:Name="ForwardButton"
-                Grid.Column="1"
-                Style="{StaticResource TitleBarBackButtonStyle}"
-                Content="&#xEA47;"
-                IsEnabled="{Binding ElementName=RootFrame, Path=CanGoForward}"
-                IsActive="{Binding ElementName=Window, Path=IsActive}"
-                Click="ForwardButton_Click" />
-
-            <!-- Centered Title -->
-            <TextBlock
-                Grid.Column="0"
-                Grid.ColumnSpan="5"
-                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                FontSize="12"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Text="Custom Title Bar" />
-
-            <ui:TitleBarButton
-                x:Name="SettingsButton"
-                Grid.Column="3"
-                IsActive="{Binding ElementName=Window, Path=IsActive}"
-                FontSize="14"
-                Content="&#xE713;"
-                Click="SettingsButton_Click" />
-
-            <Rectangle
-                x:Name="RightSpacer"
-                Width="{Binding ElementName=Window, Path=(ui:TitleBar.SystemOverlayRightInset)}"
-                Grid.Column="4" />
-        </Grid>
-
-        <ui:ThemeAwareFrame
-            x:Name="RootFrame"
-            Grid.Row="1"
-            NavigationUIVisibility="Hidden"
-            IsTabStop="False"
-            Source="/MainPage.xaml" />
-    </Grid>
+    <ui:ThemeAwareFrame
+        x:Name="RootFrame"
+        NavigationUIVisibility="Hidden"
+        IsTabStop="False"
+        Source="/MainPage.xaml" />
 </Window>
