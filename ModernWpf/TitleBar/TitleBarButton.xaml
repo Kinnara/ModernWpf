@@ -7,7 +7,7 @@
         <Setter Property="Background" Value="{DynamicResource TitleBarButtonBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="InactiveBackground" Value="{DynamicResource TitleBarButtonBackgroundInactive}" />
-        <Setter Property="InactiveForeground" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
+        <Setter Property="InactiveForeground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
         <Setter Property="HoverBackground" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
         <Setter Property="HoverForeground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
         <Setter Property="PressedBackground" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />

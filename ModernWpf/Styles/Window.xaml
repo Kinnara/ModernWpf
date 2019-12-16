@@ -36,7 +36,7 @@
         <Setter Property="local:TitleBar.Background" Value="Transparent" />
         <Setter Property="local:TitleBar.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="local:TitleBar.InactiveBackground" Value="Transparent" />
-        <Setter Property="local:TitleBar.InactiveForeground" Value="{DynamicResource SystemControlForegroundChromeDisabledLowBrush}" />
+        <Setter Property="local:TitleBar.InactiveForeground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
         <Setter Property="local:TitleBar.BackButtonStyle" Value="{StaticResource TitleBarBackButtonStyle}" />
         <Setter Property="Template">
             <Setter.Value>

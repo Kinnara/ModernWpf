@@ -1251,8 +1251,8 @@
     <m:StaticResource x:Key="TextControlButtonForegroundPressed" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
 
     <!-- Resources for Window -->
-    <SolidColorBrush x:Key="WindowBorder" Color="{m:StaticColor SystemChromeGrayColor}" />
-    <SolidColorBrush x:Key="WindowBorderInactive" Color="{m:StaticColor SystemChromeDisabledHighColor}" />
+    <SolidColorBrush x:Key="WindowBorder" Color="#FF707070" />
+    <SolidColorBrush x:Key="WindowBorderInactive" Color="#FF555555" />
     <SolidColorBrush x:Key="TitleBarButtonBackground" Color="Transparent" />
     <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="Transparent" />
 

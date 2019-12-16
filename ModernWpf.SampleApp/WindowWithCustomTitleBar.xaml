@@ -28,11 +28,9 @@
         </Style>
         <Style x:Key="AppTitleBarButtonStyle" TargetType="ui:TitleBarButton">
             <Setter Property="IsActive" Value="{Binding IsActive, ElementName=Window}" />
-            <Setter Property="InactiveForeground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
         </Style>
         <Style x:Key="AppTitleBarBackButtonStyle" TargetType="ui:TitleBarButton" BasedOn="{StaticResource TitleBarBackButtonStyle}">
             <Setter Property="IsActive" Value="{Binding IsActive, ElementName=Window}" />
-            <Setter Property="InactiveForeground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
         </Style>
     </Window.Resources>
 
