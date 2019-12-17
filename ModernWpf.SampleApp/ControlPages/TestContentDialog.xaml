@@ -23,26 +23,26 @@
     <ui:SimpleStackPanel Spacing="12">
         <TextBox
             ui:ControlHelper.Header="Title"
-            Text="{Binding ElementName=dialog, Path=Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding ElementName=dialog, Path=Title, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             ui:ControlHelper.Header="PrimaryButtonText"
-            Text="{Binding ElementName=dialog, Path=PrimaryButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding ElementName=dialog, Path=PrimaryButtonText, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             ui:ControlHelper.Header="SecondaryButtonText"
-            Text="{Binding ElementName=dialog, Path=SecondaryButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding ElementName=dialog, Path=SecondaryButtonText, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             ui:ControlHelper.Header="CloseButtonText"
-            Text="{Binding ElementName=dialog, Path=CloseButtonText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding ElementName=dialog, Path=CloseButtonText, UpdateSourceTrigger=PropertyChanged}" />
         <ComboBox
             ui:ControlHelper.Header="DefaultButton"
             ItemsSource="{Binding Source={x:Type ui:ContentDialogButton}, Converter={StaticResource EnumValuesConverter}}"
-            SelectedItem="{Binding ElementName=dialog, Path=DefaultButton, Mode=TwoWay}" />
+            SelectedItem="{Binding ElementName=dialog, Path=DefaultButton}" />
         <CheckBox
             Content="FullSizeDesired"
-            IsChecked="{Binding ElementName=dialog, Path=FullSizeDesired, Mode=TwoWay}" />
+            IsChecked="{Binding ElementName=dialog, Path=FullSizeDesired}" />
         <CheckBox
             Content="IsShadowEnabled"
-            IsChecked="{Binding ElementName=dialog, Path=IsShadowEnabled, Mode=TwoWay}" />
+            IsChecked="{Binding ElementName=dialog, Path=IsShadowEnabled}" />
         <StackPanel>
             <Button
                 Content="Try to open another ContentDialog"

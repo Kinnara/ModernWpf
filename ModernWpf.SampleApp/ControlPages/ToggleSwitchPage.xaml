@@ -36,16 +36,16 @@
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <CheckBox
                             Content="IsOn"
-                            IsChecked="{Binding ElementName=toggleSwitch, Path=IsOn, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=toggleSwitch, Path=IsOn}" />
                         <TextBox
                             ui:ControlHelper.Header="Header"
-                            Text="{Binding ElementName=toggleSwitch, Path=Header, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{Binding ElementName=toggleSwitch, Path=Header, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBox
                             ui:ControlHelper.Header="OnContent"
-                            Text="{Binding ElementName=toggleSwitch, Path=OnContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{Binding ElementName=toggleSwitch, Path=OnContent, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBox
                             ui:ControlHelper.Header="OffContent"
-                            Text="{Binding ElementName=toggleSwitch, Path=OffContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{Binding ElementName=toggleSwitch, Path=OffContent, UpdateSourceTrigger=PropertyChanged}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

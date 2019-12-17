@@ -45,7 +45,7 @@
                             Minimum="34"
                             Maximum="50"
                             AutoToolTipPlacement="TopLeft"
-                            Value="{Binding ElementName=NumberBox, Path=UpDownButtonsWidth, Mode=TwoWay}" />
+                            Value="{Binding ElementName=NumberBox, Path=UpDownButtonsWidth}" />
 
                         <TextBox
                             ui:ControlHelper.Header="Header"

@@ -23,7 +23,7 @@
             <ui:RadioButtons
                 Header="ResizeMode"
                 ItemsSource="{Binding Source={x:Type ResizeMode}, Converter={StaticResource EnumValuesConverter}}"
-                SelectedItem="{Binding ResizeMode, Mode=TwoWay}" />
+                SelectedItem="{Binding ResizeMode}" />
 
             <ui:DropDownButton Content="Resize window">
                 <ui:DropDownButton.Flyout>

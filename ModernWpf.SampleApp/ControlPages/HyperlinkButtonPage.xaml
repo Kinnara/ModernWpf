@@ -26,7 +26,7 @@
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <CheckBox
                             Content="IsEnabled"
-                            IsChecked="{Binding ElementName=Control1, Path=IsEnabled, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=Control1, Path=IsEnabled}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

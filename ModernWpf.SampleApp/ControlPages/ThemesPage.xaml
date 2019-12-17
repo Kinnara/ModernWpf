@@ -26,7 +26,7 @@
 
             <ui:RadioButtons
                 Header="Theme Mode"
-                SelectedItem="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, Mode=TwoWay, Converter={StaticResource AppThemeConverter}}">
+                SelectedItem="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, Converter={StaticResource AppThemeConverter}}">
                 <ui:RadioButtons.ItemsSource>
                     <sc:AppThemes />
                 </ui:RadioButtons.ItemsSource>
@@ -36,7 +36,7 @@
                 x:Name="PresetsComboBox"
                 MinWidth="200"
                 ui:ControlHelper.Header="Presets"
-                SelectedItem="{Binding CurrentPreset, Source={x:Static presets:PresetManager.Current}, Mode=TwoWay}">
+                SelectedItem="{Binding CurrentPreset, Source={x:Static presets:PresetManager.Current}}">
                 <sys:String>Default</sys:String>
                 <sys:String>Forest</sys:String>
                 <sys:String>Lavender</sys:String>

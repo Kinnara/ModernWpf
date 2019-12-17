@@ -34,7 +34,7 @@
                         <ComboBox
                             ui:ControlHelper.Header="LabelPosition"
                             ItemsSource="{Binding Source={x:Type ui:CommandBarLabelPosition}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=Button1, Path=LabelPosition, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=Button1, Path=LabelPosition}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

@@ -179,89 +179,89 @@
                         <ComboBox
                             ui:ControlHelper.Header="VerticalScrollBarVisibility"
                             ItemsSource="{Binding Source={x:Type ScrollBarVisibility}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=dataGrid, Path=VerticalScrollBarVisibility, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=dataGrid, Path=VerticalScrollBarVisibility}" />
                         <ComboBox
                             ui:ControlHelper.Header="HorizontalScrollBarVisibility"
                             ItemsSource="{Binding Source={x:Type ScrollBarVisibility}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=dataGrid, Path=HorizontalScrollBarVisibility, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=dataGrid, Path=HorizontalScrollBarVisibility}" />
                         <CheckBox
                             Content="CanUserAddRows"
-                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserAddRows, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserAddRows}" />
                         <CheckBox
                             Content="CanUserDeleteRows"
-                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserDeleteRows, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserDeleteRows}" />
                         <ComboBox
                             ui:ControlHelper.Header="RowDetailsVisibilityMode"
                             ItemsSource="{Binding Source={x:Type DataGridRowDetailsVisibilityMode}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=dataGrid, Path=RowDetailsVisibilityMode, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=dataGrid, Path=RowDetailsVisibilityMode}" />
                         <CheckBox
                             Content="IsReadOnly"
-                            IsChecked="{Binding ElementName=dataGrid, Path=IsReadOnly, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=dataGrid, Path=IsReadOnly}" />
                         <ComboBox
                             ui:ControlHelper.Header="HeadersVisibility"
                             ItemsSource="{Binding Source={x:Type DataGridHeadersVisibility}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=dataGrid, Path=HeadersVisibility, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=dataGrid, Path=HeadersVisibility}" />
                         <CheckBox
                             Content="AreRowDetailsFrozen"
-                            IsChecked="{Binding ElementName=dataGrid, Path=AreRowDetailsFrozen, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=dataGrid, Path=AreRowDetailsFrozen}" />
                         <ComboBox
                             ui:ControlHelper.Header="GridLinesVisibility"
                             ItemsSource="{Binding Source={x:Type DataGridGridLinesVisibility}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=dataGrid, Path=GridLinesVisibility, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=dataGrid, Path=GridLinesVisibility}" />
                         <TextBox
                             ui:ControlHelper.Header="MaxColumnWidth"
-                            Text="{Binding ElementName=dataGrid, Path=MaxColumnWidth, Mode=TwoWay}" />
+                            Text="{Binding ElementName=dataGrid, Path=MaxColumnWidth}" />
                         <TextBox
                             ui:ControlHelper.Header="MinColumnWidth"
-                            Text="{Binding ElementName=dataGrid, Path=MinColumnWidth, Mode=TwoWay}" />
+                            Text="{Binding ElementName=dataGrid, Path=MinColumnWidth}" />
                         <CheckBox
                             Content="CanUserResizeColumns"
-                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserResizeColumns, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserResizeColumns}" />
                         <TextBox
                             ui:ControlHelper.Header="RowHeaderWidth"
-                            Text="{Binding ElementName=dataGrid, Path=RowHeaderWidth, Mode=TwoWay}" />
+                            Text="{Binding ElementName=dataGrid, Path=RowHeaderWidth}" />
                         <TextBox
                             ui:ControlHelper.Header="ColumnHeaderHeight"
-                            Text="{Binding ElementName=dataGrid, Path=ColumnHeaderHeight, Mode=TwoWay}" />
+                            Text="{Binding ElementName=dataGrid, Path=ColumnHeaderHeight}" />
                         <TextBox
                             ui:ControlHelper.Header="MinRowHeight"
-                            Text="{Binding ElementName=dataGrid, Path=MinRowHeight, Mode=TwoWay}" />
+                            Text="{Binding ElementName=dataGrid, Path=MinRowHeight}" />
                         <CheckBox
                             Content="CanUserResizeRows"
-                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserResizeRows, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserResizeRows}" />
                         <TextBox
                             ui:ControlHelper.Header="RowHeight"
-                            Text="{Binding ElementName=dataGrid, Path=RowHeight, Mode=TwoWay}" />
+                            Text="{Binding ElementName=dataGrid, Path=RowHeight}" />
                         <ComboBox
                             ui:ControlHelper.Header="ClipboardCopyMode"
                             ItemsSource="{Binding Source={x:Type DataGridClipboardCopyMode}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=dataGrid, Path=ClipboardCopyMode, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=dataGrid, Path=ClipboardCopyMode}" />
                         <CheckBox
                             Content="CanUserReorderColumns"
-                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserReorderColumns, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserReorderColumns}" />
                         <CheckBox
                             Content="EnableColumnVirtualization"
-                            IsChecked="{Binding ElementName=dataGrid, Path=EnableColumnVirtualization, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=dataGrid, Path=EnableColumnVirtualization}" />
                         <CheckBox
                             Content="EnableRowVirtualization"
-                            IsChecked="{Binding ElementName=dataGrid, Path=EnableRowVirtualization, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=dataGrid, Path=EnableRowVirtualization}" />
                         <TextBox
                             ui:ControlHelper.Header="FrozenColumnCount"
-                            Text="{Binding ElementName=dataGrid, Path=FrozenColumnCount, Mode=TwoWay}" />
+                            Text="{Binding ElementName=dataGrid, Path=FrozenColumnCount}" />
                         <CheckBox
                             Content="AutoGenerateColumns"
-                            IsChecked="{Binding ElementName=dataGrid, Path=AutoGenerateColumns, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=dataGrid, Path=AutoGenerateColumns}" />
                         <CheckBox
                             Content="CanUserSortColumns"
-                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserSortColumns, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserSortColumns}" />
                         <ComboBox
                             ui:ControlHelper.Header="SelectionUnit"
                             ItemsSource="{Binding Source={x:Type DataGridSelectionUnit}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=dataGrid, Path=SelectionUnit, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=dataGrid, Path=SelectionUnit}" />
                         <ComboBox
                             ui:ControlHelper.Header="SelectionMode"
                             ItemsSource="{Binding Source={x:Type DataGridSelectionMode}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=dataGrid, Path=SelectionMode, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=dataGrid, Path=SelectionMode}" />
                     </ui:SimpleStackPanel>
                 </ScrollViewer>
             </sc:ControlExample.Options>

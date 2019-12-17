@@ -32,29 +32,29 @@
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <CheckBox
                             Content="IsSnapToTickEnabled"
-                            IsChecked="{Binding ElementName=slider, Path=IsSnapToTickEnabled, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=slider, Path=IsSnapToTickEnabled}" />
                         <CheckBox
                             Content="IsSelectionRangeEnabled"
                             IsEnabled="False"
-                            IsChecked="{Binding ElementName=slider, Path=IsSelectionRangeEnabled, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=slider, Path=IsSelectionRangeEnabled}" />
                         <CheckBox
                             Content="IsDirectionReversed"
-                            IsChecked="{Binding ElementName=slider, Path=IsDirectionReversed, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=slider, Path=IsDirectionReversed}" />
                         <CheckBox
                             Content="IsMoveToPointEnabled"
-                            IsChecked="{Binding ElementName=slider, Path=IsMoveToPointEnabled, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=slider, Path=IsMoveToPointEnabled}" />
                         <ui:RadioButtons
                             Header="AutoToolTipPlacement"
                             ItemsSource="{Binding Source={x:Type AutoToolTipPlacement}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=slider, Path=AutoToolTipPlacement, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=slider, Path=AutoToolTipPlacement}" />
                         <ui:RadioButtons
                             Header="TickPlacement"
                             ItemsSource="{Binding Source={x:Type TickPlacement}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=slider, Path=TickPlacement, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=slider, Path=TickPlacement}" />
                         <ui:RadioButtons
                             Header="Orientation"
                             ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=slider, Path=Orientation, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=slider, Path=Orientation}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

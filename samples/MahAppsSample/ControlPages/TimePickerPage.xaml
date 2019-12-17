@@ -42,7 +42,7 @@
                         <ComboBox
                             ui:ControlHelper.Header="PickerVisibility"
                             ItemsSource="{Binding Source={x:Type mah:TimePartVisibility}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=TimePicker, Path=PickerVisibility, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=TimePicker, Path=PickerVisibility}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

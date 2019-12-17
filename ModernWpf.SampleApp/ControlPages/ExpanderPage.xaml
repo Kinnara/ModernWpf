@@ -54,7 +54,7 @@
                         <ui:RadioButtons
                             Header="ExpandDirection"
                             ItemsSource="{Binding Converter={StaticResource EnumValuesConverter}, Source={x:Type ExpandDirection}}"
-                            SelectedItem="{Binding ExpandDirection, ElementName=expander, Mode=TwoWay}"
+                            SelectedItem="{Binding ExpandDirection, ElementName=expander}"
                             SelectionChanged="ExpandDirection_SelectionChanged" />
                     </sc:ControlExample.Options>
                 </sc:ControlExample>

@@ -34,7 +34,7 @@
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <ui:RadioButtons
                             Header="SpinButton Placement"
-                            SelectedItem="{Binding ElementName=NumberBoxSpinButtonPlacementExample, Path=SpinButtonPlacementMode, Mode=TwoWay}">
+                            SelectedItem="{Binding ElementName=NumberBoxSpinButtonPlacementExample, Path=SpinButtonPlacementMode}">
                             <ui:NumberBoxSpinButtonPlacementMode>Inline</ui:NumberBoxSpinButtonPlacementMode>
                             <ui:NumberBoxSpinButtonPlacementMode>Compact</ui:NumberBoxSpinButtonPlacementMode>
                         </ui:RadioButtons>
@@ -64,18 +64,18 @@
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <ui:NumberBox
                             Header="Minimum"
-                            Value="{Binding ElementName=NumberBox1, Path=Minimum, Mode=TwoWay}" />
+                            Value="{Binding ElementName=NumberBox1, Path=Minimum}" />
                         <ui:NumberBox
                             Header="Maximum"
-                            Value="{Binding ElementName=NumberBox1, Path=Maximum, Mode=TwoWay}" />
+                            Value="{Binding ElementName=NumberBox1, Path=Maximum}" />
                         <ui:NumberBox
                             Header="SmallChange"
                             SpinButtonPlacementMode="Inline"
-                            Value="{Binding ElementName=NumberBox1, Path=SmallChange, Mode=TwoWay}" />
+                            Value="{Binding ElementName=NumberBox1, Path=SmallChange}" />
                         <ui:NumberBox
                             Header="LargeChange"
                             SpinButtonPlacementMode="Inline"
-                            Value="{Binding ElementName=NumberBox1, Path=LargeChange, Mode=TwoWay}" />
+                            Value="{Binding ElementName=NumberBox1, Path=LargeChange}" />
                         <TextBox
                             ui:ControlHelper.Header="Text"
                             Text="{Binding ElementName=NumberBox1, Path=Text, Mode=OneWay}"

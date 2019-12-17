@@ -90,7 +90,7 @@
                     <MenuItem
                         Header="IsIconVisible"
                         IsCheckable="True"
-                        IsChecked="{Binding Path=(ui:TitleBar.IsIconVisible), Mode=TwoWay}" />
+                        IsChecked="{Binding Path=(ui:TitleBar.IsIconVisible)}" />
                 </MenuItem>
                 <MenuItem Header="Shadows">
                     <ui:RadioMenuItem

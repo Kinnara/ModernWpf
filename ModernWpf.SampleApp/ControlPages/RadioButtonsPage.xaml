@@ -37,11 +37,11 @@
                             ui:ControlHelper.Header="MaxColumns"
                             Minimum="1"
                             Maximum="5"
-                            Value="{Binding ElementName=radioButtons, Path=MaxColumns, Mode=TwoWay}"
+                            Value="{Binding ElementName=radioButtons, Path=MaxColumns}"
                             AutoToolTipPlacement="TopLeft" />
                         <CheckBox
                             Content="IsEnabled"
-                            IsChecked="{Binding ElementName=radioButtons, Path=IsEnabled, Mode=TwoWay}" />
+                            IsChecked="{Binding ElementName=radioButtons, Path=IsEnabled}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

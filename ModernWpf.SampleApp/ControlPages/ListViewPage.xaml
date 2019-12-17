@@ -85,10 +85,10 @@
                             <ui:RadioButtons
                                 Header="SelectionMode"
                                 ItemsSource="{Binding Source={x:Type SelectionMode}, Converter={StaticResource EnumValuesConverter}}"
-                                SelectedItem="{Binding Source={x:Reference listView1}, Path=SelectionMode, Mode=TwoWay}" />
+                                SelectedItem="{Binding Source={x:Reference listView1}, Path=SelectionMode}" />
                             <CheckBox
                                 Content="IsEnabled"
-                                IsChecked="{Binding Source={x:Reference listView1}, Path=IsEnabled, Mode=TwoWay}" />
+                                IsChecked="{Binding Source={x:Reference listView1}, Path=IsEnabled}" />
                         </ui:SimpleStackPanel>
                     </sc:ControlExample.Options>
                 </sc:ControlExample>
@@ -121,10 +121,10 @@
                             <!--<ui:RadioButtons
                                 Header="SelectionMode"
                                 ItemsSource="{Binding Source={x:Type SelectionMode}, Converter={StaticResource EnumValuesConverter}}"
-                                SelectedItem="{Binding Source={x:Reference listView2}, Path=SelectionMode, Mode=TwoWay}" />-->
+                                SelectedItem="{Binding Source={x:Reference listView2}, Path=SelectionMode}" />-->
                             <CheckBox
                                 Content="IsEnabled"
-                                IsChecked="{Binding Source={x:Reference listView2}, Path=IsEnabled, Mode=TwoWay}" />
+                                IsChecked="{Binding Source={x:Reference listView2}, Path=IsEnabled}" />
                         </ui:SimpleStackPanel>
                     </sc:ControlExample.Options>
                 </sc:ControlExample>
@@ -173,15 +173,15 @@
                         <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                             <CheckBox
                                 Content="AllowsColumnReorder"
-                                IsChecked="{Binding Source={x:Reference gridView}, Path=AllowsColumnReorder, Mode=TwoWay}" />
+                                IsChecked="{Binding Source={x:Reference gridView}, Path=AllowsColumnReorder}" />
                             <sc:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView3}}" />
                             <!--<ui:RadioButtons
                                 Header="SelectionMode"
                                 ItemsSource="{Binding Source={x:Type SelectionMode}, Converter={StaticResource EnumValuesConverter}}"
-                                SelectedItem="{Binding Source={x:Reference listView3}, Path=SelectionMode, Mode=TwoWay}" />-->
+                                SelectedItem="{Binding Source={x:Reference listView3}, Path=SelectionMode}" />-->
                             <CheckBox
                                 Content="IsEnabled"
-                                IsChecked="{Binding Source={x:Reference listView3}, Path=IsEnabled, Mode=TwoWay}" />
+                                IsChecked="{Binding Source={x:Reference listView3}, Path=IsEnabled}" />
                         </ui:SimpleStackPanel>
                     </sc:ControlExample.Options>
                 </sc:ControlExample>

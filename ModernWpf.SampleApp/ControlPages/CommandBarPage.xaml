@@ -43,11 +43,11 @@
                         <ComboBox
                             ui:ControlHelper.Header="DefaultLabelPosition"
                             ItemsSource="{Binding Source={x:Type ui:CommandBarDefaultLabelPosition}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=CommandBar1, Path=DefaultLabelPosition, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=CommandBar1, Path=DefaultLabelPosition}" />
                         <ComboBox
                             ui:ControlHelper.Header="OverflowButtonVisibility"
                             ItemsSource="{Binding Source={x:Type ui:CommandBarOverflowButtonVisibility}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=CommandBar1, Path=OverflowButtonVisibility, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=CommandBar1, Path=OverflowButtonVisibility}" />
                         <CheckBox
                             x:Name="ShowToggleButtonCheckBox"
                             Content="Show toggle button in overflow" />

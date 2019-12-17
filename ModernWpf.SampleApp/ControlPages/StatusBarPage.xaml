@@ -57,7 +57,7 @@
             <sc:ControlExample.Options>
                 <CheckBox
                     Content="IsEnabled"
-                    IsChecked="{Binding ElementName=statusBar, Path=IsEnabled, Mode=TwoWay}" />
+                    IsChecked="{Binding ElementName=statusBar, Path=IsEnabled}" />
             </sc:ControlExample.Options>
         </sc:ControlExample>
     </ui:SimpleStackPanel>

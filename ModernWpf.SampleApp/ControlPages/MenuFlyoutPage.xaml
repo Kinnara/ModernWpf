@@ -64,7 +64,7 @@
                         <ComboBox
                             ui:ControlHelper.Header="Placement"
                             ItemsSource="{Binding Source={x:Type ui:FlyoutPlacementMode}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=Flyout1, Path=Placement, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=Flyout1, Path=Placement}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

@@ -16,7 +16,7 @@
     <ScrollViewer>
         <Grid Margin="24,0">
             <GroupBox Header="Theme Mode">
-                <ui:RadioButtons SelectedItem="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, Mode=TwoWay, Converter={StaticResource AppThemeConverter}}">
+                <ui:RadioButtons SelectedItem="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, Converter={StaticResource AppThemeConverter}}">
                     <ui:RadioButtons.ItemsSource>
                         <sc:AppThemes />
                     </ui:RadioButtons.ItemsSource>

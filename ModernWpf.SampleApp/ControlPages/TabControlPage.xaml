@@ -27,7 +27,7 @@
                     <ui:RadioButtons
                         Header="TabStripPlacement"
                         ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
-                        SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement, Mode=TwoWay}" />
+                        SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement}" />
                 </sc:ControlExample.Options>
             </sc:ControlExample>
 

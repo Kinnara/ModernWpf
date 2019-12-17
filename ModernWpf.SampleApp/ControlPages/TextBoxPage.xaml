@@ -75,40 +75,40 @@
                                 Click="ClearClipboard" />
                             <CheckBox
                                 Content="AcceptsReturn"
-                                IsChecked="{Binding ElementName=textBox, Path=AcceptsReturn, Mode=TwoWay}" />
+                                IsChecked="{Binding ElementName=textBox, Path=AcceptsReturn}" />
                             <CheckBox
                                 Content="IsReadOnly"
-                                IsChecked="{Binding ElementName=textBox, Path=IsReadOnly, Mode=TwoWay}" />
+                                IsChecked="{Binding ElementName=textBox, Path=IsReadOnly}" />
                             <CheckBox
                                 Content="IsReadOnlyCaretVisible"
-                                IsChecked="{Binding ElementName=textBox, Path=IsReadOnlyCaretVisible, Mode=TwoWay}" />
+                                IsChecked="{Binding ElementName=textBox, Path=IsReadOnlyCaretVisible}" />
                             <CheckBox
                                 Content="IsUndoEnabled"
-                                IsChecked="{Binding ElementName=textBox, Path=IsUndoEnabled, Mode=TwoWay}" />
+                                IsChecked="{Binding ElementName=textBox, Path=IsUndoEnabled}" />
                             <CheckBox
                                 Content="IsInactiveSelectionHighlightEnabled"
-                                IsChecked="{Binding ElementName=textBox, Path=IsInactiveSelectionHighlightEnabled, Mode=TwoWay}" />
+                                IsChecked="{Binding ElementName=textBox, Path=IsInactiveSelectionHighlightEnabled}" />
                             <TextBox
                                 ui:ControlHelper.Header="Header"
-                                Text="{Binding ElementName=textBox, Path=(ui:ControlHelper.Header), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{Binding ElementName=textBox, Path=(ui:ControlHelper.Header), UpdateSourceTrigger=PropertyChanged}" />
                             <TextBox
                                 ui:ControlHelper.Header="PlaceholderText"
-                                Text="{Binding ElementName=textBox, Path=(ui:ControlHelper.PlaceholderText), Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{Binding ElementName=textBox, Path=(ui:ControlHelper.PlaceholderText), UpdateSourceTrigger=PropertyChanged}" />
                             <ComboBox
                                 ui:ControlHelper.Header="TextWrapping"
                                 ItemsSource="{Binding Source={x:Type TextWrapping}, Converter={StaticResource EnumValuesConverter}}"
-                                SelectedItem="{Binding ElementName=textBox, Path=TextWrapping, Mode=TwoWay}" />
+                                SelectedItem="{Binding ElementName=textBox, Path=TextWrapping}" />
                             <ComboBox
                                 ui:ControlHelper.Header="HorizontalScrollBarVisibility"
                                 ItemsSource="{Binding Source={x:Type ScrollBarVisibility}, Converter={StaticResource EnumValuesConverter}}"
-                                SelectedItem="{Binding ElementName=textBox, Path=HorizontalScrollBarVisibility, Mode=TwoWay}" />
+                                SelectedItem="{Binding ElementName=textBox, Path=HorizontalScrollBarVisibility}" />
                             <ComboBox
                                 ui:ControlHelper.Header="VerticalScrollBarVisibility"
                                 ItemsSource="{Binding Source={x:Type ScrollBarVisibility}, Converter={StaticResource EnumValuesConverter}}"
-                                SelectedItem="{Binding ElementName=textBox, Path=VerticalScrollBarVisibility, Mode=TwoWay}" />
+                                SelectedItem="{Binding ElementName=textBox, Path=VerticalScrollBarVisibility}" />
                             <ComboBox
                                 ui:ControlHelper.Header="SelectionOpacity"
-                                SelectedItem="{Binding ElementName=textBox, Path=SelectionOpacity, Mode=TwoWay}"
+                                SelectedItem="{Binding ElementName=textBox, Path=SelectionOpacity}"
                                 IsEditable="True">
                                 <sys:Double>0</sys:Double>
                                 <sys:Double>0.4</sys:Double>

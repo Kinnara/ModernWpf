@@ -52,7 +52,7 @@
                         <ui:RadioButtons
                             Header="Orientation"
                             ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=FlipView1, Path=Orientation, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=FlipView1, Path=Orientation}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

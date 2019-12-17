@@ -43,7 +43,7 @@
                         <ui:RadioButtons
                             Header="Placement"
                             ItemsSource="{Binding Source={x:Type PlacementMode}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=Popup1, Path=Placement, Mode=TwoWay}" />
+                            SelectedItem="{Binding ElementName=Popup1, Path=Placement}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
