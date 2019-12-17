@@ -35,4 +35,11 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Properties\DesignTimeResources.xaml">
+      <ContainsDesignTimeResources>True</ContainsDesignTimeResources>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>

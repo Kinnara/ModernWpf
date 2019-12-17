@@ -37,7 +37,6 @@
 
     <Style x:Key="DefaultTabItemStyle" TargetType="TabItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Foreground" Value="{DynamicResource TabViewItemHeaderForeground}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource EmptyFocusVisual}" />
@@ -100,6 +99,7 @@
                                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                             ContentSource="Header"
+                                            TextElement.Foreground="{DynamicResource TabViewItemHeaderForeground}"
                                             TextElement.FontWeight="{TemplateBinding FontWeight}"
                                             TextElement.FontSize="{DynamicResource TabViewItemHeaderFontSize}"
                                             Focusable="False"
@@ -262,7 +262,6 @@
     <Style x:Key="TabItemPivotStyle" TargetType="TabItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundUnselected}" />
-        <Setter Property="Foreground" Value="{DynamicResource PivotHeaderItemForegroundUnselected}" />
         <Setter Property="Padding" Value="{DynamicResource PivotHeaderItemMargin}" />
         <Setter Property="Height" Value="48" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -281,6 +280,7 @@
                             <ContentPresenter
                                 x:Name="ContentPresenter"
                                 ContentSource="Header"
+                                TextElement.Foreground="{DynamicResource PivotHeaderItemForegroundUnselected}"
                                 TextElement.FontSize="{DynamicResource PivotHeaderItemFontSize}"
                                 TextElement.FontFamily="{DynamicResource PivotHeaderItemFontFamily}"
                                 TextElement.FontWeight="{DynamicResource PivotHeaderItemThemeFontWeight}"
