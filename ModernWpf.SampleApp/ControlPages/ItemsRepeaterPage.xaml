@@ -335,15 +335,16 @@
                     HeaderText="StackLayout"
                     Style="{StaticResource ControlExampleFullStyle}"
                     Margin="{StaticResource TabItemContentMargin}">
+                    <sc:ControlExample.Resources>
+                        <ui:StackLayout x:Key="stackLayout" />
+                    </sc:ControlExample.Resources>
+
                     <ui:ItemsRepeaterScrollHost>
                         <ScrollViewer>
                             <ui:ItemsRepeater
+                                Layout="{StaticResource stackLayout}"
                                 ItemTemplate="{StaticResource ContactListViewTemplate}"
-                                ItemsSource="{Binding}">
-                                <ui:ItemsRepeater.Layout>
-                                    <ui:StackLayout x:Name="stackLayout" />
-                                </ui:ItemsRepeater.Layout>
-                            </ui:ItemsRepeater>
+                                ItemsSource="{Binding}" />
                         </ScrollViewer>
                     </ui:ItemsRepeaterScrollHost>
 
@@ -351,7 +352,7 @@
                         <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                             <ui:NumberBox
                                 Header="Spacing"
-                                Value="{Binding Source={x:Reference stackLayout}, Path=Spacing}" />
+                                Value="{Binding Source={StaticResource stackLayout}, Path=Spacing}" />
                         </ui:SimpleStackPanel>
                     </sc:ControlExample.Options>
                 </sc:ControlExample>
@@ -362,18 +363,32 @@
                     HeaderText="UniformGridLayout"
                     Style="{StaticResource ControlExampleFullStyle}"
                     Margin="{StaticResource TabItemContentMargin}">
+                    <sc:ControlExample.Resources>
+                        <ui:UniformGridLayout
+                            x:Key="uniformGridLayout"
+                            MinItemWidth="240"
+                            MinColumnSpacing="24" />
+                    </sc:ControlExample.Resources>
+
                     <ui:ItemsRepeaterScrollHost>
                         <ScrollViewer>
+                            <ScrollViewer.Style>
+                                <Style TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
+                                    <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+                                    <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Source={StaticResource uniformGridLayout}, Path=Orientation}" Value="Vertical">
+                                            <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+                                            <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ScrollViewer.Style>
                             <ui:ItemsRepeater
+                                x:Name="UniformGridLayoutRepeater"
+                                Layout="{StaticResource uniformGridLayout}"
                                 ItemTemplate="{StaticResource ContactListViewTemplate}"
-                                ItemsSource="{Binding}">
-                                <ui:ItemsRepeater.Layout>
-                                    <ui:UniformGridLayout
-                                        x:Name="uniformGridLayout"
-                                        MinItemWidth="240"
-                                        MinColumnSpacing="24" />
-                                </ui:ItemsRepeater.Layout>
-                            </ui:ItemsRepeater>
+                                ItemsSource="{Binding}" />
                         </ScrollViewer>
                     </ui:ItemsRepeaterScrollHost>
 
@@ -386,32 +401,32 @@
                                 Style="{StaticResource OptionsPanelStyle}">
                                 <ui:NumberBox
                                     Header="MinItemWidth"
-                                    Value="{Binding Source={x:Reference uniformGridLayout}, Path=MinItemWidth}" />
+                                    Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinItemWidth}" />
                                 <ui:NumberBox
                                     Header="MinItemHeight"
-                                    Value="{Binding Source={x:Reference uniformGridLayout}, Path=MinItemHeight}" />
+                                    Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinItemHeight}" />
                                 <ui:NumberBox
                                     Header="MinRowSpacing"
-                                    Value="{Binding Source={x:Reference uniformGridLayout}, Path=MinRowSpacing}" />
+                                    Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinRowSpacing}" />
                                 <ui:NumberBox
                                     Header="MinColumnSpacing"
-                                    Value="{Binding Source={x:Reference uniformGridLayout}, Path=MinColumnSpacing}" />
+                                    Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinColumnSpacing}" />
                                 <ui:NumberBox
                                     Header="MaximumRowsOrColumns"
                                     Minimum="-1"
-                                    Value="{Binding Source={x:Reference uniformGridLayout}, Path=MaximumRowsOrColumns}" />
+                                    Value="{Binding Source={StaticResource uniformGridLayout}, Path=MaximumRowsOrColumns}" />
                                 <ui:RadioButtons
                                     Header="ItemsStretch"
                                     ItemsSource="{Binding Source={x:Type ui:UniformGridLayoutItemsStretch}, Converter={StaticResource EnumValuesConverter}}"
-                                    SelectedItem="{Binding Source={x:Reference uniformGridLayout}, Path=ItemsStretch}" />
+                                    SelectedItem="{Binding Source={StaticResource uniformGridLayout}, Path=ItemsStretch}" />
                                 <ui:RadioButtons
                                     Header="ItemsJustification"
                                     ItemsSource="{Binding Source={x:Type ui:UniformGridLayoutItemsJustification}, Converter={StaticResource EnumValuesConverter}}"
-                                    SelectedItem="{Binding Source={x:Reference uniformGridLayout}, Path=ItemsJustification}" />
+                                    SelectedItem="{Binding Source={StaticResource uniformGridLayout}, Path=ItemsJustification}" />
                                 <ui:RadioButtons
                                     Header="Orientation"
                                     ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
-                                    SelectedItem="{Binding Source={x:Reference uniformGridLayout}, Path=Orientation}" />
+                                    SelectedItem="{Binding Source={StaticResource uniformGridLayout}, Path=Orientation}" />
                             </ui:SimpleStackPanel>
                         </ScrollViewer>
                     </sc:ControlExample.Options>
@@ -423,17 +438,30 @@
                     HeaderText="FlowLayout"
                     Style="{StaticResource ControlExampleFullStyle}"
                     Margin="{StaticResource TabItemContentMargin}">
+                    <sc:ControlExample.Resources>
+                        <ui:FlowLayout
+                            x:Key="flowLayout"
+                            MinRowSpacing="24" />
+                    </sc:ControlExample.Resources>
+
                     <ui:ItemsRepeaterScrollHost>
                         <ScrollViewer>
+                            <ScrollViewer.Style>
+                                <Style TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
+                                    <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+                                    <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Source={StaticResource flowLayout}, Path=Orientation}" Value="Vertical">
+                                            <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+                                            <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ScrollViewer.Style>
                             <ui:ItemsRepeater
+                                Layout="{StaticResource flowLayout}"
                                 ItemTemplate="{StaticResource ContactListViewTemplate}"
-                                ItemsSource="{Binding}">
-                                <ui:ItemsRepeater.Layout>
-                                    <ui:FlowLayout
-                                        x:Name="flowLayout"
-                                        MinRowSpacing="24" />
-                                </ui:ItemsRepeater.Layout>
-                            </ui:ItemsRepeater>
+                                ItemsSource="{Binding}" />
                         </ScrollViewer>
                     </ui:ItemsRepeaterScrollHost>
 
@@ -447,17 +475,17 @@
                                 <ui:RadioButtons
                                     Header="Orientation"
                                     ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
-                                    SelectedItem="{Binding Source={x:Reference flowLayout}, Path=Orientation}" />
+                                    SelectedItem="{Binding Source={StaticResource flowLayout}, Path=Orientation}" />
                                 <ui:NumberBox
                                     ui:ControlHelper.Header="MinRowSpacing"
-                                    Value="{Binding Source={x:Reference flowLayout}, Path=MinRowSpacing}" />
+                                    Value="{Binding Source={StaticResource flowLayout}, Path=MinRowSpacing}" />
                                 <ui:NumberBox
                                     ui:ControlHelper.Header="MinColumnSpacing"
-                                    Value="{Binding Source={x:Reference flowLayout}, Path=MinColumnSpacing}" />
+                                    Value="{Binding Source={StaticResource flowLayout}, Path=MinColumnSpacing}" />
                                 <ui:RadioButtons
                                     Header="LineAlignment"
                                     ItemsSource="{Binding Source={x:Type ui:FlowLayoutLineAlignment}, Converter={StaticResource EnumValuesConverter}}"
-                                    SelectedItem="{Binding Source={x:Reference flowLayout}, Path=LineAlignment}" />
+                                    SelectedItem="{Binding Source={StaticResource flowLayout}, Path=LineAlignment}" />
                             </ui:SimpleStackPanel>
                         </ScrollViewer>
                     </sc:ControlExample.Options>
