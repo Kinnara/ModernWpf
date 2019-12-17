@@ -107,7 +107,10 @@ namespace ModernWpf.Controls
                 nameof(Value),
                 typeof(double),
                 typeof(NumberBox),
-                new PropertyMetadata(0d, OnValuePropertyChanged));
+                new FrameworkPropertyMetadata(
+                    0d,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
+                    OnValuePropertyChanged));
 
         public double Value
         {
@@ -168,7 +171,10 @@ namespace ModernWpf.Controls
                 nameof(Text),
                 typeof(string),
                 typeof(NumberBox),
-                new PropertyMetadata(string.Empty, OnTextPropertyChanged));
+                new FrameworkPropertyMetadata(
+                    string.Empty,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
+                    OnTextPropertyChanged));
 
         public string Text
         {

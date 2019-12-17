@@ -80,7 +80,10 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(IsOpen),
                 typeof(bool),
-                typeof(CommandBar));
+                typeof(CommandBar),
+                new FrameworkPropertyMetadata(
+                    false,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
         public bool IsOpen
         {

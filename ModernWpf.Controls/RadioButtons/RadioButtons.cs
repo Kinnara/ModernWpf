@@ -104,7 +104,10 @@ namespace ModernWpf.Controls
                 nameof(SelectedIndex),
                 typeof(int),
                 typeof(RadioButtons),
-                new FrameworkPropertyMetadata(-1, OnSelectedIndexPropertyChanged));
+                new FrameworkPropertyMetadata(
+                    -1,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
+                    OnSelectedIndexPropertyChanged));
 
         public int SelectedIndex
         {
@@ -126,7 +129,10 @@ namespace ModernWpf.Controls
                 nameof(SelectedItem),
                 typeof(object),
                 typeof(RadioButtons),
-                new FrameworkPropertyMetadata(OnSelectedItemPropertyChanged));
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+                    OnSelectedItemPropertyChanged));
 
         public object SelectedItem
         {
