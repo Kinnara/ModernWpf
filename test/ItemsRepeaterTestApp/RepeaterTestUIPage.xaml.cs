@@ -2,11 +2,8 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using ItemsRepeaterTestApp.Samples;
-using ModernWpf.Controls;
+using ItemsRepeaterTestApp.Samples.Selection;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace ItemsRepeaterTestApp
@@ -57,9 +54,29 @@ namespace ItemsRepeaterTestApp
                 Navigate(typeof(FlowLayoutDemoPage));
             };
 
+            activityFeedLayoutDemo.Click += delegate
+            {
+                Navigate(typeof(ActivityFeedSamplePage));
+            };
+
             storeDemo.Click += delegate
             {
                 Navigate(typeof(StoreDemoPage));
+            };
+
+            flatSelectionDemo.Click += delegate
+            {
+                Navigate(typeof(FlatSample));
+            };
+
+            groupedSelectionDemo.Click += delegate
+            {
+                Navigate(typeof(GroupedSample));
+            };
+
+            treeSelectionDemo.Click += delegate
+            {
+                Navigate(typeof(TreeViewSample));
             };
         }
 

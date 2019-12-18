@@ -28,7 +28,7 @@
             <Button x:Name="collectionChangeDemo">Collection Changes Demo</Button>
             <!--<Button x:Name="animationsDemo">Animations Demo</Button>-->
             <Button x:Name="circleLayoutDemo">Circle Layout Demo</Button>
-            <!--<Button x:Name="activityFeedLayoutDemo">Xbox Activity Feed Layout Demo</Button>-->
+            <Button x:Name="activityFeedLayoutDemo">Xbox Activity Feed Layout Demo</Button>
             <!--<Button x:Name="nonVirtualStackLayoutDemo">Non Virtual Stack Layout Demo</Button>-->
             <!--<Button x:Name="virtualFixedStackLayoutDemo">Virtual Fixed Stack Layout Demo</Button>-->
             <!--<Button x:Name="virtualStackLayoutDemo">Virtual Variable Stack Layout Demo (Estimated)</Button>-->
@@ -36,12 +36,12 @@
             <Button x:Name="flowLayoutDemo">Flow Layout Demo</Button>
             <Button x:Name="storeDemo">Store demo</Button>
             <!--<Button x:Name="animatedScrollDemo">Animated scroll demo</Button>-->
-            <!--<TextBlock>Selection Demo</TextBlock>-->
-            <!--<StackPanel Orientation="Horizontal">
+            <TextBlock>Selection Demo</TextBlock>
+            <StackPanel Orientation="Horizontal">
                 <Button x:Name="flatSelectionDemo">Flat</Button>
                 <Button x:Name="groupedSelectionDemo">Grouped</Button>
                 <Button x:Name="treeSelectionDemo">Tree</Button>
-            </StackPanel>-->
+            </StackPanel>
 
             <!--<StackPanel>
                 <TextBlock>ItemSpacing</TextBlock>
