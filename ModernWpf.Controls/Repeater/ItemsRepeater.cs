@@ -28,7 +28,6 @@ namespace ModernWpf.Controls
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
-            RequestBringIntoView += OnBringIntoViewRequested;
 
             SetCurrentValue(LayoutProperty, new StackLayout());
 
@@ -543,11 +542,6 @@ namespace ModernWpf.Controls
             {
                 m_viewportManager.ResetScrollers();
             }
-        }
-
-        private void OnBringIntoViewRequested(object sender, RequestBringIntoViewEventArgs e)
-        {
-            e.Handled = true;
         }
 
         private void OnDataSourcePropertyChanged(ItemsSourceView oldValue, ItemsSourceView newValue)
