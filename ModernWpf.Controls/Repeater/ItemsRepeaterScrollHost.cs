@@ -409,6 +409,12 @@ namespace ModernWpf.Controls
 
         private void OnScrollViewerScrollChanged(object sender, ScrollChangedEventArgs e)
         {
+            // WPF-specific workaround for an issue where only the first item is realized
+            if (e.ViewportWidthChange != 0 || e.ViewportHeightChange != 0)
+            {
+                InvalidateArrange();
+            }
+
             if (e.HorizontalChange == 0 && e.VerticalChange == 0)
             {
                 return;
