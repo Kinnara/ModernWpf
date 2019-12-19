@@ -28,6 +28,7 @@ namespace ModernWpf.Controls
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+            RequestBringIntoView += OnBringIntoViewRequested;
 
             SetCurrentValue(LayoutProperty, new StackLayout());
 
@@ -527,6 +528,7 @@ namespace ModernWpf.Controls
             // layout pass during which we will hookup new scrollers.
             if (_loadedCounter > _unloadedCounter)
             {
+                _loadedCounter = _unloadedCounter; // WPF-specific optimization
                 InvalidateMeasure();
                 m_viewportManager.ResetScrollers();
             }
@@ -541,6 +543,11 @@ namespace ModernWpf.Controls
             {
                 m_viewportManager.ResetScrollers();
             }
+        }
+
+        private void OnBringIntoViewRequested(object sender, RequestBringIntoViewEventArgs e)
+        {
+            e.Handled = true;
         }
 
         private void OnDataSourcePropertyChanged(ItemsSourceView oldValue, ItemsSourceView newValue)
@@ -813,7 +820,7 @@ namespace ModernWpf.Controls
             if (m_lastChildDesiredSizeChangedCounter == 0)
             {
                 m_lastChildDesiredSizeChangedCounter = m_childDesiredSizeChangedCounter;
-                Dispatcher.BeginInvoke(CheckForNewChildDesiredSizeChanges, DispatcherPriority.Background);
+                Dispatcher.BeginInvoke(CheckForNewChildDesiredSizeChanges);
             }
         }
 

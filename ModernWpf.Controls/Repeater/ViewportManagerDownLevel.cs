@@ -180,6 +180,15 @@ namespace ModernWpf.Controls
 
         public override void OnOwnerMeasuring()
         {
+            if (m_managingViewportDisabled)
+            {
+                return;
+            }
+
+            // This is because of a bug that causes effective viewport to not 
+            // fire if you register during arrange.
+            // Bug 17411076: EffectiveViewport: registering for effective viewport in arrange should invalidate viewport
+            EnsureScrollers();
         }
 
         public override void OnOwnerArranged()
@@ -191,7 +200,10 @@ namespace ModernWpf.Controls
 
             m_expectedViewportShift = default;
 
-            EnsureScrollers();
+            // This is because of a bug that causes effective viewport to not 
+            // fire if you register during arrange.
+            // Bug 17411076: EffectiveViewport: registering for effective viewport in arrange should invalidate viewport
+            // EnsureScrollers();
 
             if (HasScrollers)
             {

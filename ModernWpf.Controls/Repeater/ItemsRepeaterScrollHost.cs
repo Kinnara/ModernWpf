@@ -409,24 +409,20 @@ namespace ModernWpf.Controls
 
         private void OnScrollViewerScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            // WPF-specific workaround for an issue where only the first item is realized
-            if (e.ViewportWidthChange != 0 || e.ViewportHeightChange != 0)
+            if (e.HorizontalChange == 0 && e.VerticalChange == 0)
             {
-                InvalidateArrange();
+                return;
             }
 
-            if (e.HorizontalChange != 0 || e.VerticalChange != 0)
+            m_pendingViewportShift = 0.0;
+
+            if (HasPendingBringIntoView &&
+                m_pendingBringIntoView.ChangeViewCalled)
             {
-                m_pendingViewportShift = 0.0;
-
-                if (HasPendingBringIntoView &&
-                    m_pendingBringIntoView.ChangeViewCalled)
-                {
-                    m_pendingBringIntoView.Reset();
-                }
-
-                ViewportChanged?.Invoke(this, true /* isFinal */);
+                m_pendingBringIntoView.Reset();
             }
+
+            ViewportChanged?.Invoke(this, true /* isFinal */);
         }
 
         private void OnScrollViewerSizeChanged(object sender, SizeChangedEventArgs args)
