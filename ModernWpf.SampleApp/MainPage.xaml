@@ -148,6 +148,8 @@
             x:Name="Frame"
             Grid.Row="1"
             Grid.Column="1"
+            Focusable="False"
+            FocusVisualStyle="{x:Null}"
             Navigated="Frame_Navigated">
             <ui:ThemeAwareFrame.Template>
                 <ControlTemplate TargetType="Frame">
@@ -159,7 +161,8 @@
                         <sc:CrossFadeContentControl
                             HorizontalContentAlignment="Stretch"
                             VerticalContentAlignment="Stretch"
-                            Content="{TemplateBinding Content}" />
+                            Content="{TemplateBinding Content}"
+                            Focusable="False" />
                     </Border>
                 </ControlTemplate>
             </ui:ThemeAwareFrame.Template>

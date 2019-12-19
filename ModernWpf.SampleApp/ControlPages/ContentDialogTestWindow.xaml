@@ -14,7 +14,8 @@
     <Grid>
         <ui:SimpleStackPanel
             HorizontalAlignment="Center"
-            VerticalAlignment="Center">
+            VerticalAlignment="Center"
+            Spacing="12">
             <Button
                 Content="Show content dialog in this window"
                 Click="ShowDialogInThisWindow" />
