@@ -618,9 +618,8 @@ namespace ModernWpf.Controls
                             {
                                 if (item is Control itemAsControl)
                                 {
-                                    if (itemAsControl.IsEnabled && itemAsControl.IsTabStop && itemAsControl.Focusable)
+                                    if (itemAsControl.Focus())
                                     {
-                                        itemAsControl.Focus();
                                         return true;
                                     }
                                 }
