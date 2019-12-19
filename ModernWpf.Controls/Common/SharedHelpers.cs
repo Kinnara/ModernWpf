@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Interop;
 
@@ -126,6 +127,21 @@ namespace ModernWpf.Controls
             }
 
             return s.Substring(startIndex);
+        }
+
+        public static bool IndexOf(this UIElementCollection collection, UIElement element, out int index)
+        {
+            int i = collection.IndexOf(element);
+            if (i >= 0)
+            {
+                index = i;
+                return true;
+            }
+            else
+            {
+                index = 0;
+                return false;
+            }
         }
     }
 }

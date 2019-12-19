@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace ModernWpf.Controls
 {
@@ -162,12 +163,12 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        private ItemsRepeaterPanel EnsureOwnerIsPanelOrNull(UIElement owner)
+        private Panel EnsureOwnerIsPanelOrNull(UIElement owner)
         {
-            ItemsRepeaterPanel ownerAsPanel = null;
+            Panel ownerAsPanel = null;
             if (owner != null)
             {
-                ownerAsPanel = owner as ItemsRepeaterPanel;
+                ownerAsPanel = owner as Panel;
                 if (ownerAsPanel == null)
                 {
                     throw new Exception("owner must to be a Panel or null.");
@@ -179,14 +180,14 @@ namespace ModernWpf.Controls
 
         private struct ElementInfo
         {
-            public ElementInfo(UIElement element, ItemsRepeaterPanel owner)
+            public ElementInfo(UIElement element, Panel owner)
             {
                 Element = element;
                 Owner = owner;
             }
 
             public UIElement Element { get; }
-            public ItemsRepeaterPanel Owner { get; }
+            public Panel Owner { get; }
         }
 
         private readonly Dictionary<string, List<ElementInfo>> m_elements = new Dictionary<string, List<ElementInfo>>();

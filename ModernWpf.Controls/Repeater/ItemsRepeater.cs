@@ -14,7 +14,7 @@ using ModernWpf.Automation.Peers;
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(ItemTemplate))]
-    public class ItemsRepeater : ItemsRepeaterPanel
+    public class ItemsRepeater : Panel
     {
         internal static readonly Point ClearedElementsArrangePosition = new Point(-10000.0, -10000.0);
         // A convention we use in the ItemsRepeater codebase for an invalid Rect value.
