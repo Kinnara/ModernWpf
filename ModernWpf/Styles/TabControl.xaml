@@ -284,15 +284,12 @@
                                 TextElement.FontSize="{DynamicResource PivotHeaderItemFontSize}"
                                 TextElement.FontFamily="{DynamicResource PivotHeaderItemFontFamily}"
                                 TextElement.FontWeight="{DynamicResource PivotHeaderItemThemeFontWeight}"
+                                TextOptions.TextFormattingMode="Display"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Stretch"
                                 Focusable="False"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                                <ContentPresenter.RenderTransform>
-                                    <TranslateTransform Y="3" />
-                                </ContentPresenter.RenderTransform>
-                            </ContentPresenter>
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             <Rectangle
                                 x:Name="SelectedPipe"
                                 Fill="{DynamicResource PivotHeaderItemSelectedPipeFill}"

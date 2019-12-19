@@ -291,7 +291,7 @@
                                                         Content="{TemplateBinding Title}"
                                                         ContentTemplate="{TemplateBinding TitleTemplate}"
                                                         FontSize="20"
-                                                        FontFamily="XamlAutoFontFamily"
+                                                        FontFamily="{DynamicResource {x:Static SystemFonts.MessageFontFamilyKey}}"
                                                         FontWeight="Normal"
                                                         Foreground="{TemplateBinding Foreground}"
                                                         HorizontalAlignment="Left"

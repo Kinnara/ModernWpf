@@ -864,7 +864,7 @@
     <m:StaticResource x:Key="NumberBoxPopupIndicatorForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
 
     <!-- Resources for Pivot -->
-    <FontFamily x:Key="PivotHeaderItemFontFamily">XamlAutoFontFamily</FontFamily>
+    <m:StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
     <sys:Double x:Key="PivotHeaderItemFontSize">24</sys:Double>
     <sys:Double x:Key="PivotHeaderItemLockedTranslation">40</sys:Double>
     <sys:Int32 x:Key="PivotHeaderItemCharacterSpacing">-25</sys:Int32>
