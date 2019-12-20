@@ -15,11 +15,7 @@ namespace ModernWpf.MahApps.Controls
         {
             if (value is IEnumerable<int> numbers && numbers.Any())
             {
-                var items = new List<int>();
-                items.AddRange(Enumerable.Repeat(NumberPaddingItem, DateTimeComponentSelector.PaddingItemsCount));
-                items.AddRange(numbers);
-                items.AddRange(Enumerable.Repeat(NumberPaddingItem, DateTimeComponentSelector.PaddingItemsCount));
-                return items;
+                return new LoopingSelectorDataSource(numbers);
             }
             else if (value is IEnumerable<string> strings && strings.Any())
             {

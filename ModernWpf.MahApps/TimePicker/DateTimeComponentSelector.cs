@@ -19,6 +19,7 @@ namespace ModernWpf.MahApps.Controls
         {
             SetResourceReference(ItemHeightProperty, "TimePickerFlyoutPresenterItemHeight");
             UpdateHeight();
+            Loaded += OnLoaded;
         }
 
         #region IsItemMouseOverEnabled
@@ -158,11 +159,16 @@ namespace ModernWpf.MahApps.Controls
 
             base.OnSelectionChanged(e);
 
-            int selectedIndex = SelectedIndex;
-            if (selectedIndex >= 0)
+            if (ItemsSource is LoopingSelectorDataSource items)
             {
-                _scrollViewer?.ScrollToVerticalOffset(selectedIndex - PaddingItemsCount);
+                int index = SelectedIndex;
+                if (index >= 0 && index < items.SourceCount)
+                {
+                    SetCurrentValue(SelectedValueProperty, items.IndexOf(items[index]));
+                }
             }
+
+            ScrollToSelection();
         }
 
         protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
@@ -186,14 +192,42 @@ namespace ModernWpf.MahApps.Controls
             }
         }
 
+        private static double IndexToOffset(int index)
+        {
+            return index - PaddingItemsCount;
+        }
+
+        private static int OffsetToIndex(double offset)
+        {
+            return (int)offset + PaddingItemsCount;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            ScrollToSelection();
+        }
+
+        private void ScrollToSelection()
+        {
+            if (_scrollViewer != null)
+            {
+                int selectedIndex = SelectedIndex;
+                if (selectedIndex >= 0)
+                {
+                    double offset = IndexToOffset(selectedIndex);
+                    _scrollViewer.ScrollToVerticalOffset(offset);
+                }
+            }
+        }
+
         private void OnScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (e.VerticalChange != 0)
             {
-                int selectedIndex = (int)e.VerticalOffset + PaddingItemsCount;
+                int selectedIndex = OffsetToIndex(e.VerticalOffset);
                 if (selectedIndex >= 0 && selectedIndex < Items.Count)
                 {
-                    SetCurrentValue(SelectedIndexProperty, (int)e.VerticalOffset + PaddingItemsCount);
+                    SetCurrentValue(SelectedIndexProperty, selectedIndex);
                 }
 
                 DisableItemMouseOver();
