@@ -416,6 +416,7 @@ namespace ModernWpf.Controls
 
                     if (toggleButton.IsChecked == true)
                     {
+                        m_blockSelecting = false; // WPF-specific fix to ensure IsChecked is honored
                         Select(args.Index);
                     }
                 }

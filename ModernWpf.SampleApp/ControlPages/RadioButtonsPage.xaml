@@ -15,21 +15,33 @@
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="A group of radio buttons.">
-                <StackPanel>
-                    <!--<Button Content="Focus me" />-->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
                     <ui:RadioButtons
-                        x:Name="radioButtons"
-                        MaxColumns="2"
-                        SelectedIndex="1">
-                        <sys:String>Red</sys:String>
-                        <sys:String>Orange</sys:String>
-                        <sys:String>Yellow</sys:String>
-                        <sys:String>Green</sys:String>
-                        <sys:String>Blue</sys:String>
-                        <sys:String>Indigo</sys:String>
-                        <sys:String>Violet</sys:String>
+                        x:Name="Options"
+                        Header="Options:">
+                        <!-- A RadioButton group. -->
+                        <RadioButton
+                            x:Name="Option1RadioButton"
+                            Content="Option 1" />
+                        <RadioButton
+                            x:Name="Option2RadioButton"
+                            Content="Option 2" />
+                        <RadioButton
+                            x:Name="Option3RadioButton"
+                            Content="Option 3" />
                     </ui:RadioButtons>
-                </StackPanel>
+                    <TextBlock
+                        x:Name="Control1Output"
+                        Text="{Binding ElementName=Options, Path=SelectedItem.Content, StringFormat='You selected {0}.', FallbackValue='Select an option.'}"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        VerticalAlignment="Center"
+                        Grid.Column="1"
+                        Margin="8,0" />
+                </Grid>
 
                 <sc:ControlExample.Options>
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
@@ -51,12 +63,13 @@
                     <ui:RadioButtons
                         x:Name="BackgroundRadioButtons"
                         MaxColumns="4"
-                        Header="Background"
-                        SelectedIndex="3">
-                        <sys:String>Green</sys:String>
-                        <sys:String>Yellow</sys:String>
-                        <sys:String>Blue</sys:String>
-                        <sys:String>White</sys:String>
+                        Header="Background">
+                        <RadioButton Content="Green" />
+                        <RadioButton Content="Yellow" />
+                        <RadioButton Content="Blue" />
+                        <RadioButton
+                            Content="White"
+                            IsChecked="True" />
                     </ui:RadioButtons>
                     <ui:RadioButtons
                         x:Name="BorderBrushRadioButtons"
@@ -71,7 +84,7 @@
                     <Border
                         x:Name="Control2Output"
                         BorderThickness="10"
-                        Background="{Binding ElementName=BackgroundRadioButtons, Path=SelectedItem}"
+                        Background="{Binding ElementName=BackgroundRadioButtons, Path=SelectedItem.Content}"
                         BorderBrush="{Binding ElementName=BorderBrushRadioButtons, Path=SelectedItem}"
                         Height="50"
                         Margin="0,10,0,10" />
