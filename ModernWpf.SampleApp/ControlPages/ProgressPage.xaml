@@ -17,7 +17,6 @@
                 <ProgressBar
                     x:Name="progressBar"
                     Width="130"
-                    HorizontalAlignment="Left"
                     IsIndeterminate="True" />
 
                 <sc:ControlExample.Options>
@@ -51,12 +50,13 @@
                 </StackPanel>
             </sc:ControlExample>
 
-            <sc:ControlExample HeaderText="An indeterminate progress ring.">
+            <sc:ControlExample
+                HeaderText="An indeterminate progress ring."
+                VerticalContentAlignment="Center">
                 <ui:ProgressRing
                     IsActive="{Binding IsOn, ElementName=ProgressToggle}"
                     Height="60"
-                    Width="60"
-                    HorizontalAlignment="Left" />
+                    Width="60" />
 
                 <sc:ControlExample.Options>
                     <ui:ToggleSwitch
