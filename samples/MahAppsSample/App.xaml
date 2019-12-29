@@ -34,6 +34,10 @@
                 <ResourceDictionary Source="/ModernWpf.MahApps;component/Styles/Controls.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <Style TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
+                <Setter Property="sc:AutoPanningMode.IsEnabled" Value="True" />
+            </Style>
+
             <Thickness x:Key="ControlPageContentMargin">24,0,24,20</Thickness>
 
             <Style x:Key="ControlPageContentPanelStyle" TargetType="ui:SimpleStackPanel">

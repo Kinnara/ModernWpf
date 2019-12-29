@@ -133,7 +133,7 @@
             </Grid>
         </DataTemplate>
 
-        <Style x:Key="ScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
+        <Style x:Key="ScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource {x:Type ScrollViewer}}">
             <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
             <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
             <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
@@ -243,7 +243,8 @@
                     <ScrollViewer
                         x:Name="SV1"
                         Style="{StaticResource ScrollViewerStyle}"
-                        ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                        VerticalScrollBarVisibility="Hidden"
+                        PanningMode="VerticalOnly"
                         ScrollChanged="OnScrollChanged">
                         <ui:ItemsRepeater
                             ItemTemplate="{StaticResource BrushTemplate}"

@@ -373,7 +373,7 @@
                     <ui:ItemsRepeaterScrollHost>
                         <ScrollViewer>
                             <ScrollViewer.Style>
-                                <Style TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
+                                <Style TargetType="ScrollViewer" BasedOn="{StaticResource {x:Type ScrollViewer}}">
                                     <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
                                     <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
                                     <Style.Triggers>
@@ -447,7 +447,7 @@
                     <ui:ItemsRepeaterScrollHost>
                         <ScrollViewer>
                             <ScrollViewer.Style>
-                                <Style TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
+                                <Style TargetType="ScrollViewer" BasedOn="{StaticResource {x:Type ScrollViewer}}">
                                     <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
                                     <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
                                     <Style.Triggers>

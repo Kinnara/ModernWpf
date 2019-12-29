@@ -61,6 +61,10 @@
             <common:BrushToColorConverter x:Key="BrushToColorConverter" />
             <common:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
 
+            <Style TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
+                <Setter Property="sc:AutoPanningMode.IsEnabled" Value="True" />
+            </Style>
+            
             <Style x:Key="OptionsPanelStyle" TargetType="ui:SimpleStackPanel">
                 <Setter Property="Spacing" Value="12" />
                 <Style.Resources>
