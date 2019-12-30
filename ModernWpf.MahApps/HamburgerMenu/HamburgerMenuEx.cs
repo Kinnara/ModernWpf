@@ -371,22 +371,6 @@ namespace ModernWpf.MahApps.Controls
             ChangeItemFocusVisualStyle();
         }
 
-        private void OnListViewItemContainerGeneratorStatusChanged(object sender, EventArgs e)
-        {
-            if (_buttonsListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated &&
-                _optionsListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
-            {
-                _buttonsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;
-                _optionsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;
-
-                var item = SelectedItem;
-                if (item != null)
-                {
-                    AnimateSelectionChanged(null /* prevItem */, item);
-                }
-            }
-        }
-
         private static void OnDisplayModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((HamburgerMenuEx)d).OnDisplayModeChanged(e);
@@ -410,6 +394,22 @@ namespace ModernWpf.MahApps.Controls
         private void OnBackButtonClicked(object sender, RoutedEventArgs e)
         {
             BackRequested?.Invoke(this, new HamburgerMenuBackRequestedEventArgs());
+        }
+
+        private void OnListViewItemContainerGeneratorStatusChanged(object sender, EventArgs e)
+        {
+            if (_buttonsListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated &&
+                _optionsListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+            {
+                _buttonsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;
+                _optionsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;
+
+                var item = SelectedItem;
+                if (item != null)
+                {
+                    AnimateSelectionChanged(null /* prevItem */, item);
+                }
+            }
         }
 
         private void OnDisplayModeChanged(DependencyPropertyChangedEventArgs e)
