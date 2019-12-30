@@ -90,7 +90,6 @@
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource NavigationViewItemForegroundSelected}" />
-                            <Setter TargetName="SelectionIndicator" Property="Opacity" Value="1" />
                         </Trigger>
                         <!-- PointerOverSelected -->
                         <MultiTrigger>
@@ -104,11 +103,6 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="LayoutRoot" Property="Opacity" Value="{DynamicResource ListViewItemDisabledThemeOpacity}" />
                         </Trigger>
-                        <!-- IconCollapsed -->
-                        <!--<MultiTrigger>
-                                    <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
-                                    <Setter TargetName="IconColumn" Property="Width" Value="16" />
-                                </MultiTrigger>-->
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

@@ -2,7 +2,10 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace ModernWpf.MahApps.Controls
 {
@@ -15,12 +18,27 @@ namespace ModernWpf.MahApps.Controls
     {
         private const string c_navViewBackButton = "NavigationViewBackButton";
 
+        private static readonly Point c_frame1point1 = new Point(0.9, 0.1);
+        private static readonly Point c_frame1point2 = new Point(1.0, 0.2);
+        private static readonly Point c_frame2point1 = new Point(0.1, 0.9);
+        private static readonly Point c_frame2point2 = new Point(0.2, 1.0);
+
+        private UIElement _paneGrid;
+        private Button _backButton;
+        private ListBox _buttonsListView;
+        private ListBox _optionsListView;
+
+        private UIElement _prevIndicator;
+        private UIElement _nextIndicator;
+
         static HamburgerMenuEx()
         {
             DisplayModeProperty.OverrideMetadata(typeof(HamburgerMenuEx), new FrameworkPropertyMetadata(OnDisplayModePropertyChanged));
             IsPaneOpenProperty.OverrideMetadata(typeof(HamburgerMenuEx), new FrameworkPropertyMetadata(OnIsPaneOpenPropertyChanged));
             CompactPaneLengthProperty.OverrideMetadata(typeof(HamburgerMenuEx), new FrameworkPropertyMetadata(OnPaneLengthPropertyChanged));
             OpenPaneLengthProperty.OverrideMetadata(typeof(HamburgerMenuEx), new FrameworkPropertyMetadata(OnPaneLengthPropertyChanged));
+            SelectedItemProperty.OverrideMetadata(typeof(HamburgerMenuEx), new FrameworkPropertyMetadata(OnSelectedItemPropertyChanged));
+            SelectedOptionsItemProperty.OverrideMetadata(typeof(HamburgerMenuEx), new FrameworkPropertyMetadata(OnSelectedItemPropertyChanged));
         }
 
         /// <summary>
@@ -264,6 +282,38 @@ namespace ModernWpf.MahApps.Controls
 
         #endregion
 
+        #region SelectedMenuItem
+
+        private static readonly DependencyProperty SelectedMenuItemProperty =
+            DependencyProperty.Register(
+                nameof(SelectedMenuItem),
+                typeof(object),
+                typeof(HamburgerMenuEx),
+                new PropertyMetadata(OnSelectedMenuItemChanged));
+
+        private object SelectedMenuItem
+        {
+            get => GetValue(SelectedMenuItemProperty);
+            set => SetValue(SelectedMenuItemProperty, value);
+        }
+
+        private static void OnSelectedMenuItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((HamburgerMenuEx)d).OnSelectedMenuItemChanged(e.OldValue, e.NewValue);
+        }
+
+        private void OnSelectedMenuItemChanged(object oldValue, object newValue)
+        {
+            AnimateSelectionChanged(oldValue, newValue);
+        }
+
+        private void UpdateSelectedMenuItem()
+        {
+            SelectedMenuItem = SelectedItem ?? SelectedOptionsItem;
+        }
+
+        #endregion
+
         /// <summary>
         /// Occurs when the back button receives an interaction such as a click or tap.
         /// </summary>
@@ -296,14 +346,45 @@ namespace ModernWpf.MahApps.Controls
                 _backButton.Click -= OnBackButtonClicked;
             }
 
+            if (_buttonsListView != null && _optionsListView != null)
+            {
+                _buttonsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;
+                _optionsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;
+            }
+
+            _paneGrid = GetTemplateChild("PaneGrid") as UIElement;
             _backButton = GetTemplateChild(c_navViewBackButton) as Button;
+            _buttonsListView = GetTemplateChild("ButtonsListView") as ListBox;
+            _optionsListView = GetTemplateChild("OptionsListView") as ListBox;
 
             if (_backButton != null)
             {
                 _backButton.Click += OnBackButtonClicked;
             }
 
+            if (_buttonsListView != null && _optionsListView != null)
+            {
+                _buttonsListView.ItemContainerGenerator.StatusChanged += OnListViewItemContainerGeneratorStatusChanged;
+                _optionsListView.ItemContainerGenerator.StatusChanged += OnListViewItemContainerGeneratorStatusChanged;
+            }
+
             ChangeItemFocusVisualStyle();
+        }
+
+        private void OnListViewItemContainerGeneratorStatusChanged(object sender, EventArgs e)
+        {
+            if (_buttonsListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated &&
+                _optionsListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+            {
+                _buttonsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;
+                _optionsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;
+
+                var item = SelectedItem;
+                if (item != null)
+                {
+                    AnimateSelectionChanged(null /* prevItem */, item);
+                }
+            }
         }
 
         private static void OnDisplayModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -319,6 +400,11 @@ namespace ModernWpf.MahApps.Controls
         private static void OnPaneLengthPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((HamburgerMenuEx)d).OnPaneLengthPropertyChanged(e);
+        }
+
+        private static void OnSelectedItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((HamburgerMenuEx)d).UpdateSelectedMenuItem();
         }
 
         private void OnBackButtonClicked(object sender, RoutedEventArgs e)
@@ -365,6 +451,176 @@ namespace ModernWpf.MahApps.Controls
             }
         }
 
-        private Button _backButton;
+        private void AnimateSelectionChanged(object prevItem, object nextItem)
+        {
+            UIElement prevIndicator = FindSelectionIndicator(prevItem);
+            UIElement nextIndicator = FindSelectionIndicator(nextItem);
+
+            bool haveValidAnimation = false;
+            // It's possible that AnimateSelectionChanged is called multiple times before the first animation is complete.
+            // To have better user experience, if the selected target is the same, keep the first animation
+            // If the selected target is not the same, abort the first animation and launch another animation.
+            if (_prevIndicator != null || _nextIndicator != null) // There is ongoing animation
+            {
+                if (nextIndicator != null && _nextIndicator == nextIndicator) // animate to the same target, just wait for animation complete
+                {
+                    if (prevIndicator != null && prevIndicator != _prevIndicator)
+                    {
+                        ResetElementAnimationProperties(prevIndicator, 0.0);
+                    }
+                    haveValidAnimation = true;
+                }
+                else
+                {
+                    // If the last animation is still playing, force it to complete.
+                    OnAnimationComplete();
+                }
+            }
+
+            if (!haveValidAnimation)
+            {
+                UIElement paneContentGrid = _paneGrid;
+
+                if ((prevItem != nextItem) && paneContentGrid != null && prevIndicator != null && nextIndicator != null && SystemParameters.MenuAnimation)
+                {
+                    // Make sure both indicators are visible and in their original locations
+                    ResetElementAnimationProperties(prevIndicator, 1.0);
+                    ResetElementAnimationProperties(nextIndicator, 1.0);
+
+                    // get the item positions in the pane
+                    Point point = new Point(0, 0);
+                    double prevPos;
+                    double nextPos;
+
+                    Point prevPosPoint = prevIndicator.TransformToVisual(paneContentGrid).Transform(point);
+                    Point nextPosPoint = nextIndicator.TransformToVisual(paneContentGrid).Transform(point);
+
+                    prevPos = prevPosPoint.Y;
+                    nextPos = nextPosPoint.Y;
+
+                    // Play the animation on both the previous and next indicators
+                    PlayIndicatorAnimations(prevIndicator, 0, nextPos - prevPos, true);
+                    PlayIndicatorAnimations(nextIndicator, prevPos - nextPos, 0, false);
+
+                    _prevIndicator = prevIndicator;
+                    _nextIndicator = nextIndicator;
+                }
+                else
+                {
+                    // if all else fails, or if animations are turned off, attempt to correctly set the positions and opacities of the indicators.
+                    ResetElementAnimationProperties(prevIndicator, 0.0);
+                    ResetElementAnimationProperties(nextIndicator, 1.0);
+                }
+            }
+        }
+
+        private void PlayIndicatorAnimations(UIElement indicator, double from, double to, bool isOutgoing)
+        {
+            Size size = indicator.RenderSize;
+            double dimension = size.Height;
+
+            double beginScale = 1.0;
+            double endScale = 1.0;
+
+            if (isOutgoing)
+            {
+                // fade the outgoing indicator so it looks nice when animating over the scroll area
+                var opacityAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(1.0, KeyTime.FromPercent(0.0)),
+                        new DiscreteDoubleKeyFrame(1.0, KeyTime.FromPercent(1.0 / 3)),
+                        new SplineDoubleKeyFrame(0.0, KeyTime.FromPercent(1.0), new KeySpline(c_frame2point1, c_frame2point2)),
+                    },
+                    Duration = TimeSpan.FromMilliseconds(600)
+                };
+
+                indicator.BeginAnimation(OpacityProperty, opacityAnim);
+            }
+
+            var posAnim = new DoubleAnimationUsingKeyFrames
+            {
+                KeyFrames =
+                {
+                    new DiscreteDoubleKeyFrame(from < to ? from : (from + (dimension * (beginScale - 1))), KeyTime.FromPercent(0.0)),
+                    new DiscreteDoubleKeyFrame(from < to ? (to + (dimension * (endScale - 1))) : to, KeyTime.FromPercent(0.333)),
+                },
+                Duration = TimeSpan.FromMilliseconds(600)
+            };
+
+            var scaleAnim = new DoubleAnimationUsingKeyFrames
+            {
+                KeyFrames =
+                {
+                    new DiscreteDoubleKeyFrame(beginScale, KeyTime.FromPercent(0.0)),
+                    new SplineDoubleKeyFrame(
+                        Math.Abs(to - from) / dimension + (from < to ? endScale : beginScale),
+                        KeyTime.FromPercent(1.0 / 3),
+                        new KeySpline(c_frame1point1, c_frame1point2)),
+                    new SplineDoubleKeyFrame(endScale, KeyTime.FromPercent(1.0), new KeySpline(c_frame2point1, c_frame2point2)),
+                },
+                Duration = TimeSpan.FromMilliseconds(600)
+            };
+
+            var centerAnim = new DoubleAnimationUsingKeyFrames
+            {
+                KeyFrames =
+                {
+                    new DiscreteDoubleKeyFrame(from < to ? 0.0 : dimension, KeyTime.FromPercent(0.0)),
+                    new DiscreteDoubleKeyFrame(from < to ? dimension : 0.0, KeyTime.FromPercent(1.0)),
+                },
+                Duration = TimeSpan.FromMilliseconds(200)
+            };
+
+            var translateTransform = new TranslateTransform();
+            var scaleTransform = new ScaleTransform();
+            indicator.RenderTransform = new TransformGroup { Children = { scaleTransform, translateTransform } };
+
+            scaleAnim.Completed += delegate
+            {
+                OnAnimationComplete();
+            };
+
+            translateTransform.BeginAnimation(TranslateTransform.YProperty, posAnim);
+            scaleTransform.BeginAnimation(ScaleTransform.CenterYProperty, centerAnim);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
+        }
+
+        private void OnAnimationComplete()
+        {
+            var indicator = _prevIndicator;
+            ResetElementAnimationProperties(indicator, 0.0);
+            _prevIndicator = null;
+
+            indicator = _nextIndicator;
+            ResetElementAnimationProperties(indicator, 1.0);
+            _nextIndicator = null;
+        }
+
+        private void ResetElementAnimationProperties(UIElement element, double desiredOpacity)
+        {
+            if (element != null)
+            {
+                element.Opacity = desiredOpacity;
+                element.RenderTransform = null;
+                element.BeginAnimation(OpacityProperty, null);
+            }
+        }
+
+        private UIElement FindSelectionIndicator(object item)
+        {
+            if (item != null)
+            {
+                var container = _buttonsListView?.ItemContainerGenerator.ContainerFromItem(item) ??
+                                _optionsListView?.ItemContainerGenerator.ContainerFromItem(item);
+                if (container is Control control)
+                {
+                    return control.Template?.FindName("SelectionIndicator", control) as UIElement;
+                }
+            }
+
+            return null;
+        }
     }
 }
