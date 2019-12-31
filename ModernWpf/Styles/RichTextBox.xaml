@@ -28,7 +28,6 @@
         <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
         <Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
-        <Setter Property="primitives:ControlHelper.PlaceholderForeground" Value="{DynamicResource TextControlPlaceholderForeground}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource TextControlSelectionHighlightColor}" />
         <Setter Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThickness}" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
@@ -46,6 +45,7 @@
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
         <Setter Property="ContextMenu" Value="{DynamicResource TextControlContextMenu}" />
         <Setter Property="local:TextContextMenu.UsingTextContextMenu" Value="True" />
+        <Setter Property="primitives:RichTextBoxHelper.IsEnabled" Value="True" />
         <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource TextControlValidationErrorTemplate}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -96,15 +96,15 @@
                             Padding="{TemplateBinding Padding}"
                             IsTabStop="False"
                             Focusable="False" />
-                        <!--<TextBlock
+                        <TextBlock
                             x:Name="PlaceholderTextContentPresenter"
                             Grid.Row="1"
-                            Foreground="{TemplateBinding primitives:ControlHelper.PlaceholderForeground}"
+                            Foreground="{DynamicResource TextControlPlaceholderForeground}"
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
                             Text="{TemplateBinding primitives:ControlHelper.PlaceholderText}"
                             IsHitTestVisible="False"
-                            Visibility="Collapsed" />-->
+                            Visibility="Collapsed" />
                         <ContentPresenter
                             x:Name="DescriptionPresenter"
                             Grid.Row="2"
@@ -119,25 +119,25 @@
                             <Setter Property="Background" Value="{DynamicResource TextControlBackgroundDisabled}" />
                             <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushDisabled}" />
                             <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundDisabled}" />
-                            <!--<Setter TargetName="PlaceholderTextContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TextControlPlaceholderForegroundDisabled}" />-->
+                            <Setter TargetName="PlaceholderTextContentPresenter" Property="Foreground" Value="{DynamicResource TextControlPlaceholderForegroundDisabled}" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushPointerOver}" />
                             <Setter Property="Background" Value="{DynamicResource TextControlBackgroundPointerOver}" />
-                            <!--<Setter TargetName="PlaceholderTextContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TextControlPlaceholderForegroundPointerOver}" />-->
+                            <Setter TargetName="PlaceholderTextContentPresenter" Property="Foreground" Value="{DynamicResource TextControlPlaceholderForegroundPointerOver}" />
                             <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundPointerOver}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocused" Value="true">
-                            <!--<Setter TargetName="PlaceholderTextContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TextControlPlaceholderForegroundFocused}" />-->
+                            <Setter TargetName="PlaceholderTextContentPresenter" Property="Foreground" Value="{DynamicResource TextControlPlaceholderForegroundFocused}" />
                             <Setter Property="Background" Value="{DynamicResource TextControlBackgroundFocused}" />
                             <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushFocused}" />
                             <Setter TargetName="BorderElement" Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThicknessFocused}" />
                             <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundFocused}" />
                             <!--<Setter TargetName="PART_ContentHost" Property="root:ThemeManager.RequestedTheme" Value="Light" />-->
                         </Trigger>
-                        <!--<Trigger Property="Text" Value="">
+                        <Trigger Property="primitives:RichTextBoxHelper.IsEmpty" Value="True">
                             <Setter TargetName="PlaceholderTextContentPresenter" Property="Visibility" Value="Visible" />
-                        </Trigger>-->
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
