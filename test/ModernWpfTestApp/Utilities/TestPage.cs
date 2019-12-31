@@ -71,6 +71,10 @@ namespace ModernWpfTestApp
             return (ApplicationTheme)obj.GetValue(s_currentTheme);
         }
 
+        protected internal virtual void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+        }
+
         //protected override void OnNavigatedFrom(NavigationEventArgs e)
         //{
         //    if (!DesignModeHelpers.IsInDesignMode)

@@ -1,0 +1,32 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <DataTemplate x:Key="BackgroundGlyphDefaultTemplate">
+        <!-- -8, -8 are to compensate for the default scale down, plus factoring in margins -->
+        <TextBlock
+            Foreground="{DynamicResource RatingControlUnselectedForeground}"
+            Margin="-8,-8,0,0"
+            FontSize="32"
+            Text="&#xE734;"
+            FontFamily="{DynamicResource SymbolThemeFontFamily}" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="ForegroundGlyphDefaultTemplate">
+        <!-- -8, -8 are to compensate for the default scale down, plus factoring in margins -->
+        <TextBlock
+            Margin="-8,-8,0,0"
+            FontSize="32"
+            Text="&#xE735;"
+            FontFamily="{DynamicResource SymbolThemeFontFamily}" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="BackgroundImageDefaultTemplate">
+        <Image Margin="-8,-8,0,0" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="ForegroundImageDefaultTemplate">
+        <Image Margin="-8,-8,0,0" />
+    </DataTemplate>
+
+</ResourceDictionary>

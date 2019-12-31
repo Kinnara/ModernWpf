@@ -44,7 +44,8 @@
         Controls:HamburgerMenuItemStyleSelector,
         ui:AppBarButton,
         ui:AppBarToggleButton,
-        Binding
+        Binding,
+        local:RatingItemFontInfo
 	",
     "SeparateByGroups": false,
     "AttributeIndentation": 0,

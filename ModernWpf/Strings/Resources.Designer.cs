@@ -61,11 +61,65 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rating, {0} of {1}.
+        /// </summary>
+        internal static string BasicRatingString {
+            get {
+                return ResourceManager.GetString("BasicRatingString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Community Rating, {0} of {1}.
+        /// </summary>
+        internal static string CommunityRatingString {
+            get {
+                return ResourceManager.GetString("CommunityRatingString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Proofing.
         /// </summary>
         internal static string ProofingMenuItemLabel {
             get {
                 return ResourceManager.GetString("ProofingMenuItemLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string RatingControlName {
+            get {
+                return ResourceManager.GetString("RatingControlName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rating Slider.
+        /// </summary>
+        internal static string RatingLocalizedControlType {
+            get {
+                return ResourceManager.GetString("RatingLocalizedControlType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string RatingsControlName {
+            get {
+                return ResourceManager.GetString("RatingsControlName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rating Unset.
+        /// </summary>
+        internal static string RatingUnset {
+            get {
+                return ResourceManager.GetString("RatingUnset", resourceCulture);
             }
         }
         

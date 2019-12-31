@@ -25,6 +25,7 @@
         <ResourceDictionary Source="Styles/PasswordBox.xaml" />
         <ResourceDictionary Source="Styles/ProgressBar.xaml" />
         <ResourceDictionary Source="Styles/RadioButton.xaml" />
+        <ResourceDictionary Source="Styles/RatingControl.xaml" />
         <ResourceDictionary Source="Styles/RepeatButton.xaml" />
         <ResourceDictionary Source="Styles/ResizeGrip.xaml" />
         <ResourceDictionary Source="Styles/RichTextBox.xaml" />

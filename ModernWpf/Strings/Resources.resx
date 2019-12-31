@@ -117,9 +117,33 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BasicRatingString" xml:space="preserve">
+    <value>Rating, {0} of {1}</value>
+    <comment>English example: Rating, 1.0 of 5.</comment>
+  </data>
+  <data name="CommunityRatingString" xml:space="preserve">
+    <value>Community Rating, {0} of {1}</value>
+    <comment>English example: Community Rating, 3.3 of 6.</comment>
+  </data>
   <data name="ProofingMenuItemLabel" xml:space="preserve">
     <value>Proofing</value>
     <comment>The label for the text context menu item that provides the proofing menu.</comment>
+  </data>
+  <data name="RatingControlName" xml:space="preserve">
+    <value />
+    <comment>UNUSED</comment>
+  </data>
+  <data name="RatingLocalizedControlType" xml:space="preserve">
+    <value>Rating Slider</value>
+    <comment>A simple description of the control for UIA</comment>
+  </data>
+  <data name="RatingsControlName" xml:space="preserve">
+    <value />
+    <comment>UNUSED</comment>
+  </data>
+  <data name="RatingUnset" xml:space="preserve">
+    <value>Rating Unset</value>
+    <comment>This text is used to show the number of stars none are selected.</comment>
   </data>
   <data name="ToggleSwitchOff" xml:space="preserve">
     <value>Off</value>

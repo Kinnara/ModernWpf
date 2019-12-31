@@ -21,6 +21,9 @@
     <member name="M:ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.Expand">
       <summary>Displays the control's drop down menu.</summary>
     </member>
+    <member name="T:ModernWpf.Automation.Peers.RatingControlAutomationPeer">
+      <summary>Exposes <see cref="ModernWpf.Controls.RatingControl?text=RatingControl" /> types to Microsoft UI Automation.</summary>
+    </member>
     <member name="T:ModernWpf.Automation.Peers.SplitButtonAutomationPeer">
       <summary>Exposes SplitButton types to Microsoft UI Automation.</summary>
     </member>
@@ -1462,6 +1465,193 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     <member name="F:ModernWpf.Controls.RadioMenuItem.GroupNameProperty">
       <summary>Identifies the <see cref="ModernWpf.Controls.RadioMenuItem.GroupName?text=GroupName" /> dependency property.</summary>
       <returns>The identifier for the <see cref="ModernWpf.Controls.RadioMenuItem.GroupName?text=GroupName" /> dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.RatingControl">
+      <summary>Represents a control that lets a user enter a star rating.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.RatingControl.#ctor">
+      <summary>Initializes a new instance of the RatingControl class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingControl.Caption">
+      <summary>Gets or sets the text label for the control.</summary>
+      <returns>The text label for the control. The default is an empty string.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingControl.CaptionProperty">
+      <summary>Identifies the Caption dependency property.</summary>
+      <returns>The identifier for Caption dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingControl.InitialSetValue">
+      <summary>Gets or sets the initial set rating value.</summary>
+      <returns>The initial set rating value. The default is 1.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingControl.InitialSetValueProperty">
+      <summary>Identifies the InitialSetValue dependency property.</summary>
+      <returns>The identifier for InitialSetValue dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingControl.IsClearEnabled">
+      <summary>Gets or sets the value that determines if the user can remove the rating.</summary>
+      <returns>true if the user can remove the rating; otherwise, false. The default is true.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingControl.IsClearEnabledProperty">
+      <summary>Identifies the IsClearEnabled dependency property.</summary>
+      <returns>The identifier for IsClearEnabled dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingControl.IsReadOnly">
+      <summary>Gets or sets the value that determines if the user can change the rating.</summary>
+      <returns>true if the rating is read-only; otherwise, false. The default is false.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingControl.IsReadOnlyProperty">
+      <summary>Identifies the IsReadOnly dependency property.</summary>
+      <returns>The identifier for IsReadOnly dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingControl.ItemInfo">
+      <summary>Gets or sets info about the visual states of the items that represent a rating.</summary>
+      <returns>A RatingItemInfo-derived object that contains details about the visual states of the items that represent a rating.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingControl.ItemInfoProperty">
+      <summary>Identifies the ItemInfo dependency property.</summary>
+      <returns>The identifier for ItemInfo dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingControl.MaxRating">
+      <summary>Gets or sets the maximum allowed rating value.</summary>
+      <returns>The maximum allowed rating value. The default is 5.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingControl.MaxRatingProperty">
+      <summary>Identifies the MaxRating dependency property.</summary>
+      <returns>The identifier for MaxRating dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingControl.PlaceholderValue">
+      <summary>Gets or sets the rating that is displayed in the control until the value is changed by a user action or some other operation.</summary>
+      <returns>The rating that is displayed in the control when no value is entered. The default is null.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingControl.PlaceholderValueProperty">
+      <summary>Identifies the PlaceholderValue dependency property.</summary>
+      <returns>The identifier for PlaceholderValue dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingControl.Value">
+      <summary>Gets or sets the rating value.</summary>
+      <returns>The rating value. The default is null.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.RatingControl.ValueChanged">
+      <summary>Occurs when the Value property has changed.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingControl.ValueProperty">
+      <summary>Identifies the Value dependency property.</summary>
+      <returns>The identifier for Value dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.RatingItemFontInfo">
+      <summary>Represents information about the visual states of font elements that represent a rating.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.RatingItemFontInfo.#ctor">
+      <summary>Initializes a new instance of the RatingItemFontInfo class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingItemFontInfo.DisabledGlyph">
+      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that is disabled.</summary>
+      <returns>The hexadecimal character code for the rating element glyph.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingItemFontInfo.DisabledGlyphProperty">
+      <summary>Identifies the DisabledGlyph dependency property.</summary>
+      <returns>The identifier for DisabledGlyph dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingItemFontInfo.Glyph">
+      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that has been set by the user.</summary>
+      <returns>The hexadecimal character code for the rating element glyph.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingItemFontInfo.GlyphProperty">
+      <summary>Identifies the Glyph dependency property.</summary>
+      <returns>The identifier for Glyph dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingItemFontInfo.PlaceholderGlyph">
+      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that is showing a placeholder value.</summary>
+      <returns>The hexadecimal character code for the rating element glyph.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingItemFontInfo.PlaceholderGlyphProperty">
+      <summary>Identifies the PlaceholderGlyph dependency property.</summary>
+      <returns>The identifier for PlaceholderGlyph dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingItemFontInfo.PointerOverGlyph">
+      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that has the pointer over it.</summary>
+      <returns>The hexadecimal character code for the rating element glyph.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingItemFontInfo.PointerOverGlyphProperty">
+      <summary>Identifies the PointerOverGlyph dependency property.</summary>
+      <returns>The identifier for PointerOverGlyph dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingItemFontInfo.PointerOverPlaceholderGlyph">
+      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element showing a placeholder value with the pointer over it.</summary>
+      <returns>The hexadecimal character code for the rating element glyph.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingItemFontInfo.PointerOverPlaceholderGlyphProperty">
+      <summary>Identifies the PointerOverPlaceholderGlyph dependency property.</summary>
+      <returns>The identifier for PointerOverPlaceholderGlyph dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingItemFontInfo.UnsetGlyph">
+      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that has not been set.</summary>
+      <returns>The hexadecimal character code for the rating element glyph.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingItemFontInfo.UnsetGlyphProperty">
+      <summary>Identifies the UnsetGlyph dependency property.</summary>
+      <returns>The identifier for UnsetGlyph dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.RatingItemImageInfo">
+      <summary>Represents information about the visual states of image elements that represent a rating.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.RatingItemImageInfo.#ctor">
+      <summary>Initializes a new instance of the RatingItemImageInfo class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingItemImageInfo.DisabledImage">
+      <summary>Gets or sets an image that represents a rating element that is disabled.</summary>
+      <returns>An object that represents the image source file for the drawn image. Typically you set this with a BitmapImage object, constructed with the Uniform Resource Identifier (URI) that describes the path to a valid image source file. Or, you can initialize a BitmapSource with a stream, perhaps a stream from a storage file.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingItemImageInfo.DisabledImageProperty">
+      <summary>Identifies the DisabledImage dependency property.</summary>
+      <returns>The identifier for DisabledImage dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingItemImageInfo.Image">
+      <summary>Gets or sets an image that represents a rating element that has been set by the user.</summary>
+      <returns>An object that represents the image source file for the drawn image. Typically you set this with a BitmapImage object, constructed with the Uniform Resource Identifier (URI) that describes the path to a valid image source file. Or, you can initialize a BitmapSource with a stream, perhaps a stream from a storage file.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingItemImageInfo.ImageProperty">
+      <summary>Identifies the Image dependency property.</summary>
+      <returns>The identifier for Image dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingItemImageInfo.PlaceholderImage">
+      <summary>Gets or sets an image that represents a rating element that is showing a placeholder value.</summary>
+      <returns>An object that represents the image source file for the drawn image. Typically you set this with a BitmapImage object, constructed with the Uniform Resource Identifier (URI) that describes the path to a valid image source file. Or, you can initialize a BitmapSource with a stream, perhaps a stream from a storage file.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingItemImageInfo.PlaceholderImageProperty">
+      <summary>Identifies the PlaceholderImage dependency property.</summary>
+      <returns>The identifier for PlaceholderImage dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingItemImageInfo.PointerOverImage">
+      <summary>Gets or sets an image that represents a rating element that has the pointer over it.</summary>
+      <returns>An object that represents the image source file for the drawn image. Typically you set this with a BitmapImage object, constructed with the Uniform Resource Identifier (URI) that describes the path to a valid image source file. Or, you can initialize a BitmapSource with a stream, perhaps a stream from a storage file.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingItemImageInfo.PointerOverImageProperty">
+      <summary>Identifies the PointerOverImage dependency property.</summary>
+      <returns>The identifier for PointerOverImage dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingItemImageInfo.PointerOverPlaceholderImage">
+      <summary>Gets or sets an image that represents a rating element showing a placeholder value with the pointer over it.</summary>
+      <returns>An object that represents the image source file for the drawn image. Typically you set this with a BitmapImage object, constructed with the Uniform Resource Identifier (URI) that describes the path to a valid image source file. Or, you can initialize a BitmapSource with a stream, perhaps a stream from a storage file.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingItemImageInfo.PointerOverPlaceholderImageProperty">
+      <summary>Identifies the PointerOverPlaceholderImage dependency property.</summary>
+      <returns>The identifier for PointerOverPlaceholderImage dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.RatingItemImageInfo.UnsetImage">
+      <summary>Gets or sets an image that represents a rating element that has not been set.</summary>
+      <returns>An object that represents the image source file for the drawn image. Typically you set this with a BitmapImage object, constructed with the Uniform Resource Identifier (URI) that describes the path to a valid image source file. Or, you can initialize a BitmapSource with a stream, perhaps a stream from a storage file.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.RatingItemImageInfo.UnsetImageProperty">
+      <summary>Identifies the UnsetImage dependency property.</summary>
+      <returns>The identifier for UnsetImage dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.RatingItemInfo">
+      <summary>Represents information about the visual states of the elements that represent a rating.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.RatingItemInfo.#ctor">
+      <summary>Initializes a new instance of the RatingItemInfo class.</summary>
     </member>
     <member name="T:ModernWpf.Controls.RecyclePool">
       <summary>Represents a cache of elements that can be re-used to display data items.</summary>
