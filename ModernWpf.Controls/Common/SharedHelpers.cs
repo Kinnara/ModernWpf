@@ -12,11 +12,15 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace ModernWpf.Controls
 {
     internal static class SharedHelpers
     {
+        public static bool IsAnimationsEnabled => SystemParameters.ClientAreaAnimation &&
+                                                  RenderCapability.Tier > 0;
+
         public static bool DoRectsIntersect(
             Rect rect1,
             Rect rect2)

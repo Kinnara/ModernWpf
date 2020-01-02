@@ -48,6 +48,7 @@ namespace ModernWpf.MahApps.Controls
         {
             DefaultStyleKey = typeof(HamburgerMenuEx);
             SetResourceReference(DefaultItemFocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
+            SetResourceReference(ClientAreaAnimationProperty, SystemParameters.ClientAreaAnimationKey);
         }
 
         #region IsBackButtonVisible
@@ -314,6 +315,23 @@ namespace ModernWpf.MahApps.Controls
 
         #endregion
 
+        #region ClientAreaAnimation
+
+        private static readonly DependencyProperty ClientAreaAnimationProperty =
+            DependencyProperty.Register(
+                nameof(ClientAreaAnimation),
+                typeof(bool),
+                typeof(HamburgerMenuEx),
+                new PropertyMetadata(SystemParameters.ClientAreaAnimation));
+
+        private bool ClientAreaAnimation
+        {
+            get => (bool)GetValue(ClientAreaAnimationProperty);
+            set => SetValue(ClientAreaAnimationProperty, value);
+        }
+
+        #endregion
+
         /// <summary>
         /// Occurs when the back button receives an interaction such as a click or tap.
         /// </summary>
@@ -481,7 +499,7 @@ namespace ModernWpf.MahApps.Controls
             {
                 UIElement paneContentGrid = _paneGrid;
 
-                if ((prevItem != nextItem) && paneContentGrid != null && prevIndicator != null && nextIndicator != null && SystemParameters.MenuAnimation)
+                if ((prevItem != nextItem) && paneContentGrid != null && prevIndicator != null && nextIndicator != null && ClientAreaAnimation && RenderCapability.Tier > 0)
                 {
                     // Make sure both indicators are visible and in their original locations
                     ResetElementAnimationProperties(prevIndicator, 1.0);

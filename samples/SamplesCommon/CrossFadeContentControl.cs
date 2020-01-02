@@ -70,7 +70,6 @@ namespace SamplesCommon
         public CrossFadeContentControl()
             : base()
         {
-            SetCurrentValue(IsCrossFadeEnabledProperty, RenderCapability.Tier > 0);
         }
 
         #region IsCrossFadeEnabled
@@ -89,6 +88,11 @@ namespace SamplesCommon
         }
 
         #endregion
+
+        private bool Animates =>
+            SystemParameters.ClientAreaAnimation &&
+            RenderCapability.Tier > 0 &&
+            IsCrossFadeEnabled;
 
         /// <summary>
         /// Flips the logical content presenters to prepare for the next visual
@@ -162,7 +166,7 @@ namespace SamplesCommon
                 FlipPresenters();
             }
 
-            bool useTransition = oldElement != null && IsCrossFadeEnabled;
+            bool useTransition = oldElement != null && Animates;
 
             _newContentPresenter.Opacity = useTransition ? 0 : 1;
             _newContentPresenter.Visibility = Visibility.Visible;
@@ -178,10 +182,10 @@ namespace SamplesCommon
                 {
                     _newContentPresenter.Opacity = 1;
 
-                    _fadeOutAnimation = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(300));
+                    _fadeOutAnimation = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(300), FillBehavior.Stop);
                     _fadeOutAnimation.Completed += OnFadeOutAnimationCompleted;
 
-                    var fadeInAnimation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300));
+                    var fadeInAnimation = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(300), FillBehavior.Stop);
 
                     _oldContentPresenter.BeginAnimation(OpacityProperty, _fadeOutAnimation);
                     _newContentPresenter.BeginAnimation(OpacityProperty, fadeInAnimation);

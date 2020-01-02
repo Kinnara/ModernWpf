@@ -132,7 +132,6 @@ namespace ModernWpf.Controls
             : base()
         {
             InheritanceBehavior = InheritanceBehavior.Default;
-            SetCurrentValue(TransitionsEnabledProperty, SystemParameters.ClientAreaAnimation && RenderCapability.Tier > 0);
 
             Navigating += OnNavigating;
             NavigationStopped += OnNavigationStopped;
@@ -189,6 +188,11 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        private bool Animates =>
+            SystemParameters.ClientAreaAnimation &&
+            RenderCapability.Tier > 0 &&
+            TransitionsEnabled;
+
         /// <summary>
         /// Flips the logical content presenters to prepare for the next visual
         /// transition.
@@ -235,7 +239,7 @@ namespace ModernWpf.Controls
             NavigationOutTransition navigationOutTransition = null;
             ITransition oldTransition = null;
 
-            if (TransitionsEnabled)
+            if (Animates)
             {
                 if (Helper.HasDefaultValue(oldElement, TransitionService.NavigationOutTransitionProperty))
                 {
@@ -411,7 +415,7 @@ namespace ModernWpf.Controls
             NavigationInTransition navigationInTransition = null;
             ITransition newTransition = null;
 
-            if (oldElement != null && newElement != null && TransitionsEnabled)
+            if (oldElement != null && newElement != null && Animates)
             {
                 if (Helper.HasDefaultValue(newElement, TransitionService.NavigationInTransitionProperty))
                 {
