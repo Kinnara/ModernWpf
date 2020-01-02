@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using ModernWpf.Automation.Peers;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -34,6 +35,7 @@ namespace ModernWpf.Controls
     {
         const double c_horizontalScaleAnimationCenterPoint = 0.5;
         const double c_verticalScaleAnimationCenterPoint = 0.8;
+        static readonly Thickness c_focusVisualMargin = new Thickness(-8, -7, -8, 0);
         const int c_defaultRatingFontSizeForRendering = 32; // (32 = 2 * [default fontsize] -- because of double size rendering), remove when MSFT #10030063 is done
         const int c_defaultItemSpacing = 8;
 
@@ -98,6 +100,13 @@ namespace ModernWpf.Controls
             }
 
             m_foregroundStackPanel = GetTemplateChild("RatingForegroundStackPanel") as StackPanel;
+
+            // I've picked values so that these LOOK like the redlines, but these
+            // values are not actually from the redlines because the redlines don't
+            // consistently pick "distance from glyph"/"distance from edge of textbox"
+            // so it's not possible to actually just have a consistent sizing model
+            // here based on the redlines.
+            SetCurrentValue(FocusVisualHelper.FocusVisualMarginProperty, c_focusVisualMargin);
 
             IsEnabledChanged += OnIsEnabledChanged;
 
@@ -771,6 +780,7 @@ namespace ModernWpf.Controls
             }
 
             m_backgroundStackPanel.ReleaseMouseCapture();
+            Focus();
         }
 
         double CalculateTotalRatingControlWidth()

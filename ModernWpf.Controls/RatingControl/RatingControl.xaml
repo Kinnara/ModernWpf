@@ -58,47 +58,49 @@
                             <!-- TODO MSFT: 9925444 Fix vertical alignment in all text scenarios -->
                         </StackPanel>
 
-                        <ContentControl
+                        <ContentPresenter
                             x:Name="ForegroundContentPresenter"
                             IsHitTestVisible="False"
                             Grid.Row="0">
                             <!-- Margin is on the StackPanel because ContentPresenter clips differently such that moving the reverse margin up won't work -->
-                            <StackPanel
-                                Orientation="Horizontal"
-                                Margin="-40,-40,-40,-40">
+                            <ContentPresenter.Content>
                                 <StackPanel
-                                    x:Name="RatingForegroundStackPanel"
                                     Orientation="Horizontal"
-                                    IsHitTestVisible="False"
-                                    Margin="40,40,40,40" />
-                            </StackPanel>
-                        </ContentControl>
+                                    Margin="-40,-40,-40,-40">
+                                    <StackPanel
+                                        x:Name="RatingForegroundStackPanel"
+                                        Orientation="Horizontal"
+                                        IsHitTestVisible="False"
+                                        Margin="40,40,40,40" />
+                                </StackPanel>
+                            </ContentPresenter.Content>
+                        </ContentPresenter>
                     </Grid>
 
                     <ControlTemplate.Triggers>
                         <!-- Disabled -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="ForegroundContentPresenter" Property="Foreground" Value="{DynamicResource RatingControlDisabledSelectedForeground}" />
+                            <Setter TargetName="ForegroundContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RatingControlDisabledSelectedForeground}" />
                         </Trigger>
                         <!-- Placeholder -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Placeholder">
-                            <Setter TargetName="ForegroundContentPresenter" Property="Foreground" Value="{DynamicResource RatingControlPlaceholderForeground}" />
+                            <Setter TargetName="ForegroundContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RatingControlPlaceholderForeground}" />
                         </Trigger>
                         <!-- PointerOverPlaceholder -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOverPlaceholder">
-                            <Setter TargetName="ForegroundContentPresenter" Property="Foreground" Value="{DynamicResource RatingControlPointerOverPlaceholderForeground}" />
+                            <Setter TargetName="ForegroundContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RatingControlPointerOverPlaceholderForeground}" />
                         </Trigger>
                         <!-- PointerOverUnselected -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOverUnselected">
-                            <Setter TargetName="ForegroundContentPresenter" Property="Foreground" Value="{DynamicResource RatingControlPointerOverUnselectedForeground}" />
+                            <Setter TargetName="ForegroundContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RatingControlPointerOverUnselectedForeground}" />
                         </Trigger>
                         <!-- Set -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Set">
-                            <Setter TargetName="ForegroundContentPresenter" Property="Foreground" Value="{DynamicResource RatingControlSelectedForeground}" />
+                            <Setter TargetName="ForegroundContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RatingControlSelectedForeground}" />
                         </Trigger>
                         <!-- PointerOverSet -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOverSet">
-                            <Setter TargetName="ForegroundContentPresenter" Property="Foreground" Value="{DynamicResource RatingControlSelectedForeground}" />
+                            <Setter TargetName="ForegroundContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RatingControlSelectedForeground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
