@@ -15,7 +15,7 @@
         To="0"
         Duration="0:0:0.35">
         <DoubleAnimation.EasingFunction>
-            <animation:BezierEase ControlPoint1="0.17,0.79" ControlPoint2="0.215,1.0025" />
+            <animation:CubicBezierEase ControlPoint1="0.17,0.79" ControlPoint2="0.215,1.0025" />
         </DoubleAnimation.EasingFunction>
     </DoubleAnimation>
     <animation:DoubleAnimationEx
@@ -26,7 +26,7 @@
         Min="0"
         Max="1">
         <DoubleAnimation.EasingFunction>
-            <animation:BezierEase ControlPoint1="0,2" ControlPoint2="0,2" />
+            <animation:CubicBezierEase ControlPoint1="0,2" ControlPoint2="0,2" />
         </DoubleAnimation.EasingFunction>
     </animation:DoubleAnimationEx>
 </Storyboard>

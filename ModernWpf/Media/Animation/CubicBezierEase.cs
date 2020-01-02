@@ -9,18 +9,18 @@ using System.Windows.Media.Animation;
 
 namespace ModernWpf.Media.Animation
 {
-    public class BezierEase : EasingFunctionBase
+    public class CubicBezierEase : EasingFunctionBase
     {
-        static BezierEase()
+        static CubicBezierEase()
         {
-            EasingModeProperty.OverrideMetadata(typeof(BezierEase), new PropertyMetadata(EasingMode.EaseIn));
+            EasingModeProperty.OverrideMetadata(typeof(CubicBezierEase), new PropertyMetadata(EasingMode.EaseIn));
         }
 
         public static readonly DependencyProperty ControlPoint1Property =
             DependencyProperty.Register(
                 nameof(ControlPoint1),
                 typeof(Point),
-                typeof(BezierEase),
+                typeof(CubicBezierEase),
                 new PropertyMetadata(new Point(0, 0), OnControlPointChanged));
 
         public Point ControlPoint1
@@ -33,7 +33,7 @@ namespace ModernWpf.Media.Animation
             DependencyProperty.Register(
                 nameof(ControlPoint2),
                 typeof(Point),
-                typeof(BezierEase),
+                typeof(CubicBezierEase),
                 new PropertyMetadata(new Point(1, 1), OnControlPointChanged));
 
         public Point ControlPoint2
@@ -44,7 +44,7 @@ namespace ModernWpf.Media.Animation
 
         protected override Freezable CreateInstanceCore()
         {
-            return new BezierEase();
+            return new CubicBezierEase();
         }
 
         protected override double EaseInCore(double normalizedTime)

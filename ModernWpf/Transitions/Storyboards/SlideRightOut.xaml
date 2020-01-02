@@ -15,7 +15,7 @@
         To="200"
         Duration="0:0:0.35">
         <DoubleAnimation.EasingFunction>
-            <animation:BezierEase ControlPoint1="0.3825,0.0025" ControlPoint2="0.8775,-0.1075" />
+            <animation:CubicBezierEase ControlPoint1="0.3825,0.0025" ControlPoint2="0.8775,-0.1075" />
         </DoubleAnimation.EasingFunction>
     </DoubleAnimation>
     <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)">
