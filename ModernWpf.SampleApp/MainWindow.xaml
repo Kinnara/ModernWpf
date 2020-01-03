@@ -17,7 +17,8 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     ui:TitleBar.IsBackButtonVisible="{Binding ElementName=RootFrame, Path=CanGoBack}"
     ui:TitleBar.IsBackEnabled="{Binding ElementName=RootFrame, Path=CanGoBack}"
-    ui:TitleBar.BackRequested="OnBackRequested">
+    ui:TitleBar.BackRequested="OnBackRequested"
+    UseLayoutRounding="True">
 
     <ui:ThemeAwareFrame
         x:Name="RootFrame"
