@@ -328,11 +328,12 @@ namespace ModernWpf.Controls
 
             if (itemsCount > 0)
             {
+                // Only use all of the space if item stretch is fill, otherwise size layout according to items placed
                 OrientationBasedMeasures.SetMinorSize(ref extent,
-                    !double.IsInfinity(availableSizeMinor) ?
+                    !double.IsInfinity(availableSizeMinor) && m_itemsStretch == UniformGridLayoutItemsStretch.Fill ?
                     availableSizeMinor :
-                    Math.Max(0.0, itemsCount * GetMinorSizeWithSpacing(context) - MinItemSpacing));
-                OrientationBasedMeasures.SetMajorSize(ref extent, Math.Max(0.0, (itemsCount / itemsPerLine) * lineSize - (LineSpacing)));
+                    Math.Max(0.0, itemsPerLine * GetMinorSizeWithSpacing(context) - MinItemSpacing));
+                OrientationBasedMeasures.SetMajorSize(ref extent, Math.Max(0.0, (itemsCount / itemsPerLine) * lineSize - LineSpacing));
 
                 if (firstRealized != null)
                 {
