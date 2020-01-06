@@ -357,6 +357,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 _parentPopupControl.Opened -= OnParentPopupControlOpened;
                 _parentPopupControl.Closed -= OnParentPopupControlClosed;
+                _parentPopupControl.SetMargin(new Thickness());
                 _parentPopupControl.Dispose();
             }
 
