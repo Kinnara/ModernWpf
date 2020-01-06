@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using ModernWpf.Controls.Primitives;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -144,7 +145,19 @@ namespace ModernWpf.Controls
             var textControl = (Control)sender;
             if (textControl.ContextMenu is TextContextMenu contextMenu)
             {
-                contextMenu.UpdateItems(textControl);
+                Control target;
+                if (textControl is PasswordBox passwordBox &&
+                    PasswordBoxHelper.GetPasswordRevealMode(passwordBox) == PasswordRevealMode.Visible &&
+                    e.Source is TextBox)
+                {
+                    target = (Control)e.Source;
+                }
+                else
+                {
+                    target = textControl;
+                }
+
+                contextMenu.UpdateItems(target);
 
                 bool hasVisibleItems = contextMenu.Items.OfType<MenuItem>().Any(mi => mi.Visibility == Visibility.Visible);
                 if (!hasVisibleItems)

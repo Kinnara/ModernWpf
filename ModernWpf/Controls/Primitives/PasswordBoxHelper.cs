@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -9,9 +10,21 @@ namespace ModernWpf.Controls.Primitives
         private const string ButtonVisibleState = "ButtonVisible";
         private const string ButtonCollapsedState = "ButtonCollapsed";
 
+        private static readonly CommandBinding TextBoxCutBinding;
+        private static readonly CommandBinding TextBoxCopyBinding;
+
         private readonly PasswordBox _passwordBox;
 
         private bool _hideRevealButton;
+
+        static PasswordBoxHelper()
+        {
+            TextBoxCutBinding = new CommandBinding(ApplicationCommands.Cut);
+            TextBoxCutBinding.CanExecute += OnDisabledCommandCanExecute;
+
+            TextBoxCopyBinding = new CommandBinding(ApplicationCommands.Copy);
+            TextBoxCopyBinding.CanExecute += OnDisabledCommandCanExecute;
+        }
 
         public PasswordBoxHelper(PasswordBox passwordBox)
         {
@@ -158,6 +171,12 @@ namespace ModernWpf.Controls.Primitives
 
         private PasswordRevealMode PasswordRevealMode => GetPasswordRevealMode(_passwordBox);
 
+        private static void OnDisabledCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = false;
+            e.Handled = true;
+        }
+
         private void Attach()
         {
             _passwordBox.PasswordChanged += OnPasswordChanged;
@@ -180,6 +199,14 @@ namespace ModernWpf.Controls.Primitives
             _passwordBox.GotFocus -= OnGotFocus;
             _passwordBox.LostFocus -= OnLostFocus;
             _passwordBox.Loaded -= OnLoaded;
+
+            if (TextBox != null)
+            {
+                TextBox.CommandBindings.Remove(TextBoxCutBinding);
+                TextBox.CommandBindings.Remove(TextBoxCopyBinding);
+                TextBox.TextChanged -= OnTextChanged;
+                TextBox = null;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -199,6 +226,10 @@ namespace ModernWpf.Controls.Primitives
 
                 if (TextBox != null)
                 {
+                    TextBox.IsUndoEnabled = false;
+                    SpellCheck.SetIsEnabled(TextBox, false);
+                    TextBox.CommandBindings.Add(TextBoxCutBinding);
+                    TextBox.CommandBindings.Add(TextBoxCopyBinding);
                     TextBox.TextChanged += OnTextChanged;
                 }
 
