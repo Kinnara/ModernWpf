@@ -202,7 +202,7 @@
                             <Setter TargetName="PlaceholderTextContentPresenter" Property="Foreground" Value="{DynamicResource TextControlPlaceholderForegroundPointerOver}" />
                             <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundPointerOver}" />
                         </Trigger>
-                        <Trigger Property="IsKeyboardFocused" Value="true">
+                        <Trigger Property="IsSelectionActive" Value="true">
                             <Setter TargetName="PlaceholderTextContentPresenter" Property="Foreground" Value="{DynamicResource TextControlPlaceholderForegroundFocused}" />
                             <Setter Property="Background" Value="{DynamicResource TextControlBackgroundFocused}" />
                             <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushFocused}" />
