@@ -7,26 +7,14 @@
 
 <Storyboard
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:animation="clr-namespace:ModernWpf.Media.Animation;assembly=ModernWpf">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)">
+        <DiscreteDoubleKeyFrame KeyTime="0" Value="200" />
+        <SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="0" KeySpline="0.1,0.9 0.2,1" />
+    </DoubleAnimationUsingKeyFrames>
     <DoubleAnimation
-        Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-        From="200"
-        To="0"
-        Duration="0:0:0.35">
-        <DoubleAnimation.EasingFunction>
-            <animation:CubicBezierEase ControlPoint1="0.17,0.79" ControlPoint2="0.215,1.0025" />
-        </DoubleAnimation.EasingFunction>
-    </DoubleAnimation>
-    <animation:DoubleAnimationEx
         Storyboard.TargetProperty="(UIElement.Opacity)"
         From="0"
         To="1"
-        Duration="0:0:0.35"
-        Min="0"
-        Max="1">
-        <DoubleAnimation.EasingFunction>
-            <animation:CubicBezierEase ControlPoint1="0,2" ControlPoint2="0,2" />
-        </DoubleAnimation.EasingFunction>
-    </animation:DoubleAnimationEx>
+        Duration="0" />
 </Storyboard>

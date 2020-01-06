@@ -90,10 +90,9 @@ namespace ModernWpf.Controls
         /// for the slide transition family.
         /// </summary>
         /// <param name="element">The <see cref="T:System.Windows.UIElement"/>.</param>
-        /// <param name="containerSize">The size of the container.</param>
         /// <param name="slideTransitionMode">The transition mode.</param>
         /// <returns>The <see cref="T:ModernWpf.Controls.ITransition"/>.</returns>
-        public static ITransition Slide(UIElement element, Size containerSize, SlideTransitionMode slideTransitionMode)
+        public static ITransition Slide(UIElement element, SlideTransitionMode slideTransitionMode)
         {
             if (element == null)
             {
@@ -104,45 +103,7 @@ namespace ModernWpf.Controls
                 throw new ArgumentOutOfRangeException("slideTransitionMode");
             }
             element.RenderTransform = new TranslateTransform();
-            ITransition transition = GetEnumStoryboard<SlideTransitionMode>(element, string.Empty, slideTransitionMode);
-            if (transition != null)
-            {
-                switch (slideTransitionMode)
-                {
-                    case SlideTransitionMode.SlideLeftIn:
-                    case SlideTransitionMode.SlideLeftOut:
-                    case SlideTransitionMode.SlideRightIn:
-                    case SlideTransitionMode.SlideRightOut:
-                        var stroyboard = (transition as Transition)?.Storyboard;
-                        if (stroyboard != null && stroyboard.Children.Count > 0)
-                        {
-                            if (stroyboard.Children[0] is DoubleAnimation translateAnimation)
-                            {
-                                double width = element.RenderSize.Width;
-                                if (width == 0)
-                                {
-                                    width = containerSize.Width;
-                                }
-
-                                double? from = translateAnimation.From;
-                                if (from.GetValueOrDefault() != 0)
-                                {
-                                    translateAnimation.From = Math.Sign(from.Value) * width;
-                                }
-                                else
-                                {
-                                    double? to = translateAnimation.To;
-                                    if (to.GetValueOrDefault() != 0)
-                                    {
-                                        translateAnimation.To = Math.Sign(to.Value) * width;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                }
-            }
-            return transition;
+            return GetEnumStoryboard(element, string.Empty, slideTransitionMode);
         }
 
         public static ITransition Fade(UIElement element, FadeTransitionMode fadeTransitionMode)

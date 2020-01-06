@@ -254,7 +254,7 @@ namespace ModernWpf.Controls
                 }
                 if (oldTransitionElement != null)
                 {
-                    oldTransition = oldTransitionElement.GetTransition(oldElement, _oldContentPresenter.RenderSize);
+                    oldTransition = oldTransitionElement.GetTransition(oldElement);
                 }
             }
 
@@ -432,12 +432,7 @@ namespace ModernWpf.Controls
                 {
                     newElement.UpdateLayout();
 
-                    Size containerSize = _newContentPresenter.RenderSize;
-                    if (containerSize == new Size())
-                    {
-                        containerSize = _oldContentPresenter.RenderSize;
-                    }
-                    newTransition = newTransitionElement.GetTransition(newElement, containerSize);
+                    newTransition = newTransitionElement.GetTransition(newElement);
                     PrepareContentPresenterForCompositor(_newContentPresenter);
                 }
             }

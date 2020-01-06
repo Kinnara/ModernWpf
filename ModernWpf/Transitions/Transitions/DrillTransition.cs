@@ -13,7 +13,7 @@ namespace ModernWpf.Controls
             set => SetValue(ModeProperty, value);
         }
 
-        public override ITransition GetTransition(UIElement element, Size containerSize)
+        public override ITransition GetTransition(UIElement element)
         {
             return Transitions.Drill(element, Mode);
         }

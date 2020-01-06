@@ -176,10 +176,6 @@
                             IsEnabled="{Binding ElementName=frame, Path=CanGoBack}"
                             Margin="0,12,0,0"
                             Click="NavigateBackward" />
-                        <TextBlock
-                            x:Name="TierTB"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            Margin="0,8,0,0" />
                     </StackPanel>
                 </ui:SimpleStackPanel>
             </sc:ControlExample.Options>

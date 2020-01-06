@@ -46,11 +46,10 @@ namespace ModernWpf.Controls
         /// value before the start of the transition, then restores it after it is stopped or completed.
         /// </summary>
         /// <param name="element">The <see cref="T:System.Windows.UIElement"/>.</param>
-        /// <param name="containerSize">The size of the container.</param>
         /// <returns>The <see cref="T:ModernWpf.Controls.ITransition"/>.</returns>
-        public override ITransition GetTransition(UIElement element, Size containerSize)
+        public override ITransition GetTransition(UIElement element)
         {
-            return Transitions.Slide(element, containerSize, Mode);
+            return Transitions.Slide(element, Mode);
         }
     }
 }

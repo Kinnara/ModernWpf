@@ -1,9 +1,8 @@
 ﻿<Storyboard
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <DoubleAnimation
-        Storyboard.TargetProperty="(UIElement.Opacity)"
-        From="0"
-        To="1"
-        Duration="0:0:0.250" />
+    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)">
+        <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+        <SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1" KeySpline="0.1,0.9 0.2,1" />
+    </DoubleAnimationUsingKeyFrames>
 </Storyboard>

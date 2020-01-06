@@ -1,9 +1,6 @@
 ﻿using SamplesCommon;
-using SamplesCommon.SamplePages;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Navigation;
 
 namespace ModernWpf.SampleApp.ControlPages
@@ -14,7 +11,6 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             InitializeComponent();
 
-            TierTB.Text = "Rendering tier: " + (RenderCapability.Tier >> 16);
             frame.Navigate(SamplePageSources.SamplePage1);
         }
 

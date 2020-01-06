@@ -25,8 +25,7 @@ namespace ModernWpf.Controls
         /// values may be saved and cleared before the start of the transition, then restored it after it is stopped or completed.
         /// </summary>
         /// <param name="element">The <see cref="T:System.Windows.UIElement"/>.</param>
-        /// <param name="containerSize">The size of the container.</param>
         /// <returns>The <see cref="T:ModernWpf.Controls.ITransition"/>.</returns>
-        public abstract ITransition GetTransition(UIElement element, Size containerSize);
+        public abstract ITransition GetTransition(UIElement element);
     }
 }

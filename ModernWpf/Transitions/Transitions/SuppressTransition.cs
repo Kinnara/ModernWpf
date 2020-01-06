@@ -6,7 +6,7 @@ namespace ModernWpf.Controls
 {
     public class SuppressTransition : TransitionElement
     {
-        public override ITransition GetTransition(UIElement element, Size containerSize)
+        public override ITransition GetTransition(UIElement element)
         {
             var storyboard = new Storyboard();
             var da = new DoubleAnimation(1, TimeSpan.FromMilliseconds(1));
