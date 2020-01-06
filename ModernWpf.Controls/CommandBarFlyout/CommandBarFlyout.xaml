@@ -573,7 +573,7 @@
                                     IsOpen="{Binding Path=IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                     StaysOpen="false"
                                     Focusable="false"
-                                    PopupAnimation="Fade">
+                                    PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
                                     <ui:ThemeShadowChrome
                                         x:Name="OuterOverflowContentRoot"
                                         Width="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=ExpandedWidth}"

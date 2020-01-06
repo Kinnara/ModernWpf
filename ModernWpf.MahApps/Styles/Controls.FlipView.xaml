@@ -230,6 +230,14 @@
                                 To="1.0" />
                         </Storyboard>
                     </ControlTemplate.Resources>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Path=(SystemParameters.ClientAreaAnimation)}" Value="False">
+                            <Setter Property="LeftTransition" Value="Normal" />
+                            <Setter Property="RightTransition" Value="Normal" />
+                            <Setter Property="UpTransition" Value="Normal" />
+                            <Setter Property="DownTransition" Value="Normal" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

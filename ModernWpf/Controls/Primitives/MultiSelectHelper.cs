@@ -31,7 +31,7 @@ namespace ModernWpf.Controls.Primitives
         private static void OnSelectionModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var container = (ListBoxItem)d;
-            UpdateVisualState(container, (SelectionMode)e.NewValue, container.IsVisible);
+            UpdateVisualState(container, (SelectionMode)e.NewValue, container.IsVisible && Helper.IsAnimationsEnabled);
         }
 
         #endregion

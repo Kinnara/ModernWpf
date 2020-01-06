@@ -6,6 +6,9 @@ namespace ModernWpf
 {
     internal static class Helper
     {
+        public static bool IsAnimationsEnabled => SystemParameters.ClientAreaAnimation &&
+                                                  RenderCapability.Tier > 0;
+
         public static bool TryGetTransformToDevice(Visual visual, out Matrix value)
         {
             var presentationSource = PresentationSource.FromVisual(visual);

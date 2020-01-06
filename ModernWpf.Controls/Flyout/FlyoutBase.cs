@@ -53,10 +53,7 @@ namespace ModernWpf.Controls.Primitives
 
         internal virtual void OnAreOpenCloseAnimationsEnabledChanged(DependencyPropertyChangedEventArgs e)
         {
-            if (m_popup != null)
-            {
-                m_popup.PopupAnimation = (bool)e.NewValue ? PopupAnimation.Fade : PopupAnimation.None;
-            }
+            UpdatePopupAnimation();
         }
 
         #endregion
@@ -245,7 +242,6 @@ namespace ModernWpf.Controls.Primitives
                     Child = m_presenter,
                     StaysOpen = false,
                     AllowsTransparency = true,
-                    PopupAnimation = AreOpenCloseAnimationsEnabled ? PopupAnimation.Fade : PopupAnimation.None,
                     CustomPopupPlacementCallback = PositionPopup
                 };
                 m_popup.Opened += OnPopupOpened;
@@ -263,6 +259,8 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_popup.IsOpen = false;
             }
+
+            UpdatePopupAnimation();
 
             if (Placement == FlyoutPlacementMode.Full &&
                 Window.GetWindow(placementTarget) is Window window)
@@ -302,6 +300,15 @@ namespace ModernWpf.Controls.Primitives
                 m_popup.PlacementRectangle = GetPlacementRectangle(placementTarget);
                 m_popup.ClearValue(FrameworkElement.WidthProperty);
                 m_popup.ClearValue(FrameworkElement.HeightProperty);
+            }
+        }
+
+        private void UpdatePopupAnimation()
+        {
+            if (m_popup != null)
+            {
+                m_popup.PopupAnimation = AreOpenCloseAnimationsEnabled && SharedHelpers.IsAnimationsEnabled ?
+                    PopupAnimation.Fade : PopupAnimation.None;
             }
         }
 

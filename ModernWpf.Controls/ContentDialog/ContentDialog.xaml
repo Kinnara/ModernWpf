@@ -23,7 +23,7 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DialogShowingStates">
                                 <VisualStateGroup.Transitions>
-                                    <VisualTransition To="DialogHidden">
+                                    <VisualTransition To="DialogHidden" GeneratedDuration="0:0:0.5">
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
@@ -45,6 +45,25 @@
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualTransition>
+                                    <VisualTransition To="DialogShowing" GeneratedDuration="0:0:0.5">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleX">
+                                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.05" />
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.5" KeySpline="0.1,0.9 0.2,1.0" Value="1.0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleY">
+                                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.05" />
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.5" KeySpline="0.1,0.9 0.2,1.0" Value="1.0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Opacity">
+                                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.0" />
+                                                <LinearDoubleKeyFrame KeyTime="0:0:0.167" Value="1.0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
                                 </VisualStateGroup.Transitions>
                                 <VisualState x:Name="DialogHidden" />
                                 <VisualState x:Name="DialogShowing">
@@ -52,18 +71,6 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleX">
-                                            <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.05" />
-                                            <SplineDoubleKeyFrame KeyTime="0:0:0.5" KeySpline="0.1,0.9 0.2,1.0" Value="1.0" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ScaleTransform" Storyboard.TargetProperty="ScaleY">
-                                            <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.05" />
-                                            <SplineDoubleKeyFrame KeyTime="0:0:0.5" KeySpline="0.1,0.9 0.2,1.0" Value="1.0" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Opacity">
-                                            <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.0" />
-                                            <LinearDoubleKeyFrame KeyTime="0:0:0.167" Value="1.0" />
-                                        </DoubleAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement" Storyboard.TargetProperty="(KeyboardNavigation.TabNavigation)">
                                             <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static KeyboardNavigationMode.Cycle}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -380,9 +387,6 @@
                                 </Border>
                             </Grid>
                             <ui:VisualStateGroupListener
-                                x:Name="DialogShowingStatesProxy"
-                                GroupName="DialogShowingStates" />
-                            <ui:VisualStateGroupListener
                                 x:Name="DefaultButtonStatesProxy"
                                 GroupName="DefaultButtonStates" />
                         </Grid>
@@ -390,9 +394,6 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsShadowEnabled" Value="False">
                             <Setter TargetName="Shdw" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
-                        <Trigger SourceName="DialogShowingStatesProxy" Property="CurrentStateName" Value="DialogShowing">
-                            <Setter TargetName="BackgroundElement" Property="KeyboardNavigation.TabNavigation" Value="Cycle" />
                         </Trigger>
                         <Trigger SourceName="DefaultButtonStatesProxy" Property="CurrentStateName" Value="PrimaryAsDefaultButton">
                             <Setter TargetName="PrimaryButton" Property="Style" Value="{DynamicResource AccentButtonStyle}" />
