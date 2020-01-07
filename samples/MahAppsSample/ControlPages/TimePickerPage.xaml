@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:MahAppsSample.ControlPages"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
@@ -43,6 +42,15 @@
                             ui:ControlHelper.Header="PickerVisibility"
                             ItemsSource="{Binding Source={x:Type mah:TimePartVisibility}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=TimePicker, Path=PickerVisibility}" />
+                        <TextBox
+                            ui:ControlHelper.Header="HourPlaceholderText"
+                            Text="{Binding ElementName=TimePicker, Path=HourPlaceholderText, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox
+                            ui:ControlHelper.Header="MinutePlaceholderText"
+                            Text="{Binding ElementName=TimePicker, Path=MinutePlaceholderText, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox
+                            ui:ControlHelper.Header="SecondPlaceholderText"
+                            Text="{Binding ElementName=TimePicker, Path=SecondPlaceholderText, UpdateSourceTrigger=PropertyChanged}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
