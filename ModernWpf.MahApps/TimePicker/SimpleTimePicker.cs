@@ -112,6 +112,57 @@ namespace ModernWpf.MahApps.Controls
 
         #endregion
 
+        #region HourPlaceholderText
+
+        public static readonly DependencyProperty HourPlaceholderTextProperty =
+            DependencyProperty.Register(
+                nameof(HourPlaceholderText),
+                typeof(string),
+                typeof(SimpleTimePicker),
+                new PropertyMetadata(string.Empty, OnPlaceholderTextChanged));
+
+        public string HourPlaceholderText
+        {
+            get => (string)GetValue(HourPlaceholderTextProperty);
+            set => SetValue(HourPlaceholderTextProperty, value);
+        }
+
+        #endregion
+
+        #region MinutePlaceholderText
+
+        public static readonly DependencyProperty MinutePlaceholderTextProperty =
+            DependencyProperty.Register(
+                nameof(MinutePlaceholderText),
+                typeof(string),
+                typeof(SimpleTimePicker),
+                new PropertyMetadata(string.Empty, OnPlaceholderTextChanged));
+
+        public string MinutePlaceholderText
+        {
+            get => (string)GetValue(MinutePlaceholderTextProperty);
+            set => SetValue(MinutePlaceholderTextProperty, value);
+        }
+
+        #endregion
+
+        #region SecondPlaceholderText
+
+        public static readonly DependencyProperty SecondPlaceholderTextProperty =
+            DependencyProperty.Register(
+                nameof(SecondPlaceholderText),
+                typeof(string),
+                typeof(SimpleTimePicker),
+                new PropertyMetadata(string.Empty, OnPlaceholderTextChanged));
+
+        public string SecondPlaceholderText
+        {
+            get => (string)GetValue(SecondPlaceholderTextProperty);
+            set => SetValue(SecondPlaceholderTextProperty, value);
+        }
+
+        #endregion
+
         private IEnumerable<DateTimeComponentSelector> Selectors
         {
             get
@@ -142,21 +193,6 @@ namespace ModernWpf.MahApps.Controls
             base.OnApplyTemplate();
 
             UpdateTextBlocks();
-        }
-
-        private void OnAcceptButtonClick(object sender, RoutedEventArgs e)
-        {
-            foreach (var selector in Selectors)
-            {
-                selector.RaiseDeferredSelectionChanged();
-            }
-
-            ClosePopup();
-        }
-
-        private void OnDismissButtonClick(object sender, RoutedEventArgs e)
-        {
-            ClosePopup();
         }
 
         protected override void OnIsKeyboardFocusWithinChanged(DependencyPropertyChangedEventArgs e)
@@ -239,6 +275,11 @@ namespace ModernWpf.MahApps.Controls
             UpdateTextBlocks();
         }
 
+        private static void OnPlaceholderTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((SimpleTimePicker)d).UpdateTextBlocks();
+        }
+
         private void SetHourPartValues(TimeSpan timeOfDay)
         {
             if (_hourInput != null)
@@ -280,21 +321,21 @@ namespace ModernWpf.MahApps.Controls
             {
                 _hourTextBlock.Text = selectedTime.HasValue ?
                     selectedTime.Value.ToString(IsMilitaryTime ? "%h" : "%H", SpecificCultureInfo) :
-                    Strings.Resources.TimePickerHour;
+                    HourPlaceholderText.DefaultIfNullOrEmpty(Strings.Resources.TimePickerHour);
             }
 
             if (_minuteTextBlock != null)
             {
                 _minuteTextBlock.Text = selectedTime.HasValue ?
                     selectedTime.Value.ToString("mm", SpecificCultureInfo) :
-                    Strings.Resources.TimePickerMinute;
+                    MinutePlaceholderText.DefaultIfNullOrEmpty(Strings.Resources.TimePickerMinute);
             }
 
             if (_secondTextBlock != null)
             {
                 _secondTextBlock.Text = selectedTime.HasValue ?
                     selectedTime.Value.ToString("ss", SpecificCultureInfo) :
-                    Strings.Resources.TimePickerSecond;
+                    SecondPlaceholderText.DefaultIfNullOrEmpty(Strings.Resources.TimePickerSecond);
             }
 
             if (_periodTextBlock != null)
@@ -333,6 +374,21 @@ namespace ModernWpf.MahApps.Controls
             {
                 Popup.IsOpen = false;
             }
+        }
+
+        private void OnAcceptButtonClick(object sender, RoutedEventArgs e)
+        {
+            foreach (var selector in Selectors)
+            {
+                selector.RaiseDeferredSelectionChanged();
+            }
+
+            ClosePopup();
+        }
+
+        private void OnDismissButtonClick(object sender, RoutedEventArgs e)
+        {
+            ClosePopup();
         }
     }
 }
