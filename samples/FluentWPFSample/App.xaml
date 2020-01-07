@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:FluentWPFSample"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -45,6 +46,8 @@
                 <ui:XamlControlsResources />
                 <!-- ModernWPF resources for MahApps -->
                 <ResourceDictionary Source="/ModernWpf.MahApps;component/Styles/Controls.xaml" />
+
+                <sc:UISettingsResources />
             </ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>
