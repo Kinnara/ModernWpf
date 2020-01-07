@@ -72,7 +72,7 @@
                             <Setter TargetName="PART_ContentHost" Property="Foreground" Value="{DynamicResource CalendarDatePickerTextForegroundDisabled}" />
                             <Setter TargetName="PART_Watermark" Property="Foreground" Value="{DynamicResource CalendarDatePickerTextForegroundDisabled}" />
                         </Trigger>
-                        <Trigger Property="IsKeyboardFocused" Value="True">
+                        <Trigger Property="IsSelectionActive" Value="True">
                             <Setter TargetName="BorderElement" Property="Background" Value="{DynamicResource TextControlBackgroundFocused}" />
                             <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushFocused}" />
                             <Setter TargetName="BorderElement" Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThicknessFocused}" />
@@ -207,7 +207,7 @@
                         <!-- TextBoxFocused -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_TextBox" Property="IsKeyboardFocused" Value="True" />
+                                <Condition SourceName="PART_TextBox" Property="IsSelectionActive" Value="True" />
                                 <Condition SourceName="PART_Button" Property="IsMouseOver" Value="False" />
                                 <Condition SourceName="PART_Button" Property="IsPressed" Value="False" />
                             </MultiTrigger.Conditions>
@@ -217,7 +217,7 @@
                         <!-- TextBoxFocusedOverlayPointerOver -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_TextBox" Property="IsKeyboardFocused" Value="True" />
+                                <Condition SourceName="PART_TextBox" Property="IsSelectionActive" Value="True" />
                                 <Condition SourceName="PART_Button" Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="PART_Button" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
@@ -227,7 +227,7 @@
                         <!-- TextBoxFocusedOverlayPressed -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_TextBox" Property="IsKeyboardFocused" Value="True" />
+                                <Condition SourceName="PART_TextBox" Property="IsSelectionActive" Value="True" />
                                 <Condition SourceName="PART_Button" Property="IsPressed" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="PART_Button" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
@@ -237,7 +237,7 @@
                         <!-- TextBoxOverlayPointerOver -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_TextBox" Property="IsKeyboardFocused" Value="False" />
+                                <Condition SourceName="PART_TextBox" Property="IsSelectionActive" Value="False" />
                                 <Condition SourceName="PART_Button" Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="PART_Button" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerOver}" />
@@ -245,7 +245,7 @@
                         <!-- TextBoxOverlayPressed -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_TextBox" Property="IsKeyboardFocused" Value="False" />
+                                <Condition SourceName="PART_TextBox" Property="IsSelectionActive" Value="False" />
                                 <Condition SourceName="PART_Button" Property="IsPressed" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="PART_Button" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerPressed}" />

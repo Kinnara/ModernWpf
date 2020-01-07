@@ -219,7 +219,7 @@
                             <Setter TargetName="PlaceholderTextContentPresenter" Property="Foreground" Value="{DynamicResource TextControlPlaceholderForegroundPointerOver}" />
                             <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundPointerOver}" />
                         </Trigger>
-                        <Trigger Property="IsKeyboardFocused" Value="true">
+                        <Trigger Property="IsSelectionActive" Value="true">
                             <Setter TargetName="PlaceholderTextContentPresenter" Property="Foreground" Value="{DynamicResource TextControlPlaceholderForegroundFocused}" />
                             <Setter Property="Background" Value="{DynamicResource TextControlBackgroundFocused}" />
                             <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushFocused}" />
@@ -275,7 +275,7 @@
                                 <ui:ResourceDictionaryEx.ThemeDictionaries>
                                     <ResourceDictionary x:Key="Light">
                                         <ResourceDictionary.MergedDictionaries>
-                                            <ui:DefaultThemeResources Key="Light" />
+                                            <ui:ApplicationThemeResources Key="Light" />
                                         </ResourceDictionary.MergedDictionaries>
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
@@ -283,7 +283,7 @@
 
                                     <ResourceDictionary x:Key="Dark">
                                         <ResourceDictionary.MergedDictionaries>
-                                            <ui:DefaultThemeResources Key="Dark" />
+                                            <ui:ApplicationThemeResources Key="Dark" />
                                         </ResourceDictionary.MergedDictionaries>
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
@@ -291,7 +291,7 @@
 
                                     <ResourceDictionary x:Key="HighContrast">
                                         <ResourceDictionary.MergedDictionaries>
-                                            <ui:DefaultThemeResources Key="HighContrast" />
+                                            <ui:ApplicationThemeResources Key="HighContrast" />
                                         </ResourceDictionary.MergedDictionaries>
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />

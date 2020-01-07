@@ -169,7 +169,7 @@
                             <Setter TargetName="PART_ContentHost" Property="Foreground" Value="{DynamicResource TextControlForegroundPointerOver}" />
                             <Setter TargetName="PlaceholderTextContentPresenter" Property="Foreground" Value="{DynamicResource TextControlPlaceholderForegroundPointerOver}" />
                         </Trigger>
-                        <Trigger Property="IsKeyboardFocused" Value="True">
+                        <Trigger Property="IsSelectionActive" Value="True">
                             <Setter TargetName="BorderElement" Property="Background" Value="{DynamicResource TextControlBackgroundFocused}" />
                             <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushFocused}" />
                             <Setter TargetName="BorderElement" Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThicknessFocused}" />
@@ -409,14 +409,17 @@
                     </Grid>
 
                     <ControlTemplate.Triggers>
+                        <!-- PointerOver -->
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Background" Property="Background" Value="{DynamicResource ComboBoxBackgroundPointerOver}" />
                             <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushPointerOver}" />
                         </Trigger>
+                        <!-- Pressed -->
                         <Trigger SourceName="ToggleButton" Property="IsPressed" Value="True">
                             <Setter TargetName="Background" Property="Background" Value="{DynamicResource ComboBoxBackgroundPressed}" />
                             <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushPressed}" />
                         </Trigger>
+                        <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Background" Property="Background" Value="{DynamicResource ComboBoxBackgroundDisabled}" />
                             <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushDisabled}" />
@@ -426,6 +429,7 @@
                             <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxDropDownGlyphForegroundDisabled}" />
                         </Trigger>
 
+                        <!-- Focused -->
                         <Trigger Property="primitives:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
                             <Setter TargetName="HighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="HighlightBackground" Property="BorderBrush" Value="{DynamicResource ComboBoxBackgroundBorderBrushFocused}" />
@@ -433,6 +437,7 @@
                             <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxForegroundFocused}" />
                             <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxDropDownGlyphForegroundFocused}" />
                         </Trigger>
+                        <!-- FocusedPressed -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="primitives:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True" />
@@ -443,6 +448,7 @@
                             <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxPlaceHolderForegroundFocusedPressed}" />
                             <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxDropDownGlyphForegroundFocusedPressed}" />
                         </MultiTrigger>
+                        <!-- FocusedDropDown -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="primitives:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True" />
@@ -468,7 +474,7 @@
                         <!-- TextBoxFocused -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_EditableTextBox" Property="IsFocused" Value="True" />
+                                <Condition SourceName="PART_EditableTextBox" Property="IsSelectionActive" Value="True" />
                                 <Condition SourceName="DropDownOverlay" Property="IsMouseOver" Value="False" />
                                 <Condition SourceName="DropDownOverlay" Property="IsPressed" Value="False" />
                             </MultiTrigger.Conditions>
@@ -478,7 +484,7 @@
                         <!-- TextBoxFocusedOverlayPointerOver -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_EditableTextBox" Property="IsFocused" Value="True" />
+                                <Condition SourceName="PART_EditableTextBox" Property="IsSelectionActive" Value="True" />
                                 <Condition SourceName="DropDownOverlay" Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
@@ -488,7 +494,7 @@
                         <!-- TextBoxFocusedOverlayPressed -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_EditableTextBox" Property="IsFocused" Value="True" />
+                                <Condition SourceName="PART_EditableTextBox" Property="IsSelectionActive" Value="True" />
                                 <Condition SourceName="DropDownOverlay" Property="IsPressed" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
@@ -498,7 +504,7 @@
                         <!-- TextBoxOverlayPointerOver -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_EditableTextBox" Property="IsFocused" Value="False" />
+                                <Condition SourceName="PART_EditableTextBox" Property="IsSelectionActive" Value="False" />
                                 <Condition SourceName="DropDownOverlay" Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="DropDownOverlay" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerOver}" />
@@ -506,7 +512,7 @@
                         <!-- TextBoxOverlayPressed -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition SourceName="PART_EditableTextBox" Property="IsFocused" Value="False" />
+                                <Condition SourceName="PART_EditableTextBox" Property="IsSelectionActive" Value="False" />
                                 <Condition SourceName="DropDownOverlay" Property="IsPressed" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="DropDownOverlay" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerPressed}" />
