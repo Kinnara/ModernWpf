@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls;
 using ModernWpf.Controls.Primitives;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -21,10 +22,10 @@ namespace ModernWpf.MahApps.Controls
         private const string ElementMinutePicker = "PART_MinutePicker";
         private const string ElementSecondPicker = "PART_SecondPicker";
 
-        private Selector _ampmSwitcher;
-        private Selector _hourInput;
-        private Selector _minuteInput;
-        private Selector _secondInput;
+        private DateTimeComponentSelector _ampmSwitcher;
+        private DateTimeComponentSelector _hourInput;
+        private DateTimeComponentSelector _minuteInput;
+        private DateTimeComponentSelector _secondInput;
 
         private TextBlock _hourTextBlock;
         private TextBlock _minuteTextBlock;
@@ -111,15 +112,26 @@ namespace ModernWpf.MahApps.Controls
 
         #endregion
 
+        private IEnumerable<DateTimeComponentSelector> Selectors
+        {
+            get
+            {
+                yield return _hourInput;
+                yield return _minuteInput;
+                yield return _secondInput;
+                yield return _ampmSwitcher;
+            }
+        }
+
         /// <summary>
         /// Called when the Template's tree has been generated.
         /// </summary>
         public override void OnApplyTemplate()
         {
-            _hourInput = GetTemplateChild(ElementHourPicker) as Selector;
-            _minuteInput = GetTemplateChild(ElementMinutePicker) as Selector;
-            _secondInput = GetTemplateChild(ElementSecondPicker) as Selector;
-            _ampmSwitcher = GetTemplateChild(ElementAmPmSwitcher) as Selector;
+            _hourInput = GetTemplateChild(ElementHourPicker) as DateTimeComponentSelector;
+            _minuteInput = GetTemplateChild(ElementMinutePicker) as DateTimeComponentSelector;
+            _secondInput = GetTemplateChild(ElementSecondPicker) as DateTimeComponentSelector;
+            _ampmSwitcher = GetTemplateChild(ElementAmPmSwitcher) as DateTimeComponentSelector;
             _hourTextBlock = GetTemplateChild("HourTextBlock") as TextBlock;
             _minuteTextBlock = GetTemplateChild("MinuteTextBlock") as TextBlock;
             _secondTextBlock = GetTemplateChild("SecondTextBlock") as TextBlock;
@@ -134,7 +146,7 @@ namespace ModernWpf.MahApps.Controls
 
         private void OnAcceptButtonClick(object sender, RoutedEventArgs e)
         {
-            foreach (var selector in new[] { _hourInput, _minuteInput, _secondInput, _ampmSwitcher }.OfType<DateTimeComponentSelector>())
+            foreach (var selector in Selectors)
             {
                 selector.RaiseDeferredSelectionChanged();
             }
@@ -162,6 +174,7 @@ namespace ModernWpf.MahApps.Controls
             if (Popup != null)
             {
                 Popup.Opened += OnPopupOpened;
+                Popup.Closed += OnPopupClosed;
             }
 
             if (_acceptButton != null)
@@ -182,6 +195,7 @@ namespace ModernWpf.MahApps.Controls
             if (Popup != null)
             {
                 Popup.Opened -= OnPopupOpened;
+                Popup.Closed -= OnPopupClosed;
             }
 
             if (_acceptButton != null)
@@ -192,6 +206,11 @@ namespace ModernWpf.MahApps.Controls
             if (_dismissButton != null)
             {
                 _dismissButton.Click -= OnDismissButtonClick; ;
+            }
+
+            foreach (var picker in Selectors)
+            {
+                picker.CancelFocusSelectedItem();
             }
         }
 
@@ -289,6 +308,22 @@ namespace ModernWpf.MahApps.Controls
         private void OnPopupOpened(object sender, EventArgs e)
         {
             SetHourPartValues(SelectedDateTime.GetValueOrDefault().TimeOfDay);
+
+            foreach (var picker in Selectors)
+            {
+                picker.CancelFocusSelectedItem();
+            }
+
+            var firstVisiblePicker = Selectors.FirstOrDefault(s => s.Visibility == Visibility.Visible);
+            firstVisiblePicker?.FocusSelectedItem();
+        }
+
+        private void OnPopupClosed(object sender, EventArgs e)
+        {
+            foreach (var picker in Selectors)
+            {
+                picker.CancelFocusSelectedItem();
+            }
         }
 
         private void ClosePopup()

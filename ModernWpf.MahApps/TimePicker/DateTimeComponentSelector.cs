@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -114,6 +115,28 @@ namespace ModernWpf.MahApps.Controls
                 e.Handled = false;
                 RaiseEvent(e);
             }
+        }
+
+        internal void FocusSelectedItem()
+        {
+            var selectedIndex = SelectedIndex;
+            if (selectedIndex >= 0)
+            {
+                var container = ItemContainerGenerator.ContainerFromIndex(selectedIndex);
+                if (container != null)
+                {
+                    (container as UIElement)?.Focus();
+                }
+                else
+                {
+                    ItemContainerGenerator.StatusChanged += OnItemContainerGeneratorStatusChanged;
+                }
+            }
+        }
+
+        internal void CancelFocusSelectedItem()
+        {
+            ItemContainerGenerator.StatusChanged -= OnItemContainerGeneratorStatusChanged;
         }
 
         protected override DependencyObject GetContainerForItemOverride()
@@ -261,6 +284,15 @@ namespace ModernWpf.MahApps.Controls
             if (IsItemMouseOverEnabled)
             {
                 IsItemMouseOverEnabled = false;
+            }
+        }
+
+        private void OnItemContainerGeneratorStatusChanged(object sender, EventArgs e)
+        {
+            if (ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+            {
+                ItemContainerGenerator.StatusChanged -= OnItemContainerGeneratorStatusChanged;
+                FocusSelectedItem();
             }
         }
 
