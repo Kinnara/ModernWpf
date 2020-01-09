@@ -14,7 +14,7 @@
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample
-                HeaderText="A Slider."
+                HeaderText="API in action"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Stretch">
                 <Grid>
@@ -25,7 +25,7 @@
                         AutoToolTipPlacement="TopLeft"
                         TickFrequency="10"
                         TickPlacement="Both"
-                        ui:ControlHelper.Header="Header" />
+                        ui:ControlHelper.Header="Control header" />
                 </Grid>
 
                 <sc:ControlExample.Options>

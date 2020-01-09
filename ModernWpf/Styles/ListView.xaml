@@ -33,6 +33,7 @@
                         Padding="{TemplateBinding Padding}"
                         SnapsToDevicePixels="true">
                         <ContentPresenter
+                            x:Name="ContentPresenter"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
@@ -40,9 +41,11 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ListViewItemForegroundPointerOver}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ListViewItemBackgroundSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ListViewItemForegroundSelected}" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>

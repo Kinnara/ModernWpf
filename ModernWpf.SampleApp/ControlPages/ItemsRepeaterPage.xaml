@@ -25,10 +25,12 @@
 
         <DataTemplate x:Key="HorizontalBarTemplate">
             <Border
-                Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
+                Tag="{DynamicResource SystemChromeLowColor}"
+                Background="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
                 Width="{Binding MaxLength}">
                 <Rectangle
-                    Fill="{DynamicResource SystemControlBackgroundAccentBrush}"
+                    Tag="{DynamicResource SystemAccentColor}"
+                    Fill="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
                     Width="{Binding Length}"
                     Height="24"
                     HorizontalAlignment="Left" />
@@ -37,10 +39,12 @@
 
         <DataTemplate x:Key="VerticalBarTemplate">
             <Border
-                Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
+                Tag="{DynamicResource SystemChromeLowColor}"
+                Background="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
                 Height="{Binding MaxHeight}">
                 <Rectangle
-                    Fill="{DynamicResource SystemControlBackgroundAccentBrush}"
+                    Tag="{DynamicResource SystemAccentColor}"
+                    Fill="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
                     Height="{Binding Height}"
                     Width="48"
                     VerticalAlignment="Top" />
@@ -50,13 +54,15 @@
         <DataTemplate x:Key="CircularTemplate">
             <Grid>
                 <Ellipse
-                    Fill="{DynamicResource SystemControlPageBackgroundChromeLowBrush}"
+                    Tag="{DynamicResource SystemChromeLowColor}"
+                    Fill="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
                     Height="{Binding MaxDiameter}"
                     Width="{Binding MaxDiameter}"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center" />
                 <Ellipse
-                    Fill="{DynamicResource SystemControlBackgroundAccentBrush}"
+                    Tag="{DynamicResource SystemAccentColor}"
+                    Fill="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
                     Height="{Binding Diameter}"
                     Width="{Binding Diameter}"
                     VerticalAlignment="Center"
@@ -68,7 +74,8 @@
             <Button
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
-                Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}">
+                Tag="{DynamicResource SystemChromeLowColor}"
+                Background="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}">
                 <TextBlock Text="{Binding}" />
             </Button>
         </DataTemplate>
@@ -77,7 +84,8 @@
             <Button
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
-                Background="{DynamicResource SystemControlBackgroundAccentBrush}">
+                Tag="{DynamicResource SystemAccentColor}"
+                Background="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}">
                 <TextBlock Text="{Binding}" />
             </Button>
         </DataTemplate>

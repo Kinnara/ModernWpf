@@ -92,6 +92,7 @@
                                 <ui:FontIcon
                                     x:Name="EllipsisIcon"
                                     VerticalAlignment="Center"
+                                    Foreground="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType=ContentPresenter}}"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="20"
                                     Glyph="&#xE10C;"

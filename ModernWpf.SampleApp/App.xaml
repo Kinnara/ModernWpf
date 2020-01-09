@@ -59,6 +59,7 @@
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <sc:EnumValuesConverter x:Key="EnumValuesConverter" />
+            <sc:ColorToBrushConverter x:Key="ColorToBrushConverter" />
             <common:BrushToColorConverter x:Key="BrushToColorConverter" />
             <common:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
 

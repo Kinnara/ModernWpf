@@ -4,12 +4,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:sc="clr-namespace:SamplesCommon"
     xmlns:local="clr-namespace:SamplesCommon.SamplePages"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
     Style="{StaticResource PageStyle}">
+
+    <Page.Resources>
+        <sc:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+    </Page.Resources>
 
     <Grid
         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
@@ -31,7 +36,8 @@
             Grid.Row="1"
             Grid.Column="0"
             MinHeight="{StaticResource TileHeight}"
-            Background="{DynamicResource SystemControlBackgroundAccentBrush}"
+            Tag="{DynamicResource SystemAccentColor}"
+            Background="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
             Margin="12"
             Width="150"
             Height="200"

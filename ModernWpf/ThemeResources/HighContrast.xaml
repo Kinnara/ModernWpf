@@ -645,7 +645,7 @@
     <m:StaticResource x:Key="HyperlinkButtonBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
 
     <!-- Resources for ListBox -->
-    <Thickness x:Key="ListBoxBorderThemeThickness">0</Thickness>
+    <Thickness x:Key="ListBoxBorderThemeThickness">2</Thickness>
 
     <!-- Resources for ListViewHeaderItem -->
     <sys:Double x:Key="ListViewHeaderItemMinHeight">44</sys:Double>
@@ -1170,7 +1170,7 @@
     <m:StaticResource x:Key="ToggleButtonBorderBrushIndeterminateDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
 
     <!-- Resources for ToggleSwitch -->
-    <sys:Double x:Key="ToggleSwitchOnStrokeThickness">0</sys:Double>
+    <sys:Double x:Key="ToggleSwitchOnStrokeThickness">1</sys:Double>
     <sys:Double x:Key="ToggleSwitchOuterBorderStrokeThickness">1</sys:Double>
     <m:StaticResource x:Key="ToggleSwitchContentForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <m:StaticResource x:Key="ToggleSwitchContentForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
