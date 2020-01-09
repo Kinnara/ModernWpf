@@ -26,17 +26,6 @@
                         Margin="8,0,0,0"
                         VerticalAlignment="Center" />
                 </StackPanel>
-                <sc:ControlExample.Options>
-                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <CheckBox
-                            Content="IsCompact"
-                            IsChecked="{Binding ElementName=Button1, Path=IsCompact}" />
-                        <ComboBox
-                            ui:ControlHelper.Header="LabelPosition"
-                            ItemsSource="{Binding Source={x:Type ui:CommandBarLabelPosition}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=Button1, Path=LabelPosition}" />
-                    </ui:SimpleStackPanel>
-                </sc:ControlExample.Options>
             </sc:ControlExample>
             <sc:ControlExample
                 x:Name="Example2"
@@ -88,23 +77,20 @@
                         VerticalAlignment="Center" />
                 </StackPanel>
             </sc:ControlExample>
-            <sc:ControlExample HeaderText="AppBarButtons separated by AppBarSeparators.">
-                <sc:ControlExample.Example>
-                    <ScrollViewer
-                        VerticalScrollBarVisibility="Disabled"
-                        HorizontalScrollBarVisibility="Hidden">
-                        <StackPanel
-                            x:Name="Control1"
-                            Orientation="Horizontal">
-                            <ui:AppBarButton Label="Attach Camera" Icon="AttachCamera" />
-                            <ui:AppBarSeparator />
-                            <ui:AppBarButton Label="Like" Icon="Like" />
-                            <ui:AppBarButton Label="Dislike" Icon="Dislike" />
-                            <ui:AppBarSeparator />
-                            <ui:AppBarButton Label="Orientation" Icon="Orientation" />
-                        </StackPanel>
-                    </ScrollViewer>
-                </sc:ControlExample.Example>
+            <sc:ControlExample
+                x:Name="Example5"
+                HeaderText="An AppBarButton with an InputGesture">
+                <StackPanel Orientation="Horizontal">
+                    <ui:AppBarButton x:Name="Button5" Icon="Save" Label="Save" Command="Save" Click="AppBarButton_Click">
+                        <ui:AppBarButton.CommandBindings>
+                            <CommandBinding Command="Save" CanExecute="Save_CanExecute" />
+                        </ui:AppBarButton.CommandBindings>
+                    </ui:AppBarButton>
+                    <TextBlock
+                        x:Name="Control5Output"
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center" />
+                </StackPanel>
             </sc:ControlExample>
         </ui:SimpleStackPanel>
     </ScrollViewer>

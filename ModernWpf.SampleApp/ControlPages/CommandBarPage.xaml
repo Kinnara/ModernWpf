@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -15,42 +14,42 @@
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="A command bar with labels on the side free floating in a page">
-                <ui:CommandBar x:Name="CommandBar1">
-                    <ui:AppBarButton Label="Add" Icon="Add" />
-                    <ui:AppBarButton Label="Share" Icon="ReShare" />
-                    <ui:AppBarButton Label="Edit" Icon="Edit" />
-                    <ui:CommandBar.SecondaryCommands>
-                        <ui:AppBarButton Label="Settings" Icon="Setting" InputGestureText="Ctrl+S" />
-                        <ui:AppBarButton Label="Button 1" Icon="Add" InputGestureText="Ctrl+N" />
-                        <ui:AppBarButton Label="Button 2" Icon="Delete" InputGestureText="Delete" />
-                        <ui:AppBarSeparator />
-                        <ui:AppBarButton Label="Button 3" Icon="FontDecrease" InputGestureText="Ctrl+-" />
-                        <ui:AppBarButton Label="Button 4" Icon="FontIncrease" InputGestureText="Ctrl++" />
-                        <ui:AppBarSeparator Visibility="{Binding Source={x:Reference ShowToggleButtonCheckBox}, Path=IsChecked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <ui:AppBarToggleButton Visibility="{Binding Source={x:Reference ShowToggleButtonCheckBox}, Path=IsChecked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Label="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, StringFormat='IsChecked = {0}'}">
-                            <ui:AppBarToggleButton.Icon>
-                                <ui:SymbolIcon />
-                            </ui:AppBarToggleButton.Icon>
-                        </ui:AppBarToggleButton>
-                    </ui:CommandBar.SecondaryCommands>
-                </ui:CommandBar>
-
+                <StackPanel>
+                    <ui:CommandBar x:Name="PrimaryCommandBar">
+                        <ui:AppBarButton Label="Add" Icon="Add" Click="OnElementClicked" />
+                        <ui:AppBarButton Label="Edit" Icon="Edit" Click="OnElementClicked" />
+                        <ui:AppBarButton Label="Share" Icon="Share" Click="OnElementClicked" />
+                        <ui:CommandBar.SecondaryCommands>
+                            <ui:AppBarButton Label="Settings" Icon="Setting" InputGestureText="Ctrl+I" Click="OnElementClicked" />
+                            <ui:AppBarButton Label="Button 1" Icon="Add" InputGestureText="Ctrl+N" Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <ui:AppBarButton Label="Button 2" Icon="Delete" InputGestureText="Delete" Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <ui:AppBarSeparator Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <ui:AppBarButton Label="Button 3" Icon="FontDecrease" InputGestureText="Ctrl+-" Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <ui:AppBarButton Label="Button 4" Icon="FontIncrease" InputGestureText="Ctrl++" Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <ui:AppBarSeparator Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <ui:AppBarToggleButton Label="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, StringFormat='IsChecked = {0}'}" Icon="Emoji" Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </ui:CommandBar.SecondaryCommands>
+                    </ui:CommandBar>
+                    <TextBlock
+                        x:Name="SelectedOptionText"
+                        Padding="0,8,0,0" />
+                </StackPanel>
                 <sc:ControlExample.Options>
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <CheckBox
+                            x:Name="ShowMoreSecondaryCommandsCheckBox"
+                            Content="Show more secondary commands" />
+                        <CheckBox
                             Content="IsDynamicOverflowEnabled"
-                            IsChecked="{Binding ElementName=CommandBar1, Path=IsDynamicOverflowEnabled}" />
+                            IsChecked="{Binding ElementName=PrimaryCommandBar, Path=IsDynamicOverflowEnabled}" />
                         <ComboBox
                             ui:ControlHelper.Header="DefaultLabelPosition"
                             ItemsSource="{Binding Source={x:Type ui:CommandBarDefaultLabelPosition}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=CommandBar1, Path=DefaultLabelPosition}" />
+                            SelectedItem="{Binding ElementName=PrimaryCommandBar, Path=DefaultLabelPosition}" />
                         <ComboBox
                             ui:ControlHelper.Header="OverflowButtonVisibility"
                             ItemsSource="{Binding Source={x:Type ui:CommandBarOverflowButtonVisibility}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=CommandBar1, Path=OverflowButtonVisibility}" />
-                        <CheckBox
-                            x:Name="ShowToggleButtonCheckBox"
-                            Content="Show toggle button in overflow" />
+                            SelectedItem="{Binding ElementName=PrimaryCommandBar, Path=OverflowButtonVisibility}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

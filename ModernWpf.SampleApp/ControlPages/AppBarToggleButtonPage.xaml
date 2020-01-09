@@ -26,17 +26,6 @@
                             VerticalAlignment="Center" />
                     </StackPanel>
                 </sc:ControlExample.Example>
-                <sc:ControlExample.Options>
-                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <CheckBox
-                            Content="IsCompact"
-                            IsChecked="{Binding ElementName=Button1, Path=IsCompact}" />
-                        <ComboBox
-                            ui:ControlHelper.Header="LabelPosition"
-                            ItemsSource="{Binding Source={x:Type ui:CommandBarLabelPosition}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=Button1, Path=LabelPosition}" />
-                    </ui:SimpleStackPanel>
-                </sc:ControlExample.Options>
             </sc:ControlExample>
             <sc:ControlExample
                 x:Name="Example2"

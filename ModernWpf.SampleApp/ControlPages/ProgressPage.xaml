@@ -38,15 +38,24 @@
                 <StackPanel Orientation="Horizontal">
                     <ProgressBar
                         x:Name="ProgressBar2"
-                        Width="130" />
+                        Width="130"
+                        Value="{Binding ElementName=ProgressValue, Path=Value, Mode=OneWay}" />
                     <TextBlock
                         x:Name="Control2Output"
                         Style="{StaticResource OutputTextBlockStyle}"
                         Width="60"
                         TextAlignment="Center" />
-                    <RepeatButton
-                        Content="Click and hold"
-                        Click="RepeatButton_Click" />
+                    <TextBlock
+                        x:Name="ProgresLabel"
+                        Text="Progress"
+                        VerticalAlignment="Center"
+                        Margin="0,0,10,0" />
+                    <ui:NumberBox
+                        x:Name="ProgressValue"
+                        AutomationProperties.LabeledBy="{Binding ElementName=ProgresLabel}"
+                        Minimum="0"
+                        Maximum="100"
+                        SpinButtonPlacementMode="Inline" />
                 </StackPanel>
             </sc:ControlExample>
 

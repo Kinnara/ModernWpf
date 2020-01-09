@@ -10,13 +10,18 @@ using System.Windows.Navigation;
 
 namespace ModernWpf.SampleApp
 {
-    public partial class MainPage
+    public partial class NavigationRootPage
     {
         private bool _ignoreSelectionChange;
 
-        public MainPage()
+        public static NavigationRootPage Current { get; private set; }
+
+        public NavigationRootPage()
         {
             InitializeComponent();
+
+            Current = this;
+
             //PagesList.SelectedItem = PagesList.Items.OfType<ControlPageInfo>().FirstOrDefault(
             //    x => x.NavigateUri.ToString().EndsWith(nameof(CommandBarFlyoutPage) + ".xaml"));
             NavigateToSelectedPage();
@@ -169,6 +174,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(CompactSizingPage), "Compact Sizing");
             AddPage(typeof(PageTransitionsPage), "Page Transitions");
             AddPage(typeof(AppBarButtonPage));
+            AddPage(typeof(AppBarSeparatorPage));
             AddPage(typeof(AppBarToggleButtonPage));
             AddPage(typeof(ButtonsPage));
             AddPage(typeof(CalendarPage));

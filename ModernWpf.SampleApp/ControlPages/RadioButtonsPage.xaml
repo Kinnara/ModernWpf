@@ -42,20 +42,6 @@
                         Grid.Column="1"
                         Margin="8,0" />
                 </Grid>
-
-                <sc:ControlExample.Options>
-                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <Slider
-                            ui:ControlHelper.Header="MaxColumns"
-                            Minimum="1"
-                            Maximum="5"
-                            Value="{Binding ElementName=radioButtons, Path=MaxColumns}"
-                            AutoToolTipPlacement="TopLeft" />
-                        <CheckBox
-                            Content="IsEnabled"
-                            IsChecked="{Binding ElementName=radioButtons, Path=IsEnabled}" />
-                    </ui:SimpleStackPanel>
-                </sc:ControlExample.Options>
             </sc:ControlExample>
 
             <sc:ControlExample HeaderText="Two groups of radio buttons.">

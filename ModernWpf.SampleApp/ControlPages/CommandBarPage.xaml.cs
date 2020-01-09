@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using ModernWpf.Controls;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
@@ -7,6 +9,11 @@ namespace ModernWpf.SampleApp.ControlPages
         public CommandBarPage()
         {
             InitializeComponent();
+        }
+
+        private void OnElementClicked(object sender, RoutedEventArgs e)
+        {
+            SelectedOptionText.Text = "You clicked: " + (sender as AppBarButton).Label;
         }
     }
 }

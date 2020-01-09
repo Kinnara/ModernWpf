@@ -147,7 +147,7 @@
                             Checked="DefaultRB_Checked" />
                         <RadioButton
                             x:Name="DrillRB"
-                            Content="Drill"
+                            Content="DrillIn"
                             Checked="DrillRB_Checked" />
                         <RadioButton
                             x:Name="SuppressRB"

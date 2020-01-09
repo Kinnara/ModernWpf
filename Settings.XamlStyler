@@ -46,7 +46,8 @@
         ui:AppBarToggleButton,
         Binding,
         local:RatingItemFontInfo,
-        animation:CubicBezierEase
+        animation:CubicBezierEase,
+        CommandBinding
 	",
     "SeparateByGroups": false,
     "AttributeIndentation": 0,

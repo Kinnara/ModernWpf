@@ -2,23 +2,22 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class AppBarButtonPage : UserControl
+    public partial class AppBarSeparatorPage : UserControl
     {
         AppBarToggleButton compactButton = null;
         AppBarSeparator separator = null;
 
-        public AppBarButtonPage()
+        public AppBarSeparatorPage()
         {
             InitializeComponent();
             Loaded += AppBarButtonPage_Loaded;
-            Unloaded += AppBarButtonPage_Unloaded;
+            Unloaded += AppBarSeparatorPage_Unloaded;
         }
 
-        private void AppBarButtonPage_Unloaded(object sender, RoutedEventArgs e)
+        private void AppBarSeparatorPage_Unloaded(object sender, RoutedEventArgs e)
         {
             CommandBar appBar = NavigationRootPage.Current.TopCommandBar;
             compactButton.Click -= CompactButton_Click;
@@ -44,49 +43,18 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void CompactButton_Click(object sender, RoutedEventArgs e)
         {
+            // NOTE: If you use AppBarButton and AppBarSeparator controls in a CommandBar,
+            // the CommandBar sets the IsCompact property automatically. You only set it
+            // yourself if the control in not in a CommandBar.
+
             ToggleButton toggle = sender as ToggleButton;
             if (toggle != null && toggle.IsChecked != null)
             {
-                Button1.IsCompact =
-                Button2.IsCompact =
-                Button3.IsCompact =
-                Button4.IsCompact =
-                Button5.IsCompact = (bool)toggle.IsChecked;
-            }
-        }
-
-        private void AppBarButton_Click(object sender, RoutedEventArgs e)
-        {
-            Button b = sender as Button;
-
-            if (b != null)
-            {
-                string name = b.Name;
-
-                switch (name)
+                foreach (ICommandBarElement element in Control1.Children)
                 {
-                    case "Button1":
-                        Control1Output.Text = "You clicked: " + name;
-                        break;
-                    case "Button2":
-                        Control2Output.Text = "You clicked: " + name;
-                        break;
-                    case "Button3":
-                        Control3Output.Text = "You clicked: " + name;
-                        break;
-                    case "Button4":
-                        Control4Output.Text = "You clicked: " + name;
-                        break;
-                    case "Button5":
-                        Control5Output.Text = "You clicked: " + name;
-                        break;
+                    element.IsCompact = (bool)toggle.IsChecked;
                 }
             }
-        }
-
-        private void Save_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
         }
     }
 }
