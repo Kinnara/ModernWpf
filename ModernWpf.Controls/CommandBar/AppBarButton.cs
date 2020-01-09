@@ -15,6 +15,9 @@ namespace ModernWpf.Controls
             CommandProperty.OverrideMetadata(typeof(AppBarButton),
                 new FrameworkPropertyMetadata(OnCommandPropertyChanged));
 
+            ToolTipProperty.OverrideMetadata(typeof(AppBarButton),
+                new FrameworkPropertyMetadata { CoerceValueCallback = AppBarElementProperties.CoerceToolTip });
+
             ToolBar.OverflowModeProperty.OverrideMetadata(typeof(AppBarButton),
                 new FrameworkPropertyMetadata(OnOverflowModePropertyChanged));
 

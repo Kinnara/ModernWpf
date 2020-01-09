@@ -37,7 +37,12 @@ namespace ModernWpf.Controls
                 "Label",
                 typeof(string),
                 typeof(AppBarElementProperties),
-                new PropertyMetadata(string.Empty, null, CoerceLabel));
+                new PropertyMetadata(string.Empty, OnLabelChanged, CoerceLabel));
+
+        private static void OnLabelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as FrameworkElement)?.CoerceValue(FrameworkElement.ToolTipProperty);
+        }
 
         // Set the label to the command text if no label has been explicitly specified
         private static object CoerceLabel(DependencyObject d, object value)
@@ -108,6 +113,7 @@ namespace ModernWpf.Controls
         private static void OnIsInOverflowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as IAppBarElement)?.UpdateApplicationViewState();
+            (d as FrameworkElement)?.CoerceValue(FrameworkElement.ToolTipProperty);
         }
 
         public static void UpdateIsInOverflow(DependencyObject element)
@@ -147,6 +153,7 @@ namespace ModernWpf.Controls
         private static void OnInputGestureTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             UpdateHasInputGestureText(d, (string)e.NewValue);
+            (d as FrameworkElement)?.CoerceValue(FrameworkElement.ToolTipProperty);
         }
 
         // Gets the input gesture text from the command text if it hasn't been explicitly specified
@@ -196,5 +203,22 @@ namespace ModernWpf.Controls
         }
 
         #endregion
+
+        internal static object CoerceToolTip(DependencyObject d, object baseValue)
+        {
+            var button = (ButtonBase)d;
+
+            if (baseValue == null &&
+                button.HasDefaultValue(FrameworkElement.ToolTipProperty) &&
+                (bool)button.GetValue(HasInputGestureTextProperty) &&
+                !(bool)button.GetValue(IsInOverflowProperty))
+            {
+                string label = (string)button.GetValue(LabelProperty);
+                string inputGestureText = (string)button.GetValue(InputGestureTextProperty);
+                return $"{label} ({inputGestureText})".Trim();
+            }
+
+            return baseValue;
+        }
     }
 }

@@ -242,9 +242,13 @@
                             <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundSubMenuOpened}" />
                         </MultiTrigger>-->
                         <!--#endregion-->
-                        <Trigger Property="HasInputGestureText" Value="True">
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="HasInputGestureText" Value="True" />
+                                <Condition Property="IsInOverflow" Value="True" />
+                            </MultiTrigger.Conditions>
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
-                        </Trigger>
+                        </MultiTrigger>
                         <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="ToolBar.IsOverflowItem" Value="True" />
