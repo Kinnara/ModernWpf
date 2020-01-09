@@ -11,8 +11,85 @@
     d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
+    <UserControl.Resources>
+        <Style TargetType="Slider" BasedOn="{StaticResource DefaultSliderStyle}">
+            <Setter Property="Maximum" Value="100" />
+            <Setter Property="TickFrequency" Value="1" />
+            <Setter Property="IsSnapToTickEnabled" Value="True" />
+            <Setter Property="AutoToolTipPlacement" Value="TopLeft" />
+        </Style>
+    </UserControl.Resources>
+
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
+            <sc:ControlExample
+                x:Name="Example1"
+                HeaderText="A simple Slider.">
+                <StackPanel Orientation="Horizontal">
+                    <Slider
+                        x:Name="Slider1"
+                        AutomationProperties.Name="simple slider"
+                        Width="200" />
+                    <TextBlock
+                        Style="{StaticResource OutputTextBlockStyle}"
+                        Text="{Binding Value, ElementName=Slider1}" />
+                </StackPanel>
+            </sc:ControlExample>
+            <sc:ControlExample
+                x:Name="Example2"
+                HeaderText="A Slider with range and steps specified.">
+                <StackPanel
+                    x:Name="Control2"
+                    Orientation="Horizontal">
+                    <Slider
+                        x:Name="Slider2"
+                        ui:ControlHelper.Header="Control header"
+                        Width="200"
+                        Minimum="500"
+                        Maximum="1000"
+                        LargeChange="100"
+                        SmallChange="10"
+                        TickFrequency="10"
+                        Value="800" />
+                    <TextBlock
+                        Style="{StaticResource OutputTextBlockStyle}"
+                        Text="{Binding Value, ElementName=Slider2, Mode=OneWay}" />
+                </StackPanel>
+            </sc:ControlExample>
+            <sc:ControlExample
+                x:Name="Example3"
+                HeaderText="A Slider with tick marks.">
+                <StackPanel Orientation="Horizontal">
+                    <Slider
+                        x:Name="Slider3"
+                        Width="290"
+                        TickFrequency="10"
+                        TickPlacement="Both"
+                        AutomationProperties.Name="Slider with ticks" />
+                    <TextBlock
+                        Style="{StaticResource OutputTextBlockStyle}"
+                        Text="{Binding Value, ElementName=Slider3, Mode=OneWay}" />
+                </StackPanel>
+            </sc:ControlExample>
+            <sc:ControlExample
+                x:Name="Example4"
+                HeaderText="A vertical slider with range and tick marks specified.">
+                <StackPanel Orientation="Horizontal">
+                    <Slider
+                        x:Name="Slider4"
+                        Width="100"
+                        Height="100"
+                        Orientation="Vertical"
+                        TickFrequency="10"
+                        TickPlacement="Both"
+                        Maximum="50"
+                        Minimum="-50"
+                        AutomationProperties.Name="vertical slider" />
+                    <TextBlock
+                        Style="{StaticResource OutputTextBlockStyle}"
+                        Text="{Binding Value, ElementName=Slider4, Mode=OneWay}" />
+                </StackPanel>
+            </sc:ControlExample>
             <sc:ControlExample
                 HeaderText="API in action"
                 HorizontalContentAlignment="Stretch"

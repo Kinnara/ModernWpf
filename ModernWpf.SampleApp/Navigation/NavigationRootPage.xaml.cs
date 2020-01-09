@@ -201,6 +201,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(ProgressPage), "Progress Controls");
             AddPage(typeof(RadioButtonsPage));
             AddPage(typeof(RatingControlPage));
+            AddPage(typeof(SimpleStackPanelPage));
             AddPage(typeof(SliderPage));
             //AddPage(typeof(StatusBarPage));
             AddPage(typeof(TabControlPage));
