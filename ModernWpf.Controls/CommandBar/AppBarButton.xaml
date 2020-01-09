@@ -26,6 +26,20 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="FlyoutStates">
+                                <VisualState x:Name="NoFlyout" />
+                                <VisualState x:Name="HasFlyout">
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SubItemChevron" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <Rectangle
                                 x:Name="AppBarButtonInnerBorder"
@@ -89,7 +103,7 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     Visibility="Collapsed" />
-                                <!--<ui:FontIcon
+                                <ui:FontIcon
                                     x:Name="SubItemChevron"
                                     Grid.Column="2"
                                     Glyph="&#xE0E3;"
@@ -97,7 +111,7 @@
                                     FontSize="12"
                                     Foreground="{DynamicResource MenuFlyoutSubItemChevron}"
                                     Margin="12,0,12,0"
-                                    Visibility="Collapsed" />-->
+                                    Visibility="Collapsed" />
 
                             </Grid>
 
@@ -251,8 +265,8 @@
                         </MultiTrigger>
                         <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition Property="ToolBar.IsOverflowItem" Value="True" />
                                 <Condition Property="HasFlyout" Value="True" />
+                                <Condition Property="IsInOverflow" Value="False" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
                         </MultiTrigger>-->
