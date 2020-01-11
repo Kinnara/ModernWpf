@@ -66,9 +66,10 @@ namespace ModernWpf.Controls
 
         private void OnRequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            if (e.Uri.Scheme.IndexOf("http", StringComparison.OrdinalIgnoreCase) >= 0)
+            Uri uri = e.Uri;
+            if (uri.IsAbsoluteUri && uri.Scheme.IndexOf("http", StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                Process.Start(new ProcessStartInfo(e.Uri.ToString())
+                Process.Start(new ProcessStartInfo(uri.ToString())
                 {
                     UseShellExecute = true
                 });

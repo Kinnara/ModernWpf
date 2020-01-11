@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -54,7 +56,7 @@ namespace ModernWpf.Controls.Primitives
                 "KeepInteriorCornersSquare",
                 typeof(bool),
                 typeof(ComboBoxHelper),
-                new PropertyMetadata(OnKeepInteriorCornersSquareChanged));
+                new PropertyMetadata(false, OnKeepInteriorCornersSquareChanged));
 
         public static bool GetKeepInteriorCornersSquare(ComboBox comboBox)
         {

@@ -85,7 +85,8 @@
                         SnapsToDevicePixels="true">
                         <ScrollViewer
                             Padding="{TemplateBinding Padding}"
-                            Focusable="false">
+                            Focusable="false"
+                            primitives:ScrollViewerHelper.AutoHideScrollBars="{TemplateBinding primitives:ScrollViewerHelper.AutoHideScrollBars}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </ScrollViewer>
                     </Border>

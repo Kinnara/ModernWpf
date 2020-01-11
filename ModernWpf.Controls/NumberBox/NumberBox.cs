@@ -425,10 +425,10 @@ namespace ModernWpf.Controls
             }
 
             m_popup = GetTemplateChild(c_numberBoxPopupName) as Popup;
+
             if (m_popup != null)
             {
-                m_popup.Opened += OnPopupOpened;
-                m_popup.Closed += OnPopupClosed;
+                m_popupRepositionHelper = new PopupRepositionHelper(m_popup, this);
             }
 
             if (GetTemplateChild(c_numberBoxPopupDownButtonName) is RepeatButton popupSpinDown)
@@ -860,68 +860,6 @@ namespace ModernWpf.Controls
             return value >= Minimum && value <= Maximum;
         }
 
-        private void OnPopupOpened(object sender, EventArgs e)
-        {
-            if (m_isPopupOpen)
-            {
-                return;
-            }
-
-            m_isPopupOpen = true;
-
-            LayoutUpdated += OnNumberBoxLayoutUpdated;
-
-            m_hostWindow = Window.GetWindow(this);
-            if (m_hostWindow != null)
-            {
-                m_hostWindow.LocationChanged += OnHostWindowLocationChanged;
-            }
-        }
-
-        private void OnPopupClosed(object sender, EventArgs e)
-        {
-            LayoutUpdated -= OnNumberBoxLayoutUpdated;
-
-            if (m_hostWindow != null)
-            {
-                m_hostWindow.LocationChanged -= OnHostWindowLocationChanged;
-                m_hostWindow = null;
-            }
-
-            m_isPopupOpen = false;
-            m_popupPosition = default;
-        }
-
-        private void OnNumberBoxLayoutUpdated(object sender, EventArgs e)
-        {
-            RepositionPopup();
-        }
-
-        private void OnHostWindowLocationChanged(object sender, EventArgs e)
-        {
-            RepositionPopup();
-        }
-
-        private void RepositionPopup()
-        {
-            if (m_popup != null)
-            {
-                var child = m_popup.Child;
-                if (child != null)
-                {
-                    if (child.IsVisible && IsVisible)
-                    {
-                        var position = child.TranslatePoint(new Point(), this);
-                        if (m_popupPosition != position)
-                        {
-                            m_popupPosition = position;
-                            m_popup.Reposition();
-                        }
-                    }
-                }
-            }
-        }
-
         bool m_valueUpdating = false;
         bool m_textUpdating = false;
 
@@ -929,8 +867,6 @@ namespace ModernWpf.Controls
 
         TextBox m_textBox;
         Popup m_popup;
-        bool m_isPopupOpen;
-        Point m_popupPosition;
-        Window m_hostWindow;
+        PopupRepositionHelper m_popupRepositionHelper;
     }
 }

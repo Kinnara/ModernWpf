@@ -197,6 +197,155 @@
       <summary>Identifies the Label dependency property.</summary>
       <returns>The identifier for the Label dependency property.</returns>
     </member>
+    <member name="T:ModernWpf.Controls.AutoSuggestBox">
+      <summary>Represents a text control that makes suggestions to users as they enter text using a keyboard or pen (using ink and handwriting recognition). The app is notified when text has been changed by the user and is responsible for providing relevant suggestions for this control to display.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.AutoSuggestBox.#ctor">
+      <summary>Initializes a new instance of the AutoSuggestBox class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.Description">
+      <summary>Gets or sets content that is shown below the control. The content should provide guidance about the input expected by the control.</summary>
+      <returns>The content to be displayed below the control. The default is **null**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.DescriptionProperty">
+      <summary>Identifies the Description dependency property.</summary>
+      <returns>The identifier for the Description dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.Header">
+      <summary>Gets or sets the header object for the text box portion of this control.</summary>
+      <returns>The header object for the text box portion of this control.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.HeaderProperty">
+      <summary>Identifies the Header dependency property.</summary>
+      <returns>The identifier for the Header dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.IsSuggestionListOpen">
+      <summary>Gets or sets a Boolean value indicating whether the drop-down portion of the AutoSuggestBox is open.</summary>
+      <returns>A Boolean value indicating whether the drop-down portion of the AutoSuggestBox is open.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.IsSuggestionListOpenProperty">
+      <summary>Identifies the IsSuggestionListOpen dependency property.</summary>
+      <returns>Identifier for the IsSuggestionListOpen dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.MaxSuggestionListHeight">
+      <summary>Gets or set the maximum height for the drop-down portion of the AutoSuggestBox control.</summary>
+      <returns>The maximum height for the drop-down portion of the AutoSuggestBox control.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.MaxSuggestionListHeightProperty">
+      <summary>Identifies the MaxSuggestionListHeight dependency property.</summary>
+      <returns>Identifier for the MaxSuggestionListHeight dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.PlaceholderText">
+      <summary>Gets or sets the placeholder text to be displayed in the control.</summary>
+      <returns>The placeholder text to be displayed in the control. The default is an empty string.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.PlaceholderTextProperty">
+      <summary>Identifies the PlaceholderText dependency property.</summary>
+      <returns>The identifier for the PlaceholderText dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.QueryIcon">
+      <summary>Gets or sets the graphic content of the button that is clicked to initiate a query.</summary>
+      <returns>The graphic content of the button that is clicked to initiate a query, if present; otherwise, **null**. The default is **null**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.QueryIconProperty">
+      <summary>Identifies the QueryIcon dependency property.</summary>
+      <returns>The identifier for the QueryIcon dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.Text">
+      <summary>Gets or sets the text that is shown in the control.</summary>
+      <returns>The text that is shown in the control.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.TextBoxStyle">
+      <summary>Gets or sets the style of the auto-suggest text box.</summary>
+      <returns>The style of the auto-suggest text box.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.TextBoxStyleProperty">
+      <summary>Identifies the TextBoxStyle dependency property.</summary>
+      <returns>Identifier for the TextBoxStyle dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.TextMemberPath">
+      <summary>Gets or sets the property path that is used to get the value for display in the text box portion of the AutoSuggestBox control, when an item is selected.</summary>
+      <returns>The property path that is used to get the value for display in the text box portion of the AutoSuggestBox control, when an item is selected.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.TextMemberPathProperty">
+      <summary>Identifies the TextMemberPath dependency property.</summary>
+      <returns>Identifier for the TextMemberPath dependency property.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.TextProperty">
+      <summary>Identifies the PlaceholderText dependency property.</summary>
+      <returns>The identifier for the PlaceholderText dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.UpdateTextOnSelect">
+      <summary>Used in conjunction with TextMemberPath, gets or sets a value indicating whether items in the view will trigger an update of the editable text part of the AutoSuggestBox when clicked.</summary>
+      <returns>A value indicating whether items in the view will trigger an update of the editable text part of the AutoSuggestBox when clicked.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.UpdateTextOnSelectProperty">
+      <summary>Identifies the UpdateTextOnSelect dependency property.</summary>
+      <returns>Identifier for the UpdateTextOnSelect dependency property.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.AutoSuggestBox.QuerySubmitted">
+      <summary>Occurs when the user submits a search query.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.AutoSuggestBox.SuggestionChosen">
+      <summary>Raised before the text content of the editable control component is updated.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.AutoSuggestBox.TextChanged">
+      <summary>Raised after the text content of the editable control component is updated.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.AutoSuggestBoxQuerySubmittedEventArgs">
+      <summary>Provides event data for the AutoSuggestBox.QuerySubmitted event.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.AutoSuggestBoxQuerySubmittedEventArgs.#ctor">
+      <summary>Initializes a new instance of the AutoSuggestBoxQuerySubmittedEventArgs class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBoxQuerySubmittedEventArgs.ChosenSuggestion">
+      <summary>Gets the suggested result that the user chose.</summary>
+      <returns>The suggested result that the user chose.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBoxQuerySubmittedEventArgs.QueryText">
+      <summary>Gets the query text of the current search.</summary>
+      <returns>The query text of the current search.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.AutoSuggestBoxSuggestionChosenEventArgs">
+      <summary>Provides data for the SuggestionChosen event.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.AutoSuggestBoxSuggestionChosenEventArgs.#ctor">
+      <summary>Initializes a new instance of the AutoSuggestBoxSuggestionChosenEventArgs class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBoxSuggestionChosenEventArgs.SelectedItem">
+      <summary>Gets a reference to the selected item.</summary>
+      <returns>A reference to the selected item.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.AutoSuggestBoxTextChangedEventArgs">
+      <summary>Provides data for the TextChanged event.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.AutoSuggestBoxTextChangedEventArgs.#ctor">
+      <summary>Initializes a new instance of the AutoSuggestBoxTextChangedEventArgs class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBoxTextChangedEventArgs.Reason">
+      <summary>Gets or sets a value that indicates the reason for the text changing in the AutoSuggestBox.</summary>
+      <returns>The reason for the text changing in the AutoSuggestBox.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBoxTextChangedEventArgs.ReasonProperty">
+      <summary>Identifies the Reason dependency property.</summary>
+      <returns>Identifier for the Reason dependency property.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.AutoSuggestBoxTextChangedEventArgs.CheckCurrent">
+      <summary>Returns a Boolean value indicating if the current value of the TextBox is unchanged from the point in time when the TextChanged event was raised.</summary>
+      <returns>Indicates if the current value of the TextBox is unchanged from the point in time when the TextChanged event was raised.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.AutoSuggestionBoxTextChangeReason">
+      <summary>Values used to indicate the reason for the text changing in the AutoSuggestBox.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestionBoxTextChangeReason.ProgrammaticChange">
+      <summary>The text was changed via code.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestionBoxTextChangeReason.SuggestionChosen">
+      <summary>The user selected one of the items in the auto-suggestion box.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestionBoxTextChangeReason.UserInput">
+      <summary>The user edited the text.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.CommandBar">
       <summary>Represents a specialized app bar that provides layout for AppBarButton and related command elements.</summary>
     </member>

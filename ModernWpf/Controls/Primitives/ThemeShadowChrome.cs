@@ -383,17 +383,24 @@ namespace ModernWpf.Controls.Primitives
 
         private void PositionParentPopupControl()
         {
-            if (_parentPopupControl != null)
+            var popup = _parentPopupControl;
+            if (popup != null)
             {
                 Debug.Assert(IsShadowEnabled);
 
-                switch (_parentPopupControl.Placement)
+                switch (popup.Placement)
                 {
                     case PlacementMode.Bottom:
-                        EnsureEdgesAligned(CustomPlacementMode.BottomEdgeAlignedLeft);
+                        if (!EnsureEdgesAligned(CustomPlacementMode.BottomEdgeAlignedLeft) && shouldAlignLeftAndRightEdges())
+                        {
+                            EnsureEdgesAligned(CustomPlacementMode.BottomEdgeAlignedRight);
+                        }
                         break;
                     case PlacementMode.Top:
-                        EnsureEdgesAligned(CustomPlacementMode.TopEdgeAlignedLeft);
+                        if (!EnsureEdgesAligned(CustomPlacementMode.TopEdgeAlignedLeft) && shouldAlignLeftAndRightEdges())
+                        {
+                            EnsureEdgesAligned(CustomPlacementMode.TopEdgeAlignedRight);
+                        }
                         break;
                     case PlacementMode.Custom:
                         if (TryGetCustomPlacementMode(out var customPlacement))
@@ -401,6 +408,14 @@ namespace ModernWpf.Controls.Primitives
                             EnsureEdgesAligned(customPlacement);
                         }
                         break;
+                }
+
+                bool shouldAlignLeftAndRightEdges()
+                {
+                    var target = popup.PlacementTarget;
+                    return target != null &&
+                           target.RenderSize.Width == ActualWidth &&
+                           ActualWidth > 0;
                 }
             }
         }
@@ -465,10 +480,10 @@ namespace ModernWpf.Controls.Primitives
             return false;
         }
 
-        private void EnsureEdgesAligned(CustomPlacementMode placement)
+        private bool EnsureEdgesAligned(CustomPlacementMode placement)
         {
             Vector offsetToTarget;
-            Vector? translation = null;
+            Vector translation = s_noTranslation;
 
             switch (placement)
             {
@@ -498,13 +513,15 @@ namespace ModernWpf.Controls.Primitives
                     break;
             }
 
-            if (translation.HasValue)
+            if (translation != s_noTranslation)
             {
-                SetupTransform(translation.Value);
+                SetupTransform(translation);
+                return true;
             }
             else
             {
                 ResetTransform();
+                return false;
             }
 
             Vector getTranslation(bool top, bool left, Vector offset)
@@ -722,6 +739,7 @@ namespace ModernWpf.Controls.Primitives
 
         private static readonly Brush s_bg1, s_bg2, s_bg3, s_bg4;
         private static readonly BitmapCache s_bitmapCache;
+        private static readonly Vector s_noTranslation = new Vector(0, 0);
         private const double c_shadowMargin = 1;
     }
 }

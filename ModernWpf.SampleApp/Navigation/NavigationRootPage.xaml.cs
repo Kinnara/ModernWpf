@@ -6,24 +6,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Navigation;
 
 namespace ModernWpf.SampleApp
 {
     public partial class NavigationRootPage
     {
-        private bool _ignoreSelectionChange;
-
         public static NavigationRootPage Current { get; private set; }
+        public static Frame RootFrame { get; private set; }
+
+        private bool _ignoreSelectionChange;
+        private readonly ControlPagesData _controlPagesData = new ControlPagesData();
 
         public NavigationRootPage()
         {
             InitializeComponent();
 
             Current = this;
+            RootFrame = rootFrame;
 
-            //PagesList.SelectedItem = PagesList.Items.OfType<ControlPageInfo>().FirstOrDefault(
-            //    x => x.NavigateUri.ToString().EndsWith(nameof(CommandBarFlyoutPage) + ".xaml"));
+            //PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(
+            //    x => x.NavigateUri.ToString().EndsWith(nameof(AutoSuggestBoxPage) + ".xaml"));
             NavigateToSelectedPage();
         }
 
@@ -74,7 +78,7 @@ namespace ModernWpf.SampleApp
         {
             if (PagesList.SelectedValue is Uri source)
             {
-                Frame?.Navigate(source);
+                RootFrame?.Navigate(source);
             }
         }
 
@@ -86,10 +90,67 @@ namespace ModernWpf.SampleApp
             }
         }
 
+        private void OnControlsSearchBoxTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            var suggestions = new List<ControlInfoDataItem>();
+
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                var querySplit = sender.Text.Split(' ');
+                var matchingItems = _controlPagesData.Where(
+                    item =>
+                    {
+                        // Idea: check for every word entered (separated by space) if it is in the name,  
+                        // e.g. for query "split button" the only result should "SplitButton" since its the only query to contain "split" and "button" 
+                        // If any of the sub tokens is not in the string, we ignore the item. So the search gets more precise with more words 
+                        bool flag = true;
+                        foreach (string queryToken in querySplit)
+                        {
+                            // Check if token is not in string 
+                            if (item.Title.IndexOf(queryToken, StringComparison.CurrentCultureIgnoreCase) < 0)
+                            {
+                                // Token is not in string, so we ignore this item. 
+                                flag = false;
+                            }
+                        }
+                        return flag;
+                    });
+                foreach (var item in matchingItems)
+                {
+                    suggestions.Add(item);
+                }
+                if (suggestions.Count > 0)
+                {
+                    controlsSearchBox.ItemsSource = suggestions.OrderByDescending(i => i.Title.StartsWith(sender.Text, StringComparison.CurrentCultureIgnoreCase)).ThenBy(i => i.Title);
+                }
+                else
+                {
+                    controlsSearchBox.ItemsSource = new string[] { "No results found" };
+                }
+            }
+        }
+
+        private void OnControlsSearchBoxQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            if (args.ChosenSuggestion != null && args.ChosenSuggestion is ControlInfoDataItem)
+            {
+                var navigateUri = (args.ChosenSuggestion as ControlInfoDataItem).NavigateUri;
+                RootFrame.Navigate(navigateUri);
+            }
+            else if (!string.IsNullOrEmpty(args.QueryText))
+            {
+                var item = _controlPagesData.FirstOrDefault(i => i.Title.Equals(args.QueryText, StringComparison.OrdinalIgnoreCase));
+                if (item != null)
+                {
+                    RootFrame.Navigate(item.NavigateUri);
+                }
+            }
+        }
+
         private void Frame_Navigated(object sender, NavigationEventArgs e)
         {
             _ignoreSelectionChange = true;
-            PagesList.SelectedValue = Frame.CurrentSource;
+            PagesList.SelectedValue = RootFrame.CurrentSource;
             _ignoreSelectionChange = false;
         }
 
@@ -162,9 +223,17 @@ namespace ModernWpf.SampleApp
                 ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
             }
         }
+
+        private void OnThemeButtonMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Right)
+            {
+                AutoSuggestArea.Visibility = Visibility.Visible;
+            }
+        }
     }
 
-    public class ControlPagesData : List<ControlPageInfo>
+    public class ControlPagesData : List<ControlInfoDataItem>
     {
         public ControlPagesData()
         {
@@ -176,6 +245,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(AppBarButtonPage));
             AddPage(typeof(AppBarSeparatorPage));
             AddPage(typeof(AppBarToggleButtonPage));
+            AddPage(typeof(AutoSuggestBoxPage));
             AddPage(typeof(ButtonsPage));
             AddPage(typeof(CalendarPage));
             //AddPage(typeof(CheckBoxPage));
@@ -214,25 +284,25 @@ namespace ModernWpf.SampleApp
 
         private void AddPage(Type pageType, string displayName = null)
         {
-            Add(new ControlPageInfo(pageType, displayName));
+            Add(new ControlInfoDataItem(pageType, displayName));
         }
     }
 
-    public class ControlPageInfo
+    public class ControlInfoDataItem
     {
-        public ControlPageInfo(Type pageType, string displayName = null)
+        public ControlInfoDataItem(Type pageType, string title = null)
         {
-            DisplayName = displayName ?? pageType.Name.Replace("Page", null);
+            Title = title ?? pageType.Name.Replace("Page", null);
             NavigateUri = new Uri($"ControlPages/{pageType.Name}.xaml", UriKind.Relative);
         }
 
-        public string DisplayName { get; }
+        public string Title { get; }
 
         public Uri NavigateUri { get; }
 
-        //public override string ToString()
-        //{
-        //    return base.ToString();
-        //}
+        public override string ToString()
+        {
+            return Title;
+        }
     }
 }

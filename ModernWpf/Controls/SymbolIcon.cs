@@ -67,6 +67,36 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region FontSize
+
+        internal static readonly DependencyProperty FontSizeProperty =
+            DependencyProperty.Register(
+                nameof(FontSize),
+                typeof(double),
+                typeof(SymbolIcon),
+                new PropertyMetadata(20d, OnFontSizeChanged));
+
+        internal double FontSize
+        {
+            get => (double)GetValue(FontSizeProperty);
+            set => SetValue(FontSizeProperty, value);
+        }
+
+        private static void OnFontSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((SymbolIcon)d).OnFontSizeChanged(e);
+        }
+
+        private void OnFontSizeChanged(DependencyPropertyChangedEventArgs e)
+        {
+            if (_textBlock != null)
+            {
+                _textBlock.FontSize = (double)e.NewValue;
+            }
+        }
+
+        #endregion
+
         internal override void InitializeChildren()
         {
             _textBlock = new TextBlock
@@ -75,7 +105,7 @@ namespace ModernWpf.Controls
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Center,
                 TextAlignment = TextAlignment.Center,
-                FontSize = 20,
+                FontSize = FontSize,
                 FontStyle = FontStyles.Normal,
                 FontWeight = FontWeights.Normal,
                 Text = ConvertToString(Symbol)

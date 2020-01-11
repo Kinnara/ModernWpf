@@ -8,6 +8,7 @@
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -41,6 +42,7 @@
             Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -122,7 +124,7 @@
                 Margin="0,0,12,0"
                 Background="Transparent"
                 DefaultLabelPosition="Right">
-                <ui:AppBarButton x:Name="ThemeButton" Click="OnThemeButtonClick" Label="Toggle Theme">
+                <ui:AppBarButton x:Name="ThemeButton" Click="OnThemeButtonClick" Label="Toggle Theme" MouseDoubleClick="OnThemeButtonMouseDoubleClick">
                     <ui:AppBarButton.Icon>
                         <ui:FontIcon
                             Glyph="&#xE771;"
@@ -130,13 +132,34 @@
                     </ui:AppBarButton.Icon>
                 </ui:AppBarButton>
             </ui:CommandBar>
+
+            <Grid
+                x:Name="AutoSuggestArea"
+                Grid.Column="2"
+                Margin="0,0,12,0"
+                Width="294"
+                Visibility="Collapsed">
+                <ui:AutoSuggestBox
+                    x:Name="controlsSearchBox"
+                    VerticalAlignment="Center"
+                    PlaceholderText="Search"
+                    QueryIcon="Find"
+                    QuerySubmitted="OnControlsSearchBoxQuerySubmitted"
+                    TextChanged="OnControlsSearchBoxTextChanged">
+                    <ui:AutoSuggestBox.Resources>
+                        <Style TargetType="ListView" BasedOn="{StaticResource DefaultListViewStyle}">
+                            <Setter Property="ui:ScrollViewerHelper.AutoHideScrollBars" Value="True" />
+                        </Style>
+                    </ui:AutoSuggestBox.Resources>
+                </ui:AutoSuggestBox>
+            </Grid>
         </Grid>
 
         <ListBox
             x:Name="PagesList"
             Grid.Row="1"
             Grid.Column="0"
-            DisplayMemberPath="DisplayName"
+            DisplayMemberPath="Title"
             SelectedValuePath="NavigateUri"
             SelectedIndex="0"
             SelectionChanged="PagesList_SelectionChanged">
@@ -146,7 +169,7 @@
         </ListBox>
 
         <ui:ThemeAwareFrame
-            x:Name="Frame"
+            x:Name="rootFrame"
             Grid.Row="1"
             Grid.Column="1"
             Focusable="False"
