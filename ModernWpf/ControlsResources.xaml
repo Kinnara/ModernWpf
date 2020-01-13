@@ -14,6 +14,7 @@
         <ResourceDictionary Source="Styles/DataGrid.xaml" />
         <ResourceDictionary Source="Styles/DatePicker.xaml" />
         <ResourceDictionary Source="Styles/Expander.xaml" />
+        <ResourceDictionary Source="Styles/GridSplitter.xaml" />
         <ResourceDictionary Source="Styles/GroupBox.xaml" />
         <ResourceDictionary Source="Styles/GroupItem.xaml" />
         <ResourceDictionary Source="Styles/Label.xaml" />
