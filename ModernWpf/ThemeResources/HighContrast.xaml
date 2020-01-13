@@ -876,6 +876,17 @@
     <!-- Resources for NumberBox -->
     <m:StaticResource x:Key="NumberBoxPopupIndicatorForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
 
+    <!-- Resources for PersonPicture -->
+    <SolidColorBrush x:Key="PersonPictureForegroundThemeBrush" Color="{m:StaticColor SystemAltHighColor}" />
+    <SolidColorBrush x:Key="PersonPictureEllipseBadgeForegroundThemeBrush" Color="{m:StaticColor SystemBaseHighColor}" />
+    <SolidColorBrush x:Key="PersonPictureEllipseBadgeFillThemeBrush" Color="{m:StaticColor SystemChromeDisabledHighColor}" />
+    <SolidColorBrush x:Key="PersonPictureEllipseBadgeStrokeThemeBrush" Color="{m:StaticColor SystemListMediumColor}" />
+    <SolidColorBrush x:Key="PersonPictureEllipseFillThemeBrush" Color="{m:StaticColor SystemBaseMediumColor}" />
+    <sys:Double x:Key="PersonPictureEllipseBadgeStrokeOpacity">0.8</sys:Double>
+    <sys:Double x:Key="PersonPictureEllipseBadgeImageSourceStrokeOpacity">1.0</sys:Double>
+    <sys:Double x:Key="PersonPictureEllipseStrokeThickness">0</sys:Double>
+    <sys:Double x:Key="PersonPictureEllipseBadgeStrokeThickness">2</sys:Double>
+
     <!-- Resources for Pivot -->
     <m:StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
     <sys:Double x:Key="PivotHeaderItemFontSize">24</sys:Double>

@@ -1,4 +1,7 @@
-﻿using System.Windows.Automation;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using ModernWpf.Controls;
@@ -23,7 +26,7 @@ namespace ModernWpf.Automation.Peers
 
         protected override string GetClassNameCore()
         {
-            return nameof(NumberBox);
+            return typeof(NumberBox).FullName;
         }
 
         protected override AutomationControlType GetAutomationControlTypeCore()

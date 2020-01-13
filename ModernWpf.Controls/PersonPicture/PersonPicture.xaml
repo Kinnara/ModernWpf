@@ -1,0 +1,145 @@
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style TargetType="local:PersonPicture">
+        <Setter Property="Foreground" Value="{DynamicResource PersonPictureForegroundThemeBrush}" />
+        <Setter Property="Width" Value="100" />
+        <Setter Property="Height" Value="100" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontWeight" Value="350" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PersonPicture">
+                    <Grid x:Name="RootGrid">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Photo" />
+                                <VisualState x:Name="Initials" />
+                                <VisualState x:Name="NoPhotoOrInitials" />
+                                <VisualState x:Name="Group" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="BadgeStates">
+                                <VisualState x:Name="NoBadge" />
+                                <VisualState x:Name="BadgeWithoutImageSource" />
+                                <VisualState x:Name="BadgeWithImageSource">
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BadgingEllipse" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <ImageBrush x:Name="BadgeImageBrush" Stretch="UniformToFill" />
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <ui:VisualStateGroupListener x:Name="CommonStatesListener" GroupName="CommonStates" />
+                        <ui:VisualStateGroupListener x:Name="BadgeStatesListener" GroupName="BadgeStates" />
+
+                        <Ellipse
+                            Fill="{DynamicResource PersonPictureEllipseFillThemeBrush}"
+                            Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                            StrokeThickness="{DynamicResource PersonPictureEllipseStrokeThickness}"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}" />
+
+                        <TextBlock
+                            x:Name="InitialsTextBlock"
+                            FontSize="36"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            Foreground="{TemplateBinding Foreground}"
+                            FontWeight="{TemplateBinding FontWeight}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ActualInitials}">
+                            <TextBlock.RenderTransform>
+                                <TranslateTransform Y="-2" />
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+
+                        <Ellipse
+                            x:Name="PersonPictureEllipse"
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
+                            FlowDirection="LeftToRight" />
+
+                        <Grid
+                            x:Name="BadgeGrid"
+                            Visibility="Collapsed"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Right">
+
+                            <Ellipse
+                                x:Name="BadgingBackgroundEllipse"
+                                Opacity="{DynamicResource PersonPictureEllipseBadgeStrokeOpacity}"
+                                Fill="{DynamicResource PersonPictureEllipseBadgeFillThemeBrush}"
+                                Stroke="{DynamicResource PersonPictureEllipseBadgeStrokeThemeBrush}"
+                                StrokeThickness="{DynamicResource PersonPictureEllipseBadgeStrokeThickness}" />
+
+                            <Ellipse
+                                x:Name="BadgingEllipse"
+                                Opacity="0"
+                                FlowDirection="LeftToRight" />
+
+                            <TextBlock
+                                x:Name="BadgeNumberTextBlock"
+                                Foreground="{DynamicResource PersonPictureEllipseBadgeForegroundThemeBrush}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontWeight="{TemplateBinding FontWeight}"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform Y="-1" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+
+                            <!-- Default font family to "Segoe MDL2 Assets" -->
+                            <ui:FontIcon
+                                x:Name="BadgeGlyphIcon"
+                                Foreground="{DynamicResource PersonPictureEllipseBadgeForegroundThemeBrush}"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontWeight="{TemplateBinding FontWeight}"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center" />
+                        </Grid>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <!-- Visual State when a Photo is available for display -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Photo">
+                            <Setter TargetName="PersonPictureEllipse" Property="Fill" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ActualImageBrush}" />
+                        </Trigger>
+                        <!-- Visual State when no Photo is available (but there are initials). -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="NoPhotoOrInitials">
+                            <Setter TargetName="InitialsTextBlock" Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
+                            <!-- Placeholder symbol for 'Contact' (https://docs.microsoft.com/en-us/windows/uwp/design/style/segoe-ui-symbol-font) -->
+                            <Setter TargetName="InitialsTextBlock" Property="Text" Value="&#xE77B;" />
+                        </Trigger>
+                        <!-- Visual State when in Group mode -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Group">
+                            <Setter TargetName="InitialsTextBlock" Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
+                            <!-- Placeholder symbol for 'People' (https://docs.microsoft.com/en-us/windows/uwp/design/style/segoe-ui-symbol-font) -->
+                            <Setter TargetName="InitialsTextBlock" Property="Text" Value="&#xE716;" />
+                        </Trigger>
+                        <Trigger SourceName="BadgeStatesListener" Property="CurrentStateName" Value="BadgeWithoutImageSource">
+                            <Setter TargetName="BadgeGrid" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger SourceName="BadgeStatesListener" Property="CurrentStateName" Value="BadgeWithImageSource">
+                            <Setter TargetName="BadgeGrid" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="BadgingEllipse" Property="Opacity" Value="{DynamicResource PersonPictureEllipseBadgeImageSourceStrokeOpacity}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

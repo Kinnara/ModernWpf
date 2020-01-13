@@ -61,6 +61,105 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to %1!s!, icon.
+        /// </summary>
+        internal static string BadgeIcon {
+            get {
+                return ResourceManager.GetString("BadgeIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to %1!s!, %2!s!.
+        /// </summary>
+        internal static string BadgeIconTextOverride {
+            get {
+                return ResourceManager.GetString("BadgeIconTextOverride", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        /// </summary>
+        internal static string BadgeItemPlural1 {
+            get {
+                return ResourceManager.GetString("BadgeItemPlural1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        /// </summary>
+        internal static string BadgeItemPlural2 {
+            get {
+                return ResourceManager.GetString("BadgeItemPlural2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        /// </summary>
+        internal static string BadgeItemPlural3 {
+            get {
+                return ResourceManager.GetString("BadgeItemPlural3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        /// </summary>
+        internal static string BadgeItemPlural4 {
+            get {
+                return ResourceManager.GetString("BadgeItemPlural4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        /// </summary>
+        internal static string BadgeItemPlural5 {
+            get {
+                return ResourceManager.GetString("BadgeItemPlural5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        /// </summary>
+        internal static string BadgeItemPlural6 {
+            get {
+                return ResourceManager.GetString("BadgeItemPlural6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        /// </summary>
+        internal static string BadgeItemPlural7 {
+            get {
+                return ResourceManager.GetString("BadgeItemPlural7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to %1!s!, %2!u! item.
+        /// </summary>
+        internal static string BadgeItemSingular {
+            get {
+                return ResourceManager.GetString("BadgeItemSingular", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to %1!s!, %2!u! %3!s!.
+        /// </summary>
+        internal static string BadgeItemTextOverride {
+            get {
+                return ResourceManager.GetString("BadgeItemTextOverride", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rating, {0} of {1}.
         /// </summary>
         internal static string BasicRatingString {
@@ -75,6 +174,24 @@ namespace ModernWpf.Strings {
         internal static string CommunityRatingString {
             get {
                 return ResourceManager.GetString("CommunityRatingString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Group.
+        /// </summary>
+        internal static string GroupName {
+            get {
+                return ResourceManager.GetString("GroupName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Person.
+        /// </summary>
+        internal static string PersonName {
+            get {
+                return ResourceManager.GetString("PersonName", resourceCulture);
             }
         }
         

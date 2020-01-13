@@ -27,7 +27,7 @@ namespace ModernWpf.SampleApp
             RootFrame = rootFrame;
 
             //PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(
-            //    x => x.NavigateUri.ToString().EndsWith(nameof(AutoSuggestBoxPage) + ".xaml"));
+            //    x => x.NavigateUri.ToString().EndsWith(nameof(PersonPicturePage) + ".xaml"));
             NavigateToSelectedPage();
         }
 
@@ -268,6 +268,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(MenuFlyoutPage));
             AddPage(typeof(NumberBoxPage));
             AddPage(typeof(PasswordBoxPage));
+            AddPage(typeof(PersonPicturePage));
             //AddPage(typeof(PopupPlacementPage));
             AddPage(typeof(ProgressPage), "Progress Controls");
             AddPage(typeof(RadioButtonsPage));

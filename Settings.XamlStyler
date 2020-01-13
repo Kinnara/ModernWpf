@@ -47,7 +47,9 @@
         Binding,
         local:RatingItemFontInfo,
         animation:CubicBezierEase,
-        CommandBinding
+        CommandBinding,
+        ui:VisualStateGroupListener,
+        ImageBrush
 	",
     "SeparateByGroups": false,
     "AttributeIndentation": 0,
