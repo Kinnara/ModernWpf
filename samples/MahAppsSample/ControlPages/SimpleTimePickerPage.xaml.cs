@@ -2,9 +2,9 @@
 
 namespace MahAppsSample.ControlPages
 {
-    public partial class TimePickerPage : Page
+    public partial class SimpleTimePickerPage : Page
     {
-        public TimePickerPage()
+        public SimpleTimePickerPage()
         {
             InitializeComponent();
         }

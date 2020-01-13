@@ -1,4 +1,5 @@
 ﻿using MahApps.Metro.Controls;
+using ModernWpf.Controls;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,7 @@ namespace ModernWpf.MahApps.Controls
     [TemplatePart(Name = c_navViewBackButton, Type = typeof(Button))]
     public class HamburgerMenuEx : HamburgerMenu
     {
+        private const string c_searchButtonName = "PaneAutoSuggestButton";
         private const string c_navViewBackButton = "NavigationViewBackButton";
 
         private static readonly Point c_frame1point1 = new Point(0.9, 0.1);
@@ -24,6 +26,7 @@ namespace ModernWpf.MahApps.Controls
         private static readonly Point c_frame2point2 = new Point(0.2, 1.0);
 
         private UIElement _paneGrid;
+        private Button _paneSearchButton;
         private Button _backButton;
         private ListBox _buttonsListView;
         private ListBox _optionsListView;
@@ -283,6 +286,29 @@ namespace ModernWpf.MahApps.Controls
 
         #endregion
 
+        #region AutoSuggestBox
+
+        /// <summary>
+        /// Identifies the AutoSuggestBox dependency property.
+        /// </summary>
+        public static readonly DependencyProperty AutoSuggestBoxProperty =
+            DependencyProperty.Register(
+                nameof(AutoSuggestBox),
+                typeof(AutoSuggestBox),
+                typeof(HamburgerMenuEx));
+
+        /// <summary>
+        /// Gets or sets an AutoSuggestBox to be displayed in the HamburgerMenuEx.
+        /// </summary>
+        /// <returns>An AutoSuggestBox box to be displayed in the HamburgerMenuEx.</returns>
+        public AutoSuggestBox AutoSuggestBox
+        {
+            get => (AutoSuggestBox)GetValue(AutoSuggestBoxProperty);
+            set => SetValue(AutoSuggestBoxProperty, value);
+        }
+
+        #endregion
+
         #region SelectedMenuItem
 
         private static readonly DependencyProperty SelectedMenuItemProperty =
@@ -305,6 +331,8 @@ namespace ModernWpf.MahApps.Controls
 
         private void OnSelectedMenuItemChanged(object oldValue, object newValue)
         {
+            SelectionChanged?.Invoke(this, new HamburgerMenuSelectionChangedEventArgs { SelectedItem = newValue });
+
             AnimateSelectionChanged(oldValue, newValue);
         }
 
@@ -353,11 +381,19 @@ namespace ModernWpf.MahApps.Controls
         public event EventHandler PaneClosed;
 
         /// <summary>
+        /// Occurs when the currently selected item changes.
+        /// </summary>
+        public event EventHandler<HamburgerMenuSelectionChangedEventArgs> SelectionChanged;
+
+        /// <summary>
         /// Called when the Template's tree has been generated.
         /// </summary>
         public override void OnApplyTemplate()
         {
-            base.OnApplyTemplate();
+            if (_paneSearchButton != null)
+            {
+                _paneSearchButton.Click -= OnPaneSearchButtonClick;
+            }
 
             if (_backButton != null)
             {
@@ -370,10 +406,18 @@ namespace ModernWpf.MahApps.Controls
                 _optionsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;
             }
 
+            base.OnApplyTemplate();
+
             _paneGrid = GetTemplateChild("PaneGrid") as UIElement;
+            _paneSearchButton = GetTemplateChild(c_searchButtonName) as Button;
             _backButton = GetTemplateChild(c_navViewBackButton) as Button;
             _buttonsListView = GetTemplateChild("ButtonsListView") as ListBox;
             _optionsListView = GetTemplateChild("OptionsListView") as ListBox;
+
+            if (_paneSearchButton != null)
+            {
+                _paneSearchButton.Click += OnPaneSearchButtonClick;
+            }
 
             if (_backButton != null)
             {
@@ -409,6 +453,13 @@ namespace ModernWpf.MahApps.Controls
             ((HamburgerMenuEx)d).UpdateSelectedMenuItem();
         }
 
+        private void OnPaneSearchButtonClick(object sender, RoutedEventArgs e)
+        {
+            SetCurrentValue(IsPaneOpenProperty, true);
+
+            AutoSuggestBox?.Focus();
+        }
+
         private void OnBackButtonClicked(object sender, RoutedEventArgs e)
         {
             BackRequested?.Invoke(this, new HamburgerMenuBackRequestedEventArgs());
@@ -416,8 +467,8 @@ namespace ModernWpf.MahApps.Controls
 
         private void OnListViewItemContainerGeneratorStatusChanged(object sender, EventArgs e)
         {
-            if (_buttonsListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated &&
-                _optionsListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+            if ((_buttonsListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated || !_buttonsListView.HasItems) &&
+                (_optionsListView.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated || !_optionsListView.HasItems))
             {
                 _buttonsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;
                 _optionsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;

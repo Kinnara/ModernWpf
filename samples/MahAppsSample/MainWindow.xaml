@@ -63,6 +63,11 @@
                         Margin="12,0,0,0" />
                 </DataTemplate>
             </ui:HamburgerMenuEx.HeaderTemplate>
+            <ui:HamburgerMenuEx.AutoSuggestBox>
+                <ui:AutoSuggestBox
+                    PlaceholderText="Hint text"
+                    QueryIcon="Find" />
+            </ui:HamburgerMenuEx.AutoSuggestBox>
 
             <mah:HamburgerMenu.ItemsSource>
                 <mah:HamburgerMenuItemCollection x:Name="NavViewItems">
@@ -96,6 +101,14 @@
                     </mah:HamburgerMenuIconItem>
 
                     <mah:HamburgerMenuIconItem
+                        Label="HamburgerMenuEx"
+                        Tag="ControlPages/HamburgerMenuExPage.xaml">
+                        <mah:HamburgerMenuIconItem.Icon>
+                            <ui:SymbolIcon Symbol="GlobalNavigationButton" />
+                        </mah:HamburgerMenuIconItem.Icon>
+                    </mah:HamburgerMenuIconItem>
+
+                    <mah:HamburgerMenuIconItem
                         Label="NumericUpDown"
                         Tag="ControlPages/NumericUpDownPage.xaml">
                         <mah:HamburgerMenuIconItem.Icon>
@@ -104,8 +117,8 @@
                     </mah:HamburgerMenuIconItem>
 
                     <mah:HamburgerMenuIconItem
-                        Label="TimePicker"
-                        Tag="ControlPages/TimePickerPage.xaml">
+                        Label="SimpleTimePicker"
+                        Tag="ControlPages/SimpleTimePickerPage.xaml">
                         <mah:HamburgerMenuIconItem.Icon>
                             <Image
                                 Stretch="None"

@@ -8,8 +8,9 @@ namespace SamplesCommon
         public static Uri SamplePage2 { get; } = GetUri(nameof(SamplePage2));
         public static Uri SamplePage3 { get; } = GetUri(nameof(SamplePage3));
         public static Uri SamplePage4 { get; } = GetUri(nameof(SamplePage4));
+        public static Uri SampleSettingsPage { get; } = GetUri(nameof(SampleSettingsPage));
 
-        private static Uri GetUri(string pageName)
+        public static Uri GetUri(string pageName)
         {
             return new Uri($"SamplesCommon;component/SamplePages/{pageName}.xaml", UriKind.Relative);
         }

@@ -200,17 +200,13 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <DockPanel
+                        <StackPanel
                             x:Name="PaneHeader"
                             Grid.Row="0"
-                            Margin="{TemplateBinding PaneHeaderMargin}"
-                            LastChildFill="True">
-                            <StackPanel
-                                x:Name="ButtonHolderPanel"
-                                DockPanel.Dock="Left">
+                            Margin="{TemplateBinding PaneHeaderMargin}">
+                            <StackPanel x:Name="ButtonHolderPanel">
                                 <Button
                                     x:Name="NavigationViewBackButton"
-                                    Grid.Row="0"
                                     Style="{DynamicResource NavigationBackButtonNormalStyle}"
                                     IsEnabled="{TemplateBinding IsBackEnabled}"
                                     Command="{TemplateBinding BackButtonCommand}"
@@ -218,15 +214,12 @@
                                     WindowChrome.IsHitTestVisibleInChrome="True" />
                                 <Button
                                     x:Name="HamburgerButton"
-                                    Grid.Row="1"
                                     Width="{TemplateBinding HamburgerWidth}"
                                     Height="{TemplateBinding HamburgerHeight}"
                                     Padding="{TemplateBinding HamburgerMargin}"
                                     AutomationProperties.Name="Main button"
                                     Foreground="{TemplateBinding PaneForeground}"
-                                    IsTabStop="{TemplateBinding IsTabStop}"
                                     Style="{TemplateBinding HamburgerButtonStyle}"
-                                    TabIndex="0"
                                     Visibility="{TemplateBinding HamburgerVisibility}"
                                     WindowChrome.IsHitTestVisibleInChrome="True">
                                     <TextBlock
@@ -238,12 +231,42 @@
                                         Style="{DynamicResource NavigationViewItemHeaderTextStyle}" />
                                 </Button>
                             </StackPanel>
+
+                            <Grid
+                                x:Name="AutoSuggestArea"
+                                Height="{DynamicResource NavigationViewTopPaneHeight}"
+                                VerticalAlignment="Center">
+
+                                <ContentControl
+                                    x:Name="PaneAutoSuggestBoxPresenter"
+                                    Content="{TemplateBinding AutoSuggestBox}"
+                                    Margin="{DynamicResource NavigationViewAutoSuggestBoxMargin}"
+                                    IsTabStop="False"
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalContentAlignment="Center">
+                                    <ContentControl.Template>
+                                        <ControlTemplate TargetType="ContentControl">
+                                            <ContentPresenter
+                                                Margin="{TemplateBinding Padding}"
+                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                        </ControlTemplate>
+                                    </ContentControl.Template>
+                                </ContentControl>
+
+                                <Button
+                                    x:Name="PaneAutoSuggestButton"
+                                    Visibility="Collapsed"
+                                    Style="{DynamicResource NavigationViewPaneSearchButtonStyle}"
+                                    Width="{TemplateBinding CompactPaneLength}"
+                                    ui:FocusVisualHelper.FocusVisualMargin="0" />
+                            </Grid>
+
                             <ContentControl
                                 x:Name="PaneHeaderContent"
-                                Grid.Row="2"
                                 ContentTemplate="{TemplateBinding HamburgerMenuHeaderTemplate}"
                                 IsTabStop="False" />
-                        </DockPanel>
+                        </StackPanel>
                         <ListBox
                             Name="ButtonsListView"
                             Grid.Row="1"
@@ -260,8 +283,7 @@
                             SelectedIndex="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedIndex, Mode=TwoWay}"
                             SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedItem, Mode=TwoWay}"
                             SelectionMode="Single"
-                            Style="{StaticResource ModernWpf.MahApps.Styles.ListBox.HamburgerMenu}"
-                            TabIndex="1" />
+                            Style="{StaticResource ModernWpf.MahApps.Styles.ListBox.HamburgerMenu}" />
                         <ListBox
                             Name="OptionsListView"
                             Grid.Row="2"
@@ -279,8 +301,7 @@
                             SelectedIndex="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedOptionsIndex, Mode=TwoWay}"
                             SelectedItem="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SelectedOptionsItem, Mode=TwoWay}"
                             SelectionMode="Single"
-                            Style="{StaticResource ModernWpf.MahApps.Styles.ListBox.HamburgerMenu}"
-                            TabIndex="2" />
+                            Style="{StaticResource ModernWpf.MahApps.Styles.ListBox.HamburgerMenu}" />
                     </Grid>
                 </Controls:SplitView.Pane>
 
@@ -329,8 +350,20 @@
             <Trigger Property="Header" Value="{x:Null}">
                 <Setter TargetName="HeaderContent" Property="Visibility" Value="Collapsed" />
             </Trigger>
-            <Trigger Property="HasPaneTitle" Value="True">
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="HasPaneTitle" Value="True" />
+                    <Condition Property="IsPaneOpen" Value="True" />
+                </MultiTrigger.Conditions>
                 <Setter TargetName="HamburgerButton" Property="Width" Value="{Binding OpenPaneLength, RelativeSource={RelativeSource TemplatedParent}}" />
+            </MultiTrigger>
+            <Trigger Property="AutoSuggestBox" Value="{x:Null}">
+                <Setter TargetName="AutoSuggestArea" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="IsPaneOpen" Value="False">
+                <Setter TargetName="PaneTitleTextBlock" Property="Visibility" Value="Collapsed" />
+                <Setter TargetName="PaneAutoSuggestBoxPresenter" Property="Visibility" Value="Collapsed" />
+                <Setter TargetName="PaneAutoSuggestButton" Property="Visibility" Value="Visible" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>

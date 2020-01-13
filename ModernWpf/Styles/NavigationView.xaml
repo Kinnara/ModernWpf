@@ -109,6 +109,15 @@
         </Setter>
     </Style>
 
+    <Style x:Key="NavigationViewPaneSearchButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+        <Setter Property="MinHeight" Value="40" />
+        <Setter Property="Content" Value="&#xE11A;" />
+        <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource NavigationViewToggleBorderThickness}" />
+        <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
+    </Style>
+
     <Style x:Key="NavigationViewItemHeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
         <Setter Property="FontWeight" Value="SemiBold" />
         <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
