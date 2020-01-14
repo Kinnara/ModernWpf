@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Navigation;
+using ModernWpf.Automation.Peers;
 
 namespace ModernWpf.Controls
 {
@@ -58,10 +60,27 @@ namespace ModernWpf.Controls
             ((HyperlinkButton)d).m_hyperlink.TargetName = (string)e.NewValue;
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new HyperlinkButtonAutomationPeer(this);
+        }
+
         protected override void OnClick()
         {
+            if (AutomationPeer.ListenerExists(AutomationEvents.InvokePatternOnInvoked))
+            {
+                AutomationPeer peer = UIElementAutomationPeer.CreatePeerForElement(this);
+                if (peer != null)
+                    peer.RaiseAutomationEvent(AutomationEvents.InvokePatternOnInvoked);
+            }
+
             m_hyperlink.DoClick();
             base.OnClick();
+        }
+
+        internal void AutomationButtonBaseClick()
+        {
+            OnClick();
         }
 
         private void OnRequestNavigate(object sender, RequestNavigateEventArgs e)
