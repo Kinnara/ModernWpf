@@ -45,8 +45,8 @@
                         </ResourceDictionary>
 
                         <ResourceDictionary x:Key="HighContrast">
-                            <SolidColorBrush x:Key="AppBackgroundBrush" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
-                            <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
+                            <SolidColorBrush x:Key="AppBackgroundBrush" Color="{Binding Path=(ui:BindableSystemColors.WindowColor)}" />
+                            <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{Binding Path=(ui:BindableSystemColors.WindowColor)}" />
                             <SolidColorBrush x:Key="RegionBrush" Color="Transparent" />
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Blue" />
                         </ResourceDictionary>

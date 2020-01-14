@@ -674,6 +674,10 @@
                     </Setter.Value>
                 </Setter>
             </Trigger>
+            <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true">
+                <Setter Property="primitives:ScrollBarHelper.CollapsedThumbBackgroundColor" Value="{DynamicResource {x:Static SystemColors.ControlTextColorKey}}" />
+                <Setter Property="primitives:ScrollBarHelper.ExpandedThumbBackgroundColor" Value="{DynamicResource {x:Static SystemColors.ControlTextColorKey}}" />
+            </DataTrigger>
         </Style.Triggers>
     </Style>
 
