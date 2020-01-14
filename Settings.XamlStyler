@@ -49,7 +49,8 @@
         animation:CubicBezierEase,
         CommandBinding,
         ui:VisualStateGroupListener,
-        ImageBrush
+        ImageBrush,
+        ui:BitmapIcon
 	",
     "SeparateByGroups": false,
     "AttributeIndentation": 0,
