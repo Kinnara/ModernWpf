@@ -35,7 +35,7 @@
                         <!-- App bar button with bitmap icon. -->
                         <ui:AppBarToggleButton x:Name="Button2" Label="BitmapIcon" Click="AppBarButton_Click">
                             <ui:AppBarToggleButton.Icon>
-                                <ui:BitmapIcon UriSource="/ModernWpf.SampleApp;component/Assets/Slices2.png" />
+                                <ui:BitmapIcon UriSource="/Assets/Slices2.png" />
                             </ui:AppBarToggleButton.Icon>
                         </ui:AppBarToggleButton>
                         <TextBlock
