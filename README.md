@@ -8,7 +8,7 @@ Modern styles and controls for your WPF applications.
 
 * Light and dark themes that can be easily customized. A high contrast theme is also included.
 
-* [Additional controls](https://github.com/Kinnara/ModernWpf/wiki/Controls#new-controls) to help you build modern applications. Some are ported from the [Windows UI Library](https://github.com/microsoft/microsoft-ui-xaml).
+* [Additional controls](https://github.com/Kinnara/ModernWpf/wiki/Controls#additional-controls) to help you build modern applications. Some are ported from the [Windows UI Library](https://github.com/microsoft/microsoft-ui-xaml).
 
 * Targets .NET Framework 4.5 and .NET Core 3.0. Runs on Windows Vista SP2 and above.
 
