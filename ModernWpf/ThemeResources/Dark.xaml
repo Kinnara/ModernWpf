@@ -805,9 +805,9 @@
     <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
 
     <!-- Resources for NavigationView -->
-    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="{StaticResource SystemChromeMediumColor}" />
-    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{StaticResource SystemChromeMediumColor}" />
-    <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="{StaticResource SystemChromeMediumHighColor}" />
+    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="{m:StaticColor SystemChromeMediumColor}" />
+    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{m:StaticColor SystemChromeMediumColor}" />
+    <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="{m:StaticColor SystemChromeMediumHighColor}" />
 
     <m:StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
@@ -1060,7 +1060,7 @@
 
     <!-- Resources for SplitButton -->
     <m:StaticResource x:Key="SplitButtonBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <SolidColorBrush x:Key="SplitButtonBackgroundPointerOver" Color="{StaticResource SystemBaseHighColor}" Opacity="0.1" />
+    <SolidColorBrush x:Key="SplitButtonBackgroundPointerOver" Color="{m:StaticColor SystemBaseHighColor}" Opacity="0.1" />
     <m:StaticResource x:Key="SplitButtonBackgroundPressed" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
     <m:StaticResource x:Key="SplitButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <m:StaticResource x:Key="SplitButtonBackgroundChecked" ResourceKey="SystemControlHighlightAccentBrush" />
