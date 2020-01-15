@@ -46,8 +46,8 @@ namespace ModernWpf.Controls
 
         public ToggleSwitch()
         {
-            SetCurrentValue(OffContentProperty, Strings.Resources.ToggleSwitchOff);
-            SetCurrentValue(OnContentProperty, Strings.Resources.ToggleSwitchOn);
+            SetCurrentValue(OffContentProperty, Strings.ToggleSwitchOff);
+            SetCurrentValue(OnContentProperty, Strings.ToggleSwitchOn);
 
             IsEnabledChanged += OnIsEnabledChanged;
         }

@@ -268,7 +268,7 @@ namespace ModernWpf.Controls
             // if none exist, it defaults to "Person"
             if (IsGroup)
             {
-                contactName = Strings.Resources.GroupName;
+                contactName = Strings.GroupName;
             }
             else if (!string.IsNullOrEmpty(DisplayName))
             {
@@ -280,7 +280,7 @@ namespace ModernWpf.Controls
             }
             else
             {
-                contactName = Strings.Resources.PersonName;
+                contactName = Strings.PersonName;
             }
 
             // BadgeInformation portion of the AutomationName is set to 'n items' if there is a BadgeNumber,
@@ -291,7 +291,7 @@ namespace ModernWpf.Controls
                 if (!string.IsNullOrEmpty(BadgeText))
                 {
                     automationName = string.Format(
-                        Strings.Resources.BadgeItemTextOverride,
+                        Strings.BadgeItemTextOverride,
                         contactName,
                         BadgeNumber,
                         BadgeText);
@@ -309,14 +309,14 @@ namespace ModernWpf.Controls
                 if (!string.IsNullOrEmpty(BadgeText))
                 {
                     automationName = string.Format(
-                        Strings.Resources.BadgeIconTextOverride,
+                        Strings.BadgeIconTextOverride,
                         contactName,
                         BadgeText);
                 }
                 else
                 {
                     automationName = string.Format(
-                        Strings.Resources.BadgeIcon,
+                        Strings.BadgeIcon,
                         contactName);
                 }
             }
@@ -336,35 +336,35 @@ namespace ModernWpf.Controls
 
             if (numericValue == 1)  // Singular
             {
-                value = Strings.Resources.BadgeItemSingular;
+                value = Strings.BadgeItemSingular;
             }
             else if (numericValue == 2) // 2
             {
-                value = Strings.Resources.BadgeItemPlural7;
+                value = Strings.BadgeItemPlural7;
             }
             else if (numericValue == 3 || numericValue == 4) // 3,4
             {
-                value = Strings.Resources.BadgeItemPlural2;
+                value = Strings.BadgeItemPlural2;
             }
             else if (numericValue >= 5 && numericValue <= 10) // 5-10
             {
-                value = Strings.Resources.BadgeItemPlural5;
+                value = Strings.BadgeItemPlural5;
             }
             else if (numericValue >= 11 && numericValue <= 19) // 11-19
             {
-                value = Strings.Resources.BadgeItemPlural6;
+                value = Strings.BadgeItemPlural6;
             }
             else if (valueMod10 == 1) // 21, 31, 41, etc.
             {
-                value = Strings.Resources.BadgeItemPlural1;
+                value = Strings.BadgeItemPlural1;
             }
             else if (valueMod10 >= 2 && valueMod10 <= 4) // 22-24, 32-34, 42-44, etc.
             {
-                value = Strings.Resources.BadgeItemPlural3;
+                value = Strings.BadgeItemPlural3;
             }
             else // Everything else... 0, 20, 25-30, 35-40, etc.
             {
-                value = Strings.Resources.BadgeItemPlural4;
+                value = Strings.BadgeItemPlural4;
             }
 
             return value;

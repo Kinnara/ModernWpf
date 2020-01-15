@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ModernWpf.Strings {
+namespace ModernWpf {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace ModernWpf.Strings {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    internal class Strings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal Strings() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace ModernWpf.Strings {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModernWpf.Strings.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ModernWpf.Resources.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,7 +61,7 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to %1!s!, icon.
+        ///   Looks up a localized string similar to {0}!s!, icon.
         /// </summary>
         internal static string BadgeIcon {
             get {
@@ -70,7 +70,7 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to %1!s!, %2!s!.
+        ///   Looks up a localized string similar to {0}!s!, {1}!s!.
         /// </summary>
         internal static string BadgeIconTextOverride {
             get {
@@ -79,7 +79,7 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
         /// </summary>
         internal static string BadgeItemPlural1 {
             get {
@@ -88,7 +88,7 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
         /// </summary>
         internal static string BadgeItemPlural2 {
             get {
@@ -97,7 +97,7 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
         /// </summary>
         internal static string BadgeItemPlural3 {
             get {
@@ -106,7 +106,7 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
         /// </summary>
         internal static string BadgeItemPlural4 {
             get {
@@ -115,7 +115,7 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
         /// </summary>
         internal static string BadgeItemPlural5 {
             get {
@@ -124,7 +124,7 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
         /// </summary>
         internal static string BadgeItemPlural6 {
             get {
@@ -133,7 +133,7 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to %1!s!, %2!u! items.
+        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
         /// </summary>
         internal static string BadgeItemPlural7 {
             get {
@@ -142,7 +142,7 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to %1!s!, %2!u! item.
+        ///   Looks up a localized string similar to {0}!s!, {1}!u! item.
         /// </summary>
         internal static string BadgeItemSingular {
             get {
@@ -151,7 +151,7 @@ namespace ModernWpf.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to %1!s!, %2!u! %3!s!.
+        ///   Looks up a localized string similar to {0}!s!, {1}!u! {2}!s!.
         /// </summary>
         internal static string BadgeItemTextOverride {
             get {
@@ -183,6 +183,15 @@ namespace ModernWpf.Strings {
         internal static string GroupName {
             get {
                 return ResourceManager.GetString("GroupName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ignore.
+        /// </summary>
+        internal static string IgnoreMenuItemLabel {
+            get {
+                return ResourceManager.GetString("IgnoreMenuItemLabel", resourceCulture);
             }
         }
         
@@ -237,6 +246,60 @@ namespace ModernWpf.Strings {
         internal static string RatingUnset {
             get {
                 return ResourceManager.GetString("RatingUnset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy.
+        /// </summary>
+        internal static string TextCommandLabelCopy {
+            get {
+                return ResourceManager.GetString("TextCommandLabelCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cut.
+        /// </summary>
+        internal static string TextCommandLabelCut {
+            get {
+                return ResourceManager.GetString("TextCommandLabelCut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paste.
+        /// </summary>
+        internal static string TextCommandLabelPaste {
+            get {
+                return ResourceManager.GetString("TextCommandLabelPaste", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo.
+        /// </summary>
+        internal static string TextCommandLabelRedo {
+            get {
+                return ResourceManager.GetString("TextCommandLabelRedo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select All.
+        /// </summary>
+        internal static string TextCommandLabelSelectAll {
+            get {
+                return ResourceManager.GetString("TextCommandLabelSelectAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo.
+        /// </summary>
+        internal static string TextCommandLabelUndo {
+            get {
+                return ResourceManager.GetString("TextCommandLabelUndo", resourceCulture);
             }
         }
         

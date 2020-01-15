@@ -38,10 +38,7 @@ namespace ModernWpf.Controls
         /// </summary>
         public TextContextMenu()
         {
-            _proofingMenuItem = new MenuItem
-            {
-                Header = Strings.Resources.ProofingMenuItemLabel
-            };
+            _proofingMenuItem = new MenuItem();
             Items.Add(_proofingMenuItem);
             Items.Add(new MenuItem
             {
@@ -191,6 +188,7 @@ namespace ModernWpf.Controls
 
         private void UpdateProofingMenuItem(Control target)
         {
+            _proofingMenuItem.Header = Strings.ProofingMenuItemLabel;
             _proofingMenuItem.Items.Clear();
 
             SpellingError spellingError = null;
@@ -225,7 +223,7 @@ namespace ModernWpf.Controls
 
                 _proofingMenuItem.Items.Add(new MenuItem
                 {
-                    Header = "Ignore",
+                    Header = Strings.IgnoreMenuItemLabel,
                     Command = EditingCommands.IgnoreSpellingError,
                     CommandTarget = target
                 });
@@ -246,6 +244,31 @@ namespace ModernWpf.Controls
             {
                 if (menuItem.Command is RoutedUICommand command)
                 {
+                    if (command == ApplicationCommands.Cut)
+                    {
+                        menuItem.Header = Strings.TextCommandLabelCut;
+                    }
+                    else if (command == ApplicationCommands.Copy)
+                    {
+                        menuItem.Header = Strings.TextCommandLabelCopy;
+                    }
+                    else if (command == ApplicationCommands.Paste)
+                    {
+                        menuItem.Header = Strings.TextCommandLabelPaste;
+                    }
+                    else if (command == ApplicationCommands.Undo)
+                    {
+                        menuItem.Header = Strings.TextCommandLabelUndo;
+                    }
+                    else if (command == ApplicationCommands.Redo)
+                    {
+                        menuItem.Header = Strings.TextCommandLabelRedo;
+                    }
+                    else if (command == ApplicationCommands.SelectAll)
+                    {
+                        menuItem.Header = Strings.TextCommandLabelSelectAll;
+                    }
+
                     menuItem.CommandTarget = target;
                     menuItem.Visibility = command.CanExecute(null, target) ? Visibility.Visible : Visibility.Collapsed;
                 }

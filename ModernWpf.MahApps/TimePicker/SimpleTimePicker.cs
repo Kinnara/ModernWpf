@@ -321,21 +321,21 @@ namespace ModernWpf.MahApps.Controls
             {
                 _hourTextBlock.Text = selectedTime.HasValue ?
                     selectedTime.Value.ToString(IsMilitaryTime ? "%h" : "%H", SpecificCultureInfo) :
-                    HourPlaceholderText.DefaultIfNullOrEmpty(Strings.Resources.TimePickerHour);
+                    HourPlaceholderText.DefaultIfNullOrEmpty(Strings.TimePickerHour);
             }
 
             if (_minuteTextBlock != null)
             {
                 _minuteTextBlock.Text = selectedTime.HasValue ?
                     selectedTime.Value.ToString("mm", SpecificCultureInfo) :
-                    MinutePlaceholderText.DefaultIfNullOrEmpty(Strings.Resources.TimePickerMinute);
+                    MinutePlaceholderText.DefaultIfNullOrEmpty(Strings.TimePickerMinute);
             }
 
             if (_secondTextBlock != null)
             {
                 _secondTextBlock.Text = selectedTime.HasValue ?
                     selectedTime.Value.ToString("ss", SpecificCultureInfo) :
-                    SecondPlaceholderText.DefaultIfNullOrEmpty(Strings.Resources.TimePickerSecond);
+                    SecondPlaceholderText.DefaultIfNullOrEmpty(Strings.TimePickerSecond);
             }
 
             if (_periodTextBlock != null)
