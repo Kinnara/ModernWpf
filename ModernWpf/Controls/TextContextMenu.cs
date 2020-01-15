@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 
@@ -13,6 +14,8 @@ namespace ModernWpf.Controls
     public class TextContextMenu : ContextMenu
     {
         private static readonly CommandBinding _selectAllBinding;
+        private static readonly CommandBinding _undoBinding;
+        private static readonly CommandBinding _redoBinding;
 
         private readonly MenuItem _proofingMenuItem;
 
@@ -22,6 +25,12 @@ namespace ModernWpf.Controls
 
             _selectAllBinding = new CommandBinding(ApplicationCommands.SelectAll);
             _selectAllBinding.PreviewCanExecute += OnSelectAllPreviewCanExecute;
+
+            _undoBinding = new CommandBinding(ApplicationCommands.Undo);
+            _undoBinding.PreviewCanExecute += OnUndoRedoPreviewCanExecute;
+
+            _redoBinding = new CommandBinding(ApplicationCommands.Redo);
+            _redoBinding.PreviewCanExecute += OnUndoRedoPreviewCanExecute;
         }
 
         /// <summary>
@@ -90,11 +99,15 @@ namespace ModernWpf.Controls
             if ((bool)e.NewValue)
             {
                 textControl.CommandBindings.Add(_selectAllBinding);
+                textControl.CommandBindings.Add(_undoBinding);
+                textControl.CommandBindings.Add(_redoBinding);
                 textControl.ContextMenuOpening += OnContextMenuOpening;
             }
             else
             {
                 textControl.CommandBindings.Remove(_selectAllBinding);
+                textControl.CommandBindings.Remove(_undoBinding);
+                textControl.CommandBindings.Remove(_redoBinding);
                 textControl.ContextMenuOpening -= OnContextMenuOpening;
             }
         }
@@ -134,6 +147,15 @@ namespace ModernWpf.Controls
                 e.Handled = true;
             }
             else if (sender is PasswordBox passwordBox && string.IsNullOrEmpty(passwordBox.Password))
+            {
+                e.CanExecute = false;
+                e.Handled = true;
+            }
+        }
+
+        private static void OnUndoRedoPreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (sender is TextBoxBase textBoxBase && textBoxBase.IsReadOnly)
             {
                 e.CanExecute = false;
                 e.Handled = true;
