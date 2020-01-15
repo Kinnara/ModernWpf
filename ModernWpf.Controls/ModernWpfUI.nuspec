@@ -6,11 +6,11 @@
     <title>ModernWPF UI Library</title>
     <authors>$authors$</authors>
     <owners>$authors$</owners>
-    <description>Modern styles and controls for your WPF applications.</description>
-    <tags>$tags$</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">$license$</license>
     <projectUrl>$projectUrl$</projectUrl>
+    <description>Modern styles and controls for your WPF applications.</description>
+    <tags>$tags$</tags>
     <dependencies>
       <group targetFramework=".NETFramework4.5">
         <dependency id="System.Runtime.WindowsRuntime" version="4.6.0" exclude="Build,Analyzers" />
@@ -27,14 +27,8 @@
     </frameworkReferences>
   </metadata>
   <files>
-    <file src="bin\$config$\net45\ModernWpf.dll" target="lib\net45\ModernWpf.dll" />
-    <file src="bin\$config$\net45\ModernWpf.xml" target="lib\net45\ModernWpf.xml" />
-    <file src="bin\$config$\net45\ModernWpf.Controls.dll" target="lib\net45\ModernWpf.Controls.dll" />
-    <file src="bin\$config$\net45\ModernWpf.Controls.xml" target="lib\net45\ModernWpf.Controls.xml" />
-    <file src="bin\$config$\netcoreapp3.0\ModernWpf.dll" target="lib\netcoreapp3.0\ModernWpf.dll" />
-    <file src="bin\$config$\netcoreapp3.0\ModernWpf.xml" target="lib\netcoreapp3.0\ModernWpf.xml" />
-    <file src="bin\$config$\netcoreapp3.0\ModernWpf.Controls.dll" target="lib\netcoreapp3.0\ModernWpf.Controls.dll" />
-    <file src="bin\$config$\netcoreapp3.0\ModernWpf.Controls.xml" target="lib\netcoreapp3.0\ModernWpf.Controls.xml" />
+    <file src="bin\$configuration$\**\ModernWpf*.dll" target="lib" />
+    <file src="bin\$configuration$\**\ModernWpf*.xml" target="lib" />
     <file src="readme.txt" target="" />
   </files>
 </package>
