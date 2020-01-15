@@ -145,6 +145,39 @@
       <summary>Identifies the Label dependency property.</summary>
       <returns>The identifier for the Label dependency property.</returns>
     </member>
+    <member name="T:ModernWpf.Controls.AppBarElementContainer">
+      <summary>Represents a container that allows an element that doesn't implement ICommandBarElement to be displayed in a command bar.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.AppBarElementContainer.#ctor">
+      <summary>Initializes a new instance of the AppBarElementContainer class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarElementContainer.DynamicOverflowOrder">
+      <summary>Gets or sets the order in which this item is moved to the CommandBar overflow menu.</summary>
+      <returns>The order in which this item is moved to the overflow menu relative to other items.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarElementContainer.DynamicOverflowOrderProperty">
+      <summary>Identifies the DynamicOverflowOrder dependency property.</summary>
+      <returns>The identifier for the DynamicOverflowOrder dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarElementContainer.IsCompact">
+      <summary>Gets or sets a value that indicates whether the element is shown in its compact state.</summary>
+      <returns>**true** if the element is shown in its compact state; otherwise, **false**. The default is **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarElementContainer.IsCompactProperty">
+      <summary>Identifies the IsCompact dependency property.</summary>
+      <returns>The identifier for the IsCompact dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarElementContainer.IsInOverflow">
+      <summary>Gets a value that indicates whether this item is in the overflow menu.</summary>
+      <returns>**true** if this item is in the overflow menu; otherwise, **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarElementContainer.IsInOverflowProperty">
+      <summary>Identifies the IsInOverflow dependency property.</summary>
+      <returns>The identifier for the IsInOverflow dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.AppBarSeparator">
+      <summary>Represents a line that separates items in an AppBar or CommandBar.</summary>
+    </member>
     <member name="M:ModernWpf.Controls.AppBarSeparator.#ctor">
       <summary>Initializes a new instance of the AppBarSeparator class.</summary>
     </member>
@@ -722,15 +755,28 @@
     <member name="F:ModernWpf.Controls.ContentDialogResult.Secondary">
       <summary>The secondary button was tapped by the user.</summary>
     </member>
+    <member name="T:ModernWpf.Controls.ContextFlyoutService">
+      <summary>Represents a service that provides static methods to display a context flyout.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.ContextFlyoutService.ContextFlyoutProperty">
+      <summary>Identifies the ContextFlyoutService.ContextFlyout XAML attached property.</summary>
+      <returns>The identifier for the ContextFlyoutService.ContextFlyout XAML attached property.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ContextFlyoutService.GetContextFlyout(System.Windows.FrameworkElement)">
+      <summary>Gets the context flyout associated with this element.</summary>
+      <param name="element">The object from which the property value is read.</param>
+      <returns>The context flyout associated with this element, if any; otherwise, **null**. The default is **null**.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.ContextFlyoutService.SetContextFlyout(System.Windows.FrameworkElement)">
+      <summary>Sets the context flyout associated with this element.</summary>
+      <param name="element">The object to set context flyout on.</param>
+      <param name="value">The value to set for context flyout.</param>
+    </member>
     <member name="T:ModernWpf.Controls.DropDownButton">
       <summary>Represents a button with a chevron intended to open a menu.</summary>
     </member>
     <member name="M:ModernWpf.Controls.DropDownButton.#ctor">
       <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.DropDownButton?text=DropDownButton" /> class.</summary>
-    </member>
-    <member name="T:ModernWpf.Controls.ElementAnimationCompleted">
-      <param name="sender" />
-      <param name="element" />
     </member>
     <member name="T:ModernWpf.Controls.ElementAnimator">
       <summary>Represents the base class for components that coordinate the animations of elements that are being conceptually added, repositioned/resized, or removed from the live visual tree.</summary>
@@ -1058,6 +1104,23 @@
     <member name="M:ModernWpf.Controls.FlyoutPresenter.#ctor">
       <summary>Initializes a new instance of the FlyoutPresenter class.</summary>
     </member>
+    <member name="T:ModernWpf.Controls.FlyoutService">
+      <summary>Represents a service that provides static methods to display a flyout.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.FlyoutService.FlyoutProperty">
+      <summary>Identifies the FlyoutService.Flyout XAML attached property.</summary>
+      <returns>The identifier for the FlyoutService.Flyout XAML attached property.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.FlyoutService.GetFlyout(System.Windows.Controls.Button)">
+      <summary>Gets the flyout associated with this button.</summary>
+      <param name="element">The object from which the property value is read.</param>
+      <returns>The flyout associated with this element, if any; otherwise, **null**. The default is **null**.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.FlyoutService.SetFlyout(System.Windows.Controls.Button)">
+      <summary>Sets the flyout associated with this element.</summary>
+      <param name="element">The object to set flyout on.</param>
+      <param name="value">The value to set for flyout.</param>
+    </member>
     <member name="T:ModernWpf.Controls.HyperlinkButton">
       <summary>Represents a button control that functions as a hyperlink.</summary>
     </member>
@@ -1118,6 +1181,21 @@
     <member name="M:ModernWpf.Controls.IScrollAnchorProvider.UnregisterAnchorCandidate(System.Windows.UIElement)">
       <summary>Unregisters a UIElement as a potential scroll anchor candidate.</summary>
       <param name="element">A UIElement within the subtree of the IScrollAnchorProvider.</param>
+    </member>
+    <member name="T:ModernWpf.Controls.ItemClickEventArgs">
+      <summary>Provides event data for the ItemClick event.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ItemClickEventArgs.#ctor">
+      <summary>Initializes a new instance of the ItemClickEventArgs class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ItemClickEventArgs.ClickedItem">
+      <summary>Gets a reference to the clicked item.</summary>
+      <returns>The clicked item.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ItemClickEventHandler">
+      <summary>Represents the method that will handle an ItemClick event.</summary>
+      <param name="sender">The object where the handler is attached.</param>
+      <param name="e">Event data for the event.</param>
     </member>
     <member name="T:ModernWpf.Controls.ItemsRepeater">
       <summary>Represents a data-driven collection control that incorporates a flexible layout system, custom views, and virtualization.</summary>
@@ -1617,6 +1695,18 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     </member>
     <member name="F:ModernWpf.Controls.Primitives.FlyoutPlacementMode.Top">
       <summary>The preferred location of the flyout is above the target element.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.Primitives.FlyoutShowMode">
+      <summary>Defines constants that specify how a flyout behaves when shown.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutShowMode.Auto">
+      <summary>The show mode is determined automatically based on the method used to show the flyout.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutShowMode.Standard">
+      <summary>Behavior is typical of a flyout shown reactively, like a context menu. The open flyout takes focus. For a CommandBarFlyout, it opens in it's expanded state.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutShowMode.Transient">
+      <summary>Behavior is typical of a flyout shown proactively. The open flyout does not take focus. For a CommandBarFlyout, it opens in it's collapsed state.</summary>
     </member>
     <member name="T:ModernWpf.Controls.Primitives.ProgressRingTemplateSettings">
       <summary>Provides calculated values that can be referenced as **TemplatedParent** sources when defining templates for a ProgressRing control. Not intended for general use.</summary>
