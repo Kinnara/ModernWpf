@@ -19,7 +19,6 @@
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="MinHeight" Value="{DynamicResource DataGridRowMinHeight}" />
-        <!--<Setter Property="IsTabStop" Value="False" />-->
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -48,7 +47,6 @@
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="MinHeight" Value="{DynamicResource DataGridRowMinHeight}" />
-        <!--<Setter Property="IsTabStop" Value="False" />-->
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -314,7 +312,6 @@
         <Setter Property="SeparatorBrush" Value="{DynamicResource GridLinesBrush}" />
         <Setter Property="Padding" Value="12,0,13,0" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
-        <!--<Setter Property="SeparatorVisibility" Value="Collapsed" />-->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="DataGridRowHeader">
@@ -546,7 +543,6 @@
 
     <Style x:Key="DefaultDataGridRowStyle" TargetType="{x:Type DataGridRow}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <!--<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />-->
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
         <Setter Property="ValidationErrorTemplate">
@@ -720,10 +716,7 @@
         <Setter Property="RowHeaderStyle" Value="{StaticResource DefaultDataGridRowHeaderStyle}" />
         <Setter Property="RowStyle" Value="{StaticResource DefaultDataGridRowStyle}" />
         <Setter Property="CellStyle" Value="{StaticResource DefaultDataGridCellStyle}" />
-        <!--<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        <!--<Setter Property="BorderBrush" Value="#FF688CAF" />-->
-        <!--<Setter Property="BorderThickness" Value="1" />-->
         <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource GridLinesBrush}" />
         <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource GridLinesBrush}" />
         <Setter Property="GridLinesVisibility" Value="Horizontal" />
@@ -764,11 +757,14 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
+
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
+
+                                        <!-- Left Column Header Corner -->
                                         <Button
                                             Width="{Binding CellsPanelHorizontalOffset, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                             Command="{x:Static DataGrid.SelectAllCommand}"
@@ -776,11 +772,14 @@
                                             Style="{DynamicResource {ComponentResourceKey ResourceId=DataGridSelectAllButtonStyle,
                                                                                           TypeInTargetAssembly={x:Type DataGrid}}}"
                                             Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.All}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+
+                                        <!-- Column Headers -->
                                         <DataGridColumnHeadersPresenter
                                             x:Name="PART_ColumnHeadersPresenter"
                                             Grid.Column="1"
                                             Grid.ColumnSpan="2"
                                             Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+
                                         <Rectangle
                                             x:Name="ColumnHeadersAndRowsSeparator"
                                             Grid.ColumnSpan="3"
@@ -789,12 +788,14 @@
                                             StrokeThickness="1"
                                             Height="1"
                                             Fill="{DynamicResource GridLinesBrush}" />
+
+                                        <!-- DataGrid content -->
                                         <ScrollContentPresenter
                                             x:Name="PART_ScrollContentPresenter"
                                             Grid.Row="1"
-                                            Grid.RowSpan="2"
-                                            Grid.ColumnSpan="3"
+                                            Grid.ColumnSpan="2"
                                             CanContentScroll="{TemplateBinding CanContentScroll}" />
+
                                         <ScrollBar
                                             x:Name="PART_VerticalScrollBar"
                                             Grid.Row="1"
@@ -804,6 +805,7 @@
                                             ViewportSize="{TemplateBinding ViewportHeight}"
                                             Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
                                             Value="{TemplateBinding VerticalOffset}" />
+
                                         <Grid
                                             Grid.Row="2"
                                             Grid.Column="1">
