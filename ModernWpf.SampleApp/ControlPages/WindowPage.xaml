@@ -21,6 +21,11 @@
                 IsChecked="{Binding Path=(ui:WindowHelper.UseModernWindowStyle)}" />
 
             <ui:RadioButtons
+                Header="WindowStyle"
+                ItemsSource="{Binding Source={x:Type WindowStyle}, Converter={StaticResource EnumValuesConverter}}"
+                SelectedItem="{Binding WindowStyle}" />
+
+            <ui:RadioButtons
                 Header="ResizeMode"
                 ItemsSource="{Binding Source={x:Type ResizeMode}, Converter={StaticResource EnumValuesConverter}}"
                 SelectedItem="{Binding ResizeMode}" />

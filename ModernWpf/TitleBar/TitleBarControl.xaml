@@ -112,6 +112,10 @@
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{x:Null}" />
                             <Setter TargetName="IconTitlePanel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
+                        <DataTrigger Binding="{Binding WindowStyle, RelativeSource={RelativeSource AncestorType=Window}}" Value="ToolWindow">
+                            <Setter TargetName="MinimizeButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="MaximizeRestoreButton" Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="NoResize">
                             <Setter TargetName="MinimizeButton" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="MaximizeRestoreButton" Property="Visibility" Value="Collapsed" />
