@@ -21,6 +21,19 @@
     <member name="M:ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.Expand">
       <summary>Displays the control's drop down menu.</summary>
     </member>
+    <member name="T:ModernWpf.Automation.Peers.HyperlinkButtonAutomationPeer">
+      <summary>Exposes HyperlinkButton types to Microsoft UI Automation.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.HyperlinkButtonAutomationPeer.#ctor(ModernWpf.Controls.HyperlinkButton)">
+      <summary>Initializes a new instance of the HyperlinkButtonAutomationPeer class.</summary>
+      <param name="owner">The owner element to create for.</param>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.HyperlinkButtonAutomationPeer.Invoke">
+      <summary>Sends a request to click the hyperlink button associated with the automation peer.</summary>
+    </member>
+    <member name="T:ModernWpf.Automation.Peers.PersonPictureAutomationPeer">
+      <summary>Exposes <see cref="ModernWpf.Controls.PersonPicture?text=PersonPicture" /> types to Microsoft UI Automation.</summary>
+    </member>
     <member name="T:ModernWpf.Automation.Peers.RatingControlAutomationPeer">
       <summary>Exposes <see cref="ModernWpf.Controls.RatingControl?text=RatingControl" /> types to Microsoft UI Automation.</summary>
     </member>
@@ -1446,6 +1459,76 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     <member name="P:ModernWpf.Controls.NonVirtualizingLayoutContext.ChildrenCore">
       <summary>Implements the behavior for getting the return value of <see cref="ModernWpf.Controls.NonVirtualizingLayoutContext.Children?text=Children" /> in a derived or custom NonVirtualizingLayoutContext.</summary>
       <returns>The value that should be returned as <see cref="ModernWpf.Controls.NonVirtualizingLayoutContext.Children?text=Children" /> by the NonVirtualizingLayoutContext.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.PersonPicture">
+      <summary>Represents a control that displays the avatar image for a person, if one is available; if not, it displays the person's initials or a generic glyph.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.PersonPicture.#ctor">
+      <summary>Initializes a new instance of the PersonPicture class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.PersonPicture.BadgeGlyph">
+      <summary>Gets or sets a Segoe MDL2 Assets font glyph to display on the badge.</summary>
+      <returns>The hexadecimal character code for the badge glyph.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.PersonPicture.BadgeGlyphProperty">
+      <summary>Identifies the BadgeGlyph dependency property.</summary>
+      <returns>The identifier for the BadgeGlyph dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.PersonPicture.BadgeImageSource">
+      <summary>Gets or sets the source of an image to display on the badge.</summary>
+      <returns>An object that represents the image source file for the drawn image. Typically you set this with a BitmapImage object, constructed with the Uniform Resource Identifier (URI) that describes the path to a valid image source file. Or, you can initialize a BitmapSource with a stream, perhaps a stream from a storage file.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.PersonPicture.BadgeImageSourceProperty">
+      <summary>Identifies the BadgeImageSource dependency property.</summary>
+      <returns>The identifier for the BadgeImageSource dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.PersonPicture.BadgeNumber">
+      <summary>Gets or sets the contact number to display on the badge.</summary>
+      <returns>The contact number to display on the badge.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.PersonPicture.BadgeNumberProperty">
+      <summary>Identifies the BadgeNumber dependency property.</summary>
+      <returns>The identifier for the BadgeNumber dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.PersonPicture.BadgeText">
+      <summary>Gets or sets the contact text to display on the badge.</summary>
+      <returns>The contact text to display on the badge.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.PersonPicture.BadgeTextProperty">
+      <summary>Identifies the BadgeText dependency property.</summary>
+      <returns>The identifier for the BadgeText dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.PersonPicture.DisplayName">
+      <summary>Gets or sets the contact's display name.</summary>
+      <returns>The contact's display name.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.PersonPicture.DisplayNameProperty">
+      <summary>Identifies the DisplayName dependency property.</summary>
+      <returns>The identifier for the DisplayName dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.PersonPicture.Initials">
+      <summary>Gets or sets the contact's initials.</summary>
+      <returns>The contact's initials.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.PersonPicture.InitialsProperty">
+      <summary>Identifies the Initials dependency property.</summary>
+      <returns>The identifier for the Initials dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.PersonPicture.IsGroup">
+      <summary>Gets or sets a value that indicates whether the PersonPicture represents a group or an individual.</summary>
+      <returns>true if the PersonPicture represents a group; otherwise, false.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.PersonPicture.IsGroupProperty">
+      <summary>Identifies the IsGroup dependency property.</summary>
+      <returns>The identifier for the IsGroup dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.PersonPicture.ProfilePicture">
+      <summary>Gets or sets the source of the contact's profile picture.</summary>
+      <returns>An object that represents the image source file for the drawn image. Typically you set this with a BitmapImage object, constructed with the Uniform Resource Identifier (URI) that describes the path to a valid image source file. Or, you can initialize a BitmapSource with a stream, perhaps a stream from a storage file.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.PersonPicture.ProfilePictureProperty">
+      <summary>Identifies the ProfilePicture dependency property.</summary>
+      <returns>The identifier for the ProfilePicture dependency property.</returns>
     </member>
     <member name="T:ModernWpf.Controls.ProgressRing">
       <summary>Represents a control that indicates that an operation is ongoing. The typical visual appearance is a ring-shaped "spinner" that cycles an animation as progress continues.</summary>
