@@ -23,7 +23,7 @@
                         FocusVisualStyle="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}"
                         Margin="5">
                         <StackPanel
-                            Background="LightGray"
+                            Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                             Margin="6">
                             <Image
                                 x:Name="recipeImage"

@@ -36,7 +36,6 @@ namespace ModernWpf
 
             ResourceDictionary themeDictionary = null;
             ThemeResources.Current?.ThemeDictionaries.TryGetValue(Key, out themeDictionary);
-            Debug.Assert(themeDictionary != null);
 
             if (themeDictionary == null)
             {

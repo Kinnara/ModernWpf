@@ -9,11 +9,12 @@
     xmlns:controls="http://schemas.modernwpf.com/2019"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+
     <StackPanel
         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
         Margin="12">
         <Button
-            Content="Click me"
+            Content="Click to open simple ContentDialog"
             Click="ShowDialog_Click" />
     </StackPanel>
 </local:TestPage>

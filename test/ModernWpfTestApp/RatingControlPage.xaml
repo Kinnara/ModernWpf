@@ -12,7 +12,8 @@
     <StackPanel
         Orientation="Vertical"
         VerticalAlignment="Center"
-        HorizontalAlignment="Center">
+        HorizontalAlignment="Center"
+        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
         <!-- this guy is out of the Scroller because it's where I do panning tests: [and having nested pannable things is NOT WHAT SHOULD BE DONE!] -->
         <muxcontrols:RatingControl
             x:Name="TestRatingControl"

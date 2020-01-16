@@ -144,7 +144,8 @@
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
                             IsTabStop="False"
-                            Focusable="False" />
+                            Focusable="False"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         <TextBlock
                             x:Name="PlaceholderTextContentPresenter"
                             Grid.Row="1"

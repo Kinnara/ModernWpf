@@ -3,11 +3,11 @@
     x:Class="ItemsRepeaterTestApp.Samples.CircleLayoutSamplePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls"
     xmlns:local="clr-namespace:ItemsRepeaterTestApp.Samples"
+    xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Page.Resources>
         <DataTemplate x:Key="PersonTemplate">
@@ -33,11 +33,11 @@
         <!--<local:RadialElementAnimator x:Name="RadialAnimator" />-->
     </Page.Resources>
 
-    <Grid>
+    <Grid Margin="12">
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="#AEB5C7" />
-                <GradientStop Color="#D3D9E5" Offset="1" />
+                <GradientStop Color="{DynamicResource SystemAltHighColor}" />
+                <GradientStop Color="{DynamicResource SystemChromeMediumColor}" Offset="1" />
             </LinearGradientBrush>
         </Grid.Background>
 
