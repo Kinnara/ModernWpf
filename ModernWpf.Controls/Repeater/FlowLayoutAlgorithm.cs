@@ -53,6 +53,7 @@ namespace ModernWpf.Controls
             double lineSpacing,
             uint maxItemsPerLine,
             ScrollOrientation orientation,
+            bool disableVirtualization,
             string layoutId)
         {
             OrientationBasedMeasures.ScrollOrientation = orientation;
@@ -73,14 +74,14 @@ namespace ModernWpf.Controls
             m_elementManager.OnBeginMeasure(orientation);
 
             int anchorIndex = GetAnchorIndex(availableSize, isWrapping, minItemSpacing, layoutId);
-            Generate(GenerateDirection.Forward, anchorIndex, availableSize, minItemSpacing, lineSpacing, maxItemsPerLine, layoutId);
-            Generate(GenerateDirection.Backward, anchorIndex, availableSize, minItemSpacing, lineSpacing, maxItemsPerLine, layoutId);
+            Generate(GenerateDirection.Forward, anchorIndex, availableSize, minItemSpacing, lineSpacing, maxItemsPerLine, disableVirtualization, layoutId);
+            Generate(GenerateDirection.Backward, anchorIndex, availableSize, minItemSpacing, lineSpacing, maxItemsPerLine, disableVirtualization, layoutId);
             if (isWrapping && IsReflowRequired)
             {
                 var firstElementBounds = m_elementManager.GetLayoutBoundsForRealizedIndex(0);
                 OrientationBasedMeasures.SetMinorStart(ref firstElementBounds, 0);
                 m_elementManager.SetLayoutBoundsForRealizedIndex(0, firstElementBounds);
-                Generate(GenerateDirection.Forward, 0 /*anchorIndex*/, availableSize, minItemSpacing, lineSpacing, maxItemsPerLine, layoutId);
+                Generate(GenerateDirection.Forward, 0 /*anchorIndex*/, availableSize, minItemSpacing, lineSpacing, maxItemsPerLine, disableVirtualization, layoutId);
             }
 
             RaiseLineArranged();
@@ -281,6 +282,7 @@ namespace ModernWpf.Controls
             double minItemSpacing,
             double lineSpacing,
             uint maxItemsPerLine,
+            bool disableVirtualization,
             string layoutId)
         {
             if (anchorIndex != -1)
@@ -296,7 +298,7 @@ namespace ModernWpf.Controls
                 bool lineNeedsReposition = false;
 
                 while (m_elementManager.IsIndexValidInData(currentIndex) &&
-                    ShouldContinueFillingUpSpace(previousIndex, direction))
+                      (disableVirtualization || ShouldContinueFillingUpSpace(previousIndex, direction)))
                 {
                     // Ensure layout element.
                     m_elementManager.EnsureElementRealized(direction == GenerateDirection.Forward, currentIndex, layoutId);

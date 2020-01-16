@@ -15,7 +15,9 @@ namespace ItemsRepeaterTestApp.Samples
             InitializeComponent();
             goBackButton.Click += delegate { NavigationService.GoBack(); };
             repeater.ItemTemplate = Resources["elementFactory"];
-            repeater.ItemsSource = Enumerable.Range(0, 10000).Select(x => x.ToString());
+            var stack = repeater.Layout as StackLayout;
+            int numItems = (stack != null && stack.DisableVirtualization) ? 10 : 10000;
+            repeater.ItemsSource = Enumerable.Range(0, numItems).Select(x => x.ToString());
         }
 
         private void OnSelectTemplateKey(RecyclingElementFactory sender, SelectTemplateEventArgs args)

@@ -176,6 +176,7 @@ namespace ModernWpf.Controls
                 LineSpacing,
                 m_maximumRowsOrColumns /* maxItemsPerLine */,
                 OrientationBasedMeasures.ScrollOrientation,
+                false /* disableVirtualization */,
                 LayoutId);
 
             // If after Measure the first item is in the realization rect, then we revoke grid state's ownership,

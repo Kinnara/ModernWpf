@@ -31,12 +31,8 @@
             RecyclePool="{StaticResource RecyclePool}"
             SelectTemplateKey="OnSelectTemplateKey">
             <controls:RecyclingElementFactory.Templates>
-                <ui:StaticResource
-                    x:Key="odd"
-                    ResourceKey="odd" />
-                <ui:StaticResource
-                    x:Key="even"
-                    ResourceKey="even" />
+                <ui:StaticResource x:Key="odd" ResourceKey="odd" />
+                <ui:StaticResource x:Key="even" ResourceKey="even" />
             </controls:RecyclingElementFactory.Templates>
         </controls:RecyclingElementFactory>
     </Page.Resources>
@@ -58,7 +54,11 @@
                 <controls:ItemsRepeater
                     x:Name="repeater"
                     VerticalCacheLength="0"
-                    Background="LightBlue" />
+                    Background="LightBlue">
+                    <controls:ItemsRepeater.Layout>
+                        <controls:StackLayout DisableVirtualization="True" />
+                    </controls:ItemsRepeater.Layout>
+                </controls:ItemsRepeater>
             </ScrollViewer>
         </controls:ItemsRepeaterScrollHost>
     </Grid>

@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Markup;
+using System.Windows.Media;
 using System.Windows.Threading;
 using ModernWpf.Automation.Peers;
 
@@ -324,8 +325,14 @@ namespace ModernWpf.Controls
 
         internal int GetElementIndexImpl(UIElement element)
         {
-            var virtInfo = TryGetVirtualizationInfo(element);
-            return ViewManager.GetElementIndex(virtInfo);
+            // Verify that element is actually a child of this ItemsRepeater
+            var parent = VisualTreeHelper.GetParent(element);
+            if (parent == this)
+            {
+                var virtInfo = TryGetVirtualizationInfo(element);
+                return ViewManager.GetElementIndex(virtInfo);
+            }
+            return -1;
         }
 
         internal UIElement GetElementFromIndexImpl(int index)
@@ -415,14 +422,17 @@ namespace ModernWpf.Controls
 
             if (property == ItemsSourceProperty)
             {
-                var newValue = args.NewValue;
-                var newDataSource = newValue as ItemsSourceView;
-                if (newValue != null && newDataSource == null)
+                if (args.NewValue != args.OldValue)
                 {
-                    newDataSource = new InspectingDataSource(newValue);
-                }
+                    var newValue = args.NewValue;
+                    var newDataSource = newValue as ItemsSourceView;
+                    if (newValue != null && newDataSource == null)
+                    {
+                        newDataSource = new InspectingDataSource(newValue);
+                    }
 
-                OnDataSourcePropertyChanged(ItemsSourceView, newDataSource);
+                    OnDataSourcePropertyChanged(ItemsSourceView, newDataSource);
+                }
             }
             else if (property == ItemTemplateProperty)
             {

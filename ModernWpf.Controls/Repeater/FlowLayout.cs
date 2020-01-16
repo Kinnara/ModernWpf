@@ -118,6 +118,7 @@ namespace ModernWpf.Controls
                 LineSpacing,
                 uint.MaxValue /* maxItemsPerLine */,
                 OrientationBasedMeasures.ScrollOrientation,
+                false /* disableVirtualization */,
                 LayoutId);
             return desiredSize;
         }

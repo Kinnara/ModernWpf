@@ -18,6 +18,19 @@ namespace ModernWpf.Controls
 
         #region Properties
 
+        public static readonly DependencyProperty DisableVirtualizationProperty =
+            DependencyProperty.Register(
+                nameof(DisableVirtualization),
+                typeof(bool),
+                typeof(StackLayout),
+                new PropertyMetadata(false, OnPropertyChanged));
+
+        public bool DisableVirtualization
+        {
+            get => (bool)GetValue(DisableVirtualizationProperty);
+            set => SetValue(DisableVirtualizationProperty, value);
+        }
+
         public static readonly DependencyProperty OrientationProperty =
             DependencyProperty.Register(
                 nameof(Orientation),
@@ -93,6 +106,7 @@ namespace ModernWpf.Controls
                 m_itemSpacing,
                 uint.MaxValue /* maxItemsPerLine */,
                 OrientationBasedMeasures.ScrollOrientation,
+                DisableVirtualization,
                 LayoutId);
             return desiredSize;
         }
