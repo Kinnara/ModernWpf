@@ -20,7 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Samples\Selection\" />
+    <Folder Include="Samples\SelectionSample\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>

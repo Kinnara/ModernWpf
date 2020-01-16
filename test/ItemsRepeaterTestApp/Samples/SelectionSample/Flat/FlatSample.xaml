@@ -3,12 +3,9 @@
     x:Class="ItemsRepeaterTestApp.Samples.Selection.FlatSample"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:ItemsRepeaterTestApp.Samples.Selection"
-    xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    mc:Ignorable="d">
+    xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls"
+    xmlns:local="clr-namespace:ItemsRepeaterTestApp.Samples.Selection">
 
     <Page.Resources>
         <controls:RecyclePool x:Key="RecyclePool" />
