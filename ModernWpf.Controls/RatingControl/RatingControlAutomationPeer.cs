@@ -160,7 +160,7 @@ namespace ModernWpf.Automation.Peers
             }
         }
 
-        int DetermineSignificantDigits(double value, int fractionDigits)
+        /*int DetermineSignificantDigits(double value, int fractionDigits)
         {
             int sigFigsInt = (int)value;
             int length = 0;
@@ -172,26 +172,17 @@ namespace ModernWpf.Automation.Peers
             }
 
             return length + fractionDigits;
-        }
+        }*/
 
         string GenerateValue_ValueString(string resourceString, double ratingValue)
         {
-            return string.Empty;
-            // TODO: GenerateValue_ValueString
+            string maxRatingString = GetRatingControl().MaxRating.ToString();
 
-            //DecimalFormatter formatter;
-            //SignificantDigitsNumberRounder rounder;
-            //formatter.NumberRounder(rounder);
-
-            //string maxRatingString = GetRatingControl().MaxRating.ToString();
-
-            //int fractionDigits = DetermineFractionDigits(ratingValue);
+            int fractionDigits = DetermineFractionDigits(ratingValue);
             //int sigDigits = DetermineSignificantDigits(ratingValue, fractionDigits);
-            //formatter.FractionDigits(fractionDigits);
-            //rounder.SignificantDigits(sigDigits);
-            //string ratingString = formatter.Format(ratingValue);
+            string ratingString = ratingValue.ToString("F" + fractionDigits);
 
-            //return string.Format(resourceString, ratingString, maxRatingString);
+            return string.Format(resourceString, ratingString, maxRatingString);
         }
     }
 }
