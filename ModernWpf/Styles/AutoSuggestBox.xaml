@@ -129,7 +129,7 @@
                             </Setter>
                         </Style>
                     </ControlTemplate.Resources>
-                    <Grid>
+                    <Grid SnapsToDevicePixels="True">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ButtonStates">
                                 <VisualState x:Name="ButtonVisible">
@@ -168,14 +168,15 @@
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
                         <ContentPresenter
                             x:Name="HeaderContentPresenter"
-                            Visibility="Collapsed"
+                            Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
                             Grid.Row="0"
                             TextElement.Foreground="{DynamicResource TextControlHeaderForeground}"
                             Margin="{DynamicResource AutoSuggestBoxTopHeaderMargin}"
                             Grid.ColumnSpan="3"
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
-                            TextElement.FontWeight="Normal">
+                            TextElement.FontWeight="Normal"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                             <ContentPresenter.Resources>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="TextWrapping" Value="Wrap" />
@@ -191,7 +192,8 @@
                             IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
-                            Focusable="False" />
+                            Focusable="False"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         <ContentControl
                             x:Name="PlaceholderTextContentPresenter"
                             Grid.Row="1"
@@ -231,8 +233,9 @@
                             Grid.Row="2"
                             Grid.ColumnSpan="3"
                             Content="{TemplateBinding primitives:ControlHelper.Description}"
-                            Visibility="Collapsed"
-                            TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}" />
+                            Visibility="{TemplateBinding primitives:ControlHelper.DescriptionVisibility}"
+                            TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
                     </Grid>
 
