@@ -473,8 +473,12 @@ namespace ModernWpf.Controls
         {
             if (m_textBox != null)
             {
+                bool shouldCloseSuggestionList = IsSuggestionListOpen;
                 SubmitQuery(m_textBox.Text, null);
-                CloseSuggestionList();
+                if (shouldCloseSuggestionList)
+                {
+                    CloseSuggestionList();
+                }
                 return true;
             }
             return false;
