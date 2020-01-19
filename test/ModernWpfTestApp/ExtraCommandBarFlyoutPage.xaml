@@ -1,0 +1,72 @@
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+<local:TestPage
+    x:Class="ModernWpfTestApp.ExtraCommandBarFlyoutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:ModernWpfTestApp"
+    xmlns:muxc="http://schemas.modernwpf.com/2019"
+    xmlns:muxcp="http://schemas.modernwpf.com/2019"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel Margin="12">
+        <TextBlock
+            Text="Demo controls"
+            Style="{DynamicResource StandardGroupHeader}" />
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Click for a CommandBarFlyout with many items">
+                <ui:FlyoutService.Flyout>
+                    <muxc:CommandBarFlyout>
+                        <ui:AppBarButton Label="Item 1" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 2" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 3" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 4" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 5" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 6" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 7" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 8" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 9" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 10" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 11" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 12" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 13" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 14" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 15" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 16" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 17" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 18" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 19" Icon="Favorite" />
+                        <ui:AppBarButton Label="Item 20" Icon="Favorite" />
+                    </muxc:CommandBarFlyout>
+                </ui:FlyoutService.Flyout>
+            </Button>
+        </StackPanel>
+        <TextBlock
+            Text="Actions"
+            Style="{DynamicResource StandardGroupHeader}"
+            Margin="0,24,0,8" />
+        <Button
+            AutomationProperties.AutomationId="ClearClipboardContentsButton"
+            Content="Clear clipboard"
+            Click="OnClearClipboardContentsClicked" />
+
+        <TextBlock
+            Text="Status"
+            Style="{DynamicResource StandardGroupHeader}"
+            Margin="0,24,0,8" />
+        <StackPanel Orientation="Horizontal">
+            <Button
+                AutomationProperties.AutomationId="CountPopupsButton"
+                Content="Count popups"
+                Click="OnCountPopupsClicked"
+                Margin="0,0,8,0" />
+            <TextBox
+                x:Name="PopupCountTextBox"
+                AutomationProperties.AutomationId="PopupCountTextBox"
+                IsReadOnly="True" />
+        </StackPanel>
+    </StackPanel>
+</local:TestPage>

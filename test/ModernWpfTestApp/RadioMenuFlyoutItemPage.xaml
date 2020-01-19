@@ -1,0 +1,122 @@
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+<local:TestPage
+    x:Class="ModernWpfTestApp.RadioMenuFlyoutItemPage"
+    x:Name="RadioMenuFlyoutItemTestPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpfTestApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:controls="http://schemas.modernwpf.com/2019"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid
+        Background="{DynamicResource ApplicationPageBackgroundThemeBrush}"
+        Margin="12">
+        <StackPanel
+            x:Name="ContentArea"
+            Orientation="Horizontal">
+            <Border
+                Style="{DynamicResource StandardGroupingBorder}"
+                VerticalAlignment="Top"
+                MinWidth="250">
+                <StackPanel>
+                    <TextBlock
+                        Text="Sample controls"
+                        Style="{DynamicResource StandardGroupHeader}" />
+
+                    <Button
+                        AutomationProperties.Name="FlyoutButton"
+                        Content="Click Me"
+                        Margin="12">
+                        <controls:FlyoutService.Flyout>
+                            <controls:MenuFlyout x:Name="ButtonMenuFlyout">
+                                <MenuItem Header="A Normal Item" />
+
+                                <Separator />
+
+                                <controls:RadioMenuItem
+                                    AutomationProperties.Name="RedItem"
+                                    Header="Red" />
+                                <controls:RadioMenuItem
+                                    AutomationProperties.Name="OrangeItem"
+                                    Header="Orange"
+                                    IsChecked="true" />
+                                <controls:RadioMenuItem
+                                    AutomationProperties.Name="YellowItem"
+                                    Header="Yellow" />
+                                <controls:RadioMenuItem
+                                    AutomationProperties.Name="GreenItem"
+                                    Header="Green" />
+                                <controls:RadioMenuItem
+                                    AutomationProperties.Name="BlueItem"
+                                    Header="Blue" />
+                                <controls:RadioMenuItem
+                                    AutomationProperties.Name="IndigoItem"
+                                    Header="Indigo" />
+                                <controls:RadioMenuItem
+                                    AutomationProperties.Name="VioletItem"
+                                    Header="Violet" />
+
+                                <Separator />
+
+                                <controls:RadioMenuItem
+                                    AutomationProperties.Name="CompactItem"
+                                    Header="Compact"
+                                    GroupName="Size"
+                                    IsChecked="true" />
+                                <controls:RadioMenuItem
+                                    AutomationProperties.Name="NormalItem"
+                                    Header="Normal"
+                                    GroupName="Size" />
+                                <controls:RadioMenuItem
+                                    AutomationProperties.Name="ExpandedItem"
+                                    Header="Expanded"
+                                    GroupName="Size" />
+                            </controls:MenuFlyout>
+                        </controls:FlyoutService.Flyout>
+                    </Button>
+
+                    <Button
+                        Content="I have icons"
+                        Margin="12">
+                        <controls:FlyoutService.Flyout>
+                            <controls:MenuFlyout>
+                                <MenuItem
+                                    Header="A Toggle Item"
+                                    IsCheckable="True" />
+                                <controls:RadioMenuItem Header="A Radio Item" />
+                                <controls:RadioMenuItem
+                                    x:Name="IconRadioMenuFlyoutItem"
+                                    Header="Radio And Has Icon" />
+                                <MenuItem
+                                    x:Name="IconMenuFlyoutItem"
+                                    Header="Just Has Icon" />
+                            </controls:MenuFlyout>
+                        </controls:FlyoutService.Flyout>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <Border
+                x:Name="InfoGrid"
+                Margin="12,0,0,0"
+                Style="{DynamicResource StandardGroupingStackPanel}"
+                MinWidth="250"
+                VerticalAlignment="Top">
+                <StackPanel>
+                    <TextBlock
+                        Text="Status"
+                        Style="{DynamicResource StandardGroupHeader}" />
+
+                    <StackPanel x:Name="ItemNames" />
+
+                    <StackPanel
+                        x:Name="ItemStates"
+                        Grid.Column="1" />
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </Grid>
+</local:TestPage>

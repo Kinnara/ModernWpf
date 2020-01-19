@@ -7,8 +7,30 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemeResources />
+                <ui:ThemeResources>
+                    <ui:ThemeResources.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Light">
+                            <ResourceDictionary.MergedDictionaries>
+                                <ui:DefaultThemeResources Key="Light" />
+                            </ResourceDictionary.MergedDictionaries>
+                            <StaticResource x:Key="ApplicationPageBackgroundThemeBrush" ResourceKey="SystemControlPageBackgroundAltHighBrush" />
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="Dark">
+                            <ResourceDictionary.MergedDictionaries>
+                                <ui:DefaultThemeResources Key="Dark" />
+                            </ResourceDictionary.MergedDictionaries>
+                            <StaticResource x:Key="ApplicationPageBackgroundThemeBrush" ResourceKey="SystemControlPageBackgroundAltHighBrush" />
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="HighContrast">
+                            <ResourceDictionary.MergedDictionaries>
+                                <ui:DefaultThemeResources Key="HighContrast" />
+                            </ResourceDictionary.MergedDictionaries>
+                            <StaticResource x:Key="ApplicationPageBackgroundThemeBrush" ResourceKey="SystemControlPageBackgroundAltHighBrush" />
+                        </ResourceDictionary>
+                    </ui:ThemeResources.ThemeDictionaries>
+                </ui:ThemeResources>
                 <ui:XamlControlsResources />
+                <ResourceDictionary Source="/ModernWpf.MahApps;component/Styles/Controls.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style x:Key="StandardGroupHeader" TargetType="TextBlock">

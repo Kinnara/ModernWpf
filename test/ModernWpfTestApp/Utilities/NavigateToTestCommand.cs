@@ -33,7 +33,17 @@ namespace ModernWpfTestApp
 
     static class FrameExtensions
     {
-        public static void NavigateEx(this Frame frame, Type sourcePageType, object extraData)
+        public static void NavigateWithoutAnimation(this Frame frame, Type sourcePageType)
+        {
+            frame.NavigateEx(sourcePageType);
+        }
+
+        public static void NavigateWithoutAnimation(this Frame frame, Type sourcePageType, object parameter)
+        {
+            frame.NavigateEx(sourcePageType, parameter);
+        }
+
+        public static void NavigateEx(this Frame frame, Type sourcePageType, object extraData = null)
         {
             frame.Navigate(new Uri(sourcePageType.Name + ".xaml", UriKind.Relative), extraData);
         }

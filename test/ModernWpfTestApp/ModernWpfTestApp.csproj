@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
+    <ProjectReference Include="..\..\ModernWpf.MahApps\ModernWpf.MahApps.csproj" />
     <ProjectReference Include="..\..\ModernWpf\ModernWpf.csproj" />
   </ItemGroup>
 
