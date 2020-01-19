@@ -70,9 +70,9 @@ namespace ModernWpf.Controls
                                 {
                                     RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
                                     m_secondaryToggleButtonCheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                                        button, ToggleButton.CheckedEvent, closeFlyoutFunc);
+                                        toggleButton, ToggleButton.CheckedEvent, closeFlyoutFunc);
                                     m_secondaryToggleButtonUncheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                                        button, ToggleButton.UncheckedEvent, closeFlyoutFunc);
+                                        toggleButton, ToggleButton.UncheckedEvent, closeFlyoutFunc);
                                 }
                                 else
                                 {
@@ -96,9 +96,9 @@ namespace ModernWpf.Controls
                                 else if (toggleButton != null)
                                 {
                                     m_secondaryToggleButtonCheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                                        button, ToggleButton.CheckedEvent, closeFlyoutFunc);
+                                        toggleButton, ToggleButton.CheckedEvent, closeFlyoutFunc);
                                     m_secondaryToggleButtonUncheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                                        button, ToggleButton.UncheckedEvent, closeFlyoutFunc);
+                                        toggleButton, ToggleButton.UncheckedEvent, closeFlyoutFunc);
                                 }
                                 break;
                             }
@@ -255,9 +255,9 @@ namespace ModernWpf.Controls
                 else if (toggleButton != null)
                 {
                     m_secondaryToggleButtonCheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                        button, ToggleButton.CheckedEvent, closeFlyoutFunc);
+                        toggleButton, ToggleButton.CheckedEvent, closeFlyoutFunc);
                     m_secondaryToggleButtonUncheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                        button, ToggleButton.UncheckedEvent, closeFlyoutFunc);
+                        toggleButton, ToggleButton.UncheckedEvent, closeFlyoutFunc);
                 }
             }
         }
