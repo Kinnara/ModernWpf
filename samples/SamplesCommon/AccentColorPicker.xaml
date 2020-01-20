@@ -117,7 +117,8 @@
                 SelectionMode="Single"
                 SelectedValuePath="Color"
                 SelectedValue="{Binding AccentColor, Source={x:Static ui:ThemeManager.Current}}"
-                ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                ui:ThemeManager.HasThemeResources="True">
                 <ListView.Template>
                     <ControlTemplate TargetType="ListView">
                         <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
@@ -143,20 +144,38 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Rectangle
-                            Fill="{Binding Brush}"
+                            Fill="{Binding Brush, Mode=OneTime}"
                             ToolTipService.InitialShowDelay="1000"
                             ToolTipService.BetweenShowDelay="500">
                             <Rectangle.ToolTip>
-                                <ToolTip Content="{Binding Name}" />
+                                <ToolTip Content="{Binding Name, Mode=OneTime}" />
                             </Rectangle.ToolTip>
                         </Rectangle>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.Resources>
-                    <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="{DynamicResource SystemBaseHighColor}" />
-                    <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{DynamicResource SystemBaseHighColor}" />
-                    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{DynamicResource SystemBaseHighColor}" />
-                    <SolidColorBrush x:Key="SystemControlForegroundBaseMediumHighBrush" Color="{DynamicResource SystemAltHighColor}" />
+                    <ui:ResourceDictionaryEx>
+                        <ui:ResourceDictionaryEx.ThemeDictionaries>
+                            <ResourceDictionary x:Key="Light">
+                                <ResourceDictionary.MergedDictionaries>
+                                    <ui:ApplicationThemeResources Key="Light" />
+                                </ResourceDictionary.MergedDictionaries>
+                                <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="{StaticResource SystemBaseHighColor}" />
+                                <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource SystemBaseHighColor}" />
+                                <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{StaticResource SystemBaseHighColor}" />
+                                <SolidColorBrush x:Key="SystemControlForegroundBaseMediumHighBrush" Color="{StaticResource SystemAltHighColor}" />
+                            </ResourceDictionary>
+                            <ResourceDictionary x:Key="Dark">
+                                <ResourceDictionary.MergedDictionaries>
+                                    <ui:ApplicationThemeResources Key="Dark" />
+                                </ResourceDictionary.MergedDictionaries>
+                                <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="{StaticResource SystemBaseHighColor}" />
+                                <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource SystemBaseHighColor}" />
+                                <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{StaticResource SystemBaseHighColor}" />
+                                <SolidColorBrush x:Key="SystemControlForegroundBaseMediumHighBrush" Color="{StaticResource SystemAltHighColor}" />
+                            </ResourceDictionary>
+                        </ui:ResourceDictionaryEx.ThemeDictionaries>
+                    </ui:ResourceDictionaryEx>
                 </ListView.Resources>
             </ListView>
             <Button

@@ -33,6 +33,10 @@ namespace ModernWpf.SampleApp.ControlPages
             repeater.ItemsSource = BarItems;
         }
 
+        ~ItemsRepeaterPage()
+        {
+        }
+
         private void InitializeData()
         {
             if (BarItems == null)

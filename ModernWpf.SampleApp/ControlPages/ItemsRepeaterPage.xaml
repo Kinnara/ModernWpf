@@ -27,11 +27,11 @@
             <Border
                 Tag="{DynamicResource SystemChromeLowColor}"
                 Background="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
-                Width="{Binding MaxLength}">
+                Width="{Binding MaxLength, Mode=OneTime}">
                 <Rectangle
                     Tag="{DynamicResource SystemAccentColor}"
                     Fill="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
-                    Width="{Binding Length}"
+                    Width="{Binding Length, Mode=OneTime}"
                     Height="24"
                     HorizontalAlignment="Left" />
             </Border>
@@ -41,11 +41,11 @@
             <Border
                 Tag="{DynamicResource SystemChromeLowColor}"
                 Background="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
-                Height="{Binding MaxHeight}">
+                Height="{Binding MaxHeight, Mode=OneTime}">
                 <Rectangle
                     Tag="{DynamicResource SystemAccentColor}"
                     Fill="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
-                    Height="{Binding Height}"
+                    Height="{Binding Height, Mode=OneTime}"
                     Width="48"
                     VerticalAlignment="Top" />
             </Border>
@@ -56,15 +56,15 @@
                 <Ellipse
                     Tag="{DynamicResource SystemChromeLowColor}"
                     Fill="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
-                    Height="{Binding MaxDiameter}"
-                    Width="{Binding MaxDiameter}"
+                    Height="{Binding MaxDiameter, Mode=OneTime}"
+                    Width="{Binding MaxDiameter, Mode=OneTime}"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center" />
                 <Ellipse
                     Tag="{DynamicResource SystemAccentColor}"
                     Fill="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
-                    Height="{Binding Diameter}"
-                    Width="{Binding Diameter}"
+                    Height="{Binding Diameter, Mode=OneTime}"
+                    Width="{Binding Diameter, Mode=OneTime}"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center" />
             </Grid>
@@ -120,12 +120,12 @@
         <DataTemplate x:Key="CategoryTemplate">
             <StackPanel>
                 <TextBlock
-                    Text="{Binding CategoryName}"
+                    Text="{Binding CategoryName, Mode=OneTime}"
                     Padding="8"
                     Style="{StaticResource TitleTextBlockStyle}" />
                 <ui:ItemsRepeater
                     x:Name="innerRepeater"
-                    ItemsSource="{Binding CategoryItems}"
+                    ItemsSource="{Binding CategoryItems, Mode=OneTime}"
                     ItemTemplate="{StaticResource StringDataTemplate}">
                     <ui:ItemsRepeater.Layout>
                         <ui:StackLayout Orientation="Horizontal" />
@@ -190,13 +190,13 @@
                     Fill="Gray" />
                 <TextBlock
                     Grid.Column="1"
-                    Text="{Binding Name}"
+                    Text="{Binding Name, Mode=OneTime}"
                     Style="{StaticResource BaseTextBlockStyle}"
                     Margin="12,6,0,0" />
                 <TextBlock
                     Grid.Column="1"
                     Grid.Row="1"
-                    Text="{Binding Company}"
+                    Text="{Binding Company, Mode=OneTime}"
                     Style="{StaticResource BodyTextBlockStyle}"
                     Margin="12,0,0,6" />
             </Grid>

@@ -105,12 +105,12 @@
                     Width="200"
                     Height="50"
                     HorizontalAlignment="Left"
-                    Fill="{x:Static SystemParameters.WindowGlassBrush}" />
+                    Fill="{Binding Path=(SystemParameters.WindowGlassBrush)}" />
             </StackPanel>-->
 
             <CheckBox
                 Content="Use modern window style"
-                DataContext="{Binding MainWindow, Source={x:Static Application.Current}}"
+                DataContext="{Binding MainWindow, Source={x:Static Application.Current}, Mode=OneTime}"
                 IsChecked="{Binding Path=(ui:WindowHelper.UseModernWindowStyle)}" />
 
             <GroupBox
