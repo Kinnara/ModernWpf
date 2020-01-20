@@ -251,7 +251,7 @@ namespace ModernWpf
 
             if (element.IsInitialized)
             {
-                ApplyRequestedTheme(element);
+                ApplyElementTheme(element);
             }
             else
             {
@@ -259,11 +259,11 @@ namespace ModernWpf
             }
         }
 
-        private static void ApplyRequestedTheme(FrameworkElement element)
+        private static void ApplyElementTheme(FrameworkElement element)
         {
             var resources = element.Resources;
             var requestedTheme = GetRequestedTheme(element);
-            ThemeResources.Current.UpdateMergedThemeDictionaries(resources, requestedTheme);
+            ThemeResources.Current.ApplyElementTheme(resources, requestedTheme);
 
             if (element is Window window)
             {
@@ -561,7 +561,7 @@ namespace ModernWpf
 
             if (GetRequestedTheme(element) != ElementTheme.Default)
             {
-                ApplyRequestedTheme(element);
+                ApplyElementTheme(element);
             }
 
             if (GetHasThemeResources(element))
@@ -586,7 +586,7 @@ namespace ModernWpf
             var element = (FrameworkElement)d;
             if (element.IsInitialized)
             {
-                ApplyRequestedTheme(element);
+                ApplyElementTheme(element);
                 UpdateThemeResourcesForElement(element);
             }
             else

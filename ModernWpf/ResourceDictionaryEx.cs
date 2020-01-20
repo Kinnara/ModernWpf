@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows;
 
 namespace ModernWpf
 {
     public class ResourceDictionaryEx : ResourceDictionary
     {
+        private ResourceDictionary _mergedThemeDictionary;
+
         /// <summary>
         /// Gets a collection of merged resource dictionaries that are specifically keyed
         /// and composed to address theme scenarios, for example supplying theme values for
@@ -17,27 +18,48 @@ namespace ModernWpf
         /// </returns>
         public Dictionary<object, ResourceDictionary> ThemeDictionaries { get; } = new Dictionary<object, ResourceDictionary>();
 
-        internal bool ContainsApplicationThemeDictionary { get; set; }
+        internal ResourceDictionary MergedAppThemeDictionary { get; set; }
 
         internal void Update(string themeKey)
         {
             if (ThemeDictionaries.TryGetValue(themeKey, out ResourceDictionary themeDictionary))
             {
-                MergedDictionaries.InsertOrReplace(ContainsApplicationThemeDictionary ? 1 : 0, themeDictionary);
-            }
-            else
-            {
-                if (ContainsApplicationThemeDictionary)
+                if (_mergedThemeDictionary != null)
                 {
-                    Debug.Assert(MergedDictionaries.Count >= 1 && MergedDictionaries.Count <= 2);
-                    if (MergedDictionaries.Count == 2)
+                    if (_mergedThemeDictionary == themeDictionary)
                     {
-                        MergedDictionaries.RemoveAt(1);
+                        return;
+                    }
+                    else
+                    {
+                        int targetIndex = MergedDictionaries.IndexOf(_mergedThemeDictionary);
+                        MergedDictionaries[targetIndex] = themeDictionary;
+                        _mergedThemeDictionary = themeDictionary;
                     }
                 }
                 else
                 {
-                    MergedDictionaries.Clear();
+                    int targetIndex;
+
+                    if (MergedAppThemeDictionary != null)
+                    {
+                        targetIndex = MergedDictionaries.IndexOf(MergedAppThemeDictionary) + 1;
+                    }
+                    else
+                    {
+                        targetIndex = 0;
+                    }
+
+                    MergedDictionaries.Insert(targetIndex, themeDictionary);
+                    _mergedThemeDictionary = themeDictionary;
+                }
+            }
+            else
+            {
+                if (_mergedThemeDictionary != null)
+                {
+                    MergedDictionaries.Remove(_mergedThemeDictionary);
+                    _mergedThemeDictionary = null;
                 }
             }
         }

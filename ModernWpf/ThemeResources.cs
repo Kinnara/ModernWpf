@@ -53,7 +53,7 @@ namespace ModernWpf
                 {
                     ThemeManager.Current.SetCurrentValue(ThemeManager.ApplicationThemeProperty, value);
 
-                    if (!IsInitializePending && DesignMode.DesignModeEnabled)
+                    if (DesignMode.DesignModeEnabled)
                     {
                         UpdateDesignTimeThemeDictionary();
                     }
@@ -73,7 +73,7 @@ namespace ModernWpf
                 {
                     ThemeManager.Current.SetCurrentValue(ThemeManager.AccentColorProperty, value);
 
-                    if (!IsInitializePending && DesignMode.DesignModeEnabled)
+                    if (DesignMode.DesignModeEnabled)
                     {
                         UpdateDesignTimeSystemColors();
                     }
@@ -88,22 +88,26 @@ namespace ModernWpf
             Debug.Assert(DesignMode.DesignModeEnabled);
             UpdateDesignTimeSystemColors();
             UpdateDesignTimeThemeDictionary();
-            SystemParameters.StaticPropertyChanged += OnSystemParametersPropertyChanged;
+            SystemParameters.StaticPropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == nameof(SystemParameters.HighContrast))
+                {
+                    UpdateDesignTimeThemeDictionary();
+                }
+            };
         }
 
         private void UpdateDesignTimeSystemColors()
         {
             Debug.Assert(DesignMode.DesignModeEnabled);
 
+            if (IsInitializePending)
+            {
+                return;
+            }
+
             var colors = GetDesignTimeSystemColors();
-            if (MergedDictionaries.Count == 0)
-            {
-                MergedDictionaries.Add(colors);
-            }
-            else
-            {
-                MergedDictionaries[0] = colors;
-            }
+            MergedDictionaries.InsertOrReplace(0, colors);
 
             ThemeManager.UpdateThemeBrushes(colors);
         }
@@ -111,6 +115,11 @@ namespace ModernWpf
         private void UpdateDesignTimeThemeDictionary()
         {
             Debug.Assert(DesignMode.DesignModeEnabled);
+
+            if (IsInitializePending)
+            {
+                return;
+            }
 
             if (SystemParameters.HighContrast)
             {
@@ -138,7 +147,7 @@ namespace ModernWpf
                 MergedDictionaries.RemoveIfNotNull(_lightResources);
                 MergedDictionaries.RemoveIfNotNull(_darkResources);
                 MergedDictionaries.RemoveIfNotNull(_highContrastResources);
-                Merge(themeDictionary);
+                MergedDictionaries.Insert(1, themeDictionary);
             }
         }
 
@@ -152,14 +161,6 @@ namespace ModernWpf
             else
             {
                 return new ResourceDictionary { Source = PackUriHelper.GetAbsoluteUri("DesignTime/SystemColors.xaml") };
-            }
-        }
-
-        private void OnSystemParametersPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(SystemParameters.HighContrast))
-            {
-                UpdateDesignTimeThemeDictionary();
             }
         }
 
@@ -178,15 +179,6 @@ namespace ModernWpf
         void ISupportInitialize.EndInit()
         {
             IsInitializePending = false;
-
-            //for (int i = MergedDictionaries.Count - 1; i >= 0; i--)
-            //{
-            //    if (MergedDictionaries[i] is ThemeDictionary td)
-            //    {
-            //        ThemeDictionaries[td.Key] = td;
-            //        MergedDictionaries.RemoveAt(i);
-            //    }
-            //}
 
             if (DesignMode.DesignModeEnabled)
             {
@@ -214,20 +206,50 @@ namespace ModernWpf
             }
         }
 
-        internal void ApplyApplicationTheme(ApplicationTheme appTheme)
+        internal void ApplyApplicationTheme(ApplicationTheme theme)
         {
-            Update(appTheme);
+            int targetIndex = DesignMode.DesignModeEnabled ? 1 : 0;
+
+            if (SystemParameters.HighContrast)
+            {
+                EnsureHighContrastResources();
+                MergedDictionaries.RemoveIfNotNull(_lightResources);
+                MergedDictionaries.RemoveIfNotNull(_darkResources);
+                MergedDictionaries.InsertIfNotExists(targetIndex, _highContrastResources);
+            }
+            else
+            {
+                MergedDictionaries.RemoveIfNotNull(_highContrastResources);
+
+                if (theme == ApplicationTheme.Light)
+                {
+                    EnsureLightResources();
+                    MergedDictionaries.RemoveIfNotNull(_darkResources);
+                    MergedDictionaries.InsertIfNotExists(targetIndex, _lightResources);
+                }
+                else if (theme == ApplicationTheme.Dark)
+                {
+                    EnsureDarkResources();
+                    MergedDictionaries.RemoveIfNotNull(_lightResources);
+                    MergedDictionaries.InsertIfNotExists(targetIndex, _darkResources);
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException(nameof(theme));
+                }
+            }
+
+            Debug.Assert(MergedThemeDictionaryCount == 1);
         }
 
-        internal void UpdateMergedThemeDictionaries(ResourceDictionary target, ElementTheme theme)
+        internal void ApplyElementTheme(ResourceDictionary target, ElementTheme theme)
         {
-            bool containsAppThemeDictionary;
+            ResourceDictionary mergedAppThemeDictionary = null;
 
             if (SystemParameters.HighContrast)
             {
                 target.MergedDictionaries.RemoveIfNotNull(_lightResources);
                 target.MergedDictionaries.RemoveIfNotNull(_darkResources);
-                containsAppThemeDictionary = false;
             }
             else
             {
@@ -236,73 +258,25 @@ namespace ModernWpf
                     EnsureLightResources();
                     target.MergedDictionaries.RemoveIfNotNull(_darkResources);
                     target.MergedDictionaries.InsertIfNotExists(0, _lightResources);
-                    containsAppThemeDictionary = true;
+                    mergedAppThemeDictionary = _lightResources;
                 }
                 else if (theme == ElementTheme.Dark)
                 {
                     EnsureDarkResources();
                     target.MergedDictionaries.RemoveIfNotNull(_lightResources);
                     target.MergedDictionaries.InsertIfNotExists(0, _darkResources);
-                    containsAppThemeDictionary = true;
+                    mergedAppThemeDictionary = _darkResources;
                 }
                 else // Default
                 {
                     target.MergedDictionaries.RemoveIfNotNull(_lightResources);
                     target.MergedDictionaries.RemoveIfNotNull(_darkResources);
-                    containsAppThemeDictionary = false;
                 }
             }
 
             if (target is ResourceDictionaryEx etr)
             {
-                etr.ContainsApplicationThemeDictionary = containsAppThemeDictionary;
-            }
-        }
-
-        private void Update(ApplicationTheme theme)
-        {
-            int startIndex = DesignMode.DesignModeEnabled ? 1 : 0;
-
-            if (SystemParameters.HighContrast)
-            {
-                EnsureHighContrastResources();
-
-                if (!MergedDictionaries.Contains(_highContrastResources))
-                {
-                    MergedDictionaries.InsertOrReplace(startIndex + MergedThemeDictionaryCount, _highContrastResources);
-                }
-                else
-                {
-                    Debug.Assert(MergedDictionaries[startIndex + MergedThemeDictionaryCount - 1] == _highContrastResources);
-                }
-            }
-            else
-            {
-                MergedDictionaries.RemoveIfNotNull(_highContrastResources);
-
-                ResourceDictionary targetDictionary;
-
-                if (theme == ApplicationTheme.Light)
-                {
-                    EnsureLightResources();
-                    targetDictionary = _lightResources;
-                }
-                else if (theme == ApplicationTheme.Dark)
-                {
-                    EnsureDarkResources();
-                    targetDictionary = _darkResources;
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException(nameof(theme));
-                }
-
-                int targetIndex = startIndex + MergedThemeDictionaryCount - 1;
-                if (targetIndex == 1 && MergedDictionaries[targetIndex] != targetDictionary)
-                {
-                    MergedDictionaries.Swap(startIndex, targetIndex);
-                }
-                Debug.Assert(MergedDictionaries[targetIndex] == targetDictionary);
+                etr.MergedAppThemeDictionary = mergedAppThemeDictionary;
             }
         }
 
@@ -311,7 +285,6 @@ namespace ModernWpf
             if (_lightResources == null)
             {
                 _lightResources = GetThemeDictionary(ThemeManager.LightKey);
-                Merge(_lightResources);
             }
         }
 
@@ -320,7 +293,6 @@ namespace ModernWpf
             if (_darkResources == null)
             {
                 _darkResources = GetThemeDictionary(ThemeManager.DarkKey);
-                Merge(_darkResources);
             }
         }
 
@@ -330,13 +302,6 @@ namespace ModernWpf
             {
                 _highContrastResources = GetThemeDictionary(ThemeManager.HighContrastKey);
             }
-        }
-
-        private void Merge(ResourceDictionary dictionary)
-        {
-            int insertIndex = DesignMode.DesignModeEnabled ? 1 : 0;
-            MergedDictionaries.Insert(insertIndex, dictionary);
-            Debug.Assert(MergedThemeDictionaryCount >= 1 && MergedThemeDictionaryCount <= 2);
         }
 
         private bool IsMerged(ResourceDictionary dictionary)
