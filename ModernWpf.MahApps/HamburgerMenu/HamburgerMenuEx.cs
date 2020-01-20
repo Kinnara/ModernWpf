@@ -136,6 +136,23 @@ namespace ModernWpf.MahApps.Controls
 
         #endregion
 
+        #region BackButtonCommandTarget
+
+        public static readonly DependencyProperty BackButtonCommandTargetProperty =
+            DependencyProperty.Register(
+                nameof(BackButtonCommandTarget),
+                typeof(IInputElement),
+                typeof(HamburgerMenuEx),
+                null);
+
+        public IInputElement BackButtonCommandTarget
+        {
+            get => (IInputElement)GetValue(BackButtonCommandTargetProperty);
+            set => SetValue(BackButtonCommandTargetProperty, value);
+        }
+
+        #endregion
+
         #region PaneLength
 
         private static readonly DependencyPropertyKey PaneLengthPropertyKey =

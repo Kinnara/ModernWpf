@@ -6,6 +6,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
 
 namespace ModernWpf.SampleApp
 {
@@ -14,6 +17,12 @@ namespace ModernWpf.SampleApp
         public MainWindow()
         {
             InitializeComponent();
+
+            var rootFrame = NavigationRootPage.RootFrame;
+            SetBinding(TitleBar.IsBackButtonVisibleProperty,
+                new Binding { Path = new PropertyPath(Frame.CanGoBackProperty), Source = rootFrame });
+            TitleBar.SetBackButtonCommand(this, NavigationCommands.BrowseBack);
+            TitleBar.SetBackButtonCommandTarget(this, rootFrame);
 
             SubscribeToResourcesChanged();
         }
@@ -31,20 +40,6 @@ namespace ModernWpf.SampleApp
             {
                 Settings.Default.MainWindowPlacement = this.GetPlacement();
                 Settings.Default.Save();
-            }
-        }
-
-        private void OnBackRequested(object sender, BackRequestedEventArgs e)
-        {
-            GoBack();
-        }
-
-        private void GoBack()
-        {
-            if (RootFrame.CanGoBack)
-            {
-                RootFrame.GoBack();
-                RootFrame.RemoveBackEntry();
             }
         }
 

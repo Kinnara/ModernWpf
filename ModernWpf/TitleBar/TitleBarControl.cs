@@ -250,6 +250,19 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
+        #region BackButtonCommandTarget
+
+        public static readonly DependencyProperty BackButtonCommandTargetProperty =
+            TitleBar.BackButtonCommandTargetProperty.AddOwner(typeof(TitleBarControl));
+
+        public IInputElement BackButtonCommandTarget
+        {
+            get => (IInputElement)GetValue(BackButtonCommandTargetProperty);
+            set => SetValue(BackButtonCommandTargetProperty, value);
+        }
+
+        #endregion
+
         #region BackButtonStyle
 
         public static readonly DependencyProperty BackButtonStyleProperty =

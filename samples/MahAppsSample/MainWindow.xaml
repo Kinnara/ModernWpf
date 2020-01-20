@@ -43,11 +43,12 @@
         <ui:HamburgerMenuEx
             x:Name="NavView"
             PaneTitle="Pane Title"
+            BackButtonCommand="BrowseBack"
+            BackButtonCommandTarget="{Binding ElementName=ContentFrame}"
             IsBackButtonVisible="True"
             IsPaneOpen="True"
             IsBackEnabled="{Binding ElementName=ContentFrame, Path=CanGoBack}"
             ItemInvoked="NavView_ItemInvoked"
-            BackRequested="NavView_BackRequested"
             PaneOpened="NavView_PaneOpened"
             PaneClosed="NavView_PaneClosed">
             <ui:HamburgerMenuEx.Padding>

@@ -19,11 +19,6 @@ namespace MahAppsSample
             Navigate(NavView.SelectedItem);
         }
 
-        private void NavView_BackRequested(object sender, HamburgerMenuBackRequestedEventArgs e)
-        {
-            ContentFrame.GoBack();
-        }
-
         private void NavView_ItemInvoked(object sender, HamburgerMenuItemInvokedEventArgs e)
         {
             if (e.IsItemOptions)

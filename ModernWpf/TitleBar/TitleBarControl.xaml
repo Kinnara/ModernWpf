@@ -38,6 +38,7 @@
                                 IsEnabled="{TemplateBinding IsBackEnabled}"
                                 Command="{TemplateBinding BackButtonCommand}"
                                 CommandParameter="{TemplateBinding BackButtonCommandParameter}"
+                                CommandTarget="{TemplateBinding BackButtonCommandTarget}"
                                 IsActive="{TemplateBinding IsActive}"
                                 Visibility="Collapsed" />
                         </StackPanel>

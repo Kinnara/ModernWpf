@@ -211,6 +211,7 @@
                                     IsEnabled="{TemplateBinding IsBackEnabled}"
                                     Command="{TemplateBinding BackButtonCommand}"
                                     CommandParameter="{TemplateBinding BackButtonCommandParameter}"
+                                    CommandTarget="{TemplateBinding BackButtonCommandTarget}"
                                     WindowChrome.IsHitTestVisibleInChrome="True" />
                                 <Button
                                     x:Name="HamburgerButton"

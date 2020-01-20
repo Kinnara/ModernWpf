@@ -84,6 +84,7 @@
                                     IsBackEnabled="{TemplateBinding local:TitleBar.IsBackEnabled}"
                                     BackButtonCommand="{TemplateBinding local:TitleBar.BackButtonCommand}"
                                     BackButtonCommandParameter="{TemplateBinding local:TitleBar.BackButtonCommandParameter}"
+                                    BackButtonCommandTarget="{TemplateBinding local:TitleBar.BackButtonCommandTarget}"
                                     BackButtonStyle="{TemplateBinding local:TitleBar.BackButtonStyle}"
                                     ExtendViewIntoTitleBar="{TemplateBinding local:TitleBar.ExtendViewIntoTitleBar}"
                                     Panel.ZIndex="1" />

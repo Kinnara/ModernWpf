@@ -3,6 +3,7 @@ using ModernWpf.SampleApp.ControlPages;
 using ModernWpf.SampleApp.Presets;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -147,8 +148,18 @@ namespace ModernWpf.SampleApp
             }
         }
 
-        private void Frame_Navigated(object sender, NavigationEventArgs e)
+        private void RootFrame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
+            if (e.NavigationMode == NavigationMode.Back)
+            {
+                RootFrame.RemoveBackEntry();
+            }
+        }
+
+        private void RootFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            Debug.Assert(!RootFrame.CanGoForward);
+
             _ignoreSelectionChange = true;
             PagesList.SelectedValue = RootFrame.CurrentSource;
             _ignoreSelectionChange = false;

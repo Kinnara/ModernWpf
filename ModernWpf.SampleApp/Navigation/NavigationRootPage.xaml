@@ -8,7 +8,6 @@
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -174,7 +173,8 @@
             Grid.Column="1"
             Focusable="False"
             FocusVisualStyle="{x:Null}"
-            Navigated="Frame_Navigated">
+            Navigating="RootFrame_Navigating"
+            Navigated="RootFrame_Navigated">
             <ui:ThemeAwareFrame.Template>
                 <ControlTemplate TargetType="Frame">
                     <Border

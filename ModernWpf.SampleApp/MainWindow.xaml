@@ -6,6 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
     mc:Ignorable="d"
     Title="ModernWPF Sample App"
     Width="1000"
@@ -15,14 +16,7 @@
     Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
     ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.UseModernWindowStyle="True"
-    ui:TitleBar.IsBackButtonVisible="{Binding ElementName=RootFrame, Path=CanGoBack}"
-    ui:TitleBar.IsBackEnabled="{Binding ElementName=RootFrame, Path=CanGoBack}"
-    ui:TitleBar.BackRequested="OnBackRequested"
     UseLayoutRounding="True">
 
-    <ui:ThemeAwareFrame
-        x:Name="RootFrame"
-        NavigationUIVisibility="Hidden"
-        IsTabStop="False"
-        Source="/Navigation/NavigationRootPage.xaml" />
+    <local:NavigationRootPage x:Name="RootPage" />
 </Window>
