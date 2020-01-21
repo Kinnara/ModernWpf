@@ -1,4 +1,4 @@
-﻿<Page
+﻿<local:TestPage
     x:Class="ModernWpfTestApp.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -94,4 +94,4 @@
 
         </StackPanel>
     </Grid>
-</Page>
+</local:TestPage>

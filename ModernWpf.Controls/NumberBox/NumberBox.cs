@@ -8,9 +8,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
 using ModernWpf.Automation.Peers;
-using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -32,7 +30,7 @@ namespace ModernWpf.Controls
     [TemplatePart(Name = c_numberBoxPopupName, Type = typeof(Popup))]
     [TemplatePart(Name = c_numberBoxPopupDownButtonName, Type = typeof(RepeatButton))]
     [TemplatePart(Name = c_numberBoxPopupUpButtonName, Type = typeof(RepeatButton))]
-    public class NumberBox : Control
+    public partial class NumberBox : Control
     {
         const string c_numberBoxDownButtonName = "DownSpinButton";
         const string c_numberBoxUpButtonName = "UpSpinButton";
@@ -53,335 +51,18 @@ namespace ModernWpf.Controls
 
         public NumberBox()
         {
+            SetCurrentValue(NumberFormatterProperty, GetRegionalSettingsAwareDecimalFormatter());
+
             MouseWheel += OnNumberBoxScroll;
 
             GotKeyboardFocus += OnNumberBoxGotFocus;
             LostKeyboardFocus += OnNumberBoxLostFocus;
         }
 
-        #region Minimum
-
-        public static readonly DependencyProperty MinimumProperty =
-            DependencyProperty.Register(
-                nameof(Minimum),
-                typeof(double),
-                typeof(NumberBox),
-                new PropertyMetadata(double.MinValue, OnMinimumPropertyChanged));
-
-        public double Minimum
+        private INumberBoxNumberFormatter GetRegionalSettingsAwareDecimalFormatter()
         {
-            get => (double)GetValue(MinimumProperty);
-            set => SetValue(MinimumProperty, value);
+            return new DefaultNumberBoxNumberFormatter();
         }
-
-        private static void OnMinimumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnMinimumPropertyChanged(args);
-        }
-
-        #endregion
-
-        #region Maximum
-
-        public static readonly DependencyProperty MaximumProperty =
-            DependencyProperty.Register(
-                nameof(Maximum),
-                typeof(double),
-                typeof(NumberBox),
-                new PropertyMetadata(double.MaxValue, OnMaximumPropertyChanged));
-
-        public double Maximum
-        {
-            get => (double)GetValue(MaximumProperty);
-            set => SetValue(MaximumProperty, value);
-        }
-
-        private static void OnMaximumPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnMaximumPropertyChanged(args);
-        }
-
-        #endregion
-
-        #region Value
-
-        public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register(
-                nameof(Value),
-                typeof(double),
-                typeof(NumberBox),
-                new FrameworkPropertyMetadata(
-                    0d,
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
-                    OnValuePropertyChanged));
-
-        public double Value
-        {
-            get => (double)GetValue(ValueProperty);
-            set => SetValue(ValueProperty, value);
-        }
-
-        private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnValuePropertyChanged(args);
-        }
-
-        #endregion
-
-        #region SmallChange
-
-        public static readonly DependencyProperty SmallChangeProperty =
-            DependencyProperty.Register(
-                nameof(SmallChange),
-                typeof(double),
-                typeof(NumberBox),
-                new PropertyMetadata(1d, OnSmallChangePropertyChanged));
-
-        public double SmallChange
-        {
-            get => (double)GetValue(SmallChangeProperty);
-            set => SetValue(SmallChangeProperty, value);
-        }
-
-        private static void OnSmallChangePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnSmallChangePropertyChanged(args);
-        }
-
-        #endregion
-
-        #region LargeChange
-
-        public static readonly DependencyProperty LargeChangeProperty =
-            DependencyProperty.Register(
-                nameof(LargeChange),
-                typeof(double),
-                typeof(NumberBox),
-                new PropertyMetadata(10d));
-
-        public double LargeChange
-        {
-            get => (double)GetValue(LargeChangeProperty);
-            set => SetValue(LargeChangeProperty, value);
-        }
-
-        #endregion
-
-        #region Text
-
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register(
-                nameof(Text),
-                typeof(string),
-                typeof(NumberBox),
-                new FrameworkPropertyMetadata(
-                    string.Empty,
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
-                    OnTextPropertyChanged));
-
-        public string Text
-        {
-            get => (string)GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
-        }
-
-        private static void OnTextPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnTextPropertyChanged(args);
-        }
-
-        #endregion
-
-        #region Header
-
-        public static readonly DependencyProperty HeaderProperty =
-            ControlHelper.HeaderProperty.AddOwner(typeof(NumberBox));
-
-        public object Header
-        {
-            get => GetValue(HeaderProperty);
-            set => SetValue(HeaderProperty, value);
-        }
-
-        #endregion
-
-        #region HeaderTemplate
-
-        public static readonly DependencyProperty HeaderTemplateProperty =
-            ControlHelper.HeaderTemplateProperty.AddOwner(typeof(NumberBox));
-
-        public DataTemplate HeaderTemplate
-        {
-            get => (DataTemplate)GetValue(HeaderTemplateProperty);
-            set => SetValue(HeaderTemplateProperty, value);
-        }
-
-        #endregion
-
-        #region PlaceholderText
-
-        public static readonly DependencyProperty PlaceholderTextProperty =
-            ControlHelper.PlaceholderTextProperty.AddOwner(typeof(NumberBox));
-
-        public string PlaceholderText
-        {
-            get => (string)GetValue(PlaceholderTextProperty);
-            set => SetValue(PlaceholderTextProperty, value);
-        }
-
-        #endregion
-
-        #region SelectionBrush
-
-        public static readonly DependencyProperty SelectionBrushProperty =
-            DependencyProperty.Register(
-                nameof(SelectionBrush),
-                typeof(Brush),
-                typeof(NumberBox));
-
-        public Brush SelectionBrush
-        {
-            get => (Brush)GetValue(SelectionBrushProperty);
-            set => SetValue(SelectionBrushProperty, value);
-        }
-
-        #endregion
-
-        #region Description
-
-        public static readonly DependencyProperty DescriptionProperty =
-            ControlHelper.DescriptionProperty.AddOwner(typeof(NumberBox));
-
-        public object Description
-        {
-            get => GetValue(DescriptionProperty);
-            set => SetValue(DescriptionProperty, value);
-        }
-
-        #endregion
-
-        #region ValidationMode
-
-        public static readonly DependencyProperty ValidationModeProperty =
-            DependencyProperty.Register(
-                nameof(ValidationMode),
-                typeof(NumberBoxValidationMode),
-                typeof(NumberBox),
-                new PropertyMetadata(OnValidationModePropertyChanged));
-
-        public NumberBoxValidationMode ValidationMode
-        {
-            get => (NumberBoxValidationMode)GetValue(ValidationModeProperty);
-            set => SetValue(ValidationModeProperty, value);
-        }
-
-        private static void OnValidationModePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnValidationModePropertyChanged(args);
-        }
-
-        #endregion
-
-        #region SpinButtonPlacementMode
-
-        public static readonly DependencyProperty SpinButtonPlacementModeProperty =
-            DependencyProperty.Register(
-                nameof(SpinButtonPlacementMode),
-                typeof(NumberBoxSpinButtonPlacementMode),
-                typeof(NumberBox),
-                new PropertyMetadata(NumberBoxSpinButtonPlacementMode.Hidden, OnSpinButtonPlacementModePropertyChanged));
-
-        public NumberBoxSpinButtonPlacementMode SpinButtonPlacementMode
-        {
-            get => (NumberBoxSpinButtonPlacementMode)GetValue(SpinButtonPlacementModeProperty);
-            set => SetValue(SpinButtonPlacementModeProperty, value);
-        }
-
-        private static void OnSpinButtonPlacementModePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnSpinButtonPlacementModePropertyChanged(args);
-        }
-
-        #endregion
-
-        #region IsWrapEnabled
-
-        public static readonly DependencyProperty IsWrapEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsWrapEnabled),
-                typeof(bool),
-                typeof(NumberBox),
-                new PropertyMetadata(false, OnIsWrapEnabledPropertyChanged));
-
-        public bool IsWrapEnabled
-        {
-            get => (bool)GetValue(IsWrapEnabledProperty);
-            set => SetValue(IsWrapEnabledProperty, value);
-        }
-
-        private static void OnIsWrapEnabledPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnIsWrapEnabledPropertyChanged(args);
-        }
-
-        #endregion
-
-        #region AcceptsExpression
-
-        public static readonly DependencyProperty AcceptsExpressionProperty =
-            DependencyProperty.Register(
-                nameof(AcceptsExpression),
-                typeof(bool),
-                typeof(NumberBox),
-                new PropertyMetadata(false));
-
-        public bool AcceptsExpression
-        {
-            get => (bool)GetValue(AcceptsExpressionProperty);
-            set => SetValue(AcceptsExpressionProperty, value);
-        }
-
-        #endregion
-
-        #region NumberFormatter
-
-        public static readonly DependencyProperty NumberFormatterProperty =
-            DependencyProperty.Register(
-                nameof(NumberFormatter),
-                typeof(INumberBoxNumberFormatter),
-                typeof(NumberBox),
-                new PropertyMetadata(
-                    new DefaultNumberBoxNumberFormatter(),
-                    OnNumberFormatterPropertyChanged),
-                ValidateNumberFormatter);
-
-        public INumberBoxNumberFormatter NumberFormatter
-        {
-            get => (INumberBoxNumberFormatter)GetValue(NumberFormatterProperty);
-            set => SetValue(NumberFormatterProperty, value);
-        }
-
-        private static void OnNumberFormatterPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((NumberBox)sender).OnNumberFormatterPropertyChanged(args);
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(NumberBox));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        public event TypedEventHandler<NumberBox, NumberBoxValueChangedEventArgs> ValueChanged;
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -528,9 +209,12 @@ namespace ModernWpf.Controls
             UpdateTextToValue();
         }
 
-        private static bool ValidateNumberFormatter(object value)
+        private void ValidateNumberFormatter(INumberBoxNumberFormatter value)
         {
-            return value is INumberBoxNumberFormatter;
+            if (value is null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
         }
 
         private void OnSpinButtonPlacementModePropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -546,7 +230,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        void UpdateValueToText()
+        private void UpdateValueToText()
         {
             if (m_textBox != null)
             {
@@ -561,7 +245,7 @@ namespace ModernWpf.Controls
             UpdateSpinButtonEnabled();
         }
 
-        void OnNumberBoxGotFocus(object sender, RoutedEventArgs e)
+        private void OnNumberBoxGotFocus(object sender, RoutedEventArgs e)
         {
             // When the control receives focus, select the text
             if (m_textBox != null)
@@ -578,7 +262,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        void OnNumberBoxLostFocus(object sender, RoutedEventArgs e)
+        private void OnNumberBoxLostFocus(object sender, RoutedEventArgs e)
         {
             ValidateInput();
 
@@ -588,7 +272,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        void CoerceMinimum()
+        private void CoerceMinimum()
         {
             var max = Maximum;
             if (Minimum > max)
@@ -597,7 +281,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        void CoerceMaximum()
+        private void CoerceMaximum()
         {
             var min = Minimum;
             if (Maximum < min)
@@ -606,7 +290,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        void CoerceValue()
+        private void CoerceValue()
         {
             // Validate that the value is in bounds
             var value = Value;
@@ -625,7 +309,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        void ValidateInput()
+        private void ValidateInput()
         {
             // Validate the content of the inner textbox
             if (m_textBox != null)
@@ -670,17 +354,17 @@ namespace ModernWpf.Controls
             }
         }
 
-        void OnSpinDownClick(object sender, RoutedEventArgs args)
+        private void OnSpinDownClick(object sender, RoutedEventArgs args)
         {
             StepValue(-SmallChange);
         }
 
-        void OnSpinUpClick(object sender, RoutedEventArgs args)
+        private void OnSpinUpClick(object sender, RoutedEventArgs args)
         {
             StepValue(SmallChange);
         }
 
-        void OnNumberBoxKeyDown(object sender, KeyEventArgs args)
+        private void OnNumberBoxKeyDown(object sender, KeyEventArgs args)
         {
             // Handle these on key down so that we get repeat behavior.
             switch (args.Key)
@@ -707,7 +391,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        void OnNumberBoxKeyUp(object sender, KeyEventArgs args)
+        private void OnNumberBoxKeyUp(object sender, KeyEventArgs args)
         {
             switch (args.Key)
             {
@@ -723,7 +407,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        void OnNumberBoxScroll(object sender, MouseWheelEventArgs args)
+        private void OnNumberBoxScroll(object sender, MouseWheelEventArgs args)
         {
             if (m_textBox != null)
             {
@@ -744,7 +428,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        void StepValue(double change)
+        private void StepValue(double change)
         {
             // Before adjusting the value, validate the contents of the textbox so we don't override it.
             ValidateInput();
@@ -774,7 +458,7 @@ namespace ModernWpf.Controls
         }
 
         // Updates TextBox.Text with the formatted Value
-        void UpdateTextToValue()
+        private void UpdateTextToValue()
         {
             if (m_textBox != null)
             {
@@ -806,7 +490,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        void UpdateSpinButtonPlacement()
+        private void UpdateSpinButtonPlacement()
         {
             var spinButtonMode = SpinButtonPlacementMode;
 
@@ -824,7 +508,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        void UpdateSpinButtonEnabled()
+        private void UpdateSpinButtonEnabled()
         {
             var value = Value;
             bool isUpButtonEnabled = false;
@@ -855,7 +539,7 @@ namespace ModernWpf.Controls
             VisualStateManager.GoToState(this, isDownButtonEnabled ? "DownSpinButtonEnabled" : "DownSpinButtonDisabled", false);
         }
 
-        bool IsInBounds(double value)
+        private bool IsInBounds(double value)
         {
             return value >= Minimum && value <= Maximum;
         }

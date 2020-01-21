@@ -7,10 +7,11 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Navigation;
 
 namespace ModernWpfTestApp
 {
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : TestPage
     {
         List<string> locales = new List<string>
         {
@@ -112,7 +113,7 @@ namespace ModernWpfTestApp
 
             // This setting is persisted across multiple openings of an app, so we always want to initialize it to en-US
             // in case the app crashed while in a different language or otherwise was not able to set it back.
-            //ModernWpfTestApp.App.LanguageOverride = "en-US";
+            App.LanguageOverride = "en-US";
 
             // We'll additionally make sure that the combo box begins on the right element to reflect the current value.
             LanguageChooser.SelectedIndex = locales.IndexOf("en-US");
@@ -177,24 +178,24 @@ namespace ModernWpfTestApp
             return child;
         }
 
-        //protected override void OnNavigatedTo(NavigationEventArgs e)
-        //{
-        //    LanguageChooser.SelectedItem = ModernWpfTestApp.App.LanguageOverride;
+        protected internal override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            LanguageChooser.SelectedItem = App.LanguageOverride;
 
-        //    var testContentLoadedCheckBox = SearchVisualTree(this.Frame, "TestContentLoadedCheckBox") as CheckBox;
-        //    if (testContentLoadedCheckBox != null)
-        //    {
-        //        testContentLoadedCheckBox.IsChecked = false;
-        //    }
-        //    else
-        //    {
-        //        Log.Warning("Warning: Couldn't find the TestContentLoadedCheckBox to uncheck in OnNavigatedTo");
-        //    }
-        //}
+            /*var testContentLoadedCheckBox = SearchVisualTree(this.Frame, "TestContentLoadedCheckBox") as CheckBox;
+            if (testContentLoadedCheckBox != null)
+            {
+                testContentLoadedCheckBox.IsChecked = false;
+            }
+            else
+            {
+                Log.Warning("Warning: Couldn't find the TestContentLoadedCheckBox to uncheck in OnNavigatedTo");
+            }*/
+        }
 
         private void LanguageChooser_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //ModernWpfTestApp.App.LanguageOverride = (string)((ComboBoxItem)LanguageChooser.SelectedItem).Content;
+            App.LanguageOverride = (string)((ComboBoxItem)LanguageChooser.SelectedItem).Content;
         }
 
         private void LongAnimationsDisabled_Checked(object sender, RoutedEventArgs e)

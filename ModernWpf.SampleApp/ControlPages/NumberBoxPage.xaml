@@ -81,8 +81,14 @@
                             Text="{Binding ElementName=NumberBox1, Path=Text, Mode=OneWay}"
                             IsEnabled="False" />
                         <TextBox
+                            ui:ControlHelper.Header="Header"
+                            Text="{Binding ElementName=NumberBox1, Path=Header, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox
                             ui:ControlHelper.Header="PlaceholderText"
-                            Text="{Binding ElementName=NumberBox1, Path=PlaceholderText}" />
+                            Text="{Binding ElementName=NumberBox1, Path=PlaceholderText, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox
+                            ui:ControlHelper.Header="Description"
+                            Text="{Binding ElementName=NumberBox1, Path=Description, UpdateSourceTrigger=PropertyChanged}" />
                         <ComboBox
                             ui:ControlHelper.Header="ValidationMode"
                             ItemsSource="{Binding Source={x:Type ui:NumberBoxValidationMode}, Converter={StaticResource EnumValuesConverter}}"
@@ -91,12 +97,12 @@
                             ui:ControlHelper.Header="SpinButtonPlacementMode"
                             ItemsSource="{Binding Source={x:Type ui:NumberBoxSpinButtonPlacementMode}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=NumberBox1, Path=SpinButtonPlacementMode}" />
-                        <ui:ToggleSwitch
-                            Header="IsWrapEnabled"
-                            IsOn="{Binding ElementName=NumberBox1, Path=IsWrapEnabled}" />
-                        <ui:ToggleSwitch
-                            Header="AcceptsExpression"
-                            IsOn="{Binding ElementName=NumberBox1, Path=AcceptsExpression}" />
+                        <CheckBox
+                            Content="IsWrapEnabled"
+                            IsChecked="{Binding ElementName=NumberBox1, Path=IsWrapEnabled}" />
+                        <CheckBox
+                            Content="AcceptsExpression"
+                            IsChecked="{Binding ElementName=NumberBox1, Path=AcceptsExpression}" />
                         <Slider
                             x:Name="CornerRadiusSlider"
                             ui:ControlHelper.Header="CornerRadius"

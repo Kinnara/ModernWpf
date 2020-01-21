@@ -8,11 +8,17 @@ namespace ModernWpfTestApp
         public TestFrame()
         {
             Navigating += OnNavigating;
+            Navigated += OnNavigated;
         }
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
         {
             (e.Content as TestPage)?.OnNavigatingFrom(e);
+        }
+
+        private void OnNavigated(object sender, NavigationEventArgs e)
+        {
+            (e.Content as TestPage)?.OnNavigatedTo(e);
         }
     }
 }
