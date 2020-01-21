@@ -63,6 +63,7 @@
             <common:BrushToColorConverter x:Key="BrushToColorConverter" />
             <common:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
             <common:BooleanToValueConverter x:Key="booleanToValueConverter" />
+            <common:CornerRadiusToDoubleConverter x:Key="CornerRadiusToDoubleConverter" />
 
             <Style TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
                 <Setter Property="sc:AutoPanningMode.IsEnabled" Value="True" />

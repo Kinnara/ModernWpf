@@ -313,7 +313,8 @@
                             ui:ControlHelper.HeaderTemplate="{TemplateBinding HeaderTemplate}"
                             ui:ControlHelper.PlaceholderText="{TemplateBinding PlaceholderText}"
                             SelectionBrush="{TemplateBinding SelectionBrush}"
-                            ui:ControlHelper.Description="{TemplateBinding Description}" />
+                            ui:ControlHelper.Description="{TemplateBinding Description}"
+                            ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}" />
 
                         <Popup
                             x:Name="UpDownPopup"

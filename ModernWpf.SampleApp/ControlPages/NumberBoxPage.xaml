@@ -97,6 +97,14 @@
                         <ui:ToggleSwitch
                             Header="AcceptsExpression"
                             IsOn="{Binding ElementName=NumberBox1, Path=AcceptsExpression}" />
+                        <Slider
+                            x:Name="CornerRadiusSlider"
+                            ui:ControlHelper.Header="CornerRadius"
+                            Maximum="20"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            AutoToolTipPlacement="TopLeft"
+                            Value="{Binding ElementName=NumberBox1, Path=CornerRadius, Converter={StaticResource CornerRadiusToDoubleConverter}}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
