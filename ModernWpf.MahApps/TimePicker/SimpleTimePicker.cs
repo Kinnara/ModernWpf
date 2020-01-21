@@ -37,6 +37,8 @@ namespace ModernWpf.MahApps.Controls
         static SimpleTimePicker()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SimpleTimePicker), new FrameworkPropertyMetadata(typeof(SimpleTimePicker)));
+
+            IsDropDownOpenProperty.OverrideMetadata(typeof(SimpleTimePicker), new FrameworkPropertyMetadata(OnIsDropDownOpenChanged));
         }
 
         /// <summary>
@@ -275,6 +277,18 @@ namespace ModernWpf.MahApps.Controls
             UpdateTextBlocks();
         }
 
+        private static void OnIsDropDownOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(bool)e.NewValue)
+            {
+                var timePicker = (SimpleTimePicker)d;
+                if (timePicker.IsKeyboardFocusWithin)
+                {
+                    timePicker.Focus();
+                }
+            }
+        }
+
         private static void OnPlaceholderTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((SimpleTimePicker)d).UpdateTextBlocks();
@@ -356,7 +370,7 @@ namespace ModernWpf.MahApps.Controls
             }
 
             var firstVisiblePicker = Selectors.FirstOrDefault(s => s.Visibility == Visibility.Visible);
-            firstVisiblePicker?.FocusSelectedItem();
+            firstVisiblePicker?.Focus();
         }
 
         private void OnPopupClosed(object sender, EventArgs e)

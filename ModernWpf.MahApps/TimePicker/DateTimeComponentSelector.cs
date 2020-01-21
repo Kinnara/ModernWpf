@@ -12,8 +12,10 @@ namespace ModernWpf.MahApps.Controls
 
         static DateTimeComponentSelector()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(DateTimeComponentSelector),
-                new FrameworkPropertyMetadata(typeof(DateTimeComponentSelector)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(DateTimeComponentSelector), new FrameworkPropertyMetadata(typeof(DateTimeComponentSelector)));
+
+            IsTabStopProperty.OverrideMetadata(typeof(DateTimeComponentSelector), new FrameworkPropertyMetadata(true));
+            KeyboardNavigation.TabNavigationProperty.OverrideMetadata(typeof(DateTimeComponentSelector), new FrameworkPropertyMetadata(KeyboardNavigationMode.Cycle));
         }
 
         public DateTimeComponentSelector()
@@ -194,6 +196,55 @@ namespace ModernWpf.MahApps.Controls
             ScrollToSelection();
         }
 
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            bool handled = true;
+            Key key = e.Key;
+            switch (key)
+            {
+                case Key.Up:
+                    _scrollViewer?.LineUp();
+                    break;
+
+                case Key.Down:
+                    _scrollViewer?.LineDown();
+                    break;
+
+                case Key.Left:
+                case Key.Right:
+                    if (IsKeyboardFocusWithin)
+                    {
+                        var direction = key == Key.Left ? FocusNavigationDirection.Left : FocusNavigationDirection.Right;
+                        MoveFocus(new TraversalRequest(direction));
+                    }
+                    break;
+
+                case Key.Home:
+                case Key.End:
+                    break;
+
+                case Key.PageUp:
+                    _scrollViewer?.PageUp();
+                    break;
+
+                case Key.PageDown:
+                    _scrollViewer?.PageDown();
+                    break;
+
+                default:
+                    handled = false;
+                    break;
+            }
+            if (handled)
+            {
+                e.Handled = true;
+            }
+            else
+            {
+                base.OnKeyDown(e);
+            }
+        }
+
         protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
         {
             base.OnPreviewMouseWheel(e);
@@ -302,14 +353,5 @@ namespace ModernWpf.MahApps.Controls
 
         private SelectionChangedEventArgs _deferredSelectionChangedEventArgs;
         private bool _ignoreNextMouseMove;
-    }
-
-    public class DateTimeComponentSelectorItem : ListBoxItem
-    {
-        static DateTimeComponentSelectorItem()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(DateTimeComponentSelectorItem),
-                new FrameworkPropertyMetadata(typeof(DateTimeComponentSelectorItem)));
-        }
     }
 }

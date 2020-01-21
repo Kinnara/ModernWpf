@@ -393,7 +393,8 @@
                                                     FontSize="16"
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch"
-                                                    Style="{DynamicResource DateTimePickerFlyoutButtonStyle}" />
+                                                    Style="{DynamicResource DateTimePickerFlyoutButtonStyle}"
+                                                    IsDefault="True" />
                                                 <Button
                                                     x:Name="DismissButton"
                                                     Grid.Column="1"
@@ -402,7 +403,8 @@
                                                     FontSize="16"
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch"
-                                                    Style="{DynamicResource DateTimePickerFlyoutButtonStyle}" />
+                                                    Style="{DynamicResource DateTimePickerFlyoutButtonStyle}"
+                                                    IsCancel="True" />
                                             </Grid>
                                         </Grid>
                                     </Border>
