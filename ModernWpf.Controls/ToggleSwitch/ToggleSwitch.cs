@@ -3,6 +3,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 
@@ -40,8 +41,9 @@ namespace ModernWpf.Controls
 
         static ToggleSwitch()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(ToggleSwitch),
-                new FrameworkPropertyMetadata(typeof(ToggleSwitch)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(ToggleSwitch), new FrameworkPropertyMetadata(typeof(ToggleSwitch)));
+
+            EventManager.RegisterClassHandler(typeof(ToggleSwitch), MouseLeftButtonDownEvent, new MouseButtonEventHandler(OnMouseLeftButtonDown), true);
         }
 
         public ToggleSwitch()
@@ -248,8 +250,6 @@ namespace ModernWpf.Controls
 
         public override void OnApplyTemplate()
         {
-            base.OnApplyTemplate();
-
             if (SwitchKnobBounds != null &&
                 SwitchKnob != null &&
                 KnobTranslateTransform != null &&
@@ -259,6 +259,8 @@ namespace ModernWpf.Controls
                 SwitchThumb.DragDelta -= OnSwitchThumbDragDelta;
                 SwitchThumb.DragCompleted -= OnSwitchThumbDragCompleted;
             }
+
+            base.OnApplyTemplate();
 
             HeaderContentPresenter = GetTemplateChild(nameof(HeaderContentPresenter)) as ContentPresenter;
             SwitchKnobBounds = GetTemplateChild(nameof(SwitchKnobBounds)) as FrameworkElement;
@@ -305,6 +307,27 @@ namespace ModernWpf.Controls
             }
         }
 
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                e.Handled = true;
+                Toggle();
+            }
+
+            base.OnKeyUp(e);
+        }
+
+        private static void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var toggle = (ToggleSwitch)sender;
+
+            if (!toggle.IsKeyboardFocusWithin)
+            {
+                e.Handled = toggle.Focus() || e.Handled;
+            }
+        }
+
         private void OnSwitchThumbDragStarted(object sender, DragStartedEventArgs e)
         {
             e.Handled = true;
@@ -344,7 +367,7 @@ namespace ModernWpf.Controls
             }
             if (click)
             {
-                SetCurrentValue(IsOnProperty, !IsOn);
+                Toggle();
             }
 
             _wasDragged = false;
@@ -399,6 +422,11 @@ namespace ModernWpf.Controls
             VisualStateManager.GoToState(this, stateName, useTransitions);
 
             VisualStateManager.GoToState(this, IsOn ? OnContentState : OffContentState, useTransitions);
+        }
+
+        private void Toggle()
+        {
+            SetCurrentValue(IsOnProperty, !IsOn);
         }
     }
 }
