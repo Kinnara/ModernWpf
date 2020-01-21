@@ -6,26 +6,47 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
-    <Grid Margin="{StaticResource ControlPageContentMargin}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
+    <ScrollViewer>
+        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
+            <sc:ControlExample
+                x:Name="Example1"
+                HeaderText="A basic content dialog with content.">
+                <sc:ControlExample.Example>
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            x:Name="ShowDialog"
+                            Content="Show dialog"
+                            Click="ShowDialog_Click" />
+                        <TextBlock
+                            x:Name="DialogResult"
+                            Style="{StaticResource OutputTextBlockStyle}" />
+                    </StackPanel>
+                </sc:ControlExample.Example>
+            </sc:ControlExample>
 
-        <local:ContentDialogTestContent
-            Grid.Column="0"
-            ui:ThemeManager.RequestedTheme="Light" />
-        <local:ContentDialogTestContent
-            Grid.Column="1"
-            ui:ThemeManager.RequestedTheme="Dark" />
+            <sc:ControlExample
+                HeaderText="API in action."
+                HorizontalContentAlignment="Stretch">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
 
-        <local:TestContentDialog
-            x:Name="ParentedDialog"
-            PrimaryButtonText="Invert theme" />
-    </Grid>
+                    <local:ContentDialogTestContent
+                        Grid.Column="0"
+                        ui:ThemeManager.RequestedTheme="Light" />
+                    <local:ContentDialogTestContent
+                        Grid.Column="1"
+                        ui:ThemeManager.RequestedTheme="Dark" />
+                </Grid>
+            </sc:ControlExample>
+        </ui:SimpleStackPanel>
+    </ScrollViewer>
 </UserControl>

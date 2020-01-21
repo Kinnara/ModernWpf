@@ -79,7 +79,9 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void OpenNewWindow(object sender, RoutedEventArgs e)
         {
-            new ContentDialogTestWindow().Show();
+            var window = new ContentDialogTestWindow();
+            ThemeManager.SetRequestedTheme(window, ThemeManager.GetActualTheme(this));
+            window.Show();
         }
     }
 }

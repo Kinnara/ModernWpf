@@ -453,7 +453,15 @@ namespace ModernWpf.Controls
                     m_isShowing = value;
                     m_opening = m_isShowing;
 
-                    if (!m_isShowing)
+                    if (m_isShowing)
+                    {
+                        // Keep the previous focus
+                        if (Keyboard.FocusedElement != null)
+                        {
+                            m_weakRefToPreviousFocus = new WeakReference<IInputElement>(Keyboard.FocusedElement);
+                        }
+                    }
+                    else
                     {
                         if (m_isShowingInPlace)
                         {
@@ -466,6 +474,17 @@ namespace ModernWpf.Controls
                         }
 
                         m_closeTimer.Start();
+
+                        if (m_weakRefToPreviousFocus != null)
+                        {
+                            if (m_weakRefToPreviousFocus.TryGetTarget(out IInputElement previousFocus))
+                            {
+                                // Previous focused element is still alive, so return focus to it.
+                                previousFocus.Focus();
+                            }
+
+                            m_weakRefToPreviousFocus = null;
+                        }
                     }
 
                     UpdateDialogShowingStates(true);
@@ -566,28 +585,29 @@ namespace ModernWpf.Controls
 
         public override void OnApplyTemplate()
         {
-            base.OnApplyTemplate();
-
             if (LayoutRoot != null)
             {
                 LayoutRoot.IsVisibleChanged -= OnLayoutRootIsVisibleChanged;
                 LayoutRoot.Loaded -= OnLayoutRootLoaded;
+                LayoutRoot.KeyDown -= OnLayoutRootKeyDown;
             }
 
             if (PrimaryButton != null)
             {
-                PrimaryButton.Click -= OnPrimaryButtonClick;
+                PrimaryButton.Click -= OnButtonClick;
             }
 
             if (SecondaryButton != null)
             {
-                SecondaryButton.Click -= OnSecondaryButtonClick;
+                SecondaryButton.Click -= OnButtonClick;
             }
 
             if (CloseButton != null)
             {
-                CloseButton.Click -= OnCloseButtonClick;
+                CloseButton.Click -= OnButtonClick;
             }
+
+            base.OnApplyTemplate();
 
             Container = GetTemplateChild(nameof(Container)) as Border;
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as FrameworkElement;
@@ -599,21 +619,22 @@ namespace ModernWpf.Controls
             {
                 LayoutRoot.IsVisibleChanged += OnLayoutRootIsVisibleChanged;
                 LayoutRoot.Loaded += OnLayoutRootLoaded;
+                LayoutRoot.KeyDown += OnLayoutRootKeyDown;
             }
 
             if (PrimaryButton != null)
             {
-                PrimaryButton.Click += OnPrimaryButtonClick;
+                PrimaryButton.Click += OnButtonClick;
             }
 
             if (SecondaryButton != null)
             {
-                SecondaryButton.Click += OnSecondaryButtonClick;
+                SecondaryButton.Click += OnButtonClick;
             }
 
             if (CloseButton != null)
             {
-                CloseButton.Click += OnCloseButtonClick;
+                CloseButton.Click += OnButtonClick;
             }
 
 #if DEBUG
@@ -624,6 +645,12 @@ namespace ModernWpf.Controls
             //}
 #endif
             UpdateVisualStates(false);
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            HandleKeyDown(e);
+            base.OnKeyDown(e);
         }
 
         private void Hide(ContentDialogResult result)
@@ -660,39 +687,45 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void OnPrimaryButtonClick(object sender, RoutedEventArgs e)
+        private void OnButtonClick(object sender, RoutedEventArgs e)
         {
-            OnButtonClick(
-                PrimaryButtonClick,
-                PrimaryButtonCommand,
-                PrimaryButtonCommandParameter,
-                ContentDialogResult.Primary);
+            if (sender == PrimaryButton)
+            {
+                HandleButtonClick(
+                    PrimaryButtonClick,
+                    PrimaryButtonCommand,
+                    PrimaryButtonCommandParameter,
+                    ContentDialogResult.Primary);
+            }
+            else if (sender == SecondaryButton)
+            {
+                HandleButtonClick(
+                    SecondaryButtonClick,
+                    SecondaryButtonCommand,
+                    SecondaryButtonCommandParameter,
+                    ContentDialogResult.Secondary);
+            }
+            else if (sender == CloseButton)
+            {
+                HandleButtonClick(
+                    CloseButtonClick,
+                    CloseButtonCommand,
+                    CloseButtonCommandParameter,
+                    ContentDialogResult.None);
+            }
         }
 
-        private void OnSecondaryButtonClick(object sender, RoutedEventArgs e)
-        {
-            OnButtonClick(
-                SecondaryButtonClick,
-                SecondaryButtonCommand,
-                SecondaryButtonCommandParameter,
-                ContentDialogResult.Secondary);
-        }
-
-        private void OnCloseButtonClick(object sender, RoutedEventArgs e)
-        {
-            OnButtonClick(
-                CloseButtonClick,
-                CloseButtonCommand,
-                CloseButtonCommandParameter,
-                ContentDialogResult.None);
-        }
-
-        private void OnButtonClick(
+        private void HandleButtonClick(
             TypedEventHandler<ContentDialog, ContentDialogButtonClickEventArgs> handler,
             ICommand command,
             object commandParameter,
             ContentDialogResult result)
         {
+            if (!IsShowing)
+            {
+                return;
+            }
+
             if (handler != null)
             {
                 var args = new ContentDialogButtonClickEventArgs();
@@ -728,8 +761,7 @@ namespace ModernWpf.Controls
         {
             if ((bool)e.NewValue)
             {
-                OnOpened();
-
+                // Take focus so we get keyboard events.
                 if (LayoutRoot.Parent is Popup)
                 {
                     LayoutRoot.Focusable = true;
@@ -740,12 +772,19 @@ namespace ModernWpf.Controls
                     LayoutRoot.Focusable = false;
                     Focus();
                 }
+
+                OnOpened();
             }
             else
             {
                 m_closeTimer.Stop();
                 OnClosed();
             }
+        }
+
+        private void OnLayoutRootKeyDown(object sender, KeyEventArgs e)
+        {
+            HandleKeyDown(e);
         }
 
         private void OnCloseTimerTick(object sender, EventArgs e)
@@ -779,6 +818,48 @@ namespace ModernWpf.Controls
                 m_showTcs.TrySetResult(m_result);
                 m_showTcs = null;
                 m_result = ContentDialogResult.None;
+            }
+        }
+
+        private void HandleKeyDown(KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    if (IsShowing)
+                    {
+                        Button button = null;
+
+                        switch (DefaultButton)
+                        {
+                            case ContentDialogButton.Primary:
+                                button = PrimaryButton;
+                                break;
+                            case ContentDialogButton.Secondary:
+                                button = SecondaryButton;
+                                break;
+                            case ContentDialogButton.Close:
+                                button = CloseButton;
+                                break;
+                        }
+
+                        if (button == null)
+                        {
+                            button = PrimaryButton ?? SecondaryButton ?? CloseButton;
+                        }
+
+                        if (button != null)
+                        {
+                            OnButtonClick(button, null);
+                            e.Handled = true;
+                        }
+                    }
+                    break;
+
+                case Key.Escape:
+                    Hide();
+                    e.Handled = true;
+                    break;
             }
         }
 
@@ -1162,5 +1243,6 @@ namespace ModernWpf.Controls
         private Window m_openDialogOwner;
         private ContentDialogResult m_result;
         private readonly DispatcherTimer m_closeTimer;
+        private WeakReference<IInputElement> m_weakRefToPreviousFocus; // Keep the previously focused element before ContentDialog to open
     }
 }

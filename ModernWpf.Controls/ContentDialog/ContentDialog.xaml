@@ -16,6 +16,7 @@
         <Setter Property="CloseButtonStyle" Value="{DynamicResource DefaultButtonStyle}" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentDialog">
@@ -386,22 +387,19 @@
                                     </Border>
                                 </Border>
                             </Grid>
-                            <ui:VisualStateGroupListener
-                                x:Name="DefaultButtonStatesProxy"
-                                GroupName="DefaultButtonStates" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsShadowEnabled" Value="False">
                             <Setter TargetName="Shdw" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <Trigger SourceName="DefaultButtonStatesProxy" Property="CurrentStateName" Value="PrimaryAsDefaultButton">
+                        <Trigger Property="DefaultButton" Value="Primary">
                             <Setter TargetName="PrimaryButton" Property="Style" Value="{DynamicResource AccentButtonStyle}" />
                         </Trigger>
-                        <Trigger SourceName="DefaultButtonStatesProxy" Property="CurrentStateName" Value="SecondaryAsDefaultButton">
+                        <Trigger Property="DefaultButton" Value="Secondary">
                             <Setter TargetName="SecondaryButton" Property="Style" Value="{DynamicResource AccentButtonStyle}" />
                         </Trigger>
-                        <Trigger SourceName="DefaultButtonStatesProxy" Property="CurrentStateName" Value="CloseAsDefaultButton">
+                        <Trigger Property="DefaultButton" Value="Close">
                             <Setter TargetName="CloseButton" Property="Style" Value="{DynamicResource AccentButtonStyle}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
