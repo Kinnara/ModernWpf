@@ -76,6 +76,10 @@ namespace ModernWpf.Controls
             }
         }
 
+        internal override void OnIsOpenChanged()
+        {
+        }
+
         internal override void UpdateIsOpen()
         {
             IsOpen = m_presenter != null && m_presenter.IsOpen;

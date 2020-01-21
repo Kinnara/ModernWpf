@@ -15,7 +15,6 @@ namespace ModernWpf.Controls
 
         public FlyoutPresenter()
         {
-            IsVisibleChanged += OnIsVisibleChanged;
         }
 
         #region CornerRadius
@@ -59,14 +58,6 @@ namespace ModernWpf.Controls
                     popup.SetCurrentValue(Popup.IsOpenProperty, false);
                     e.Handled = true;
                 }
-            }
-        }
-
-        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if ((bool)e.NewValue)
-            {
-                Focus();
             }
         }
     }

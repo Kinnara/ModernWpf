@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -65,7 +66,7 @@ namespace ModernWpf.Controls.Primitives
                 nameof(IsOpen),
                 typeof(bool),
                 typeof(FlyoutBase),
-                new PropertyMetadata(false));
+                new PropertyMetadata(false, OnIsOpenChanged));
 
         public static readonly DependencyProperty IsOpenProperty =
             IsOpenPropertyKey.DependencyProperty;
@@ -74,6 +75,36 @@ namespace ModernWpf.Controls.Primitives
         {
             get => (bool)GetValue(IsOpenProperty);
             internal set => SetValue(IsOpenPropertyKey, value);
+        }
+
+        private static void OnIsOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FlyoutBase)d).OnIsOpenChanged();
+        }
+
+        internal virtual void OnIsOpenChanged()
+        {
+            if (IsOpen)
+            {
+                if (Keyboard.FocusedElement != null)
+                {
+                    m_weakRefToPreviousFocus = new WeakReference<IInputElement>(Keyboard.FocusedElement);
+                }
+
+                m_presenter?.Focus();
+            }
+            else
+            {
+                if (m_weakRefToPreviousFocus != null)
+                {
+                    if (m_weakRefToPreviousFocus.TryGetTarget(out IInputElement previousFocus))
+                    {
+                        previousFocus.Focus();
+                    }
+
+                    m_weakRefToPreviousFocus = null;
+                }
+            }
         }
 
         internal virtual void UpdateIsOpen()
@@ -397,6 +428,7 @@ namespace ModernWpf.Controls.Primitives
         private Control m_presenter;
         private PopupEx m_popup;
         private FrameworkElement m_target;
+        private WeakReference<IInputElement> m_weakRefToPreviousFocus;
 
         private class FullPlacementWidthConverter : IMultiValueConverter
         {
