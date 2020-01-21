@@ -2,6 +2,7 @@
 using ModernWpf.Controls;
 using System;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -19,6 +20,7 @@ namespace ModernWpf.MahApps.Controls
     {
         private const string c_searchButtonName = "PaneAutoSuggestButton";
         private const string c_navViewBackButton = "NavigationViewBackButton";
+        private const string c_navViewBackButtonToolTip = "NavigationViewBackButtonToolTip";
 
         private static readonly Point c_frame1point1 = new Point(0.9, 0.1);
         private static readonly Point c_frame1point2 = new Point(1.0, 0.2);
@@ -28,6 +30,7 @@ namespace ModernWpf.MahApps.Controls
         private UIElement _paneGrid;
         private Button _paneSearchButton;
         private Button _backButton;
+        private Button _paneToggleButton;
         private ListBox _buttonsListView;
         private ListBox _optionsListView;
 
@@ -428,17 +431,37 @@ namespace ModernWpf.MahApps.Controls
             _paneGrid = GetTemplateChild("PaneGrid") as UIElement;
             _paneSearchButton = GetTemplateChild(c_searchButtonName) as Button;
             _backButton = GetTemplateChild(c_navViewBackButton) as Button;
+            _paneToggleButton = GetTemplateChild("HamburgerButton") as Button;
             _buttonsListView = GetTemplateChild("ButtonsListView") as ListBox;
             _optionsListView = GetTemplateChild("OptionsListView") as ListBox;
+
+            if (_paneToggleButton != null)
+            {
+                SetPaneToggleButtonAutomationName();
+            }
 
             if (_paneSearchButton != null)
             {
                 _paneSearchButton.Click += OnPaneSearchButtonClick;
+
+                var searchButtonName = Strings.NavigationViewSearchButtonName;
+                AutomationProperties.SetName(_paneSearchButton, searchButtonName);
+                var toolTip = new ToolTip
+                {
+                    Content = searchButtonName
+                };
+                ToolTipService.SetToolTip(_paneSearchButton, toolTip);
             }
 
             if (_backButton != null)
             {
                 _backButton.Click += OnBackButtonClicked;
+                AutomationProperties.SetName(_backButton, Strings.NavigationBackButtonName);
+            }
+
+            if (GetTemplateChild(c_navViewBackButtonToolTip) is ToolTip backButtonToolTip)
+            {
+                backButtonToolTip.Content = Strings.NavigationBackButtonToolTip;
             }
 
             if (_buttonsListView != null && _optionsListView != null)
@@ -505,6 +528,7 @@ namespace ModernWpf.MahApps.Controls
 
         private void OnIsPaneOpenChanged(DependencyPropertyChangedEventArgs e)
         {
+            SetPaneToggleButtonAutomationName();
             UpdatePaneLength();
             ChangeItemFocusVisualStyle();
 
@@ -534,6 +558,29 @@ namespace ModernWpf.MahApps.Controls
                 focusVisualStyle.Seal();
 
                 SetValue(ItemFocusVisualStylePropertyKey, focusVisualStyle);
+            }
+        }
+
+        private void SetPaneToggleButtonAutomationName()
+        {
+            string navigationName;
+            if (IsPaneOpen)
+            {
+                navigationName = Strings.NavigationButtonOpenName;
+            }
+            else
+            {
+                navigationName = Strings.NavigationButtonClosedName;
+            }
+
+            if (_paneToggleButton != null)
+            {
+                AutomationProperties.SetName(_paneToggleButton, navigationName);
+                var toolTip = new ToolTip
+                {
+                    Content = navigationName
+                };
+                ToolTipService.SetToolTip(_paneToggleButton, toolTip);
             }
         }
 

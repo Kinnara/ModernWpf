@@ -147,4 +147,82 @@
   <data name="IgnoreMenuItemLabel" xml:space="preserve">
     <value>Ignora</value>
   </data>
+  <data name="BadgeIcon" xml:space="preserve">
+    <value>{0}!s!, icona</value>
+    <comment>This text is used with the badging glyph. {0} is the contact name.</comment>
+  </data>
+  <data name="BadgeIconTextOverride" xml:space="preserve">
+    <value>{0}!s!, {1}!s!</value>
+    <comment>This format string is used for the automation name. It is 'Person Name, badgetext', where badgetext is a user specified string like skype.</comment>
+  </data>
+  <data name="BadgeItemPlural1" xml:space="preserve">
+    <value>{0}!s!, {1}!u! elementi</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is 21,31,41,etc. {0} is the contact name and {1} is the number of items.</comment>
+  </data>
+  <data name="BadgeItemPlural2" xml:space="preserve">
+    <value>{0}!s!, {1}!u! elementi</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is 3-4. {0} is the contact name and {1} is the number of items.</comment>
+  </data>
+  <data name="BadgeItemPlural3" xml:space="preserve">
+    <value>{0}!s!, {1}!u! elementi</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is  22-24, 32-34, 42-44, etc. {0} is the contact name and {1} is the number of items.</comment>
+  </data>
+  <data name="BadgeItemPlural4" xml:space="preserve">
+    <value>{0}!s!, {1}!u! elementi</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is  0, 20, 25-30, 35-40, etc. (fallback plural). {0} is the contact name and {1} is the number of items.</comment>
+  </data>
+  <data name="BadgeItemPlural5" xml:space="preserve">
+    <value>{0}!s!, {1}!u! elementi</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is  5-10. {0} is the contact name and {1} is the number of items.</comment>
+  </data>
+  <data name="BadgeItemPlural6" xml:space="preserve">
+    <value>{0}!s!, {1}!u! elementi</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is  11-19. {0} is the contact name and {1} is the number of items.</comment>
+  </data>
+  <data name="BadgeItemPlural7" xml:space="preserve">
+    <value>{0}!s!, {1}!u! elementi</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is  2. {0} is the contact name and {1} is the number of items.</comment>
+  </data>
+  <data name="BadgeItemSingular" xml:space="preserve">
+    <value>{0}!s!, {1}!u! elemento</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is  1. {0} is the contact name and {1} is the number of items.</comment>
+  </data>
+  <data name="BadgeItemTextOverride" xml:space="preserve">
+    <value>{0}!s!, {1}!u! {2}!s!</value>
+    <comment>This format string is used for the automation name. It is 'Person Name, badgenumber badgetext', where badge text is a user specified string overriding 'item(s)'.</comment>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>Gruppo</value>
+    <comment>This text is used as the generic narrator text when the group glyph is showing.</comment>
+  </data>
+  <data name="PersonName" xml:space="preserve">
+    <value>Persona</value>
+    <comment>This text is used as the generic narrator text when there is no display name or initials.</comment>
+  </data>
+  <data name="BasicRatingString" xml:space="preserve">
+    <value>Classificazione, {0} di {1}</value>
+    <comment>English example: Rating, 1.0 of 5.</comment>
+  </data>
+  <data name="CommunityRatingString" xml:space="preserve">
+    <value>Classificazione della community, {0} di {1}</value>
+    <comment>English example: Community Rating, 3.3 of 6.</comment>
+  </data>
+  <data name="RatingLocalizedControlType" xml:space="preserve">
+    <value>Dispositivo di scorrimento valutazione</value>
+    <comment>A simple description of the control for UIA</comment>
+  </data>
+  <data name="RatingUnset" xml:space="preserve">
+    <value>Classificazione non impostata</value>
+    <comment>This text is used to show the number of stars none are selected.</comment>
+  </data>
+  <data name="SplitButtonSecondaryButtonName" xml:space="preserve">
+    <value>Altre opzioni</value>
+    <comment>Automation name for the secondary button.</comment>
+  </data>
+  <data name="AppBarMoreButtonName" xml:space="preserve">
+    <value>Aumenta barra dell'app</value>
+  </data>
+  <data name="AppBarMoreButtonToolTip" xml:space="preserve">
+    <value>Visualizza altre info</value>
+  </data>
 </root>

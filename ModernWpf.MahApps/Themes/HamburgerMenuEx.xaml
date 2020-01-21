@@ -212,13 +212,16 @@
                                     Command="{TemplateBinding BackButtonCommand}"
                                     CommandParameter="{TemplateBinding BackButtonCommandParameter}"
                                     CommandTarget="{TemplateBinding BackButtonCommandTarget}"
-                                    WindowChrome.IsHitTestVisibleInChrome="True" />
+                                    WindowChrome.IsHitTestVisibleInChrome="True">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip x:Name="NavigationViewBackButtonToolTip" />
+                                    </ToolTipService.ToolTip>
+                                </Button>
                                 <Button
                                     x:Name="HamburgerButton"
                                     Width="{TemplateBinding HamburgerWidth}"
                                     Height="{TemplateBinding HamburgerHeight}"
                                     Padding="{TemplateBinding HamburgerMargin}"
-                                    AutomationProperties.Name="Main button"
                                     Foreground="{TemplateBinding PaneForeground}"
                                     Style="{TemplateBinding HamburgerButtonStyle}"
                                     Visibility="{TemplateBinding HamburgerVisibility}"

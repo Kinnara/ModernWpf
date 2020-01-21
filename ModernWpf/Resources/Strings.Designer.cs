@@ -61,6 +61,24 @@ namespace ModernWpf {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to More app bar.
+        /// </summary>
+        internal static string AppBarMoreButtonName {
+            get {
+                return ResourceManager.GetString("AppBarMoreButtonName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to See more.
+        /// </summary>
+        internal static string AppBarMoreButtonToolTip {
+            get {
+                return ResourceManager.GetString("AppBarMoreButtonToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}!s!, icon.
         /// </summary>
         internal static string BadgeIcon {
@@ -196,6 +214,24 @@ namespace ModernWpf {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Decrease.
+        /// </summary>
+        internal static string NumberBoxDownSpinButtonName {
+            get {
+                return ResourceManager.GetString("NumberBoxDownSpinButtonName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase.
+        /// </summary>
+        internal static string NumberBoxUpSpinButtonName {
+            get {
+                return ResourceManager.GetString("NumberBoxUpSpinButtonName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Person.
         /// </summary>
         internal static string PersonName {
@@ -246,6 +282,15 @@ namespace ModernWpf {
         internal static string RatingUnset {
             get {
                 return ResourceManager.GetString("RatingUnset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to More Options.
+        /// </summary>
+        internal static string SplitButtonSecondaryButtonName {
+            get {
+                return ResourceManager.GetString("SplitButtonSecondaryButtonName", resourceCulture);
             }
         }
         

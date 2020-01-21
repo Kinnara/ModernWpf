@@ -169,7 +169,7 @@ namespace ModernWpf.Controls
 
             if (m_secondaryButton != null)
             {
-                var secondaryName = "More Options";
+                var secondaryName = Strings.SplitButtonSecondaryButtonName;
                 AutomationProperties.SetName(m_secondaryButton, secondaryName);
 
                 m_secondaryButton.Click += OnClickSecondary;

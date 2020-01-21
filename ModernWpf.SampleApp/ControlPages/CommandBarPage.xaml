@@ -16,18 +16,11 @@
             <sc:ControlExample HeaderText="A command bar with labels on the side free floating in a page">
                 <StackPanel>
                     <ui:CommandBar x:Name="PrimaryCommandBar">
-                        <ui:AppBarButton Label="Add" Icon="Add" Click="OnElementClicked" />
-                        <ui:AppBarButton Label="Edit" Icon="Edit" Click="OnElementClicked" />
-                        <ui:AppBarButton Label="Share" Icon="Share" Click="OnElementClicked" />
+                        <ui:AppBarButton x:Name="addButton" Icon="Add" Label="Add" Click="OnElementClicked" />
+                        <ui:AppBarButton x:Name="editButton" Icon="Edit" Label="Edit" Click="OnElementClicked" />
+                        <ui:AppBarButton x:Name="shareButton" Icon="Share" Label="Share" Click="OnElementClicked" />
                         <ui:CommandBar.SecondaryCommands>
-                            <ui:AppBarButton Label="Settings" Icon="Setting" InputGestureText="Ctrl+I" Click="OnElementClicked" />
-                            <ui:AppBarButton Label="Button 1" Icon="Add" InputGestureText="Ctrl+N" Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <ui:AppBarButton Label="Button 2" Icon="Delete" InputGestureText="Delete" Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <ui:AppBarSeparator Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <ui:AppBarButton Label="Button 3" Icon="FontDecrease" InputGestureText="Ctrl+-" Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <ui:AppBarButton Label="Button 4" Icon="FontIncrease" InputGestureText="Ctrl++" Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <ui:AppBarSeparator Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                            <ui:AppBarToggleButton Label="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked, StringFormat='IsChecked = {0}'}" Icon="Emoji" Visibility="{Binding IsChecked, Source={x:Reference ShowMoreSecondaryCommandsCheckBox}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            <ui:AppBarButton x:Name="settingsButton" Icon="Setting" Label="Settings" Click="OnElementClicked" />
                         </ui:CommandBar.SecondaryCommands>
                     </ui:CommandBar>
                     <TextBlock
@@ -36,9 +29,13 @@
                 </StackPanel>
                 <sc:ControlExample.Options>
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <CheckBox
-                            x:Name="ShowMoreSecondaryCommandsCheckBox"
-                            Content="Show more secondary commands" />
+                        <TextBlock Text="Modify content" />
+                        <Button
+                            Content="Add secondary commands"
+                            Click="AddSecondaryCommands_Click" />
+                        <Button
+                            Content="Remove secondary commands"
+                            Click="RemoveSecondaryCommands_Click" />
                         <CheckBox
                             Content="IsDynamicOverflowEnabled"
                             IsChecked="{Binding ElementName=PrimaryCommandBar, Path=IsDynamicOverflowEnabled}" />

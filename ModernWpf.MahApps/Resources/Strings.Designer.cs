@@ -61,6 +61,96 @@ namespace ModernWpf.MahApps {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        internal static string NavigationBackButtonName {
+            get {
+                return ResourceManager.GetString("NavigationBackButtonName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        internal static string NavigationBackButtonToolTip {
+            get {
+                return ResourceManager.GetString("NavigationBackButtonToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Navigation.
+        /// </summary>
+        internal static string NavigationButtonClosedName {
+            get {
+                return ResourceManager.GetString("NavigationButtonClosedName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close Navigation.
+        /// </summary>
+        internal static string NavigationButtonOpenName {
+            get {
+                return ResourceManager.GetString("NavigationButtonOpenName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string NavigationCloseButtonName {
+            get {
+                return ResourceManager.GetString("NavigationCloseButtonName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to More Button.
+        /// </summary>
+        internal static string NavigationOverflowButtonName {
+            get {
+                return ResourceManager.GetString("NavigationOverflowButtonName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to More.
+        /// </summary>
+        internal static string NavigationOverflowButtonText {
+            get {
+                return ResourceManager.GetString("NavigationOverflowButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NavigationViewItem.
+        /// </summary>
+        internal static string NavigationViewItemDefaultControlName {
+            get {
+                return ResourceManager.GetString("NavigationViewItemDefaultControlName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click to search.
+        /// </summary>
+        internal static string NavigationViewSearchButtonName {
+            get {
+                return ResourceManager.GetString("NavigationViewSearchButtonName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string SettingsButtonName {
+            get {
+                return ResourceManager.GetString("SettingsButtonName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to AM.
         /// </summary>
         internal static string TimePickerAM {

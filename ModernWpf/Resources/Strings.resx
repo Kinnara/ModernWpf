@@ -117,6 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppBarMoreButtonName" xml:space="preserve">
+    <value>More app bar</value>
+    <comment>332-5305</comment>
+  </data>
+  <data name="AppBarMoreButtonToolTip" xml:space="preserve">
+    <value>See more</value>
+    <comment>319-5102</comment>
+  </data>
   <data name="BadgeIcon" xml:space="preserve">
     <value>{0}!s!, icon</value>
     <comment>This text is used with the badging glyph. {0} is the contact name.</comment>
@@ -177,6 +185,14 @@
     <value>Ignore</value>
     <comment>5580</comment>
   </data>
+  <data name="NumberBoxDownSpinButtonName" xml:space="preserve">
+    <value>Decrease</value>
+    <comment>Automation name for the down button</comment>
+  </data>
+  <data name="NumberBoxUpSpinButtonName" xml:space="preserve">
+    <value>Increase</value>
+    <comment>Automation name for the up button</comment>
+  </data>
   <data name="PersonName" xml:space="preserve">
     <value>Person</value>
     <comment>This text is used as the generic narrator text when there is no display name or initials.</comment>
@@ -201,34 +217,32 @@
     <value>Rating Unset</value>
     <comment>This text is used to show the number of stars none are selected.</comment>
   </data>
+  <data name="SplitButtonSecondaryButtonName" xml:space="preserve">
+    <value>More Options</value>
+    <comment>Automation name for the secondary button.</comment>
+  </data>
   <data name="TextCommandLabelCopy" xml:space="preserve">
     <value>Copy</value>
-    
     <comment>5035</comment>
   </data>
   <data name="TextCommandLabelCut" xml:space="preserve">
     <value>Cut</value>
-    
     <comment>5034</comment>
   </data>
   <data name="TextCommandLabelPaste" xml:space="preserve">
     <value>Paste</value>
-    
     <comment>5036</comment>
   </data>
   <data name="TextCommandLabelRedo" xml:space="preserve">
     <value>Redo</value>
-    
     <comment>5038</comment>
   </data>
   <data name="TextCommandLabelSelectAll" xml:space="preserve">
     <value>Select All</value>
-    
     <comment>5039</comment>
   </data>
   <data name="TextCommandLabelUndo" xml:space="preserve">
     <value>Undo</value>
-    
     <comment>5037</comment>
   </data>
   <data name="ToggleSwitchOff" xml:space="preserve">

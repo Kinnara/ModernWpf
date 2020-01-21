@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -206,9 +207,16 @@ namespace ModernWpf.Controls.Primitives
             }
 
             m_layoutRoot = this.GetTemplateRoot();
+            m_moreButton = GetTemplateChild("MoreButton") as ButtonBase;
             m_overflowPopup = GetTemplateChild(OverflowPopupName) as Popup;
             m_toolBarPanel = GetTemplateChild(ToolBarPanelName) as ToolBarPanel;
             m_toolBarOverflowPanel = GetTemplateChild(ToolBarOverflowPanelName) as CommandBarOverflowPanel;
+
+            if (m_moreButton != null)
+            {
+                AutomationProperties.SetName(m_moreButton, Strings.AppBarMoreButtonName);
+                m_moreButton.ToolTip = Strings.AppBarMoreButtonToolTip;
+            }
 
             if (m_overflowPopup != null)
             {
@@ -324,6 +332,7 @@ namespace ModernWpf.Controls.Primitives
         }
 
         private FrameworkElement m_layoutRoot;
+        private ButtonBase m_moreButton;
         private Popup m_overflowPopup;
         private ToolBarPanel m_toolBarPanel;
         private CommandBarOverflowPanel m_toolBarOverflowPanel;
