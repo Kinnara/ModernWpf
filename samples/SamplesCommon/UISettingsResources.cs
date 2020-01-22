@@ -10,6 +10,9 @@ namespace SamplesCommon
 {
     public class UISettingsResources : ResourceDictionary
     {
+        private const string UniversalApiContractName = "Windows.Foundation.UniversalApiContract";
+        private const string AutoHideScrollBarsKey = "AutoHideScrollBars";
+
         private object _uiSettings;
 
         public UISettingsResources()
@@ -33,9 +36,14 @@ namespace SamplesCommon
 
             var uiSettings = new UISettings();
 
-            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4))
+            if (ApiInformation.IsApiContractPresent(UniversalApiContractName, 4))
             {
                 InitializeForContract4(uiSettings);
+            }
+
+            if (ApiInformation.IsApiContractPresent(UniversalApiContractName, 8))
+            {
+                InitializeForContract8(uiSettings);
             }
 
             _uiSettings = uiSettings;
@@ -52,6 +60,24 @@ namespace SamplesCommon
                 });
             };
             ApplyAdvancedEffectsEnabled(settings.AdvancedEffectsEnabled);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void InitializeForContract8(UISettings settings)
+        {
+            settings.AutoHideScrollBarsChanged += (sender, args) =>
+            {
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    ApplyAutoHideScrollBars(sender.AutoHideScrollBars);
+                });
+            };
+            ApplyAutoHideScrollBars(settings.AutoHideScrollBars);
+        }
+
+        private void ApplyAutoHideScrollBars(bool value)
+        {
+            this[AutoHideScrollBarsKey] = value;
         }
 
         private void ApplyAdvancedEffectsEnabled(bool value)

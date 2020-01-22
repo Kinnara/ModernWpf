@@ -108,6 +108,23 @@
                         Header="Disabled"
                         Checked="ShadowsDisabled_Checked" />
                 </MenuItem>
+                <MenuItem Header="Settings">
+                    <MenuItem Header="Automatically hide scroll bars">
+                        <ui:RadioMenuItem
+                            x:Name="AutoHideScrollBarsAuto"
+                            Header="Use system setting"
+                            IsChecked="True"
+                            Checked="AutoHideScrollBarsAuto_Checked" />
+                        <ui:RadioMenuItem
+                            x:Name="AutoHideScrollBarsOn"
+                            Header="On"
+                            Checked="AutoHideScrollBarsOn_Checked" />
+                        <ui:RadioMenuItem
+                            x:Name="AutoHideScrollBarsOff"
+                            Header="Off"
+                            Checked="AutoHideScrollBarsOff_Checked" />
+                    </MenuItem>
+                </MenuItem>
                 <MenuItem
                     Header="Debug"
                     Visibility="Collapsed">

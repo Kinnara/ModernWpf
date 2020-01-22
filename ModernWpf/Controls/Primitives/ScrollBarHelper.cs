@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -40,8 +38,8 @@ namespace ModernWpf.Controls.Primitives
             if (newValue)
             {
                 scrollBar.Loaded += OnLoaded;
-                scrollBar.MouseEnter += OnMouseEnter;
-                scrollBar.MouseLeave += OnMouseLeave;
+                scrollBar.MouseEnter += OnIsMouseOverChanged;
+                scrollBar.MouseLeave += OnIsMouseOverChanged;
                 scrollBar.IsEnabledChanged += OnIsEnabledChanged;
 
                 if (scrollBar.IsLoaded)
@@ -52,10 +50,36 @@ namespace ModernWpf.Controls.Primitives
             else
             {
                 scrollBar.Loaded -= OnLoaded;
-                scrollBar.MouseEnter -= OnMouseEnter;
-                scrollBar.MouseLeave -= OnMouseLeave;
+                scrollBar.MouseEnter -= OnIsMouseOverChanged;
+                scrollBar.MouseLeave -= OnIsMouseOverChanged;
                 scrollBar.IsEnabledChanged -= OnIsEnabledChanged;
             }
+        }
+
+        #endregion
+
+        #region IndicatorMode
+
+        public static readonly DependencyProperty IndicatorModeProperty =
+            DependencyProperty.RegisterAttached(
+                "IndicatorMode",
+                typeof(ScrollingIndicatorMode),
+                typeof(ScrollBarHelper),
+                new PropertyMetadata(ScrollingIndicatorMode.MouseIndicator, OnIndicatorModeChanged));
+
+        public static ScrollingIndicatorMode GetIndicatorMode(ScrollBar scrollBar)
+        {
+            return (ScrollingIndicatorMode)scrollBar.GetValue(IndicatorModeProperty);
+        }
+
+        public static void SetIndicatorMode(ScrollBar scrollBar, ScrollingIndicatorMode value)
+        {
+            scrollBar.SetValue(IndicatorModeProperty, value);
+        }
+
+        private static void OnIndicatorModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateVisualState((ScrollBar)d);
         }
 
         #endregion
@@ -105,23 +129,13 @@ namespace ModernWpf.Controls.Primitives
         private static void OnLoaded(object sender, RoutedEventArgs e)
         {
             var scrollBar = (ScrollBar)sender;
-            UpdateVisualState(scrollBar);
+            scrollBar.ApplyTemplate();
+            UpdateVisualState(scrollBar, false);
         }
 
-        private static void OnMouseEnter(object sender, MouseEventArgs e)
+        private static void OnIsMouseOverChanged(object sender, MouseEventArgs e)
         {
             var scrollBar = (ScrollBar)sender;
-            Debug.Assert(scrollBar.IsMouseOver);
-            if (scrollBar.IsEnabled)
-            {
-                UpdateVisualState(scrollBar);
-            }
-        }
-
-        private static void OnMouseLeave(object sender, MouseEventArgs e)
-        {
-            var scrollBar = (ScrollBar)sender;
-            Debug.Assert(!scrollBar.IsMouseOver);
             if (scrollBar.IsEnabled)
             {
                 UpdateVisualState(scrollBar);
@@ -134,14 +148,13 @@ namespace ModernWpf.Controls.Primitives
             UpdateVisualState(scrollBar);
         }
 
-        private static void UpdateVisualState(ScrollBar scrollBar)
+        private static void UpdateVisualState(ScrollBar scrollBar, bool useTransitions = true)
         {
             string stateName;
-            bool useTransitions;
 
             if (scrollBar.IsEnabled)
             {
-                bool autoHide = scrollBar.TemplatedParent is ScrollViewer sv && ScrollViewerHelper.GetAutoHideScrollBars(sv);
+                bool autoHide = GetIndicatorMode(scrollBar) != ScrollingIndicatorMode.MouseIndicator;
                 if (autoHide)
                 {
                     stateName = scrollBar.IsMouseOver ? StateExpanded : StateCollapsed;
@@ -151,7 +164,7 @@ namespace ModernWpf.Controls.Primitives
                     stateName = StateExpanded;
                 }
 
-                useTransitions = Helper.IsAnimationsEnabled;
+                useTransitions &= Helper.IsAnimationsEnabled;
             }
             else
             {

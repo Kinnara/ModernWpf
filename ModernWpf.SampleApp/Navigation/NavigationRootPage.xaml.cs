@@ -14,6 +14,8 @@ namespace ModernWpf.SampleApp
 {
     public partial class NavigationRootPage
     {
+        private const string AutoHideScrollBarsKey = "AutoHideScrollBars";
+
         public static NavigationRootPage Current { get; private set; }
         public static Frame RootFrame { get; private set; }
 
@@ -215,6 +217,21 @@ namespace ModernWpf.SampleApp
         private void ShadowsDisabled_Checked(object sender, RoutedEventArgs e)
         {
             Application.Current.Resources[SystemParameters.DropShadowKey] = false;
+        }
+
+        private void AutoHideScrollBarsAuto_Checked(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Resources.Remove(AutoHideScrollBarsKey);
+        }
+
+        private void AutoHideScrollBarsOn_Checked(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Resources[AutoHideScrollBarsKey] = true;
+        }
+
+        private void AutoHideScrollBarsOff_Checked(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Resources[AutoHideScrollBarsKey] = false;
         }
 
         private void ForceGC(object sender, RoutedEventArgs e)
