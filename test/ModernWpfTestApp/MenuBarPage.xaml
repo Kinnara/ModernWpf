@@ -100,7 +100,7 @@
             Grid.Row="2"
             Orientation="Horizontal">
             <StackPanel.Resources>
-                <Style TargetType="Button">
+                <Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
                     <Setter Property="Margin" Value="4" />
                 </Style>
             </StackPanel.Resources>

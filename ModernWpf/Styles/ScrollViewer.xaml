@@ -222,4 +222,13 @@
         </Setter>
     </Style>
 
+    <ControlTemplate TargetType="ScrollViewer" x:Key="ScrollViewerScrollBarlessTemplate">
+        <Grid Background="{TemplateBinding Background}">
+            <ScrollContentPresenter
+                x:Name="ScrollContentPresenter"
+                ContentTemplate="{TemplateBinding ContentTemplate}"
+                Margin="{TemplateBinding Padding}" />
+        </Grid>
+    </ControlTemplate>
+
 </ResourceDictionary>

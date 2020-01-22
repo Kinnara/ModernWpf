@@ -14,6 +14,8 @@
     Loaded="OnLoaded">
 
     <UserControl.Resources>
+        <Thickness x:Key="TabItemContentMargin">12,0,12,20</Thickness>
+
         <local:ContactGroupKeyConverter x:Key="ContactGroupKeyConverter" />
 
         <CollectionViewSource
@@ -65,127 +67,130 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid>
-        <TabControl
-            x:Name="tabControl"
-            Style="{StaticResource TabControlPivotStyle}"
-            Padding="{StaticResource ControlPageContentMargin}">
-            <TabItem Header="MultiSelect">
-                <sc:ControlExample HeaderText="A Simple ListView with Selection support">
-                    <ListView
-                        x:Name="listView1"
-                        SelectionMode="Multiple"
-                        ItemContainerStyle="{StaticResource MultiSelectListViewItemStyle}"
-                        ItemsSource="{Binding}"
-                        VirtualizingPanel.VirtualizationMode="Recycling" />
+    <TabControl
+        x:Name="tabControl"
+        Style="{StaticResource TabControlPivotStyle}">
+        <TabItem Header="MultiSelect">
+            <sc:ControlExample
+                HeaderText="A Simple ListView with Selection support"
+                Margin="{StaticResource TabItemContentMargin}">
+                <ListView
+                    x:Name="listView1"
+                    SelectionMode="Multiple"
+                    ItemContainerStyle="{StaticResource MultiSelectListViewItemStyle}"
+                    ItemsSource="{Binding}"
+                    VirtualizingPanel.VirtualizationMode="Recycling" />
 
-                    <sc:ControlExample.Options>
-                        <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                            <sc:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView1}}" />
-                            <ui:RadioButtons
-                                Header="SelectionMode"
-                                ItemsSource="{Binding Source={x:Type SelectionMode}, Converter={StaticResource EnumValuesConverter}}"
-                                SelectedItem="{Binding Source={x:Reference listView1}, Path=SelectionMode}" />
-                            <CheckBox
-                                Content="IsEnabled"
-                                IsChecked="{Binding Source={x:Reference listView1}, Path=IsEnabled}" />
-                        </ui:SimpleStackPanel>
-                    </sc:ControlExample.Options>
-                </sc:ControlExample>
-            </TabItem>
+                <sc:ControlExample.Options>
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <sc:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView1}}" />
+                        <ui:RadioButtons
+                            Header="SelectionMode"
+                            ItemsSource="{Binding Source={x:Type SelectionMode}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding Source={x:Reference listView1}, Path=SelectionMode}" />
+                        <CheckBox
+                            Content="IsEnabled"
+                            IsChecked="{Binding Source={x:Reference listView1}, Path=IsEnabled}" />
+                    </ui:SimpleStackPanel>
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
+        </TabItem>
 
-            <TabItem Header="Grouped">
-                <sc:ControlExample HeaderText="A ListView with Grouped Headers">
-                    <ListView
-                        x:Name="listView2"
-                        ItemTemplate="{StaticResource ContactListViewTemplate}"
-                        ItemsSource="{Binding Source={StaticResource ContactsCVS}}"
-                        VirtualizingPanel.IsVirtualizingWhenGrouping="True"
-                        VirtualizingPanel.VirtualizationMode="Recycling">
-                        <ListView.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <TextBlock
-                                            Text="{Binding Name}"
-                                            Style="{DynamicResource TitleTextBlockStyle}" />
-                                    </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </ListView.GroupStyle>
-                    </ListView>
+        <TabItem Header="Grouped">
+            <sc:ControlExample
+                HeaderText="A ListView with Grouped Headers"
+                Margin="{StaticResource TabItemContentMargin}">
+                <ListView
+                    x:Name="listView2"
+                    ItemTemplate="{StaticResource ContactListViewTemplate}"
+                    ItemsSource="{Binding Source={StaticResource ContactsCVS}}"
+                    VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        Text="{Binding Name}"
+                                        Style="{DynamicResource TitleTextBlockStyle}" />
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
 
-                    <sc:ControlExample.Options>
-                        <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                            <!--<controls:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView2}}" />-->
-                            <!--<ui:RadioButtons
+                <sc:ControlExample.Options>
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <!--<controls:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView2}}" />-->
+                        <!--<ui:RadioButtons
                                 Header="SelectionMode"
                                 ItemsSource="{Binding Source={x:Type SelectionMode}, Converter={StaticResource EnumValuesConverter}}"
                                 SelectedItem="{Binding Source={x:Reference listView2}, Path=SelectionMode}" />-->
-                            <CheckBox
-                                Content="IsEnabled"
-                                IsChecked="{Binding Source={x:Reference listView2}, Path=IsEnabled}" />
-                        </ui:SimpleStackPanel>
-                    </sc:ControlExample.Options>
-                </sc:ControlExample>
-            </TabItem>
+                        <CheckBox
+                            Content="IsEnabled"
+                            IsChecked="{Binding Source={x:Reference listView2}, Path=IsEnabled}" />
+                    </ui:SimpleStackPanel>
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
+        </TabItem>
 
-            <TabItem Header="GridView">
-                <sc:ControlExample HeaderText="A ListView with GridView as its View">
-                    <ListView
-                        x:Name="listView3"
-                        Style="{StaticResource {x:Static GridView.GridViewStyleKey}}"
-                        ItemsSource="{Binding}"
-                        VirtualizingPanel.VirtualizationMode="Recycling">
-                        <ListView.View>
-                            <GridView
-                                x:Name="gridView"
-                                ColumnHeaderToolTip="Employee Information">
+        <TabItem Header="GridView">
+            <sc:ControlExample
+                HeaderText="A ListView with GridView as its View"
+                Margin="{StaticResource TabItemContentMargin}">
+                <ListView
+                    x:Name="listView3"
+                    Style="{StaticResource {x:Static GridView.GridViewStyleKey}}"
+                    ItemsSource="{Binding}"
+                    VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ListView.View>
+                        <GridView
+                            x:Name="gridView"
+                            ColumnHeaderToolTip="Employee Information">
 
-                                <GridViewColumn
-                                    DisplayMemberBinding="{Binding FirstName}"
-                                    Header="First Name"
-                                    Width="120" />
+                            <GridViewColumn
+                                DisplayMemberBinding="{Binding FirstName}"
+                                Header="First Name"
+                                Width="120" />
 
-                                <GridViewColumn
-                                    DisplayMemberBinding="{Binding LastName}"
-                                    Width="120">
-                                    <GridViewColumnHeader>
-                                        Last Name
-                                        <GridViewColumnHeader.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Header="Ascending" />
-                                                <MenuItem Header="Descending" />
-                                            </ContextMenu>
-                                        </GridViewColumnHeader.ContextMenu>
-                                    </GridViewColumnHeader>
-                                </GridViewColumn>
+                            <GridViewColumn
+                                DisplayMemberBinding="{Binding LastName}"
+                                Width="120">
+                                <GridViewColumnHeader>
+                                    Last Name
+                                    <GridViewColumnHeader.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Ascending" />
+                                            <MenuItem Header="Descending" />
+                                        </ContextMenu>
+                                    </GridViewColumnHeader.ContextMenu>
+                                </GridViewColumnHeader>
+                            </GridViewColumn>
 
-                                <GridViewColumn
-                                    DisplayMemberBinding="{Binding Company}"
-                                    Header="Company"
-                                    Width="240" />
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                            <GridViewColumn
+                                DisplayMemberBinding="{Binding Company}"
+                                Header="Company"
+                                Width="240" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
 
-                    <sc:ControlExample.Options>
-                        <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                            <CheckBox
-                                Content="AllowsColumnReorder"
-                                IsChecked="{Binding Source={x:Reference gridView}, Path=AllowsColumnReorder}" />
-                            <sc:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView3}}" />
-                            <!--<ui:RadioButtons
+                <sc:ControlExample.Options>
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <CheckBox
+                            Content="AllowsColumnReorder"
+                            IsChecked="{Binding Source={x:Reference gridView}, Path=AllowsColumnReorder}" />
+                        <sc:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView3}}" />
+                        <!--<ui:RadioButtons
                                 Header="SelectionMode"
                                 ItemsSource="{Binding Source={x:Type SelectionMode}, Converter={StaticResource EnumValuesConverter}}"
                                 SelectedItem="{Binding Source={x:Reference listView3}, Path=SelectionMode}" />-->
-                            <CheckBox
-                                Content="IsEnabled"
-                                IsChecked="{Binding Source={x:Reference listView3}, Path=IsEnabled}" />
-                        </ui:SimpleStackPanel>
-                    </sc:ControlExample.Options>
-                </sc:ControlExample>
-            </TabItem>
-        </TabControl>
-    </Grid>
+                        <CheckBox
+                            Content="IsEnabled"
+                            IsChecked="{Binding Source={x:Reference listView3}, Path=IsEnabled}" />
+                    </ui:SimpleStackPanel>
+                </sc:ControlExample.Options>
+            </sc:ControlExample>
+        </TabItem>
+    </TabControl>
 </UserControl>

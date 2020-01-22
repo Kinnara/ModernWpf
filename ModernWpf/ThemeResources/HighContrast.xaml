@@ -895,10 +895,29 @@
     <sys:Int32 x:Key="PivotHeaderItemCharacterSpacing">-25</sys:Int32>
     <Thickness x:Key="PivotHeaderItemMargin">12,0,12,0</Thickness>
     <Thickness x:Key="PivotItemMargin">12,0,12,0</Thickness>
+    <Thickness x:Key="PivotNavButtonMargin">0,6,0,0</Thickness>
     <Thickness x:Key="PivotPortraitThemePadding">12,14,0,13</Thickness>
     <FontWeight x:Key="PivotHeaderItemThemeFontWeight">350</FontWeight>
     <m:StaticResource x:Key="PivotBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="PivotHeaderBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="PivotNextButtonBackground" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
+    <m:StaticResource x:Key="PivotNextButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightBaseMediumBrush" />
+    <m:StaticResource x:Key="PivotNextButtonBackgroundPressed" ResourceKey="SystemControlHighlightBaseMediumHighBrush" />
+    <m:StaticResource x:Key="PivotNextButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="PivotNextButtonBorderBrushPointerOver" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="PivotNextButtonBorderBrushPressed" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="PivotNextButtonForeground" ResourceKey="SystemControlForegroundAltMediumHighBrush" />
+    <m:StaticResource x:Key="PivotNextButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltAltMediumHighBrush" />
+    <m:StaticResource x:Key="PivotNextButtonForegroundPressed" ResourceKey="SystemControlHighlightAltAltMediumHighBrush" />
+    <m:StaticResource x:Key="PivotPreviousButtonBackground" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
+    <m:StaticResource x:Key="PivotPreviousButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightBaseMediumBrush" />
+    <m:StaticResource x:Key="PivotPreviousButtonBackgroundPressed" ResourceKey="SystemControlHighlightBaseMediumHighBrush" />
+    <m:StaticResource x:Key="PivotPreviousButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="PivotPreviousButtonBorderBrushPointerOver" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="PivotPreviousButtonBorderBrushPressed" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="PivotPreviousButtonForeground" ResourceKey="SystemControlForegroundAltMediumHighBrush" />
+    <m:StaticResource x:Key="PivotPreviousButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltAltMediumHighBrush" />
+    <m:StaticResource x:Key="PivotPreviousButtonForegroundPressed" ResourceKey="SystemControlHighlightAltAltMediumHighBrush" />
     <m:StaticResource x:Key="PivotItemBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="PivotHeaderItemBackgroundUnselected" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="PivotHeaderItemBackgroundUnselectedPointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
