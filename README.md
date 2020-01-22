@@ -55,7 +55,7 @@ Modern styles and controls for your WPF applications.
 | NuGet Package | Latest Versions |
 | --- | --- |
 | [ModernWpfUI][NuGet] | [![latest stable version](https://img.shields.io/nuget/v/ModernWpfUI)][NuGet]<br />[![latest prerelease version](https://img.shields.io/nuget/vpre/ModernWpfUI)][NuGet.Pre] |
-| [ModernWpfUI.MahApps][NuGet.MahApps] | [![latest stable version](https://img.shields.io/nuget/v/ModernWpfUI.MahApps)][NuGet.MahApps] |
+| [ModernWpfUI.MahApps][NuGet.MahApps] | [![latest stable version](https://img.shields.io/nuget/v/ModernWpfUI.MahApps)][NuGet.MahApps]<br />[![latest prerelease version](https://img.shields.io/nuget/vpre/ModernWpfUI.MahApps)][NuGet.MahApps.Pre] |
 
 ## Screenshots
 ![Styled MahApps HamburgerMenu (Dark)](docs/images/Controls.Dark.png "Styled MahApps HamburgerMenu (Dark)")
@@ -89,3 +89,4 @@ Modern styles and controls for your WPF applications.
 [NuGet]: https://www.nuget.org/packages/ModernWpfUI/
 [NuGet.Pre]: https://www.nuget.org/packages/ModernWpfUI/absoluteLatest
 [NuGet.MahApps]: https://www.nuget.org/packages/ModernWpfUI.MahApps/
+[NuGet.MahApps.Pre]: https://www.nuget.org/packages/ModernWpfUI.MahApps/absoluteLatest
