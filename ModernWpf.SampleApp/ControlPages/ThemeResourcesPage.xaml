@@ -71,6 +71,7 @@
         <Style x:Key="ColorListStyle" TargetType="ItemsControl">
             <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundAltHighBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
+            <Setter Property="Padding" Value="12,0" />
             <Setter Property="IsTabStop" Value="False" />
             <Setter Property="ItemTemplate" Value="{StaticResource ColorTemplate}" />
             <Setter Property="ItemsPanel">
@@ -133,20 +134,34 @@
             </Grid>
         </DataTemplate>
 
+        <Style x:Key="BrushesRepeaterStyle" TargetType="ui:ItemsRepeater">
+            <Setter Property="ItemTemplate" Value="{StaticResource BrushTemplate}" />
+            <Setter Property="ItemsSource" Value="{StaticResource BrushResources}" />
+            <Setter Property="Margin" Value="12" />
+            <Setter Property="Layout">
+                <Setter.Value>
+                    <ui:StackLayout Spacing="14" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="ScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource {x:Type ScrollViewer}}">
             <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
             <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
             <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
-            <Setter Property="Padding" Value="0,12" />
+            <Setter Property="Padding" Value="0" />
             <Setter Property="ui:ScrollViewerHelper.AutoHideScrollBars" Value="True" />
         </Style>
     </Page.Resources>
 
-    <TabControl Style="{StaticResource TabControlPivotStyle}">
+    <TabControl
+        Style="{StaticResource TabControlPivotStyle}"
+        Padding="12,0">
 
         <TabItem Header="Color ramp">
             <ScrollViewer
                 Style="{StaticResource ScrollViewerStyle}"
+                Margin="-24,0"
                 Padding="0"
                 ui:ThemeManager.RequestedTheme="Dark">
                 <Grid>
@@ -185,7 +200,9 @@
         <TabItem Header="Accent color palette">
             <UniformGrid
                 Rows="7"
-                Columns="1">
+                Columns="1"
+                Margin="-24,0"
+                UseLayoutRounding="False">
                 <UniformGrid.Resources>
                     <Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
                         <Setter Property="HorizontalAlignment" Value="Center" />
@@ -231,7 +248,7 @@
         </TabItem>
 
         <TabItem Header="Brushes">
-            <Grid>
+            <Grid Margin="-24,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
@@ -246,13 +263,7 @@
                         VerticalScrollBarVisibility="Hidden"
                         PanningMode="VerticalOnly"
                         ScrollChanged="OnScrollChanged">
-                        <ui:ItemsRepeater
-                            ItemTemplate="{StaticResource BrushTemplate}"
-                            ItemsSource="{StaticResource BrushResources}">
-                            <ui:ItemsRepeater.Layout>
-                                <ui:StackLayout Spacing="14" />
-                            </ui:ItemsRepeater.Layout>
-                        </ui:ItemsRepeater>
+                        <ui:ItemsRepeater Style="{StaticResource BrushesRepeaterStyle}" />
                     </ScrollViewer>
                 </ui:ItemsRepeaterScrollHost>
 
@@ -264,22 +275,18 @@
                         x:Name="SV2"
                         Style="{StaticResource ScrollViewerStyle}"
                         ScrollChanged="OnScrollChanged">
-                        <ui:ItemsRepeater
-                            ItemTemplate="{StaticResource BrushTemplate}"
-                            ItemsSource="{StaticResource BrushResources}">
-                            <ui:ItemsRepeater.Layout>
-                                <ui:StackLayout Spacing="14" />
-                            </ui:ItemsRepeater.Layout>
-                        </ui:ItemsRepeater>
+                        <ui:ItemsRepeater Style="{StaticResource BrushesRepeaterStyle}" />
                     </ScrollViewer>
                 </ui:ItemsRepeaterScrollHost>
             </Grid>
         </TabItem>
 
         <TabItem Header="Type ramp">
-            <ui:ItemsRepeaterScrollHost>
+            <ui:ItemsRepeaterScrollHost Margin="-24,0">
                 <ScrollViewer Style="{StaticResource ScrollViewerStyle}">
-                    <ui:ItemsRepeater ItemsSource="{StaticResource TextStyles}">
+                    <ui:ItemsRepeater
+                        ItemsSource="{StaticResource TextStyles}"
+                        Margin="12,0">
                         <ui:ItemsRepeater.Layout>
                             <ui:StackLayout Spacing="12" />
                         </ui:ItemsRepeater.Layout>

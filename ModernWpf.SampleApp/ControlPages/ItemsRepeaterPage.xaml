@@ -16,8 +16,6 @@
     Loaded="OnLoaded">
 
     <UserControl.Resources>
-        <Thickness x:Key="TabItemContentMargin">12,0,12,20</Thickness>
-
         <Style TargetType="ui:NumberBox">
             <Setter Property="SpinButtonPlacementMode" Value="Inline" />
             <Setter Property="Minimum" Value="0" />
@@ -205,12 +203,17 @@
 
     <TabControl
         x:Name="tabControl"
-        Style="{StaticResource TabControlPivotStyle}">
-        <TabItem Header="Examples">
-            <ScrollViewer>
+        Style="{StaticResource TabControlPivotStyle}"
+        Padding="12,0">
+        <TabControl.Resources>
+            <Thickness x:Key="PivotItemMargin">12,0,12,20</Thickness>
+        </TabControl.Resources>
+
+        <TabItem Header="Overview">
+            <ScrollViewer Margin="0,0,-24,-20">
                 <ui:SimpleStackPanel
-                    Margin="{StaticResource TabItemContentMargin}"
-                    Spacing="16">
+                    Spacing="16"
+                    Margin="0,0,24,20">
                     <sc:ControlExample HeaderText="Basic, non-interactive items laid out by ItemsRepeater">
                         <ui:ItemsRepeaterScrollHost MaxHeight="500">
                             <ScrollViewer
@@ -340,8 +343,7 @@
         <TabItem Header="StackLayout">
             <sc:ControlExample
                 HeaderText="StackLayout"
-                Style="{StaticResource ControlExampleFullStyle}"
-                Margin="{StaticResource TabItemContentMargin}">
+                Style="{StaticResource ControlExampleFullStyle}">
                 <sc:ControlExample.Resources>
                     <ui:StackLayout x:Key="stackLayout" />
                 </sc:ControlExample.Resources>
@@ -368,8 +370,7 @@
         <TabItem Header="UniformGridLayout">
             <sc:ControlExample
                 HeaderText="UniformGridLayout"
-                Style="{StaticResource ControlExampleFullStyle}"
-                Margin="{StaticResource TabItemContentMargin}">
+                Style="{StaticResource ControlExampleFullStyle}">
                 <sc:ControlExample.Resources>
                     <ui:UniformGridLayout
                         x:Key="uniformGridLayout"
@@ -443,8 +444,7 @@
         <TabItem Header="FlowLayout">
             <sc:ControlExample
                 HeaderText="FlowLayout"
-                Style="{StaticResource ControlExampleFullStyle}"
-                Margin="{StaticResource TabItemContentMargin}">
+                Style="{StaticResource ControlExampleFullStyle}">
                 <sc:ControlExample.Resources>
                     <ui:FlowLayout
                         x:Key="flowLayout"

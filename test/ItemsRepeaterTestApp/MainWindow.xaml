@@ -16,9 +16,7 @@
     ui:TitleBar.IsBackEnabled="{Binding ElementName=RootFrame, Path=CanGoBack}"
     ui:TitleBar.BackRequested="OnBackRequested">
 
-    <Frame
+    <ui:ThemeAwareFrame
         x:Name="RootFrame"
-        NavigationUIVisibility="Hidden"
-        IsTabStop="False"
         Source="/RepeaterTestUIPage.xaml" />
 </Window>

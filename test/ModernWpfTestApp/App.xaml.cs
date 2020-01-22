@@ -22,8 +22,7 @@ namespace ModernWpfTestApp
 
             var frame = new ThemeAwareFrame
             {
-                NavigationUIVisibility = NavigationUIVisibility.Hidden,
-                Source = new Uri("MainPage.xaml", UriKind.Relative)
+                Source = new Uri("MainPage.xaml", UriKind.Relative),
             };
 
             var window = new Window

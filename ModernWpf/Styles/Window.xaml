@@ -23,6 +23,8 @@
         <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundAltHighBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource WindowBorder}" />
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
                 <WindowChrome

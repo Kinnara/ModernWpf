@@ -7,7 +7,6 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="NavigationUIVisibility" Value="Hidden" />
         <Setter Property="DefaultNavigationInTransition">
             <Setter.Value>
                 <local:NavigationInTransition>

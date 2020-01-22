@@ -14,8 +14,6 @@
     Loaded="OnLoaded">
 
     <UserControl.Resources>
-        <Thickness x:Key="TabItemContentMargin">12,0,12,20</Thickness>
-
         <local:ContactGroupKeyConverter x:Key="ContactGroupKeyConverter" />
 
         <CollectionViewSource
@@ -69,11 +67,14 @@
 
     <TabControl
         x:Name="tabControl"
-        Style="{StaticResource TabControlPivotStyle}">
+        Style="{StaticResource TabControlPivotStyle}"
+        Padding="12,0">
+        <TabControl.Resources>
+            <Thickness x:Key="PivotItemMargin">12,0,12,20</Thickness>
+        </TabControl.Resources>
+
         <TabItem Header="MultiSelect">
-            <sc:ControlExample
-                HeaderText="A Simple ListView with Selection support"
-                Margin="{StaticResource TabItemContentMargin}">
+            <sc:ControlExample HeaderText="A Simple ListView with Selection support">
                 <ListView
                     x:Name="listView1"
                     SelectionMode="Multiple"
@@ -97,9 +98,7 @@
         </TabItem>
 
         <TabItem Header="Grouped">
-            <sc:ControlExample
-                HeaderText="A ListView with Grouped Headers"
-                Margin="{StaticResource TabItemContentMargin}">
+            <sc:ControlExample HeaderText="A ListView with Grouped Headers">
                 <ListView
                     x:Name="listView2"
                     ItemTemplate="{StaticResource ContactListViewTemplate}"
@@ -135,9 +134,7 @@
         </TabItem>
 
         <TabItem Header="GridView">
-            <sc:ControlExample
-                HeaderText="A ListView with GridView as its View"
-                Margin="{StaticResource TabItemContentMargin}">
+            <sc:ControlExample HeaderText="A ListView with GridView as its View">
                 <ListView
                     x:Name="listView3"
                     Style="{StaticResource {x:Static GridView.GridViewStyleKey}}"

@@ -17,12 +17,10 @@
                 x:Name="Example1"
                 HeaderText="Compact Sizing for controls"
                 Loaded="Example1_Loaded">
-                <Frame
+                <ui:ThemeAwareFrame
                     x:Name="ContentFrame"
                     JournalOwnership="OwnsJournal"
-                    NavigationUIVisibility="Hidden"
-                    Width="296"
-                    IsTabStop="False" />
+                    Width="296" />
 
                 <sc:ControlExample.Options>
                     <StackPanel>

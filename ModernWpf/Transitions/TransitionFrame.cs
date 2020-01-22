@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 
 namespace ModernWpf.Controls
@@ -121,8 +120,10 @@ namespace ModernWpf.Controls
 
         static TransitionFrame()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TransitionFrame),
-                new FrameworkPropertyMetadata(typeof(TransitionFrame)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(TransitionFrame), new FrameworkPropertyMetadata(typeof(TransitionFrame)));
+            NavigationUIVisibilityProperty.OverrideMetadata(typeof(TransitionFrame), new FrameworkPropertyMetadata(NavigationUIVisibility.Hidden));
+            IsTabStopProperty.OverrideMetadata(typeof(TransitionFrame), new FrameworkPropertyMetadata(false));
+            FocusVisualStyleProperty.OverrideMetadata(typeof(TransitionFrame), new FrameworkPropertyMetadata(null));
         }
 
         /// <summary>
@@ -348,7 +349,7 @@ namespace ModernWpf.Controls
             {
                 CompleteTransition(_storedNavigationOutTransition, /*_oldContentPresenter*/ null, _storedOldTransition);
             }
-            
+
             _storedNavigationOutTransition = null;
             _storedOldTransition = null;
 
