@@ -939,6 +939,7 @@
     <sys:Double x:Key="ProgressBarIndicatorPauseOpacity">0.6</sys:Double>
     <sys:Double x:Key="ProgressBarThemeMinHeight">4</sys:Double>
     <Thickness x:Key="ProgressBarBorderThemeThickness">0</Thickness>
+    <Color x:Key="SystemControlErrorBackgroundColor">#29C50500</Color>
 
     <!-- Resources for RadioButton -->
     <sys:Double x:Key="RadioButtonBorderThemeThickness">1</sys:Double>
