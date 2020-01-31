@@ -347,25 +347,36 @@ namespace ModernWpf.Controls
 
                 case NotifyCollectionChangedAction.Reset:
                     {
-                        if (m_owner.ItemsSourceView.HasKeyIndexMapping)
+                        // If we get multiple resets back to back before
+                        // running layout, we dont have to clear all the elements again.         
+                        if (!m_isDataSourceStableResetPending)
                         {
-                            m_isDataSourceStableResetPending = true;
-                        }
+#if DEBUG
+                            // There should be no elements in the reset pool at this time.
+                            Debug.Assert(m_resetPool.IsEmpty);
+#endif
 
-                        // Walk through all the elements and make sure they are cleared, they will go into
-                        // the stable id reset pool.
-                        var children = m_owner.Children;
-                        for (int i = 0; i < children.Count; ++i)
-                        {
-                            var element = children[i];
-                            var virtInfo = ItemsRepeater.GetVirtualizationInfo(element);
-                            if (virtInfo.IsRealized && virtInfo.AutoRecycleCandidate)
+                            if (m_owner.ItemsSourceView.HasKeyIndexMapping)
                             {
-                                m_owner.ClearElementImpl(element);
+                                m_isDataSourceStableResetPending = true;
+                            }
+
+                            // Walk through all the elements and make sure they are cleared, they will go into
+                            // the stable id reset pool.
+                            var children = m_owner.Children;
+                            for (int i = 0; i < children.Count; ++i)
+                            {
+                                var element = children[i];
+                                var virtInfo = ItemsRepeater.GetVirtualizationInfo(element);
+                                if (virtInfo.IsRealized && virtInfo.AutoRecycleCandidate)
+                                {
+                                    m_owner.ClearElementImpl(element);
+                                }
                             }
                         }
 
                         InvalidateRealizedIndicesHeldByLayout();
+
                         break;
                     }
             }
@@ -395,6 +406,9 @@ namespace ModernWpf.Controls
                 }
 
                 m_resetPool.Clear();
+
+                // Flush the realized indices once the stable reset pool is cleared to start fresh.
+                InvalidateRealizedIndicesHeldByLayout();
             }
         }
 
@@ -460,6 +474,10 @@ namespace ModernWpf.Controls
                     var virtInfo = ItemsRepeater.GetVirtualizationInfo(element);
                     virtInfo.MoveOwnershipToLayoutFromUniqueIdResetPool();
                     UpdateElementIndex(element, virtInfo, index);
+
+                    // Update realized indices
+                    m_firstRealizedElementIndexHeldByLayout = Math.Min(m_firstRealizedElementIndexHeldByLayout, index);
+                    m_lastRealizedElementIndexHeldByLayout = Math.Max(m_lastRealizedElementIndexHeldByLayout, index);
                 }
             }
 
@@ -481,6 +499,10 @@ namespace ModernWpf.Controls
                     m_pinnedPool.RemoveAt(i);
                     element = elementInfo.PinnedElement;
                     elementInfo.VirtualizationInfo.MoveOwnershipToLayoutFromPinnedPool();
+
+                    // Update realized indices
+                    m_firstRealizedElementIndexHeldByLayout = Math.Min(m_firstRealizedElementIndexHeldByLayout, index);
+                    m_lastRealizedElementIndexHeldByLayout = Math.Max(m_lastRealizedElementIndexHeldByLayout, index);
                     break;
                 }
             }

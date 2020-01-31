@@ -63,6 +63,10 @@ namespace ModernWpf.Controls
             return GetEnumerator();
         }
 
+#if DEBUG
+        public bool IsEmpty => m_elementMap.Count == 0;
+#endif
+
         private readonly ItemsRepeater m_owner;
         private readonly Dictionary<string, UIElement> m_elementMap = new Dictionary<string, UIElement>();
     }
