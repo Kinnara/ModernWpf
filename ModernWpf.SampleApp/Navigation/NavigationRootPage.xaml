@@ -126,6 +126,7 @@
                     </MenuItem>
                 </MenuItem>
                 <MenuItem
+                    x:Name="DebugMenuItem"
                     Header="Debug"
                     Visibility="Collapsed">
                     <MenuItem

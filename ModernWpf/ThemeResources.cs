@@ -213,30 +213,30 @@ namespace ModernWpf
             if (SystemParameters.HighContrast)
             {
                 EnsureHighContrastResources();
+                MergedDictionaries.InsertOrReplace(targetIndex, _highContrastResources);
                 MergedDictionaries.RemoveIfNotNull(_lightResources);
                 MergedDictionaries.RemoveIfNotNull(_darkResources);
-                MergedDictionaries.InsertIfNotExists(targetIndex, _highContrastResources);
             }
             else
             {
-                MergedDictionaries.RemoveIfNotNull(_highContrastResources);
-
                 if (theme == ApplicationTheme.Light)
                 {
                     EnsureLightResources();
+                    MergedDictionaries.InsertOrReplace(targetIndex, _lightResources);
                     MergedDictionaries.RemoveIfNotNull(_darkResources);
-                    MergedDictionaries.InsertIfNotExists(targetIndex, _lightResources);
                 }
                 else if (theme == ApplicationTheme.Dark)
                 {
                     EnsureDarkResources();
+                    MergedDictionaries.InsertOrReplace(targetIndex, _darkResources);
                     MergedDictionaries.RemoveIfNotNull(_lightResources);
-                    MergedDictionaries.InsertIfNotExists(targetIndex, _darkResources);
                 }
                 else
                 {
                     throw new ArgumentOutOfRangeException(nameof(theme));
                 }
+
+                MergedDictionaries.RemoveIfNotNull(_highContrastResources);
             }
 
             Debug.Assert(MergedThemeDictionaryCount == 1);

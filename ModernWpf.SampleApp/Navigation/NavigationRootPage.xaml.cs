@@ -32,6 +32,11 @@ namespace ModernWpf.SampleApp
             //PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(
             //    x => x.NavigateUri.ToString().EndsWith(nameof(PersonPicturePage) + ".xaml"));
             NavigateToSelectedPage();
+
+            if (Debugger.IsAttached)
+            {
+                DebugMenuItem.Visibility = Visibility.Visible;
+            }
         }
 
         private void ContextMenu_Loaded(object sender, RoutedEventArgs e)

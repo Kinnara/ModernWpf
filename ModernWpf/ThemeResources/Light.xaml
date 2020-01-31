@@ -889,14 +889,18 @@
 
     <!-- Resources for Pivot -->
     <m:StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
+    <m:StaticResource x:Key="PivotTitleFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
     <sys:Double x:Key="PivotHeaderItemFontSize">24</sys:Double>
     <sys:Double x:Key="PivotHeaderItemLockedTranslation">40</sys:Double>
+    <sys:Double x:Key="PivotTitleFontSize">14</sys:Double>
     <sys:Int32 x:Key="PivotHeaderItemCharacterSpacing">-25</sys:Int32>
     <Thickness x:Key="PivotHeaderItemMargin">12,0,12,0</Thickness>
     <Thickness x:Key="PivotItemMargin">12,0,12,0</Thickness>
+    <Thickness x:Key="PivotNavButtonBorderThemeThickness">0</Thickness>
     <Thickness x:Key="PivotNavButtonMargin">0,6,0,0</Thickness>
     <Thickness x:Key="PivotPortraitThemePadding">12,14,0,13</Thickness>
     <FontWeight x:Key="PivotHeaderItemThemeFontWeight">350</FontWeight>
+    <FontWeight x:Key="PivotTitleThemeFontWeight">Bold</FontWeight>
     <m:StaticResource x:Key="PivotBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="PivotHeaderBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="PivotNextButtonBackground" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
