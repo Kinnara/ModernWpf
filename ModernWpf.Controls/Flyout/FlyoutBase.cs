@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace ModernWpf.Controls.Primitives
@@ -296,41 +297,67 @@ namespace ModernWpf.Controls.Primitives
             if (Placement == FlyoutPlacementMode.Full &&
                 Window.GetWindow(placementTarget) is Window window)
             {
+                var adornerDecorator = window.FindDescendant<AdornerDecorator>();
+                if (adornerDecorator != null)
+                {
+                    placementTarget = adornerDecorator;
+
+                    m_presenter.SetBinding(
+                        FrameworkElement.WidthProperty,
+                        new Binding
+                        {
+                            Path = new PropertyPath(FrameworkElement.ActualWidthProperty),
+                            Source = adornerDecorator
+                        });
+
+                    m_presenter.SetBinding(
+                        FrameworkElement.HeightProperty,
+                        new Binding
+                        {
+                            Path = new PropertyPath(FrameworkElement.ActualHeightProperty),
+                            Source = adornerDecorator
+                        });
+                }
+                else
+                {
+                    placementTarget = window;
+
+                    m_presenter.SetBinding(
+                        FrameworkElement.WidthProperty,
+                        new MultiBinding
+                        {
+                            Converter = s_fullPlacementWidthConverter,
+                            Bindings =
+                            {
+                                new Binding { Path = new PropertyPath(FrameworkElement.ActualWidthProperty), Source = window },
+                                new Binding { Path = new PropertyPath(Control.BorderThicknessProperty), Source = window },
+                            }
+                        });
+
+                    m_presenter.SetBinding(
+                        FrameworkElement.HeightProperty,
+                        new MultiBinding
+                        {
+                            Converter = s_fullPlacementHeightConverter,
+                            Bindings =
+                            {
+                                new Binding { Path = new PropertyPath(FrameworkElement.ActualHeightProperty), Source = window },
+                                new Binding { Path = new PropertyPath(Control.BorderThicknessProperty), Source = window },
+                            }
+                        });
+                }
+
                 m_popup.Placement = PlacementMode.Center;
-                m_popup.PlacementTarget = window;
+                m_popup.PlacementTarget = placementTarget;
                 m_popup.ClearValue(Popup.PlacementRectangleProperty);
-
-                m_popup.SetBinding(
-                    FrameworkElement.WidthProperty,
-                    new MultiBinding
-                    {
-                        Converter = s_fullPlacementWidthConverter,
-                        Bindings =
-                        {
-                            new Binding { Path = new PropertyPath(FrameworkElement.ActualWidthProperty), Source = window },
-                            new Binding { Path = new PropertyPath(Control.BorderThicknessProperty), Source = window },
-                        }
-                    });
-
-                m_popup.SetBinding(
-                    FrameworkElement.HeightProperty,
-                    new MultiBinding
-                    {
-                        Converter = s_fullPlacementHeightConverter,
-                        Bindings =
-                        {
-                            new Binding { Path = new PropertyPath(FrameworkElement.ActualHeightProperty), Source = window },
-                            new Binding { Path = new PropertyPath(Control.BorderThicknessProperty), Source = window },
-                        }
-                    });
             }
             else
             {
+                m_presenter.ClearValue(FrameworkElement.WidthProperty);
+                m_presenter.ClearValue(FrameworkElement.HeightProperty);
                 m_popup.Placement = PlacementMode.Custom;
                 m_popup.PlacementTarget = placementTarget;
                 m_popup.PlacementRectangle = GetPlacementRectangle(placementTarget);
-                m_popup.ClearValue(FrameworkElement.WidthProperty);
-                m_popup.ClearValue(FrameworkElement.HeightProperty);
             }
         }
 
@@ -451,9 +478,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 double windowHeight = (double)values[0];
                 Thickness border = (Thickness)values[1];
-                double desiredHeight = windowHeight - border.Top - border.Bottom;
-                double screenHeight = SystemParameters.PrimaryScreenHeight;
-                return Math.Min(desiredHeight, screenHeight * 0.75);
+                return windowHeight - border.Top - border.Bottom;
             }
 
             public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
