@@ -10,6 +10,9 @@ namespace ModernWpf.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AppBarSeparator),
                 new FrameworkPropertyMetadata(typeof(AppBarSeparator)));
 
+            FocusableProperty.OverrideMetadata(typeof(AppBarSeparator),
+                new FrameworkPropertyMetadata(false));
+
             ToolBar.OverflowModeProperty.OverrideMetadata(typeof(AppBarSeparator),
                 new FrameworkPropertyMetadata(OnOverflowModePropertyChanged));
         }

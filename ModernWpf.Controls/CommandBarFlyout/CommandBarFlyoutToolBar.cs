@@ -27,7 +27,7 @@ namespace ModernWpf.Controls.Primitives
 
         public CommandBarFlyoutToolBar()
         {
-            //SetValue(FlyoutTemplateSettingsPropertyKey, new CommandBarFlyoutCommandBarTemplateSettings());
+            SetValue(FlyoutTemplateSettingsPropertyKey, new CommandBarFlyoutCommandBarTemplateSettings());
 
             Loaded += delegate
             {
@@ -127,11 +127,8 @@ namespace ModernWpf.Controls.Primitives
         public static readonly DependencyProperty FlyoutTemplateSettingsProperty =
             FlyoutTemplateSettingsPropertyKey.DependencyProperty;
 
-        public CommandBarFlyoutCommandBarTemplateSettings FlyoutTemplateSettings
-        {
-            get => (CommandBarFlyoutCommandBarTemplateSettings)GetValue(FlyoutTemplateSettingsProperty);
-            private set => SetValue(FlyoutTemplateSettingsPropertyKey, value);
-        }
+        public CommandBarFlyoutCommandBarTemplateSettings FlyoutTemplateSettings =>
+            (CommandBarFlyoutCommandBarTemplateSettings)GetValue(FlyoutTemplateSettingsProperty);
 
         #endregion
 
@@ -159,7 +156,6 @@ namespace ModernWpf.Controls.Primitives
 
             if (m_layoutRoot != null)
             {
-                FlyoutTemplateSettings = m_layoutRoot.Resources["FlyoutTemplateSettings"] as CommandBarFlyoutCommandBarTemplateSettings;
                 m_openingStoryboard = m_layoutRoot.Resources["OpeningStoryboard"] as Storyboard;
                 m_closingStoryboard = m_layoutRoot.Resources["ClosingStoryboard"] as Storyboard;
             }

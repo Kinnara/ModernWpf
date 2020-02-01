@@ -233,7 +233,7 @@ namespace ModernWpf.Controls
             return presenter;
         }
 
-        void SetSecondaryCommandsToCloseWhenExecuted()
+        private void SetSecondaryCommandsToCloseWhenExecuted()
         {
             RevokeAndClear(m_secondaryButtonClickRevokerByElementMap);
             RevokeAndClear(m_secondaryToggleButtonCheckedRevokerByElementMap);

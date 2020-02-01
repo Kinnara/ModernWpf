@@ -61,7 +61,8 @@
                                 <ui:AppBarElementContainer>
                                     <ui:SplitButton
                                         ToolTipService.ToolTip="Alignment"
-                                        CornerRadius="0">
+                                        CornerRadius="0"
+                                        ui:FocusVisualHelper.FocusVisualMargin="0">
                                         <ui:SplitButton.Resources>
                                             <!--
                                                 Override default brushes to make the SplitButton

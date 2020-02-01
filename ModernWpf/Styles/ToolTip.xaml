@@ -10,8 +10,8 @@
         <Setter Property="Background" Value="{DynamicResource ToolTipBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ToolTipBorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ToolTipBorderThemeThickness}" />
-        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.StatusFontFamilyKey}}" />
+        <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="{DynamicResource ToolTipContentThemeFontSize}" />
         <Setter Property="Padding" Value="{DynamicResource ToolTipBorderThemePadding}" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />

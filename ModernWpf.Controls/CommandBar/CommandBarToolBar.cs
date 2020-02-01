@@ -15,6 +15,8 @@ namespace ModernWpf.Controls.Primitives
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(CommandBarToolBar), new FrameworkPropertyMetadata(typeof(CommandBarToolBar)));
 
+            IsOverflowOpenProperty.OverrideMetadata(typeof(CommandBarToolBar), new FrameworkPropertyMetadata(OnIsOverflowOpenChanged));
+
             KeyboardNavigation.DirectionalNavigationProperty.OverrideMetadata(typeof(CommandBarToolBar),
                 new FrameworkPropertyMetadata(KeyboardNavigationMode.Contained));
             KeyboardNavigation.TabNavigationProperty.OverrideMetadata(typeof(CommandBarToolBar),
@@ -23,6 +25,8 @@ namespace ModernWpf.Controls.Primitives
 
         public CommandBarToolBar()
         {
+            m_moreButtonClosedToolTip = new ToolTip { Content = Strings.AppBarMoreButtonClosedToolTip };
+            m_moreButtonOpenToolTip = new ToolTip { Content = Strings.AppBarMoreButtonOpenToolTip };
         }
 
         #region CornerRadius
@@ -196,7 +200,10 @@ namespace ModernWpf.Controls.Primitives
 
         public override void OnApplyTemplate()
         {
-            base.OnApplyTemplate();
+            if (m_moreButton != null)
+            {
+                m_moreButton.ClearValue(ToolTipProperty);
+            }
 
             if (m_overflowPopup != null)
             {
@@ -205,6 +212,8 @@ namespace ModernWpf.Controls.Primitives
                 m_overflowPopup.Opened -= OnOverflowPopupOpened;
                 m_overflowPopup.Closed -= OnOverflowPopupClosed;
             }
+
+            base.OnApplyTemplate();
 
             m_layoutRoot = this.GetTemplateRoot();
             m_moreButton = GetTemplateChild("MoreButton") as ButtonBase;
@@ -215,7 +224,7 @@ namespace ModernWpf.Controls.Primitives
             if (m_moreButton != null)
             {
                 AutomationProperties.SetName(m_moreButton, Strings.AppBarMoreButtonName);
-                m_moreButton.ToolTip = Strings.AppBarMoreButtonToolTip;
+                UpdateMoreButtonTooTip();
             }
 
             if (m_overflowPopup != null)
@@ -293,6 +302,11 @@ namespace ModernWpf.Controls.Primitives
             base.OnKeyDown(e);
         }
 
+        private static void OnIsOverflowOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((CommandBarToolBar)d).UpdateMoreButtonTooTip();
+        }
+
         private void InvalidateLayout()
         {
             var layoutRoot = m_layoutRoot;
@@ -331,11 +345,22 @@ namespace ModernWpf.Controls.Primitives
                 child: m_overflowPopup.Child as FrameworkElement);
         }
 
+        private void UpdateMoreButtonTooTip()
+        {
+            if (m_moreButton != null)
+            {
+                m_moreButton.ToolTip = IsOverflowOpen ? m_moreButtonOpenToolTip : m_moreButtonClosedToolTip;
+            }
+        }
+
         private FrameworkElement m_layoutRoot;
         private ButtonBase m_moreButton;
         private Popup m_overflowPopup;
         private ToolBarPanel m_toolBarPanel;
         private CommandBarOverflowPanel m_toolBarOverflowPanel;
+
+        private readonly ToolTip m_moreButtonClosedToolTip;
+        private readonly ToolTip m_moreButtonOpenToolTip;
 
         private const string OverflowPopupName = "OverflowPopup";
         private const string ToolBarPanelName = "PART_ToolBarPanel";

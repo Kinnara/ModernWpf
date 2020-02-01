@@ -219,10 +219,13 @@
     <value>更多選項</value>
     <comment>Automation name for the secondary button.</comment>
   </data>
-  <data name="AppBarMoreButtonToolTip" xml:space="preserve">
+  <data name="AppBarMoreButtonClosedToolTip" xml:space="preserve">
     <value>查看更多</value>
   </data>
   <data name="AppBarMoreButtonName" xml:space="preserve">
     <value>更多應用程式列</value>
+  </data>
+  <data name="AppBarMoreButtonOpenToolTip" xml:space="preserve">
+    <value>查看更少的資訊</value>
   </data>
 </root>

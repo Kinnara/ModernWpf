@@ -486,7 +486,9 @@
                         <Border.Resources>
                             <Style TargetType="local:AppBarButton" BasedOn="{StaticResource CommandBarFlyoutAppBarButtonStyle}" />
                             <Style TargetType="local:AppBarToggleButton" BasedOn="{StaticResource CommandBarFlyoutAppBarToggleButtonStyle}" />
-                            <primitives:CommandBarFlyoutCommandBarTemplateSettings x:Key="FlyoutTemplateSettings" />
+                            <RectangleGeometry
+                                x:Key="OuterContentRootClip"
+                                Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ContentClipRect}" />
                         </Border.Resources>
                         <VisualStateManager.VisualStateGroups>
                             <ui:VisualStateGroupEx x:Name="AvailableCommandsStates">
@@ -518,15 +520,11 @@
                             x:Name="OuterContentRoot"
                             VerticalAlignment="Top"
                             Margin="{TemplateBinding Padding}"
-                            Width="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=CurrentWidth}"
+                            Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.CurrentWidth}"
                             Height="{TemplateBinding Height}"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="{Binding ElementName=LayoutRoot, Path=CornerRadius}">
-                            <Border.Clip>
-                                <RectangleGeometry
-                                    x:Name="OuterContentRootClip"
-                                    Rect="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=ContentClipRect}" />
-                            </Border.Clip>
+                            CornerRadius="{Binding ElementName=LayoutRoot, Path=CornerRadius}"
+                            Clip="{StaticResource OuterContentRootClip}">
                             <Grid x:Name="ContentRoot">
                                 <Border
                                     x:Name="PrimaryItemsRoot"
@@ -577,7 +575,7 @@
                                     PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
                                     <ui:ThemeShadowChrome
                                         x:Name="OuterOverflowContentRoot"
-                                        Width="{Binding Source={StaticResource FlyoutTemplateSettings}, Path=ExpandedWidth}"
+                                        Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandedWidth}"
                                         IsShadowEnabled="False">
                                         <Border
                                             x:Name="OverflowContentRoot"
@@ -599,7 +597,7 @@
                                                     IsTabStop="False">
                                                     <primitives:CommandBarOverflowPanel
                                                         x:Name="PART_ToolBarOverflowPanel"
-                                                        Focusable="true"
+                                                        Focusable="False"
                                                         FocusVisualStyle="{x:Null}"
                                                         KeyboardNavigation.TabNavigation="Once"
                                                         KeyboardNavigation.DirectionalNavigation="Cycle"
@@ -621,6 +619,7 @@
                         <DataTrigger Binding="{Binding ElementName=AvailableCommandsStates, Path=CurrentStateName}" Value="SecondaryCommandsOnly">
                             <Setter TargetName="OverflowPopup" Property="Placement" Value="{x:Static PlacementMode.Relative}" />
                             <Setter TargetName="OuterOverflowContentRoot" Property="IsShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
+                            <Setter TargetName="PART_ToolBarOverflowPanel" Property="Focusable" Value="True" />
                         </DataTrigger>
                         <!-- ExpandedUpWithPrimaryCommands -->
                         <DataTrigger Binding="{Binding ElementName=ExpansionStates2, Path=CurrentStateName}" Value="ExpandedUpWithPrimaryCommands">

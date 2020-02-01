@@ -7,6 +7,10 @@ namespace ModernWpf.Controls.Primitives
 {
     public sealed class CommandBarFlyoutCommandBarTemplateSettings : DependencyObject
     {
+        internal CommandBarFlyoutCommandBarTemplateSettings()
+        {
+        }
+
         #region CloseAnimationEndPosition
 
         private static readonly DependencyPropertyKey CloseAnimationEndPositionPropertyKey =

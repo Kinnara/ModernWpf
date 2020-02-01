@@ -222,7 +222,10 @@
   <data name="AppBarMoreButtonName" xml:space="preserve">
     <value>詳細アプリ バー</value>
   </data>
-  <data name="AppBarMoreButtonToolTip" xml:space="preserve">
+  <data name="AppBarMoreButtonClosedToolTip" xml:space="preserve">
     <value>もっと見る</value>
+  </data>
+  <data name="AppBarMoreButtonOpenToolTip" xml:space="preserve">
+    <value>表示を減らす</value>
   </data>
 </root>

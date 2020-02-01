@@ -61,6 +61,15 @@ namespace ModernWpf {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to See more.
+        /// </summary>
+        internal static string AppBarMoreButtonClosedToolTip {
+            get {
+                return ResourceManager.GetString("AppBarMoreButtonClosedToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to More app bar.
         /// </summary>
         internal static string AppBarMoreButtonName {
@@ -70,11 +79,11 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to See more.
+        ///   Looks up a localized string similar to See less.
         /// </summary>
-        internal static string AppBarMoreButtonToolTip {
+        internal static string AppBarMoreButtonOpenToolTip {
             get {
-                return ResourceManager.GetString("AppBarMoreButtonToolTip", resourceCulture);
+                return ResourceManager.GetString("AppBarMoreButtonOpenToolTip", resourceCulture);
             }
         }
         
