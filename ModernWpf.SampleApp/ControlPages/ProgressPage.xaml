@@ -14,23 +14,30 @@
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="An indeterminate progress bar.">
-                <ProgressBar
-                    x:Name="progressBar"
+                <ui:ProgressBar
                     Width="130"
-                    IsIndeterminate="True" />
+                    IsIndeterminate="True"
+                    VerticalAlignment="Top"
+                    Margin="10,10,0,0"
+                    ShowPaused="{Binding IsChecked, ElementName=PausedRB}"
+                    ShowError="{Binding IsChecked, ElementName=ErrorRB}" />
 
                 <sc:ControlExample.Options>
-                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <CheckBox
-                            Content="IsIndeterminate"
-                            IsChecked="{Binding ElementName=progressBar, Path=IsIndeterminate}" />
-                        <Slider
-                            ui:ControlHelper.Header="Width"
-                            AutoToolTipPlacement="TopLeft"
-                            Minimum="130"
-                            Maximum="260"
-                            Value="{Binding ElementName=progressBar, Path=Width}" />
-                    </ui:SimpleStackPanel>
+                    <StackPanel>
+                        <RadioButton
+                            x:Name="RunningRB"
+                            GroupName="ProgressState"
+                            Content="Running"
+                            IsChecked="True" />
+                        <RadioButton
+                            x:Name="PausedRB"
+                            GroupName="ProgressState"
+                            Content="Paused" />
+                        <RadioButton
+                            x:Name="ErrorRB"
+                            GroupName="ProgressState"
+                            Content="Error" />
+                    </StackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
 
