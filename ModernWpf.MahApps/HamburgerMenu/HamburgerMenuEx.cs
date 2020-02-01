@@ -3,6 +3,8 @@ using ModernWpf.Controls;
 using System;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -37,6 +39,8 @@ namespace ModernWpf.MahApps.Controls
         private UIElement _prevIndicator;
         private UIElement _nextIndicator;
 
+        private ButtonAutomationPeer _backButtonPeer;
+
         static HamburgerMenuEx()
         {
             DisplayModeProperty.OverrideMetadata(typeof(HamburgerMenuEx), new FrameworkPropertyMetadata(OnDisplayModePropertyChanged));
@@ -53,8 +57,11 @@ namespace ModernWpf.MahApps.Controls
         public HamburgerMenuEx()
         {
             DefaultStyleKey = typeof(HamburgerMenuEx);
+
             SetResourceReference(DefaultItemFocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
             SetResourceReference(ClientAreaAnimationProperty, SystemParameters.ClientAreaAnimationKey);
+
+            InputBindings.Add(new KeyBinding(new GoBackCommand(this), Key.Left, ModifierKeys.Alt));
         }
 
         #region IsBackButtonVisible
@@ -426,6 +433,8 @@ namespace ModernWpf.MahApps.Controls
                 _optionsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;
             }
 
+            _backButtonPeer = null;
+
             base.OnApplyTemplate();
 
             _paneGrid = GetTemplateChild("PaneGrid") as UIElement;
@@ -754,6 +763,41 @@ namespace ModernWpf.MahApps.Controls
             }
 
             return null;
+        }
+
+        private void InvokeBack()
+        {
+            if (_backButton != null && _backButton.IsEnabled)
+            {
+                if (_backButtonPeer == null)
+                {
+                    _backButtonPeer = new ButtonAutomationPeer(_backButton);
+                }
+
+                (_backButtonPeer.GetPattern(PatternInterface.Invoke) as IInvokeProvider)?.Invoke();
+            }
+        }
+
+        private class GoBackCommand : ICommand
+        {
+            private readonly HamburgerMenuEx _owner;
+
+            public GoBackCommand(HamburgerMenuEx owner)
+            {
+                _owner = owner;
+            }
+
+            public event EventHandler CanExecuteChanged;
+
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public void Execute(object parameter)
+            {
+                _owner.InvokeBack();
+            }
         }
     }
 }

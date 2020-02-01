@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -19,6 +21,10 @@ namespace ModernWpf.Controls.Primitives
         private const string BackButtonName = "PART_BackButton";
         private const string LeftSystemOverlayName = "PART_LeftSystemOverlay";
         private const string RightSystemOverlayName = "PART_RightSystemOverlay";
+
+        private Window _parentWindow;
+        private KeyBinding _altLeftBinding;
+        private ButtonAutomationPeer _backButtonPeer;
 
         static TitleBarControl()
         {
@@ -297,8 +303,6 @@ namespace ModernWpf.Controls.Primitives
 
         public override void OnApplyTemplate()
         {
-            base.OnApplyTemplate();
-
             if (BackButton != null)
             {
                 BackButton.Click -= OnBackButtonClick;
@@ -313,6 +317,10 @@ namespace ModernWpf.Controls.Primitives
             {
                 RightSystemOverlay.SizeChanged -= OnRightSystemOverlaySizeChanged;
             }
+
+            _backButtonPeer = null;
+
+            base.OnApplyTemplate();
 
             BackButton = GetTemplateChild(BackButtonName) as Button;
             LeftSystemOverlay = GetTemplateChild(LeftSystemOverlayName) as FrameworkElement;
@@ -340,6 +348,28 @@ namespace ModernWpf.Controls.Primitives
         {
             UpdateActualIcon();
             base.OnInitialized(e);
+        }
+
+        protected override void OnVisualParentChanged(DependencyObject oldParent)
+        {
+            if (_parentWindow != null)
+            {
+                if (_altLeftBinding != null)
+                {
+                    _parentWindow.InputBindings.Remove(_altLeftBinding);
+                    _altLeftBinding = null;
+                }
+            }
+
+            base.OnVisualParentChanged(oldParent);
+
+            _parentWindow = TemplatedParent as Window;
+
+            if (_parentWindow != null)
+            {
+                _altLeftBinding = new KeyBinding(new GoBackCommand(this), Key.Left, ModifierKeys.Alt);
+                _parentWindow.InputBindings.Add(_altLeftBinding);
+            }
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -418,6 +448,41 @@ namespace ModernWpf.Controls.Primitives
             if (TemplatedParent is Window window)
             {
                 SystemCommands.CloseWindow(window);
+            }
+        }
+
+        private void InvokeBack()
+        {
+            if (BackButton != null && BackButton.IsEnabled)
+            {
+                if (_backButtonPeer == null)
+                {
+                    _backButtonPeer = new ButtonAutomationPeer(BackButton);
+                }
+
+                (_backButtonPeer.GetPattern(PatternInterface.Invoke) as IInvokeProvider)?.Invoke();
+            }
+        }
+
+        private class GoBackCommand : ICommand
+        {
+            private readonly TitleBarControl _owner;
+
+            public GoBackCommand(TitleBarControl owner)
+            {
+                _owner = owner;
+            }
+
+            public event EventHandler CanExecuteChanged;
+
+            public bool CanExecute(object parameter)
+            {
+                return true;
+            }
+
+            public void Execute(object parameter)
+            {
+                _owner.InvokeBack();
             }
         }
     }
