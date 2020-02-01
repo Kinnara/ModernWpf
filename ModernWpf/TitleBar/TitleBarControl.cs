@@ -24,7 +24,6 @@ namespace ModernWpf.Controls.Primitives
 
         private Window _parentWindow;
         private KeyBinding _altLeftBinding;
-        private ButtonAutomationPeer _backButtonPeer;
 
         static TitleBarControl()
         {
@@ -318,8 +317,6 @@ namespace ModernWpf.Controls.Primitives
                 RightSystemOverlay.SizeChanged -= OnRightSystemOverlaySizeChanged;
             }
 
-            _backButtonPeer = null;
-
             base.OnApplyTemplate();
 
             BackButton = GetTemplateChild(BackButtonName) as Button;
@@ -455,12 +452,8 @@ namespace ModernWpf.Controls.Primitives
         {
             if (BackButton != null && BackButton.IsEnabled)
             {
-                if (_backButtonPeer == null)
-                {
-                    _backButtonPeer = new ButtonAutomationPeer(BackButton);
-                }
-
-                (_backButtonPeer.GetPattern(PatternInterface.Invoke) as IInvokeProvider)?.Invoke();
+                var peer = UIElementAutomationPeer.CreatePeerForElement(BackButton);
+                (peer?.GetPattern(PatternInterface.Invoke) as IInvokeProvider)?.Invoke();
             }
         }
 

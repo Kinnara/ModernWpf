@@ -39,8 +39,6 @@ namespace ModernWpf.MahApps.Controls
         private UIElement _prevIndicator;
         private UIElement _nextIndicator;
 
-        private ButtonAutomationPeer _backButtonPeer;
-
         static HamburgerMenuEx()
         {
             DisplayModeProperty.OverrideMetadata(typeof(HamburgerMenuEx), new FrameworkPropertyMetadata(OnDisplayModePropertyChanged));
@@ -433,8 +431,6 @@ namespace ModernWpf.MahApps.Controls
                 _optionsListView.ItemContainerGenerator.StatusChanged -= OnListViewItemContainerGeneratorStatusChanged;
             }
 
-            _backButtonPeer = null;
-
             base.OnApplyTemplate();
 
             _paneGrid = GetTemplateChild("PaneGrid") as UIElement;
@@ -769,12 +765,8 @@ namespace ModernWpf.MahApps.Controls
         {
             if (_backButton != null && _backButton.IsEnabled)
             {
-                if (_backButtonPeer == null)
-                {
-                    _backButtonPeer = new ButtonAutomationPeer(_backButton);
-                }
-
-                (_backButtonPeer.GetPattern(PatternInterface.Invoke) as IInvokeProvider)?.Invoke();
+                var peer = UIElementAutomationPeer.CreatePeerForElement(_backButton);
+                (peer?.GetPattern(PatternInterface.Invoke) as IInvokeProvider)?.Invoke();
             }
         }
 
