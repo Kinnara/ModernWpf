@@ -21,6 +21,14 @@ namespace ModernWpf.SampleApp.ControlPages
             }
         }
 
+        private void TabView_Loaded(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                (sender as TabControl).Items.Add(CreateNewTab(i));
+            }
+        }
+
         private TabItem CreateNewTab(int index)
         {
             TabItem newItem = new TabItem();

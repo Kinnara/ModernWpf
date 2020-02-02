@@ -21,13 +21,35 @@
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="A basic TabControl">
-                <TabControl x:Name="tabControl" />
+                <TabControl x:Name="tabControl">
+                    <ui:TabControlHelper.TabStripHeader>
+                        <Button
+                            Content="Header"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            ui:FocusVisualHelper.FocusVisualMargin="0"
+                            Visibility="{Binding IsChecked, ElementName=ShowHeaderAndFooterCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </ui:TabControlHelper.TabStripHeader>
+                    <ui:TabControlHelper.TabStripFooter>
+                        <Button
+                            Content="Footer"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            ui:FocusVisualHelper.FocusVisualMargin="0"
+                            Visibility="{Binding IsChecked, ElementName=ShowHeaderAndFooterCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </ui:TabControlHelper.TabStripFooter>
+                </TabControl>
 
                 <sc:ControlExample.Options>
-                    <ui:RadioButtons
-                        Header="TabStripPlacement"
-                        ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
-                        SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement}" />
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <ui:RadioButtons
+                            Header="TabStripPlacement"
+                            ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement}" />
+                        <CheckBox
+                            x:Name="ShowHeaderAndFooterCheckBox"
+                            Content="Show header and footer" />
+                    </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
 
@@ -61,6 +83,39 @@
                                     </ui:TabItemHelper.Icon>
                                 </TabItem>
                             </TabControl.Items>
+                        </TabControl>
+                    </StackPanel>
+                </sc:ControlExample.Example>
+            </sc:ControlExample>
+
+            <sc:ControlExample HeaderText="You can put custom content in TabStripHeader and TabStripFooter">
+                <sc:ControlExample.Example>
+                    <StackPanel>
+                        <TextBlock
+                            TextWrapping="Wrap"
+                            Margin="0,0,0,24"
+                            Text="You can put any content in the TabStripHeader and TabStripFooter areas" />
+
+                        <TabControl
+                            SelectedIndex="0"
+                            Margin="-12"
+                            Loaded="TabView_Loaded"
+                            MinHeight="475">
+                            <ui:TabControlHelper.TabStripHeader>
+                                <TextBlock
+                                    Text="TabStripHeader Content"
+                                    VerticalAlignment="Center"
+                                    Margin="8,6"
+                                    Style="{DynamicResource BaseTextBlockStyle}" />
+                            </ui:TabControlHelper.TabStripHeader>
+                            <ui:TabControlHelper.TabStripFooter>
+                                <TextBlock
+                                    Text="TabStripFooter Content"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Right"
+                                    Margin="6"
+                                    Style="{DynamicResource BaseTextBlockStyle}" />
+                            </ui:TabControlHelper.TabStripFooter>
                         </TabControl>
                     </StackPanel>
                 </sc:ControlExample.Example>

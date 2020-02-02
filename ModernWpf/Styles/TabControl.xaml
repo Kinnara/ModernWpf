@@ -192,19 +192,37 @@
                             <RowDefinition x:Name="RowDefinition0" Height="Auto" />
                             <RowDefinition x:Name="RowDefinition1" Height="*" />
                         </Grid.RowDefinitions>
-                        <Border
+                        <DockPanel
                             x:Name="headerPanel"
                             ClipToBounds="True"
                             Panel.ZIndex="1"
                             Grid.Row="0"
                             Grid.Column="0"
-                            Background="{TemplateBinding Background}"
-                            Padding="{DynamicResource TabViewTopHeaderPadding}">
+                            Background="{TemplateBinding Background}">
+
+                            <ContentPresenter
+                                DockPanel.Dock="Left"
+                                x:Name="HeaderContentPresenter"
+                                Content="{TemplateBinding primitives:TabControlHelper.TabStripHeader}"
+                                ContentTemplate="{TemplateBinding primitives:TabControlHelper.TabStripHeaderTemplate}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
                             <TabPanel
+                                DockPanel.Dock="Left"
+                                x:Name="TabPanel"
                                 Background="Transparent"
-                                IsItemsHost="true"
-                                KeyboardNavigation.TabIndex="1" />
-                        </Border>
+                                Margin="{DynamicResource TabViewTopHeaderPadding}"
+                                IsItemsHost="true" />
+
+                            <ContentPresenter
+                                DockPanel.Dock="Right"
+                                x:Name="FooterContentPresenter"
+                                HorizontalAlignment="Stretch"
+                                Content="{TemplateBinding primitives:TabControlHelper.TabStripFooter}"
+                                ContentTemplate="{TemplateBinding primitives:TabControlHelper.TabStripFooterTemplate}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
+                        </DockPanel>
                         <Border
                             x:Name="contentPanel"
                             Grid.Row="1"
@@ -212,7 +230,6 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             KeyboardNavigation.DirectionalNavigation="Contained"
-                            KeyboardNavigation.TabIndex="2"
                             KeyboardNavigation.TabNavigation="Local">
                             <ContentPresenter
                                 x:Name="PART_SelectedContentHost"
@@ -222,12 +239,16 @@
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="TabStripPlacement" Value="Top">
+                            <Setter TargetName="TabPanel" Property="VerticalAlignment" Value="Bottom" />
+                        </Trigger>
                         <Trigger Property="TabStripPlacement" Value="Bottom">
                             <Setter TargetName="headerPanel" Property="Grid.Row" Value="1" />
                             <Setter TargetName="contentPanel" Property="Grid.Row" Value="0" />
                             <Setter TargetName="RowDefinition0" Property="Height" Value="*" />
                             <Setter TargetName="RowDefinition1" Property="Height" Value="Auto" />
-                            <Setter TargetName="headerPanel" Property="Padding" Value="{DynamicResource TabViewBottomHeaderPadding}" />
+                            <Setter TargetName="TabPanel" Property="VerticalAlignment" Value="Top" />
+                            <Setter TargetName="TabPanel" Property="Margin" Value="{DynamicResource TabViewBottomHeaderPadding}" />
                         </Trigger>
                         <Trigger Property="TabStripPlacement" Value="Left">
                             <Setter TargetName="headerPanel" Property="Grid.Row" Value="0" />
@@ -238,7 +259,11 @@
                             <Setter TargetName="ColumnDefinition1" Property="Width" Value="*" />
                             <Setter TargetName="RowDefinition0" Property="Height" Value="*" />
                             <Setter TargetName="RowDefinition1" Property="Height" Value="0" />
-                            <Setter TargetName="headerPanel" Property="Padding" Value="{DynamicResource TabViewLeftHeaderPadding}" />
+                            <Setter TargetName="HeaderContentPresenter" Property="DockPanel.Dock" Value="Top" />
+                            <Setter TargetName="TabPanel" Property="DockPanel.Dock" Value="Top" />
+                            <Setter TargetName="TabPanel" Property="HorizontalAlignment" Value="Right" />
+                            <Setter TargetName="TabPanel" Property="Margin" Value="{DynamicResource TabViewLeftHeaderPadding}" />
+                            <Setter TargetName="FooterContentPresenter" Property="DockPanel.Dock" Value="Bottom" />
                         </Trigger>
                         <Trigger Property="TabStripPlacement" Value="Right">
                             <Setter TargetName="headerPanel" Property="Grid.Row" Value="0" />
@@ -249,10 +274,11 @@
                             <Setter TargetName="ColumnDefinition1" Property="Width" Value="Auto" />
                             <Setter TargetName="RowDefinition0" Property="Height" Value="*" />
                             <Setter TargetName="RowDefinition1" Property="Height" Value="0" />
-                            <Setter TargetName="headerPanel" Property="Padding" Value="{DynamicResource TabViewRightHeaderPadding}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="templateRoot" Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                            <Setter TargetName="HeaderContentPresenter" Property="DockPanel.Dock" Value="Top" />
+                            <Setter TargetName="TabPanel" Property="DockPanel.Dock" Value="Top" />
+                            <Setter TargetName="TabPanel" Property="HorizontalAlignment" Value="Left" />
+                            <Setter TargetName="TabPanel" Property="Margin" Value="{DynamicResource TabViewRightHeaderPadding}" />
+                            <Setter TargetName="FooterContentPresenter" Property="DockPanel.Dock" Value="Bottom" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
