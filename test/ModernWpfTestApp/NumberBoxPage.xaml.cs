@@ -2,7 +2,9 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using ModernWpf.Controls;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using Windows.Globalization.NumberFormatting;
@@ -12,6 +14,8 @@ namespace ModernWpfTestApp
     [TopLevelTestPage(Name = "NumberBox")]
     public sealed partial class NumberBoxPage : TestPage
     {
+        public DataModelWithINPC DataModelWithINPC { get; set; } = new DataModelWithINPC();
+
         public NumberBoxPage()
         {
             InitializeComponent();
@@ -112,6 +116,12 @@ namespace ModernWpfTestApp
             TestNumberBox.Value = double.NaN;
         }
 
+        private void SetTwoWayBoundNaNButton_Click(object sender, RoutedEventArgs e)
+        {
+            DataModelWithINPC.Value = Double.NaN;
+            TwoWayBoundNumberBoxValue.Text = TwoWayBoundNumberBox.Value.ToString();
+        }
+
         private void ScrollviewerWithScroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (e.VerticalChange != 0)
@@ -137,6 +147,31 @@ namespace ModernWpfTestApp
             public double? ParseDouble(string text)
             {
                 return _formatter.ParseDouble(text);
+            }
+        }
+    }
+
+    public class DataModelWithINPC : INotifyPropertyChanged
+    {
+        private double _value;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public double Value
+        {
+            get => _value;
+            set
+            {
+                if (value != _value)
+                {
+                    _value = value;
+                    OnPropertyChanged(nameof(Value));
+                }
             }
         }
     }
