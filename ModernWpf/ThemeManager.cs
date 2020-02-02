@@ -26,6 +26,8 @@ namespace ModernWpf
 
         static ThemeManager()
         {
+            ThemeProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(OnThemeChanged));
+
             _actualThemeChangedEventArgs = new RoutedEventArgs(ActualThemeChangedEvent);
             MenuDropAlignmentHelper.EnsureStandardPopupAlignment();
 
@@ -95,6 +97,17 @@ namespace ModernWpf
         private static void OnActualApplicationThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var tm = (ThemeManager)d;
+
+            switch ((ApplicationTheme)e.NewValue)
+            {
+                case ModernWpf.ApplicationTheme.Light:
+                    tm._defaultActualTheme = ElementTheme.Light;
+                    break;
+                case ModernWpf.ApplicationTheme.Dark:
+                    tm._defaultActualTheme = ElementTheme.Dark;
+                    break;
+            }
+
             tm.ApplyApplicationTheme();
             tm.ActualApplicationThemeChanged?.Invoke(tm, null);
         }
@@ -251,7 +264,7 @@ namespace ModernWpf
 
             if (element.IsInitialized)
             {
-                ApplyElementTheme(element);
+                ApplyRequestedTheme(element);
             }
             else
             {
@@ -259,7 +272,7 @@ namespace ModernWpf
             }
         }
 
-        private static void ApplyElementTheme(FrameworkElement element)
+        private static void ApplyRequestedTheme(FrameworkElement element)
         {
             var resources = element.Resources;
             var requestedTheme = GetRequestedTheme(element);
@@ -267,15 +280,54 @@ namespace ModernWpf
 
             if (element is Window window)
             {
-                UpdateWindowActualTheme(window);
+                UpdateWindowTheme(window);
             }
-            else if (requestedTheme == ElementTheme.Default)
+            else if (requestedTheme != ElementTheme.Default)
             {
-                element.ClearValue(ActualThemePropertyKey);
+                SetTheme(element, requestedTheme);
             }
             else
             {
-                SetActualTheme(element, requestedTheme);
+                element.ClearValue(ThemeProperty);
+            }
+        }
+
+        #endregion
+
+        #region Theme
+
+        private static readonly DependencyProperty ThemeProperty =
+            DependencyProperty.RegisterAttached(
+                "Theme",
+                typeof(ElementTheme),
+                typeof(ThemeManager),
+                new FrameworkPropertyMetadata(
+                    ElementTheme.Default,
+                    FrameworkPropertyMetadataOptions.Inherits));
+
+        private static void SetTheme(FrameworkElement element, ElementTheme value)
+        {
+            element.SetValue(ThemeProperty, value);
+        }
+
+        private static void OnThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is FrameworkElement fe)
+            {
+                UpdateActualTheme(fe, (ElementTheme)e.NewValue);
+            }
+        }
+
+        private static void UpdateWindowTheme(Window window)
+        {
+            var requestedTheme = GetRequestedTheme(window);
+            if (requestedTheme != ElementTheme.Default)
+            {
+                SetTheme(window, requestedTheme);
+            }
+            else
+            {
+                SetTheme(window, Current._defaultActualTheme);
             }
         }
 
@@ -294,11 +346,6 @@ namespace ModernWpf
             return (ElementTheme)element.GetValue(ActualThemeProperty);
         }
 
-        internal static void SetActualTheme(FrameworkElement element, ElementTheme value)
-        {
-            element.SetValue(ActualThemePropertyKey, value);
-        }
-
         private static readonly DependencyPropertyKey ActualThemePropertyKey =
             DependencyProperty.RegisterAttachedReadOnly(
                 "ActualTheme",
@@ -306,7 +353,6 @@ namespace ModernWpf
                 typeof(ThemeManager),
                 new FrameworkPropertyMetadata(
                     ElementTheme.Light,
-                    FrameworkPropertyMetadataOptions.Inherits,
                     OnActualThemeChanged));
 
         /// <summary>
@@ -319,6 +365,12 @@ namespace ModernWpf
         {
             if (d is FrameworkElement fe)
             {
+#if DEBUG
+                if (DependencyPropertyHelper.GetValueSource(d, ThemeProperty).BaseValueSource == BaseValueSource.Default)
+                {
+                    Debug.Assert((ElementTheme)e.NewValue == Current._defaultActualTheme);
+                }
+#endif
                 if (GetHasThemeResources(fe))
                 {
                     UpdateThemeResourcesForElement(fe);
@@ -328,19 +380,23 @@ namespace ModernWpf
             }
         }
 
-        internal static void UpdateWindowActualTheme(Window window)
+        private static void UpdateActualTheme(FrameworkElement element, ElementTheme theme)
         {
-            var requestedTheme = GetRequestedTheme(window);
-            if (requestedTheme == ElementTheme.Default)
+            ElementTheme actualTheme;
+
+            if (theme != ElementTheme.Default)
             {
-                SetActualTheme(window, Current.ActualApplicationTheme == ModernWpf.ApplicationTheme.Dark ?
-                    ElementTheme.Dark : ElementTheme.Light);
+                actualTheme = theme;
             }
             else
             {
-                SetActualTheme(window, requestedTheme);
+                actualTheme = Current._defaultActualTheme;
             }
+
+            element.SetValue(ActualThemePropertyKey, actualTheme);
         }
+
+        private ElementTheme _defaultActualTheme = ElementTheme.Light;
 
         #endregion
 
@@ -403,7 +459,7 @@ namespace ModernWpf
                             Source = Current
                         });
 
-                    UpdateWindowActualTheme((Window)d);
+                    UpdateWindowTheme((Window)d);
                 }
                 else
                 {
@@ -421,7 +477,7 @@ namespace ModernWpf
 
         private static void OnInheritedApplicationThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            UpdateWindowActualTheme((Window)d);
+            UpdateWindowTheme((Window)d);
         }
 
         #endregion
@@ -514,11 +570,6 @@ namespace ModernWpf
                 typeof(ThemeManager),
                 new PropertyMetadata(false, OnSubscribedToInitializedChanged));
 
-        private static bool GetSubscribedToInitialized(FrameworkElement element)
-        {
-            return (bool)element.GetValue(SubscribedToInitializedProperty);
-        }
-
         private static void SetSubscribedToInitialized(FrameworkElement element, bool value)
         {
             element.SetValue(SubscribedToInitializedProperty, value);
@@ -561,7 +612,7 @@ namespace ModernWpf
 
             if (GetRequestedTheme(element) != ElementTheme.Default)
             {
-                ApplyElementTheme(element);
+                ApplyRequestedTheme(element);
             }
 
             if (GetHasThemeResources(element))
@@ -586,7 +637,7 @@ namespace ModernWpf
             var element = (FrameworkElement)d;
             if (element.IsInitialized)
             {
-                ApplyElementTheme(element);
+                ApplyRequestedTheme(element);
                 UpdateThemeResourcesForElement(element);
             }
             else
@@ -598,16 +649,6 @@ namespace ModernWpf
         #endregion
 
         #region IsListeningForHighContrastChanges
-
-        private static bool GetIsListeningForHighContrastChanges(FrameworkElement element)
-        {
-            return (bool)element.GetValue(IsListeningForHighContrastChangesProperty);
-        }
-
-        private static void SetIsListeningForHighContrastChanges(FrameworkElement element, bool value)
-        {
-            element.SetValue(IsListeningForHighContrastChangesProperty, value);
-        }
 
         private static readonly DependencyProperty IsListeningForHighContrastChangesProperty =
             DependencyProperty.RegisterAttached(
@@ -640,7 +681,7 @@ namespace ModernWpf
         {
             if (ShouldListenForHighContrastChanges(element))
             {
-                SetIsListeningForHighContrastChanges(element, true);
+                element.SetValue(IsListeningForHighContrastChangesProperty, true);
             }
             else
             {

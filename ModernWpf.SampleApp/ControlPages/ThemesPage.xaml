@@ -134,6 +134,15 @@
                     <TextBox
                         Width="200"
                         HorizontalAlignment="Left"
+                        ui:ControlHelper.Header="Actual window theme"
+                        DataContext="{Binding MainWindow, Source={x:Static Application.Current}, Mode=OneTime}"
+                        Text="{Binding Path=(ui:ThemeManager.ActualTheme), Mode=OneWay}"
+                        IsReadOnly="True" />
+
+                    <TextBox
+                        x:Name="AET"
+                        Width="200"
+                        HorizontalAlignment="Left"
                         ui:ControlHelper.Header="Actual element theme"
                         Text="{Binding ElementName=InverseAppThemeGroupBox, Path=(ui:ThemeManager.ActualTheme), Mode=OneWay}"
                         IsReadOnly="True" />
