@@ -4,9 +4,6 @@ using System.Windows;
 
 namespace FluentRibbonSample
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow
     {
         public MainWindow()
@@ -14,7 +11,7 @@ namespace FluentRibbonSample
             InitializeComponent();
         }
 
-        private void InvertTheme(object sender, RoutedEventArgs e)
+        private void ToggleTheme(object sender, RoutedEventArgs e)
         {
             if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark)
             {

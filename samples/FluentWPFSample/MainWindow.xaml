@@ -98,8 +98,8 @@
                             IsReadOnly="True" />
                     </Border>
                     <Button
-                        Content="Invert theme"
-                        Click="InvertTheme" />
+                        Content="Toggle theme"
+                        Click="ToggleTheme" />
                 </ui:SimpleStackPanel>
             </Border>
         </ui:HamburgerMenuEx>

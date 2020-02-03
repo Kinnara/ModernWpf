@@ -1,26 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ModernWpf.SampleApp.Data;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using ModernWpf.SampleApp.Data;
 using System.Windows.Threading;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    /// <summary>
-    /// Interaction logic for DataGridPage.xaml
-    /// </summary>
     public partial class DataGridPage
     {
         private readonly Stopwatch _stopwatch;
@@ -58,9 +46,9 @@ namespace ModernWpf.SampleApp.ControlPages
               }, DispatcherPriority.ApplicationIdle);
         }
 
-        private void InvertTheme(object sender, RoutedEventArgs e)
+        private void ToggleTheme(object sender, RoutedEventArgs e)
         {
-            this.InvertTheme();
+            this.ToggleTheme();
         }
 
         private void GroupingToggle_Checked(object sender, RoutedEventArgs e)

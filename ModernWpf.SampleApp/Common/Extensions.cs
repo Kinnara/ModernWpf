@@ -1,12 +1,10 @@
-﻿using ModernWpf;
-using System;
-using System.Windows;
+﻿using System.Windows;
 
 namespace ModernWpf.SampleApp
 {
     public static class Extensions
     {
-        public static void InvertTheme(this FrameworkElement element)
+        public static void ToggleTheme(this FrameworkElement element)
         {
             ElementTheme newTheme;
             if (ThemeManager.GetActualTheme(element) == ElementTheme.Dark)

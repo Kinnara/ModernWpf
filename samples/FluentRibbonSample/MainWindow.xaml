@@ -40,8 +40,8 @@
             Spacing="12"
             Margin="12">
             <Button
-                Content="Invert theme"
-                Click="InvertTheme" />
+                Content="Toggle theme"
+                Click="ToggleTheme" />
             <Button
                 Content="Show content dialog"
                 Click="ShowContentDialog" />

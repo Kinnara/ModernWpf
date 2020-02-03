@@ -48,9 +48,9 @@ namespace ModernWpf.SampleApp
             FindMenuItem(menu, ThemeManager.GetRequestedTheme(content)).IsChecked = true;
         }
 
-        private void InvertTheme(object sender, RoutedEventArgs e)
+        private void ToggleTheme(object sender, RoutedEventArgs e)
         {
-            GetTabItemContent(sender as MenuItem)?.InvertTheme();
+            GetTabItemContent(sender as MenuItem)?.ToggleTheme();
         }
 
         private void ThemeMenuItem_Checked(object sender, RoutedEventArgs e)

@@ -41,7 +41,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             WriteCallerName();
             args.Cancel = true;
-            this.InvertTheme();
+            this.ToggleTheme();
         }
 
         private void Dialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

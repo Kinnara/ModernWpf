@@ -7,9 +7,9 @@ namespace SamplesCommon
 {
     public static class CommonCommands
     {
-        public static ICommand InvertTheme { get; } = new InvertThemeCommand();
+        public static ICommand ToggleTheme { get; } = new ToggleThemeCommand();
 
-        private class InvertThemeCommand : ICommand
+        private class ToggleThemeCommand : ICommand
         {
             public event EventHandler CanExecuteChanged;
 

@@ -31,6 +31,6 @@
 
         <local:TestContentDialog
             x:Name="ParentedDialog"
-            PrimaryButtonText="Invert theme" />
+            PrimaryButtonText="Toggle theme" />
     </Grid>
 </UserControl>

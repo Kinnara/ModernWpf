@@ -56,8 +56,8 @@
                             Text="{Binding ElementName=NumberBox, Path=(ui:ControlHelper.PlaceholderText), UpdateSourceTrigger=PropertyChanged}" />
 
                         <Button
-                            Content="Invert theme"
-                            Command="{x:Static sc:CommonCommands.InvertTheme}" />
+                            Content="Toggle theme"
+                            Command="{x:Static sc:CommonCommands.ToggleTheme}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
