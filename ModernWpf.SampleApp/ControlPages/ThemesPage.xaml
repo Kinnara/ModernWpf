@@ -3,13 +3,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:presets="clr-namespace:ModernWpf.SampleApp.Presets"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
-    xmlns:presets="clr-namespace:ModernWpf.SampleApp.Presets"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -17,6 +15,14 @@
 
     <UserControl.Resources>
         <sc:AppThemeConverter x:Key="AppThemeConverter" />
+        <Style x:Key="ShapeSliderStyle" TargetType="Slider" BasedOn="{StaticResource DefaultSliderStyle}">
+            <Setter Property="Width" Value="244" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="AutoToolTipPlacement" Value="TopLeft" />
+            <Setter Property="TickFrequency" Value="1" />
+            <Setter Property="IsSnapToTickEnabled" Value="True" />
+            <Setter Property="Minimum" Value="0" />
+        </Style>
     </UserControl.Resources>
 
     <ScrollViewer>
@@ -35,7 +41,7 @@
             <ComboBox
                 x:Name="PresetsComboBox"
                 MinWidth="200"
-                ui:ControlHelper.Header="Presets"
+                ui:ControlHelper.Header="Color Presets"
                 SelectedItem="{Binding CurrentPreset, Source={x:Static presets:PresetManager.Current}}">
                 <sys:String>Default</sys:String>
                 <sys:String>Forest</sys:String>
@@ -43,6 +49,22 @@
                 <sys:String>Nighttime</sys:String>
             </ComboBox>
 
+            <StackPanel>
+                <TextBlock
+                    Text="Corner Radius"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Margin="0,0,0,4" />
+                <Slider
+                    x:Name="ControlCornerRadiusSlider"
+                    Style="{StaticResource ShapeSliderStyle}"
+                    ui:ControlHelper.Header="Controls"
+                    Maximum="20" />
+                <Slider
+                    x:Name="OverlayCornerRadiusSlider"
+                    Style="{StaticResource ShapeSliderStyle}"
+                    ui:ControlHelper.Header="Overlay"
+                    Maximum="20" />
+            </StackPanel>
 
             <sc:AccentColorPicker />
 
@@ -107,11 +129,6 @@
                     HorizontalAlignment="Left"
                     Fill="{Binding Path=(SystemParameters.WindowGlassBrush)}" />
             </StackPanel>-->
-
-            <CheckBox
-                Content="Use modern window style"
-                DataContext="{Binding MainWindow, Source={x:Static Application.Current}, Mode=OneTime}"
-                IsChecked="{Binding Path=(ui:WindowHelper.UseModernWindowStyle)}" />
 
             <GroupBox
                 x:Name="InverseAppThemeGroupBox"
