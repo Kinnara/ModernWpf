@@ -7,6 +7,8 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -161,6 +163,8 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
+        internal virtual PopupAnimation DesiredPopupAnimation => PopupAnimation.Fade;
+
         internal PopupEx InternalPopup => m_popup;
 
         public event EventHandler<object> Opening;
@@ -215,7 +219,7 @@ namespace ModernWpf.Controls.Primitives
             Debug.Assert(m_popup.ReadLocalValue(Popup.PlacementTargetProperty) != DependencyProperty.UnsetValue);
 
             m_target = placementTarget;
-            RaiseOpening();
+            OnOpening();
             m_popup.IsOpen = true;
         }
 
@@ -227,17 +231,17 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        internal void RaiseOpening()
+        internal virtual void OnOpening()
         {
             Opening?.Invoke(this, null);
         }
 
-        internal void RaiseOpened()
+        internal virtual void OnOpened()
         {
             Opened?.Invoke(this, null);
         }
 
-        internal void RaiseClosed()
+        internal virtual void OnClosed()
         {
             Closed?.Invoke(this, null);
         }
@@ -366,7 +370,7 @@ namespace ModernWpf.Controls.Primitives
             if (m_popup != null)
             {
                 m_popup.PopupAnimation = AreOpenCloseAnimationsEnabled && SharedHelpers.IsAnimationsEnabled ?
-                    PopupAnimation.Fade : PopupAnimation.None;
+                    DesiredPopupAnimation : PopupAnimation.None;
             }
         }
 
@@ -408,7 +412,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupOpened(object sender, EventArgs e)
         {
-            RaiseOpened();
+            OnOpened();
         }
 
         private void OnPopupClosing(object sender, EventArgs e)
@@ -418,8 +422,6 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupClosed(object sender, EventArgs e)
         {
-            RaiseClosed();
-
             if (!m_popup.IsOpen)
             {
                 m_popup.ClearValue(Popup.PlacementProperty);
@@ -429,6 +431,8 @@ namespace ModernWpf.Controls.Primitives
                 m_popup.ClearValue(FrameworkElement.HeightProperty);
                 m_target = null;
             }
+
+            OnClosed();
         }
 
         private void OnPopupIsOpenChanged(object sender, EventArgs e)

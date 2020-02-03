@@ -118,7 +118,7 @@ namespace ModernWpf.Controls
                 m_presenter.ClearValue(Popup.PlacementRectangleProperty);
             }
 
-            RaiseOpening();
+            OnOpening();
             m_presenter.IsOpen = true;
         }
 
@@ -150,12 +150,12 @@ namespace ModernWpf.Controls
 
         private void OnPresenterOpened(object sender, RoutedEventArgs e)
         {
-            RaiseOpened();
+            OnOpened();
         }
 
         private void OnPresenterClosed(object sender, RoutedEventArgs e)
         {
-            RaiseClosed();
+            OnClosed();
         }
 
         private void OnPresenterIsOpenChanged(object sender, DependencyPropertyChangedEventArgs e)

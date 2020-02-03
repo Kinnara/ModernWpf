@@ -30,7 +30,7 @@ namespace ModernWpf.SampleApp
             RootFrame = rootFrame;
 
             //PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(
-            //    x => x.NavigateUri.ToString().EndsWith(nameof(PersonPicturePage) + ".xaml"));
+            //    x => x.NavigateUri.ToString().Split('/').Last().Equals(nameof(FlyoutPage) + ".xaml", StringComparison.OrdinalIgnoreCase));
             NavigateToSelectedPage();
 
             if (Debugger.IsAttached)
