@@ -11,7 +11,7 @@
     </ResourceDictionary.MergedDictionaries>
 
     <sys:Double x:Key="SplitButtonPrimaryButtonSize">32</sys:Double>
-    <GridLength x:Key="SplitButtonSecondaryButtonSize">32</GridLength>
+    <sys:Double x:Key="SplitButtonSecondaryButtonSize">32</sys:Double>
 
     <ui:CornerRadiusFilterConverter x:Key="LeftCornerRadiusFilterConverter" Filter="Left" />
     <ui:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
@@ -124,12 +124,10 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition x:Name="PrimaryButtonColumn" Width="*" MinWidth="{StaticResource SplitButtonPrimaryButtonSize}" />
                             <ColumnDefinition x:Name="Separator" Width="1" />
-                            <ColumnDefinition x:Name="SecondaryButtonColumn" Width="{StaticResource SplitButtonSecondaryButtonSize}" />
+                            <ColumnDefinition x:Name="SecondaryButtonColumn" ui:ColumnDefinitionHelper.PixelWidth="{StaticResource SplitButtonSecondaryButtonSize}" />
                         </Grid.ColumnDefinitions>
 
-                        <ui:VisualStateGroupListener
-                            x:Name="CommonStatesProxy"
-                            GroupName="CommonStates" />
+                        <ui:VisualStateGroupListener x:Name="CommonStatesProxy" GroupName="CommonStates" />
 
                         <Border
                             x:Name="PrimaryBackgroundGrid"

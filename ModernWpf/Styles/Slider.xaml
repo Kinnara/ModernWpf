@@ -10,8 +10,8 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Thickness x:Key="SliderTopHeaderMargin">0,0,0,4</Thickness>
-    <GridLength x:Key="SliderPreContentMargin">15</GridLength>
-    <GridLength x:Key="SliderPostContentMargin">15</GridLength>
+    <sys:Double x:Key="SliderPreContentMargin">15</sys:Double>
+    <sys:Double x:Key="SliderPostContentMargin">15</sys:Double>
     <sys:Double x:Key="SliderHorizontalHeight">32</sys:Double>
     <sys:Double x:Key="SliderVerticalWidth">32</sys:Double>
     <CornerRadius x:Key="SliderThumbCornerRadius">10</CornerRadius>
@@ -102,9 +102,9 @@
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="{DynamicResource SliderPreContentMargin}" />
+                        <RowDefinition primitives:RowDefinitionHelper.PixelHeight="{DynamicResource SliderPreContentMargin}" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="{DynamicResource SliderPostContentMargin}" />
+                        <RowDefinition primitives:RowDefinitionHelper.PixelHeight="{DynamicResource SliderPostContentMargin}" />
                     </Grid.RowDefinitions>
 
                     <Rectangle
@@ -259,9 +259,9 @@
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="{DynamicResource SliderPreContentMargin}" />
+                        <ColumnDefinition primitives:ColumnDefinitionHelper.PixelWidth="{DynamicResource SliderPreContentMargin}" />
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="{DynamicResource SliderPostContentMargin}" />
+                        <ColumnDefinition primitives:ColumnDefinitionHelper.PixelWidth="{DynamicResource SliderPostContentMargin}" />
                     </Grid.ColumnDefinitions>
 
                     <Rectangle

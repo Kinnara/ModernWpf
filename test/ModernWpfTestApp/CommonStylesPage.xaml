@@ -1,0 +1,474 @@
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+<local:TestPage
+    x:Class="ModernWpfTestApp.CommonStylesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:ModernWpfTestApp"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Grid
+        Background="{DynamicResource ApplicationPageBackgroundThemeBrush}"
+        Margin="12">
+        <StackPanel>
+            <TextBlock
+                Text="Control samples"
+                Style="{DynamicResource StandardGroupHeader}"
+                HorizontalAlignment="Center" />
+            <StackPanel
+                Orientation="Horizontal"
+                HorizontalAlignment="Center">
+                <StackPanel.Resources>
+                    <sys:Double x:Key="CompareGridHeight">600</sys:Double>
+                    <Style TargetType="Border" x:Key="CompactBorderStyle">
+                        <Setter Property="Padding" Value="4" />
+                        <Setter Property="Margin" Value="4" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeGrayBrush}" />
+                    </Style>
+                </StackPanel.Resources>
+
+                <Border Style="{DynamicResource CompactBorderStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Compact sizing" />
+                        <Grid Height="{DynamicResource CompareGridHeight}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBox
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                x:Name="TextBox"
+                                ui:ControlHelper.Header="TextBox"
+                                Text="Density" />
+                            <ComboBox
+                                Grid.Row="1"
+                                HorizontalAlignment="Right"
+                                x:Name="ComboBox"
+                                ui:ControlHelper.Header="Fonts"
+                                ItemsSource="{Binding Fonts, Mode=OneTime}" />
+                            <DatePicker
+                                Grid.Row="2"
+                                HorizontalAlignment="Right"
+                                x:Name="DatePicker"
+                                ui:ControlHelper.Header="DatePicker Header" />
+                            <ui:SimpleTimePicker
+                                Grid.Row="3"
+                                HorizontalAlignment="Right"
+                                x:Name="TimePicker"
+                                Header="TimePicker Header" />
+                            <ui:ToggleSwitch
+                                Grid.Row="4"
+                                HorizontalAlignment="Right"
+                                x:Name="ToggleSwitch"
+                                Header="Toggle work"
+                                OffContent="Do work"
+                                OnContent="Working"
+                                IsOn="True" />
+                            <Slider
+                                Grid.Row="5"
+                                HorizontalAlignment="Right"
+                                x:Name="Slider1"
+                                ui:ControlHelper.Header="Horizontal Slider"
+                                Width="200"
+                                Minimum="500"
+                                Maximum="1000"
+                                TickFrequency="10"
+                                IsSnapToTickEnabled="True"
+                                SmallChange="10"
+                                LargeChange="100"
+                                Value="800" />
+                            <Slider
+                                Grid.Row="6"
+                                HorizontalAlignment="Right"
+                                x:Name="Slider2"
+                                ui:ControlHelper.Header="Vertical Slider"
+                                Width="100"
+                                Orientation="Vertical"
+                                TickFrequency="10"
+                                TickPlacement="Both"
+                                Maximum="50"
+                                Minimum="-50" />
+                            <PasswordBox
+                                Grid.Row="7"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                x:Name="PasswordBox"
+                                ui:ControlHelper.Header="PasswordBox" />
+                            <ui:AutoSuggestBox
+                                Grid.Row="8"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                x:Name="AutoSuggestBox"
+                                Header="AutoSuggestBox"
+                                TextChanged="AutoSuggestBox_TextChanged" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border Style="{DynamicResource CompactBorderStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Normal sizing" />
+                        <Grid Height="{DynamicResource CompareGridHeight}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.Resources>
+                                <Thickness x:Key="TextBoxTopHeaderMargin">0,0,0,8</Thickness>
+                                <Thickness x:Key="PasswordBoxTopHeaderMargin">0,0,0,8</Thickness>
+                                <Thickness x:Key="ComboBoxTopHeaderMargin">0,0,0,8</Thickness>
+                                <Thickness x:Key="SliderTopHeaderMargin">0,0,0,8</Thickness>
+                                <sys:Double x:Key="SliderPreContentMargin">18</sys:Double>
+                                <sys:Double x:Key="SliderPostContentMargin">18</sys:Double>
+                                <sys:Double x:Key="SliderHorizontalHeight">44</sys:Double>
+                                <sys:Double x:Key="SliderVerticalWidth">44</sys:Double>
+                                <Thickness x:Key="ToggleSwitchTopHeaderMargin">0,0,0,4</Thickness>
+                                <sys:Double x:Key="ToggleSwitchPreContentMargin">10</sys:Double>
+                                <sys:Double x:Key="ToggleSwitchPostContentMargin">10</sys:Double>
+                                <Thickness x:Key="TimePickerTopHeaderMargin">0,0,0,8</Thickness>
+                                <sys:Double x:Key="TimePickerFlyoutPresenterHighlightHeight">44</sys:Double>
+                                <sys:Double x:Key="TimePickerFlyoutPresenterAcceptDismissHostGridHeight">45</sys:Double>
+                                <Thickness x:Key="DatePickerTopHeaderMargin">0,0,0,8</Thickness>
+                                <sys:Double x:Key="DatePickerFlyoutPresenterHighlightHeight">44</sys:Double>
+                                <sys:Double x:Key="DatePickerFlyoutPresenterAcceptDismissHostGridHeight">45</sys:Double>
+                                <Thickness x:Key="AutoSuggestBoxTopHeaderMargin">0,0,0,8</Thickness>
+                            </Grid.Resources>
+                            <TextBox
+                                ui:ControlHelper.Header="TextBox"
+                                VerticalAlignment="Top"
+                                Text="Density Disabled" />
+                            <ComboBox
+                                Grid.Row="1"
+                                ui:ControlHelper.Header="Fonts"
+                                ItemsSource="{Binding Fonts, Mode=OneTime}" />
+                            <DatePicker
+                                Grid.Row="2"
+                                ui:ControlHelper.Header="DatePicker Header" />
+                            <ui:SimpleTimePicker
+                                Grid.Row="3"
+                                Header="TimePicker Header" />
+                            <ui:ToggleSwitch
+                                Grid.Row="4"
+                                Header="Toggle work"
+                                OffContent="Do work"
+                                OnContent="Working"
+                                IsOn="True" />
+                            <Slider
+                                Grid.Row="5"
+                                HorizontalAlignment="Left"
+                                ui:ControlHelper.Header="Horizontal Slider"
+                                Width="200"
+                                Minimum="500"
+                                Maximum="1000"
+                                TickFrequency="10"
+                                IsSnapToTickEnabled="True"
+                                SmallChange="10"
+                                LargeChange="100"
+                                Value="800" />
+                            <Slider
+                                Grid.Row="6"
+                                HorizontalAlignment="Left"
+                                ui:ControlHelper.Header="Vertical Slider"
+                                Width="100"
+                                Orientation="Vertical"
+                                TickFrequency="10"
+                                TickPlacement="Both"
+                                Maximum="50"
+                                Minimum="-50" />
+                            <PasswordBox
+                                Grid.Row="7"
+                                ui:ControlHelper.Header="Password"
+                                VerticalAlignment="Top" />
+                            <ui:AutoSuggestBox
+                                Grid.Row="8"
+                                Header="AutoSuggestBox"
+                                VerticalAlignment="Top"
+                                TextChanged="AutoSuggestBox_TextChanged" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border Style="{DynamicResource CompactBorderStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Compact sizing" />
+                        <Grid Height="{DynamicResource CompareGridHeight}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ListView
+                                x:Name="ListView1"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Right"
+                                BorderThickness="1"
+                                BorderBrush="Red"
+                                SelectedIndex="0">
+                                <sys:String>Item 1</sys:String>
+                                <sys:String>Item 2</sys:String>
+                            </ListView>
+                            <StackPanel
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Grid.Row="1">
+                                <ui:AppBarButton x:Name="AppBarButton1" Label="AppBar" Icon="Accept" Background="Red" LabelPosition="Collapsed" />
+                                <ui:AppBarButton x:Name="AppBarButton2" Label="AppBar" Icon="Accept" Background="Red" LabelPosition="Default" />
+                            </StackPanel>
+                            <StackPanel
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Grid.Row="2">
+                                <ui:AppBarToggleButton x:Name="AppBarToggleButton1" Label="Toggle" Icon="Accept" Background="Red" LabelPosition="Collapsed" />
+                                <ui:AppBarToggleButton x:Name="AppBarToggleButton2" Label="Toggle" Icon="Accept" Background="Red" LabelPosition="Default" />
+                            </StackPanel>
+                            <StackPanel
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Grid.Row="3">
+                                <ui:AppBarButton x:Name="AppBarButton3" Label="AppBar" Icon="Accept" LabelPosition="Collapsed" Background="Red" Style="{DynamicResource AppBarButtonRevealStyle}" />
+                                <ui:AppBarButton x:Name="AppBarButton4" Label="AppBar" Icon="Accept" LabelPosition="Default" Background="Red" Style="{DynamicResource AppBarButtonRevealStyle}" />
+                            </StackPanel>
+                            <StackPanel
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Grid.Row="4">
+                                <ui:AppBarToggleButton x:Name="AppBarToggleButton3" Label="Toggle" Icon="Accept" LabelPosition="Collapsed" Background="Red" Style="{DynamicResource AppBarToggleButtonRevealStyle}" />
+                                <ui:AppBarToggleButton x:Name="AppBarToggleButton4" Label="Toggle" Icon="Accept" LabelPosition="Default" Background="Red" Style="{DynamicResource AppBarToggleButtonRevealStyle}" />
+                            </StackPanel>
+                            <ui:CommandBar
+                                Grid.Row="5"
+                                HorizontalAlignment="Right">
+                                <ui:AppBarButton Icon="Back" Label="Back" />
+                                <ui:AppBarToggleButton Icon="Add" Label="Add" />
+                                <ui:AppBarButton Icon="Back" Label="Back" LabelPosition="Collapsed" />
+                                <ui:AppBarSeparator />
+                                <ui:AppBarToggleButton Icon="Add" Label="Add" LabelPosition="Collapsed" />
+                                <ui:CommandBar.SecondaryCommands>
+                                    <ui:AppBarButton Icon="Like" Label="Like" />
+                                    <ui:AppBarToggleButton Icon="Dislike" Label="Dislike" />
+                                    <ui:AppBarButton Icon="Like" Label="Like" LabelPosition="Collapsed" />
+                                    <ui:AppBarToggleButton Icon="Dislike" Label="Dislike" LabelPosition="Collapsed" />
+                                </ui:CommandBar.SecondaryCommands>
+                            </ui:CommandBar>
+                            <RichTextBox
+                                x:Name="RichEditBox"
+                                Grid.Row="6"
+                                ui:ControlHelper.Header="RichEditBox"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border Style="{DynamicResource CompactBorderStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Normal sizing" />
+                        <Grid Height="{DynamicResource CompareGridHeight}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.Resources>
+                                <sys:Double x:Key="ListViewItemMinHeight">44</sys:Double>
+                                <Thickness x:Key="AppBarButtonContentViewboxMargin">12,14,0,14</Thickness>
+                                <Thickness x:Key="AppBarButtonContentViewboxCompactMargin">0,14,0,14</Thickness>
+                                <Thickness x:Key="AppBarButtonContentViewboxCollapsedMargin">0,14,0,4</Thickness>
+                                <Thickness x:Key="AppBarButtonOverflowTextTouchMargin">0,11,0,13</Thickness>
+                                <Thickness x:Key="AppBarButtonOverflowTextLabelPadding">0,5,0,7</Thickness>
+                                <Thickness x:Key="AppBarButtonTextLabelMargin">2,0,2,8</Thickness>
+                                <Thickness x:Key="AppBarButtonTextLabelOnRightMargin">8,15,12,17</Thickness>
+                                <Thickness x:Key="AppBarToggleButtonOverflowTextTouchMargin">0,11,0,13</Thickness>
+                                <Thickness x:Key="AppBarToggleButtonOverflowCheckTouchMargin">12,12,12,12</Thickness>
+                                <Thickness x:Key="AppBarToggleButtonOverflowCheckMargin">12,6,12,6</Thickness>
+                                <Thickness x:Key="AppBarToggleButtonTextLabelMargin">2,0,2,8</Thickness>
+                                <Thickness x:Key="AppBarToggleButtonTextLabelOnRightMargin">8,15,12,17</Thickness>
+                                <Thickness x:Key="AppBarToggleButtonOverflowTextLabelPadding">0,5,0,7</Thickness>
+                                <Thickness x:Key="ButtonPadding">8,4,8,4</Thickness>
+                                <Thickness x:Key="CommandBarMoreButtonMargin">14,23,14,0</Thickness>
+                                <sys:Double x:Key="AppBarButtonContentHeight">20</sys:Double>
+                                <sys:Double x:Key="AppBarThemeMinHeight">60</sys:Double>
+                                <sys:Double x:Key="AppBarThemeCompactHeight">48</sys:Double>
+                                <Thickness x:Key="RichEditBoxTopHeaderMargin">0,0,0,8</Thickness>
+                            </Grid.Resources>
+                            <ListView
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                BorderThickness="1"
+                                BorderBrush="Red"
+                                SelectedIndex="0">
+                                <sys:String>Item 1</sys:String>
+                                <sys:String>Item 2</sys:String>
+                            </ListView>
+                            <StackPanel
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                Grid.Row="1">
+                                <ui:AppBarButton Label="AppBar" Icon="Accept" LabelPosition="Default" Background="Red" />
+                                <ui:AppBarButton Label="AppBar" Icon="Accept" LabelPosition="Collapsed" Background="Red" />
+                            </StackPanel>
+                            <StackPanel
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                Grid.Row="2">
+                                <ui:AppBarToggleButton Label="Toggle" Icon="Accept" LabelPosition="Default" Background="Red" />
+                                <ui:AppBarToggleButton Label="Toggle" Icon="Accept" LabelPosition="Collapsed" Background="Red" />
+                            </StackPanel>
+                            <StackPanel
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                Grid.Row="3">
+                                <ui:AppBarButton Label="AppBar" Icon="Accept" LabelPosition="Default" Background="Red" Style="{DynamicResource AppBarButtonRevealStyle}" />
+                                <ui:AppBarButton Label="AppBar" Icon="Accept" LabelPosition="Collapsed" Background="Red" Style="{DynamicResource AppBarButtonRevealStyle}" />
+                            </StackPanel>
+                            <StackPanel
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                Grid.Row="4">
+                                <ui:AppBarToggleButton Label="Toggle" Icon="Accept" LabelPosition="Default" Background="Red" Style="{DynamicResource AppBarToggleButtonRevealStyle}" />
+                                <ui:AppBarToggleButton Label="Toggle" Icon="Accept" LabelPosition="Collapsed" Background="Red" Style="{DynamicResource AppBarToggleButtonRevealStyle}" />
+                            </StackPanel>
+                            <ui:CommandBar
+                                Grid.Row="5"
+                                HorizontalAlignment="Left">
+                                <ui:CommandBar.Resources>
+                                    <sys:Double x:Key="AppBarThemeCompactHeight">48</sys:Double>
+                                </ui:CommandBar.Resources>
+                                <ui:AppBarButton Icon="Back" Label="Back" />
+                                <ui:AppBarToggleButton Icon="Add" Label="Add" />
+                                <ui:AppBarButton Icon="Back" Label="Back" LabelPosition="Collapsed" />
+                                <ui:AppBarSeparator />
+                                <ui:AppBarToggleButton Icon="Add" Label="Add" LabelPosition="Collapsed" />
+                                <ui:CommandBar.SecondaryCommands>
+                                    <ui:AppBarButton Icon="Like" Label="Like" />
+                                    <ui:AppBarToggleButton Icon="Dislike" Label="Dislike" />
+                                    <ui:AppBarButton Icon="Like" Label="Like" LabelPosition="Collapsed" />
+                                    <ui:AppBarToggleButton Icon="Dislike" Label="Dislike" LabelPosition="Collapsed" />
+                                </ui:CommandBar.SecondaryCommands>
+                            </ui:CommandBar>
+                            <RichTextBox
+                                Grid.Row="6"
+                                ui:ControlHelper.Header="RichEditBox"
+                                VerticalAlignment="Top" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <StackPanel>
+                    <!-- If there are styles we need to ensure that are available, they can be placed below this TextBlock -->
+                    <TextBlock
+                        Text="Default style availability area"
+                        Style="{DynamicResource StandardGroupHeader}" />
+
+                    <!-- Checking that the DefaultRadioButtonStyle can be accessed as resource -->
+                    <RadioButton
+                        Style="{StaticResource DefaultRadioButtonStyle}"
+                        Content="I am a RadioButton with DefaultRadioButtonStyle set" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock
+                    Text="Validating"
+                    Style="{DynamicResource StandardGroupHeader}" />
+                <TextBox
+                    x:Name="DensityTestResult"
+                    AutomationProperties.Name="DensityTestResult"
+                    Text="Result"
+                    ui:ControlHelper.Header="Test result" />
+                <TextBlock Text="Control tests" />
+                <Border
+                    Grid.Row="1"
+                    BorderBrush="{DynamicResource SystemControlForegroundChromeGrayBrush}"
+                    BorderThickness="2">
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            x:Name="SliderDensityTest"
+                            AutomationProperties.Name="SliderDensityTest"
+                            Content="Slider"
+                            Click="SliderDensityTest_Click" />
+                        <Button
+                            x:Name="ToggleSwitchDensityTest"
+                            AutomationProperties.Name="ToggleSwitchDensityTest"
+                            Content="ToggleSwitch"
+                            Click="ToggleSwitchDensityTest_Click" />
+                        <Button
+                            x:Name="DatePickerDensityTest"
+                            AutomationProperties.Name="DatePickerDensityTest"
+                            Content="DatePicker"
+                            Click="DatePickerDensityTest_Click" />
+                        <Button
+                            x:Name="TimePickerDensityTest"
+                            AutomationProperties.Name="TimePickerDensityTest"
+                            Content="TimePicker"
+                            Click="TimePickerDensityTest_Click" />
+                        <Button
+                            x:Name="AutoSuggestBoxDensityTest"
+                            AutomationProperties.Name="AutoSuggestBoxDensityTest"
+                            Content="AutoSuggestBox"
+                            Click="AutoSuggestBoxDensityTest_Click" />
+                        <Button
+                            x:Name="ListViewItemDensityTest"
+                            AutomationProperties.Name="ListViewItemDensityTest"
+                            Content="ListViewItem"
+                            Click="ListViewItemDensityTest_Click" />
+                        <Button
+                            x:Name="TextBoxDensityTest"
+                            AutomationProperties.Name="TextBoxDensityTest"
+                            Content="TextBoxDensity"
+                            Click="TextBoxDensityTest_Click" />
+                        <Button
+                            x:Name="PasswordBoxDensityTest"
+                            AutomationProperties.Name="PasswordBoxDensityTest"
+                            Content="PasswordBoxDensity"
+                            Click="PasswordBoxDensityTest_Click" />
+                        <Button
+                            x:Name="ComboBoxDensityTest"
+                            AutomationProperties.Name="ComboBoxDensityTest"
+                            Content="ComboBoxDensity"
+                            Click="ComboBoxDensityTest_Click" />
+                        <Button
+                            x:Name="AppBarButtonDensityTest"
+                            AutomationProperties.Name="AppBarButtonDensityTest"
+                            Content="AppBarButtonDensity"
+                            Click="AppBarButtonDensityTest_Click" />
+                        <Button
+                            x:Name="AppBarToggleButtonDensityTest"
+                            AutomationProperties.Name="AppBarToggleButtonDensityTest"
+                            Content="AppBarToggleButtonDensity"
+                            Click="AppBarToggleButtonDensityTest_Click" />
+                        <Button
+                            x:Name="RichEditBoxDensityTest"
+                            AutomationProperties.Name="RichEditBoxDensityTest"
+                            Content="RichEditBoxDensity"
+                            Click="RichEditBoxDensityTest_Click" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</local:TestPage>
