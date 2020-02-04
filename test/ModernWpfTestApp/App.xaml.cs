@@ -1,13 +1,10 @@
 ﻿using ModernWpf.Controls;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Navigation;
+using System.Windows.Markup;
 
 namespace ModernWpfTestApp
 {
@@ -16,6 +13,29 @@ namespace ModernWpfTestApp
     /// </summary>
     public partial class App : Application
     {
+        private string _currentLanguage = "en-US";
+
+        public static string LanguageOverride
+        {
+            get
+            {
+                return ((App)Current)._currentLanguage;
+            }
+            set
+            {
+                var culture = new CultureInfo(value);
+                CultureInfo.CurrentCulture = culture;
+                CultureInfo.CurrentUICulture = culture;
+                CultureInfo.DefaultThreadCurrentCulture = culture;
+                CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+                Debug.Assert(Current.MainWindow != null);
+                Current.MainWindow.Language = XmlLanguage.GetLanguage(value);
+
+                ((App)Current)._currentLanguage = value;
+            }
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);

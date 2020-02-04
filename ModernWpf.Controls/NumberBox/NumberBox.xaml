@@ -19,8 +19,7 @@
         <Style.Setters>
             <Setter Property="IsTabStop" Value="False" />
             <Setter Property="MinWidth" Value="34" />
-            <Setter Property="Height" Value="{DynamicResource TextControlThemeMinHeight}" />
-            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
             <Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="{DynamicResource NumberBoxSpinButtonBorderThickness}" />
@@ -253,20 +252,38 @@
                 <ControlTemplate TargetType="local:NumberBox">
                     <Grid ui:ThemeManager.HasThemeResources="True">
                         <VisualStateManager.VisualStateGroups>
-                            <ui:VisualStateGroupEx x:Name="SpinButtonStates">
+                            <VisualStateGroup x:Name="SpinButtonStates">
                                 <VisualState x:Name="SpinButtonsCollapsed" />
                                 <VisualState x:Name="SpinButtonsVisible" />
                                 <VisualState x:Name="SpinButtonsPopup" />
-                            </ui:VisualStateGroupEx>
+                            </VisualStateGroup>
 
-                            <ui:VisualStateGroupEx x:Name="UpSpinButtonEnabledStates">
+                            <VisualStateGroup x:Name="UpSpinButtonEnabledStates">
                                 <VisualState x:Name="UpSpinButtonEnabled" />
-                                <VisualState x:Name="UpSpinButtonDisabled" />
-                            </ui:VisualStateGroupEx>
+                                <VisualState x:Name="UpSpinButtonDisabled">
+                                    <Storyboard>
+                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="UpSpinButton" Storyboard.TargetProperty="IsEnabled">
+                                            <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
+                                        </BooleanAnimationUsingKeyFrames>
+                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="PopupUpSpinButton" Storyboard.TargetProperty="IsEnabled">
+                                            <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
+                                        </BooleanAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
 
                             <ui:VisualStateGroupEx x:Name="DownSpinButtonEnabledStates">
                                 <VisualState x:Name="DownSpinButtonEnabled" />
-                                <VisualState x:Name="DownSpinButtonDisabled" />
+                                <VisualState x:Name="DownSpinButtonDisabled">
+                                    <Storyboard>
+                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="DownSpinButton" Storyboard.TargetProperty="IsEnabled">
+                                            <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
+                                        </BooleanAnimationUsingKeyFrames>
+                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="PopupDownSpinButton" Storyboard.TargetProperty="IsEnabled">
+                                            <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
+                                        </BooleanAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
                             </ui:VisualStateGroupEx>
                         </VisualStateManager.VisualStateGroups>
 
@@ -300,24 +317,46 @@
                             </ui:ResourceDictionaryEx>
                         </Grid.Resources>
 
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
+                        <ContentPresenter
+                            x:Name="HeaderContentPresenter"
+                            Grid.ColumnSpan="3"
+                            Content="{TemplateBinding Header}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}"
+                            TextElement.FontWeight="Normal"
+                            TextElement.Foreground="{DynamicResource TextControlHeaderForeground}"
+                            Margin="{DynamicResource TextBoxTopHeaderMargin}"
+                            VerticalAlignment="Top"
+                            Visibility="{TemplateBinding ui:ControlHelper.HeaderVisibility}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                            <ContentPresenter.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                </Style>
+                            </ContentPresenter.Resources>
+                        </ContentPresenter>
+
                         <TextBox
                             x:Name="InputBox"
-                            Grid.Column="0"
-                            ui:ControlHelper.Header="{TemplateBinding Header}"
-                            ui:ControlHelper.HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                            Grid.Row="1"
                             ui:ControlHelper.PlaceholderText="{TemplateBinding PlaceholderText}"
                             SelectionBrush="{TemplateBinding SelectionBrush}"
-                            ui:ControlHelper.Description="{TemplateBinding Description}"
                             ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}" />
 
                         <Popup
                             x:Name="UpDownPopup"
+                            Grid.Row="1"
                             Grid.Column="1"
                             AllowsTransparency="True"
                             Placement="Right"
@@ -344,7 +383,6 @@
                                         <RepeatButton
                                             x:Name="PopupUpSpinButton"
                                             Style="{StaticResource NumberBoxPopupSpinButtonStyle}"
-                                            Grid.Row="0"
                                             Content="&#xE70E;" />
 
                                         <RepeatButton
@@ -359,6 +397,7 @@
 
                         <RepeatButton
                             x:Name="UpSpinButton"
+                            Grid.Row="1"
                             Grid.Column="1"
                             Visibility="Collapsed"
                             FontSize="{TemplateBinding FontSize}"
@@ -368,34 +407,37 @@
 
                         <RepeatButton
                             x:Name="DownSpinButton"
+                            Grid.Row="1"
                             Grid.Column="2"
                             Visibility="Collapsed"
                             FontSize="{TemplateBinding FontSize}"
                             Content="&#xE70D;"
                             Style="{StaticResource NumberBoxSpinButtonStyle}"
                             ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}" />
+
+                        <ContentPresenter
+                            x:Name="DescriptionPresenter"
+                            Grid.Row="2"
+                            Grid.ColumnSpan="2"
+                            Content="{TemplateBinding Description}"
+                            TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
+                            Visibility="{TemplateBinding ui:ControlHelper.DescriptionVisibility}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="HeaderContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TextControlHeaderForegroundDisabled}" />
+                        </Trigger>
                         <!-- SpinButtonsVisible -->
-                        <DataTrigger Binding="{Binding ElementName=SpinButtonStates, Path=CurrentStateName}" Value="SpinButtonsVisible">
+                        <Trigger Property="SpinButtonPlacementMode" Value="Inline">
                             <Setter TargetName="DownSpinButton" Property="Visibility" Value="Visible" />
                             <Setter TargetName="UpSpinButton" Property="Visibility" Value="Visible" />
                             <Setter TargetName="InputBox" Property="ui:ControlHelper.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
-                        </DataTrigger>
+                        </Trigger>
                         <!-- SpinButtonsPopup -->
-                        <DataTrigger Binding="{Binding ElementName=SpinButtonStates, Path=CurrentStateName}" Value="SpinButtonsPopup">
+                        <Trigger Property="SpinButtonPlacementMode" Value="Compact">
                             <Setter TargetName="InputBox" Property="Style" Value="{StaticResource NumberBoxTextBoxStyle}" />
-                        </DataTrigger>
-                        <!-- UpSpinButtonDisabled -->
-                        <DataTrigger Binding="{Binding ElementName=UpSpinButtonEnabledStates, Path=CurrentStateName}" Value="UpSpinButtonDisabled">
-                            <Setter TargetName="UpSpinButton" Property="IsEnabled" Value="False" />
-                            <Setter TargetName="PopupUpSpinButton" Property="IsEnabled" Value="False" />
-                        </DataTrigger>
-                        <!-- DownSpinButtonDisabled -->
-                        <DataTrigger Binding="{Binding ElementName=DownSpinButtonEnabledStates, Path=CurrentStateName}" Value="DownSpinButtonDisabled">
-                            <Setter TargetName="DownSpinButton" Property="IsEnabled" Value="False" />
-                            <Setter TargetName="PopupDownSpinButton" Property="IsEnabled" Value="False" />
-                        </DataTrigger>
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
