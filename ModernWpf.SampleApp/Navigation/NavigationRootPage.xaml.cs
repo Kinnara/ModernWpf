@@ -29,8 +29,8 @@ namespace ModernWpf.SampleApp
             Current = this;
             RootFrame = rootFrame;
 
-            //PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(
-            //    x => x.NavigateUri.ToString().Split('/').Last().Equals(nameof(FlyoutPage) + ".xaml", StringComparison.OrdinalIgnoreCase));
+            PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(
+                x => x.NavigateUri.ToString().Split('/').Last().Equals(nameof(ListView2Page) + ".xaml", StringComparison.OrdinalIgnoreCase));
             NavigateToSelectedPage();
 
             if (Debugger.IsAttached)
@@ -292,11 +292,13 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(ExpanderPage));
             AddPage(typeof(FlyoutPage));
             //AddPage(typeof(GridSplitterPage));
+            AddPage(typeof(GridViewPage));
             AddPage(typeof(GroupBoxPage));
             AddPage(typeof(HyperlinkButtonPage));
             AddPage(typeof(ItemsRepeaterPage));
             AddPage(typeof(ListBoxPage));
             AddPage(typeof(ListViewPage));
+            AddPage(typeof(ListView2Page), "ListView (ModernWPF)");
             AddPage(typeof(MenuPage));
             AddPage(typeof(MenuFlyoutPage));
             AddPage(typeof(NumberBoxPage));

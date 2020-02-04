@@ -6,7 +6,6 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
     <Style TargetType="local:ListViewHeaderItem">
-        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ListViewHeaderItemThemeFontSize}" />
         <Setter Property="Background" Value="{DynamicResource ListViewHeaderItemBackground}" />

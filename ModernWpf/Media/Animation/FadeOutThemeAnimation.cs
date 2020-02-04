@@ -8,12 +8,14 @@ namespace ModernWpf.Media.Animation
     /// Represents the preconfigured opacity animation that applies to controls when
     /// they are removed from the UI or hidden.
     /// </summary>
-    public sealed class FadeOutThemeAnimation : DoubleAnimationBase
+    public sealed class FadeOutThemeAnimation : DoubleAnimation
     {
-        private readonly DoubleAnimation _da = new DoubleAnimation(0, TimeSpan.FromMilliseconds(167));
+        private static readonly Duration DefaultDuration = TimeSpan.FromMilliseconds(167);
 
         static FadeOutThemeAnimation()
         {
+            ToProperty.OverrideMetadata(typeof(FadeOutThemeAnimation), new FrameworkPropertyMetadata(0.0));
+            DurationProperty.OverrideMetadata(typeof(FadeOutThemeAnimation), new FrameworkPropertyMetadata(DefaultDuration));
             Storyboard.TargetPropertyProperty.OverrideMetadata(typeof(FadeOutThemeAnimation), new FrameworkPropertyMetadata(new PropertyPath(UIElement.OpacityProperty)));
         }
 
@@ -45,11 +47,6 @@ namespace ModernWpf.Media.Animation
         protected override Freezable CreateInstanceCore()
         {
             return new FadeOutThemeAnimation();
-        }
-
-        protected override double GetCurrentValueCore(double defaultOriginValue, double defaultDestinationValue, AnimationClock animationClock)
-        {
-            return _da.GetCurrentValue(defaultOriginValue, defaultDestinationValue, animationClock);
         }
     }
 }

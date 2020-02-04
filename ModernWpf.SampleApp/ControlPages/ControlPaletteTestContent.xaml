@@ -143,18 +143,6 @@
 
         <HeaderedContentControl Header="List view">
             <ListView HorizontalAlignment="Stretch">
-                <ListView.Template>
-                    <ControlTemplate TargetType="ListView">
-                        <Border
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            Background="{TemplateBinding Background}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Padding="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="true">
-                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </Border>
-                    </ControlTemplate>
-                </ListView.Template>
                 <ListView.Items>
                     <ListViewItem
                         Content="Howdy! (disabled)"

@@ -8,12 +8,14 @@ namespace ModernWpf.Media.Animation
     /// Represents the preconfigured opacity animation that applies to controls when
     /// they are first shown.
     /// </summary>
-    public sealed class FadeInThemeAnimation : DoubleAnimationBase
+    public sealed class FadeInThemeAnimation : DoubleAnimation
     {
-        private readonly DoubleAnimation _da = new DoubleAnimation(1, TimeSpan.FromMilliseconds(167));
+        private static readonly Duration DefaultDuration = TimeSpan.FromMilliseconds(167);
 
         static FadeInThemeAnimation()
         {
+            ToProperty.OverrideMetadata(typeof(FadeInThemeAnimation), new FrameworkPropertyMetadata(1.0));
+            DurationProperty.OverrideMetadata(typeof(FadeInThemeAnimation), new FrameworkPropertyMetadata(DefaultDuration));
             Storyboard.TargetPropertyProperty.OverrideMetadata(typeof(FadeInThemeAnimation), new FrameworkPropertyMetadata(new PropertyPath(UIElement.OpacityProperty)));
         }
 
@@ -45,11 +47,6 @@ namespace ModernWpf.Media.Animation
         protected override Freezable CreateInstanceCore()
         {
             return new FadeInThemeAnimation();
-        }
-
-        protected override double GetCurrentValueCore(double defaultOriginValue, double defaultDestinationValue, AnimationClock animationClock)
-        {
-            return _da.GetCurrentValue(defaultOriginValue, defaultDestinationValue, animationClock);
         }
     }
 }

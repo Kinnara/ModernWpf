@@ -7,6 +7,7 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
+    xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
     mc:Ignorable="d"
     d:DesignWidth="1200"
     d:DesignHeight="900"
@@ -24,6 +25,9 @@
                     PropertyName="LastName"
                     Converter="{StaticResource ContactGroupKeyConverter}" />
             </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <cm:SortDescription PropertyName="LastName" />
+            </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
 
         <DataTemplate x:Key="ContactListViewTemplate">
@@ -47,13 +51,13 @@
                     Fill="Gray" />
                 <TextBlock
                     Grid.Column="1"
-                    Text="{Binding Name}"
+                    Text="{Binding Name, Mode=OneTime}"
                     Style="{StaticResource BaseTextBlockStyle}"
                     Margin="12,6,0,0" />
                 <TextBlock
                     Grid.Column="1"
                     Grid.Row="1"
-                    Text="{Binding Company}"
+                    Text="{Binding Company, Mode=OneTime}"
                     Style="{StaticResource BodyTextBlockStyle}"
                     Margin="12,0,0,6" />
             </Grid>
@@ -73,12 +77,11 @@
             <Thickness x:Key="PivotItemMargin">12,0,12,20</Thickness>
         </TabControl.Resources>
 
-        <TabItem Header="MultiSelect">
-            <sc:ControlExample HeaderText="A Simple ListView with Selection support">
+        <TabItem Header="Basic">
+            <sc:ControlExample HeaderText="Basic ListView with Simple DataTemplate">
                 <ListView
                     x:Name="listView1"
-                    SelectionMode="Multiple"
-                    ItemContainerStyle="{StaticResource MultiSelectListViewItemStyle}"
+                    SelectionMode="Single"
                     ItemsSource="{Binding}"
                     VirtualizingPanel.VirtualizationMode="Recycling" />
 
@@ -110,7 +113,7 @@
                             <GroupStyle.HeaderTemplate>
                                 <DataTemplate>
                                     <TextBlock
-                                        Text="{Binding Name}"
+                                        Text="{Binding Name, Mode=OneTime}"
                                         Style="{DynamicResource TitleTextBlockStyle}" />
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
@@ -134,7 +137,7 @@
         </TabItem>
 
         <TabItem Header="GridView">
-            <sc:ControlExample HeaderText="A ListView with GridView as its View">
+            <sc:ControlExample HeaderText="A ListView with a GridView as the view mode">
                 <ListView
                     x:Name="listView3"
                     Style="{StaticResource {x:Static GridView.GridViewStyleKey}}"
@@ -146,12 +149,12 @@
                             ColumnHeaderToolTip="Employee Information">
 
                             <GridViewColumn
-                                DisplayMemberBinding="{Binding FirstName}"
+                                DisplayMemberBinding="{Binding FirstName, Mode=OneTime}"
                                 Header="First Name"
                                 Width="120" />
 
                             <GridViewColumn
-                                DisplayMemberBinding="{Binding LastName}"
+                                DisplayMemberBinding="{Binding LastName, Mode=OneTime}"
                                 Width="120">
                                 <GridViewColumnHeader>
                                     Last Name
@@ -165,7 +168,7 @@
                             </GridViewColumn>
 
                             <GridViewColumn
-                                DisplayMemberBinding="{Binding Company}"
+                                DisplayMemberBinding="{Binding Company, Mode=OneTime}"
                                 Header="Company"
                                 Width="240" />
                         </GridView>

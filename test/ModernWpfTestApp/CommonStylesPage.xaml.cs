@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ListViewItem = System.Windows.Controls.ListViewItem;
 
 namespace ModernWpfTestApp
 {

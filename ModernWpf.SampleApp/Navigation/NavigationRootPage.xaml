@@ -185,7 +185,7 @@
             </ListBox.ItemsSource>
         </ListBox>
 
-        <ui:ThemeAwareFrame
+        <sc:SampleFrame
             x:Name="rootFrame"
             Grid.Row="1"
             Grid.Column="1"
@@ -193,7 +193,7 @@
             FocusVisualStyle="{x:Null}"
             Navigating="RootFrame_Navigating"
             Navigated="RootFrame_Navigated">
-            <ui:ThemeAwareFrame.Template>
+            <Frame.Template>
                 <ControlTemplate TargetType="Frame">
                     <Border
                         Background="{TemplateBinding Background}"
@@ -207,7 +207,7 @@
                             Focusable="False" />
                     </Border>
                 </ControlTemplate>
-            </ui:ThemeAwareFrame.Template>
-        </ui:ThemeAwareFrame>
+            </Frame.Template>
+        </sc:SampleFrame>
     </Grid>
 </UserControl>

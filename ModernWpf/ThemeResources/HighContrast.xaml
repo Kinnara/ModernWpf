@@ -662,9 +662,13 @@
 
     <!-- Resources for ListViewHeaderItem -->
     <sys:Double x:Key="ListViewHeaderItemMinHeight">44</sys:Double>
+    <sys:Double x:Key="GridViewHeaderItemMinHeight">44</sys:Double>
     <sys:Double x:Key="ListViewHeaderItemThemeFontSize">20</sys:Double>
+    <sys:Double x:Key="GridViewHeaderItemThemeFontSize">20</sys:Double>
     <m:StaticResource x:Key="ListViewHeaderItemBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="GridViewHeaderItemBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="ListViewHeaderItemDividerStroke" ResourceKey="SystemControlForegroundBaseLowBrush" />
+    <m:StaticResource x:Key="GridViewHeaderItemDividerStroke" ResourceKey="SystemControlForegroundBaseLowBrush" />
 
     <!-- Resources for ListViewItem -->
     <sys:Double x:Key="ListViewItemContentOffsetX">-40.5</sys:Double>
@@ -675,7 +679,6 @@
     <sys:Double x:Key="ListViewItemReorderTargetThemeScale">0.95</sys:Double>
     <sys:Double x:Key="ListViewItemReorderHintThemeOffset">10.0</sys:Double>
     <sys:Double x:Key="ListViewItemSelectedBorderThemeThickness">4</sys:Double>
-    <sys:Double x:Key="ListViewItemMinWidth">88</sys:Double>
     <m:StaticResource x:Key="ListViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="ListViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
     <m:StaticResource x:Key="ListViewItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
