@@ -29,6 +29,8 @@ namespace ModernWpf.MahApps.Controls
         private static readonly Point c_frame2point1 = new Point(0.1, 0.9);
         private static readonly Point c_frame2point2 = new Point(0.2, 1.0);
 
+        private static readonly BitmapCache _bitmapCacheMode = new BitmapCache();
+
         private UIElement _paneGrid;
         private Button _paneSearchButton;
         private Button _backButton;
@@ -659,6 +661,11 @@ namespace ModernWpf.MahApps.Controls
 
             double beginScale = 1.0;
             double endScale = 1.0;
+
+            if (indicator.CacheMode == null)
+            {
+                indicator.CacheMode = _bitmapCacheMode;
+            }
 
             if (isOutgoing)
             {
