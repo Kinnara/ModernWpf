@@ -29,8 +29,8 @@ namespace ModernWpf.SampleApp
             Current = this;
             RootFrame = rootFrame;
 
-            PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(
-                x => x.NavigateUri.ToString().Split('/').Last().Equals(nameof(ListView2Page) + ".xaml", StringComparison.OrdinalIgnoreCase));
+            //PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(
+            //    x => x.NavigateUri.ToString().Split('/').Last().Equals(nameof(ListView2Page) + ".xaml", StringComparison.OrdinalIgnoreCase));
             NavigateToSelectedPage();
 
             if (Debugger.IsAttached)

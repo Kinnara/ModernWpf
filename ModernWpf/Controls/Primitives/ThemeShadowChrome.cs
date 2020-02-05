@@ -388,34 +388,71 @@ namespace ModernWpf.Controls.Primitives
             {
                 Debug.Assert(IsShadowEnabled);
 
+                CustomPlacementMode? placement = null;
+
                 switch (popup.Placement)
                 {
                     case PlacementMode.Bottom:
-                        if (!EnsureEdgesAligned(CustomPlacementMode.BottomEdgeAlignedLeft) && shouldAlignLeftAndRightEdges())
-                        {
-                            EnsureEdgesAligned(CustomPlacementMode.BottomEdgeAlignedRight);
-                        }
+                        placement = CustomPlacementMode.BottomEdgeAlignedLeft;
                         break;
                     case PlacementMode.Top:
-                        if (!EnsureEdgesAligned(CustomPlacementMode.TopEdgeAlignedLeft) && shouldAlignLeftAndRightEdges())
-                        {
-                            EnsureEdgesAligned(CustomPlacementMode.TopEdgeAlignedRight);
-                        }
+                        placement = CustomPlacementMode.TopEdgeAlignedLeft;
                         break;
                     case PlacementMode.Custom:
                         if (TryGetCustomPlacementMode(out var customPlacement))
                         {
-                            EnsureEdgesAligned(customPlacement);
+                            placement = customPlacement;
                         }
                         break;
                 }
 
-                bool shouldAlignLeftAndRightEdges()
+                if (placement.HasValue)
+                {
+                    if (!EnsureEdgesAligned(placement.Value))
+                    {
+                        if (placement == CustomPlacementMode.BottomEdgeAlignedLeft)
+                        {
+                            if (shouldAlignRightEdges())
+                            {
+                                EnsureEdgesAligned(CustomPlacementMode.BottomEdgeAlignedRight);
+                            }
+                        }
+                        else if (placement == CustomPlacementMode.TopEdgeAlignedLeft)
+                        {
+                            if (shouldAlignRightEdges())
+                            {
+                                EnsureEdgesAligned(CustomPlacementMode.TopEdgeAlignedRight);
+                            }
+                        }
+                    }
+                }
+
+                bool shouldAlignRightEdges()
                 {
                     var target = popup.PlacementTarget;
-                    return target != null &&
-                           target.RenderSize.Width == ActualWidth &&
-                           ActualWidth > 0;
+                    if (target != null)
+                    {
+                        var targetWidth = target.RenderSize.Width;
+                        if (ActualWidth > 0 && targetWidth > 0)
+                        {
+                            if (ActualWidth == targetWidth)
+                            {
+                                return true;
+                            }
+                            else if (ActualWidth > targetWidth)
+                            {
+                                if (TryGetOffsetToTarget(InterestPoint.TopRight, InterestPoint.TopRight, out Vector offset))
+                                {
+                                    if (offset.X < 0)
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return false;
                 }
             }
         }
