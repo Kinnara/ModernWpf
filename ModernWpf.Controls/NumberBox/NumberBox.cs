@@ -109,6 +109,11 @@ namespace ModernWpf.Controls
 
             if (m_popup != null)
             {
+                if (m_popup.HasDefaultValue(Popup.PlacementTargetProperty))
+                {
+                    m_popup.PlacementTarget = m_textBox;
+                }
+
                 m_popupRepositionHelper = new PopupRepositionHelper(m_popup, this);
             }
 

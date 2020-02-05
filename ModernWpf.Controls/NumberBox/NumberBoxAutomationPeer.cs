@@ -29,6 +29,21 @@ namespace ModernWpf.Automation.Peers
             return typeof(NumberBox).FullName;
         }
 
+        protected override string GetNameCore()
+        {
+            string name = base.GetNameCore();
+
+            if (string.IsNullOrEmpty(name))
+            {
+                if (Owner is NumberBox numberBox)
+                {
+                    name = numberBox.Header?.ToString();
+                }
+            }
+
+            return name ?? string.Empty;
+        }
+
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
             return AutomationControlType.Spinner;

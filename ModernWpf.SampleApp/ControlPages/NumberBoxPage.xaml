@@ -111,6 +111,16 @@
                             IsSnapToTickEnabled="True"
                             AutoToolTipPlacement="TopLeft"
                             Value="{Binding ElementName=NumberBox1, Path=CornerRadius, Converter={StaticResource CornerRadiusToDoubleConverter}}" />
+                        <ui:NumberBox
+                            Header="PopupHorizonalOffset"
+                            SpinButtonPlacementMode="Inline"
+                            Value="{DynamicResource NumberBoxPopupHorizonalOffset}"
+                            ValueChanged="PopupHorizonalOffset_ValueChanged" />
+                        <ui:NumberBox
+                            Header="PopupVerticalOffset"
+                            SpinButtonPlacementMode="Inline"
+                            Value="{DynamicResource NumberBoxPopupVerticalOffset}"
+                            ValueChanged="PopupVerticalOffset_ValueChanged" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

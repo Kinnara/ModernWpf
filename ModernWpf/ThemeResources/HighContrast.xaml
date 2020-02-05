@@ -879,6 +879,7 @@
 
     <!-- Resources for NumberBox -->
     <m:StaticResource x:Key="NumberBoxPopupIndicatorForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+    <Thickness x:Key="NumberBoxPopupSpinButtonBorderThickness">2</Thickness>
 
     <!-- Resources for PersonPicture -->
     <SolidColorBrush x:Key="PersonPictureForegroundThemeBrush" Color="{StaticResource SystemAltHighColor}" />

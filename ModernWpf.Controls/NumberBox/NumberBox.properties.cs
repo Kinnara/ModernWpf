@@ -58,7 +58,7 @@ namespace ModernWpf.Controls
                 typeof(double),
                 typeof(NumberBox),
                 new FrameworkPropertyMetadata(
-                    0d,
+                    double.NaN,
                     FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
                     OnValuePropertyChanged));
 

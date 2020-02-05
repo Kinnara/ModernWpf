@@ -28,5 +28,15 @@ namespace ModernWpf.SampleApp.ControlPages
                 return null;
             }
         }
+
+        private void PopupHorizonalOffset_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+        {
+            NumberBox1.Resources["NumberBoxPopupHorizonalOffset"] = args.NewValue;
+        }
+
+        private void PopupVerticalOffset_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+        {
+            NumberBox1.Resources["NumberBoxPopupVerticalOffset"] = args.NewValue;
+        }
     }
 }
