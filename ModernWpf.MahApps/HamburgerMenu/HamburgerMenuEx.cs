@@ -10,6 +10,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace ModernWpf.MahApps.Controls
 {
@@ -28,6 +29,11 @@ namespace ModernWpf.MahApps.Controls
         private static readonly Point c_frame1point2 = new Point(1.0, 0.2);
         private static readonly Point c_frame2point1 = new Point(0.1, 0.9);
         private static readonly Point c_frame2point2 = new Point(0.2, 1.0);
+
+        private static readonly PropertyPath _opacityPath = new PropertyPath(OpacityProperty);
+        private static readonly PropertyPath _centerYPath = new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.CenterY)");
+        private static readonly PropertyPath _scaleYPath = new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)");
+        private static readonly PropertyPath _translateYPath = new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)");
 
         private static readonly BitmapCache _bitmapCacheMode = new BitmapCache();
 
@@ -387,6 +393,26 @@ namespace ModernWpf.MahApps.Controls
 
         #endregion
 
+        #region ElementAnimation
+
+        private static readonly DependencyProperty ElementAnimationProperty =
+            DependencyProperty.RegisterAttached(
+                "ElementAnimation",
+                typeof(Storyboard),
+                typeof(HamburgerMenuEx));
+
+        private static Storyboard GetElementAnimation(FrameworkElement element)
+        {
+            return (Storyboard)element.GetValue(ElementAnimationProperty);
+        }
+
+        private static void SetElementAnimation(FrameworkElement element, Storyboard value)
+        {
+            element.SetValue(ElementAnimationProperty, value);
+        }
+
+        #endregion
+
         /// <summary>
         /// Occurs when the back button receives an interaction such as a click or tap.
         /// </summary>
@@ -662,10 +688,11 @@ namespace ModernWpf.MahApps.Controls
             double beginScale = 1.0;
             double endScale = 1.0;
 
-            if (indicator.CacheMode == null)
+            var storyboard = new Storyboard { FillBehavior = FillBehavior.Stop };
+            storyboard.Completed += delegate
             {
-                indicator.CacheMode = _bitmapCacheMode;
-            }
+                OnAnimationComplete();
+            };
 
             if (isOutgoing)
             {
@@ -680,8 +707,8 @@ namespace ModernWpf.MahApps.Controls
                     },
                     Duration = TimeSpan.FromMilliseconds(600)
                 };
-
-                indicator.BeginAnimation(OpacityProperty, opacityAnim);
+                Storyboard.SetTargetProperty(opacityAnim, _opacityPath);
+                storyboard.Children.Add(opacityAnim);
             }
 
             var posAnim = new DoubleAnimationUsingKeyFrames
@@ -693,6 +720,8 @@ namespace ModernWpf.MahApps.Controls
                 },
                 Duration = TimeSpan.FromMilliseconds(600)
             };
+            Storyboard.SetTargetProperty(posAnim, _translateYPath);
+            storyboard.Children.Add(posAnim);
 
             var scaleAnim = new DoubleAnimationUsingKeyFrames
             {
@@ -707,6 +736,8 @@ namespace ModernWpf.MahApps.Controls
                 },
                 Duration = TimeSpan.FromMilliseconds(600)
             };
+            Storyboard.SetTargetProperty(scaleAnim, _scaleYPath);
+            storyboard.Children.Add(scaleAnim);
 
             var centerAnim = new DoubleAnimationUsingKeyFrames
             {
@@ -717,19 +748,35 @@ namespace ModernWpf.MahApps.Controls
                 },
                 Duration = TimeSpan.FromMilliseconds(200)
             };
+            Storyboard.SetTargetProperty(centerAnim, _centerYPath);
+            storyboard.Children.Add(centerAnim);
 
-            var translateTransform = new TranslateTransform();
-            var scaleTransform = new ScaleTransform();
-            indicator.RenderTransform = new TransformGroup { Children = { scaleTransform, translateTransform } };
-
-            scaleAnim.Completed += delegate
+            indicator.RenderTransform = new TransformGroup
             {
-                OnAnimationComplete();
+                Children =
+                {
+                    new ScaleTransform(),
+                    new TranslateTransform()
+                }
             };
 
-            translateTransform.BeginAnimation(TranslateTransform.YProperty, posAnim);
-            scaleTransform.BeginAnimation(ScaleTransform.CenterYProperty, centerAnim);
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleAnim);
+            if (indicator.CacheMode == null)
+            {
+                indicator.CacheMode = _bitmapCacheMode;
+            }
+
+            var indicatorAsFE = (FrameworkElement)indicator;
+            SetElementAnimation(indicatorAsFE, storyboard);
+            storyboard.Begin(indicatorAsFE, true);
+            storyboard.Pause(indicatorAsFE);
+            Dispatcher.BeginInvoke(() =>
+            {
+                var animation = GetElementAnimation(indicatorAsFE);
+                if (animation == storyboard)
+                {
+                    animation.Resume(indicatorAsFE);
+                }
+            }, DispatcherPriority.Render);
         }
 
         private void OnAnimationComplete()
@@ -749,7 +796,14 @@ namespace ModernWpf.MahApps.Controls
             {
                 element.Opacity = desiredOpacity;
                 element.RenderTransform = null;
-                element.BeginAnimation(OpacityProperty, null);
+
+                var elementAsFE = (FrameworkElement)element;
+                var animation = GetElementAnimation(elementAsFE);
+                if (animation != null)
+                {
+                    animation.Remove(elementAsFE);
+                    elementAsFE.ClearValue(ElementAnimationProperty);
+                }
             }
         }
 
