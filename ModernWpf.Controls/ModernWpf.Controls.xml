@@ -1121,6 +1121,24 @@
       <param name="element">The object to set flyout on.</param>
       <param name="value">The value to set for flyout.</param>
     </member>
+    <member name="T:ModernWpf.Controls.GridView">
+      <summary>Represents a control that displays data items in rows and columns.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.GridView.#ctor">
+      <summary>Initializes a new instance of the GridView class.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.GridViewHeaderItem">
+      <summary>Represents items in the header for grouped data inside a GridView.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.GridViewHeaderItem.#ctor">
+      <summary>Initializes a new instance of the GridViewHeaderItem class.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.GridViewItem">
+      <summary>Represents the container for an item in a GridView control.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.GridViewItem.#ctor">
+      <summary>Initializes a new instance of the GridViewItem class.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.HyperlinkButton">
       <summary>Represents a button control that functions as a hyperlink.</summary>
     </member>
@@ -1465,6 +1483,43 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     <member name="F:ModernWpf.Controls.LayoutPanel.PaddingProperty">
       <summary>Identifies the <see cref="ModernWpf.Controls.LayoutPanel.Padding?text=Padding" /> dependency property.</summary>
       <returns>The identifier for the <see cref="ModernWpf.Controls.LayoutPanel.Padding?text=Padding" /> dependency property.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.ListView">
+      <summary>Represents a control that displays data items in a vertical stack.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ListView.#ctor">
+      <summary>Initializes a new instance of the ListView class.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.ListViewBase">
+      <summary>Provides the infrastructure for the ListView and GridView classes.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ListViewBase.#ctor">
+      <summary>Provides base-class initialization behavior for classes that are derived from the ListViewBase class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.ListViewBase.IsItemClickEnabled">
+      <summary>Gets or sets a value that indicates whether items in the view fire an ItemClick event in response to interaction.</summary>
+      <returns>**true** if interaction fires an ItemClick event; otherwise, **false**. The default is **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ListViewBase.IsItemClickEnabledProperty">
+      <summary>Identifies the IsItemClickEnabled dependency property.</summary>
+      <returns>The identifier for the IsItemClickEnabled dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.ListViewBase.IsMultiSelectCheckBoxEnabled">
+      <summary>Gets or sets a value that indicates whether a check box is shown to enable multi-selection.</summary>
+      <returns>**true** if a check box is shown to enable multi-selection; otherwise, **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.ListViewBase.IsMultiSelectCheckBoxEnabledProperty">
+      <summary>Get the identifier for the IsMultiSelectCheckBoxEnabled dependency property.</summary>
+      <returns>The identifier for the IsMultiSelectCheckBoxEnabled dependency property.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.ListViewBase.ItemClick">
+      <summary>Occurs when an item in the list view receives an interaction, and the IsItemClickEnabled property is **true**.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.ListViewItem">
+      <summary>Represents the container for an item in a ListView control.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.ListViewItem.#ctor">
+      <summary>Initializes a new instance of the ListViewItem class.</summary>
     </member>
     <member name="T:ModernWpf.Controls.MenuFlyout">
       <summary>Represents a flyout that displays a menu of commands.</summary>
