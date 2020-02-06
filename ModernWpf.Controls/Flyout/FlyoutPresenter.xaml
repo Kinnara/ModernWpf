@@ -8,7 +8,11 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="Background" Value="{DynamicResource FlyoutPresenterBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource FlyoutBorderThemeBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource FlyoutBorderThemeThickness}" />
         <Setter Property="Padding" Value="{DynamicResource FlyoutContentThemePadding}" />
