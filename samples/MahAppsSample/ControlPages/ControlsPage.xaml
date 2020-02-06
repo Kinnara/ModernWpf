@@ -84,6 +84,7 @@
                 Margin="0,8,0,0" />
             <RadioButton
                 Content="Disabled"
+                GroupName="Disabled"
                 IsChecked="True"
                 IsEnabled="False"
                 Margin="0,8,0,0" />
