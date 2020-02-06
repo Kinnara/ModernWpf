@@ -35,7 +35,9 @@
                     Culture="zh-CN" />
             </sc:ControlExample>
             <sc:ControlExample HeaderText="API in action">
-                <ui:SimpleTimePicker x:Name="TimePicker" />
+                <ui:SimpleTimePicker
+                    x:Name="TimePicker"
+                    SelectedDateTimeChanged="TimePicker_SelectedDateTimeChanged" />
                 <sc:ControlExample.Options>
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <ComboBox
@@ -51,6 +53,12 @@
                         <TextBox
                             ui:ControlHelper.Header="SecondPlaceholderText"
                             Text="{Binding ElementName=TimePicker, Path=SecondPlaceholderText, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button
+                            Content="Set value to now"
+                            Click="SetValueToNow_Click" />
+                        <Button
+                            Content="Clear value"
+                            Click="ClearValue_Click" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace ModernWpf.MahApps.Controls
 {
@@ -22,25 +22,25 @@ namespace ModernWpf.MahApps.Controls
         {
             SetResourceReference(ItemHeightProperty, "TimePickerFlyoutPresenterItemHeight");
             UpdateHeight();
-            Loaded += OnLoaded;
+            IsVisibleChanged += OnIsVisibleChanged;
         }
 
-        #region IsItemMouseOverEnabled
+        #region SuppressItemMouseOver
 
-        private static readonly DependencyPropertyKey IsItemMouseOverEnabledPropertyKey =
+        private static readonly DependencyPropertyKey SuppressItemMouseOverPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                nameof(IsItemMouseOverEnabled),
+                nameof(SuppressItemMouseOver),
                 typeof(bool),
                 typeof(DateTimeComponentSelector),
-                new PropertyMetadata(true));
+                new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsItemMouseOverEnabledProperty =
-            IsItemMouseOverEnabledPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty SuppressItemMouseOverProperty =
+            SuppressItemMouseOverPropertyKey.DependencyProperty;
 
-        public bool IsItemMouseOverEnabled
+        public bool SuppressItemMouseOver
         {
-            get => (bool)GetValue(IsItemMouseOverEnabledProperty);
-            private set => SetValue(IsItemMouseOverEnabledPropertyKey, value);
+            get => (bool)GetValue(SuppressItemMouseOverProperty);
+            private set => SetValue(SuppressItemMouseOverPropertyKey, value);
         }
 
         #endregion
@@ -70,8 +70,6 @@ namespace ModernWpf.MahApps.Controls
 
         public override void OnApplyTemplate()
         {
-            base.OnApplyTemplate();
-
             if (_scrollViewer != null)
             {
                 _scrollViewer.ScrollChanged -= OnScrollChanged;
@@ -86,6 +84,8 @@ namespace ModernWpf.MahApps.Controls
             {
                 _downButton.Click -= OnDownButtonClick;
             }
+
+            base.OnApplyTemplate();
 
             _scrollViewer = GetTemplateChild("ScrollViewer") as ScrollViewer;
             _upButton = GetTemplateChild("UpButton") as RepeatButton;
@@ -105,6 +105,8 @@ namespace ModernWpf.MahApps.Controls
             {
                 _downButton.Click += OnDownButtonClick;
             }
+
+            ScrollToSelection();
         }
 
         internal void RaiseDeferredSelectionChanged()
@@ -117,28 +119,6 @@ namespace ModernWpf.MahApps.Controls
                 e.Handled = false;
                 RaiseEvent(e);
             }
-        }
-
-        internal void FocusSelectedItem()
-        {
-            var selectedIndex = SelectedIndex;
-            if (selectedIndex >= 0)
-            {
-                var container = ItemContainerGenerator.ContainerFromIndex(selectedIndex);
-                if (container != null)
-                {
-                    (container as UIElement)?.Focus();
-                }
-                else
-                {
-                    ItemContainerGenerator.StatusChanged += OnItemContainerGeneratorStatusChanged;
-                }
-            }
-        }
-
-        internal void CancelFocusSelectedItem()
-        {
-            ItemContainerGenerator.StatusChanged -= OnItemContainerGeneratorStatusChanged;
         }
 
         protected override DependencyObject GetContainerForItemOverride()
@@ -260,9 +240,9 @@ namespace ModernWpf.MahApps.Controls
             {
                 _ignoreNextMouseMove = false;
             }
-            else if (!IsItemMouseOverEnabled)
+            else if (SuppressItemMouseOver)
             {
-                ClearValue(IsItemMouseOverEnabledPropertyKey);
+                ClearValue(SuppressItemMouseOverPropertyKey);
             }
         }
 
@@ -276,9 +256,23 @@ namespace ModernWpf.MahApps.Controls
             return (int)offset + PaddingItemsCount;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            ScrollToSelection();
+            if ((bool)e.NewValue)
+            {
+                Opacity = 0;
+                Dispatcher.BeginInvoke(() =>
+                {
+                    if (IsVisible)
+                    {
+                        ClearValue(OpacityProperty);
+                    }
+                });
+            }
+            else
+            {
+                ClearValue(OpacityProperty);
+            }
         }
 
         private void ScrollToSelection()
@@ -332,18 +326,9 @@ namespace ModernWpf.MahApps.Controls
 
             _ignoreNextMouseMove = true;
 
-            if (IsItemMouseOverEnabled)
+            if (!SuppressItemMouseOver)
             {
-                IsItemMouseOverEnabled = false;
-            }
-        }
-
-        private void OnItemContainerGeneratorStatusChanged(object sender, EventArgs e)
-        {
-            if (ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
-            {
-                ItemContainerGenerator.StatusChanged -= OnItemContainerGeneratorStatusChanged;
-                FocusSelectedItem();
+                SuppressItemMouseOver = true;
             }
         }
 

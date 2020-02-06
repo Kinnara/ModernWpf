@@ -94,7 +94,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
-                                <Condition Binding="{Binding IsItemMouseOverEnabled, RelativeSource={RelativeSource AncestorType=local:DateTimeComponentSelector}}" Value="True" />
+                                <Condition Binding="{Binding SuppressItemMouseOver, RelativeSource={RelativeSource AncestorType=local:DateTimeComponentSelector}}" Value="False" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource LoopingSelectorItemBackgroundPointerOver}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource LoopingSelectorItemForegroundPointerOver}" />

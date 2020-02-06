@@ -212,7 +212,6 @@ namespace ModernWpf.MahApps.Controls
             if (Popup != null)
             {
                 Popup.Opened += OnPopupOpened;
-                Popup.Closed += OnPopupClosed;
             }
 
             if (_acceptButton != null)
@@ -233,7 +232,6 @@ namespace ModernWpf.MahApps.Controls
             if (Popup != null)
             {
                 Popup.Opened -= OnPopupOpened;
-                Popup.Closed -= OnPopupClosed;
             }
 
             if (_acceptButton != null)
@@ -244,11 +242,6 @@ namespace ModernWpf.MahApps.Controls
             if (_dismissButton != null)
             {
                 _dismissButton.Click -= OnDismissButtonClick; ;
-            }
-
-            foreach (var picker in Selectors)
-            {
-                picker.CancelFocusSelectedItem();
             }
         }
 
@@ -364,21 +357,8 @@ namespace ModernWpf.MahApps.Controls
         {
             SetHourPartValues(SelectedDateTime.GetValueOrDefault().TimeOfDay);
 
-            foreach (var picker in Selectors)
-            {
-                picker.CancelFocusSelectedItem();
-            }
-
-            var firstVisiblePicker = Selectors.FirstOrDefault(s => s.Visibility == Visibility.Visible);
-            firstVisiblePicker?.Focus();
-        }
-
-        private void OnPopupClosed(object sender, EventArgs e)
-        {
-            foreach (var picker in Selectors)
-            {
-                picker.CancelFocusSelectedItem();
-            }
+            var firstVisibleSelector = Selectors.FirstOrDefault(s => s.Visibility == Visibility.Visible);
+            firstVisibleSelector?.Focus();
         }
 
         private void ClosePopup()
