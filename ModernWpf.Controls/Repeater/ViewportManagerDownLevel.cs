@@ -464,7 +464,7 @@ namespace ModernWpf.Controls
                     .BeginInvoke(() =>
                     {
                         OnCacheBuildActionCompleted();
-                    }, DispatcherPriority.ApplicationIdle);
+                    }, DispatcherPriority.ContextIdle);
             }
         }
 

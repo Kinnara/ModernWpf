@@ -39,7 +39,8 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        Padding="{TemplateBinding Padding}">
+                        Padding="{TemplateBinding Padding}"
+                        ClipToBounds="True">
                         <Grid>
                             <ContentPresenter
                                 x:Name="FirstContentPresenter"

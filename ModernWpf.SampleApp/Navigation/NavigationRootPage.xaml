@@ -189,25 +189,7 @@
             x:Name="rootFrame"
             Grid.Row="1"
             Grid.Column="1"
-            Focusable="False"
-            FocusVisualStyle="{x:Null}"
             Navigating="RootFrame_Navigating"
-            Navigated="RootFrame_Navigated">
-            <Frame.Template>
-                <ControlTemplate TargetType="Frame">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        Padding="{TemplateBinding Padding}">
-                        <sc:CrossFadeContentControl
-                            HorizontalContentAlignment="Stretch"
-                            VerticalContentAlignment="Stretch"
-                            Content="{TemplateBinding Content}"
-                            Focusable="False" />
-                    </Border>
-                </ControlTemplate>
-            </Frame.Template>
-        </sc:SampleFrame>
+            Navigated="RootFrame_Navigated" />
     </Grid>
 </UserControl>

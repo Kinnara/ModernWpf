@@ -129,8 +129,6 @@
                 x:Name="frame"
                 MinHeight="600"
                 JournalOwnership="OwnsJournal"
-                ClipToBounds="True"
-                TransitionsEnabled="True"
                 Navigated="Frame_Navigated" />
 
             <sc:ControlExample.Options>

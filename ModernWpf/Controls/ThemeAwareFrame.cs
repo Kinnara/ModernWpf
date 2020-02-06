@@ -10,6 +10,7 @@ namespace ModernWpf.Controls
         {
             NavigationUIVisibilityProperty.OverrideMetadata(typeof(ThemeAwareFrame), new FrameworkPropertyMetadata(NavigationUIVisibility.Hidden));
             IsTabStopProperty.OverrideMetadata(typeof(ThemeAwareFrame), new FrameworkPropertyMetadata(false));
+            FocusableProperty.OverrideMetadata(typeof(ThemeAwareFrame), new FrameworkPropertyMetadata(false));
             FocusVisualStyleProperty.OverrideMetadata(typeof(ThemeAwareFrame), new FrameworkPropertyMetadata(null));
         }
 

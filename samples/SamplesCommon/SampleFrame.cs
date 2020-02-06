@@ -3,7 +3,7 @@ using System.Windows.Navigation;
 
 namespace SamplesCommon
 {
-    public class SampleFrame : ThemeAwareFrame
+    public class SampleFrame : TransitionFrame
     {
         private object _oldContent;
 

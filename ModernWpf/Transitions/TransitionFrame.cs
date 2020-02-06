@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 
 namespace ModernWpf.Controls
 {
@@ -118,11 +119,14 @@ namespace ModernWpf.Controls
         /// </summary>
         private NavigationOutTransition _storedNavigationOutTransition;
 
+        private DispatcherOperation _performTransitionOp;
+
         static TransitionFrame()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(TransitionFrame), new FrameworkPropertyMetadata(typeof(TransitionFrame)));
             NavigationUIVisibilityProperty.OverrideMetadata(typeof(TransitionFrame), new FrameworkPropertyMetadata(NavigationUIVisibility.Hidden));
             IsTabStopProperty.OverrideMetadata(typeof(TransitionFrame), new FrameworkPropertyMetadata(false));
+            FocusableProperty.OverrideMetadata(typeof(TransitionFrame), new FrameworkPropertyMetadata(false));
             FocusVisualStyleProperty.OverrideMetadata(typeof(TransitionFrame), new FrameworkPropertyMetadata(null));
         }
 
@@ -172,27 +176,9 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region TransitionsEnabled
-
-        public static readonly DependencyProperty TransitionsEnabledProperty =
-            DependencyProperty.Register(
-                nameof(TransitionsEnabled),
-                typeof(bool),
-                typeof(TransitionFrame),
-                new PropertyMetadata(true));
-
-        public bool TransitionsEnabled
-        {
-            get => (bool)GetValue(TransitionsEnabledProperty);
-            set => SetValue(TransitionsEnabledProperty, value);
-        }
-
-        #endregion
-
         private bool Animates =>
             SystemParameters.ClientAreaAnimation &&
-            RenderCapability.Tier > 0 &&
-            TransitionsEnabled;
+            RenderCapability.Tier > 0;
 
         /// <summary>
         /// Flips the logical content presenters to prepare for the next visual
@@ -242,12 +228,12 @@ namespace ModernWpf.Controls
 
             if (Animates)
             {
-                if (Helper.HasDefaultValue(oldElement, TransitionService.NavigationOutTransitionProperty))
-                {
-                    oldElement.SetCurrentValue(TransitionService.NavigationOutTransitionProperty, DefaultNavigationOutTransition);
-                }
-
                 navigationOutTransition = TransitionService.GetNavigationOutTransition(oldElement);
+
+                if (navigationOutTransition == null && oldElement.HasDefaultValue(TransitionService.NavigationOutTransitionProperty))
+                {
+                    navigationOutTransition = DefaultNavigationOutTransition;
+                }
 
                 if (navigationOutTransition != null)
                 {
@@ -268,10 +254,6 @@ namespace ModernWpf.Controls
                 oldTransition.Completed += OnExitTransitionCompleted;
 
                 _performingExitTransition = true;
-
-                PerformTransition(navigationOutTransition, _oldContentPresenter, oldTransition);
-
-                PrepareContentPresenterForCompositor(_oldContentPresenter);
             }
             else
             {
@@ -295,6 +277,12 @@ namespace ModernWpf.Controls
         {
             _readyToTransitionToNewContent = false;
             _contentReady = false;
+
+            if (_performTransitionOp != null)
+            {
+                _performTransitionOp.Abort();
+                _performTransitionOp = null;
+            }
 
             if (_performingExitTransition)
             {
@@ -418,12 +406,13 @@ namespace ModernWpf.Controls
 
             if (oldElement != null && newElement != null && Animates)
             {
-                if (Helper.HasDefaultValue(newElement, TransitionService.NavigationInTransitionProperty))
+                navigationInTransition = TransitionService.GetNavigationInTransition(newElement);
+
+                if (navigationInTransition == null && newElement.HasDefaultValue(TransitionService.NavigationInTransitionProperty))
                 {
-                    newElement.SetCurrentValue(TransitionService.NavigationInTransitionProperty, DefaultNavigationInTransition);
+                    navigationInTransition = DefaultNavigationInTransition;
                 }
 
-                navigationInTransition = TransitionService.GetNavigationInTransition(newElement);
                 TransitionElement newTransitionElement = null;
                 if (navigationInTransition != null)
                 {
@@ -448,12 +437,34 @@ namespace ModernWpf.Controls
 
             if (_readyToTransitionToNewContent)
             {
-                TransitionNewContent(newTransition, navigationInTransition);
+                if (newTransition != null)
+                {
+                    QueueTransition(() => TransitionNewContent(newTransition, navigationInTransition));
+                }
+                else
+                {
+                    TransitionNewContent(newTransition, navigationInTransition);
+                }
             }
             else
             {
                 _storedNewTransition = newTransition;
                 _storedNavigationInTransition = navigationInTransition;
+
+                if (_performingExitTransition)
+                {
+                    NavigationOutTransition navigationOutTransition = _storedNavigationOutTransition;
+                    ITransition oldTransition = _storedOldTransition;
+
+                    Debug.Assert(navigationOutTransition != null && oldTransition != null);
+
+                    QueueTransition(() =>
+                    {
+                        PerformTransition(navigationOutTransition, _oldContentPresenter, oldTransition);
+
+                        PrepareContentPresenterForCompositor(_oldContentPresenter);
+                    });
+                }
             }
         }
 
@@ -489,6 +500,20 @@ namespace ModernWpf.Controls
             _storedNewTransition = null;
 
             PerformTransition(navigationInTransition, _newContentPresenter, newTransition);
+        }
+
+        private void QueueTransition(Action action)
+        {
+            if (_performTransitionOp != null)
+            {
+                _performTransitionOp.Abort();
+            }
+
+            _performTransitionOp = Dispatcher.BeginInvoke(() =>
+            {
+                _performTransitionOp = null;
+                action();
+            }, DispatcherPriority.ApplicationIdle);
         }
 
         /// <summary>
