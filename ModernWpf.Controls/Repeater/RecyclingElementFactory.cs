@@ -28,7 +28,7 @@ namespace ModernWpf.Controls
 
         public event TypedEventHandler<RecyclingElementFactory, SelectTemplateEventArgs> SelectTemplateKey;
 
-        internal string OnSelectTemplateKeyCore(
+        protected virtual string OnSelectTemplateKeyCore(
             object dataContext,
             UIElement owner)
         {
@@ -47,7 +47,7 @@ namespace ModernWpf.Controls
             var templateKey = args.TemplateKey;
             if (string.IsNullOrEmpty(templateKey))
             {
-                throw new Exception("Please provide a valid template identifier in the handler for the SelectTemplateKey event.");
+                throw new InvalidOperationException("Please provide a valid template identifier in the handler for the SelectTemplateKey event.");
             }
 
             return templateKey;
@@ -57,7 +57,7 @@ namespace ModernWpf.Controls
         {
             if (m_templates == null || m_templates.Count == 0)
             {
-                throw new Exception("Templates property cannot be null or empty.");
+                throw new InvalidOperationException("Templates property cannot be null or empty.");
             }
 
             var winrtOwner = args.Parent;
@@ -71,7 +71,7 @@ namespace ModernWpf.Controls
                 // Note: We could allow null/whitespace, which would work as long as
                 // the recycle pool is not shared. in order to make this work in all cases
                 // currently we validate that a valid template key is provided.
-                throw new Exception("Template key cannot be empty or null.");
+                throw new InvalidOperationException("Template key cannot be empty or null.");
             }
 
             // Get an element from the Recycle Pool or create one
@@ -83,7 +83,7 @@ namespace ModernWpf.Controls
                 if (m_templates.Count > 1 && !m_templates.ContainsKey(templateKey))
                 {
                     string message = "No templates of key " + templateKey + " were found in the templates collection.";
-                    throw new Exception(message);
+                    throw new InvalidOperationException(message);
                 }
 
                 var dataTemplate = m_templates[templateKey];

@@ -1,13 +1,14 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Collections.Specialized;
 
 namespace ModernWpf.Controls
 {
-    public abstract class ItemsSourceView : INotifyCollectionChanged
+    public class ItemsSourceView : INotifyCollectionChanged
     {
-        protected ItemsSourceView(object source)
+        public ItemsSourceView(object source)
         {
         }
 
@@ -51,15 +52,30 @@ namespace ModernWpf.Controls
             CollectionChanged?.Invoke(this, args);
         }
 
-        internal abstract int GetSizeCore();
+        internal virtual int GetSizeCore()
+        {
+            throw new NotImplementedException();
+        }
 
-        internal abstract object GetAtCore(int index);
+        internal virtual object GetAtCore(int index)
+        {
+            throw new NotImplementedException();
+        }
 
-        internal abstract bool HasKeyIndexMappingCore();
+        internal virtual bool HasKeyIndexMappingCore()
+        {
+            throw new NotImplementedException();
+        }
 
-        internal abstract string KeyFromIndexCore(int index);
+        internal virtual string KeyFromIndexCore(int index)
+        {
+            throw new NotImplementedException();
+        }
 
-        internal abstract int IndexFromKeyCore(string id);
+        internal virtual int IndexFromKeyCore(string id)
+        {
+            throw new NotImplementedException();
+        }
 
         private int m_cachedSize = -1;
     }

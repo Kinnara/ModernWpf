@@ -18,7 +18,7 @@ namespace ModernWpf.Controls
                 m_estimationBuffer.Resize(BufferSize, 0.0);
             }
 
-            context.LayoutStateCore = this;
+            ((ILayoutContextOverrides)context).LayoutStateCore = this;
         }
 
         internal void UninitializeForContext(VirtualizingLayoutContext context)

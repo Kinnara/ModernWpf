@@ -690,7 +690,6 @@ namespace ModernWpf.Controls
         {
             UIElement focusedElement = null;
 
-            // auto child = winrt::FocusManager::GetFocusedElement().as<winrt::DependencyObject>();
             var child = Keyboard.FocusedElement as DependencyObject;
 
             if (child != null)

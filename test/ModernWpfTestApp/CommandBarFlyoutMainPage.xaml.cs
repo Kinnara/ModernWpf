@@ -4,7 +4,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "CommandBarFlyout", Icon = "CommandBarFlyout.png")]
     public sealed partial class CommandBarFlyoutMainPage : TestPage

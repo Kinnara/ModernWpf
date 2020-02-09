@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     public sealed partial class MainPage : TestPage
     {
@@ -117,7 +117,7 @@ namespace ModernWpfTestApp
 
             // We'll additionally make sure that the combo box begins on the right element to reflect the current value.
             LanguageChooser.SelectedIndex = locales.IndexOf("en-US");
-            //LongAnimationsDisabled.IsChecked = ModernWpfTestApp.App.DisableLongAnimations;
+            //LongAnimationsDisabled.IsChecked = MUXControlsTestApp.App.DisableLongAnimations;
             FlowDirectionChooser.SelectedIndex = FlowDirections.IndexOf(GetRootFlowDirection());
 
             // App remembers ExtendViewIntoTitleBar and the value persists true if test case aborted and didn't change it back
@@ -140,8 +140,6 @@ namespace ModernWpfTestApp
 
             ((NavigateToTestCommand)Resources["NavigateToTestCommand"]).Frame = Frame;
         }
-
-        public Frame Frame => Application.Current.MainWindow.Content as Frame;
 
         public List<TestDeclaration> Tests
         {
@@ -178,7 +176,7 @@ namespace ModernWpfTestApp
             return child;
         }
 
-        protected internal override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             LanguageChooser.SelectedItem = App.LanguageOverride;
 
@@ -200,12 +198,12 @@ namespace ModernWpfTestApp
 
         private void LongAnimationsDisabled_Checked(object sender, RoutedEventArgs e)
         {
-            //ModernWpfTestApp.App.DisableLongAnimations = true;
+            //MUXControlsTestApp.App.DisableLongAnimations = true;
         }
 
         private void LongAnimationsDisabled_Unchecked(object sender, RoutedEventArgs e)
         {
-            //ModernWpfTestApp.App.DisableLongAnimations = false;
+            //MUXControlsTestApp.App.DisableLongAnimations = false;
         }
 
         private void FlowDirectionChooser_SelectionChanged(object sender, SelectionChangedEventArgs e)

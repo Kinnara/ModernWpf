@@ -11,9 +11,9 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
-    public class TestPage : Page
+    public class TestPage : BasePage
     {
         public TestPage()
         {
@@ -69,14 +69,6 @@ namespace ModernWpfTestApp
         public static ApplicationTheme GetCurrentTheme(DependencyObject obj)
         {
             return (ApplicationTheme)obj.GetValue(s_currentTheme);
-        }
-
-        protected internal virtual void OnNavigatedTo(NavigationEventArgs e)
-        {
-        }
-
-        protected internal virtual void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
         }
 
         //protected override void OnNavigatedFrom(NavigationEventArgs e)

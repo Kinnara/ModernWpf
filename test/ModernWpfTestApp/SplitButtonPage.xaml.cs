@@ -9,7 +9,7 @@ using ModernWpf.Controls.Primitives;
 using System.Windows.Controls;
 using System.Windows;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "SplitButton", Icon = "SplitButton.png")]
     public sealed partial class SplitButtonPage : TestPage

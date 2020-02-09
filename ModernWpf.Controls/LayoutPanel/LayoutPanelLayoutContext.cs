@@ -18,7 +18,7 @@ namespace ModernWpf.Controls
 
         protected override IReadOnlyList<UIElement> ChildrenCore => new UIElementCollectionView(GetOwner().Children);
 
-        protected internal override object LayoutStateCore
+        protected override object LayoutStateCore
         {
             get => GetOwner().LayoutState;
             set => GetOwner().LayoutState = value;

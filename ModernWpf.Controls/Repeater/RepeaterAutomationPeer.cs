@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using ModernWpf.Controls;
@@ -11,13 +12,14 @@ namespace ModernWpf.Automation.Peers
 {
     public class RepeaterAutomationPeer : FrameworkElementAutomationPeer
     {
-        public RepeaterAutomationPeer(FrameworkElement owner) : base(owner)
+        public RepeaterAutomationPeer(FrameworkElement owner) :
+            base(owner)
         {
         }
 
         protected override List<AutomationPeer> GetChildrenCore()
         {
-            var repeater = Owner as ItemsRepeater;
+            var repeater = (ItemsRepeater)Owner;
             var childrenPeers = base.GetChildrenCore();
             if (childrenPeers == null) return null;
             int peerCount = childrenPeers.Count;
@@ -42,13 +44,10 @@ namespace ModernWpf.Automation.Peers
                 }
             }
 
-            // Sort peers by index.
-            realizedPeers.Sort((lhs, rhs) => lhs.Item1 - rhs.Item1);
-
             // Select peers.
             {
                 var peers = new List<AutomationPeer>(realizedPeers.Count /* capacity */);
-                foreach (var entry in realizedPeers)
+                foreach (var entry in realizedPeers.OrderBy(x => x.Item1)) // Sort peers by index.
                 {
                     peers.Add(entry.Item2);
                 }
@@ -63,7 +62,7 @@ namespace ModernWpf.Automation.Peers
 
         private UIElement GetElement(AutomationPeer childPeer, ItemsRepeater repeater)
         {
-            var childElement = (DependencyObject)(childPeer as FrameworkElementAutomationPeer).Owner;
+            var childElement = (DependencyObject)((FrameworkElementAutomationPeer)childPeer).Owner;
 
             var parent = CachedVisualTreeHelpers.GetParent(childElement);
             // Child peer could have given a descendant of the repeater's child. We
@@ -74,7 +73,7 @@ namespace ModernWpf.Automation.Peers
                 parent = CachedVisualTreeHelpers.GetParent(childElement);
             }
 
-            return childElement as UIElement;
+            return (UIElement)childElement;
         }
     }
 }

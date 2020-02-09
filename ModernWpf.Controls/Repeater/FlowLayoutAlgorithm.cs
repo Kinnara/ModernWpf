@@ -42,7 +42,7 @@ namespace ModernWpf.Controls
                 // being held and remove the layout state from the context.
                 m_elementManager.ClearRealizedRange();
             }
-            context.LayoutStateCore = null;
+            ((ILayoutContextOverrides)context).LayoutStateCore = null;
         }
 
         public Size Measure(
@@ -170,7 +170,7 @@ namespace ModernWpf.Controls
             if (!IsVirtualizingContext)
             {
                 // Non virtualizing host, start generating from the element 0
-                anchorIndex = m_context.ItemCountCore() > 0 ? 0 : -1;
+                anchorIndex = ((IVirtualizingLayoutContextOverrides)m_context).ItemCountCore() > 0 ? 0 : -1;
             }
             else
             {
@@ -627,7 +627,7 @@ namespace ModernWpf.Controls
 
                             case LineAlignment.End:
                                 {
-                                    OrientationBasedMeasures.SetMinorStart(ref bounds, OrientationBasedMeasures.MinorStart(bounds) + spaceAtLineStart);
+                                    OrientationBasedMeasures.SetMinorStart(ref bounds, OrientationBasedMeasures.MinorStart(bounds) + spaceAtLineEnd);
                                     break;
                                 }
 

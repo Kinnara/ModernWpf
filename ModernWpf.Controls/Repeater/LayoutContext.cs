@@ -1,13 +1,14 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Windows;
 
 namespace ModernWpf.Controls
 {
-    public abstract class LayoutContext : DependencyObject
+    public class LayoutContext : DependencyObject, ILayoutContextOverrides
     {
-        protected internal LayoutContext()
+        internal LayoutContext()
         {
         }
 
@@ -17,6 +18,21 @@ namespace ModernWpf.Controls
             set => LayoutStateCore = value;
         }
 
-        protected internal abstract object LayoutStateCore { get; set; }
+        protected virtual object LayoutStateCore
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+
+        object ILayoutContextOverrides.LayoutStateCore
+        {
+            get => LayoutStateCore;
+            set => LayoutStateCore = value;
+        }
+    }
+
+    internal interface ILayoutContextOverrides
+    {
+        object LayoutStateCore { get; set; }
     }
 }

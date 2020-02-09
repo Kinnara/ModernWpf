@@ -13,13 +13,13 @@ namespace ModernWpf.Controls
             m_owner = new WeakReference<ItemsRepeater>(owner);
         }
 
-        protected internal override object LayoutStateCore
+        protected override object LayoutStateCore
         {
             get => GetOwner().LayoutState;
             set => GetOwner().LayoutState = value;
         }
 
-        protected internal override int ItemCountCore()
+        protected override int ItemCountCore()
         {
             var dataSource = GetOwner().ItemsSourceView;
             if (dataSource != null)

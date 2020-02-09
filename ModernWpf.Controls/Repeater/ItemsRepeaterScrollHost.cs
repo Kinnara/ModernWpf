@@ -313,6 +313,12 @@ namespace ModernWpf.Controls
                 pendingViewportShift = scrollViewer.ExtentHeight - scrollViewer.ViewportHeight - verticalOffset;
             }
 
+            // WPF-specific
+            if (scrollViewer.ScrollableHeight == 0)
+            {
+                pendingViewportShift = 0;
+            }
+
             if (Math.Abs(pendingViewportShift) > 1)
             {
                 // TODO: do we need to account for the zoom factor?

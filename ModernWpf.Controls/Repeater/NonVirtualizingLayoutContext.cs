@@ -1,20 +1,21 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Windows;
 
 namespace ModernWpf.Controls
 {
-    public abstract class NonVirtualizingLayoutContext : LayoutContext
+    public class NonVirtualizingLayoutContext : LayoutContext
     {
-        protected NonVirtualizingLayoutContext()
+        public NonVirtualizingLayoutContext()
         {
         }
 
         public IReadOnlyList<UIElement> Children => ChildrenCore;
 
-        protected abstract IReadOnlyList<UIElement> ChildrenCore { get; }
+        protected virtual IReadOnlyList<UIElement> ChildrenCore => throw new NotImplementedException();
 
         internal VirtualizingLayoutContext GetVirtualizingContextAdapter()
         {

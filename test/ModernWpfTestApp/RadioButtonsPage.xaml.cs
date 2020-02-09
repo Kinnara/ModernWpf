@@ -9,7 +9,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "RadioButtons", Icon = "RadioButton.png")]
     public sealed partial class RadioButtonsPage : TestPage

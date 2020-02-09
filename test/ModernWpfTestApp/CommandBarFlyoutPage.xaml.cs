@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Automation;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     public sealed partial class CommandBarFlyoutPage : TestPage
     {

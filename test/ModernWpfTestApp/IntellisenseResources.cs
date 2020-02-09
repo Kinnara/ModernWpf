@@ -1,6 +1,6 @@
 ﻿using ModernWpf.DesignTime;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     public class IntellisenseResources : IntellisenseResourcesBase
     {

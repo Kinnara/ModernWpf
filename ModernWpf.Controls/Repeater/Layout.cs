@@ -47,12 +47,12 @@ namespace ModernWpf.Controls
 
         public void InitializeForContext(LayoutContext context)
         {
-            if (this is VirtualizingLayout virtualizingLayout)
+            if (this is IVirtualizingLayoutOverrides virtualizingLayout)
             {
                 var virtualizingContext = GetVirtualizingLayoutContext(context);
                 virtualizingLayout.InitializeForContextCore(virtualizingContext);
             }
-            else if (this is NonVirtualizingLayout nonVirtualizingLayout)
+            else if (this is INonVirtualizingLayoutOverrides nonVirtualizingLayout)
             {
                 var nonVirtualizingContext = GetNonVirtualizingLayoutContext(context);
                 nonVirtualizingLayout.InitializeForContextCore(nonVirtualizingContext);
@@ -65,12 +65,12 @@ namespace ModernWpf.Controls
 
         public void UninitializeForContext(LayoutContext context)
         {
-            if (this is VirtualizingLayout virtualizingLayout)
+            if (this is IVirtualizingLayoutOverrides virtualizingLayout)
             {
                 var virtualizingContext = GetVirtualizingLayoutContext(context);
                 virtualizingLayout.UninitializeForContextCore(virtualizingContext);
             }
-            else if (this is NonVirtualizingLayout nonVirtualizingLayout)
+            else if (this is INonVirtualizingLayoutOverrides nonVirtualizingLayout)
             {
                 var nonVirtualizingContext = GetNonVirtualizingLayoutContext(context);
                 nonVirtualizingLayout.UninitializeForContextCore(nonVirtualizingContext);
@@ -83,12 +83,12 @@ namespace ModernWpf.Controls
 
         public Size Measure(LayoutContext context, Size availableSize)
         {
-            if (this is VirtualizingLayout virtualizingLayout)
+            if (this is IVirtualizingLayoutOverrides virtualizingLayout)
             {
                 var virtualizingContext = GetVirtualizingLayoutContext(context);
                 return virtualizingLayout.MeasureOverride(virtualizingContext, availableSize);
             }
-            else if (this is NonVirtualizingLayout nonVirtualizingLayout)
+            else if (this is INonVirtualizingLayoutOverrides nonVirtualizingLayout)
             {
                 var nonVirtualizingContext = GetNonVirtualizingLayoutContext(context);
                 return nonVirtualizingLayout.MeasureOverride(nonVirtualizingContext, availableSize);
@@ -101,12 +101,12 @@ namespace ModernWpf.Controls
 
         public Size Arrange(LayoutContext context, Size finalSize)
         {
-            if (this is VirtualizingLayout virtualizingLayout)
+            if (this is IVirtualizingLayoutOverrides virtualizingLayout)
             {
                 var virtualizingContext = GetVirtualizingLayoutContext(context);
                 return virtualizingLayout.ArrangeOverride(virtualizingContext, finalSize);
             }
-            else if (this is NonVirtualizingLayout nonVirtualizingLayout)
+            else if (this is INonVirtualizingLayoutOverrides nonVirtualizingLayout)
             {
                 var nonVirtualizingContext = GetNonVirtualizingLayoutContext(context);
                 return nonVirtualizingLayout.ArrangeOverride(nonVirtualizingContext, finalSize);

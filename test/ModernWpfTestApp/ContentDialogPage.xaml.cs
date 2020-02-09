@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "ContentDialog")]
     public sealed partial class ContentDialogPage : TestPage

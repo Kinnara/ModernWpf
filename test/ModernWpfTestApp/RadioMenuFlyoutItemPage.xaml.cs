@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Windows.Automation;
 using System.Windows.Controls;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "RadioMenuFlyoutItem")]
     public sealed partial class RadioMenuFlyoutItemPage : TestPage

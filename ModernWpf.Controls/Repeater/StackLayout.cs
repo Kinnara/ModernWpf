@@ -64,7 +64,7 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        protected internal override void InitializeForContextCore(VirtualizingLayoutContext context)
+        protected override void InitializeForContextCore(VirtualizingLayoutContext context)
         {
             var state = context.LayoutState;
             StackLayoutState stackState = null;
@@ -88,13 +88,13 @@ namespace ModernWpf.Controls
             stackState.InitializeForContext(context, this);
         }
 
-        protected internal override void UninitializeForContextCore(VirtualizingLayoutContext context)
+        protected override void UninitializeForContextCore(VirtualizingLayoutContext context)
         {
             var stackState = GetAsStackState(context.LayoutState);
             stackState.UninitializeForContext(context);
         }
 
-        protected internal override Size MeasureOverride(
+        protected override Size MeasureOverride(
             VirtualizingLayoutContext context,
             Size availableSize)
         {
@@ -111,7 +111,7 @@ namespace ModernWpf.Controls
             return desiredSize;
         }
 
-        protected internal override Size ArrangeOverride(
+        protected override Size ArrangeOverride(
             VirtualizingLayoutContext context,
             Size finalSize)
         {
@@ -127,7 +127,7 @@ namespace ModernWpf.Controls
             return value;
         }
 
-        protected internal override void OnItemsChangedCore(
+        protected override void OnItemsChangedCore(
             VirtualizingLayoutContext context,
             object source,
             NotifyCollectionChangedEventArgs args)

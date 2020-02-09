@@ -6,22 +6,58 @@ using System.Windows;
 
 namespace ModernWpf.Controls
 {
-    public abstract class NonVirtualizingLayout : Layout
+    public class NonVirtualizingLayout : Layout, INonVirtualizingLayoutOverrides
     {
-        protected NonVirtualizingLayout()
+        public NonVirtualizingLayout()
         {
         }
 
-        protected internal virtual void InitializeForContextCore(NonVirtualizingLayoutContext context)
+        protected virtual void InitializeForContextCore(NonVirtualizingLayoutContext context)
         {
         }
 
-        protected internal virtual void UninitializeForContextCore(NonVirtualizingLayoutContext context)
+        protected virtual void UninitializeForContextCore(NonVirtualizingLayoutContext context)
         {
         }
 
-        protected internal abstract Size MeasureOverride(NonVirtualizingLayoutContext context, Size availableSize);
+        protected virtual Size MeasureOverride(NonVirtualizingLayoutContext context, Size availableSize)
+        {
+            throw new NotImplementedException();
+        }
 
-        protected internal abstract Size ArrangeOverride(NonVirtualizingLayoutContext context, Size finalSize);
+        protected virtual Size ArrangeOverride(NonVirtualizingLayoutContext context, Size finalSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        #region INonVirtualizingLayoutOverrides
+        void INonVirtualizingLayoutOverrides.InitializeForContextCore(NonVirtualizingLayoutContext context)
+        {
+            InitializeForContextCore(context);
+        }
+
+        void INonVirtualizingLayoutOverrides.UninitializeForContextCore(NonVirtualizingLayoutContext context)
+        {
+            UninitializeForContextCore(context);
+        }
+
+        Size INonVirtualizingLayoutOverrides.MeasureOverride(NonVirtualizingLayoutContext context, Size availableSize)
+        {
+            return MeasureOverride(context, availableSize);
+        }
+
+        Size INonVirtualizingLayoutOverrides.ArrangeOverride(NonVirtualizingLayoutContext context, Size finalSize)
+        {
+            return ArrangeOverride(context, finalSize);
+        }
+        #endregion
+    }
+
+    internal interface INonVirtualizingLayoutOverrides
+    {
+        void InitializeForContextCore(NonVirtualizingLayoutContext context);
+        void UninitializeForContextCore(NonVirtualizingLayoutContext context);
+        Size MeasureOverride(NonVirtualizingLayoutContext context, Size availableSize);
+        Size ArrangeOverride(NonVirtualizingLayoutContext context, Size finalSize);
     }
 }

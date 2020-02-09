@@ -1,13 +1,14 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Windows;
 
 namespace ModernWpf.Controls
 {
-    public abstract class VirtualizingLayoutContext : LayoutContext
+    public class VirtualizingLayoutContext : LayoutContext, IVirtualizingLayoutContextOverrides
     {
-        protected VirtualizingLayoutContext()
+        public VirtualizingLayoutContext()
         {
         }
 
@@ -35,15 +36,30 @@ namespace ModernWpf.Controls
             RecycleElementCore(element);
         }
 
-        protected internal abstract int ItemCountCore();
+        protected virtual int ItemCountCore()
+        {
+            throw new NotImplementedException();
+        }
 
-        protected abstract object GetItemAtCore(int index);
+        protected virtual object GetItemAtCore(int index)
+        {
+            throw new NotImplementedException();
+        }
 
-        protected abstract Rect RealizationRectCore();
+        protected virtual Rect RealizationRectCore()
+        {
+            throw new NotImplementedException();
+        }
 
-        protected abstract UIElement GetOrCreateElementAtCore(int index, ElementRealizationOptions options);
+        protected virtual UIElement GetOrCreateElementAtCore(int index, ElementRealizationOptions options)
+        {
+            throw new NotImplementedException();
+        }
 
-        protected abstract void RecycleElementCore(UIElement element);
+        protected virtual void RecycleElementCore(UIElement element)
+        {
+            throw new NotImplementedException();
+        }
 
         public Point LayoutOrigin
         {
@@ -57,9 +73,13 @@ namespace ModernWpf.Controls
 
         public int RecommendedAnchorIndex => RecommendedAnchorIndexCore;
 
-        protected virtual Point LayoutOriginCore { get; set; }
+        protected virtual Point LayoutOriginCore
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
 
-        protected virtual int RecommendedAnchorIndexCore { get; }
+        protected virtual int RecommendedAnchorIndexCore => throw new NotImplementedException();
 
         internal NonVirtualizingLayoutContext GetNonVirtualizingContextAdapter()
         {
@@ -70,6 +90,55 @@ namespace ModernWpf.Controls
             return m_contextAdapter;
         }
 
+        #region IVirtualizingLayoutContextOverrides
+        int IVirtualizingLayoutContextOverrides.ItemCountCore()
+        {
+            return ItemCountCore();
+        }
+
+        object IVirtualizingLayoutContextOverrides.GetItemAtCore(int index)
+        {
+            return GetItemAtCore(index);
+        }
+
+        UIElement IVirtualizingLayoutContextOverrides.GetOrCreateElementAtCore(int index, ElementRealizationOptions options)
+        {
+            return GetOrCreateElementAtCore(index, options);
+        }
+
+        void IVirtualizingLayoutContextOverrides.RecycleElementCore(UIElement element)
+        {
+            RecycleElementCore(element);
+        }
+
+        Rect IVirtualizingLayoutContextOverrides.RealizationRectCore()
+        {
+            return RealizationRectCore();
+        }
+
+        int IVirtualizingLayoutContextOverrides.RecommendedAnchorIndexCore => RecommendedAnchorIndexCore;
+
+        Point IVirtualizingLayoutContextOverrides.LayoutOriginCore
+        {
+            get => LayoutOriginCore;
+            set => LayoutOriginCore = value;
+        }
+        #endregion
+
         private NonVirtualizingLayoutContext m_contextAdapter;
+    }
+
+    internal interface IVirtualizingLayoutContextOverrides
+    {
+        int ItemCountCore();
+        object GetItemAtCore(int index);
+        UIElement GetOrCreateElementAtCore(int index, ElementRealizationOptions options);
+        void RecycleElementCore(UIElement element);
+
+        Rect RealizationRectCore();
+
+        int RecommendedAnchorIndexCore { get; }
+
+        Point LayoutOriginCore { get; set; }
     }
 }

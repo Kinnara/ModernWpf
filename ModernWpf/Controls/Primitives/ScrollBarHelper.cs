@@ -37,7 +37,7 @@ namespace ModernWpf.Controls.Primitives
 
             if (newValue)
             {
-                scrollBar.Loaded += OnLoaded;
+                scrollBar.IsVisibleChanged += OnIsVisibleChanged;
                 scrollBar.MouseEnter += OnIsMouseOverChanged;
                 scrollBar.MouseLeave += OnIsMouseOverChanged;
                 scrollBar.IsEnabledChanged += OnIsEnabledChanged;
@@ -49,7 +49,7 @@ namespace ModernWpf.Controls.Primitives
             }
             else
             {
-                scrollBar.Loaded -= OnLoaded;
+                scrollBar.IsVisibleChanged -= OnIsVisibleChanged;
                 scrollBar.MouseEnter -= OnIsMouseOverChanged;
                 scrollBar.MouseLeave -= OnIsMouseOverChanged;
                 scrollBar.IsEnabledChanged -= OnIsEnabledChanged;
@@ -126,11 +126,14 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        private static void OnLoaded(object sender, RoutedEventArgs e)
+        private static void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            var scrollBar = (ScrollBar)sender;
-            scrollBar.ApplyTemplate();
-            UpdateVisualState(scrollBar, false);
+            if ((bool)e.NewValue)
+            {
+                var scrollBar = (ScrollBar)sender;
+                scrollBar.ApplyTemplate();
+                UpdateVisualState(scrollBar, false);
+            }
         }
 
         private static void OnIsMouseOverChanged(object sender, MouseEventArgs e)

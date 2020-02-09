@@ -13,12 +13,8 @@ namespace ModernWpf.Controls
     // is correct (hide -> bounds change -> show).
     // It's possible to customize the animations by inheriting from ElementAnimator
     // and overriding virtual/abstract members.
-    public abstract class ElementAnimator
+    public class ElementAnimator
     {
-        protected ElementAnimator()
-        {
-        }
-
         public event ElementAnimationCompleted ShowAnimationCompleted;
 
         public event ElementAnimationCompleted HideAnimationCompleted;
@@ -97,25 +93,51 @@ namespace ModernWpf.Controls
             return HasBoundsChangeAnimationCore(element, context, oldBounds, newBounds);
         }
 
-        protected abstract bool HasShowAnimationCore(UIElement element, AnimationContext context);
-
-        protected abstract bool HasHideAnimationCore(UIElement element, AnimationContext context);
-
-        protected abstract bool HasBoundsChangeAnimationCore(UIElement element, AnimationContext context, Rect oldBounds, Rect newBounds);
-
-        protected abstract void StartShowAnimation(
+        protected virtual bool HasShowAnimationCore(
             UIElement element,
-            AnimationContext context);
+            AnimationContext context)
+        {
+            throw new NotImplementedException();
+        }
 
-        protected abstract void StartHideAnimation(
+        protected virtual bool HasHideAnimationCore(
             UIElement element,
-            AnimationContext context);
+            AnimationContext context)
+        {
+            throw new NotImplementedException();
+        }
 
-        protected abstract void StartBoundsChangeAnimation(
+        protected virtual bool HasBoundsChangeAnimationCore(
             UIElement element,
             AnimationContext context,
             Rect oldBounds,
-            Rect newBounds);
+            Rect newBounds)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual void StartShowAnimation(
+            UIElement element,
+            AnimationContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual void StartHideAnimation(
+            UIElement element,
+            AnimationContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual void StartBoundsChangeAnimation(
+            UIElement element,
+            AnimationContext context,
+            Rect oldBounds,
+            Rect newBounds)
+        {
+            throw new NotImplementedException();
+        }
 
         protected bool HasShowAnimationsPending { get; private set; }
 

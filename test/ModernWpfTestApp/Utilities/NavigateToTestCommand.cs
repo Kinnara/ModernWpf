@@ -4,8 +4,9 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     public class NavigateToTestCommand : System.Windows.Input.ICommand
     {
@@ -31,7 +32,7 @@ namespace ModernWpfTestApp
         }
     }
 
-    static class FrameExtensions
+    static class NavigationExtensions
     {
         public static void NavigateWithoutAnimation(this Frame frame, Type sourcePageType)
         {
@@ -45,7 +46,22 @@ namespace ModernWpfTestApp
 
         public static void NavigateEx(this Frame frame, Type sourcePageType, object extraData = null)
         {
-            frame.Navigate(new Uri(sourcePageType.Name + ".xaml", UriKind.Relative), extraData);
+            frame.Navigate(Activator.CreateInstance(sourcePageType), extraData);
+        }
+
+        public static void NavigateWithoutAnimation(this NavigationService frame, Type sourcePageType)
+        {
+            frame.NavigateEx(sourcePageType);
+        }
+
+        public static void NavigateWithoutAnimation(this NavigationService frame, Type sourcePageType, object parameter)
+        {
+            frame.NavigateEx(sourcePageType, parameter);
+        }
+
+        public static void NavigateEx(this NavigationService frame, Type sourcePageType, object extraData = null)
+        {
+            frame.Navigate(Activator.CreateInstance(sourcePageType), extraData);
         }
     }
 }

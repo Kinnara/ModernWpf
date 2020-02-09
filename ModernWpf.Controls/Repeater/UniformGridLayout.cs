@@ -129,7 +129,7 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        protected internal override void InitializeForContextCore(VirtualizingLayoutContext context)
+        protected override void InitializeForContextCore(VirtualizingLayoutContext context)
         {
             var state = context.LayoutState;
             UniformGridLayoutState gridState = null;
@@ -153,13 +153,13 @@ namespace ModernWpf.Controls
             gridState.InitializeForContext(context, this);
         }
 
-        protected internal override void UninitializeForContextCore(VirtualizingLayoutContext context)
+        protected override void UninitializeForContextCore(VirtualizingLayoutContext context)
         {
             var gridState = GetAsGridState(context.LayoutState);
             gridState.UninitializeForContext(context);
         }
 
-        protected internal override Size MeasureOverride(
+        protected override Size MeasureOverride(
             VirtualizingLayoutContext context,
             Size availableSize)
         {
@@ -186,7 +186,7 @@ namespace ModernWpf.Controls
             return desiredSize;
         }
 
-        protected internal override Size ArrangeOverride(
+        protected override Size ArrangeOverride(
             VirtualizingLayoutContext context,
             Size finalSize)
         {
@@ -194,12 +194,12 @@ namespace ModernWpf.Controls
                 finalSize,
                 context,
                 true /* isWrapping */,
-                (FlowLayoutAlgorithm.LineAlignment)(m_itemsJustification),
+                (FlowLayoutAlgorithm.LineAlignment)m_itemsJustification,
                 LayoutId);
             return value;
         }
 
-        protected internal override void OnItemsChangedCore(
+        protected override void OnItemsChangedCore(
             VirtualizingLayoutContext context,
             object source,
             NotifyCollectionChangedEventArgs args)

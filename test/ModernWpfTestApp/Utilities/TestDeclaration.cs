@@ -3,7 +3,7 @@
 
 using System;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     public class TestDeclaration
     {

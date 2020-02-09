@@ -13,7 +13,7 @@ namespace ModernWpf.Controls
 
     internal class OrientationBasedMeasures
     {
-        public ScrollOrientation ScrollOrientation { get; set; }
+        public ScrollOrientation ScrollOrientation { get; set; } = ScrollOrientation.Vertical;
 
         // Major - Scrolling/virtualizing direction
         // Minor - Opposite direction

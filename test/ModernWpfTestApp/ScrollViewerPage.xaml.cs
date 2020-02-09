@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "ScrollViewer", Icon = "ScrollViewer.png")]
     public sealed partial class ScrollViewerPage : TestPage

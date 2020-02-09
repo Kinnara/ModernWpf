@@ -4,7 +4,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace ModernWpfTestApp.Utilities
+namespace MUXControlsTestApp.Utilities
 {
     public static class VisualTreeUtils
     {

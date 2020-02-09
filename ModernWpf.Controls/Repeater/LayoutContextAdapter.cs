@@ -13,7 +13,7 @@ namespace ModernWpf.Controls
             m_nonVirtualizingContext = new WeakReference<NonVirtualizingLayoutContext>(nonVirtualizingContext);
         }
 
-        protected internal override object LayoutStateCore
+        protected override object LayoutStateCore
         {
             get
             {
@@ -27,12 +27,12 @@ namespace ModernWpf.Controls
             {
                 if (m_nonVirtualizingContext.TryGetTarget(out var context))
                 {
-                    context.LayoutStateCore = value;
+                    ((ILayoutContextOverrides)context).LayoutStateCore = value;
                 }
             }
         }
 
-        protected internal override int ItemCountCore()
+        protected override int ItemCountCore()
         {
             if (m_nonVirtualizingContext.TryGetTarget(out var context))
             {

@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using ModernWpf.Controls;
-using ModernWpfTestApp.Utilities;
+using MUXControlsTestApp.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,7 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using ListViewItem = System.Windows.Controls.ListViewItem;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     class SimpleVerify
     {

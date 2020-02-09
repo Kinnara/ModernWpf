@@ -13,6 +13,14 @@ namespace ModernWpf.Controls
         public static bool ChangeView(this ScrollViewer scrollViewer,
             double? horizontalOffset,
             double? verticalOffset,
+            float? zoomFactor)
+        {
+            return scrollViewer.ChangeView(horizontalOffset, verticalOffset, zoomFactor, false);
+        }
+
+        public static bool ChangeView(this ScrollViewer scrollViewer,
+            double? horizontalOffset,
+            double? verticalOffset,
             float? zoomFactor,
             bool disableAnimation)
         {

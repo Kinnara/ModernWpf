@@ -4,6 +4,8 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net48</TargetFramework>
     <UseWPF>true</UseWPF>
+    <AssemblyName>MUXControlsTestApp</AssemblyName>
+    <RootNamespace>MUXControlsTestApp</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,10 +16,15 @@
 
   <ItemGroup>
     <None Remove="Assets\**" />
+    <None Remove="Images\**" />
     <Resource Include="Assets\**" />
+    <Resource Include="Images\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.1.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
     <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.7.0" />
   </ItemGroup>
 

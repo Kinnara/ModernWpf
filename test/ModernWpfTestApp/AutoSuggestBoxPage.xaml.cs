@@ -3,7 +3,7 @@
 
 using ModernWpf.Controls;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "AutoSuggestBox", Icon = "AutoSuggestBox.png")]
     public sealed partial class AutoSuggestBoxPage : TestPage

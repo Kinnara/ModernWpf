@@ -11,7 +11,7 @@ using System.Windows.Markup;
                                               // app, or any theme specific resource dictionaries)
 )]
 
-[assembly: InternalsVisibleTo("ModernWpfTestApp")]
+[assembly: InternalsVisibleTo("MUXControlsTestApp")]
 
 [assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Controls")]
 [assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Controls.Primitives")]

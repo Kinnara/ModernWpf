@@ -4,7 +4,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "Menu", Icon = "MenuBar.png")]
     public sealed partial class MenuBarPage : TestPage

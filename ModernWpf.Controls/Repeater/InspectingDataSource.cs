@@ -28,7 +28,7 @@ namespace ModernWpf.Controls
             {
                 if (source is IEnumerable iterable)
                 {
-                    m_vector = (WrapIterable(iterable));
+                    m_vector = WrapIterable(iterable);
                 }
                 else
                 {

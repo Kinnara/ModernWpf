@@ -186,6 +186,12 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             DataContext = await Contact.GetContactsAsync();
         }
+
+        private void ChangeFirstItemButton_Click(object sender, RoutedEventArgs e)
+        {
+            var contacts = (ObservableCollection<Contact>)DataContext;
+            contacts[0] = new Contact("First", "Last", "Line 1\nLine 2");
+        }
     }
 
     public class NestedCategory

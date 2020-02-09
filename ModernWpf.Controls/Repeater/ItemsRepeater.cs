@@ -9,13 +9,12 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Media;
-using System.Windows.Threading;
 using ModernWpf.Automation.Peers;
 
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(ItemTemplate))]
-    public class ItemsRepeater : Panel
+    public partial class ItemsRepeater : Panel
     {
         internal static readonly Point ClearedElementsArrangePosition = new Point(-10000.0, -10000.0);
         // A convention we use in the ItemsRepeater codebase for an invalid Rect value.
@@ -53,12 +52,12 @@ namespace ModernWpf.Controls
         {
             if (m_isLayoutInProgress)
             {
-                throw new Exception("Reentrancy detected during layout.");
+                throw new InvalidOperationException("Reentrancy detected during layout.");
             }
 
             if (IsProcessingCollectionChange)
             {
-                throw new Exception("Cannot run layout in the middle of a collection change.");
+                throw new InvalidOperationException("Cannot run layout in the middle of a collection change.");
             }
 
             m_viewportManager.OnOwnerMeasuring();
@@ -105,7 +104,7 @@ namespace ModernWpf.Controls
 
                 m_viewportManager.SetLayoutExtent(extent);
                 m_lastAvailableSize = availableSize;
-                m_lastChildDesiredSizeChangedCounter = m_childDesiredSizeChangedCounter = 0;
+                OnLayoutEvent(LayoutEvent.Measure);
                 return desiredSize;
             }
             finally
@@ -118,12 +117,12 @@ namespace ModernWpf.Controls
         {
             if (m_isLayoutInProgress)
             {
-                throw new Exception("Reentrancy detected during layout.");
+                throw new InvalidOperationException("Reentrancy detected during layout.");
             }
 
             if (IsProcessingCollectionChange)
             {
-                throw new Exception("Cannot run layout in the middle of a collection change.");
+                throw new InvalidOperationException("Cannot run layout in the middle of a collection change.");
             }
 
             m_isLayoutInProgress = true;
@@ -174,6 +173,8 @@ namespace ModernWpf.Controls
 
                 m_viewportManager.OnOwnerArranged();
                 AnimationManager.OnOwnerArranged();
+
+                OnLayoutEvent(LayoutEvent.Arrange);
 
                 return arrangeSize;
             }
@@ -357,12 +358,12 @@ namespace ModernWpf.Controls
         {
             if (index >= 0 && index >= ItemsSourceView.Count)
             {
-                throw new ArgumentOutOfRangeException(nameof(index), "Argument index is invalid.");
+                throw new ArgumentException(nameof(index), "Argument index is invalid.");
             }
 
             if (m_isLayoutInProgress)
             {
-                throw new Exception("GetOrCreateElement invocation is not allowed during layout.");
+                throw new InvalidOperationException("GetOrCreateElement invocation is not allowed during layout.");
             }
 
             var element = GetElementFromIndexImpl(index);
@@ -372,7 +373,7 @@ namespace ModernWpf.Controls
             {
                 if (Layout == null)
                 {
-                    throw new Exception("Cannot make an Anchor when there is no attached layout.");
+                    throw new InvalidOperationException("Cannot make an Anchor when there is no attached layout.");
                 }
 
                 element = GetLayoutContext().GetOrCreateElementAt(index);
@@ -558,7 +559,7 @@ namespace ModernWpf.Controls
         {
             if (m_isLayoutInProgress)
             {
-                throw new Exception("Cannot set ItemsSourceView during layout.");
+                throw new InvalidOperationException("Cannot set ItemsSourceView during layout.");
             }
 
             ItemsSourceView = newValue;
@@ -587,7 +588,7 @@ namespace ModernWpf.Controls
 
                     if (layout is VirtualizingLayout virtualLayout)
                     {
-                        virtualLayout.OnItemsChangedCore(GetLayoutContext(), newValue, args);
+                        ((IVirtualizingLayoutOverrides)virtualLayout).OnItemsChangedCore(GetLayoutContext(), newValue, args);
                     }
                     else if (layout is NonVirtualizingLayout nonVirtualLayout)
                     {
@@ -620,7 +621,7 @@ namespace ModernWpf.Controls
         {
             if (m_isLayoutInProgress && oldValue != null)
             {
-                throw new Exception("ItemTemplate cannot be changed during layout.");
+                throw new InvalidOperationException("ItemTemplate cannot be changed during layout.");
             }
 
             bool processingChange = false;
@@ -642,7 +643,7 @@ namespace ModernWpf.Controls
 
                     if (layout is VirtualizingLayout virtualLayout)
                     {
-                        virtualLayout.OnItemsChangedCore(GetLayoutContext(), newValue, args);
+                        ((IVirtualizingLayoutOverrides)virtualLayout).OnItemsChangedCore(GetLayoutContext(), newValue, args);
                     }
                     else if (layout is NonVirtualizingLayout nonVirtualLayout)
                     {
@@ -686,7 +687,7 @@ namespace ModernWpf.Controls
                     }
                     else
                     {
-                        throw new ArgumentOutOfRangeException(nameof(newValue), "ItemTemplate");
+                        throw new ArgumentException(nameof(newValue), "ItemTemplate");
                     }
                 }
 
@@ -705,7 +706,7 @@ namespace ModernWpf.Controls
         {
             if (m_isLayoutInProgress)
             {
-                throw new Exception("Layout cannot be changed during layout.");
+                throw new InvalidOperationException("Layout cannot be changed during layout.");
             }
 
             ViewManager.OnLayoutChanging();
@@ -766,12 +767,12 @@ namespace ModernWpf.Controls
             if (m_isLayoutInProgress)
             {
                 // Bad things will follow if the data changes while we are in the middle of a layout pass.
-                throw new Exception("Changes in data source are not allowed during layout.");
+                throw new InvalidOperationException("Changes in data source are not allowed during layout.");
             }
 
             if (IsProcessingCollectionChange)
             {
-                throw new Exception("Changes in the data source are not allowed during another change in the data source.");
+                throw new InvalidOperationException("Changes in the data source are not allowed during another change in the data source.");
             }
 
             m_processingItemsSourceChange = args;
@@ -784,7 +785,7 @@ namespace ModernWpf.Controls
                 {
                     if (layout is VirtualizingLayout virtualLayout)
                     {
-                        virtualLayout.OnItemsChangedCore(GetLayoutContext(), sender, args);
+                        ((IVirtualizingLayoutOverrides)virtualLayout).OnItemsChangedCore(GetLayoutContext(), sender, args);
                     }
                     else
                     {
@@ -816,38 +817,6 @@ namespace ModernWpf.Controls
                 m_layoutContext = new RepeaterLayoutContext(this);
             }
             return m_layoutContext;
-        }
-
-        protected override void OnChildDesiredSizeChanged(UIElement child)
-        {
-            m_childDesiredSizeChangedCounter++;
-            if (m_lastChildDesiredSizeChangedCounter == 0)
-            {
-                m_lastChildDesiredSizeChangedCounter = m_childDesiredSizeChangedCounter;
-                Dispatcher.BeginInvoke(CheckForNewChildDesiredSizeChanges);
-            }
-        }
-
-        private void CheckForNewChildDesiredSizeChanges()
-        {
-            if (m_lastChildDesiredSizeChangedCounter > 0)
-            {
-                Debug.Assert(m_childDesiredSizeChangedCounter > 0);
-                if (m_lastChildDesiredSizeChangedCounter == m_childDesiredSizeChangedCounter)
-                {
-                    m_lastChildDesiredSizeChangedCounter = m_childDesiredSizeChangedCounter = 0;
-
-                    if (IsMeasureValid)
-                    {
-                        InvalidateMeasure();
-                    }
-                }
-                else
-                {
-                    m_lastChildDesiredSizeChangedCounter = m_childDesiredSizeChangedCounter;
-                    Dispatcher.BeginInvoke(CheckForNewChildDesiredSizeChanges, DispatcherPriority.Background);
-                }
-            }
         }
 
         private bool IsProcessingCollectionChange => m_processingItemsSourceChange != null;
@@ -887,9 +856,5 @@ namespace ModernWpf.Controls
         // See: https://github.com/microsoft/microsoft-ui-xaml/issues/776
         // Solution: Have flag that is only true when DataTemplate exists but it is empty.
         private bool m_isItemTemplateEmpty = false;
-
-        // Workaround for infinite MeasureOverride loop
-        private int m_childDesiredSizeChangedCounter;
-        private int m_lastChildDesiredSizeChangedCounter;
     }
 }

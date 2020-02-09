@@ -4,7 +4,7 @@ using ModernWpf.Controls;
 using System.Collections.ObjectModel;
 using System.Windows;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "CornerRadius")]
     public sealed partial class CornerRadiusPage : TestPage

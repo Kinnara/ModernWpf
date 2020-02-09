@@ -3,7 +3,7 @@
 
 using System.Windows;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     public sealed partial class ExtraCommandBarFlyoutPage : TestPage
     {

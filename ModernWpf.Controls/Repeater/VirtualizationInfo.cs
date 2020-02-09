@@ -28,6 +28,11 @@ namespace ModernWpf.Controls
     // That would make the lookups much more performant than an attached property.
     internal class VirtualizationInfo
     {
+        public VirtualizationInfo()
+        {
+            ArrangeBounds = ItemsRepeater.InvalidRect;
+        }
+
         public ElementOwner Owner { get; private set; } = ElementOwner.ElementFactory;
 
         public int Index { get; private set; } = -1;
@@ -105,7 +110,7 @@ namespace ModernWpf.Controls
         {
             if (!IsRealized)
             {
-                throw new Exception("You can't pin an unrealized element.");
+                throw new InvalidOperationException("You can't pin an unrealized element.");
             }
 
             return ++m_pinCounter;
@@ -115,12 +120,12 @@ namespace ModernWpf.Controls
         {
             if (!IsRealized)
             {
-                throw new Exception("You can't unpin an unrealized element.");
+                throw new InvalidOperationException("You can't unpin an unrealized element.");
             }
 
             if (!IsPinned)
             {
-                throw new Exception("UnpinElement was called more often than PinElement.");
+                throw new InvalidOperationException("UnpinElement was called more often than PinElement.");
             }
 
             return --m_pinCounter;
@@ -134,11 +139,11 @@ namespace ModernWpf.Controls
 
         public Rect ArrangeBounds { get; set; }
 
-        public string UniqueId { get; private set; }
+        public string UniqueId { get; private set; } = string.Empty;
 
-        public bool KeepAlive { get; set; }
+        public bool KeepAlive { get; set; } = false;
 
-        public bool AutoRecycleCandidate { get; set; }
+        public bool AutoRecycleCandidate { get; set; } = false;
 
         private uint m_pinCounter = 0u;
     }

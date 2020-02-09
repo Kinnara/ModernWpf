@@ -84,9 +84,8 @@ namespace ModernWpf.Controls
                     }
                     else
                     {
-                        // TODO: Commented out to avoid display issues and exceptions on WPF
-                        //elementInfo = elements[elements.Count - 1];
-                        //elements.RemoveAt(elements.Count - 1);
+                        elementInfo = elements.Last();
+                        elements.RemoveLast();
                     }
 
                     var ownerAsPanel = EnsureOwnerIsPanelOrNull(winrtOwner);
@@ -171,14 +170,14 @@ namespace ModernWpf.Controls
                 ownerAsPanel = owner as Panel;
                 if (ownerAsPanel == null)
                 {
-                    throw new Exception("owner must to be a Panel or null.");
+                    throw new ArgumentException("owner must to be a Panel or null.");
                 }
             }
 
             return ownerAsPanel;
         }
 
-        private struct ElementInfo
+        private class ElementInfo
         {
             public ElementInfo(UIElement element, Panel owner)
             {

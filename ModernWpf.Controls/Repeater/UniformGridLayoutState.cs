@@ -15,7 +15,7 @@ namespace ModernWpf.Controls
             IFlowLayoutAlgorithmDelegates callbacks)
         {
             FlowAlgorithm.InitializeForContext(context, callbacks);
-            context.LayoutStateCore = this;
+            ((ILayoutContextOverrides)context).LayoutStateCore = this;
         }
 
         internal void UninitializeForContext(VirtualizingLayoutContext context)
@@ -108,6 +108,12 @@ namespace ModernWpf.Controls
                 var numItemsPerColumn = Math.Min(
                     maxItemsPerLine,
                     (uint)Math.Max(1.0, availableSizeMinor / (itemSizeMinor + minorItemSpacing)));
+
+                if (numItemsPerColumn == 0)
+                {
+                    numItemsPerColumn = 1;
+                }
+
                 var usedSpace = (numItemsPerColumn * (itemSizeMinor + minorItemSpacing)) - minorItemSpacing;
                 var remainingSpace = ((int)(availableSizeMinor - usedSpace));
                 extraMinorPixelsForEachItem = remainingSpace / ((int)numItemsPerColumn);

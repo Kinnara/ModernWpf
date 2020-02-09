@@ -95,8 +95,6 @@ namespace ModernWpf
 
         public static void UpdateBrushes(ResourceDictionary themeDictionary, ResourceDictionary colors)
         {
-            int count = 0;
-
             foreach (DictionaryEntry entry in themeDictionary)
             {
                 if (entry.Value is SolidColorBrush brush)
@@ -105,12 +103,9 @@ namespace ModernWpf
                     if (colorKey != null && colors.Contains(colorKey))
                     {
                         brush.SetCurrentValue(SolidColorBrush.ColorProperty, (Color)colors[colorKey]);
-                        count++;
                     }
                 }
             }
-
-            Debug.WriteLine($"{count} brushes updated");
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

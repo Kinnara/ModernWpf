@@ -6,7 +6,7 @@ using ModernWpf.Controls.Primitives;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
 
     [TopLevelTestPage(Name = "DropDownButton", Icon = "DropDownButton.png")]

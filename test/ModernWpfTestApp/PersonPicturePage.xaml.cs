@@ -14,7 +14,7 @@ using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "PersonPicture", Icon = "PersonPicture.png")]
     public sealed partial class PersonPicturePage : TestPage

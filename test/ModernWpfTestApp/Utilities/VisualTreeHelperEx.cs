@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Interop;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     internal static class VisualTreeHelperEx
     {

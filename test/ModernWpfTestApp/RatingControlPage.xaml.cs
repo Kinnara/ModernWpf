@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "RatingControl", Icon = "RatingControl.png")]
     public sealed partial class RatingControlPage : TestPage
@@ -103,7 +103,7 @@ namespace ModernWpfTestApp
         }
 
 
-        protected internal override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             _dt.Tick -= DispatcherTimer_Tick; // prevent leaks since the dispatcher holds a pointer to this
         }

@@ -362,6 +362,10 @@
                         <ui:NumberBox
                             Header="Spacing"
                             Value="{Binding Source={StaticResource stackLayout}, Path=Spacing}" />
+                        <Button
+                            x:Name="changeFirstItemButton"
+                            Content="Change first item"
+                            Click="ChangeFirstItemButton_Click" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

@@ -76,7 +76,7 @@ namespace ModernWpf.Controls
 
         #region IVirtualizingLayoutOverrides
 
-        protected internal override void InitializeForContextCore(VirtualizingLayoutContext context)
+        protected override void InitializeForContextCore(VirtualizingLayoutContext context)
         {
             var state = context.LayoutState;
             FlowLayoutState flowState = null;
@@ -100,13 +100,13 @@ namespace ModernWpf.Controls
             flowState.InitializeForContext(context, this);
         }
 
-        protected internal override void UninitializeForContextCore(VirtualizingLayoutContext context)
+        protected override void UninitializeForContextCore(VirtualizingLayoutContext context)
         {
             var flowState = GetAsFlowState(context.LayoutState);
             flowState.UninitializeForContext(context);
         }
 
-        protected internal override Size MeasureOverride(
+        protected override Size MeasureOverride(
             VirtualizingLayoutContext context,
             Size availableSize)
         {
@@ -123,7 +123,7 @@ namespace ModernWpf.Controls
             return desiredSize;
         }
 
-        protected internal override Size ArrangeOverride(
+        protected override Size ArrangeOverride(
             VirtualizingLayoutContext context,
             Size finalSize)
         {
@@ -136,7 +136,7 @@ namespace ModernWpf.Controls
             return value;
         }
 
-        protected internal override void OnItemsChangedCore(
+        protected override void OnItemsChangedCore(
             VirtualizingLayoutContext context,
             object source,
             NotifyCollectionChangedEventArgs args)
@@ -450,7 +450,7 @@ namespace ModernWpf.Controls
             double avgLineSize = 0;
             avgCountInLine = 1;
 
-            Debug.Assert(context.ItemCountCore() > 0);
+            Debug.Assert(((IVirtualizingLayoutContextOverrides)context).ItemCountCore() > 0);
             if (flowState.TotalLinesMeasured == 0)
             {
                 var tmpElement = context.GetOrCreateElementAt(0, ElementRealizationOptions.ForceCreate | ElementRealizationOptions.SuppressAutoRecycle);
@@ -470,7 +470,7 @@ namespace ModernWpf.Controls
 
         private FlowLayoutState GetAsFlowState(object state)
         {
-            return state as FlowLayoutState;
+            return (FlowLayoutState)state;
         }
 
         private void InvalidateLayout()
@@ -488,9 +488,9 @@ namespace ModernWpf.Controls
             return OrientationBasedMeasures.MajorEnd(realizationWindow) >= OrientationBasedMeasures.MajorStart(extent) && OrientationBasedMeasures.MajorStart(realizationWindow) <= OrientationBasedMeasures.MajorEnd(extent);
         }
 
-        private double LineSpacing => OrientationBasedMeasures.ScrollOrientation == ScrollOrientation.Vertical ? m_minColumnSpacing : m_minRowSpacing;
+        private double LineSpacing => new ScrollOrientation() == ScrollOrientation.Vertical ? m_minColumnSpacing : m_minRowSpacing;
 
-        private double MinItemSpacing => OrientationBasedMeasures.ScrollOrientation == ScrollOrientation.Vertical ? m_minRowSpacing : m_minColumnSpacing;
+        private double MinItemSpacing => new ScrollOrientation() == ScrollOrientation.Vertical ? m_minRowSpacing : m_minColumnSpacing;
 
         // Fields
         private double m_minRowSpacing;

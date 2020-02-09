@@ -102,7 +102,7 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        protected internal override Size MeasureOverride(NonVirtualizingLayoutContext context, Size availableSize)
+        protected override Size MeasureOverride(NonVirtualizingLayoutContext context, Size availableSize)
         {
             var children = context.Children;
             if (children != null && children.Count > 0)
@@ -140,7 +140,7 @@ namespace ModernWpf.Controls.Primitives
             return new Size(0, 0);
         }
 
-        protected internal override Size ArrangeOverride(NonVirtualizingLayoutContext context, Size finalSize)
+        protected override Size ArrangeOverride(NonVirtualizingLayoutContext context, Size finalSize)
         {
             var children = context.Children;
             if (children != null)

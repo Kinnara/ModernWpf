@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Windows.Globalization.NumberFormatting;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "NumberBox")]
     public sealed partial class NumberBoxPage : TestPage

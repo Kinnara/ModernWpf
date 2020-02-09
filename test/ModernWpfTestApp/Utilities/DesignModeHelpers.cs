@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 
-namespace ModernWpfTestApp
+namespace MUXControlsTestApp
 {
     public static class DesignModeHelpers
     {

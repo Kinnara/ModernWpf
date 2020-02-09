@@ -15,7 +15,7 @@ namespace ModernWpf.Controls
             m_virtualizingContext = new WeakReference<VirtualizingLayoutContext>(virtualizingContext);
         }
 
-        protected internal override object LayoutStateCore
+        protected override object LayoutStateCore
         {
             get
             {
