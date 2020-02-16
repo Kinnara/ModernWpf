@@ -27,6 +27,7 @@ namespace ModernWpf.Controls
 
         public AppBarButton()
         {
+            IsVisibleChanged += OnIsVisibleChanged;
         }
 
         #region CornerRadius
@@ -62,7 +63,7 @@ namespace ModernWpf.Controls
 
         private void OnFlyoutChanged()
         {
-            UpdateVisualState(true);
+            UpdateVisualState();
         }
 
         #endregion
@@ -133,10 +134,10 @@ namespace ModernWpf.Controls
 
         #region ApplicationViewState
 
-        public static readonly DependencyProperty ApplicationViewStateProperty =
+        private static readonly DependencyProperty ApplicationViewStateProperty =
             AppBarElementProperties.ApplicationViewStateProperty.AddOwner(typeof(AppBarButton));
 
-        public AppBarElementApplicationViewState ApplicationViewState
+        private AppBarElementApplicationViewState ApplicationViewState
         {
             get => (AppBarElementApplicationViewState)GetValue(ApplicationViewStateProperty);
         }
@@ -150,16 +151,9 @@ namespace ModernWpf.Controls
         {
             AppBarElementApplicationViewState value;
 
-            if (IsInOverflow)
+            if (IsInOverflow && IsVisible && VisualParent is CommandBarOverflowPanel overflow)
             {
-                if (VisualParent is CommandBarOverflowPanel overflow)
-                {
-                    value = ComputeApplicationViewStateInOverflow(overflow.HasToggleButton, overflow.HasMenuIcon);
-                }
-                else
-                {
-                    value = ComputeApplicationViewStateInOverflow(false, Icon != null);
-                }
+                value = ComputeApplicationViewStateInOverflow(overflow.HasToggleButton, overflow.HasMenuIcon);
             }
             else
             {
@@ -263,7 +257,7 @@ namespace ModernWpf.Controls
             if (e.Property == ToolBar.IsOverflowItemProperty)
             {
                 AppBarElementProperties.UpdateIsInOverflow(this);
-                UpdateVisualState(true);
+                UpdateVisualState();
             }
         }
 
@@ -284,10 +278,22 @@ namespace ModernWpf.Controls
             ((AppBarButton)d).UpdateApplicationViewState();
         }
 
-        private void UpdateVisualState(bool useTransitions)
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            string stateName = Flyout != null && !ToolBar.GetIsOverflowItem(this) ? "HasFlyout" : "NoFlyout";
-            VisualStateManager.GoToState(this, stateName, useTransitions);
+            UpdateApplicationViewState();
+        }
+
+        private void UpdateVisualState(bool useTransitions = true)
+        {
+            bool hasFlyout = Flyout != null && !ToolBar.GetIsOverflowItem(this);
+            VisualStateManager.GoToState(this, hasFlyout ? "HasFlyout" : "NoFlyout", useTransitions);
+
+            VisualStateManager.GoToState(this, ApplicationViewState.ToString(), useTransitions);
+        }
+
+        void IAppBarElement.UpdateVisualState()
+        {
+            UpdateVisualState();
         }
     }
 }

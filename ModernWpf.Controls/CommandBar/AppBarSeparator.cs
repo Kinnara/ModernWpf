@@ -19,6 +19,7 @@ namespace ModernWpf.Controls
 
         public AppBarSeparator()
         {
+            IsVisibleChanged += OnIsVisibleChanged;
         }
 
         #region IsCompact
@@ -48,19 +49,24 @@ namespace ModernWpf.Controls
 
         #region ApplicationViewState
 
-        public static readonly DependencyProperty ApplicationViewStateProperty =
+        private static readonly DependencyProperty ApplicationViewStateProperty =
             AppBarElementProperties.ApplicationViewStateProperty.AddOwner(typeof(AppBarSeparator));
 
-        public AppBarElementApplicationViewState ApplicationViewState
+        private AppBarElementApplicationViewState ApplicationViewState
         {
             get => (AppBarElementApplicationViewState)GetValue(ApplicationViewStateProperty);
         }
 
         void IAppBarElement.UpdateApplicationViewState()
         {
+            UpdateApplicationViewState();
+        }
+
+        private void UpdateApplicationViewState()
+        {
             AppBarElementApplicationViewState value;
 
-            if (IsInOverflow)
+            if (IsInOverflow && IsVisible)
             {
                 value = AppBarElementApplicationViewState.Overflow;
             }
@@ -78,6 +84,12 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            UpdateVisualState(false);
+        }
+
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
@@ -91,6 +103,21 @@ namespace ModernWpf.Controls
         private static void OnOverflowModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             AppBarElementProperties.UpdateIsInOverflow(d);
+        }
+
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateApplicationViewState();
+        }
+
+        private void UpdateVisualState(bool useTransitions = true)
+        {
+            VisualStateManager.GoToState(this, ApplicationViewState.ToString(), useTransitions);
+        }
+
+        void IAppBarElement.UpdateVisualState()
+        {
+            UpdateVisualState();
         }
     }
 }

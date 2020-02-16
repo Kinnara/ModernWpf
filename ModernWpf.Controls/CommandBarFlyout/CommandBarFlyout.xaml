@@ -32,6 +32,18 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ApplicationViewStates">
+                                <VisualState x:Name="FullSize" />
+                                <VisualState x:Name="Compact" />
+                                <VisualState x:Name="LabelOnRight" />
+                                <VisualState x:Name="LabelCollapsed" />
+                                <VisualState x:Name="Overflow" />
+                                <VisualState x:Name="OverflowWithToggleButtons" />
+                                <VisualState x:Name="OverflowWithMenuIcons" />
+                                <VisualState x:Name="OverflowWithToggleButtonsAndMenuIcons" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="ContentRoot">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -81,24 +93,25 @@
                                 Margin="12,0,12,0"
                                 VerticalAlignment="Center"
                                 Visibility="Collapsed" />-->
+                            <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" GroupName="ApplicationViewStates" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <!-- Overflow -->
-                        <Trigger Property="ApplicationViewState" Value="Overflow">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <!-- OverflowWithToggleButtons -->
-                        <Trigger Property="ApplicationViewState" Value="OverflowWithToggleButtons">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
                         </Trigger>
                         <!-- OverflowWithMenuIcons -->
-                        <Trigger Property="ApplicationViewState" Value="OverflowWithMenuIcons">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
@@ -109,7 +122,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
                         </Trigger>
                         <!-- OverflowWithToggleButtonsAndMenuIcons -->
-                        <Trigger Property="ApplicationViewState" Value="OverflowWithToggleButtonsAndMenuIcons">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtonsAndMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
@@ -211,6 +224,16 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ApplicationViewStates">
+                                <VisualState x:Name="FullSize" />
+                                <VisualState x:Name="Compact" />
+                                <VisualState x:Name="LabelOnRight" />
+                                <VisualState x:Name="LabelCollapsed" />
+                                <VisualState x:Name="Overflow" />
+                                <VisualState x:Name="OverflowWithMenuIcons" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <Rectangle
                                 x:Name="CheckedHighlightBackground"
@@ -266,11 +289,12 @@
                                     VerticalAlignment="Center"
                                     Visibility="Collapsed" />
                             </Grid>
+                            <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" GroupName="ApplicationViewStates" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <!-- Overflow -->
-                        <Trigger Property="ApplicationViewState" Value="Overflow">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Visibility" Value="Collapsed" />
@@ -278,7 +302,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <!-- OverflowWithMenuIcons -->
-                        <Trigger Property="ApplicationViewState" Value="OverflowWithMenuIcons">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Visible" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />

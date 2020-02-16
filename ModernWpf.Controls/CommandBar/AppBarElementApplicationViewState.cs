@@ -1,6 +1,6 @@
 ﻿namespace ModernWpf.Controls
 {
-    public enum AppBarElementApplicationViewState
+    internal enum AppBarElementApplicationViewState
     {
         FullSize,
         Compact,

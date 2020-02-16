@@ -27,6 +27,16 @@
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ApplicationViewStates">
+                                <VisualState x:Name="FullSize" />
+                                <VisualState x:Name="Compact" />
+                                <VisualState x:Name="LabelOnRight" />
+                                <VisualState x:Name="LabelCollapsed" />
+                                <VisualState x:Name="Overflow" />
+                                <VisualState x:Name="OverflowWithToggleButtons" />
+                                <VisualState x:Name="OverflowWithMenuIcons" />
+                                <VisualState x:Name="OverflowWithToggleButtonsAndMenuIcons" />
+                            </VisualStateGroup>
                             <VisualStateGroup x:Name="FlyoutStates">
                                 <VisualState x:Name="NoFlyout" />
                                 <VisualState x:Name="HasFlyout">
@@ -114,17 +124,17 @@
                                     Visibility="Collapsed" />
 
                             </Grid>
-
+                            <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" GroupName="ApplicationViewStates" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <!--#region ApplicationViewStates-->
                         <!-- Compact -->
-                        <Trigger Property="ApplicationViewState" Value="Compact">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Compact">
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <!-- LabelOnRight -->
-                        <Trigger Property="ApplicationViewState" Value="LabelOnRight">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="LabelOnRight">
                             <Setter TargetName="ContentViewbox" Property="Margin" Value="{DynamicResource AppBarButtonContentViewboxMargin}" />
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="{DynamicResource AppBarThemeCompactHeight}" />
                             <Setter TargetName="TextLabel" Property="Grid.Row" Value="0" />
@@ -134,19 +144,19 @@
                             <Setter Property="Width" Value="NaN" />
                         </Trigger>
                         <!-- LabelCollapsed -->
-                        <Trigger Property="ApplicationViewState" Value="LabelCollapsed">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="LabelCollapsed">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="{DynamicResource AppBarThemeCompactHeight}" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <!-- Overflow -->
-                        <Trigger Property="ApplicationViewState" Value="Overflow">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <!-- OverflowWithToggleButtons -->
-                        <Trigger Property="ApplicationViewState" Value="OverflowWithToggleButtons">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
@@ -154,7 +164,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
                         </Trigger>
                         <!-- OverflowWithMenuIcons -->
-                        <Trigger Property="ApplicationViewState" Value="OverflowWithMenuIcons">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
@@ -166,7 +176,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
                         </Trigger>
                         <!-- OverflowWithToggleButtonsAndMenuIcons -->
-                        <Trigger Property="ApplicationViewState" Value="OverflowWithToggleButtonsAndMenuIcons">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtonsAndMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
@@ -179,6 +189,7 @@
                         </Trigger>
                         <!--#endregion-->
                         <!--#region CommonStates-->
+                        <!-- PointerOver -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsInOverflow" Value="False" />
@@ -192,6 +203,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />
                         </MultiTrigger>
+                        <!-- Pressed -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsInOverflow" Value="False" />
@@ -205,6 +217,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />
                         </MultiTrigger>
+                        <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundDisabled}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushDisabled}" />
@@ -256,6 +269,7 @@
                             <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundSubMenuOpened}" />
                         </MultiTrigger>-->
                         <!--#endregion-->
+                        <!-- KeyboardAcceleratorTextVisible -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="HasInputGestureText" Value="True" />
@@ -263,13 +277,6 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
                         </MultiTrigger>
-                        <!--<MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="HasFlyout" Value="True" />
-                                <Condition Property="IsInOverflow" Value="False" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
-                        </MultiTrigger>-->
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

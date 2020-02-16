@@ -26,6 +26,16 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ApplicationViewStates">
+                                <VisualState x:Name="FullSize" />
+                                <VisualState x:Name="Compact" />
+                                <VisualState x:Name="LabelOnRight" />
+                                <VisualState x:Name="LabelCollapsed" />
+                                <VisualState x:Name="Overflow" />
+                                <VisualState x:Name="OverflowWithMenuIcons" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <Rectangle
                                 x:Name="CheckedHighlightBackground"
@@ -110,17 +120,17 @@
                                     Visibility="Collapsed" />
 
                             </Grid>
-
+                            <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" GroupName="ApplicationViewStates" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <!--#region ApplicationViewStates-->
                         <!-- Compact -->
-                        <Trigger Property="ApplicationViewState" Value="Compact">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Compact">
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <!-- LabelOnRight -->
-                        <Trigger Property="ApplicationViewState" Value="LabelOnRight">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="LabelOnRight">
                             <Setter TargetName="ContentViewbox" Property="Margin" Value="{DynamicResource AppBarButtonContentViewboxMargin}" />
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="{DynamicResource AppBarThemeCompactHeight}" />
                             <Setter TargetName="TextLabel" Property="Grid.Row" Value="0" />
@@ -130,12 +140,12 @@
                             <Setter Property="Width" Value="NaN" />
                         </Trigger>
                         <!-- LabelCollapsed -->
-                        <Trigger Property="ApplicationViewState" Value="LabelCollapsed">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="LabelCollapsed">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="{DynamicResource AppBarThemeCompactHeight}" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <!-- Overflow -->
-                        <Trigger Property="ApplicationViewState" Value="Overflow">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
@@ -144,7 +154,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <!-- OverflowWithMenuIcons -->
-                        <Trigger Property="ApplicationViewState" Value="OverflowWithMenuIcons">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Visible" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
@@ -359,6 +369,7 @@
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
                         <!--#endregion-->
+                        <!-- KeyboardAcceleratorTextVisible -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="HasInputGestureText" Value="True" />

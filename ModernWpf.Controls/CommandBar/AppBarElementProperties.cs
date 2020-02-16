@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,6 +11,7 @@ namespace ModernWpf.Controls
     internal interface IAppBarElement
     {
         void UpdateApplicationViewState();
+        void UpdateVisualState();
     }
 
     internal static class AppBarElementProperties
@@ -131,10 +133,17 @@ namespace ModernWpf.Controls
                 "ApplicationViewState",
                 typeof(AppBarElementApplicationViewState),
                 typeof(AppBarElementProperties),
-                new PropertyMetadata(AppBarElementApplicationViewState.FullSize));
+                new PropertyMetadata(
+                    AppBarElementApplicationViewState.FullSize,
+                    OnApplicationViewStateChanged));
 
-        public static readonly DependencyProperty ApplicationViewStateProperty =
+        internal static readonly DependencyProperty ApplicationViewStateProperty =
             ApplicationViewStatePropertyKey.DependencyProperty;
+
+        private static void OnApplicationViewStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as IAppBarElement)?.UpdateVisualState();
+        }
 
         #endregion
 

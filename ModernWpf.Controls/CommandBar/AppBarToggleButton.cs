@@ -30,6 +30,7 @@ namespace ModernWpf.Controls
 
         public AppBarToggleButton()
         {
+            IsVisibleChanged += OnIsVisibleChanged;
         }
 
         #region CornerRadius
@@ -111,10 +112,10 @@ namespace ModernWpf.Controls
 
         #region ApplicationViewState
 
-        public static readonly DependencyProperty ApplicationViewStateProperty =
+        private static readonly DependencyProperty ApplicationViewStateProperty =
             AppBarElementProperties.ApplicationViewStateProperty.AddOwner(typeof(AppBarToggleButton));
 
-        public AppBarElementApplicationViewState ApplicationViewState
+        private AppBarElementApplicationViewState ApplicationViewState
         {
             get => (AppBarElementApplicationViewState)GetValue(ApplicationViewStateProperty);
         }
@@ -128,16 +129,9 @@ namespace ModernWpf.Controls
         {
             AppBarElementApplicationViewState value;
 
-            if (IsInOverflow)
+            if (IsInOverflow && IsVisible && VisualParent is CommandBarOverflowPanel overflow)
             {
-                if (VisualParent is CommandBarOverflowPanel overflow)
-                {
-                    value = ComputeApplicationViewStateInOverflow(overflow.HasMenuIcon);
-                }
-                else
-                {
-                    value = ComputeApplicationViewStateInOverflow(Icon != null);
-                }
+                value = ComputeApplicationViewStateInOverflow(overflow.HasMenuIcon);
             }
             else
             {
@@ -232,6 +226,12 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            UpdateVisualState(false);
+        }
+
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
             base.OnVisualParentChanged(oldParent);
@@ -269,6 +269,21 @@ namespace ModernWpf.Controls
         private static void OnDefaultLabelPositionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((AppBarToggleButton)d).UpdateApplicationViewState();
+        }
+
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateApplicationViewState();
+        }
+
+        private void UpdateVisualState(bool useTransitions = true)
+        {
+            VisualStateManager.GoToState(this, ApplicationViewState.ToString(), useTransitions);
+        }
+
+        void IAppBarElement.UpdateVisualState()
+        {
+            UpdateVisualState();
         }
     }
 }
