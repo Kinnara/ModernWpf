@@ -31,8 +31,8 @@
                                 </VisualState>
                                 <VisualState x:Name="SecondaryCommandsOnly">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PrimaryItemsRoot" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_ToolBarPanel" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Hidden}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -69,7 +69,7 @@
                                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                     IsTabStop="False"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                <ToolBarPanel
+                                <primitives:CommandBarPanel
                                     x:Name="PART_ToolBarPanel"
                                     HorizontalAlignment="Right"
                                     MinHeight="{DynamicResource AppBarThemeCompactHeight}"

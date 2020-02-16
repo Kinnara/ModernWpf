@@ -39,7 +39,7 @@ namespace ModernWpf.Controls
 
         public object Content
         {
-            get => (object)GetValue(ContentProperty);
+            get => GetValue(ContentProperty);
             set => SetValue(ContentProperty, value);
         }
 
@@ -99,25 +99,13 @@ namespace ModernWpf.Controls
 
         private void PrimaryCommands_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UpdateHasPrimaryCommands();
-
             if (e.NewItems != null)
             {
                 UpdateOverflowModeForPrimaryCommands(e.NewItems.OfType<DependencyObject>());
             }
         }
 
-        private bool HasPrimaryCommands { get; set; }
-
-        private void UpdateHasPrimaryCommands()
-        {
-            bool value = PrimaryCommands.Count > 0;
-            if (HasPrimaryCommands != value)
-            {
-                HasPrimaryCommands = value;
-                UpdateVisualState();
-            }
-        }
+        private bool HasPrimaryCommands => m_toolBar != null && m_toolBar.HasPrimaryCommands;
 
         #endregion
 
@@ -127,25 +115,13 @@ namespace ModernWpf.Controls
 
         private void SecondaryCommands_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UpdateHasSecondaryCommands();
-
             if (e.NewItems != null)
             {
                 UpdateOverflowModeForSecondaryCommands(e.NewItems.OfType<DependencyObject>());
             }
         }
 
-        private bool HasSecondaryCommands { get; set; }
-
-        private void UpdateHasSecondaryCommands()
-        {
-            bool value = SecondaryCommands.Count > 0;
-            if (HasSecondaryCommands != value)
-            {
-                HasSecondaryCommands = value;
-                UpdateVisualState();
-            }
-        }
+        private bool HasSecondaryCommands => m_toolBar != null && m_toolBar.HasOverflowItems;
 
         #endregion
 
@@ -240,14 +216,16 @@ namespace ModernWpf.Controls
 
         public override void OnApplyTemplate()
         {
-            base.OnApplyTemplate();
-
             if (m_toolBar != null)
             {
                 m_toolBar.ClearValue(ItemsControl.ItemsSourceProperty);
                 m_toolBar.OverflowOpened -= OnOverflowOpened;
                 m_toolBar.OverflowClosed -= OnOverflowClosed;
+                m_toolBar.HasPrimaryCommandsChanged -= OnHasPrimaryCommandsChanged;
+                m_toolBar.HasOverflowItemsChanged -= OnHasOverflowItemsChanged;
             }
+
+            base.OnApplyTemplate();
 
             m_toolBar = GetTemplateChild(ToolBarName) as CommandBarToolBar;
 
@@ -260,7 +238,11 @@ namespace ModernWpf.Controls
                 };
                 m_toolBar.OverflowOpened += OnOverflowOpened;
                 m_toolBar.OverflowClosed += OnOverflowClosed;
+                m_toolBar.HasPrimaryCommandsChanged += OnHasPrimaryCommandsChanged;
+                m_toolBar.HasOverflowItemsChanged += OnHasOverflowItemsChanged;
             }
+
+            UpdateVisualState(false);
         }
 
         private void OnOverflowOpened(object sender, EventArgs e)
@@ -273,6 +255,16 @@ namespace ModernWpf.Controls
             Closed?.Invoke(this, null);
         }
 
+        private void OnHasPrimaryCommandsChanged(object sender, EventArgs e)
+        {
+            UpdateVisualState();
+        }
+
+        private void OnHasOverflowItemsChanged(object sender, EventArgs e)
+        {
+            UpdateVisualState();
+        }
+
         internal void UpdateVisualState(bool useTransitions = true)
         {
             if (m_toolBar != null)
@@ -283,17 +275,13 @@ namespace ModernWpf.Controls
                 {
                     stateName = "BothCommands";
                 }
-                else if (HasPrimaryCommands)
-                {
-                    stateName = "PrimaryCommandsOnly";
-                }
                 else if (HasSecondaryCommands)
                 {
                     stateName = "SecondaryCommandsOnly";
                 }
                 else
                 {
-                    stateName = "BothCommands";
+                    stateName = "PrimaryCommandsOnly";
                 }
 
                 VisualStateManager.GoToState(m_toolBar, stateName, useTransitions);

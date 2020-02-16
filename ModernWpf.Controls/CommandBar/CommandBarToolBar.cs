@@ -194,9 +194,15 @@ namespace ModernWpf.Controls.Primitives
 
         internal Popup OverflowPopup => m_overflowPopup;
 
+        internal bool HasPrimaryCommands => m_toolBarPanel != null && m_toolBarPanel.HasChildren;
+
         internal event EventHandler OverflowOpened;
 
         internal event EventHandler OverflowClosed;
+
+        internal event EventHandler HasPrimaryCommandsChanged;
+
+        internal event EventHandler HasOverflowItemsChanged;
 
         public override void OnApplyTemplate()
         {
@@ -213,12 +219,17 @@ namespace ModernWpf.Controls.Primitives
                 m_overflowPopup.Closed -= OnOverflowPopupClosed;
             }
 
+            if (m_toolBarPanel != null)
+            {
+                m_toolBarPanel.HasChildrenChanged -= OnToolBarPanelHasChildrenChanged;
+            }
+
             base.OnApplyTemplate();
 
             m_layoutRoot = this.GetTemplateRoot();
             m_moreButton = GetTemplateChild("MoreButton") as ButtonBase;
             m_overflowPopup = GetTemplateChild(OverflowPopupName) as Popup;
-            m_toolBarPanel = GetTemplateChild(ToolBarPanelName) as ToolBarPanel;
+            m_toolBarPanel = GetTemplateChild(ToolBarPanelName) as CommandBarPanel;
             m_toolBarOverflowPanel = GetTemplateChild(ToolBarOverflowPanelName) as CommandBarOverflowPanel;
 
             if (m_moreButton != null)
@@ -233,6 +244,11 @@ namespace ModernWpf.Controls.Primitives
                 m_overflowPopup.SetValue(CustomPopupPlacementHelper.PlacementProperty, CustomPlacementMode.BottomEdgeAlignedRight);
                 m_overflowPopup.Opened += OnOverflowPopupOpened;
                 m_overflowPopup.Closed += OnOverflowPopupClosed;
+            }
+
+            if (m_toolBarPanel != null)
+            {
+                m_toolBarPanel.HasChildrenChanged += OnToolBarPanelHasChildrenChanged;
             }
 
             if (TemplatedParent is CommandBar commandBar)
@@ -273,6 +289,7 @@ namespace ModernWpf.Controls.Primitives
             if (e.Property == HasOverflowItemsProperty)
             {
                 UpdateEffectiveOverflowButtonVisibility();
+                HasOverflowItemsChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -335,6 +352,11 @@ namespace ModernWpf.Controls.Primitives
             OverflowClosed?.Invoke(this, EventArgs.Empty);
         }
 
+        private void OnToolBarPanelHasChildrenChanged(object sender, EventArgs e)
+        {
+            HasPrimaryCommandsChanged?.Invoke(this, e);
+        }
+
         private CustomPopupPlacement[] PositionOverflowPopup(Size popupSize, Size targetSize, Point offset)
         {
             return CustomPopupPlacementHelper.PositionPopup(
@@ -356,7 +378,7 @@ namespace ModernWpf.Controls.Primitives
         private FrameworkElement m_layoutRoot;
         private ButtonBase m_moreButton;
         private Popup m_overflowPopup;
-        private ToolBarPanel m_toolBarPanel;
+        private CommandBarPanel m_toolBarPanel;
         private CommandBarOverflowPanel m_toolBarOverflowPanel;
 
         private readonly ToolTip m_moreButtonClosedToolTip;

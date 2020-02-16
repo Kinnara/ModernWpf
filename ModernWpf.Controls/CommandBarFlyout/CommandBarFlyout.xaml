@@ -536,7 +536,7 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <ToolBarPanel
+                                        <primitives:CommandBarPanel
                                             x:Name="PART_ToolBarPanel"
                                             Height="40"
                                             Grid.Column="0"
