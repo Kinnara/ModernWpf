@@ -87,11 +87,11 @@ namespace ModernWpf.Controls
             get
             {
                 IndexPath anchor = null;
-                if (m_rootNode.AnchorIndex>= 0)
+                if (m_rootNode.AnchorIndex >= 0)
                 {
                     List<int> path = new List<int>();
                     var current = m_rootNode;
-                    while (current != null && current.AnchorIndex>= 0)
+                    while (current != null && current.AnchorIndex >= 0)
                     {
                         path.Add(current.AnchorIndex);
                         current = current.GetAt(current.AnchorIndex, false);
@@ -179,7 +179,7 @@ namespace ModernWpf.Controls
                             false, /* realizeChildren */
                             (currentInfo) =>
                             {
-                                if (currentInfo.Node.SelectedCount> 0)
+                                if (currentInfo.Node.SelectedCount > 0)
                                 {
                                     selectedInfos.Add(new SelectedItemInfo(currentInfo.Node, currentInfo.Path));
                                 }
@@ -238,7 +238,7 @@ namespace ModernWpf.Controls
                         false, /* realizeChildren */
                         (currentInfo) =>
                         {
-                            if (currentInfo.Node.SelectedCount> 0)
+                            if (currentInfo.Node.SelectedCount > 0)
                             {
                                 selectedInfos.Add(new SelectedItemInfo(currentInfo.Node, currentInfo.Path));
                             }
@@ -425,7 +425,7 @@ namespace ModernWpf.Controls
                 true, /* realizeChildren */
                 info =>
                 {
-                    if (info.Node.DataCount> 0)
+                    if (info.Node.DataCount > 0)
                     {
                         info.Node.SelectAll();
                     }
@@ -458,7 +458,7 @@ namespace ModernWpf.Controls
 
         internal SelectionNode SharedLeafNode() { return m_leafNode; }
 
-        internal object ResolvePath(object data, WeakReference<SelectionNode> sourceNode)
+        internal object ResolvePath(object data, IndexPath dataIndexPath)
         {
             object resolved = null;
             // Raise ChildrenRequested event if there is a handler
@@ -467,11 +467,11 @@ namespace ModernWpf.Controls
             {
                 if (m_childrenRequestedEventArgs == null)
                 {
-                    m_childrenRequestedEventArgs = new SelectionModelChildrenRequestedEventArgs(data, sourceNode);
+                    m_childrenRequestedEventArgs = new SelectionModelChildrenRequestedEventArgs(data, dataIndexPath, false /*throwOnAccess*/);
                 }
                 else
                 {
-                    m_childrenRequestedEventArgs.Initialize(data, sourceNode);
+                    m_childrenRequestedEventArgs.Initialize(data, dataIndexPath, false /*throwOnAccess*/);
                 }
 
 
@@ -479,7 +479,7 @@ namespace ModernWpf.Controls
                 resolved = m_childrenRequestedEventArgs.Children;
 
                 // Clear out the values in the args so that it cannot be used after the event handler call.
-                m_childrenRequestedEventArgs.Initialize(null, new WeakReference<SelectionNode>(null) /* empty weakptr */);
+                m_childrenRequestedEventArgs.Initialize(null, null, true /*throwOnAccess*/);
             }
             else
             {
@@ -658,7 +658,7 @@ namespace ModernWpf.Controls
             {
                 var groupNode = m_rootNode.GetAt(groupIdx, true /* realizeChild */);
                 int startIndex = groupIdx == startGroupIndex ? startItemIndex : 0;
-                int endIndex = groupIdx == endGroupIndex ? endItemIndex : groupNode.DataCount- 1;
+                int endIndex = groupIdx == endGroupIndex ? endItemIndex : groupNode.DataCount - 1;
                 selected |= groupNode.SelectRange(new IndexRange(startIndex, endIndex), select);
             }
 
@@ -689,7 +689,7 @@ namespace ModernWpf.Controls
 
                 info =>
                 {
-                    if (info.Node.DataCount== 0)
+                    if (info.Node.DataCount == 0)
                     {
                         // Select only leaf nodes
                         info.ParentNode.Select(info.Path.GetAt(info.Path.GetSize() - 1), select);

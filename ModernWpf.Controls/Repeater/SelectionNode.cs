@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -118,7 +117,8 @@ namespace ModernWpf.Controls
                     var childData = m_dataSource.GetAt(index);
                     if (childData != null)
                     {
-                        var resolvedChild = m_manager.ResolvePath(childData, new WeakReference<SelectionNode>(this));
+                        var childDataIndexPath = IndexPath.CloneWithChildIndex(index);
+                        var resolvedChild = m_manager.ResolvePath(childData, childDataIndexPath);
                         if (resolvedChild != null)
                         {
                             child = new SelectionNode(m_manager, this /* parent */);
@@ -214,12 +214,12 @@ namespace ModernWpf.Controls
 
         public int SelectedIndex()
         {
-            return SelectedCount> 0 ? SelectedIndices()[0] : -1;
+            return SelectedCount > 0 ? SelectedIndices()[0] : -1;
         }
 
         public void SelectedIndex(int value)
         {
-            if (IsValidIndex(value) && (SelectedCount!= 1 || !IsSelected(value)))
+            if (IsValidIndex(value) && (SelectedCount != 1 || !IsSelected(value)))
             {
                 ClearSelection();
 
