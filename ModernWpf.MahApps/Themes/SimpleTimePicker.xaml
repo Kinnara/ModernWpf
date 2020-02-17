@@ -24,6 +24,8 @@
                     <Grid SnapsToDevicePixels="True">
                         <ScrollViewer
                             x:Name="ScrollViewer"
+                            VerticalScrollBarVisibility="Hidden"
+                            HorizontalScrollBarVisibility="Disabled"
                             Focusable="false">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </ScrollViewer>
