@@ -24,7 +24,7 @@ namespace ModernWpf.Controls.Primitives
 
             s_bitmapCache = new BitmapCache
             {
-                SnapsToDevicePixels = true
+                SnapsToDevicePixels = false
             };
             s_bitmapCache.Freeze();
         }
@@ -34,7 +34,7 @@ namespace ModernWpf.Controls.Primitives
             _background = new Grid
             {
                 CacheMode = s_bitmapCache,
-                SnapsToDevicePixels = true
+                SnapsToDevicePixels = false
             };
             AddVisualChild(_background);
         }
@@ -317,7 +317,6 @@ namespace ModernWpf.Controls.Primitives
             return new Border
             {
                 Background = Brushes.Black,
-                Margin = new Thickness(c_shadowMargin),
                 CornerRadius = CornerRadius,
                 Effect = new DropShadowEffect
                 {
@@ -334,7 +333,7 @@ namespace ModernWpf.Controls.Primitives
                 double depth = Depth;
                 var effect = (DropShadowEffect)_shadow1.Effect;
                 effect.ShadowDepth = 0.4 * depth;
-                effect.BlurRadius = 0.9 * depth + c_shadowMargin;
+                effect.BlurRadius = 0.9 * depth;
                 _shadow1.Background = depth >= 32 ? s_bg4 : s_bg3;
             }
         }
@@ -346,7 +345,7 @@ namespace ModernWpf.Controls.Primitives
                 double depth = Depth;
                 var effect = (DropShadowEffect)_shadow2.Effect;
                 effect.ShadowDepth = 0.08 * depth;
-                effect.BlurRadius = 0.22 * depth + c_shadowMargin;
+                effect.BlurRadius = 0.22 * depth;
                 _shadow2.Background = depth >= 32 ? s_bg2 : s_bg1;
             }
         }
@@ -777,6 +776,5 @@ namespace ModernWpf.Controls.Primitives
         private static readonly Brush s_bg1, s_bg2, s_bg3, s_bg4;
         private static readonly BitmapCache s_bitmapCache;
         private static readonly Vector s_noTranslation = new Vector(0, 0);
-        private const double c_shadowMargin = 1;
     }
 }
