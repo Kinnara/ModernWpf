@@ -7,8 +7,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -184,6 +183,7 @@ namespace ModernWpf.Controls.Primitives
 
         public void Hide()
         {
+            CancelAsyncShow();
             HideCore();
         }
 
@@ -206,10 +206,18 @@ namespace ModernWpf.Controls.Primitives
 
         internal virtual void ShowAtCore(FrameworkElement placementTarget)
         {
+            CancelAsyncShow();
+
             if (m_popup != null &&
                 m_popup.IsOpen &&
                 m_target == placementTarget)
             {
+                return;
+            }
+
+            if (m_closing)
+            {
+                m_pendingShow = () => ShowAtCore(placementTarget);
                 return;
             }
 
@@ -244,6 +252,13 @@ namespace ModernWpf.Controls.Primitives
         internal virtual void OnClosed()
         {
             Closed?.Invoke(this, null);
+
+            var pendingShow = m_pendingShow;
+            CancelAsyncShow();
+            if (pendingShow != null)
+            {
+                m_asyncShow = Dispatcher.BeginInvoke(pendingShow);
+            }
         }
 
         internal void BindPlacement(Control presenter)
@@ -418,10 +433,13 @@ namespace ModernWpf.Controls.Primitives
         private void OnPopupClosing(object sender, EventArgs e)
         {
             Closing?.Invoke(this, null);
+            m_closing = true;
         }
 
         private void OnPopupClosed(object sender, EventArgs e)
         {
+            m_closing = false;
+
             if (!m_popup.IsOpen)
             {
                 m_popup.ClearValue(Popup.PlacementProperty);
@@ -450,6 +468,17 @@ namespace ModernWpf.Controls.Primitives
             return CustomPopupPlacementHelper.PositionPopup((CustomPlacementMode)Placement, popupSize, targetSize, offset, child);
         }
 
+        private void CancelAsyncShow()
+        {
+            m_pendingShow = null;
+
+            if (m_asyncShow != null)
+            {
+                m_asyncShow.Abort();
+                m_asyncShow = null;
+            }
+        }
+
         private static readonly IMultiValueConverter s_fullPlacementWidthConverter = new FullPlacementWidthConverter();
         private static readonly IMultiValueConverter s_fullPlacementHeightConverter = new FullPlacementHeightConverter();
         private static readonly IValueConverter s_placementConverter = new PlacementConverter();
@@ -460,6 +489,9 @@ namespace ModernWpf.Controls.Primitives
         private PopupEx m_popup;
         private FrameworkElement m_target;
         private WeakReference<IInputElement> m_weakRefToPreviousFocus;
+        private bool m_closing;
+        private Action m_pendingShow;
+        private DispatcherOperation m_asyncShow;
 
         private class FullPlacementWidthConverter : IMultiValueConverter
         {

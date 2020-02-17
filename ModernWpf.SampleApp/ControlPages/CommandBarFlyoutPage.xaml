@@ -53,7 +53,9 @@
                 <StackPanel>
                     <Button Content="Click me">
                         <ui:FlyoutService.Flyout>
-                            <ui:CommandBarFlyout Placement="RightEdgeAlignedTop">
+                            <ui:CommandBarFlyout
+                                x:Name="CommandBarFlyout2"
+                                Placement="RightEdgeAlignedTop">
                                 <ui:AppBarButton Icon="Cut" ToolTipService.ToolTip="Cut" />
                                 <ui:AppBarButton Icon="Copy" ToolTipService.ToolTip="Copy" />
                                 <ui:AppBarButton Icon="Paste" ToolTipService.ToolTip="Paste" />
@@ -180,6 +182,14 @@
                         </ui:FlyoutService.Flyout>
                     </Button>
                 </StackPanel>
+                <sc:ControlExample.Options>
+                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                        <ComboBox
+                            ui:ControlHelper.Header="Placement"
+                            ItemsSource="{Binding Source={x:Type ui:FlyoutPlacementMode}, Converter={StaticResource EnumValuesConverter}}"
+                            SelectedItem="{Binding ElementName=CommandBarFlyout2, Path=Placement}" />
+                    </ui:SimpleStackPanel>
+                </sc:ControlExample.Options>
             </sc:ControlExample>
         </ui:SimpleStackPanel>
     </ScrollViewer>

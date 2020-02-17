@@ -50,7 +50,8 @@
         CommandBinding,
         ui:VisualStateGroupListener,
         ImageBrush,
-        ui:BitmapIcon
+        ui:BitmapIcon,
+        Storyboard
 	",
     "SeparateByGroups": false,
     "AttributeIndentation": 0,

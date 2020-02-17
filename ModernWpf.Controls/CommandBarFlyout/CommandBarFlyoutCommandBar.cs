@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Input;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -14,6 +15,7 @@ namespace ModernWpf.Controls.Primitives
 
         public CommandBarFlyoutCommandBar()
         {
+            IsVisibleChanged += OnIsVisibleChanged;
         }
 
         internal WeakReference<CommandBarFlyout> OwningFlyout => m_owningFlyout;
@@ -54,6 +56,26 @@ namespace ModernWpf.Controls.Primitives
             base.OnApplyTemplate();
 
             m_toolBar = GetTemplateChild(ToolBarName) as CommandBarFlyoutToolBar;
+        }
+
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue)
+            {
+                InputManager.Current.PostProcessInput += OnPostProcessInput;
+            }
+            else
+            {
+                InputManager.Current.PostProcessInput -= OnPostProcessInput;
+            }
+        }
+
+        private void OnPostProcessInput(object sender, ProcessInputEventArgs e)
+        {
+            if (e.StagingItem.Input.RoutedEvent == Mouse.MouseUpEvent)
+            {
+                e.StagingItem.Input.Handled = true;
+            }
         }
 
         CommandBarFlyoutToolBar m_toolBar;

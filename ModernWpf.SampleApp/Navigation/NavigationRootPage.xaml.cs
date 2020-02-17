@@ -21,6 +21,7 @@ namespace ModernWpf.SampleApp
 
         private bool _ignoreSelectionChange;
         private readonly ControlPagesData _controlPagesData = new ControlPagesData();
+        private string _startPage;
 
         public NavigationRootPage()
         {
@@ -29,8 +30,13 @@ namespace ModernWpf.SampleApp
             Current = this;
             RootFrame = rootFrame;
 
-            //PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(
-            //    x => x.NavigateUri.ToString().Split('/').Last().Equals(nameof(ListView2Page) + ".xaml", StringComparison.OrdinalIgnoreCase));
+            SetStartPage();
+            if (!string.IsNullOrEmpty(_startPage))
+            {
+                PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(
+                    x => x.NavigateUri.ToString().Split('/').Last().Equals(_startPage + ".xaml", StringComparison.OrdinalIgnoreCase));
+            }
+
             NavigateToSelectedPage();
 
             if (Debugger.IsAttached)
@@ -38,6 +44,8 @@ namespace ModernWpf.SampleApp
                 DebugMenuItem.Visibility = Visibility.Visible;
             }
         }
+
+        partial void SetStartPage();
 
         private void ContextMenu_Loaded(object sender, RoutedEventArgs e)
         {

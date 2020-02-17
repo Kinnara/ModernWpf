@@ -18,6 +18,8 @@ namespace ModernWpf.Controls
     {
         public CommandBarFlyout()
         {
+            //AreOpenCloseAnimationsEnabled = false;
+
             PrimaryCommands = new ObservableCollection<ICommandBarElement>();
             SecondaryCommands = new ObservableCollection<ICommandBarElement>();
 
@@ -124,16 +126,7 @@ namespace ModernWpf.Controls
 
             Opening += delegate
             {
-                AreOpenCloseAnimationsEnabled = true;
-
-                if (m_commandBar.HasOpenAnimation())
-                {
-                    InternalPopup.SuppressFadeAnimation = true;
-                }
-                else
-                {
-                    InternalPopup.SuppressFadeAnimation = false;
-                }
+                InternalPopup.SuppressFadeAnimation = true;
 
                 if (ShowMode == FlyoutShowMode.Standard)
                 {
@@ -148,10 +141,6 @@ namespace ModernWpf.Controls
                     if (m_commandBar.HasOpenAnimation())
                     {
                         m_commandBar.PlayOpenAnimation();
-                    }
-                    else
-                    {
-                        AreOpenCloseAnimationsEnabled = false;
                     }
                 }
             };
@@ -196,6 +185,8 @@ namespace ModernWpf.Controls
         public ObservableCollection<ICommandBarElement> PrimaryCommands { get; }
 
         public ObservableCollection<ICommandBarElement> SecondaryCommands { get; }
+
+        internal override PopupAnimation DesiredPopupAnimation => PopupAnimation.Fade;
 
         protected override Control CreatePresenter()
         {

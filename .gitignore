@@ -338,3 +338,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+/ModernWpf.SampleApp/Navigation/NavigationRootPage.local.cs

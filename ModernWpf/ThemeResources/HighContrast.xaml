@@ -149,6 +149,9 @@
     <SolidColorBrush x:Key="SystemControlTransientBackgroundBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
     <m:StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
 
+    <!-- Acrylic Brushes -->
+    <SolidColorBrush x:Key="SystemControlAcrylicElementBrush" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
+
     <!-- Background Brushes -->
     <SolidColorBrush x:Key="SystemControlBackgroundBaseLowRevealBackgroundBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
     <SolidColorBrush x:Key="SystemControlTransparentRevealBackgroundBrush" Color="Transparent" />
