@@ -22,8 +22,10 @@
 
             <ui:RadioButtons
                 Header="WindowStyle"
-                ItemsSource="{Binding Source={x:Type WindowStyle}, Converter={StaticResource EnumValuesConverter}}"
-                SelectedItem="{Binding WindowStyle}" />
+                SelectedItem="{Binding WindowStyle}">
+                <WindowStyle>SingleBorderWindow</WindowStyle>
+                <WindowStyle>ToolWindow</WindowStyle>
+            </ui:RadioButtons>
 
             <ui:RadioButtons
                 Header="ResizeMode"
