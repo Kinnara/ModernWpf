@@ -12,6 +12,7 @@
 		RotateTransform,
 		TranslateTransform,
 		Trigger,
+        EventTrigger,
 		Condition,
 		Setter,
 		Style,

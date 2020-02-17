@@ -131,7 +131,7 @@ namespace MUXControlsTestApp
                 simpleVerify.IsEqual(contentPresenter.Margin.ToString(), expectedHeaderMargin, "HeaderContentPresenter.Margin");
             }
 
-            var grid = (Grid)root;
+            var grid = (Grid)VisualTreeHelper.GetChild(root, 0);
             if (grid != null)
             {
                 var rowDefinitions = grid.RowDefinitions;

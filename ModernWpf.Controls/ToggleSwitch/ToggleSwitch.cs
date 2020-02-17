@@ -236,6 +236,19 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region CornerRadius
+
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(ToggleSwitch));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
+
         private ContentPresenter HeaderContentPresenter { get; set; }
 
         private FrameworkElement SwitchKnobBounds { get; set; }
