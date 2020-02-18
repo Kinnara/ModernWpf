@@ -176,10 +176,6 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        private bool Animates =>
-            SystemParameters.ClientAreaAnimation &&
-            RenderCapability.Tier > 0;
-
         /// <summary>
         /// Flips the logical content presenters to prepare for the next visual
         /// transition.
@@ -226,7 +222,7 @@ namespace ModernWpf.Controls
             NavigationOutTransition navigationOutTransition = null;
             ITransition oldTransition = null;
 
-            if (Animates)
+            if (Helper.IsAnimationsEnabled)
             {
                 navigationOutTransition = TransitionService.GetNavigationOutTransition(oldElement);
 
@@ -404,7 +400,7 @@ namespace ModernWpf.Controls
             NavigationInTransition navigationInTransition = null;
             ITransition newTransition = null;
 
-            if (oldElement != null && newElement != null && Animates)
+            if (oldElement != null && newElement != null && Helper.IsAnimationsEnabled)
             {
                 navigationInTransition = TransitionService.GetNavigationInTransition(newElement);
 
@@ -504,11 +500,7 @@ namespace ModernWpf.Controls
 
         private void QueueTransition(Action action)
         {
-            if (_performTransitionOp != null)
-            {
-                _performTransitionOp.Abort();
-            }
-
+            _performTransitionOp?.Abort();
             _performTransitionOp = Dispatcher.BeginInvoke(() =>
             {
                 _performTransitionOp = null;
