@@ -58,14 +58,16 @@ namespace ModernWpf.Controls
             throw new InvalidOperationException();
         }
 
-        internal override void ShowAtCore(FrameworkElement placementTarget)
+        internal override void ShowAtCore(FrameworkElement placementTarget, bool showAsContextFlyout = false)
         {
-            Show(placementTarget);
-        }
-
-        internal override void ShowAsContextFlyoutCore(FrameworkElement placementTarget)
-        {
-            Show(placementTarget, PlacementMode.MousePoint);
+            if (showAsContextFlyout)
+            {
+                Show(placementTarget, PlacementMode.MousePoint);
+            }
+            else
+            {
+                Show(placementTarget);
+            }
         }
 
         internal override void HideCore()
@@ -94,7 +96,9 @@ namespace ModernWpf.Controls
         {
             if (m_presenter != null &&
                 m_presenter.IsOpen &&
-                m_presenter.PlacementTarget == placementTarget)
+                m_presenter.PlacementTarget == placementTarget &&
+                m_presenter.Placement == placement &&
+                m_currentPlacement == Placement)
             {
                 return;
             }
@@ -118,6 +122,7 @@ namespace ModernWpf.Controls
                 m_presenter.ClearValue(Popup.PlacementRectangleProperty);
             }
 
+            m_currentPlacement = Placement;
             OnOpening();
             m_presenter.IsOpen = true;
         }
@@ -155,6 +160,14 @@ namespace ModernWpf.Controls
 
         private void OnPresenterClosed(object sender, RoutedEventArgs e)
         {
+            if (!m_presenter.IsOpen)
+            {
+                m_presenter.ClearValue(ContextMenu.PlacementProperty);
+                m_presenter.ClearValue(ContextMenu.PlacementTargetProperty);
+                m_presenter.ClearValue(ContextMenu.PlacementRectangleProperty);
+                m_currentPlacement = null;
+            }
+
             OnClosed();
         }
 
@@ -164,5 +177,6 @@ namespace ModernWpf.Controls
         }
 
         private MenuFlyoutPresenter m_presenter;
+        private FlyoutPlacementMode? m_currentPlacement;
     }
 }

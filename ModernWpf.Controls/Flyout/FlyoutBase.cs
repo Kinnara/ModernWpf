@@ -178,7 +178,7 @@ namespace ModernWpf.Controls.Primitives
                 throw new ArgumentNullException(nameof(placementTarget));
             }
 
-            ShowAtCore(placementTarget);
+            ShowAtCore(placementTarget, false);
         }
 
         public void Hide()
@@ -196,37 +196,33 @@ namespace ModernWpf.Controls.Primitives
                 throw new ArgumentNullException(nameof(placementTarget));
             }
 
-            ShowAsContextFlyoutCore(placementTarget);
+            ShowAtCore(placementTarget, true);
         }
 
-        internal virtual void ShowAsContextFlyoutCore(FrameworkElement placementTarget)
-        {
-            ShowAtCore(placementTarget);
-        }
-
-        internal virtual void ShowAtCore(FrameworkElement placementTarget)
+        internal virtual void ShowAtCore(FrameworkElement placementTarget, bool showAsContextFlyout)
         {
             CancelAsyncShow();
 
             if (m_popup != null &&
                 m_popup.IsOpen &&
-                m_target == placementTarget)
+                m_target == placementTarget &&
+                m_showingAsContextFlyout == showAsContextFlyout)
             {
                 return;
             }
 
             if (m_closing)
             {
-                m_pendingShow = () => ShowAtCore(placementTarget);
+                m_pendingShow = () => ShowAtCore(placementTarget, showAsContextFlyout);
                 return;
             }
 
-            PreparePopup(placementTarget);
-
-            Debug.Assert(m_popup.ReadLocalValue(Popup.PlacementProperty) != DependencyProperty.UnsetValue);
-            Debug.Assert(m_popup.ReadLocalValue(Popup.PlacementTargetProperty) != DependencyProperty.UnsetValue);
+            PreparePopup(placementTarget, showAsContextFlyout);
+            Debug.Assert(m_popup.HasLocalValue(Popup.PlacementProperty));
+            Debug.Assert(m_popup.HasLocalValue(Popup.PlacementTargetProperty));
 
             m_target = placementTarget;
+            m_showingAsContextFlyout = showAsContextFlyout;
             OnOpening();
             m_popup.IsOpen = true;
         }
@@ -302,7 +298,7 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private void PreparePopup(FrameworkElement placementTarget)
+        private void PreparePopup(FrameworkElement placementTarget, bool showAsContextFlyout)
         {
             EnsurePopup();
 
@@ -313,7 +309,15 @@ namespace ModernWpf.Controls.Primitives
 
             UpdatePopupAnimation();
 
-            if (Placement == FlyoutPlacementMode.Full &&
+            if (showAsContextFlyout)
+            {
+                m_presenter.ClearValue(FrameworkElement.WidthProperty);
+                m_presenter.ClearValue(FrameworkElement.HeightProperty);
+                m_popup.Placement = PlacementMode.MousePoint;
+                m_popup.PlacementTarget = placementTarget;
+                m_popup.ClearValue(Popup.PlacementRectangleProperty);
+            }
+            else if (Placement == FlyoutPlacementMode.Full &&
                 Window.GetWindow(placementTarget) is Window window)
             {
                 var adornerDecorator = window.FindDescendant<AdornerDecorator>();
@@ -448,6 +452,7 @@ namespace ModernWpf.Controls.Primitives
                 m_popup.ClearValue(FrameworkElement.WidthProperty);
                 m_popup.ClearValue(FrameworkElement.HeightProperty);
                 m_target = null;
+                m_showingAsContextFlyout = false;
             }
 
             OnClosed();
@@ -488,6 +493,7 @@ namespace ModernWpf.Controls.Primitives
         private Control m_presenter;
         private PopupEx m_popup;
         private FrameworkElement m_target;
+        private bool m_showingAsContextFlyout;
         private WeakReference<IInputElement> m_weakRefToPreviousFocus;
         private bool m_closing;
         private Action m_pendingShow;
