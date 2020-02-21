@@ -70,7 +70,7 @@ Modern styles and controls for your WPF applications.
 
 ![DataGrid](docs/images/DataGrid.png "DataGrid")
 
-![ItemsRepeater - UniformGridLayout](docs/images/UniformGridLayout.png "ItemsRepeater - UniformGridLayout")
+![ItemsRepeater](docs/images/ItemsRepeater.png "ItemsRepeater")
 
 ![Custom title bar](docs/images/CustomTitleBar.Dark.png "Custom title bar")
 
