@@ -59,12 +59,12 @@ namespace ModernWpf.Controls
                         }
                         else
                         {
-                            var (value, charLength) = GetNextNumber(input, numberParser);
+                            var parsedNumber = GetNextNumber(input, numberParser);
 
-                            if (charLength > 0)
+                            if (!ParsedNumber.IsEmpty(parsedNumber))
                             {
-                                tokens.Add(new MathToken(MathTokenType.Numeric, value));
-                                input = input.SafeSubstring(charLength - 1); // advance the end of the token
+                                tokens.Add(new MathToken(MathTokenType.Numeric, parsedNumber.Value));
+                                input = input.SafeSubstring(parsedNumber.CharLength - 1); // advance the end of the token
                                 expectNumber = false; // next token should be an operator
                             }
                             else
@@ -100,7 +100,7 @@ namespace ModernWpf.Controls
             return tokens;
         }
 
-        static (double, int) GetNextNumber(string input, INumberBoxNumberFormatter numberParser)
+        static ParsedNumber GetNextNumber(string input, INumberBoxNumberFormatter numberParser)
         {
             // Attempt to parse anything before an operator or space as a number
             Regex regex = new Regex("^-?([^-+/*\\(\\)\\^\\s]+)");
@@ -114,11 +114,11 @@ namespace ModernWpf.Controls
                 if (parsedNum.HasValue)
                 {
                     // Parsing was successful
-                    return (parsedNum.Value, matchLength);
+                    return ParsedNumber.Create(parsedNum.Value, matchLength);
                 }
             }
 
-            return (double.NaN, 0);
+            return ParsedNumber.Empty;
         }
 
         static int GetPrecedenceValue(char c)
