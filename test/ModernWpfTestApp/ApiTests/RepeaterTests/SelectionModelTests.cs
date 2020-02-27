@@ -955,6 +955,28 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                        Path(1)
                    },
                    1 /* selectedInnerNodes */);
+
+                selectionModel = new SelectionModel() { Source = CreateNestedData(2, 2, 1) };
+
+                selectionModel.SelectRange(
+                    Path(1), Path(2));
+
+                ValidateSelection(
+                    selectionModel,
+                    new List<IndexPath> {
+                        Path(1,0,0),
+                        Path(1), Path(2),
+                        Path(1,0),Path(1,1),
+                        Path(2,0),Path(2,1),
+                        Path(1,0,1),
+                        Path(1,1,0),Path(1,1,1),
+                        Path(2,0,0),Path(2,0,1),
+                        Path(2,1,0),Path(2,1,1),
+
+                    },
+                    new List<IndexPath> { IndexPath.CreateFromIndices(new List<int> { }) },
+                    12);
+
             });
         }
 
