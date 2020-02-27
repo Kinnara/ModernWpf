@@ -51,16 +51,16 @@
                             IsOpen="{Binding IsSuggestionListOpen, RelativeSource={RelativeSource TemplatedParent}}">
                             <ui:ThemeShadowChrome
                                 IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
-                                CornerRadius="{Binding ElementName=SuggestionsContainer, Path=CornerRadius}">
+                                CornerRadius="{Binding ElementName=SuggestionsContainer, Path=CornerRadius}"
+                                Width="{TemplateBinding ActualWidth}"
+                                MaxHeight="{TemplateBinding MaxSuggestionListHeight}">
                                 <Border
                                     x:Name="SuggestionsContainer"
                                     Padding="{DynamicResource AutoSuggestListMargin}"
                                     BorderThickness="{DynamicResource AutoSuggestListBorderThemeThickness}"
                                     BorderBrush="{DynamicResource AutoSuggestBoxSuggestionsListBorderBrush}"
                                     Background="{DynamicResource AutoSuggestBoxSuggestionsListBackground}"
-                                    CornerRadius="{DynamicResource OverlayCornerRadius}"
-                                    MaxHeight="{TemplateBinding MaxSuggestionListHeight}"
-                                    Width="{TemplateBinding ActualWidth}">
+                                    CornerRadius="{DynamicResource OverlayCornerRadius}">
                                     <primitives:AutoSuggestBoxListView
                                         x:Name="SuggestionsList"
                                         Style="{DynamicResource {x:Type ListView}}"

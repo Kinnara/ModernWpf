@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 
 namespace ModernWpf.Controls.Primitives
@@ -37,6 +38,9 @@ namespace ModernWpf.Controls.Primitives
                 SnapsToDevicePixels = false
             };
             AddVisualChild(_background);
+
+            SizeChanged += OnSizeChanged;
+            Loaded += OnLoaded;
         }
 
         #region IsShadowEnabled
@@ -202,7 +206,14 @@ namespace ModernWpf.Controls.Primitives
         {
             if (_parentPopupControl != null)
             {
-                _parentPopupControl.SetMargin(PopupMargin);
+                if (ReadLocalValue(PopupMarginProperty) == DependencyProperty.UnsetValue)
+                {
+                    _parentPopupControl.ClearMargin();
+                }
+                else
+                {
+                    _parentPopupControl.SetMargin(PopupMargin);
+                }
             }
         }
 
@@ -350,13 +361,57 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ClearMarginAdjustment();
+            UpdateLayout();
+            AdjustMargin();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (IsVisible)
+            {
+                AdjustMargin();
+            }
+        }
+
+        private void AdjustMargin()
+        {
+            if (_parentPopupControl != null)
+            {
+                var margin = Margin;
+                if (margin != new Thickness() && VisualParent is UIElement parent)
+                {
+                    var parentWidth = parent.RenderSize.Width;
+                    var shadowWidth = ActualWidth;
+                    if (parentWidth > 0 && shadowWidth > 0)
+                    {
+                        if (parentWidth < shadowWidth + margin.Left + margin.Right)
+                        {
+                            var leftRightMargin = (parentWidth - shadowWidth) / 2;
+                            var adjustedMargin = new Thickness(leftRightMargin, margin.Top, leftRightMargin, margin.Bottom);
+                            var marginAnim = new ThicknessAnimation(adjustedMargin, TimeSpan.Zero);
+                            BeginAnimation(MarginProperty, marginAnim);
+                            UpdateLayout();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ClearMarginAdjustment()
+        {
+            BeginAnimation(MarginProperty, null);
+        }
+
         private void SetParentPopupControl(PopupControl value)
         {
             if (_parentPopupControl != null)
             {
                 _parentPopupControl.Opened -= OnParentPopupControlOpened;
                 _parentPopupControl.Closed -= OnParentPopupControlClosed;
-                _parentPopupControl.SetMargin(new Thickness());
+                _parentPopupControl.ClearMargin();
                 _parentPopupControl.Dispose();
             }
 
@@ -377,6 +432,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnParentPopupControlClosed(object sender, EventArgs e)
         {
+            ClearMarginAdjustment();
             ResetTransform();
         }
 
@@ -717,20 +773,27 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
+            private FrameworkElement ChildAsFE =>
+                _contextMenu as FrameworkElement ??
+                _toolTip as FrameworkElement ??
+                _popup?.Child as FrameworkElement;
+
             public event EventHandler Opened;
 
             public event EventHandler Closed;
 
             public void SetMargin(Thickness margin)
             {
-                FrameworkElement popupChild =
-                    _contextMenu as FrameworkElement ??
-                    _toolTip as FrameworkElement ??
-                    _popup?.Child as FrameworkElement;
-                if (popupChild != null)
+                var child = ChildAsFE;
+                if (child != null)
                 {
-                    popupChild.SetCurrentValue(MarginProperty, margin);
+                    child.Margin = margin;
                 }
+            }
+
+            public void ClearMargin()
+            {
+                ChildAsFE?.ClearValue(MarginProperty);
             }
 
             public void Dispose()
@@ -739,21 +802,20 @@ namespace ModernWpf.Controls.Primitives
                 {
                     _contextMenu.Opened -= OnOpened;
                     _contextMenu.Closed -= OnClosed;
+                    _contextMenu = null;
                 }
                 else if (_toolTip != null)
                 {
                     _toolTip.Opened -= OnOpened;
                     _toolTip.Closed -= OnClosed;
+                    _toolTip = null;
                 }
                 else if (_popup != null)
                 {
                     _popup.Opened -= OnOpened;
                     _popup.Closed -= OnClosed;
+                    _popup = null;
                 }
-
-                _contextMenu = null;
-                _toolTip = null;
-                _popup = null;
             }
 
             private void OnOpened(object sender, EventArgs e)
