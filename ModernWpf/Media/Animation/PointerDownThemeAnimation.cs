@@ -6,8 +6,7 @@ using ModernWpf.Controls.Primitives;
 namespace ModernWpf.Media.Animation
 {
     /// <summary>
-    /// Represents the preconfigured pointer down animation that applies to controls when
-    /// they are pressed.
+    /// Represents a preconfigured animation that runs when a pointer down is detected on an item or element.
     /// </summary>
     public sealed class PointerDownThemeAnimation : BooleanAnimationUsingKeyFrames
     {

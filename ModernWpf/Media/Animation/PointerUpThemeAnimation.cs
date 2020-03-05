@@ -6,8 +6,7 @@ using ModernWpf.Controls.Primitives;
 namespace ModernWpf.Media.Animation
 {
     /// <summary>
-    /// Represents the preconfigured pointer up animation that applies to controls when
-    /// they are pressed.
+    /// Represents a preconfigured animation that runs after a pointer down is detected on an item or element and the tap action is released.
     /// </summary>
     public sealed class PointerUpThemeAnimation : BooleanAnimationUsingKeyFrames
     {
