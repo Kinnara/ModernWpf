@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public static class PlaneratorHelper
+    internal static class PlaneratorHelper
     {
 
         #region Dependency Properties

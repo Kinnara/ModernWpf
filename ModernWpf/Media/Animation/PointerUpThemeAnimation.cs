@@ -13,7 +13,7 @@ namespace ModernWpf.Media.Animation
 
         static PointerUpThemeAnimation()
         {
-            Storyboard.TargetPropertyProperty.OverrideMetadata(typeof(PointerUpThemeAnimation), new FrameworkPropertyMetadata(new PropertyPath(PointerUpDownHelper.IsPressedProperty)));
+            Storyboard.TargetPropertyProperty.OverrideMetadata(typeof(PointerUpThemeAnimation), new FrameworkPropertyMetadata(new PropertyPath(TiltEffect.IsPressedProperty)));
         }
 
         /// <summary>

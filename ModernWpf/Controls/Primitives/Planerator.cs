@@ -13,7 +13,7 @@ namespace ModernWpf.Controls.Primitives
     /// </summary>
 
     [ContentProperty("Child")]
-    public class Planerator : FrameworkElement
+    internal class Planerator : FrameworkElement
     {
         #region Public API
 

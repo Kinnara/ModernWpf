@@ -24,6 +24,7 @@
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-3" />
+        <Setter Property="primitives:TiltEffect.IsEnabled" Value="True"/>
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
@@ -53,7 +54,7 @@
                         <Border
                         x:Name="Background"
                         Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" primitives:TiltEffect.IsEnabled="{TemplateBinding primitives:TiltEffect.IsEnabled}"
                         SnapsToDevicePixels="True">
                             <Border
                             x:Name="Border"

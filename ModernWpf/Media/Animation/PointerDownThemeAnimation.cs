@@ -13,7 +13,7 @@ namespace ModernWpf.Media.Animation
 
         static PointerDownThemeAnimation()
         {
-            Storyboard.TargetPropertyProperty.OverrideMetadata(typeof(PointerDownThemeAnimation), new FrameworkPropertyMetadata(new PropertyPath(PointerUpDownHelper.IsPressedProperty)));
+            Storyboard.TargetPropertyProperty.OverrideMetadata(typeof(PointerDownThemeAnimation), new FrameworkPropertyMetadata(new PropertyPath(TiltEffect.IsPressedProperty)));
         }
 
         /// <summary>
