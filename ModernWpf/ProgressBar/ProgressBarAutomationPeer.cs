@@ -26,7 +26,13 @@ namespace ModernWpf.Automation.Peers
         {
             if (patternInterface == PatternInterface.RangeValue)
             {
-                return this;
+                if (Owner is ProgressBar progressBar)
+                {
+                    if (progressBar.IsIndeterminate)
+                    {
+                        return null;
+                    }
+                }
             }
 
             return base.GetPattern(patternInterface);
@@ -37,12 +43,35 @@ namespace ModernWpf.Automation.Peers
             return typeof(ProgressBar).FullName;
         }
 
+        protected override string GetNameCore()
+        {
+            string name = base.GetNameCore();
+
+            if (Owner is ProgressBar progressBar)
+            {
+                if (progressBar.ShowError)
+                {
+                    return Strings.ProgressBarErrorStatus;
+                }
+                else if (progressBar.ShowPaused)
+                {
+                    return Strings.ProgressBarPausedStatus;
+                }
+                else if (progressBar.IsIndeterminate)
+                {
+                    return Strings.ProgressBarIndeterminateStatus;
+                }
+            }
+            return name;
+        }
+
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
             return AutomationControlType.ProgressBar;
         }
 
         // IRangeValueProvider
+        bool IRangeValueProvider.IsReadOnly => true;
         double IRangeValueProvider.SmallChange => double.NaN;
         double IRangeValueProvider.LargeChange => double.NaN;
     }

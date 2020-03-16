@@ -250,6 +250,33 @@ namespace ModernWpf {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string ProgressBarErrorStatus {
+            get {
+                return ResourceManager.GetString("ProgressBarErrorStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Busy.
+        /// </summary>
+        internal static string ProgressBarIndeterminateStatus {
+            get {
+                return ResourceManager.GetString("ProgressBarIndeterminateStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paused.
+        /// </summary>
+        internal static string ProgressBarPausedStatus {
+            get {
+                return ResourceManager.GetString("ProgressBarPausedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Proofing.
         /// </summary>
         internal static string ProofingMenuItemLabel {

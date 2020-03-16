@@ -324,8 +324,6 @@ namespace ModernWpf.Controls
                         {
                             m_indeterminateProgressBarIndicator2.Width = progressBarWidth * 0.6; // 60% of ProgressBar Width
                         }
-
-                        return;
                     }
                     else if (Math.Abs(maximum - minimum) > double.Epsilon)
                     {

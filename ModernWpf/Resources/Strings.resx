@@ -257,4 +257,16 @@
     <value>See less</value>
     <comment>320-5109</comment>
   </data>
+  <data name="ProgressBarErrorStatus" xml:space="preserve">
+    <value>Error</value>
+    <comment>This is used to announce Error state.</comment>
+  </data>
+  <data name="ProgressBarIndeterminateStatus" xml:space="preserve">
+    <value>Busy</value>
+    <comment>This is used to announce Indeterminate state.</comment>
+  </data>
+  <data name="ProgressBarPausedStatus" xml:space="preserve">
+    <value>Paused</value>
+    <comment>This is used to announce Paused state.</comment>
+  </data>
 </root>
