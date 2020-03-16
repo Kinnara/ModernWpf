@@ -10,9 +10,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     DataContext="{Binding RelativeSource={RelativeSource Self}}">
-    <Grid
+    <ScrollViewer
         Background="{DynamicResource ApplicationPageBackgroundThemeBrush}"
-        Margin="12">
+        Margin="12"
+        HorizontalScrollBarVisibility="Visible"
+        VerticalScrollBarVisibility="Disabled"
+        HorizontalAlignment="Stretch">
         <StackPanel>
             <TextBlock
                 Text="Control samples"
@@ -379,17 +382,41 @@
                         </Grid>
                     </StackPanel>
                 </Border>
-                <StackPanel>
-                    <!-- If there are styles we need to ensure that are available, they can be placed below this TextBlock -->
-                    <TextBlock
-                        Text="Default style availability area"
-                        Style="{DynamicResource StandardGroupHeader}" />
+                <Border Style="{DynamicResource CompactBorderStyle}">
+                    <StackPanel>
+                        <!-- If there are styles we need to ensure that are available, they can be placed below this TextBlock -->
+                        <TextBlock
+                            Text="Default style availability area"
+                            Style="{DynamicResource StandardGroupHeader}" />
 
-                    <!-- Checking that the DefaultRadioButtonStyle can be accessed as resource -->
-                    <RadioButton
-                        Style="{StaticResource DefaultRadioButtonStyle}"
-                        Content="I am a RadioButton with DefaultRadioButtonStyle set" />
-                </StackPanel>
+                        <!-- Checking that the DefaultRadioButtonStyle can be accessed as resource -->
+                        <RadioButton
+                            Style="{StaticResource DefaultRadioButtonStyle}"
+                            Content="I am a RadioButton with DefaultRadioButtonStyle set" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{DynamicResource CompactBorderStyle}">
+                    <StackPanel>
+                        <TextBlock
+                            Text="Miscellaneous testing area"
+                            Style="{DynamicResource StandardGroupHeader}" />
+                        <Button
+                            Width="200"
+                            Height="40"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            <Button.Resources>
+                                <ResourceDictionary>
+                                    <SolidColorBrush x:Key="ButtonForeground" Color="Red" />
+                                    <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="Teal" />
+                                    <SolidColorBrush x:Key="ButtonForegroundPressed" Color="Aqua" />
+                                    <SolidColorBrush x:Key="ButtonForegroundDisabled" Color="Green" />
+                                </ResourceDictionary>
+                            </Button.Resources>
+                            <ui:FontIcon Glyph="&#xE781;" />
+                        </Button>
+                    </StackPanel>
+                </Border>
             </StackPanel>
             <StackPanel>
                 <TextBlock
@@ -470,5 +497,5 @@
                 </Border>
             </StackPanel>
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </local:TestPage>

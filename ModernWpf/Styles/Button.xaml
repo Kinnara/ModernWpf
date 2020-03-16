@@ -91,6 +91,7 @@
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                             <ContentPresenter
                                 x:Name="ContentPresenter"
+                                TextElement.Foreground="{TemplateBinding Foreground}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Focusable="False"
