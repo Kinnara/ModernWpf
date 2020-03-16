@@ -98,6 +98,8 @@ namespace ModernWpf.Controls
             VirtualizingLayoutContext context,
             Size availableSize)
         {
+            GetAsStackState(context.LayoutState).OnMeasureStart();
+
             var desiredSize = GetFlowAlgorithm(context).Measure(
                 availableSize,
                 context,
@@ -121,8 +123,6 @@ namespace ModernWpf.Controls
                 false, /* isWraping */
                 FlowLayoutAlgorithm.LineAlignment.Start,
                 LayoutId);
-
-            GetAsStackState(context.LayoutState).OnArrangeLayoutEnd();
 
             return value;
         }

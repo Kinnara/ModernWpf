@@ -42,7 +42,7 @@ namespace ModernWpf.Controls
             MaxArrangeBounds = Math.Max(MaxArrangeBounds, minorSize);
         }
 
-        internal void OnArrangeLayoutEnd()
+        internal void OnMeasureStart()
         {
             MaxArrangeBounds = 0.0;
         }
