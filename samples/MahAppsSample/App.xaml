@@ -27,8 +27,10 @@
                 </ui:ThemeResources>
 
                 <ui:MahAppsColorPaletteResources />
-                <ResourceDictionary Source="/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="/MahApps.Metro;component/Styles/Sizes.xaml" />
                 <ResourceDictionary Source="/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="/MahApps.Metro;component/Styles/Controls.GroupBox.xaml" />
+                <ResourceDictionary Source="/MahApps.Metro;component/Themes/HamburgerMenu.xaml" />
 
                 <ui:XamlControlsResources />
                 <ResourceDictionary Source="/ModernWpf.MahApps;component/Styles/Controls.xaml" />

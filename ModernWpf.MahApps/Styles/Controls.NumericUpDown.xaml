@@ -7,9 +7,9 @@
     <ui:CornerRadiusFilterConverter x:Key="LeftCornerRadiusFilterConverter" Filter="Left" />
     <ui:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
 
-    <Thickness x:Key="NumberBoxSpinButtonBorderThickness">0,1,1,1</Thickness>
+    <Thickness x:Key="NumericUpDownSpinButtonBorderThickness">0,1,1,1</Thickness>
 
-    <Style x:Key="NumberBoxSpinButtonStyle" TargetType="RepeatButton" BasedOn="{StaticResource DefaultRepeatButtonStyle}">
+    <Style x:Key="NumericUpDownSpinButtonStyle" TargetType="RepeatButton" BasedOn="{StaticResource DefaultRepeatButtonStyle}">
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="MinWidth" Value="34" />
         <Setter Property="Height" Value="{DynamicResource TextControlThemeMinHeight}" />
@@ -18,7 +18,7 @@
         <Setter Property="VerticalAlignment" Value="Bottom" />
         <Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
-        <Setter Property="BorderThickness" Value="{DynamicResource NumberBoxSpinButtonBorderThickness}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource NumericUpDownSpinButtonBorderThickness}" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
     </Style>
 
@@ -40,7 +40,7 @@
                                 <ui:ResourceDictionaryEx.ThemeDictionaries>
                                     <ResourceDictionary x:Key="Light">
                                         <ResourceDictionary.MergedDictionaries>
-                                            <ui:DefaultThemeResources Key="Light" />
+                                            <ui:ApplicationThemeResources Key="Light" />
                                         </ResourceDictionary.MergedDictionaries>
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
@@ -48,7 +48,7 @@
 
                                     <ResourceDictionary x:Key="Dark">
                                         <ResourceDictionary.MergedDictionaries>
-                                            <ui:DefaultThemeResources Key="Dark" />
+                                            <ui:ApplicationThemeResources Key="Dark" />
                                         </ResourceDictionary.MergedDictionaries>
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
@@ -56,7 +56,7 @@
 
                                     <ResourceDictionary x:Key="HighContrast">
                                         <ResourceDictionary.MergedDictionaries>
-                                            <ui:DefaultThemeResources Key="HighContrast" />
+                                            <ui:ApplicationThemeResources Key="HighContrast" />
                                         </ResourceDictionary.MergedDictionaries>
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
@@ -65,7 +65,6 @@
                             </ui:ResourceDictionaryEx>
                         </Grid.Resources>
 
-                        <Grid.RowDefinitions />
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
@@ -90,7 +89,7 @@
                             Focusable="{TemplateBinding UpDownButtonsFocusable}"
                             FontSize="{TemplateBinding FontSize}"
                             Content="&#xE70E;"
-                            Style="{StaticResource NumberBoxSpinButtonStyle}"
+                            Style="{StaticResource NumericUpDownSpinButtonStyle}"
                             ui:ControlHelper.CornerRadius="0" />
 
                         <RepeatButton
@@ -101,7 +100,7 @@
                             Focusable="{TemplateBinding UpDownButtonsFocusable}"
                             FontSize="{TemplateBinding FontSize}"
                             Content="&#xE70D;"
-                            Style="{StaticResource NumberBoxSpinButtonStyle}"
+                            Style="{StaticResource NumericUpDownSpinButtonStyle}"
                             ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}" />
                     </Grid>
 
@@ -116,7 +115,7 @@
                         <Trigger Property="HideUpDownButtons" Value="True">
                             <Setter TargetName="PART_NumericDown" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PART_NumericUp" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="PART_TextBox" Property="ui:ControlHelper.CornerRadius" Value="{Binding (ui:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}}" />
+                            <Setter TargetName="PART_TextBox" Property="ui:ControlHelper.CornerRadius" Value="{Binding Path=(ui:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
