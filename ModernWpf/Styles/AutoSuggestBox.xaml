@@ -257,7 +257,6 @@
                             <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushFocused}" />
                             <Setter TargetName="BorderElement" Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThicknessFocused}" />
                             <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundFocused}" />
-                            <!--<Setter TargetName="PART_ContentHost" Property="RequestedTheme" Value="Light" />-->
                             <Setter TargetName="QueryButton" Property="Foreground" Value="{DynamicResource TextControlButtonForeground}" />
                         </Trigger>
                         <Trigger Property="primitives:TextBoxHelper.HasText" Value="True">

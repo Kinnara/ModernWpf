@@ -78,7 +78,6 @@
                             <Setter TargetName="BorderElement" Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThicknessFocused}" />
                             <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundFocused}" />
                             <Setter Property="CaretBrush" Value="{DynamicResource TextControlForegroundFocused}" />
-                            <!--<Setter TargetName="PART_ContentHost" Property="root:ThemeManager.RequestedTheme" Value="Light" />-->
                             <Setter TargetName="PART_Watermark" Property="Foreground" Value="{DynamicResource TextControlPlaceholderForegroundFocused}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
