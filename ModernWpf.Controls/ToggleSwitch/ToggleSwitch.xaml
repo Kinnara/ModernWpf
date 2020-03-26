@@ -307,6 +307,7 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <!-- PointerOver -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="true" />
@@ -320,8 +321,8 @@
                             <Setter Property="Stroke" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchStrokeOnPointerOver}" />
                             <Setter Property="Background" TargetName="SwitchAreaGrid" Value="{DynamicResource ToggleSwitchContainerBackgroundPointerOver}" />
                         </MultiTrigger>
+                        <!-- Pressed -->
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter Property="StrokeThickness" TargetName="OuterBorder" Value="0" />
                             <Setter Property="Stroke" TargetName="OuterBorder" Value="{DynamicResource ToggleSwitchStrokeOffPressed}" />
                             <Setter Property="Fill" TargetName="OuterBorder" Value="{DynamicResource ToggleSwitchFillOffPressed}" />
                             <Setter Property="Fill" TargetName="SwitchKnobOff" Value="{DynamicResource ToggleSwitchKnobFillOffPressed}" />
@@ -330,6 +331,7 @@
                             <Setter Property="Stroke" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchStrokeOnPressed}" />
                             <Setter Property="Background" TargetName="SwitchAreaGrid" Value="{DynamicResource ToggleSwitchContainerBackgroundPressed}" />
                         </Trigger>
+                        <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="TextElement.Foreground" TargetName="HeaderContentPresenter" Value="{DynamicResource ToggleSwitchHeaderForegroundDisabled}" />
                             <Setter Property="TextElement.Foreground" TargetName="OffContentPresenter" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
@@ -342,6 +344,14 @@
                             <Setter Property="Stroke" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchStrokeOnDisabled}" />
                             <Setter Property="Background" TargetName="SwitchAreaGrid" Value="{DynamicResource ToggleSwitchContainerBackgroundDisabled}" />
                         </Trigger>
+                        
+                        <Trigger Property="IsOn" Value="true">
+                            <Setter TargetName="SwitchKnobBounds" Property="Opacity" Value="1" />
+                            <Setter TargetName="OuterBorder" Property="Opacity" Value="0" />
+                            <Setter TargetName="SwitchKnobOn" Property="Opacity" Value="1" />
+                            <Setter TargetName="SwitchKnobOff" Property="Opacity" Value="0" />
+                        </Trigger>
+                        
                         <Trigger Property="ui:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
                             <Setter TargetName="FocusVisual" Property="Visibility" Value="Visible" />
                         </Trigger>
