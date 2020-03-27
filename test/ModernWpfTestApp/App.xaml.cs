@@ -108,8 +108,7 @@ namespace MUXControlsTestApp
             var window = new Window
             {
                 Content = frame,
-                WindowState = WindowState.Maximized,
-                UseLayoutRounding = true
+                WindowState = WindowState.Maximized
             };
             window.SetBinding(TitleBar.IsBackButtonVisibleProperty, new Binding("CanGoBack") { Source = frame });
             TitleBar.AddBackRequestedHandler(window, delegate { frame.GoBack(); });

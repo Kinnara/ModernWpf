@@ -16,7 +16,6 @@
     Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
     ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.UseModernWindowStyle="True"
-    UseLayoutRounding="True"
     ui:TitleBar.BackRequested="OnBackRequested">
 
     <local:NavigationRootPage x:Name="RootPage" />
