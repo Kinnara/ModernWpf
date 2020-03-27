@@ -379,7 +379,6 @@
                                 MaxHeight="{TemplateBinding MaxDropDownHeight}"
                                 MinWidth="{Binding ActualWidth, ElementName=LayoutRoot}"
                                 IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
-                                CornerRadius="{Binding ElementName=PopupBorder, Path=CornerRadius}"
                                 primitives:OpeningAnimationHelper.Storyboard="{StaticResource OverlayOpeningAnimation}">
                                 <Border
                                     x:Name="PopupBorder"

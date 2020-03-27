@@ -25,7 +25,6 @@
                         Depth="16"
                         IsShadowEnabled="{TemplateBinding HasDropShadow}"
                         MaxWidth="320"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Border
                             Background="{TemplateBinding Background}"

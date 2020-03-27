@@ -317,6 +317,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(RadioButtonsPage));
             AddPage(typeof(RatingControlPage));
             AddPage(typeof(RichTextBoxPage));
+            AddPage(typeof(ShadowPage));
             AddPage(typeof(SimpleStackPanelPage));
             AddPage(typeof(SliderPage));
             //AddPage(typeof(StatusBarPage));

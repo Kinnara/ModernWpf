@@ -304,8 +304,7 @@
                             StaysOpen="False">
                             <ui:ThemeShadowChrome
                                 MinWidth="{Binding ActualWidth, ElementName=PART_Button}"
-                                IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
-                                CornerRadius="{DynamicResource OverlayCornerRadius}">
+                                IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
                                 <Border
                                     x:Name="Background"
                                     Background="{DynamicResource TimePickerFlyoutPresenterBackground}"

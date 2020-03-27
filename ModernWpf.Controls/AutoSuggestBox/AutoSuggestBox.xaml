@@ -51,7 +51,6 @@
                             IsOpen="{Binding IsSuggestionListOpen, RelativeSource={RelativeSource TemplatedParent}}">
                             <ui:ThemeShadowChrome
                                 IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
-                                CornerRadius="{Binding ElementName=SuggestionsContainer, Path=CornerRadius}"
                                 Width="{TemplateBinding ActualWidth}"
                                 MaxHeight="{TemplateBinding MaxSuggestionListHeight}">
                                 <Border

@@ -6,6 +6,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
+using System.Windows.Shapes;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -22,19 +23,18 @@ namespace ModernWpf.Controls.Primitives
             s_bg2.Freeze();
             s_bg3.Freeze();
             s_bg4.Freeze();
-
-            s_bitmapCache = new BitmapCache
-            {
-                SnapsToDevicePixels = false
-            };
-            s_bitmapCache.Freeze();
         }
 
         public ThemeShadowChrome()
         {
+#if NETCOREAPP || NET462
+            _bitmapCache = new BitmapCache(VisualTreeHelper.GetDpi(this).PixelsPerDip);
+#else
+            _bitmapCache = new BitmapCache();
+#endif
             _background = new Grid
             {
-                CacheMode = s_bitmapCache,
+                CacheMode = _bitmapCache,
                 SnapsToDevicePixels = false
             };
             AddVisualChild(_background);
@@ -122,37 +122,19 @@ namespace ModernWpf.Controls.Primitives
 
         #region CornerRadius
 
+        [Obsolete]
         public static readonly DependencyProperty CornerRadiusProperty =
             DependencyProperty.Register(
                 nameof(CornerRadius),
                 typeof(CornerRadius),
                 typeof(ThemeShadowChrome),
-                new PropertyMetadata(new CornerRadius(), OnCornerRadiusChanged));
+                new PropertyMetadata(new CornerRadius()));
 
+        [Obsolete]
         public CornerRadius CornerRadius
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
             set => SetValue(CornerRadiusProperty, value);
-        }
-
-        private static void OnCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ThemeShadowChrome)d).OnCornerRadiusChanged(e);
-        }
-
-        private void OnCornerRadiusChanged(DependencyPropertyChangedEventArgs e)
-        {
-            var cornerRadius = (CornerRadius)e.NewValue;
-
-            if (_shadow1 != null)
-            {
-                _shadow1.CornerRadius = cornerRadius;
-            }
-
-            if (_shadow2 != null)
-            {
-                _shadow2.CornerRadius = cornerRadius;
-            }
         }
 
         #endregion
@@ -280,6 +262,15 @@ namespace ModernWpf.Controls.Primitives
             return base.ArrangeOverride(arrangeSize);
         }
 
+#if NETCOREAPP || NET462
+        protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+        {
+            base.OnDpiChanged(oldDpi, newDpi);
+
+            _bitmapCache.RenderAtScale = newDpi.PixelsPerDip;
+        }
+#endif
+
         private void OnVisualParentChanged()
         {
             if (IsShadowEnabled)
@@ -323,17 +314,12 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private Border CreateShadowElement()
+        private Rectangle CreateShadowElement()
         {
-            return new Border
+            return new Rectangle
             {
-                Background = Brushes.Black,
-                CornerRadius = CornerRadius,
-                Effect = new DropShadowEffect
-                {
-                    Direction = 270,
-                    Color = Colors.Black
-                }
+                Effect = new BlurEffect(),
+                RenderTransform = new TranslateTransform()
             };
         }
 
@@ -342,10 +328,14 @@ namespace ModernWpf.Controls.Primitives
             if (_shadow1 != null)
             {
                 double depth = Depth;
-                var effect = (DropShadowEffect)_shadow1.Effect;
-                effect.ShadowDepth = 0.4 * depth;
-                effect.BlurRadius = 0.9 * depth;
-                _shadow1.Background = depth >= 32 ? s_bg4 : s_bg3;
+
+                var effect = (BlurEffect)_shadow1.Effect;
+                effect.Radius = 0.9 * depth;
+
+                var transform = (TranslateTransform)_shadow1.RenderTransform;
+                transform.Y = 0.4 * depth;
+
+                _shadow1.Fill = depth >= 32 ? s_bg4 : s_bg2;
             }
         }
 
@@ -354,10 +344,14 @@ namespace ModernWpf.Controls.Primitives
             if (_shadow2 != null)
             {
                 double depth = Depth;
-                var effect = (DropShadowEffect)_shadow2.Effect;
-                effect.ShadowDepth = 0.08 * depth;
-                effect.BlurRadius = 0.22 * depth;
-                _shadow2.Background = depth >= 32 ? s_bg2 : s_bg1;
+
+                var effect = (BlurEffect)_shadow2.Effect;
+                effect.Radius = 0.225 * depth;
+
+                var transform = (TranslateTransform)_shadow2.RenderTransform;
+                transform.Y = 0.075 * depth;
+
+                _shadow2.Fill = depth >= 32 ? s_bg3 : s_bg1;
             }
         }
 
@@ -830,13 +824,13 @@ namespace ModernWpf.Controls.Primitives
         }
 
         private readonly Grid _background;
-        private Border _shadow1;
-        private Border _shadow2;
+        private readonly BitmapCache _bitmapCache;
+        private Rectangle _shadow1;
+        private Rectangle _shadow2;
         private PopupControl _parentPopupControl;
         private TranslateTransform _transform;
 
         private static readonly Brush s_bg1, s_bg2, s_bg3, s_bg4;
-        private static readonly BitmapCache s_bitmapCache;
         private static readonly Vector s_noTranslation = new Vector(0, 0);
     }
 }

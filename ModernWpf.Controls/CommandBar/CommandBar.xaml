@@ -109,7 +109,6 @@
                                 <ui:ThemeShadowChrome
                                     x:Name="OverflowContentRoot"
                                     IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
-                                    CornerRadius="{Binding ElementName=SecondaryItemsControl, Path=CornerRadius}"
                                     MinWidth="{DynamicResource CommandBarOverflowMinWidth}"
                                     MaxWidth="{DynamicResource CommandBarOverflowMaxWidth}"
                                     MaxHeight="{TemplateBinding OverflowContentMaxHeight}"

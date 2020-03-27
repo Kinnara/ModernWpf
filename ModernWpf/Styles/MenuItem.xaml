@@ -97,9 +97,7 @@
                 IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                 PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
                 Placement="Bottom">
-                <primitives:ThemeShadowChrome
-                    IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
-                    CornerRadius="{DynamicResource OverlayCornerRadius}">
+                <primitives:ThemeShadowChrome IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
                     <Border
                         x:Name="SubMenuRoot"
                         Background="{DynamicResource MenuFlyoutPresenterBackground}"
@@ -313,9 +311,7 @@
                             <Binding ElementName="LayoutRoot" Path="ActualHeight" />
                         </MultiBinding>
                     </Popup.PlacementRectangle>
-                    <primitives:ThemeShadowChrome
-                        IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
-                        CornerRadius="{DynamicResource OverlayCornerRadius}">
+                    <primitives:ThemeShadowChrome IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
                         <Border
                             x:Name="SubMenuRoot"
                             Background="{DynamicResource MenuFlyoutPresenterBackground}"

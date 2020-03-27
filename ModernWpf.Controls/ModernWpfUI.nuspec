@@ -16,6 +16,10 @@
         <dependency id="System.Runtime.WindowsRuntime" version="4.7.0" exclude="Build,Analyzers" />
         <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
       </group>
+      <group targetFramework=".NETFramework4.6.2">
+        <dependency id="System.Runtime.WindowsRuntime" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+      </group>
       <group targetFramework=".NETCoreApp3.0">
         <dependency id="System.Runtime.WindowsRuntime" version="4.7.0" exclude="Build,Analyzers" />
       </group>
