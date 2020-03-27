@@ -7,8 +7,7 @@
     PrimaryButtonText="Save"
     SecondaryButtonText="Don't Save"
     CloseButtonText="Cancel"
-    DefaultButton="Primary"
-    IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
+    DefaultButton="Primary">
 
     <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <!-- Content body -->

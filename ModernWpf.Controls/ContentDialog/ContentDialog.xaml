@@ -17,6 +17,7 @@
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="IsShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentDialog">
@@ -26,6 +27,9 @@
                                 <VisualStateGroup.Transitions>
                                     <VisualTransition To="DialogHidden" GeneratedDuration="0:0:0.5">
                                         <Storyboard>
+                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="SnapsToDevicePixels">
+                                                <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="False" />
+                                            </BooleanAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
                                             </ObjectAnimationUsingKeyFrames>
@@ -48,6 +52,9 @@
                                     </VisualTransition>
                                     <VisualTransition To="DialogShowing" GeneratedDuration="0:0:0.5">
                                         <Storyboard>
+                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="SnapsToDevicePixels">
+                                                <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="False" />
+                                            </BooleanAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
                                             </ObjectAnimationUsingKeyFrames>
