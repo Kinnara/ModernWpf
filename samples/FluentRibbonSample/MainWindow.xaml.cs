@@ -34,8 +34,9 @@ namespace FluentRibbonSample
                 PrimaryButtonText = "Yes",
                 SecondaryButtonText = "No",
                 CloseButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Primary
+                DefaultButton = ContentDialogButton.Primary,
             };
+            dialog.SetResourceReference(ContentDialog.IsShadowEnabledProperty, SystemParameters.DropShadowKey);
             await dialog.ShowAsync();
         }
     }

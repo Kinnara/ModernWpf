@@ -6,16 +6,14 @@
     Title="Save your work?"
     PrimaryButtonText="Save"
     SecondaryButtonText="Don't Save"
-    DefaultButton="Secondary">
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
 
-    <StackPanel
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch">
+    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <!-- Content body -->
-        <TextBlock
-            Text="Lorem ipsum dolor sit amet, adipisicing elit."
-            TextWrapping="Wrap" />
-        <CheckBox Content="Upload your content to the cloud." />
+        <TextBlock Text="Lorem ipsum dolor sit amet, adipisicing elit." TextWrapping="Wrap" />
+        <CheckBox Content="Upload your content to the cloud."/>
     </StackPanel>
 
 </ui:ContentDialog>
