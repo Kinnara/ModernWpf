@@ -110,7 +110,12 @@ namespace ModernWpf.Controls
 
             if (animateFrom != AnimateFrom.None)
             {
-                presenter.CacheMode = s_bitmapCacheMode;
+#if NETCOREAPP || NET462
+                var bitmapCache = new BitmapCache(VisualTreeHelper.GetDpi(presenter).PixelsPerDip);
+#else
+                var bitmapCache = new BitmapCache();
+#endif
+                presenter.CacheMode = bitmapCache;
             }
 
             m_openingStoryboard.Begin(presenter, true);

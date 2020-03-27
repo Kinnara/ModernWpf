@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -60,5 +61,17 @@ namespace ModernWpf.Controls
                 }
             }
         }
+
+#if NETCOREAPP || NET462
+        protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+        {
+            base.OnDpiChanged(oldDpi, newDpi);
+
+            if (CacheMode is BitmapCache bitmapCache)
+            {
+                bitmapCache.RenderAtScale = newDpi.PixelsPerDip;
+            }
+        }
+#endif
     }
 }
