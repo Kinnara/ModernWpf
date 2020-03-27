@@ -39,6 +39,8 @@ namespace ModernWpf.Controls
         private double _startTranslation;
         private bool _wasDragged;
 
+        private BitmapCache _bitmapCache;
+
         static ToggleSwitch()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ToggleSwitch), new FrameworkPropertyMetadata(typeof(ToggleSwitch)));
@@ -271,6 +273,7 @@ namespace ModernWpf.Controls
                 SwitchThumb.DragStarted -= OnSwitchThumbDragStarted;
                 SwitchThumb.DragDelta -= OnSwitchThumbDragDelta;
                 SwitchThumb.DragCompleted -= OnSwitchThumbDragCompleted;
+                SwitchThumb.ClearValue(CacheModeProperty);
             }
 
             base.OnApplyTemplate();
@@ -289,6 +292,17 @@ namespace ModernWpf.Controls
                 SwitchThumb.DragStarted += OnSwitchThumbDragStarted;
                 SwitchThumb.DragDelta += OnSwitchThumbDragDelta;
                 SwitchThumb.DragCompleted += OnSwitchThumbDragCompleted;
+
+                if (_bitmapCache == null)
+                {
+#if NETCOREAPP || NET462
+                    _bitmapCache = new BitmapCache(VisualTreeHelper.GetDpi(this).PixelsPerDip);
+#else
+                    _bitmapCache = new BitmapCache(2);
+#endif
+                }
+
+                SwitchThumb.CacheMode = _bitmapCache;
             }
 
             UpdateHeaderContentPresenterVisibility();
@@ -319,6 +333,18 @@ namespace ModernWpf.Controls
                 _onTranslation = SwitchKnobBounds.ActualWidth - SwitchKnob.ActualWidth - SwitchKnob.Margin.Left - SwitchKnob.Margin.Right;
             }
         }
+
+#if NETCOREAPP || NET462
+        protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+        {
+            base.OnDpiChanged(oldDpi, newDpi);
+
+            if (_bitmapCache != null)
+            {
+                _bitmapCache.RenderAtScale = newDpi.PixelsPerDip;
+            }
+        }
+#endif
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
