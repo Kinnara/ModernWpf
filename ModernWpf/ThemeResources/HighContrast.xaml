@@ -562,7 +562,6 @@
     <m:StaticResource x:Key="ContentDialogBackground" ResourceKey="SystemControlPageBackgroundAltHighBrush" />
     <m:StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <m:StaticResource x:Key="ContentDialogLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
-    <SolidColorBrush x:Key="ContentDialogShadowBackground" Color="#5C000000" />
 
     <!-- Resources for DataGrid -->
     <sys:Double x:Key="ListAccentLowOpacity">0.6</sys:Double>
