@@ -334,7 +334,7 @@ namespace ModernWpf.Controls.Primitives
             // Ensure the SizeOfSet and PositionInSet automation properties
             // for the primary commands and the MoreButton account for the
             // potential MoreButton.
-#if NETCOREAPP3_0
+#if NETCOREAPP
             EnsureAutomationSetCountAndPosition();
 #endif
 
@@ -615,7 +615,7 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-#if NETCOREAPP3_0
+#if NETCOREAPP
         void EnsureAutomationSetCountAndPosition()
         {
             var moreButton = m_moreButton;

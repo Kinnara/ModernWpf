@@ -41,6 +41,7 @@
         <Setter Property="local:TitleBar.InactiveBackground" Value="Transparent" />
         <Setter Property="local:TitleBar.InactiveForeground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
         <Setter Property="local:TitleBar.BackButtonStyle" Value="{StaticResource TitleBarBackButtonStyle}" />
+        <Setter Property="primitives:WindowHelper.IsAutoPaddingEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Window">
@@ -48,18 +49,8 @@
                         x:Name="LayoutRoot"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                        <Border.Resources>
-                            <primitives:WindowPaddingConveter x:Key="WindowPaddingConveter" />
-                        </Border.Resources>
-                        <Border.Padding>
-                            <MultiBinding Converter="{StaticResource WindowPaddingConveter}">
-                                <Binding Path="WindowState" RelativeSource="{RelativeSource TemplatedParent}" />
-                                <Binding Path="(SystemParameters.WindowNonClientFrameThickness)" />
-                                <Binding Path="(SystemParameters.WindowResizeBorderThickness)" />
-                                <Binding Path="(SystemParameters.WindowCaptionHeight)" />
-                            </MultiBinding>
-                        </Border.Padding>
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}">
                         <Grid>
                             <Rectangle
                                 x:Name="HighContrastBackground"

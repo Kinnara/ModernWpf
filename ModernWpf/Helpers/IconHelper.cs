@@ -68,7 +68,7 @@ namespace ModernWpf
             }
         }
 
-        private class NativeMethods
+        private static class NativeMethods
         {
             [DllImport("Shell32.dll", CharSet = CharSet.Auto)]
             public extern static int ExtractIconEx(string lpszFile, int nIconIndex, IntPtr[] phiconLarge, IntPtr[] phiconSmall, uint nIcons);

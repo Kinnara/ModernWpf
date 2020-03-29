@@ -420,7 +420,7 @@ namespace ModernWpf.Controls
                         Select(args.Index);
                     }
                 }
-#if NETCOREAPP3_0
+#if NETCOREAPP
                 var repeater = m_repeater;
                 if (repeater != null)
                 {
@@ -462,7 +462,7 @@ namespace ModernWpf.Controls
             var element = args.Element;
             if (element != null)
             {
-#if NETCOREAPP3_0
+#if NETCOREAPP
                 element.SetValue(AutomationProperties.PositionInSetProperty, args.NewIndex + 1);
 #endif
                 // When the selected item's index changes, update selection to match
@@ -478,7 +478,7 @@ namespace ModernWpf.Controls
 
         void OnRepeaterCollectionChanged(object sender, object args)
         {
-#if NETCOREAPP3_0
+#if NETCOREAPP
             var repeater = m_repeater;
             if (repeater != null)
             {
