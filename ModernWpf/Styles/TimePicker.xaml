@@ -17,6 +17,7 @@
 
     <Style x:Key="DateTimePickerFlyoutButtonStyle" TargetType="ButtonBase">
         <Setter Property="Background" Value="{DynamicResource DateTimePickerFlyoutButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
