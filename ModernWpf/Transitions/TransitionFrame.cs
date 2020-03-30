@@ -575,7 +575,7 @@ namespace ModernWpf.Controls
         /// <param name="presenter">The content presenter instance.</param>
         /// <param name="applyBitmapCache">A value indicating whether to apply
         /// a bitmap cache.</param>
-        private static void PrepareContentPresenterForCompositor(ContentPresenter presenter, bool applyBitmapCache = true)
+        private static void PrepareContentPresenterForCompositor(ContentPresenter presenter, bool applyBitmapCache = false)
         {
             if (presenter != null)
             {

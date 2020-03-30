@@ -212,7 +212,11 @@ namespace ModernWpf.Controls
             _cacheMode = _element.CacheMode;
             if (!(_cacheMode is BitmapCache))
             {
+#if NETCOREAPP || NET462
+                _element.CacheMode = new BitmapCache(VisualTreeHelper.GetDpi(_element).PixelsPerDip);
+#else
                 _element.CacheMode = TransitionFrame.BitmapCacheMode;
+#endif
             }
             _isHitTestVisible = _element.IsHitTestVisible;
             if (_isHitTestVisible)

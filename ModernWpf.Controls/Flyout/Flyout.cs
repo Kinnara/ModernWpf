@@ -113,7 +113,7 @@ namespace ModernWpf.Controls
 #if NETCOREAPP || NET462
                 var bitmapCache = new BitmapCache(VisualTreeHelper.GetDpi(presenter).PixelsPerDip);
 #else
-                var bitmapCache = new BitmapCache();
+                var bitmapCache = s_bitmapCacheMode;
 #endif
                 presenter.CacheMode = bitmapCache;
             }

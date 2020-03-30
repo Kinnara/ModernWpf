@@ -35,7 +35,7 @@ namespace ModernWpf.MahApps.Controls
         private static readonly PropertyPath _scaleYPath = new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)");
         private static readonly PropertyPath _translateYPath = new PropertyPath("(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)");
 
-        private static readonly BitmapCache _bitmapCacheMode = new BitmapCache();
+        private readonly BitmapCache _bitmapCacheMode = new BitmapCache();
 
         private UIElement _paneGrid;
         private Button _paneSearchButton;
@@ -505,6 +505,15 @@ namespace ModernWpf.MahApps.Controls
 
             ChangeItemFocusVisualStyle();
         }
+
+#if NETCOREAPP || NET462
+        protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+        {
+            base.OnDpiChanged(oldDpi, newDpi);
+
+            _bitmapCacheMode.RenderAtScale = newDpi.PixelsPerDip;
+        }
+#endif
 
         private static void OnDisplayModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
