@@ -1,10 +1,8 @@
-﻿using ModernWpf.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Markup;
 
 namespace MUXControlsTestApp
@@ -100,18 +98,17 @@ namespace MUXControlsTestApp
         {
             base.OnStartup(e);
 
-            var frame = new TestFrame
+            var frame = new TestFrame(typeof(MainPage))
             {
                 Source = new Uri("MainPage.xaml", UriKind.Relative),
             };
 
             var window = new Window
             {
+                Title = "ModernWpfTestApp",
                 Content = frame,
                 WindowState = WindowState.Maximized
             };
-            window.SetBinding(TitleBar.IsBackButtonVisibleProperty, new Binding("CanGoBack") { Source = frame });
-            TitleBar.AddBackRequestedHandler(window, delegate { frame.GoBack(); });
             MainWindow = window;
             _isRootCreated = true;
 

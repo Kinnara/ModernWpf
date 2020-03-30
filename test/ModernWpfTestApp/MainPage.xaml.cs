@@ -117,13 +117,7 @@ namespace MUXControlsTestApp
 
             // We'll additionally make sure that the combo box begins on the right element to reflect the current value.
             LanguageChooser.SelectedIndex = locales.IndexOf("en-US");
-            //LongAnimationsDisabled.IsChecked = MUXControlsTestApp.App.DisableLongAnimations;
             FlowDirectionChooser.SelectedIndex = FlowDirections.IndexOf(GetRootFlowDirection());
-
-            // App remembers ExtendViewIntoTitleBar and the value persists true if test case aborted and didn't change it back
-            // Always set it to false when app restarted
-            //CoreApplicationViewTitleBar titleBar = CoreApplication.GetCurrentView().TitleBar;
-            //titleBar.ExtendViewIntoTitleBar = false;
 
             DataContext = this;
         }
@@ -144,13 +138,6 @@ namespace MUXControlsTestApp
         public List<TestDeclaration> Tests
         {
             get { return TestInventory.Tests; }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            DependencyObject checkBox = SearchVisualTree(this.Frame, "ViewScalingCheckBox");
-            CheckBox cb = checkBox as CheckBox;
-            cb.IsChecked = true;
         }
 
         DependencyObject SearchVisualTree(DependencyObject root, string name)
@@ -194,16 +181,6 @@ namespace MUXControlsTestApp
         private void LanguageChooser_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             App.LanguageOverride = (string)((ComboBoxItem)LanguageChooser.SelectedItem).Content;
-        }
-
-        private void LongAnimationsDisabled_Checked(object sender, RoutedEventArgs e)
-        {
-            //MUXControlsTestApp.App.DisableLongAnimations = true;
-        }
-
-        private void LongAnimationsDisabled_Unchecked(object sender, RoutedEventArgs e)
-        {
-            //MUXControlsTestApp.App.DisableLongAnimations = false;
         }
 
         private void FlowDirectionChooser_SelectionChanged(object sender, SelectionChangedEventArgs e)

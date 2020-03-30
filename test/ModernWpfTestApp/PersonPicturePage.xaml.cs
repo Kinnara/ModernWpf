@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using ModernWpf.Controls;
+using MUXControlsTestApp.Utilities;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -41,7 +42,7 @@ namespace MUXControlsTestApp
                     // Capture initial state of the property
                     PrimaryEllipseFillChanged(primaryEllipse, EventArgs.Empty);
 
-                    DependencyPropertyDescriptor.FromProperty(Ellipse.FillProperty, typeof(Ellipse)).AddValueChanged(primaryEllipse, PrimaryEllipseFillChanged);
+                    primaryEllipse.RegisterPropertyChangedCallback(Ellipse.FillProperty, PrimaryEllipseFillChanged);
                     primaryEllipseLoaded = true;
                 }
             }

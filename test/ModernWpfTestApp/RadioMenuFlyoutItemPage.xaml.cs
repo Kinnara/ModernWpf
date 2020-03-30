@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using ModernWpf.Controls;
+using MUXControlsTestApp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -40,7 +41,7 @@ namespace MUXControlsTestApp
                 {
                     RadioMenuItem radioItem = item as RadioMenuItem;
 
-                    DependencyPropertyDescriptor.FromProperty(RadioMenuItem.IsCheckedProperty, typeof(RadioMenuItem)).AddValueChanged(radioItem, IsCheckedChanged);
+                    radioItem.RegisterPropertyChangedCallback(RadioMenuItem.IsCheckedProperty, IsCheckedChanged);
 
                     TextBlock nameText = new TextBlock();
                     nameText.Text = (string)radioItem.Header;
