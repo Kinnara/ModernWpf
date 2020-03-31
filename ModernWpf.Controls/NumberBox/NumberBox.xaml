@@ -364,6 +364,7 @@
                             HorizontalOffset="{DynamicResource NumberBoxPopupHorizonalOffset}"
                             HorizontalAlignment="Left">
                             <ui:ThemeShadowChrome
+                                CornerRadius="{DynamicResource OverlayCornerRadius}"
                                 Depth="{DynamicResource NumberBoxPopupShadowDepth}"
                                 IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
                                 <Border

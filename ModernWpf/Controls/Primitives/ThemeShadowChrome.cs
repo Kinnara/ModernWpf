@@ -122,19 +122,37 @@ namespace ModernWpf.Controls.Primitives
 
         #region CornerRadius
 
-        [Obsolete]
         public static readonly DependencyProperty CornerRadiusProperty =
             DependencyProperty.Register(
                 nameof(CornerRadius),
                 typeof(CornerRadius),
                 typeof(ThemeShadowChrome),
-                new PropertyMetadata(new CornerRadius()));
+                new PropertyMetadata(new CornerRadius(), OnCornerRadiusChanged));
 
-        [Obsolete]
         public CornerRadius CornerRadius
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
             set => SetValue(CornerRadiusProperty, value);
+        }
+
+        private static void OnCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ThemeShadowChrome)d).OnCornerRadiusChanged(e);
+        }
+
+        private void OnCornerRadiusChanged(DependencyPropertyChangedEventArgs e)
+        {
+            var cornerRadius = (CornerRadius)e.NewValue;
+
+            if (_shadow1 != null)
+            {
+                _shadow1.CornerRadius = cornerRadius;
+            }
+
+            if (_shadow2 != null)
+            {
+                _shadow2.CornerRadius = cornerRadius;
+            }
         }
 
         #endregion
@@ -314,10 +332,11 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private Rectangle CreateShadowElement()
+        private Border CreateShadowElement()
         {
-            return new Rectangle
+            return new Border
             {
+                CornerRadius = CornerRadius,
                 Effect = new BlurEffect(),
                 RenderTransform = new TranslateTransform()
             };
@@ -335,7 +354,7 @@ namespace ModernWpf.Controls.Primitives
                 var transform = (TranslateTransform)_shadow1.RenderTransform;
                 transform.Y = 0.4 * depth;
 
-                _shadow1.Fill = depth >= 32 ? s_bg4 : s_bg2;
+                _shadow1.Background = depth >= 32 ? s_bg4 : s_bg2;
             }
         }
 
@@ -351,7 +370,7 @@ namespace ModernWpf.Controls.Primitives
                 var transform = (TranslateTransform)_shadow2.RenderTransform;
                 transform.Y = 0.075 * depth;
 
-                _shadow2.Fill = depth >= 32 ? s_bg3 : s_bg1;
+                _shadow2.Background = depth >= 32 ? s_bg3 : s_bg1;
             }
         }
 
@@ -825,8 +844,8 @@ namespace ModernWpf.Controls.Primitives
 
         private readonly Grid _background;
         private readonly BitmapCache _bitmapCache;
-        private Rectangle _shadow1;
-        private Rectangle _shadow2;
+        private Border _shadow1;
+        private Border _shadow2;
         private PopupControl _parentPopupControl;
         private TranslateTransform _transform;
 

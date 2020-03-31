@@ -30,6 +30,7 @@
                 <ControlTemplate TargetType="local:FlyoutPresenter">
                     <ui:ThemeShadowChrome
                         IsShadowEnabled="{TemplateBinding IsDefaultShadowEnabled}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Border
                             x:Name="LayoutRoot"

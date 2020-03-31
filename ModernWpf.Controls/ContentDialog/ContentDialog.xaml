@@ -273,6 +273,7 @@
                                 <ui:ThemeShadowChrome
                                     x:Name="Shdw"
                                     IsShadowEnabled="{TemplateBinding IsShadowEnabled}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
                                     Margin="{DynamicResource ContentDialogBorderWidth}" />
                                 <Border
                                     Background="{TemplateBinding Background}"

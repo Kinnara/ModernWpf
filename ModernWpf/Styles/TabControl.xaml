@@ -45,6 +45,7 @@
                     <!-- This item will cover the separator on its left side. -->
                     <primitives:ThemeShadowChrome
                         x:Name="Shadow"
+                        CornerRadius="{Binding ElementName=TabContainer, Path=CornerRadius}"
                         Depth="{DynamicResource TabViewShadowDepth}"
                         IsShadowEnabled="False">
                         <Border

@@ -415,6 +415,7 @@
                     <primitives:ThemeShadowChrome
                         x:Name="Shdw"
                         IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True"
                         primitives:OpeningAnimationHelper.Storyboard="{DynamicResource OpeningStoryboard}">
                         <primitives:ThemeShadowChrome.Resources>
