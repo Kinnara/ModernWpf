@@ -4,34 +4,28 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock">
-        <!--<Setter Property="FontFamily" Value="XamlAutoFontFamily" />-->
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MessageFontFamilyKey}}" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="TextTrimming" Value="None" />
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="LineStackingStrategy" Value="MaxHeight" />
-        <!--<Setter Property="TextLineBounds" Value="Full" />-->
     </Style>
     <Style x:Key="HeaderTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
         <Setter Property="FontSize" Value="46" />
         <Setter Property="FontWeight" Value="Light" />
-        <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
     </Style>
     <Style x:Key="SubheaderTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
         <Setter Property="FontSize" Value="34" />
         <Setter Property="FontWeight" Value="Light" />
-        <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
     </Style>
     <Style x:Key="TitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
         <Setter Property="FontWeight" Value="350" />
         <Setter Property="FontSize" Value="24" />
-        <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
     </Style>
     <Style x:Key="SubtitleTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="20" />
-        <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
     </Style>
     <Style x:Key="BodyTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
         <Setter Property="FontWeight" Value="Normal" />
