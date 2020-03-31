@@ -17,6 +17,7 @@
         <ResourceDictionary Source="Styles/GridSplitter.xaml" />
         <ResourceDictionary Source="Styles/GroupBox.xaml" />
         <ResourceDictionary Source="Styles/GroupItem.xaml" />
+        <ResourceDictionary Source="Styles/Hyperlink.xaml" />
         <ResourceDictionary Source="Styles/Label.xaml" />
         <ResourceDictionary Source="Styles/ListBox.xaml" />
         <ResourceDictionary Source="Styles/ListView.xaml" />

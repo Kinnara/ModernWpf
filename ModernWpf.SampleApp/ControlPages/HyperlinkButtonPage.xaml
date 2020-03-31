@@ -7,10 +7,7 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    Style="{StaticResource PageStyle}"
-    Title="HyperlinkButtonPage">
+    Style="{StaticResource PageStyle}">
 
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
@@ -36,6 +33,21 @@
                     x:Name="Control2"
                     Content="Go to ListBox"
                     Click="GoToHyperlinkButton_Click" />
+            </sc:ControlExample>
+
+            <sc:ControlExample
+                HeaderText="Hyperlink text."
+                VerticalContentAlignment="Center">
+                <TextBlock x:Name="Control3">
+                    <Run>This is</Run>
+                    <Hyperlink>hyperlink text</Hyperlink>
+                </TextBlock>
+
+                <sc:ControlExample.Options>
+                    <CheckBox
+                        Content="IsEnabled"
+                        IsChecked="{Binding ElementName=Control3, Path=IsEnabled}" />
+                </sc:ControlExample.Options>
             </sc:ControlExample>
         </ui:SimpleStackPanel>
     </ScrollViewer>

@@ -1,0 +1,27 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
+
+    <Style x:Key="DefaultHyperlinkStyle" TargetType="Hyperlink">
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlHyperlinkTextBrush}" />
+        <Setter Property="TextDecorations" Value="Underline" />
+        <Setter Property="primitives:HyperlinkHelper.IsPressEnabled" Value="True" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Foreground" Value="{DynamicResource SystemControlHyperlinkBaseMediumBrush}" />
+            </Trigger>
+            <Trigger Property="primitives:HyperlinkHelper.IsPressed" Value="true">
+                <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="false">
+                <Setter Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="true">
+                <Setter Property="Cursor" Value="Hand" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="Hyperlink" BasedOn="{StaticResource DefaultHyperlinkStyle}" />
+</ResourceDictionary>
