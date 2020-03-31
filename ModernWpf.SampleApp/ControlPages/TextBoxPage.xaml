@@ -118,14 +118,6 @@
                     </Expander>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
-
-            <sc:ControlExample HeaderText="A simple text editor using RichTextBox.">
-                <RichTextBox
-                    x:Name="richTextBox"
-                    ui:ControlHelper.Header="Control header"
-                    ui:ControlHelper.PlaceholderText="Placeholder text"
-                    SpellCheck.IsEnabled="True" />
-            </sc:ControlExample>
         </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>

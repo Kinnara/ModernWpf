@@ -35,13 +35,9 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid
-            Grid.Row="0"
-            Grid.Column="0"
-            Grid.ColumnSpan="2">
+        <Grid Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -141,7 +137,7 @@
                 Margin="0,0,12,0"
                 Background="Transparent"
                 DefaultLabelPosition="Right">
-                <ui:AppBarButton x:Name="ThemeButton" Click="OnThemeButtonClick" Label="Toggle Theme" MouseDoubleClick="OnThemeButtonMouseDoubleClick">
+                <ui:AppBarButton x:Name="ThemeButton" Click="OnThemeButtonClick" Label="Toggle Theme">
                     <ui:AppBarButton.Icon>
                         <ui:FontIcon
                             Glyph="&#xE771;"
@@ -149,41 +145,32 @@
                     </ui:AppBarButton.Icon>
                 </ui:AppBarButton>
             </ui:CommandBar>
-
-            <Grid
-                x:Name="AutoSuggestArea"
-                Grid.Column="2"
-                Margin="0,0,12,0"
-                Width="294"
-                Visibility="Collapsed">
-                <ui:AutoSuggestBox
-                    x:Name="controlsSearchBox"
-                    VerticalAlignment="Center"
-                    PlaceholderText="Search"
-                    QueryIcon="Find"
-                    QuerySubmitted="OnControlsSearchBoxQuerySubmitted"
-                    TextChanged="OnControlsSearchBoxTextChanged">
-                    <ui:AutoSuggestBox.Resources>
-                        <Style TargetType="ListView" BasedOn="{StaticResource DefaultListViewStyle}">
-                            <Setter Property="ui:ScrollViewerHelper.AutoHideScrollBars" Value="True" />
-                        </Style>
-                    </ui:AutoSuggestBox.Resources>
-                </ui:AutoSuggestBox>
-            </Grid>
         </Grid>
 
-        <ListBox
-            x:Name="PagesList"
+        <DockPanel
             Grid.Row="1"
-            Grid.Column="0"
-            DisplayMemberPath="Title"
-            SelectedValuePath="NavigateUri"
-            SelectedIndex="0"
-            SelectionChanged="PagesList_SelectionChanged">
-            <ListBox.ItemsSource>
-                <local:ControlPagesData />
-            </ListBox.ItemsSource>
-        </ListBox>
+            Background="{DynamicResource NavigationViewExpandedPaneBackground}">
+            <ui:AutoSuggestBox
+                x:Name="controlsSearchBox"
+                DockPanel.Dock="Top"
+                Margin="12"
+                PlaceholderText="Search"
+                QueryIcon="Find"
+                QuerySubmitted="OnControlsSearchBoxQuerySubmitted"
+                TextChanged="OnControlsSearchBoxTextChanged" />
+
+            <ui:ListView
+                x:Name="PagesList"
+                DockPanel.Dock="Top"
+                DisplayMemberPath="Title"
+                SelectedValuePath="NavigateUri"
+                SelectedIndex="0"
+                SelectionChanged="PagesList_SelectionChanged">
+                <ui:ListView.ItemsSource>
+                    <local:ControlPagesData />
+                </ui:ListView.ItemsSource>
+            </ui:ListView>
+        </DockPanel>
 
         <sc:SampleFrame
             x:Name="rootFrame"

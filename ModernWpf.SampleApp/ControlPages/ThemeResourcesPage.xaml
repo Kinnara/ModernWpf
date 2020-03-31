@@ -150,7 +150,6 @@
             <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
             <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="ui:ScrollViewerHelper.AutoHideScrollBars" Value="True" />
         </Style>
     </Page.Resources>
 

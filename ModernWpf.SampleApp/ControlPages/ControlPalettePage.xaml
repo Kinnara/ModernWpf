@@ -20,6 +20,13 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
+        <ui:ThemeShadowChrome
+            x:Name="Shadow"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Depth="8"
+            IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
+
         <Border
             Grid.Column="0"
             Background="{DynamicResource RegionBrush}"
@@ -34,7 +41,6 @@
         <ScrollViewer
             x:Name="ContentScrollViewer"
             Grid.ColumnSpan="2"
-            ui:ScrollViewerHelper.AutoHideScrollBars="True"
             ui:ThemeManager.RequestedTheme="Dark">
             <Grid VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>

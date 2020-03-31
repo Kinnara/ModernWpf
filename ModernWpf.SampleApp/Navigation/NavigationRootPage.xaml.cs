@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Navigation;
 
 namespace ModernWpf.SampleApp
@@ -26,6 +25,11 @@ namespace ModernWpf.SampleApp
         public NavigationRootPage()
         {
             InitializeComponent();
+
+            Loaded += delegate
+            {
+                controlsSearchBox.Focus();
+            };
 
             Current = this;
             RootFrame = rootFrame;
@@ -262,14 +266,6 @@ namespace ModernWpf.SampleApp
             else
             {
                 ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
-            }
-        }
-
-        private void OnThemeButtonMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Right)
-            {
-                AutoSuggestArea.Visibility = Visibility.Visible;
             }
         }
     }

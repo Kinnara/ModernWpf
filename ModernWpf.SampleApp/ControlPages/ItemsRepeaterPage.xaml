@@ -216,9 +216,7 @@
                     Margin="0,0,24,20">
                     <sc:ControlExample HeaderText="Basic, non-interactive items laid out by ItemsRepeater">
                         <ui:ItemsRepeaterScrollHost MaxHeight="500">
-                            <ScrollViewer
-                                HorizontalScrollBarVisibility="Auto"
-                                ui:ScrollViewerHelper.AutoHideScrollBars="True">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto">
                                 <ui:ItemsRepeater
                                     x:Name="repeater"
                                     Layout="{StaticResource VerticalStackLayout}"
@@ -405,9 +403,7 @@
                 </ui:ItemsRepeaterScrollHost>
 
                 <sc:ControlExample.Options>
-                    <ScrollViewer
-                        Margin="-16"
-                        ui:ScrollViewerHelper.AutoHideScrollBars="True">
+                    <ScrollViewer Margin="-16">
                         <ui:SimpleStackPanel
                             Margin="16"
                             Style="{StaticResource OptionsPanelStyle}">
@@ -477,9 +473,7 @@
                 </ui:ItemsRepeaterScrollHost>
 
                 <sc:ControlExample.Options>
-                    <ScrollViewer
-                        Margin="-16"
-                        ui:ScrollViewerHelper.AutoHideScrollBars="True">
+                    <ScrollViewer Margin="-16">
                         <ui:SimpleStackPanel
                             Margin="16"
                             Style="{StaticResource OptionsPanelStyle}">
