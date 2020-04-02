@@ -100,25 +100,20 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <ContentPresenter
+                        <local:ContentPresenterEx
                             x:Name="HeaderContentPresenter"
                             Grid.Row="0"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
-                            TextElement.FontWeight="Normal"
-                            TextElement.Foreground="{DynamicResource TextControlHeaderForeground}"
+                            FontWeight="Normal"
+                            Foreground="{DynamicResource TextControlHeaderForeground}"
                             Margin="{DynamicResource TextBoxTopHeaderMargin}"
+                            TextWrapping="Wrap"
                             VerticalAlignment="Top"
                             Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                            <ContentPresenter.Resources>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap" />
-                                </Style>
-                            </ContentPresenter.Resources>
-                        </ContentPresenter>
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         <!-- Control.IsTemplateFocusTarget="True" -->
                         <Border
                             x:Name="BorderElement"
@@ -191,7 +186,7 @@
                             <Setter TargetName="PlaceholderTextContentPresenter" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="HeaderContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TextControlHeaderForegroundDisabled}" />
+                            <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource TextControlHeaderForegroundDisabled}" />
                             <Setter Property="Background" Value="{DynamicResource TextControlBackgroundDisabled}" />
                             <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushDisabled}" />
                             <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundDisabled}" />

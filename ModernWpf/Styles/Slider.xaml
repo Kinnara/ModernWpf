@@ -2,6 +2,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
@@ -70,22 +71,17 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <ContentPresenter
+            <local:ContentPresenterEx
                 x:Name="HeaderContentPresenter"
                 Grid.Row="0"
                 Content="{TemplateBinding primitives:ControlHelper.Header}"
                 ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
-                TextElement.FontWeight="{DynamicResource SliderHeaderThemeFontWeight}"
-                TextElement.Foreground="{DynamicResource SliderHeaderForeground}"
+                FontWeight="{DynamicResource SliderHeaderThemeFontWeight}"
+                Foreground="{DynamicResource SliderHeaderForeground}"
                 Margin="{DynamicResource SliderTopHeaderMargin}"
+                TextWrapping="Wrap"
                 Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
-                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                <ContentPresenter.Resources>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="TextWrapping" Value="Wrap" />
-                    </Style>
-                </ContentPresenter.Resources>
-            </ContentPresenter>
+                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
             <!-- Control.IsTemplateFocusTarget="True" -->
             <Grid
                 x:Name="SliderContainer"
@@ -204,7 +200,7 @@
                 <Setter TargetName="HorizontalDecreaseRect" Property="Fill" Value="{DynamicResource SliderTrackValueFillPressed}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter TargetName="HeaderContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SliderHeaderForegroundDisabled}" />
+                <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource SliderHeaderForegroundDisabled}" />
                 <Setter TargetName="HorizontalDecreaseRect" Property="Fill" Value="{DynamicResource SliderTrackValueFillDisabled}" />
                 <Setter TargetName="HorizontalTrackRect" Property="Fill" Value="{DynamicResource SliderTrackFillDisabled}" />
                 <Setter TargetName="HorizontalThumb" Property="Background" Value="{DynamicResource SliderThumbBackgroundDisabled}" />
@@ -227,22 +223,18 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <ContentPresenter
+            <local:ContentPresenterEx
                 x:Name="HeaderContentPresenter"
                 Grid.Row="0"
                 Content="{TemplateBinding primitives:ControlHelper.Header}"
                 ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
-                TextElement.FontWeight="{DynamicResource SliderHeaderThemeFontWeight}"
-                TextElement.Foreground="{DynamicResource SliderHeaderForeground}"
+                FontWeight="{DynamicResource SliderHeaderThemeFontWeight}"
+                Foreground="{DynamicResource SliderHeaderForeground}"
                 Margin="{DynamicResource SliderTopHeaderMargin}"
+                TextWrapping="Wrap"
                 Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                <ContentPresenter.Resources>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="TextWrapping" Value="Wrap" />
-                    </Style>
-                </ContentPresenter.Resources>
-            </ContentPresenter>
+            </local:ContentPresenterEx>
             <!-- Control.IsTemplateFocusTarget="True" -->
             <Grid
                 x:Name="SliderContainer"
@@ -362,7 +354,7 @@
                 <Setter TargetName="VerticalDecreaseRect" Property="Fill" Value="{DynamicResource SliderTrackValueFillPressed}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter TargetName="HeaderContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SliderHeaderForegroundDisabled}" />
+                <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource SliderHeaderForegroundDisabled}" />
                 <Setter TargetName="VerticalDecreaseRect" Property="Fill" Value="{DynamicResource SliderTrackValueFillDisabled}" />
                 <Setter TargetName="VerticalTrackRect" Property="Fill" Value="{DynamicResource SliderTrackFillDisabled}" />
                 <Setter TargetName="VerticalThumb" Property="Background" Value="{DynamicResource SliderThumbBackgroundDisabled}" />

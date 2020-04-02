@@ -90,27 +90,22 @@
                                     Fill="{DynamicResource RadioButtonCheckGlyphFill}"
                                     Stroke="{DynamicResource RadioButtonCheckGlyphStroke}" />
                             </Grid>
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 x:Name="ContentPresenter"
                                 TextElement.Foreground="{TemplateBinding Foreground}"
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Grid.Column="1"
+                                TextWrapping="Wrap"
                                 Focusable="False"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                                <ContentPresenter.Resources>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="TextWrapping" Value="Wrap" />
-                                    </Style>
-                                </ContentPresenter.Resources>
-                            </ContentPresenter>
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RadioButtonForegroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource RadioButtonForegroundPointerOver}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource RadioButtonBackgroundPointerOver}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource RadioButtonBorderBrushPointerOver}" />
                             <Setter TargetName="OuterEllipse" Property="Stroke" Value="{DynamicResource RadioButtonOuterEllipseStrokePointerOver}" />
@@ -121,7 +116,7 @@
                             <Setter TargetName="CheckGlyph" Property="Stroke" Value="{DynamicResource RadioButtonCheckGlyphStrokePointerOver}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RadioButtonForegroundPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource RadioButtonForegroundPressed}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource RadioButtonBackgroundPressed}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource RadioButtonBorderBrushPressed}" />
                             <Setter TargetName="OuterEllipse" Property="Stroke" Value="{DynamicResource RadioButtonOuterEllipseStrokePressed}" />
@@ -132,7 +127,7 @@
                             <Setter TargetName="CheckGlyph" Property="Stroke" Value="{DynamicResource RadioButtonCheckGlyphStrokePressed}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RadioButtonForegroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource RadioButtonForegroundDisabled}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource RadioButtonBackgroundDisabled}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource RadioButtonBorderBrushDisabled}" />
                             <Setter TargetName="OuterEllipse" Property="Stroke" Value="{DynamicResource RadioButtonOuterEllipseStrokeDisabled}" />

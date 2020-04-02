@@ -40,23 +40,18 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <ContentPresenter
+                        <local:ContentPresenterEx
                             x:Name="HeaderContentPresenter"
                             Grid.Row="0"
+                            Foreground="{DynamicResource TextControlHeaderForeground}"
+                            Margin="{DynamicResource RichEditBoxTopHeaderMargin}"
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
-                            TextElement.FontWeight="Normal"
-                            TextElement.Foreground="{DynamicResource TextControlHeaderForeground}"
-                            Margin="{DynamicResource RichEditBoxTopHeaderMargin}"
+                            FontWeight="Normal"
+                            TextWrapping="Wrap"
                             VerticalAlignment="Top"
                             Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                            <ContentPresenter.Resources>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap" />
-                                </Style>
-                            </ContentPresenter.Resources>
-                        </ContentPresenter>
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         <Border
                             x:Name="BorderElement"
                             Grid.Row="1"
@@ -99,7 +94,7 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="HeaderContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TextControlHeaderForegroundDisabled}" />
+                            <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource TextControlHeaderForegroundDisabled}" />
                             <Setter Property="Background" Value="{DynamicResource TextControlBackgroundDisabled}" />
                             <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushDisabled}" />
                             <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundDisabled}" />

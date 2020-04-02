@@ -185,23 +185,18 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <ContentPresenter
+                        <ui:ContentPresenterEx
                             x:Name="HeaderContentPresenter"
                             Grid.Row="0"
                             Content="{TemplateBinding Header}"
                             ContentTemplate="{TemplateBinding HeaderTemplate}"
                             Margin="{DynamicResource TimePickerTopHeaderMargin}"
                             MaxWidth="{DynamicResource TimePickerThemeMaxWidth}"
-                            TextElement.Foreground="{DynamicResource TimePickerHeaderForeground}"
+                            Foreground="{DynamicResource TimePickerHeaderForeground}"
+                            TextWrapping="Wrap"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
-                            Visibility="{TemplateBinding ui:ControlHelper.HeaderVisibility}">
-                            <ContentPresenter.Resources>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap" />
-                                </Style>
-                            </ContentPresenter.Resources>
-                        </ContentPresenter>
+                            Visibility="{TemplateBinding ui:ControlHelper.HeaderVisibility}" />
                         <Button
                             x:Name="PART_Button"
                             Grid.Row="1"

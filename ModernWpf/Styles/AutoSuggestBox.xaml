@@ -166,23 +166,18 @@
                             Grid.ColumnSpan="3"
                             Grid.RowSpan="1"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
-                        <ContentPresenter
+                        <local:ContentPresenterEx
                             x:Name="HeaderContentPresenter"
                             Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
                             Grid.Row="0"
-                            TextElement.Foreground="{DynamicResource TextControlHeaderForeground}"
+                            Foreground="{DynamicResource TextControlHeaderForeground}"
                             Margin="{DynamicResource AutoSuggestBoxTopHeaderMargin}"
                             Grid.ColumnSpan="3"
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
-                            TextElement.FontWeight="Normal"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                            <ContentPresenter.Resources>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap" />
-                                </Style>
-                            </ContentPresenter.Resources>
-                        </ContentPresenter>
+                            FontWeight="Normal"
+                            TextWrapping="Wrap"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         <ScrollViewer
                             x:Name="PART_ContentHost"
                             Grid.Row="1"
@@ -242,7 +237,7 @@
                     <ControlTemplate.Triggers>
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="HeaderContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TextControlHeaderForegroundDisabled}" />
+                            <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource TextControlHeaderForegroundDisabled}" />
                             <Setter Property="Background" Value="{DynamicResource TextControlBackgroundDisabled}" />
                             <Setter TargetName="BorderElement" Property="BorderBrush" Value="{DynamicResource TextControlBorderBrushDisabled}" />
                             <Setter Property="Foreground" Value="{DynamicResource TextControlForegroundDisabled}" />

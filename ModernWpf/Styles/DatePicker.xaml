@@ -116,19 +116,14 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <ContentPresenter
+                        <local:ContentPresenterEx
                             x:Name="HeaderContentPresenter"
                             Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
                             Margin="{StaticResource CalendarDatePickerTopHeaderMargin}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                            <ContentPresenter.Resources>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap" />
-                                </Style>
-                            </ContentPresenter.Resources>
-                        </ContentPresenter>
+                            TextWrapping="Wrap"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         <Grid
                             x:Name="PART_Root"
                             Grid.Row="1">
@@ -254,7 +249,7 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Background" Property="Background" Value="{DynamicResource CalendarDatePickerBackgroundDisabled}" />
                             <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource CalendarDatePickerBorderBrushDisabled}" />
-                            <Setter TargetName="HeaderContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CalendarDatePickerHeaderForegroundDisabled}" />
+                            <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource CalendarDatePickerHeaderForegroundDisabled}" />
                             <Setter TargetName="PART_TextBox" Property="Foreground" Value="{DynamicResource CalendarDatePickerTextForegroundDisabled}" />
                             <Setter TargetName="PART_Button" Property="Foreground" Value="{DynamicResource CalendarDatePickerCalendarGlyphForegroundDisabled}" />
                         </Trigger>

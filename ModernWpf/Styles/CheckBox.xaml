@@ -60,21 +60,16 @@
                                     Foreground="{DynamicResource CheckBoxCheckGlyphForegroundUnchecked}"
                                     Opacity="0" />
                             </Grid>
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 x:Name="ContentPresenter"
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Grid.Column="1"
+                                TextWrapping="Wrap"
                                 Focusable="False"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                                <ContentPresenter.Resources>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="TextWrapping" Value="Wrap" />
-                                    </Style>
-                                </ContentPresenter.Resources>
-                            </ContentPresenter>
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -86,7 +81,7 @@
                                 <Condition Property="IsPressed" Value="False" />
                                 <Condition Property="IsEnabled" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CheckBoxForegroundUnchecked}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource CheckBoxForegroundUnchecked}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource CheckBoxBackgroundUnchecked}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushUnchecked}" />
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeUnchecked}" />
@@ -99,7 +94,7 @@
                                 <Condition Property="IsChecked" Value="False" />
                                 <Condition Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CheckBoxForegroundUncheckedPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource CheckBoxForegroundUncheckedPointerOver}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource CheckBoxBackgroundUncheckedPointerOver}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushUncheckedPointerOver}" />
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeUncheckedPointerOver}" />
@@ -112,7 +107,7 @@
                                 <Condition Property="IsChecked" Value="False" />
                                 <Condition Property="IsPressed" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CheckBoxForegroundUncheckedPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource CheckBoxForegroundUncheckedPressed}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource CheckBoxBackgroundUncheckedPressed}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushUncheckedPressed}" />
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeUncheckedPressed}" />
@@ -125,7 +120,7 @@
                                 <Condition Property="IsChecked" Value="False" />
                                 <Condition Property="IsEnabled" Value="False" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CheckBoxForegroundUncheckedDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource CheckBoxForegroundUncheckedDisabled}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource CheckBoxBackgroundUncheckedDisabled}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushUncheckedDisabled}" />
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeUncheckedDisabled}" />
@@ -140,7 +135,7 @@
                                 <Condition Property="IsPressed" Value="False" />
                                 <Condition Property="IsEnabled" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CheckBoxForegroundChecked}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource CheckBoxForegroundChecked}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource CheckBoxBackgroundChecked}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushChecked}" />
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeChecked}" />
@@ -155,7 +150,7 @@
                                 <Condition Property="IsChecked" Value="True" />
                                 <Condition Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CheckBoxForegroundCheckedPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource CheckBoxForegroundCheckedPointerOver}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource CheckBoxBackgroundCheckedPointerOver}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushCheckedPointerOver}" />
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeCheckedPointerOver}" />
@@ -169,7 +164,7 @@
                                 <Condition Property="IsChecked" Value="True" />
                                 <Condition Property="IsPressed" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CheckBoxForegroundCheckedPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource CheckBoxForegroundCheckedPressed}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource CheckBoxBackgroundCheckedPressed}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushCheckedPressed}" />
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeCheckedPressed}" />
@@ -183,7 +178,7 @@
                                 <Condition Property="IsChecked" Value="True" />
                                 <Condition Property="IsEnabled" Value="False" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CheckBoxForegroundCheckedDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource CheckBoxForegroundCheckedDisabled}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource CheckBoxBackgroundCheckedDisabled}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushCheckedDisabled}" />
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeCheckedDisabled}" />
@@ -199,7 +194,7 @@
                                 <Condition Property="IsPressed" Value="False" />
                                 <Condition Property="IsEnabled" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CheckBoxForegroundIndeterminate}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource CheckBoxForegroundIndeterminate}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource CheckBoxBackgroundIndeterminate}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushIndeterminate}" />
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminate}" />
@@ -214,7 +209,7 @@
                                 <Condition Property="IsChecked" Value="{x:Null}" />
                                 <Condition Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CheckBoxForegroundIndeterminatePointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource CheckBoxForegroundIndeterminatePointerOver}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource CheckBoxBackgroundIndeterminatePointerOver}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushIndeterminatePointerOver}" />
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminatePointerOver}" />
@@ -229,7 +224,7 @@
                                 <Condition Property="IsChecked" Value="{x:Null}" />
                                 <Condition Property="IsPressed" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CheckBoxForegroundIndeterminatePressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource CheckBoxForegroundIndeterminatePressed}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource CheckBoxBackgroundIndeterminatePressed}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushIndeterminatePressed}" />
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminatePressed}" />
@@ -244,7 +239,7 @@
                                 <Condition Property="IsChecked" Value="{x:Null}" />
                                 <Condition Property="IsEnabled" Value="False" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CheckBoxForegroundIndeterminateDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource CheckBoxForegroundIndeterminateDisabled}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource CheckBoxBackgroundIndeterminateDisabled}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource CheckBoxBorderBrushIndeterminateDisabled}" />
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminateDisabled}" />

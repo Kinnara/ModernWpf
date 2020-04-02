@@ -179,7 +179,7 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <ContentPresenter
+                            <ui:ContentPresenterEx
                                 x:Name="HeaderContentPresenter"
                                 Grid.Row="0"
                                 Content="{TemplateBinding Header}"
@@ -187,15 +187,10 @@
                                 TextElement.Foreground="{DynamicResource ToggleSwitchHeaderForeground}"
                                 IsHitTestVisible="False"
                                 Margin="{DynamicResource ToggleSwitchTopHeaderMargin}"
+                                TextWrapping="Wrap"
                                 VerticalAlignment="Top"
                                 Visibility="Collapsed"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                                <ContentPresenter.Resources>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="TextWrapping" Value="Wrap" />
-                                    </Style>
-                                </ContentPresenter.Resources>
-                            </ContentPresenter>
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             <Grid
                                 Grid.Row="1"
                                 MinWidth="{StaticResource ToggleSwitchThemeMinWidth}"
@@ -330,7 +325,7 @@
                         </Trigger>
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="TextElement.Foreground" TargetName="HeaderContentPresenter" Value="{DynamicResource ToggleSwitchHeaderForegroundDisabled}" />
+                            <Setter Property="Foreground" TargetName="HeaderContentPresenter" Value="{DynamicResource ToggleSwitchHeaderForegroundDisabled}" />
                             <Setter Property="TextElement.Foreground" TargetName="OffContentPresenter" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
                             <Setter Property="TextElement.Foreground" TargetName="OnContentPresenter" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
                             <Setter Property="Stroke" TargetName="OuterBorder" Value="{DynamicResource ToggleSwitchStrokeOffDisabled}" />
@@ -341,14 +336,14 @@
                             <Setter Property="Stroke" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchStrokeOnDisabled}" />
                             <Setter Property="Background" TargetName="SwitchAreaGrid" Value="{DynamicResource ToggleSwitchContainerBackgroundDisabled}" />
                         </Trigger>
-                        
+
                         <Trigger Property="IsOn" Value="true">
                             <Setter TargetName="SwitchKnobBounds" Property="Opacity" Value="1" />
                             <Setter TargetName="OuterBorder" Property="Opacity" Value="0" />
                             <Setter TargetName="SwitchKnobOn" Property="Opacity" Value="1" />
                             <Setter TargetName="SwitchKnobOff" Property="Opacity" Value="0" />
                         </Trigger>
-                        
+
                         <Trigger Property="ui:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
                             <Setter TargetName="FocusVisual" Property="Visibility" Value="Visible" />
                         </Trigger>

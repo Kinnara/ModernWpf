@@ -314,23 +314,17 @@
                                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                                                         <ContentControl.Template>
                                                             <ControlTemplate TargetType="ContentControl">
-                                                                <ContentPresenter
+                                                                <ui:ContentPresenterEx
                                                                     Content="{TemplateBinding Content}"
+                                                                    TextWrapping="Wrap"
                                                                     ContentTemplate="{TemplateBinding ContentTemplate}"
                                                                     Margin="{TemplateBinding Padding}"
                                                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                                                                    <ContentPresenter.Resources>
-                                                                        <Style TargetType="TextBlock">
-                                                                            <!--<Setter Property="MaxLines" Value="2" />-->
-                                                                            <Setter Property="TextWrapping" Value="Wrap" />
-                                                                        </Style>
-                                                                    </ContentPresenter.Resources>
-                                                                </ContentPresenter>
+                                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                                                             </ControlTemplate>
                                                         </ContentControl.Template>
                                                     </ContentControl>
-                                                    <ContentPresenter
+                                                    <ui:ContentPresenterEx
                                                         x:Name="Content"
                                                         ContentTemplate="{TemplateBinding ContentTemplate}"
                                                         Content="{TemplateBinding Content}"
@@ -339,13 +333,8 @@
                                                         Margin="{DynamicResource ContentDialogContentMargin}"
                                                         TextElement.Foreground="{TemplateBinding Foreground}"
                                                         Grid.Row="1"
-                                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                                                        <ContentPresenter.Resources>
-                                                            <Style TargetType="TextBlock">
-                                                                <Setter Property="TextWrapping" Value="Wrap" />
-                                                            </Style>
-                                                        </ContentPresenter.Resources>
-                                                    </ContentPresenter>
+                                                        TextWrapping="Wrap"
+                                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                                 </Grid>
                                             </ScrollViewer>
                                             <Grid
