@@ -52,11 +52,6 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         Padding="{TemplateBinding Padding}">
                         <Grid>
-                            <Rectangle
-                                x:Name="HighContrastBackground"
-                                Fill="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
-                                Visibility="Collapsed" />
-
                             <Grid x:Name="ContentGrid">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
@@ -97,9 +92,33 @@
                                     IsTabStop="false"
                                     Visibility="Collapsed" />
                             </Grid>
+                            
+                            <Border
+                                x:Name="HighContrastBorder"
+                                BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
+                                BorderThickness="7,1,7,7"
+                                IsHitTestVisible="False"
+                                Visibility="Collapsed" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="IsActive" Value="False">
+                            <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource WindowBorderInactive}" />
+                            <Setter TargetName="HighContrastBorder" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true">
+                            <Setter TargetName="ContentGrid" Property="Margin" Value="7,0,7,7" />
+                            <Setter TargetName="HighContrastBorder" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="0" />
+                            <Setter TargetName="ContentGrid" Property="Margin" Value="0" />
+                            <Setter TargetName="HighContrastBorder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="local:TitleBar.ExtendViewIntoTitleBar" Value="True">
+                            <Setter TargetName="AdornerDecorator" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="AdornerDecorator" Property="Grid.RowSpan" Value="2" />
+                        </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="ResizeMode" Value="CanResizeWithGrip" />
@@ -107,22 +126,6 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="WindowResizeGrip" Property="Visibility" Value="Visible" />
                         </MultiTrigger>
-                        <Trigger Property="IsActive" Value="False">
-                            <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource WindowBorderInactive}" />
-                            <Setter TargetName="HighContrastBackground" Property="Fill" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
-                        </Trigger>
-                        <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true">
-                            <Setter TargetName="HighContrastBackground" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="ContentGrid" Property="Margin" Value="7,0,7,7" />
-                        </DataTrigger>
-                        <Trigger Property="WindowState" Value="Maximized">
-                            <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="0" />
-                            <Setter TargetName="ContentGrid" Property="Margin" Value="0" />
-                        </Trigger>
-                        <Trigger Property="local:TitleBar.ExtendViewIntoTitleBar" Value="True">
-                            <Setter TargetName="AdornerDecorator" Property="Grid.Row" Value="0" />
-                            <Setter TargetName="AdornerDecorator" Property="Grid.RowSpan" Value="2" />
-                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

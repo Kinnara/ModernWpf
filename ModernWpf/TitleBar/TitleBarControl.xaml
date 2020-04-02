@@ -28,6 +28,11 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
+                        <Rectangle x:Name="HighContrastBackground"
+                                   Grid.ColumnSpan="3"
+                                   Fill="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
+                                   Visibility="Collapsed"/>
+                        
                         <StackPanel
                             x:Name="PART_LeftSystemOverlay"
                             Orientation="Horizontal">
@@ -102,16 +107,21 @@
                         </StackPanel>
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="IsActive" Value="False">
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{Binding InactiveBackground, RelativeSource={RelativeSource TemplatedParent}}" />
+                            <Setter TargetName="HighContrastBackground" Property="Fill" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                            <Setter TargetName="Title" Property="Foreground" Value="{Binding InactiveForeground, RelativeSource={RelativeSource TemplatedParent}}" />
+                        </Trigger>
+                        <Trigger Property="ExtendViewIntoTitleBar" Value="True">
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{x:Null}" />
+                            <Setter TargetName="IconTitlePanel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
                         <Trigger Property="IsBackButtonVisible" Value="True">
                             <Setter TargetName="PART_BackButton" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="IsIconVisible" Value="True">
                             <Setter TargetName="Icon" Property="Visibility" Value="Visible" />
                             <Setter TargetName="Title" Property="Margin" Value="5,0,12,0" />
-                        </Trigger>
-                        <Trigger Property="ExtendViewIntoTitleBar" Value="True">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{x:Null}" />
-                            <Setter TargetName="IconTitlePanel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <DataTrigger Binding="{Binding WindowStyle, RelativeSource={RelativeSource AncestorType=Window}}" Value="ToolWindow">
                             <Setter TargetName="MinimizeButton" Property="Visibility" Value="Collapsed" />
@@ -128,10 +138,6 @@
                             <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeRestore}" />
                             <Setter TargetName="MaximizeRestoreButton" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
                         </DataTrigger>
-                        <Trigger Property="IsActive" Value="False">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{Binding InactiveBackground, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <Setter TargetName="Title" Property="Foreground" Value="{Binding InactiveForeground, RelativeSource={RelativeSource TemplatedParent}}" />
-                        </Trigger>
                         <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true">
                             <Setter TargetName="PART_BackButton" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
                             <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" />
@@ -146,7 +152,14 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
-                                <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource TemplatedParent}}" Value="False" />
+                                <Condition Binding="{Binding ExtendViewIntoTitleBar, RelativeSource={RelativeSource Self}}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="HighContrastBackground" Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
+                                <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}" Value="False" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" />
                         </MultiDataTrigger>

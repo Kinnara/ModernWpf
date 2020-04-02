@@ -10,6 +10,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace ModernWpf.MahApps.Controls
@@ -460,6 +461,15 @@ namespace ModernWpf.MahApps.Controls
             }
 
             base.OnApplyTemplate();
+
+            if (GetTemplateChild("MainSplitView") is SplitView splitView)
+            {
+                splitView.ApplyTemplate();
+                if (splitView.Template?.FindName("HCPaneBorder", splitView) is Rectangle HCPaneBorder)
+                {
+                    HCPaneBorder.SetResourceReference(Rectangle.FillProperty, "SystemControlForegroundTransparentBrush");
+                }
+            }
 
             _paneGrid = GetTemplateChild("PaneGrid") as UIElement;
             _paneSearchButton = GetTemplateChild(c_searchButtonName) as Button;

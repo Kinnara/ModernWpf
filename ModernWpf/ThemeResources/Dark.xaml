@@ -150,6 +150,7 @@
 
     <!-- Acrylic Brushes -->
     <SolidColorBrush x:Key="SystemControlAcrylicElementBrush" Color="{m:StaticColor SystemChromeMediumColor}" />
+    <SolidColorBrush x:Key="SystemControlChromeMediumLowAcrylicElementMediumBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
 
     <!-- Background Brushes -->
     <SolidColorBrush x:Key="SystemControlBackgroundBaseLowRevealBackgroundBrush" Color="{m:StaticColor SystemBaseLowColor}" />
@@ -810,9 +811,9 @@
     <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
 
     <!-- Resources for NavigationView -->
-    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="{m:StaticColor SystemChromeMediumColor}" />
+    <m:StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemControlAcrylicElementBrush" />
     <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{m:StaticColor SystemChromeMediumColor}" />
-    <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="{m:StaticColor SystemChromeMediumHighColor}" />
+    <m:StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemControlChromeMediumLowAcrylicElementMediumBrush" />
 
     <m:StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />

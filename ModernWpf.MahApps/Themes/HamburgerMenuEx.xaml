@@ -369,6 +369,9 @@
                 <Setter TargetName="PaneAutoSuggestBoxPresenter" Property="Visibility" Value="Collapsed" />
                 <Setter TargetName="PaneAutoSuggestButton" Property="Visibility" Value="Visible" />
             </Trigger>
+            <Trigger Property="IsPaneOpen" Value="True">
+                <Setter TargetName="MainSplitView" Property="PaneBackground" Value="{DynamicResource NavigationViewExpandedPaneBackground}" />
+            </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 

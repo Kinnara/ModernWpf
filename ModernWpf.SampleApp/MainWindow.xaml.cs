@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace ModernWpf.SampleApp
 {
@@ -21,7 +22,7 @@ namespace ModernWpf.SampleApp
             SetBinding(TitleBar.IsBackButtonVisibleProperty,
                 new Binding { Path = new PropertyPath(Frame.CanGoBackProperty), Source = rootFrame });
 
-            SubscribeToResourcesChanged();
+            SubscribeToResourcesChanged();            
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -39,6 +40,16 @@ namespace ModernWpf.SampleApp
                 Settings.Default.Save();
             }
         }
+
+        /*protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property == FocusManager.FocusedElementProperty)
+            {
+                Debug.WriteLine("FocusedElement: " + e.NewValue);
+            }
+        }*/
 
         private void OnBackRequested(object sender, BackRequestedEventArgs e)
         {

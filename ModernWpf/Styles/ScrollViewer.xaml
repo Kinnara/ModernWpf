@@ -15,7 +15,7 @@
 
     <Style x:Key="DefaultScrollViewerStyle" TargetType="ScrollViewer">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Top" />
         <Setter Property="VerticalScrollBarVisibility" Value="Visible" />

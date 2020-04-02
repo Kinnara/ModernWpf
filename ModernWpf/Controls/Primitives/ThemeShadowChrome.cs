@@ -6,7 +6,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
-using System.Windows.Shapes;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -35,6 +34,8 @@ namespace ModernWpf.Controls.Primitives
             _background = new Grid
             {
                 CacheMode = _bitmapCache,
+                Focusable = false,
+                IsHitTestVisible = false,
                 SnapsToDevicePixels = false
             };
             AddVisualChild(_background);
