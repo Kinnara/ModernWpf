@@ -15,7 +15,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (e.OriginalSource is MenuItem menuItem)
             {
-                var size = Size.Parse((string)menuItem.Tag);
+                var size = Size.Parse(((string)menuItem.Header).Replace('×', ','));
                 Application.Current.MainWindow.Width = size.Width;
                 Application.Current.MainWindow.Height = size.Height;
             }

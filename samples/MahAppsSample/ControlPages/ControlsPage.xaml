@@ -30,7 +30,7 @@
         </ui:Flyout>
     </Page.Resources>
 
-    <ui:SimpleStackPanel
+    <sc:NonClippingStackPanel
         Orientation="Horizontal"
         Spacing="40"
         Margin="24,0,24,50">
@@ -259,5 +259,5 @@
                 Maximum="100" />
         </sc:NonClippingStackPanel>
 
-    </ui:SimpleStackPanel>
+    </sc:NonClippingStackPanel>
 </Page>
