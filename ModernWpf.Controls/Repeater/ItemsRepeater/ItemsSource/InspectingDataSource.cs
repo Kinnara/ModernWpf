@@ -83,7 +83,21 @@ namespace ModernWpf.Controls
             }
         }
 
-        public int IndexOf(object value)
+        internal override int IndexOfCore(object value)
+        {
+            int index = -1;
+            if (m_vector != null)
+            {
+                var v = m_vector.IndexOf(value);
+                if (v >= 0)
+                {
+                    index = v;
+                }
+            }
+            return index;
+        }
+
+        /*public int IndexOf(object value)
         {
             int index = -1;
             if (m_vector != null && value != null)
@@ -95,11 +109,18 @@ namespace ModernWpf.Controls
                 }
             }
             return index;
-        }
+        }*/
 
         private IList WrapIterable(IEnumerable iterable)
         {
-            return new List<object>(iterable.OfType<object>());
+            var vector = new List<object>();
+            var iterator = iterable.GetEnumerator();
+            while (iterator.MoveNext())
+            {
+                vector.Add(iterator.Current);
+            }
+
+            return vector;
         }
 
         private void UnListenToCollectionChanges()

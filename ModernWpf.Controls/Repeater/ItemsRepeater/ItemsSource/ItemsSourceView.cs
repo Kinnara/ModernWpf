@@ -44,6 +44,11 @@ namespace ModernWpf.Controls
             return IndexFromKeyCore(key);
         }
 
+        public int IndexOf(object value)
+        {
+            return IndexOfCore(value);
+        }
+
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         internal void OnItemsSourceChanged(NotifyCollectionChangedEventArgs args)
@@ -73,6 +78,11 @@ namespace ModernWpf.Controls
         }
 
         internal virtual int IndexFromKeyCore(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal virtual int IndexOfCore(object value)
         {
             throw new NotImplementedException();
         }
