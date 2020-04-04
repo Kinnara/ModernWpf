@@ -21,18 +21,20 @@
                 <ControlTemplate TargetType="primitives:TitleBarControl">
                     <Grid
                         x:Name="LayoutRoot"
-                        Background="{TemplateBinding Background}">
+                        Background="{TemplateBinding Background}"
+                        SnapsToDevicePixels="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
-                        <Rectangle x:Name="HighContrastBackground"
-                                   Grid.ColumnSpan="3"
-                                   Fill="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
-                                   Visibility="Collapsed"/>
-                        
+                        <Rectangle
+                            x:Name="HighContrastBackground"
+                            Grid.ColumnSpan="3"
+                            Fill="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
+                            Visibility="Collapsed" />
+
                         <StackPanel
                             x:Name="PART_LeftSystemOverlay"
                             Orientation="Horizontal">
@@ -45,7 +47,8 @@
                                 CommandParameter="{TemplateBinding BackButtonCommandParameter}"
                                 CommandTarget="{TemplateBinding BackButtonCommandTarget}"
                                 IsActive="{TemplateBinding IsActive}"
-                                Visibility="Collapsed" />
+                                Visibility="Collapsed"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </StackPanel>
 
                         <StackPanel
@@ -85,14 +88,16 @@
                                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
                                 Content="{StaticResource ChromeMinimize}"
                                 IsActive="{TemplateBinding IsActive}"
-                                Style="{TemplateBinding ButtonStyle}" />
+                                Style="{TemplateBinding ButtonStyle}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
                             <primitives:TitleBarButton
                                 x:Name="MaximizeRestoreButton"
                                 Command="{x:Static SystemCommands.MaximizeWindowCommand}"
                                 Content="{StaticResource ChromeMaximize}"
                                 IsActive="{TemplateBinding IsActive}"
-                                Style="{TemplateBinding ButtonStyle}" />
+                                Style="{TemplateBinding ButtonStyle}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
                             <primitives:TitleBarButton
                                 x:Name="CloseButton"
@@ -103,7 +108,8 @@
                                 HoverBackground="#E81123"
                                 HoverForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
                                 PressedBackground="#F1707A"
-                                PressedForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}" />
+                                PressedForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </StackPanel>
                     </Grid>
                     <ControlTemplate.Triggers>
