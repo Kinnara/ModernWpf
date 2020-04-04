@@ -29,7 +29,7 @@ namespace ModernWpf.Automation.Peers
 
         protected override string GetClassNameCore()
         {
-            return typeof(SplitButton).FullName;
+            return nameof(SplitButton);
         }
 
         protected override AutomationControlType GetAutomationControlTypeCore()

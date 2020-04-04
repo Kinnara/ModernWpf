@@ -26,7 +26,7 @@ namespace ModernWpf.Automation.Peers
 
         protected override string GetClassNameCore()
         {
-            return typeof(DropDownButton).FullName;
+            return nameof(DropDownButton);
         }
 
         private DropDownButton GetImpl()

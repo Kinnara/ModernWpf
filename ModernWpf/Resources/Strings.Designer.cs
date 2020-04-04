@@ -277,6 +277,15 @@ namespace ModernWpf {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Busy.
+        /// </summary>
+        internal static string ProgressRingIndeterminateStatus {
+            get {
+                return ResourceManager.GetString("ProgressRingIndeterminateStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Proofing.
         /// </summary>
         internal static string ProofingMenuItemLabel {

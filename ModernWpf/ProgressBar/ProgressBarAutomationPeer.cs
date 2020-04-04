@@ -40,7 +40,7 @@ namespace ModernWpf.Automation.Peers
 
         protected override string GetClassNameCore()
         {
-            return typeof(ProgressBar).FullName;
+            return nameof(ProgressBar);
         }
 
         protected override string GetNameCore()

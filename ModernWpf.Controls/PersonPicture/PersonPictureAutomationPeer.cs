@@ -19,7 +19,7 @@ namespace ModernWpf.Automation.Peers
 
         protected override string GetClassNameCore()
         {
-            return typeof(PersonPicture).FullName;
+            return nameof(PersonPicture);
         }
     }
 }

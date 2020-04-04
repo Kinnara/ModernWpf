@@ -26,7 +26,7 @@ namespace ModernWpf.Automation.Peers
 
         protected override string GetClassNameCore()
         {
-            return typeof(NumberBox).FullName;
+            return nameof(NumberBox);
         }
 
         protected override string GetNameCore()

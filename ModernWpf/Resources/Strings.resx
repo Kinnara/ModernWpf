@@ -269,4 +269,8 @@
     <value>Paused</value>
     <comment>This is used to announce Paused state.</comment>
   </data>
+  <data name="ProgressRingIndeterminateStatus" xml:space="preserve">
+    <value>Busy</value>
+    <comment>This is used to announce Indeterminate state.</comment>
+  </data>
 </root>

@@ -1,7 +1,9 @@
-﻿using ModernWpf.Controls.Primitives;
-using System;
+﻿using System;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
+using ModernWpf.Automation.Peers;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -21,13 +23,17 @@ namespace ModernWpf.Controls
 
         static ProgressRing()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(ProgressRing),
-                new FrameworkPropertyMetadata(typeof(ProgressRing)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(ProgressRing), new FrameworkPropertyMetadata(typeof(ProgressRing)));
         }
 
         public ProgressRing()
         {
             TemplateSettings = new ProgressRingTemplateSettings();
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ProgressRingAutomationPeer(this);
         }
 
         #region IsActive
@@ -47,7 +53,7 @@ namespace ModernWpf.Controls
 
         private static void OnIsActiveChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ProgressRing)d).UpdateVisualStates(true);
+            ((ProgressRing)d).ChangeVisualState(true);
         }
 
         #endregion
@@ -58,7 +64,7 @@ namespace ModernWpf.Controls
         {
             base.OnApplyTemplate();
 
-            UpdateVisualStates(false);
+            ChangeVisualState(false);
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -77,10 +83,10 @@ namespace ModernWpf.Controls
             templateSettings.EllipseOffset = new Thickness(0, maxSideLength / 2 - ellipseDiameter, 0, 0);
             templateSettings.MaxSideLength = maxSideLength;
 
-            UpdateVisualStates(true);
+            ChangeVisualState(true);
         }
 
-        private void UpdateVisualStates(bool useTransitions)
+        private void ChangeVisualState(bool useTransitions)
         {
             VisualStateManager.GoToState(this, IsActive ? ActiveState : InactiveState, useTransitions);
             VisualStateManager.GoToState(this, TemplateSettings.MaxSideLength < 60 ? SmallState : LargeState, useTransitions);
