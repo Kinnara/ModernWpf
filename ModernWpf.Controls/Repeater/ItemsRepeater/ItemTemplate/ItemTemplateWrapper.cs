@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
@@ -28,6 +29,17 @@ namespace ModernWpf.Controls
         public UIElement GetElement(ElementFactoryGetArgs args)
         {
             var selectedTemplate = Template ?? TemplateSelector.SelectTemplate(args.Data, null);
+            // Check if selected template we got is valid
+            if (selectedTemplate == null)
+            {
+                selectedTemplate = TemplateSelector.SelectTemplate(args.Data, null);
+
+                if (selectedTemplate == null)
+                {
+                    // Still nullptr, fail with a reasonable message now.
+                    throw new InvalidOperationException("Null encountered as data template. That is not a valid value for a data template, and can not be used.");
+                }
+            }
             var recyclePool = RecyclePool.GetPoolInstance(selectedTemplate);
             UIElement element = null;
 
