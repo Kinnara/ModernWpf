@@ -279,6 +279,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(ThemeResourcesPage), "Theme Resources");
             AddPage(typeof(CompactSizingPage), "Compact Sizing");
             AddPage(typeof(PageTransitionsPage), "Page Transitions");
+            AddPage(typeof(ThreadedUIPage), "Threaded UI");
             AddPage(typeof(AppBarButtonPage));
             AddPage(typeof(AppBarSeparatorPage));
             AddPage(typeof(AppBarToggleButtonPage));

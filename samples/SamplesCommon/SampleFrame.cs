@@ -1,5 +1,8 @@
 ﻿using ModernWpf.Controls;
+using System.Windows;
+using System.Windows.Input;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 
 namespace SamplesCommon
 {
@@ -26,6 +29,8 @@ namespace SamplesCommon
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
+            bool firstNavigation = _oldContent == null;
+
             if (_oldContent != null)
             {
                 (_oldContent as SamplePage)?.InternalOnNavigatedFrom(e);
@@ -33,6 +38,14 @@ namespace SamplesCommon
             }
 
             (e.Content as SamplePage)?.InternalOnNavigatedTo(e);
+
+            if (!firstNavigation && e.Content is UIElement element)
+            {
+                Dispatcher.BeginInvoke(() =>
+                {
+                    element.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
+                }, DispatcherPriority.Loaded);
+            }
         }
     }
 }

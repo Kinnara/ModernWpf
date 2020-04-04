@@ -7,30 +7,9 @@ namespace ModernWpf.Controls.Primitives
 {
     public class CornerRadiusFilterConverter : DependencyObject, IValueConverter
     {
-        public CornerRadiusFilterKind Filter
-        {
-            get => (CornerRadiusFilterKind)GetValue(FilterProperty);
-            set => SetValue(FilterProperty, value);
-        }
+        public CornerRadiusFilterKind Filter { get; set; }
 
-        public static readonly DependencyProperty FilterProperty =
-            DependencyProperty.Register(
-                nameof(Filter),
-                typeof(CornerRadiusFilterKind),
-                typeof(CornerRadiusFilterConverter));
-
-        public double Scale
-        {
-            get => (double)GetValue(ScaleProperty);
-            set => SetValue(ScaleProperty, value);
-        }
-
-        public static readonly DependencyProperty ScaleProperty =
-            DependencyProperty.Register(
-                nameof(Scale),
-                typeof(double),
-                typeof(CornerRadiusFilterConverter),
-                new PropertyMetadata(1.0));
+        public double Scale { get; set; } = 1.0;
 
         public CornerRadius Convert(CornerRadius radius, CornerRadiusFilterKind filterKind)
         {
