@@ -7,8 +7,6 @@
     xmlns:m="clr-namespace:ModernWpf.Markup"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <m:StaticResource x:Key="ContentControlThemeFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
-    <FontFamily x:Key="SymbolThemeFontFamily">/ModernWpf;component/Assets/#Segoe MDL2 Assets,Segoe MDL2 Assets</FontFamily>
     <CornerRadius x:Key="ControlCornerRadius">2,2,2,2</CornerRadius>
     <CornerRadius x:Key="OverlayCornerRadius">4,4,4,4</CornerRadius>
 
@@ -895,8 +893,6 @@
     <sys:Double x:Key="PersonPictureEllipseBadgeStrokeThickness">2</sys:Double>
 
     <!-- Resources for Pivot -->
-    <m:StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
-    <m:StaticResource x:Key="PivotTitleFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
     <sys:Double x:Key="PivotHeaderItemFontSize">24</sys:Double>
     <sys:Double x:Key="PivotHeaderItemLockedTranslation">40</sys:Double>
     <sys:Double x:Key="PivotTitleFontSize">14</sys:Double>
