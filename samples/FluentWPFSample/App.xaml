@@ -22,7 +22,7 @@
                                 <!-- 2. MahApps theme resources -->
                                 <ResourceDictionary Source="/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" />
                                 <!-- 3. ModernWPF theme resources -->
-                                <ui:DefaultThemeResources Key="Light" />
+                                <ResourceDictionary Source="/ModernWpf;component/ThemeResources/Light.xaml" />
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
                         <ResourceDictionary x:Key="Dark">
@@ -30,7 +30,7 @@
                                 <ResourceDictionary Source="/FluentWPF;component/Styles/Colors.Dark.xaml" />
                                 <ResourceDictionary Source="/FluentWPF;component/Styles/Brushes.xaml" />
                                 <ResourceDictionary Source="/MahApps.Metro;component/Styles/Themes/Dark.Blue.xaml" />
-                                <ui:DefaultThemeResources Key="Dark" />
+                                <ResourceDictionary Source="/ModernWpf;component/ThemeResources/Dark.xaml" />
                             </ResourceDictionary.MergedDictionaries>
                             <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource SystemBaseHighColor}" />
                         </ResourceDictionary>

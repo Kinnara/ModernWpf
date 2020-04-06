@@ -315,7 +315,7 @@ namespace ModernWpf
 
             if (ThemeDictionaries.TryGetValue(key, out ResourceDictionary themeDictionary))
             {
-                if (!ContainsDefaultThemeResources(themeDictionary))
+                if (!ContainsDefaultThemeResources(themeDictionary, defaultThemeDictionary))
                 {
                     themeDictionary.MergedDictionaries.Insert(0, defaultThemeDictionary);
                 }
@@ -328,23 +328,36 @@ namespace ModernWpf
             return themeDictionary;
         }
 
-        private static bool ContainsDefaultThemeResources(ResourceDictionary dictionary)
+        private static bool ContainsDefaultThemeResources(ResourceDictionary dictionary, ResourceDictionary defaultResources)
         {
-            if (dictionary is DefaultThemeResources)
+            if (dictionary == defaultResources ||
+                dictionary is DefaultThemeResources ||
+                dictionary is ApplicationThemeResources ||
+                SourceEquals(dictionary.Source, defaultResources.Source))
             {
                 return true;
             }
 
             foreach (var mergedDictionary in dictionary.MergedDictionaries)
             {
-                if (mergedDictionary is DefaultThemeResources ||
-                    mergedDictionary != null && ContainsDefaultThemeResources(mergedDictionary))
+                if (mergedDictionary != null && ContainsDefaultThemeResources(mergedDictionary, defaultResources))
                 {
                     return true;
                 }
             }
 
             return false;
+
+            static bool SourceEquals(Uri x, Uri y)
+            {
+                if (x == null || y == null)
+                    return false;
+
+                string xString = x.IsAbsoluteUri ? x.LocalPath : x.ToString();
+                string yString = y.IsAbsoluteUri ? y.LocalPath : y.ToString();
+
+                return string.Equals(xString, yString, StringComparison.OrdinalIgnoreCase);
+            }
         }
     }
 }

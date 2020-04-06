@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 
 namespace ModernWpf
 {
+    [Obsolete]
     public class ApplicationThemeResources : ResourceDictionary
     {
         private string _key;
@@ -32,7 +32,10 @@ namespace ModernWpf
 
         private void UpdateContent()
         {
-            MergedDictionaries.Clear();
+            if (MergedDictionaries.Count > 0)
+            {
+                MergedDictionaries.Clear();
+            }
 
             ResourceDictionary themeDictionary = null;
             ThemeResources.Current?.ThemeDictionaries.TryGetValue(Key, out themeDictionary);

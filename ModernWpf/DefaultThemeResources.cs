@@ -3,6 +3,7 @@ using System.Windows;
 
 namespace ModernWpf
 {
+    [Obsolete]
     public class DefaultThemeResources : ResourceDictionary
     {
         private string _key;
@@ -31,7 +32,10 @@ namespace ModernWpf
 
         private void UpdateContent()
         {
-            MergedDictionaries.Clear();
+            if (MergedDictionaries.Count > 0)
+            {
+                MergedDictionaries.Clear();
+            }
 
             ResourceDictionary defaultThemeDictionary = ThemeManager.GetDefaultThemeDictionary(Key);
 

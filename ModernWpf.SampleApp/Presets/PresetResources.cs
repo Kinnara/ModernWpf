@@ -37,7 +37,11 @@ namespace ModernWpf.SampleApp.Presets
 
         private void ApplyCurrentPreset()
         {
-            MergedDictionaries.Clear();
+            if (MergedDictionaries.Count > 0)
+            {
+                MergedDictionaries.Clear();
+            }
+            
             string assemblyName = GetType().Assembly.GetName().Name;
             string currentPreset = PresetManager.Current.CurrentPreset;
             var source = new Uri($"pack://application:,,,/{assemblyName};component/Presets/{currentPreset}/{TargetTheme}.xaml");

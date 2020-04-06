@@ -13,15 +13,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources>
                     <ui:ThemeResources.ThemeDictionaries>
-
-                        <ResourceDictionary x:Key="Light">
+                        <ResourceDictionary x:Key="Light" ui:ThemeDictionary.Key="Light">
                             <ResourceDictionary.MergedDictionaries>
-                                <ResourceDictionary>
-                                    <ResourceDictionary.MergedDictionaries>
-                                        <ui:DefaultThemeResources Key="Light" />
-                                    </ResourceDictionary.MergedDictionaries>
-                                    <SolidColorBrush x:Key="RegionBrush" Color="{StaticResource SystemAltHighColor}" />
-                                </ResourceDictionary>
                                 <presets:PresetResources TargetTheme="Light" />
                             </ResourceDictionary.MergedDictionaries>
                             <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FFF1F1F1" />
@@ -29,14 +22,8 @@
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Red" />
                         </ResourceDictionary>
 
-                        <ResourceDictionary x:Key="Dark">
+                        <ResourceDictionary x:Key="Dark" ui:ThemeDictionary.Key="Dark">
                             <ResourceDictionary.MergedDictionaries>
-                                <ResourceDictionary>
-                                    <ResourceDictionary.MergedDictionaries>
-                                        <ui:DefaultThemeResources Key="Dark" />
-                                    </ResourceDictionary.MergedDictionaries>
-                                    <SolidColorBrush x:Key="RegionBrush" Color="{StaticResource SystemAltHighColor}" />
-                                </ResourceDictionary>
                                 <presets:PresetResources TargetTheme="Dark" />
                             </ResourceDictionary.MergedDictionaries>
                             <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FF232323" />
@@ -44,17 +31,28 @@
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Yellow" />
                         </ResourceDictionary>
 
-                        <ResourceDictionary x:Key="HighContrast">
+                        <ResourceDictionary x:Key="HighContrast" ui:ThemeDictionary.Key="HighContrast">
                             <SolidColorBrush x:Key="AppBackgroundBrush" Color="{Binding Path=(ui:BindableSystemColors.WindowColor)}" />
                             <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{Binding Path=(ui:BindableSystemColors.WindowColor)}" />
                             <SolidColorBrush x:Key="RegionBrush" Color="Transparent" />
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Blue" />
                         </ResourceDictionary>
-
                     </ui:ThemeResources.ThemeDictionaries>
                 </ui:ThemeResources>
+                
                 <ui:XamlControlsResources />
                 <sc:UISettingsResources />
+                
+                <!-- Font Overrides -->
+                <!--<sc:FontOverrides FontFamily="Comic Sans MS" />-->
+                <!--<ResourceDictionary>
+                    <FontFamily x:Key="DefaultFontFamily">Comic Sans MS</FontFamily>
+                    <StaticResource x:Key="{x:Static SystemFonts.MessageFontFamilyKey}" ResourceKey="DefaultFontFamily" />
+                    <StaticResource x:Key="ContentControlThemeFontFamily" ResourceKey="DefaultFontFamily" />
+                    <StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="DefaultFontFamily" />
+                    <StaticResource x:Key="PivotTitleFontFamily" ResourceKey="DefaultFontFamily" />
+                </ResourceDictionary>-->
+                
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

@@ -52,7 +52,8 @@
         ui:VisualStateGroupListener,
         ImageBrush,
         ui:BitmapIcon,
-        Storyboard
+        Storyboard,
+        ResourceDictionary
 	",
     "SeparateByGroups": false,
     "AttributeIndentation": 0,

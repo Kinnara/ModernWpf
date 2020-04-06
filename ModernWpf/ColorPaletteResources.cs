@@ -401,7 +401,10 @@ namespace ModernWpf
                 return;
             }
 
-            MergedDictionaries.Clear();
+            if (MergedDictionaries.Count > 0)
+            {
+                MergedDictionaries.Clear();
+            }
 
             if (TargetTheme == null || Count == 0)
             {
@@ -412,6 +415,7 @@ namespace ModernWpf
             var overrides = new ResourceDictionary();
             var originalsToOverrides = new Dictionary<SolidColorBrush, SolidColorBrush>();
 
+            // TODO: recursive
             foreach (DictionaryEntry entry in originals)
             {
                 if (entry.Value is SolidColorBrush originalBrush)

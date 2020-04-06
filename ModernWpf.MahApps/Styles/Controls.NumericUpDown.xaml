@@ -38,26 +38,17 @@
                         <Grid.Resources>
                             <ui:ResourceDictionaryEx>
                                 <ui:ResourceDictionaryEx.ThemeDictionaries>
-                                    <ResourceDictionary x:Key="Light">
-                                        <ResourceDictionary.MergedDictionaries>
-                                            <ui:ApplicationThemeResources Key="Light" />
-                                        </ResourceDictionary.MergedDictionaries>
+                                    <ResourceDictionary x:Key="Light" ui:ThemeDictionary.Key="Light">
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
                                     </ResourceDictionary>
 
-                                    <ResourceDictionary x:Key="Dark">
-                                        <ResourceDictionary.MergedDictionaries>
-                                            <ui:ApplicationThemeResources Key="Dark" />
-                                        </ResourceDictionary.MergedDictionaries>
+                                    <ResourceDictionary x:Key="Dark" ui:ThemeDictionary.Key="Dark">
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
                                     </ResourceDictionary>
 
-                                    <ResourceDictionary x:Key="HighContrast">
-                                        <ResourceDictionary.MergedDictionaries>
-                                            <ui:ApplicationThemeResources Key="HighContrast" />
-                                        </ResourceDictionary.MergedDictionaries>
+                                    <ResourceDictionary x:Key="HighContrast" ui:ThemeDictionary.Key="HighContrast">
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
                                         <ui:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
                                     </ResourceDictionary>
