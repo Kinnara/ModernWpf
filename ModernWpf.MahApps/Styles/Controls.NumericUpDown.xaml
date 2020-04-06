@@ -4,6 +4,10 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/ModernWpf;component/Styles/RepeatButton.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <ui:CornerRadiusFilterConverter x:Key="LeftCornerRadiusFilterConverter" Filter="Left" />
     <ui:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
 
