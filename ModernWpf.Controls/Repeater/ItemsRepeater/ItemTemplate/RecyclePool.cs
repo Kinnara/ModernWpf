@@ -3,9 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Xaml;
 
 namespace ModernWpf.Controls
 {
@@ -132,25 +132,20 @@ namespace ModernWpf.Controls
             element.SetValue(ReuseKeyProperty, value);
         }
 
-        //public static readonly DependencyProperty PoolInstanceProperty =
-        //    DependencyProperty.RegisterAttached(
-        //        "PoolInstance",
-        //        typeof(RecyclePool),
-        //        typeof(RecyclePool),
-        //        null);
+        private static readonly AttachableMemberIdentifier PoolInstanceProperty =
+            new AttachableMemberIdentifier(
+                typeof(RecyclePool),
+                "PoolInstance");
 
         public static RecyclePool GetPoolInstance(DataTemplate dataTemplate)
         {
-            //return dataTemplate.GetValue(s_poolInstanceProperty) as RecyclePool;
-            s_templatesToPools.TryGetValue(dataTemplate, out RecyclePool value);
+            AttachablePropertyServices.TryGetProperty<RecyclePool>(dataTemplate, PoolInstanceProperty, out var value);
             return value;
         }
 
         public static void SetPoolInstance(DataTemplate dataTemplate, RecyclePool value)
         {
-            //dataTemplate.SetValue(s_poolInstanceProperty, value);
-            s_templatesToPools.Remove(dataTemplate);
-            s_templatesToPools.Add(dataTemplate, value);
+            AttachablePropertyServices.SetProperty(dataTemplate, PoolInstanceProperty, value);
         }
 
         internal static readonly DependencyProperty OriginTemplateProperty =
@@ -190,6 +185,5 @@ namespace ModernWpf.Controls
         }
 
         private readonly Dictionary<string, List<ElementInfo>> m_elements = new Dictionary<string, List<ElementInfo>>();
-        private static readonly ConditionalWeakTable<DataTemplate, RecyclePool> s_templatesToPools = new ConditionalWeakTable<DataTemplate, RecyclePool>();
     }
 }
