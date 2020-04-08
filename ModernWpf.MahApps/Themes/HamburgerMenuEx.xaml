@@ -120,10 +120,17 @@
                 <ControlTemplate>
                     <Grid SnapsToDevicePixels="True">
                         <Rectangle
-                            Height="1"
-                            Margin="16,10"
+                            x:Name="SeparatorLine"
+                            Height="{DynamicResource NavigationViewItemSeparatorHeight}"
+                            Margin="{DynamicResource NavigationViewItemSeparatorMargin}"
                             Fill="{DynamicResource SystemControlForegroundBaseLowBrush}" />
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- HorizontalLineCompact -->
+                        <DataTrigger Binding="{Binding IsPaneOpen, RelativeSource={RelativeSource AncestorType=Controls:HamburgerMenu}}" Value="False">
+                            <Setter TargetName="SeparatorLine" Property="Margin" Value="{DynamicResource NavigationViewCompactItemSeparatorMargin}" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

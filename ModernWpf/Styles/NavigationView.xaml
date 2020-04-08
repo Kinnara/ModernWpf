@@ -19,6 +19,9 @@
     <sys:Double x:Key="NavigationViewItemOnLeftMinHeight">40</sys:Double>
     <sys:Double x:Key="NavigationViewPaneHeaderRowMinHeight">4</sys:Double>
 
+    <sys:Double x:Key="NavigationViewItemSeparatorHeight">1</sys:Double>
+    <sys:Double x:Key="TopNavigationViewItemSeparatorWidth">1</sys:Double>
+
     <Thickness x:Key="NavigationViewToggleBorderThickness">1</Thickness>
     <Thickness x:Key="NavigationViewItemBorderThickness">1</Thickness>
     <Thickness x:Key="NavigationViewItemOnLeftIconBoxMargin">12,0,12,0</Thickness>
@@ -26,6 +29,9 @@
     <Thickness x:Key="NavigationViewMinimalHeaderMargin">8,5,0,0</Thickness>
     <Thickness x:Key="NavigationViewHeaderMargin">12,5,0,11</Thickness>
     <Thickness x:Key="NavigationViewPaneTitlePresenterMargin">8,4,0,0</Thickness>
+    <Thickness x:Key="NavigationViewItemSeparatorMargin">16,10</Thickness>
+    <Thickness x:Key="NavigationViewCompactItemSeparatorMargin">16,10</Thickness>
+    <Thickness x:Key="TopNavigationViewItemSeparatorMargin">10,0</Thickness>
 
     <Style x:Key="PaneToggleButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
         <Setter Property="FontSize" Value="16" />
