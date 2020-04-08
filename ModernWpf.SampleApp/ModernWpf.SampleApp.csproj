@@ -16,14 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Page Update="Properties\DesignTimeResources.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <ContainsDesignTimeResources>True</ContainsDesignTimeResources>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -62,6 +54,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Remove="Properties\DesignTimeResources.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Remove="Assets\SampleMedia\cliff.jpg" />
     <Resource Remove="Assets\SampleMedia\rainier.jpg" />
   </ItemGroup>
@@ -73,6 +69,14 @@
     <Content Include="Assets\SampleMedia\rainier.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Properties\DesignTimeResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <ContainsDesignTimeResources>True</ContainsDesignTimeResources>
+    </None>
   </ItemGroup>
 
 </Project>

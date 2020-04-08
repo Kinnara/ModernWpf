@@ -15,6 +15,12 @@
   <ItemGroup>
     <Resource Remove="Assets\SampleMedia\**" />
     <Content Include="Assets\SampleMedia\**" />
+    <Page Remove="Properties\DesignTimeResources.xaml" />
+    <None Include="Properties\DesignTimeResources.xaml">
+      <ContainsDesignTimeResources>True</ContainsDesignTimeResources>
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </None>
     <Content Update="Assets\SampleMedia\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

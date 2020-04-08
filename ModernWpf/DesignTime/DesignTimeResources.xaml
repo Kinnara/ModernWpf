@@ -2,8 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/ModernWpf;component/DesignTime/SystemColors.xaml" />
-        <ResourceDictionary Source="/ModernWpf;component/ThemeResources/Light.xaml" />
-        <ResourceDictionary Source="/ModernWpf;component/ControlsResources.xaml" />
+        <ResourceDictionary Source="SystemColors.xaml" />
+        <ResourceDictionary Source="/ThemeResources/Light.xaml" />
+        <ResourceDictionary Source="/ControlsResources.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

@@ -8,6 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Page Remove="Properties\DesignTimeResources.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Properties\DesignTimeResources.xaml">
+      <ContainsDesignTimeResources>True</ContainsDesignTimeResources>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentWPF" Version="0.8.0" />
     <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0748" />
   </ItemGroup>
@@ -17,13 +28,6 @@
     <ProjectReference Include="..\..\ModernWpf.MahApps\ModernWpf.MahApps.csproj" />
     <ProjectReference Include="..\..\ModernWpf\ModernWpf.csproj" />
     <ProjectReference Include="..\SamplesCommon\SamplesCommon.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Properties\DesignTimeResources.xaml">
-      <ContainsDesignTimeResources>True</ContainsDesignTimeResources>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
 
 </Project>
