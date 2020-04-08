@@ -696,10 +696,7 @@ namespace ModernWpf.Controls
                     var itemsSourceView = repeater.ItemsSourceView;
                     if (itemsSourceView != null)
                     {
-                        if (itemsSourceView is InspectingDataSource inspectingDataSource)
-                        {
-                            Select(inspectingDataSource.IndexOf(SelectedItem));
-                        }
+                        Select(itemsSourceView.IndexOf(SelectedItem));
                     }
                 }
             }

@@ -97,20 +97,6 @@ namespace ModernWpf.Controls
             return index;
         }
 
-        /*public int IndexOf(object value)
-        {
-            int index = -1;
-            if (m_vector != null && value != null)
-            {
-                var v = m_vector.IndexOf(value);
-                if (v >= 0)
-                {
-                    index = v;
-                }
-            }
-            return index;
-        }*/
-
         private IList WrapIterable(IEnumerable iterable)
         {
             var vector = new List<object>();
