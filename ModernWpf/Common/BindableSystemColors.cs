@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
 
@@ -7,6 +8,7 @@ namespace ModernWpf
     /// <summary>
     ///     Contains bindable properties that are queries into the system's various colors.
     /// </summary>
+    [Obsolete]
     public static class BindableSystemColors
     {
         static BindableSystemColors()

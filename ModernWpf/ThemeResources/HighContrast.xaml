@@ -46,151 +46,151 @@
     <Color x:Key="SystemListMediumColor">#33FFFFFF</Color>
     <Color x:Key="SystemErrorTextColor">#FFF000</Color>
 
-    <SolidColorBrush x:Key="SystemControlBackgroundAccentBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundAltMediumHighBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundAltMediumBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundAltMediumLowBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseHighBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseLowBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumHighBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumLowBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundChromeBlackHighBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundChromeBlackMediumBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundAccentBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundAltMediumHighBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundAltMediumBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundAltMediumLowBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundBaseHighBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundBaseLowBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumHighBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumLowBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundChromeBlackHighBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundChromeBlackMediumBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
     <SolidColorBrush x:Key="SystemControlBackgroundChromeBlackLowBrush" Color="{StaticResource SystemChromeBlackLowColor}" />
     <SolidColorBrush x:Key="SystemControlBackgroundChromeBlackMediumLowBrush" Color="{StaticResource SystemChromeBlackMediumLowColor}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundChromeMediumBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundChromeMediumLowBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundChromeWhiteBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundListLowBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundListMediumBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlDisabledAccentBrush" Color="{Binding Path=(root:BindableSystemColors.GrayTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlDisabledBaseHighBrush" Color="{Binding Path=(root:BindableSystemColors.GrayTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlDisabledBaseLowBrush" Color="{Binding Path=(root:BindableSystemColors.GrayTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlDisabledBaseMediumLowBrush" Color="{Binding Path=(root:BindableSystemColors.GrayTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlDisabledChromeDisabledHighBrush" Color="{Binding Path=(root:BindableSystemColors.GrayTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlDisabledChromeDisabledLowBrush" Color="{Binding Path=(root:BindableSystemColors.GrayTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlDisabledChromeHighBrush" Color="{Binding Path=(root:BindableSystemColors.GrayTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlDisabledChromeMediumLowBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlDisabledListMediumBrush" Color="{Binding Path=(root:BindableSystemColors.GrayTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlDisabledTransparentBrush" Color="{Binding Path=(root:BindableSystemColors.GrayTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlRevealFocusVisualBrush" Color="{DynamicResource SystemAccentColor}" />
-    <SolidColorBrush x:Key="SystemControlForegroundAccentBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundAltHighBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundAltMediumHighBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundBaseHighBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundBaseLowBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundBaseMediumBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundBaseMediumHighBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundBaseMediumLowBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundChromeBlackHighBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundChromeHighBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundChromeMediumBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundChromeDisabledLowBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundChromeWhiteBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundChromeBlackMediumBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundChromeBlackMediumLowBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundChromeGrayBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundListLowBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundListMediumBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlForegroundTransparentBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltAltHighBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltBaseHighBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltBaseLowBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltBaseMediumBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltBaseMediumHighBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltAltMediumHighBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltBaseMediumLowBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltListAccentHighBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltListAccentLowBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltListAccentMediumBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltChromeWhiteBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltTransparentBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightBaseHighBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightBaseLowBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumHighBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumLowBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightChromeAltLowBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightChromeHighBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListMediumBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightChromeWhiteBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightTransparentBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHyperlinkTextBrush" Color="{Binding Path=(root:BindableSystemColors.HotTrackColor)}" />
-    <SolidColorBrush x:Key="SystemControlHyperlinkBaseHighBrush" Color="{Binding Path=(root:BindableSystemColors.HotTrackColor)}" />
-    <SolidColorBrush x:Key="SystemControlHyperlinkBaseMediumBrush" Color="{Binding Path=(root:BindableSystemColors.WindowTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHyperlinkBaseMediumHighBrush" Color="{Binding Path=(root:BindableSystemColors.HotTrackColor)}" />
-    <SolidColorBrush x:Key="SystemControlPageBackgroundAltMediumBrush" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
-    <SolidColorBrush x:Key="SystemControlPageBackgroundAltHighBrush" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
-    <SolidColorBrush x:Key="SystemControlPageBackgroundMediumAltMediumBrush" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" Opacity="0.6" />
-    <SolidColorBrush x:Key="SystemControlPageBackgroundBaseLowBrush" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
-    <SolidColorBrush x:Key="SystemControlPageBackgroundBaseMediumBrush" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
-    <SolidColorBrush x:Key="SystemControlPageBackgroundListLowBrush" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
-    <SolidColorBrush x:Key="SystemControlPageBackgroundChromeLowBrush" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
-    <SolidColorBrush x:Key="SystemControlPageBackgroundChromeMediumLowBrush" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
-    <SolidColorBrush x:Key="SystemControlPageBackgroundTransparentBrush" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
-    <SolidColorBrush x:Key="SystemControlPageTextBaseHighBrush" Color="{Binding Path=(root:BindableSystemColors.WindowTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="{Binding Path=(root:BindableSystemColors.WindowTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlPageTextChromeBlackMediumLowBrush" Color="{Binding Path=(root:BindableSystemColors.WindowTextColor)}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundChromeMediumBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundChromeMediumLowBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundChromeWhiteBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundListLowBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundListMediumBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlDisabledAccentBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="SystemControlDisabledBaseHighBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="SystemControlDisabledBaseLowBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="SystemControlDisabledBaseMediumLowBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="SystemControlDisabledChromeDisabledHighBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="SystemControlDisabledChromeDisabledLowBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="SystemControlDisabledChromeHighBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="SystemControlDisabledChromeMediumLowBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlDisabledListMediumBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="SystemControlDisabledTransparentBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlRevealFocusVisualBrush" Color="{m:ThemeResource SystemAccentColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundAccentBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundAltHighBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundAltMediumHighBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundBaseHighBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundBaseLowBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundBaseMediumBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundBaseMediumHighBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundBaseMediumLowBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundChromeBlackHighBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundChromeHighBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundChromeMediumBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundChromeDisabledLowBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundChromeWhiteBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundChromeBlackMediumBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundChromeBlackMediumLowBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundChromeGrayBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundListLowBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundListMediumBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlForegroundTransparentBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltAccentBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltAltHighBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltBaseHighBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltBaseLowBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltBaseMediumBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltBaseMediumHighBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltAltMediumHighBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltBaseMediumLowBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltListAccentHighBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltListAccentLowBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltListAccentMediumBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltChromeWhiteBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltTransparentBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightBaseHighBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightBaseLowBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumHighBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumLowBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightChromeAltLowBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightChromeHighBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListMediumBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightChromeWhiteBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightTransparentBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHyperlinkTextBrush" Color="{m:ThemeResource SystemColorHotlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHyperlinkBaseHighBrush" Color="{m:ThemeResource SystemColorHotlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHyperlinkBaseMediumBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHyperlinkBaseMediumHighBrush" Color="{m:ThemeResource SystemColorHotlightColor}" />
+    <SolidColorBrush x:Key="SystemControlPageBackgroundAltMediumBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemControlPageBackgroundAltHighBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemControlPageBackgroundMediumAltMediumBrush" Color="{m:ThemeResource SystemColorWindowColor}" Opacity="0.6" />
+    <SolidColorBrush x:Key="SystemControlPageBackgroundBaseLowBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemControlPageBackgroundBaseMediumBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemControlPageBackgroundListLowBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemControlPageBackgroundChromeLowBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemControlPageBackgroundChromeMediumLowBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemControlPageBackgroundTransparentBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemControlPageTextBaseHighBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="SystemControlPageTextBaseMediumBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="SystemControlPageTextChromeBlackMediumLowBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="SystemControlTransparentBrush" Color="Transparent" />
-    <SolidColorBrush x:Key="SystemControlErrorTextForegroundBrush" Color="{Binding Path=(root:BindableSystemColors.WindowTextColor)}" />
+    <SolidColorBrush x:Key="SystemControlErrorTextForegroundBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <m:StaticResource x:Key="SystemControlTransientBorderBrush" ResourceKey="SystemControlForegroundChromeHighBrush" />
     <SolidColorBrush x:Key="SystemControlTransientBackgroundBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
     <m:StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
 
     <!-- Acrylic Brushes -->
-    <SolidColorBrush x:Key="SystemControlAcrylicElementBrush" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
-    <SolidColorBrush x:Key="SystemControlChromeMediumLowAcrylicElementMediumBrush" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
+    <SolidColorBrush x:Key="SystemControlAcrylicElementBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemControlChromeMediumLowAcrylicElementMediumBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
     <!-- Background Brushes -->
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseLowRevealBackgroundBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundBaseLowRevealBackgroundBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
     <SolidColorBrush x:Key="SystemControlTransparentRevealBackgroundBrush" Color="Transparent" />
-    <SolidColorBrush x:Key="SystemControlBackgroundAltHighRevealBackgroundBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAccentRevealBackgroundBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAccent3RevealBackgroundBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAccent2RevealBackgroundBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListMediumRevealBackgroundBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListLowRevealBackgroundBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumLowRevealBaseLowBackgroundBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumLowRevealAccentBackgroundBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListMediumRevealListLowBackgroundBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAccent3RevealAccent2BackgroundBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundAltHighRevealBackgroundBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAccentRevealBackgroundBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAccent3RevealBackgroundBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAccent2RevealBackgroundBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListMediumRevealBackgroundBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListLowRevealBackgroundBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumLowRevealBaseLowBackgroundBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumLowRevealAccentBackgroundBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListMediumRevealListLowBackgroundBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAccent3RevealAccent2BackgroundBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
 
     <!-- Border Brushes -->
-    <SolidColorBrush x:Key="SystemControlBackgroundAccentRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseHighRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseLowRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumHighRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumLowRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundChromeBlackHighRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundChromeBlackMediumRevealChromeBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundChromeMediumRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundChromeMediumLowRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundChromeWhiteRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundAccentRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundBaseHighRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundBaseLowRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumHighRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumLowRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundChromeBlackHighRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundChromeBlackMediumRevealChromeBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundChromeMediumRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundChromeMediumLowRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundChromeWhiteRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
     <SolidColorBrush x:Key="SystemControlTransparentRevealListLowBorderBrush" Color="Transparent" />
-    <SolidColorBrush x:Key="SystemControlBackgroundListLowRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundListMediumRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundListLowRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundListMediumRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
     <SolidColorBrush x:Key="SystemControlTransparentRevealBorderBrush" Color="Transparent" />
-    <SolidColorBrush x:Key="SystemControlForegroundRevealTransparentBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlBackgroundTransparentRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightTransparentRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltTransparentRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAccentRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightBaseHighRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightBaseLowRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumHighRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
-    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumLowRevealBorderBrush" Color="{Binding Path=(root:BindableSystemColors.HighlightColor)}" />
+    <SolidColorBrush x:Key="SystemControlForegroundRevealTransparentBorderBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="SystemControlBackgroundTransparentRevealBorderBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightTransparentRevealBorderBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltTransparentRevealBorderBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAccentRevealBorderBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightBaseHighRevealBorderBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightBaseLowRevealBorderBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumRevealBorderBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumHighRevealBorderBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightBaseMediumLowRevealBorderBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
     <SolidColorBrush x:Key="ListViewItemRevealBorderBrush" Color="Transparent" />
     <SolidColorBrush x:Key="ListViewItemRevealBorderBrushPointerOver" Color="Transparent" />
     <SolidColorBrush x:Key="ListViewItemRevealBorderBrushPressed" Color="Transparent" />
@@ -537,7 +537,7 @@
     <Thickness x:Key="CommandBarFlyoutBorderThemeThickness">1</Thickness>
     <Thickness x:Key="CommandBarFlyoutBorderUpThemeThickness">1,1,1,0</Thickness>
     <Thickness x:Key="CommandBarFlyoutBorderDownThemeThickness">1,0,1,1</Thickness>
-    <SolidColorBrush x:Key="CommandBarFlyoutButtonBackground" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
+    <SolidColorBrush x:Key="CommandBarFlyoutButtonBackground" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
 
     <!-- Resources for ContentDialog -->
     <sys:Double x:Key="ContentDialogMinWidth">320</sys:Double>
@@ -811,7 +811,7 @@
 
     <!-- Resources for NavigationView -->
     <m:StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemControlAcrylicElementBrush" />
-    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
+    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{m:ThemeResource SystemColorWindowColor}" />
     <m:StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemControlChromeMediumLowAcrylicElementMediumBrush" />
 
     <m:StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
@@ -855,7 +855,7 @@
 
     <m:StaticResource x:Key="NavigationViewItemSeparatorForeground" ResourceKey="SystemControlForegroundBaseLowBrush" />
 
-    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{Binding Path=(root:BindableSystemColors.HighlightTextColor)}" />
+    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
 
     <m:StaticResource x:Key="TopNavigationViewItemForeground" ResourceKey="SystemControlForegroundAltHighBrush" />
     <m:StaticResource x:Key="TopNavigationViewItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltAccentBrush" />
@@ -999,7 +999,7 @@
     <m:StaticResource x:Key="RatingControlPointerOverPlaceholderForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
     <m:StaticResource x:Key="RatingControlPointerOverUnselectedForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
     <m:StaticResource x:Key="RatingControlPointerOverSelectedForeground" ResourceKey="SystemControlHighlightAccentBrush" />
-    <SolidColorBrush x:Key="RatingControlDisabledSelectedForeground" Color="{Binding Path=(root:BindableSystemColors.GrayTextColor)}" />
+    <SolidColorBrush x:Key="RatingControlDisabledSelectedForeground" Color="{m:ThemeResource SystemColorGrayTextColor}" />
     <m:StaticResource x:Key="RatingControlCaptionForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
     <local:RatingItemFontInfo x:Key="RatingControlDefaultFontInfo" Glyph="&#xE735;" UnsetGlyph="&#xE734;" />
 
@@ -1054,8 +1054,8 @@
     <m:StaticResource x:Key="ScrollBarTrackStrokeDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
     <m:StaticResource x:Key="ScrollBarThumbBackgroundColor" ResourceKey="{x:Static SystemColors.ControlTextColorKey}" />
     <m:StaticResource x:Key="ScrollBarPanningThumbBackgroundColor" ResourceKey="{x:Static SystemColors.ControlTextColorKey}" />
-    <SolidColorBrush x:Key="ScrollBarThumbBackground" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="ScrollBarPanningThumbBackground" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
+    <SolidColorBrush x:Key="ScrollBarThumbBackground" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ScrollBarPanningThumbBackground" Color="{m:ThemeResource SystemColorButtonTextColor}" />
     <m:StaticResource x:Key="ScrollBarPanningThumbBackgroundDisabled" ResourceKey="SystemControlDisabledChromeHighBrush" />
 
     <!-- Resource for ScrollViewer -->
@@ -1293,9 +1293,9 @@
     <m:StaticResource x:Key="TreeViewItemBorderBrushSelectedPointerOver" ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
     <m:StaticResource x:Key="TreeViewItemBorderBrushSelectedPressed" ResourceKey="SystemControlBackgroundTransparentRevealBorderBrush" />
     <m:StaticResource x:Key="TreeViewItemBorderBrushSelectedDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <SolidColorBrush x:Key="TreeViewItemCheckBoxBackgroundSelected" Color="{Binding Path=(root:BindableSystemColors.WindowColor)}" />
-    <SolidColorBrush x:Key="TreeViewItemCheckBoxBorderSelected" Color="{Binding Path=(root:BindableSystemColors.ControlTextColor)}" />
-    <SolidColorBrush x:Key="TreeViewItemCheckGlyphSelected" Color="{Binding Path=(root:BindableSystemColors.WindowTextColor)}" />
+    <SolidColorBrush x:Key="TreeViewItemCheckBoxBackgroundSelected" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="TreeViewItemCheckBoxBorderSelected" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="TreeViewItemCheckGlyphSelected" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <Thickness x:Key="TreeViewItemBorderThemeThickness">1</Thickness>
 
     <sys:Double x:Key="TextControlThemeMinWidth">64</sys:Double>
@@ -1333,10 +1333,10 @@
     <m:StaticResource x:Key="TextControlButtonForegroundPressed" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
 
     <!-- Resources for Window -->
-    <SolidColorBrush x:Key="WindowBorder" Color="{Binding Path=(root:BindableSystemColors.ActiveCaptionTextColor)}" />
-    <SolidColorBrush x:Key="WindowBorderInactive" Color="{Binding Path=(root:BindableSystemColors.InactiveCaptionTextColor)}" />
-    <SolidColorBrush x:Key="TitleBarButtonBackground" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
-    <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="{Binding Path=(root:BindableSystemColors.ControlColor)}" />
+    <SolidColorBrush x:Key="WindowBorder" Color="{m:ThemeResource SystemColorActiveCaptionColor}" />
+    <SolidColorBrush x:Key="WindowBorderInactive" Color="{m:ThemeResource SystemColorInactiveCaptionTextColor}" />
+    <SolidColorBrush x:Key="TitleBarButtonBackground" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
 
     <!-- Resources for AccentButtonStyle -->
     <m:StaticResource x:Key="AccentButtonBackground" ResourceKey="SystemControlBackgroundAccentBrush" />

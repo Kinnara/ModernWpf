@@ -10,10 +10,23 @@
 
     <UserControl.Resources>
         <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource SystemAccentColor}" />
+        <SolidColorBrush x:Key="SystemControlBackgroundBaseLowBrush" Color="{StaticResource SystemBaseLowColor}" />
+        <SolidColorBrush x:Key="SystemControlHighlightTransparentBrush" Color="Transparent" />
     </UserControl.Resources>
 
     <ui:ProgressBar
         Width="130"
-        IsIndeterminate="{Binding ElementName=Root, Path=IsIndeterminate}" />
-
+        IsIndeterminate="{Binding ElementName=Root, Path=IsIndeterminate}"
+        ui:ThemeManager.HasThemeResources="True">
+        <ui:ProgressBar.Resources>
+            <ui:ResourceDictionaryEx>
+                <ui:ResourceDictionaryEx.ThemeDictionaries>
+                    <ResourceDictionary x:Key="HighContrast">
+                        <SolidColorBrush x:Key="SystemControlBackgroundBaseLowBrush" Color="{ui:ThemeResource SystemColorButtonFaceColor}" />
+                        <SolidColorBrush x:Key="SystemControlHighlightTransparentBrush" Color="{ui:ThemeResource SystemColorHighlightColor}" />
+                    </ResourceDictionary>
+                </ui:ResourceDictionaryEx.ThemeDictionaries>
+            </ui:ResourceDictionaryEx>
+        </ui:ProgressBar.Resources>
+    </ui:ProgressBar>
 </UserControl>

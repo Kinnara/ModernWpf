@@ -818,7 +818,19 @@ namespace ModernWpf
         {
             if (e.PropertyName == nameof(SystemParameters.HighContrast))
             {
-                ApplyApplicationTheme();
+                RunOnMainThread(ApplyApplicationTheme);
+            }
+        }
+
+        private void RunOnMainThread(Action action)
+        {
+            if (Dispatcher.CheckAccess())
+            {
+                action();
+            }
+            else
+            {
+                Dispatcher.BeginInvoke(action);
             }
         }
     }
