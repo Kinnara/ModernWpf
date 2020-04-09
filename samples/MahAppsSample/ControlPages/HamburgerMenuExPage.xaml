@@ -73,6 +73,12 @@
                             ItemsSource="{Binding Source={x:Type mah:SplitViewDisplayMode}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=nvSample, Path=DisplayMode}" />
 
+                        <ui:NumberBox
+                            Header="CompactPaneLength"
+                            Margin="0,12,0,0"
+                            Value="{Binding ElementName=nvSample, Path=CompactPaneLength}"
+                            SpinButtonPlacementMode="Inline" />
+
                     </StackPanel>
 
                 </sc:ControlExample.Options>

@@ -59,11 +59,11 @@
                         HorizontalAlignment="Stretch"
                         SnapsToDevicePixels="True">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition MinWidth="{DynamicResource PaneToggleButtonWidth}" MaxWidth="{DynamicResource PaneToggleButtonWidth}" />
+                            <ColumnDefinition primitives:ColumnDefinitionHelper.PixelWidth="{TemplateBinding MinWidth}" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition MinHeight="{DynamicResource PaneToggleButtonHeight}" MaxHeight="{DynamicResource PaneToggleButtonHeight}" />
+                            <RowDefinition primitives:RowDefinitionHelper.PixelHeight="{DynamicResource PaneToggleButtonHeight}" />
                         </Grid.RowDefinitions>
 
                         <Viewbox

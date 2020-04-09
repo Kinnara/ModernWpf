@@ -16,9 +16,9 @@
     <Controls:HamburgerMenuItemStyleSelector x:Key="HamburgerMenuItemOptionsStyleSelector" IsItemOptions="True" />
 
     <DataTemplate x:Key="HamburgerMenuItem">
-        <Grid>
+        <Grid>          
             <Grid.ColumnDefinitions>
-                <ColumnDefinition MinWidth="{DynamicResource NavigationViewCompactPaneLength}" MaxWidth="{DynamicResource NavigationViewCompactPaneLength}" />
+                <ColumnDefinition Width="{Binding CompactPaneLength, RelativeSource={RelativeSource AncestorType=Controls:HamburgerMenu}}" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
@@ -215,6 +215,7 @@
                                 <Button
                                     x:Name="NavigationViewBackButton"
                                     Style="{DynamicResource NavigationBackButtonNormalStyle}"
+                                    Width="{TemplateBinding CompactPaneLength}"
                                     IsEnabled="{TemplateBinding IsBackEnabled}"
                                     Command="{TemplateBinding BackButtonCommand}"
                                     CommandParameter="{TemplateBinding BackButtonCommandParameter}"
@@ -227,6 +228,7 @@
                                 <Button
                                     x:Name="HamburgerButton"
                                     Width="{TemplateBinding HamburgerWidth}"
+                                    MinWidth="{TemplateBinding CompactPaneLength}"
                                     Height="{TemplateBinding HamburgerHeight}"
                                     Padding="{TemplateBinding HamburgerMargin}"
                                     Foreground="{TemplateBinding PaneForeground}"
