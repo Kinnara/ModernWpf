@@ -10,49 +10,28 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             InitializeComponent();
 
-            var controlCornerRadius = (CornerRadius)Application.Current.FindResource("ControlCornerRadius");
-            ControlCornerRadiusSlider.Value = controlCornerRadius.TopLeft;
-            ControlCornerRadiusSlider.ValueChanged += ControlCornerRadiusSlider_ValueChanged;
-
-            var overlayCornerRadius = (CornerRadius)Application.Current.FindResource("OverlayCornerRadius");
-            OverlayCornerRadiusSlider.Value = overlayCornerRadius.TopLeft;
-            OverlayCornerRadiusSlider.ValueChanged += OverlayCornerRadiusSlider_ValueChanged;
-
-            //WindowThemeSelector.SetBinding(
-            //    RadioButtons.SelectedItemProperty,
-            //    new Binding
-            //    {
-            //        Path = new PropertyPath(ThemeManager.RequestedThemeProperty),
-            //        Source = Application.Current.MainWindow,
-            //        Mode = BindingMode.TwoWay
-            //    });
+            ShapePresetsComboBox.ItemsSource = new[]
+            {
+                new ShapePreset("Default", "Default"),
+                new ShapePreset("PreFluent", "No Rounding, Thicker Borders"),
+            };
         }
 
         ~ThemesPage()
         {
         }
+    }
 
-        private void OpenNewWindow(object sender, RoutedEventArgs e)
+    public class ShapePreset
+    {
+        public ShapePreset(string value, string displayName)
         {
-            new Window { Title = "New Window" }.Show();
+            Value = value;
+            DisplayName = displayName;
         }
 
-        private void ControlCornerRadiusSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            SetThemeResource("ControlCornerRadius", new CornerRadius(e.NewValue));
-        }
+        public string Value { get; }
 
-        private void OverlayCornerRadiusSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            SetThemeResource("OverlayCornerRadius", new CornerRadius(e.NewValue));
-        }
-
-        private void SetThemeResource(object key, object value)
-        {
-            var tr = Application.Current.Resources.MergedDictionaries.OfType<ThemeResources>().First();
-            tr.ThemeDictionaries["Light"][key] = value;
-            tr.ThemeDictionaries["Dark"][key] = value;
-            tr.ThemeDictionaries["HighContrast"][key] = value;
-        }
+        public string DisplayName { get; }
     }
 }

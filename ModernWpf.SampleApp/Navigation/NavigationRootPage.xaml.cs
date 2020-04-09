@@ -203,7 +203,7 @@ namespace ModernWpf.SampleApp
         {
             if (e.OriginalSource is MenuItem menuItem)
             {
-                PresetManager.Current.CurrentPreset = (string)menuItem.Header;
+                PresetManager.Current.ColorPreset = (string)menuItem.Header;
             }
         }
 

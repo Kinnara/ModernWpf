@@ -3,15 +3,15 @@ using System.Windows;
 
 namespace ModernWpf.SampleApp.Presets
 {
-    public class PresetResources : ResourceDictionary
+    public class ColorPresetResources : ResourceDictionary
     {
         private ApplicationTheme _targetTheme;
 
-        public PresetResources()
+        public ColorPresetResources()
         {
             WeakEventManager<PresetManager, EventArgs>.AddHandler(
                 PresetManager.Current,
-                nameof(PresetManager.CurrentPresetChanged),
+                nameof(PresetManager.ColorPresetChanged),
                 OnCurrentPresetChanged);
 
             ApplyCurrentPreset();
@@ -43,7 +43,7 @@ namespace ModernWpf.SampleApp.Presets
             }
             
             string assemblyName = GetType().Assembly.GetName().Name;
-            string currentPreset = PresetManager.Current.CurrentPreset;
+            string currentPreset = PresetManager.Current.ColorPreset;
             var source = new Uri($"pack://application:,,,/{assemblyName};component/Presets/{currentPreset}/{TargetTheme}.xaml");
             var rd = new ResourceDictionary { Source = source };
             MergedDictionaries.Add(rd);

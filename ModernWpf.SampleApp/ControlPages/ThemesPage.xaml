@@ -14,15 +14,8 @@
     Style="{StaticResource ControlPageStyle}">
 
     <UserControl.Resources>
+        <sys:Double x:Key="ItemWidth">280</sys:Double>
         <sc:AppThemeConverter x:Key="AppThemeConverter" />
-        <Style x:Key="ShapeSliderStyle" TargetType="Slider" BasedOn="{StaticResource DefaultSliderStyle}">
-            <Setter Property="Width" Value="244" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="AutoToolTipPlacement" Value="TopLeft" />
-            <Setter Property="TickFrequency" Value="1" />
-            <Setter Property="IsSnapToTickEnabled" Value="True" />
-            <Setter Property="Minimum" Value="0" />
-        </Style>
     </UserControl.Resources>
 
     <ScrollViewer>
@@ -39,43 +32,25 @@
             </ui:RadioButtons>
 
             <ComboBox
-                x:Name="PresetsComboBox"
-                MinWidth="200"
+                x:Name="ColorPresetsComboBox"
+                MinWidth="{StaticResource ItemWidth}"
                 ui:ControlHelper.Header="Color Presets"
-                SelectedItem="{Binding CurrentPreset, Source={x:Static presets:PresetManager.Current}}">
+                SelectedItem="{Binding ColorPreset, Source={x:Static presets:PresetManager.Current}}">
                 <sys:String>Default</sys:String>
                 <sys:String>Forest</sys:String>
                 <sys:String>Lavender</sys:String>
                 <sys:String>Nighttime</sys:String>
             </ComboBox>
 
-            <StackPanel>
-                <TextBlock
-                    Text="Corner Radius"
-                    Style="{StaticResource BaseTextBlockStyle}"
-                    Margin="0,0,0,4" />
-                <Slider
-                    x:Name="ControlCornerRadiusSlider"
-                    Style="{StaticResource ShapeSliderStyle}"
-                    ui:ControlHelper.Header="Controls"
-                    Maximum="20" />
-                <Slider
-                    x:Name="OverlayCornerRadiusSlider"
-                    Style="{StaticResource ShapeSliderStyle}"
-                    ui:ControlHelper.Header="Overlay"
-                    Maximum="20" />
-            </StackPanel>
-
+            <ComboBox
+                x:Name="ShapePresetsComboBox"
+                MinWidth="{StaticResource ItemWidth}"
+                ui:ControlHelper.Header="Shape Presets"
+                DisplayMemberPath="DisplayName"
+                SelectedValuePath="Value"
+                SelectedValue="{Binding ShapePreset, Source={x:Static presets:PresetManager.Current}}" />
+            
             <sc:AccentColorPicker />
-
-            <!--<ui:RadioButtons
-                x:Name="WindowThemeSelector"
-                Header="Window RequestedTheme"
-                ItemsSource="{Binding Source={x:Type ui:ElementTheme}, Converter={StaticResource EnumValuesConverter}}" />-->
-
-            <!--<Button
-                Content="Open new window"
-                Click="OpenNewWindow" />-->
 
             <StackPanel>
                 <TextBlock
@@ -83,7 +58,7 @@
                     Style="{StaticResource BodyTextBlockStyle}"
                     Margin="0,0,0,4" />
                 <Rectangle
-                    Width="200"
+                    Width="{StaticResource ItemWidth}"
                     Height="50"
                     HorizontalAlignment="Left"
                     Fill="{DynamicResource CustomThemeBrush}" />
@@ -95,7 +70,7 @@
                     Style="{StaticResource BodyTextBlockStyle}"
                     Margin="0,0,0,4" />
                 <Rectangle
-                    Width="200"
+                    Width="{StaticResource ItemWidth}"
                     Height="50"
                     HorizontalAlignment="Left"
                     Fill="{DynamicResource CustomThemeBrush}"
@@ -118,18 +93,6 @@
                 </Rectangle>
             </StackPanel>
 
-            <!--<StackPanel>
-                <TextBlock
-                    Text="WindowGlassBrush"
-                    Style="{StaticResource BodyTextBlockStyle}"
-                    Margin="0,0,0,4" />
-                <Rectangle
-                    Width="200"
-                    Height="50"
-                    HorizontalAlignment="Left"
-                    Fill="{Binding Path=(SystemParameters.WindowGlassBrush)}" />
-            </StackPanel>-->
-
             <GroupBox
                 x:Name="InverseAppThemeGroupBox"
                 Header="Inverse app theme"
@@ -142,14 +105,14 @@
                 </GroupBox.Resources>
                 <ui:SimpleStackPanel Spacing="24">
                     <TextBox
-                        Width="200"
+                        Width="{StaticResource ItemWidth}"
                         HorizontalAlignment="Left"
                         ui:ControlHelper.Header="Actual application theme"
                         Text="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Mode=OneWay}"
                         IsReadOnly="True" />
 
                     <TextBox
-                        Width="200"
+                        Width="{StaticResource ItemWidth}"
                         HorizontalAlignment="Left"
                         ui:ControlHelper.Header="Actual window theme"
                         DataContext="{Binding MainWindow, Source={x:Static Application.Current}, Mode=OneTime}"
@@ -158,14 +121,14 @@
 
                     <TextBox
                         x:Name="AET"
-                        Width="200"
+                        Width="{StaticResource ItemWidth}"
                         HorizontalAlignment="Left"
                         ui:ControlHelper.Header="Actual element theme"
                         Text="{Binding ElementName=InverseAppThemeGroupBox, Path=(ui:ThemeManager.ActualTheme), Mode=OneWay}"
                         IsReadOnly="True" />
 
                     <TextBox
-                        Width="200"
+                        Width="{StaticResource ItemWidth}"
                         HorizontalAlignment="Left"
                         ui:ControlHelper.Header="Actual accent color"
                         Text="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualAccentColor, Mode=OneWay}"

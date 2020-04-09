@@ -15,7 +15,8 @@
                     <ui:ThemeResources.ThemeDictionaries>
                         <ResourceDictionary x:Key="Light" ui:ThemeDictionary.Key="Light">
                             <ResourceDictionary.MergedDictionaries>
-                                <presets:PresetResources TargetTheme="Light" />
+                                <presets:ColorPresetResources TargetTheme="Light" />
+                                <presets:ShapePresetResources />
                             </ResourceDictionary.MergedDictionaries>
                             <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FFF1F1F1" />
                             <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
@@ -24,7 +25,8 @@
 
                         <ResourceDictionary x:Key="Dark" ui:ThemeDictionary.Key="Dark">
                             <ResourceDictionary.MergedDictionaries>
-                                <presets:PresetResources TargetTheme="Dark" />
+                                <presets:ColorPresetResources TargetTheme="Dark" />
+                                <presets:ShapePresetResources />
                             </ResourceDictionary.MergedDictionaries>
                             <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FF232323" />
                             <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="#FF282828" />
@@ -42,7 +44,7 @@
                 
                 <ui:XamlControlsResources />
                 <sc:UISettingsResources />
-                
+
                 <!-- Font Overrides -->
                 <!--<sc:FontOverrides FontFamily="Comic Sans MS" />-->
                 <!--<ResourceDictionary>

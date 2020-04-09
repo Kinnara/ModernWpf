@@ -7,7 +7,8 @@ namespace ModernWpf.SampleApp.Presets
     {
         internal const string DefaultPreset = "Default";
 
-        private string _currentPreset = DefaultPreset;
+        private string _colorPreset = DefaultPreset;
+        private string _shapePreset = DefaultPreset;
 
         private PresetManager()
         {
@@ -15,25 +16,35 @@ namespace ModernWpf.SampleApp.Presets
 
         public static PresetManager Current { get; } = new PresetManager();
 
-        public string CurrentPreset
+        public string ColorPreset
         {
-            get => _currentPreset;
+            get => _colorPreset;
             set
             {
-                if (_currentPreset != value)
+                if (_colorPreset != value)
                 {
-                    _currentPreset = value;
+                    _colorPreset = value;
                     RaisePropertyChanged();
-                    OnCurrentPresetChanged();
+                    ColorPresetChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
 
-        public event EventHandler CurrentPresetChanged;
-
-        private void OnCurrentPresetChanged()
+        public string ShapePreset
         {
-            CurrentPresetChanged?.Invoke(this, EventArgs.Empty);
+            get => _shapePreset;
+            set
+            {
+                if (_shapePreset != value)
+                {
+                    _shapePreset = value;
+                    RaisePropertyChanged();
+                    ShapePresetChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
         }
+
+        public event EventHandler ColorPresetChanged;
+        public event EventHandler ShapePresetChanged;
     }
 }
