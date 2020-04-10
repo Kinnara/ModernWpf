@@ -13,5 +13,6 @@ namespace MahAppsSample
     /// </summary>
     public partial class App : Application
     {
+        public static bool RepositoryImageMode { get; set; } = false;
     }
 }

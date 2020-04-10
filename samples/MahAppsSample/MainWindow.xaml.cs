@@ -13,6 +13,15 @@ namespace MahAppsSample
         {
             InitializeComponent();
 
+            if (App.RepositoryImageMode)
+            {
+                Width = 1280;
+                Height = 640;
+                NavView.ClearValue(PaddingProperty);
+                NavView.ClearValue(HamburgerMenuEx.HeaderTemplateProperty);
+                NavViewItems.RemoveAt(NavViewItems.Count - 1);
+            }
+
             UpdateAppTitleBarMargin(NavView);
 
             NavView.SelectedItem = NavViewItems.OfType<HamburgerMenuItem>().First();
