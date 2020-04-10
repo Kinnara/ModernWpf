@@ -11,17 +11,20 @@ namespace ModernWpf.SampleApp.ThreadedUI
     {
         protected ThreadedVisualHostBase()
         {
-            Loaded += OnLoaded;
+            IsVisibleChanged += OnIsVisibleChanged;
             Unloaded += OnUnloaded;
         }
 
-        protected override int VisualChildrenCount => 1;
+        protected override int VisualChildrenCount => _hostVisual != null ? 1 : 0;
 
         protected override System.Collections.IEnumerator LogicalChildren
         {
             get
             {
-                yield return HostVisual;
+                if (_hostVisual != null)
+                {
+                    yield return _hostVisual;
+                }
             }
         }
 
@@ -53,25 +56,11 @@ namespace ModernWpf.SampleApp.ThreadedUI
             }
         }
 
-        private HostVisual HostVisual
-        {
-            get
-            {
-                if (_hostVisual == null)
-                {
-                    _hostVisual = new HostVisual();
-                    AddVisualChild(_hostVisual);
-                    AddLogicalChild(_hostVisual);
-                }
-                return _hostVisual;
-            }
-        }
-
         public event EventHandler ChildChanged;
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            if (ChildInternal == null && IsLoaded)
+            if (ChildInternal == null && IsVisible)
             {
                 LoadChild(availableSize);
             }
@@ -106,11 +95,11 @@ namespace ModernWpf.SampleApp.ThreadedUI
 
         protected override Visual GetVisualChild(int index)
         {
-            if (index != 0)
+            if (index != 0 || _hostVisual == null)
             {
                 throw new IndexOutOfRangeException(nameof(index));
             }
-            return HostVisual;
+            return _hostVisual;
         }
 
         protected virtual void OnChildChanged()
@@ -131,11 +120,18 @@ namespace ModernWpf.SampleApp.ThreadedUI
 
         protected abstract UIElement CreateChild();
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (ChildInternal == null)
+            if ((bool)e.NewValue)
             {
-                InvalidateMeasure();
+                if (ChildInternal == null)
+                {
+                    InvalidateMeasure();
+                }
+            }
+            else if (!IsLoaded)
+            {
+                UnloadChild();
             }
         }
 
@@ -144,6 +140,27 @@ namespace ModernWpf.SampleApp.ThreadedUI
             UnloadChild();
 
             Debug.Assert(ChildInternal == null);
+            Debug.Assert(!IsVisible);
+        }
+
+        private void AddHostVisual()
+        {
+            if (_hostVisual == null)
+            {
+                _hostVisual = new HostVisual();
+                AddVisualChild(_hostVisual);
+                AddLogicalChild(_hostVisual);
+            }
+        }
+
+        private void RemoveHostVisual()
+        {
+            if (_hostVisual != null)
+            {
+                RemoveVisualChild(_hostVisual);
+                RemoveLogicalChild(_hostVisual);
+                _hostVisual = null;
+            }
         }
 
         private void LoadChild(Size availableSize)
@@ -151,7 +168,7 @@ namespace ModernWpf.SampleApp.ThreadedUI
             if (ChildInternal != null)
                 return;
 
-            _ = HostVisual;
+            AddHostVisual();
 
             var thread = new Thread(ThreadProc)
             {
@@ -165,7 +182,7 @@ namespace ModernWpf.SampleApp.ThreadedUI
 
             void ThreadProc()
             {
-                var source = new VisualTargetPresentationSource(HostVisual);
+                var source = new VisualTargetPresentationSource(_hostVisual);
 
                 var child = CreateChild();
                 if (child != null)
@@ -195,6 +212,8 @@ namespace ModernWpf.SampleApp.ThreadedUI
                 child.Dispatcher.InvokeShutdown();
                 InvalidateMeasure();
             }
+
+            RemoveHostVisual();
         }
 
         private void OnChildSizeChanged(object sender, SizeChangedEventArgs e)

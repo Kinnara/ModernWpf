@@ -19,7 +19,7 @@
                 VerticalContentAlignment="Center">
                 <threaded:ThreadedVisualHost
                     x:Name="ProgressControlHost"
-                    Visibility="{Binding ElementName=IsVisibleCheckBox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                     ChildType="{x:Type threaded:ThreadedProgressBar}"
                     ChildChanged="ProgressControlHost_ChildChanged" />
 
@@ -29,9 +29,8 @@
                             Content="IsBusy"
                             IsChecked="{Binding IsBusy}" />
                         <CheckBox
-                            x:Name="IsVisibleCheckBox"
                             Content="IsVisible"
-                            IsChecked="True" />
+                            IsChecked="{Binding IsVisible}" />
                         <Button
                             Content="Unload"
                             Click="LoadOrUnload" />

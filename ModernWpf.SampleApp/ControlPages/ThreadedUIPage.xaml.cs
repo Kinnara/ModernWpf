@@ -71,5 +71,12 @@ namespace ModernWpf.SampleApp.ControlPages
             get => _isBusy;
             set => Set(ref _isBusy, value);
         }
+
+        private bool _isVisbile = true;
+        public bool IsVisible
+        {
+            get => _isVisbile;
+            set => Set(ref _isVisbile, value);
+        }
     }
 }
