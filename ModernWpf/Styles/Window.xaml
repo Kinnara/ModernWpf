@@ -78,7 +78,7 @@
                                     BackButtonStyle="{TemplateBinding local:TitleBar.BackButtonStyle}"
                                     ExtendViewIntoTitleBar="{TemplateBinding local:TitleBar.ExtendViewIntoTitleBar}"
                                     Panel.ZIndex="1"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
                                 <AdornerDecorator
                                     x:Name="AdornerDecorator"
@@ -88,13 +88,14 @@
 
                                 <ResizeGrip
                                     x:Name="WindowResizeGrip"
+                                    WindowChrome.ResizeGripDirection="BottomRight"
                                     Grid.Row="1"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Bottom"
                                     IsTabStop="false"
                                     Visibility="Collapsed" />
                             </Grid>
-                            
+
                             <Border
                                 x:Name="HighContrastBorder"
                                 BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
