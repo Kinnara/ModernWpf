@@ -90,7 +90,7 @@
                 Margin="12,0,12,0"
                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
-            <Popup
+            <primitives:MenuPopup
                 x:Name="PART_Popup"
                 AllowsTransparency="true"
                 Focusable="false"
@@ -127,10 +127,13 @@
                         </Grid>
                     </Border>
                 </primitives:ThemeShadowChrome>
-            </Popup>
+            </primitives:MenuPopup>
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="IsSuspendingPopupAnimation" Value="true">
+                <Setter TargetName="PART_Popup" Property="PopupAnimation" Value="None" />
+            </Trigger>
+            <Trigger SourceName="PART_Popup" Property="IsSuspendingAnimation" Value="true">
                 <Setter TargetName="PART_Popup" Property="PopupAnimation" Value="None" />
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">

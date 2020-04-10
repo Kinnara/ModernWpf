@@ -98,7 +98,7 @@
                                     Glyph="&#xE10C;"
                                     Height="{DynamicResource AppBarExpandButtonCircleDiameter}" />
                             </ToggleButton>
-                            <Popup
+                            <ui:MenuPopup
                                 x:Name="OverflowPopup"
                                 AllowsTransparency="true"
                                 Placement="Custom"
@@ -128,7 +128,7 @@
                                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                     </primitives:CommandBarOverflowPresenter>
                                 </ui:ThemeShadowChrome>
-                            </Popup>
+                            </ui:MenuPopup>
                             <Rectangle
                                 x:Name="HighContrastBorder"
                                 Grid.ColumnSpan="2"
@@ -150,6 +150,9 @@
                         <Trigger Property="IsDynamicOverflowEnabled" Value="True">
                             <Setter TargetName="ContentControlColumnDefinition" Property="Width" Value="Auto" />
                             <Setter TargetName="PrimaryItemsControlColumnDefinition" Property="Width" Value="*" />
+                        </Trigger>
+                        <Trigger SourceName="OverflowPopup" Property="IsSuspendingAnimation" Value="true">
+                            <Setter TargetName="OverflowPopup" Property="PopupAnimation" Value="None" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
