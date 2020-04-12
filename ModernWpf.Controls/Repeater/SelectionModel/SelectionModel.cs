@@ -548,18 +548,21 @@ namespace ModernWpf.Controls
 
         void SelectImpl(int index, bool select)
         {
-            if (m_singleSelect)
+            if (m_rootNode.IsSelected(index) != select)
             {
-                ClearSelection(true /*resetAnchor*/, false /* raiseSelectionChanged */);
-            }
+                if (m_singleSelect)
+                {
+                    ClearSelection(true /*resetAnchor*/, false /* raiseSelectionChanged */);
+                }
 
-            var selected = m_rootNode.Select(index, select);
-            if (selected)
-            {
-                AnchorIndex = new IndexPath(index);
-            }
+                var selected = m_rootNode.Select(index, select);
+                if (selected)
+                {
+                    AnchorIndex = new IndexPath(index);
+                }
 
-            OnSelectionChanged();
+                OnSelectionChanged();
+            }
         }
 
         void SelectWithGroupImpl(int groupIndex, int itemIndex, bool select)
@@ -581,34 +584,72 @@ namespace ModernWpf.Controls
 
         void SelectWithPathImpl(IndexPath index, bool select, bool raiseSelectionChanged)
         {
-            bool selected = false;
+            bool newSelection = true;
+
+            // Handle single select differently as comparing indexpaths is faster
             if (m_singleSelect)
             {
-                ClearSelection(true /*restAnchor*/, false /* raiseSelectionChanged */);
-            }
-
-            SelectionTreeHelper.TraverseIndexPath(
-                m_rootNode,
-                index,
-                true, /* realizeChildren */
-
-                (currentNode, path, depth, childIndex) =>
+                var selectedIndex = SelectedIndex;
+                if (selectedIndex != null)
                 {
-                    if (depth == path.GetSize() - 1)
+                    // If paths are equal and we want to select, skip everything and do nothing
+                    if (select && selectedIndex.CompareTo(index) == 0)
                     {
-                        selected = currentNode.Select(childIndex, select);
+                        newSelection = false;
                     }
                 }
-            );
-
-            if (selected)
-            {
-                AnchorIndex = index;
+                else
+                {
+                    // If we are in single select and selectedIndex is null, deselecting is not a new change.
+                    // Selecting something is a new change, so set flag to appropriate value here.
+                    newSelection = select;
+                }
             }
 
-            if (raiseSelectionChanged)
+            // Selection is actually different from previous one, so update.
+            if (newSelection)
             {
-                OnSelectionChanged();
+                bool selected = false;
+                // If we unselect something, raise event any way, otherwise changedSelection is false
+                bool changedSelection = false;
+
+                if (m_singleSelect)
+                {
+                    ClearSelection(true /*resetAnchor*/, false /* raiseSelectionChanged */);
+                }
+
+                SelectionTreeHelper.TraverseIndexPath(
+                    m_rootNode,
+                    index,
+                    true, /* realizeChildren */
+                    (currentNode, path, depth, childIndex) =>
+                    {
+                        if (depth == path.GetSize() - 1)
+                        {
+                            if (currentNode.IsSelected(childIndex) != select)
+                            {
+                                // Node has different value then we want to set, so lets update!
+                                changedSelection = true;
+                            }
+                            selected = currentNode.Select(childIndex, select);
+                        }
+                    }
+                );
+
+                if (selected)
+                {
+                    AnchorIndex = index;
+                }
+
+                // The walk tree operation can change the indices, and the next time it get's read,
+                // we would throw an exception. That's what we are preventing with next two lines
+                m_selectedIndicesCached = null;
+                m_selectedItemsCached = null;
+
+                if (raiseSelectionChanged && changedSelection)
+                {
+                    OnSelectionChanged();
+                }
             }
         }
 
