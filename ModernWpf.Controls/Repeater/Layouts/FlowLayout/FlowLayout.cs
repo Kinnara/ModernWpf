@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Windows;
@@ -488,9 +491,9 @@ namespace ModernWpf.Controls
             return OrientationBasedMeasures.MajorEnd(realizationWindow) >= OrientationBasedMeasures.MajorStart(extent) && OrientationBasedMeasures.MajorStart(realizationWindow) <= OrientationBasedMeasures.MajorEnd(extent);
         }
 
-        private double LineSpacing => new ScrollOrientation() == ScrollOrientation.Vertical ? m_minColumnSpacing : m_minRowSpacing;
+        private double LineSpacing => OrientationBasedMeasures.ScrollOrientation == ScrollOrientation.Vertical ? m_minRowSpacing : m_minColumnSpacing;
 
-        private double MinItemSpacing => new ScrollOrientation() == ScrollOrientation.Vertical ? m_minRowSpacing : m_minColumnSpacing;
+        private double MinItemSpacing => OrientationBasedMeasures.ScrollOrientation == ScrollOrientation.Vertical ? m_minColumnSpacing : m_minRowSpacing;
 
         // Fields
         private double m_minRowSpacing;
