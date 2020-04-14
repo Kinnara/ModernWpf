@@ -27,20 +27,25 @@ namespace ModernWpf.Controls.Primitives
         private static void OnStoryboardChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var element = (FrameworkElement)d;
-            element.Loaded -= OnLoaded;
-            if (e.NewValue is Storyboard)
+
+            if (e.OldValue != null)
             {
-                element.Loaded += OnLoaded;
+                element.Loaded -= OnElementLoaded;
+            }
+
+            if (e.NewValue != null)
+            {
+                element.Loaded += OnElementLoaded;
             }
         }
 
         #endregion
 
-        private static void OnLoaded(object sender, RoutedEventArgs e)
+        private static void OnElementLoaded(object sender, RoutedEventArgs e)
         {
-            if (Helper.IsAnimationsEnabled)
+            var element = (FrameworkElement)sender;
+            if (element.IsVisible && Helper.IsAnimationsEnabled && !DesignMode.DesignModeEnabled)
             {
-                var element = (FrameworkElement)sender;
                 var storyboard = GetStoryboard(element);
                 if (storyboard != null)
                 {
