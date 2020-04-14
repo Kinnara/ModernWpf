@@ -32,6 +32,11 @@ namespace ModernWpf.Controls.Primitives
 
                 if (child == null) { continue; }
 
+                if (child is AppBarSeparator separator && IsPrimaryCommand(separator))
+                {
+                    UpdateSeparatorVisibility(i, separator);
+                }
+
                 child.Measure(layoutSlotSize);
                 Size childDesiredSize = child.DesiredSize;
 
@@ -71,6 +76,11 @@ namespace ModernWpf.Controls.Primitives
             if (visualAdded != null)
             {
                 UpdateChildrenApplicationViewState();
+            }
+
+            if (visualRemoved is AppBarSeparator separator && IsPrimaryCommand(separator))
+            {
+                RestoreSeparatorVisibility(separator);
             }
         }
 
@@ -127,6 +137,36 @@ namespace ModernWpf.Controls.Primitives
                 {
                     element.UpdateApplicationViewState();
                 }
+            }
+        }
+
+        private bool IsPrimaryCommand(DependencyObject element)
+        {
+            return ToolBar.GetOverflowMode(element) != OverflowMode.Always;
+        }
+
+        private void UpdateSeparatorVisibility(int index, AppBarSeparator separator)
+        {
+            var visibility = separator.Visibility;
+            if (index == 0)
+            {
+                if (visibility == Visibility.Visible)
+                {
+                    separator.SetCurrentValue(VisibilityProperty, Visibility.Collapsed);
+                }
+            }
+            else
+            {
+                RestoreSeparatorVisibility(separator);
+            }
+        }
+
+        private void RestoreSeparatorVisibility(AppBarSeparator separator)
+        {
+            if (separator.Visibility == Visibility.Collapsed &&
+                DependencyPropertyHelper.GetValueSource(separator, VisibilityProperty).IsCurrent)
+            {
+                separator.InvalidateProperty(VisibilityProperty);
             }
         }
 
