@@ -56,6 +56,14 @@ namespace ModernWpf.Controls
             IsEnabledChanged += OnIsEnabledChanged;
         }
 
+        public static readonly RoutedEvent ToggledEvent = EventManager.RegisterRoutedEvent(nameof(Toggled), RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(ToggleSwitch));
+
+        public event RoutedEventHandler Toggled
+        {
+            add { AddHandler(ToggledEvent, value); }
+            remove { RemoveHandler(ToggledEvent, value); }
+        }
+
         #region Header
 
         public object Header
@@ -261,8 +269,6 @@ namespace ModernWpf.Controls
 
         private Thumb SwitchThumb { get; set; }
 
-        public event RoutedEventHandler Toggled;
-
         public override void OnApplyTemplate()
         {
             if (SwitchKnobBounds != null &&
@@ -311,7 +317,7 @@ namespace ModernWpf.Controls
 
         protected virtual void OnToggled()
         {
-            Toggled?.Invoke(this, new RoutedEventArgs());
+            RaiseEvent(new RoutedEventArgs(ToggledEvent));
         }
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
