@@ -9,6 +9,7 @@
     <Thickness x:Key="TabViewBottomHeaderPadding">8,0,0,8</Thickness>
     <Thickness x:Key="TabViewLeftHeaderPadding">8,8,0,8</Thickness>
     <Thickness x:Key="TabViewRightHeaderPadding">0,8,8,8</Thickness>
+    <Thickness x:Key="TabViewHeaderPadding">8,8,0,0</Thickness>
     <Thickness x:Key="TabViewItemHeaderPadding">12,8,10,8</Thickness>
 
     <sys:Double x:Key="TabViewItemMaxWidth">240</sys:Double>

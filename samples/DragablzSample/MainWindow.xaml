@@ -1,0 +1,43 @@
+﻿<Window
+    x:Class="DragablzSample.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:DragablzSample"
+    xmlns:dragablz="http://dragablz.net/winfx/xaml/dragablz"
+    mc:Ignorable="d"
+    Title="Dragablz Sample"
+    Height="450"
+    Width="800"
+    ui:WindowHelper.UseModernWindowStyle="True">
+    <local:TabablzControlEx
+        x:Name="TabView"
+        ShowDefaultAddButton="True"
+        ShowDefaultCloseButton="True">
+        <local:TabablzControlEx.InterTabController>
+            <dragablz:InterTabController />
+        </local:TabablzControlEx.InterTabController>
+        <TabItem Header="Home">
+            <ui:TabItemHelper.Icon>
+                <ui:SymbolIcon Symbol="Home" />
+            </ui:TabItemHelper.Icon>
+        </TabItem>
+        <TabItem Header="Document 1">
+            <ui:TabItemHelper.Icon>
+                <ui:SymbolIcon Symbol="Document" />
+            </ui:TabItemHelper.Icon>
+        </TabItem>
+        <TabItem Header="Document 2">
+            <ui:TabItemHelper.Icon>
+                <ui:SymbolIcon Symbol="Document" />
+            </ui:TabItemHelper.Icon>
+        </TabItem>
+        <TabItem Header="Document 3">
+            <ui:TabItemHelper.Icon>
+                <ui:SymbolIcon Symbol="Document" />
+            </ui:TabItemHelper.Icon>
+        </TabItem>
+    </local:TabablzControlEx>
+</Window>
