@@ -11,8 +11,12 @@ namespace ModernWpf.Controls
         static RadioMenuItem()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RadioMenuItem), new FrameworkPropertyMetadata(typeof(RadioMenuItem)));
+            IsCheckableProperty.OverrideMetadata(typeof(RadioMenuItem), new FrameworkPropertyMetadata(true, null, CoerceIsCheckable));
+        }
 
-            IsCheckableProperty.OverrideMetadata(typeof(RadioMenuItem), new FrameworkPropertyMetadata(true));
+        private static object CoerceIsCheckable(DependencyObject d, object baseValue)
+        {
+            return true;
         }
 
         public static readonly DependencyProperty GroupNameProperty =
