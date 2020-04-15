@@ -239,7 +239,7 @@
                             <ColumnDefinition Width="32" />
                         </Grid.ColumnDefinitions>
 
-                        <ContentPresenter
+                        <local:ContentPresenterEx
                             x:Name="HeaderContentPresenter"
                             Grid.Row="0"
                             Grid.Column="0"
@@ -247,8 +247,9 @@
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
                             FlowDirection="{TemplateBinding FlowDirection}"
-                            TextElement.FontWeight="{DynamicResource ComboBoxHeaderThemeFontWeight}"
+                            FontWeight="{DynamicResource ComboBoxHeaderThemeFontWeight}"
                             Margin="{DynamicResource ComboBoxTopHeaderMargin}"
+                            TextWrapping="Wrap"
                             VerticalAlignment="Top"
                             Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
@@ -422,7 +423,7 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Background" Property="Background" Value="{DynamicResource ComboBoxBackgroundDisabled}" />
                             <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushDisabled}" />
-                            <Setter TargetName="HeaderContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundDisabled}" />
+                            <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource ComboBoxForegroundDisabled}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundDisabled}" />
                             <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxForegroundDisabled}" />
                             <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxDropDownGlyphForegroundDisabled}" />
