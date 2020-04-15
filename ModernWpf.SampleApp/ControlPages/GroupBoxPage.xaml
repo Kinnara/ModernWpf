@@ -7,54 +7,73 @@
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d"
-    d:DesignWidth="1200"
-    d:DesignHeight="900"
     Style="{StaticResource ControlPageStyle}">
 
     <UserControl.Resources>
-        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
-            <Setter Property="MinWidth" Value="280" />
-            <Setter Property="Margin" Value="0,0,0,12" />
+        <Style x:Key="ComboBoxHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
+            <Setter Property="Margin" Value="0,0,0,4" />
         </Style>
-        <Style TargetType="ui:HyperlinkButton">
-            <Setter Property="Margin" Value="0,0,0,20" />
+        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+            <Setter Property="MinWidth" Value="180" />
+            <Setter Property="Margin" Value="0,0,0,12" />
         </Style>
     </UserControl.Resources>
 
     <ScrollViewer>
-        <StackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <GroupBox Header="Scale and layout">
+        <ui:SimpleStackPanel
+            Style="{StaticResource ControlPageContentPanelStyle}"
+            Width="404"
+            HorizontalAlignment="Left"
+            Spacing="0">
+            <TextBlock
+                Text="Power &amp; Sleep"
+                Style="{StaticResource TitleTextBlockStyle}"
+                FontSize="28"
+                Margin="0,8,0,12" />
+            <GroupBox Header="Screen">
                 <StackPanel>
-                    <ComboBox ui:ControlHelper.Header="Change the size of text, apps, and other items">
-                        <ComboBoxItem
-                            Content="100% (Recommended)"
-                            IsSelected="True" />
+                    <TextBlock
+                        Text="On battery power, turn off after"
+                        Style="{StaticResource ComboBoxHeaderStyle}" />
+                    <ComboBox>
+                        <ComboBoxItem IsSelected="True">5 minutes</ComboBoxItem>
                     </ComboBox>
-                    <ui:HyperlinkButton Content="Advanced scaling settings" />
-                    <ComboBox ui:ControlHelper.Header="Display resolution">
-                        <ComboBoxItem
-                            Content="1920 × 1080 (Recommended)"
-                            IsSelected="True" />
-                    </ComboBox>
-                    <ComboBox ui:ControlHelper.Header="Display orientation">
-                        <ComboBoxItem
-                            Content="Landscape"
-                            IsSelected="True" />
+
+                    <TextBlock
+                        Text="When plugged in, turn off after"
+                        Style="{StaticResource ComboBoxHeaderStyle}" />
+                    <ComboBox>
+                        <ComboBoxItem IsSelected="True">10 minutes</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="Multiple displays">
+            <GroupBox Header="Sleep">
                 <StackPanel>
-                    <ComboBox ui:ControlHelper.Header="Multiple displays">
-                        <ComboBoxItem
-                            Content="Extend these displays"
-                            IsSelected="True" />
+                    <TextBlock
+                        Text="On battery power, PC goes to sleep after"
+                        Style="{StaticResource ComboBoxHeaderStyle}" />
+                    <ComboBox>
+                        <ComboBoxItem IsSelected="True">5 minutes</ComboBoxItem>
                     </ComboBox>
-                    <CheckBox
-                        Content="Make this my main display"
-                        IsChecked="True" />
+
+                    <TextBlock
+                        Text="When plugged in, PC goes to sleep after"
+                        Style="{StaticResource ComboBoxHeaderStyle}" />
+                    <ComboBox>
+                        <ComboBoxItem IsSelected="True">10 minutes</ComboBoxItem>
+                    </ComboBox>
                 </StackPanel>
             </GroupBox>
-        </StackPanel>
+            <GroupBox Header="Network connection">
+                <StackPanel>
+                    <TextBlock
+                        Text="When my PC is asleep and on battery power, disconnect from the network"
+                        Style="{StaticResource ComboBoxHeaderStyle}" />
+                    <ComboBox>
+                        <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+            </GroupBox>
+        </ui:SimpleStackPanel>
     </ScrollViewer>
 </UserControl>
