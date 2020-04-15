@@ -18,13 +18,13 @@
 
     <primitives:SharedSizeGroupConverter x:Key="SharedSizeGroupConverter" />
 
-    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}" TargetType="{x:Type ScrollViewer}">
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}" TargetType="ScrollViewer">
         <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="PanningMode" Value="VerticalOnly" />
     </Style>
 
-    <Style x:Key="DefaultMenuItemSeparatorStyle" TargetType="{x:Type Separator}">
+    <Style x:Key="DefaultMenuItemSeparatorStyle" TargetType="Separator">
         <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
         <Setter Property="Padding" Value="{DynamicResource MenuFlyoutSeparatorThemePadding}" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
@@ -40,7 +40,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}" BasedOn="{StaticResource DefaultMenuItemSeparatorStyle}" />
+    <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator" BasedOn="{StaticResource DefaultMenuItemSeparatorStyle}" />
 
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=TopLevelItemTemplateKey}" TargetType="MenuItem">
         <Grid
@@ -152,7 +152,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuItemTemplateKey}" TargetType="{x:Type MenuItem}">
+    <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuItemTemplateKey}" TargetType="MenuItem">
         <Border
             x:Name="LayoutRoot"
             SnapsToDevicePixels="true"
@@ -250,7 +250,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
+    <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuHeaderTemplateKey}" TargetType="MenuItem">
         <Border
             x:Name="LayoutRoot"
             Padding="{TemplateBinding Padding}"
@@ -391,7 +391,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <Style x:Key="DefaultMenuItemStyle" TargetType="{x:Type MenuItem}">
+    <Style x:Key="DefaultMenuItemStyle" TargetType="MenuItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource MenuFlyoutItemRevealBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemRevealBorderBrush}" />

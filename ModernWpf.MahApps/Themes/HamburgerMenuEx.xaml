@@ -18,7 +18,7 @@
     <DataTemplate x:Key="HamburgerMenuItem">
         <Grid>          
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding CompactPaneLength, RelativeSource={RelativeSource AncestorType=Controls:HamburgerMenu}}" />
+                <ColumnDefinition Width="{Binding CompactPaneLength, RelativeSource={RelativeSource AncestorType={x:Type Controls:HamburgerMenu}}}" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
@@ -114,7 +114,7 @@
         <Setter Property="IsEnabled" Value="False" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="MinHeight" Value="0" />
-        <Setter Property="Width" Value="{Binding PaneLength, RelativeSource={RelativeSource AncestorType=local:HamburgerMenuEx}}" />
+        <Setter Property="Width" Value="{Binding PaneLength, RelativeSource={RelativeSource AncestorType={x:Type local:HamburgerMenuEx}}}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
@@ -127,7 +127,7 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <!-- HorizontalLineCompact -->
-                        <DataTrigger Binding="{Binding IsPaneOpen, RelativeSource={RelativeSource AncestorType=Controls:HamburgerMenu}}" Value="False">
+                        <DataTrigger Binding="{Binding IsPaneOpen, RelativeSource={RelativeSource AncestorType={x:Type Controls:HamburgerMenu}}}" Value="False">
                             <Setter TargetName="SeparatorLine" Property="Margin" Value="{DynamicResource NavigationViewCompactItemSeparatorMargin}" />
                         </DataTrigger>
                     </ControlTemplate.Triggers>
@@ -135,7 +135,7 @@
             </Setter.Value>
         </Setter>
         <Style.Triggers>
-            <DataTrigger Binding="{Binding IsPaneOpen, RelativeSource={RelativeSource AncestorType=Controls:HamburgerMenu}}" Value="False">
+            <DataTrigger Binding="{Binding IsPaneOpen, RelativeSource={RelativeSource AncestorType={x:Type Controls:HamburgerMenu}}}" Value="False">
                 <Setter Property="HorizontalAlignment" Value="Left" />
             </DataTrigger>
         </Style.Triggers>
@@ -166,7 +166,7 @@
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding IsPaneOpen, RelativeSource={RelativeSource AncestorType=Controls:HamburgerMenu}}" Value="False">
+                        <DataTrigger Binding="{Binding IsPaneOpen, RelativeSource={RelativeSource AncestorType={x:Type Controls:HamburgerMenu}}}" Value="False">
                             <Setter TargetName="HeaderText" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="InnerHeaderGrid" Property="Height" Value="20" />
                         </DataTrigger>
@@ -176,7 +176,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ModernWpf.MahApps.Styles.ListBox.HamburgerMenu" BasedOn="{StaticResource DefaultListBoxStyle}" TargetType="{x:Type ListBox}">
+    <Style x:Key="ModernWpf.MahApps.Styles.ListBox.HamburgerMenu" BasedOn="{StaticResource DefaultListBoxStyle}" TargetType="ListBox">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -186,7 +186,7 @@
         <Setter Property="ui:ScrollViewerHelper.AutoHideScrollBars" Value="True" />
     </Style>
 
-    <ControlTemplate x:Key="ModernWpf.MahApps.Templates.HamburgerMenu" TargetType="{x:Type local:HamburgerMenuEx}">
+    <ControlTemplate x:Key="ModernWpf.MahApps.Templates.HamburgerMenu" TargetType="local:HamburgerMenuEx">
         <Grid SnapsToDevicePixels="True">
             <Controls:SplitView
                 x:Name="MainSplitView"
@@ -384,7 +384,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <Style TargetType="{x:Type local:HamburgerMenuEx}">
+    <Style TargetType="local:HamburgerMenuEx">
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="HamburgerButtonStyle" Value="{DynamicResource PaneToggleButtonStyle}" />

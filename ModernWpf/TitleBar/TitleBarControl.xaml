@@ -129,18 +129,18 @@
                             <Setter TargetName="Icon" Property="Visibility" Value="Visible" />
                             <Setter TargetName="Title" Property="Margin" Value="5,0,12,0" />
                         </Trigger>
-                        <DataTrigger Binding="{Binding WindowStyle, RelativeSource={RelativeSource AncestorType=Window}}" Value="ToolWindow">
+                        <DataTrigger Binding="{Binding WindowStyle, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="ToolWindow">
                             <Setter TargetName="MinimizeButton" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="MaximizeRestoreButton" Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="NoResize">
+                        <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="NoResize">
                             <Setter TargetName="MinimizeButton" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="MaximizeRestoreButton" Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType=Window}}" Value="CanMinimize">
+                        <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="CanMinimize">
                             <Setter TargetName="MaximizeRestoreButton" Property="IsEnabled" Value="False" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                        <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="Maximized">
                             <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeRestore}" />
                             <Setter TargetName="MaximizeRestoreButton" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
                         </DataTrigger>
@@ -172,7 +172,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
-                                <Condition Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized" />
+                                <Condition Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="Maximized" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeRestoreContrast}" />
                         </MultiDataTrigger>

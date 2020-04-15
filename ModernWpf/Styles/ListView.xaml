@@ -9,7 +9,7 @@
     <sys:Double x:Key="GridViewColumnHeaderMinHeight">33</sys:Double>
     <sys:Double x:Key="GridViewItemContainerMinHeight">32</sys:Double>
 
-    <Style x:Key="DefaultListViewItemStyle" TargetType="{x:Type ListViewItem}">
+    <Style x:Key="DefaultListViewItemStyle" TargetType="ListViewItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="Background" Value="{DynamicResource ListViewItemBackground}" />
@@ -23,7 +23,7 @@
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                <ControlTemplate TargetType="ListViewItem">
                     <Border
                         x:Name="Bd"
                         BorderBrush="{TemplateBinding BorderBrush}"
@@ -64,7 +64,7 @@
 
     <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}" />
 
-    <Style x:Key="DefaultListViewStyle" TargetType="{x:Type ListView}">
+    <Style x:Key="DefaultListViewStyle" TargetType="ListView">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
@@ -76,7 +76,7 @@
         <Setter Property="primitives:ScrollViewerHelper.AutoHideScrollBars" Value="{DynamicResource AutoHideScrollBars}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListView}">
+                <ControlTemplate TargetType="ListView">
                     <Border
                         x:Name="Bd"
                         Background="{TemplateBinding Background}"
@@ -107,11 +107,11 @@
     <Style TargetType="ListView" BasedOn="{StaticResource DefaultListViewStyle}" />
 
     <!-- GridView ScrollViewer Style -->
-    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" TargetType="{x:Type ScrollViewer}">
+    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" TargetType="ScrollViewer">
         <Setter Property="Focusable" Value="false" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                <ControlTemplate TargetType="ScrollViewer">
                     <Grid
                         Background="{TemplateBinding Background}"
                         SnapsToDevicePixels="true">
@@ -199,7 +199,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="GridViewColumnHeaderGripper" TargetType="{x:Type Thumb}">
+    <Style x:Key="GridViewColumnHeaderGripper" TargetType="Thumb">
         <Setter Property="Canvas.Right" Value="-9" />
         <Setter Property="Width" Value="18" />
         <Setter Property="Height" Value="{Binding Path=ActualHeight, RelativeSource={RelativeSource TemplatedParent}}" />
@@ -207,7 +207,7 @@
         <Setter Property="Background" Value="#FF000000" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Thumb}">
+                <ControlTemplate TargetType="Thumb">
                     <Border
                         Padding="{TemplateBinding Padding}"
                         Background="Transparent">
@@ -221,7 +221,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Type GridViewColumnHeader}" TargetType="{x:Type GridViewColumnHeader}">
+    <Style x:Key="{x:Type GridViewColumnHeader}" TargetType="GridViewColumnHeader">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -233,7 +233,7 @@
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                <ControlTemplate TargetType="GridViewColumnHeader">
                     <Grid SnapsToDevicePixels="true">
                         <!-- GridViewColumnHeader Content -->
                         <Border
@@ -278,7 +278,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <!-- The same as normal header, just no gripper. -->
-                        <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                        <ControlTemplate TargetType="GridViewColumnHeader">
                             <Border
                                 Background="{TemplateBinding Background}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
@@ -296,7 +296,7 @@
                 <Setter Property="Opacity" Value="{DynamicResource ListViewItemReorderTargetThemeOpacity}" />
                 <Setter Property="Template">
                     <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                        <ControlTemplate TargetType="GridViewColumnHeader">
                             <Canvas Name="PART_FloatingHeaderCanvas">
                                 <Rectangle
                                     Opacity="0.3034"
@@ -311,12 +311,12 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="{x:Static GridView.GridViewItemContainerStyleKey}" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource DefaultListViewItemStyle}">
+    <Style x:Key="{x:Static GridView.GridViewItemContainerStyleKey}" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
         <Setter Property="Padding" Value="6,0,6,0" />
         <Setter Property="MinHeight" Value="{DynamicResource GridViewItemContainerMinHeight}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                <ControlTemplate TargetType="ListViewItem">
                     <Border
                         x:Name="Bd"
                         BorderBrush="{TemplateBinding BorderBrush}"
@@ -352,11 +352,11 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Static GridView.GridViewStyleKey}" TargetType="{x:Type ListView}" BasedOn="{StaticResource DefaultListViewStyle}">
+    <Style x:Key="{x:Static GridView.GridViewStyleKey}" TargetType="ListView" BasedOn="{StaticResource DefaultListViewStyle}">
         <Setter Property="ItemContainerStyle" Value="{DynamicResource {x:Static GridView.GridViewItemContainerStyleKey}}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ListView}">
+                <ControlTemplate TargetType="ListView">
                     <Border
                         x:Name="Bd"
                         BorderThickness="{TemplateBinding BorderThickness}"

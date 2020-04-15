@@ -7,7 +7,7 @@
 
     <Thickness x:Key="MenuFlyoutScrollerMargin">0,4,0,4</Thickness>
 
-    <Style x:Key="ContextMenuStyleBase" TargetType="{x:Type ContextMenu}">
+    <Style x:Key="ContextMenuStyleBase" TargetType="ContextMenu">
         <Setter Property="Background" Value="{DynamicResource MenuFlyoutPresenterBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutPresenterBorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}" />
@@ -27,7 +27,7 @@
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ContextMenu}">
+                <ControlTemplate TargetType="ContextMenu">
                     <primitives:ThemeShadowChrome
                         x:Name="Shdw"
                         IsShadowEnabled="{TemplateBinding HasDropShadow}"

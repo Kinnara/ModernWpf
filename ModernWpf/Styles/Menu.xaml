@@ -5,14 +5,14 @@
 
     <sys:Double x:Key="MenuBarHeight">40</sys:Double>
 
-    <Style x:Key="DefaultMenuStyle" TargetType="{x:Type Menu}">
+    <Style x:Key="DefaultMenuStyle" TargetType="Menu">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource MenuBarBackground}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Height" Value="{StaticResource MenuBarHeight}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Menu}">
+                <ControlTemplate TargetType="Menu">
                     <Border
                         Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"

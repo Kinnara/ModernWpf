@@ -7,12 +7,12 @@
 
     <sys:Double x:Key="TreeViewItemMinHeight">32</sys:Double>
 
-    <Style x:Key="ExpandCollapseToggleStyle" TargetType="{x:Type ToggleButton}">
+    <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Focusable" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                <ControlTemplate TargetType="ToggleButton">
                     <Border
                         Background="{TemplateBinding Background}"
                         Padding="{TemplateBinding Padding}">
@@ -197,7 +197,7 @@
 
     <Style TargetType="TreeViewItem" BasedOn="{StaticResource DefaultTreeViewItemStyle}" />
 
-    <Style x:Key="DefaultTreeViewStyle" TargetType="{x:Type TreeView}">
+    <Style x:Key="DefaultTreeViewStyle" TargetType="TreeView">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
@@ -206,7 +206,7 @@
         <Setter Property="primitives:ScrollViewerHelper.AutoHideScrollBars" Value="{DynamicResource AutoHideScrollBars}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type TreeView}">
+                <ControlTemplate TargetType="TreeView">
                     <Border
                         x:Name="Bd"
                         BorderBrush="{TemplateBinding BorderBrush}"

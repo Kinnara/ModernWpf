@@ -50,7 +50,7 @@
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type DataGridCell}">
+                <ControlTemplate TargetType="DataGridCell">
                     <Border
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
@@ -105,11 +105,11 @@
 
     <!--<Style TargetType="DataGridCell" BasedOn="{StaticResource DefaultDataGridCellStyle}" />-->
 
-    <Style x:Key="DefaultDataGridColumnHeadersPresenterStyle" TargetType="{x:Type DataGridColumnHeadersPresenter}">
+    <Style x:Key="DefaultDataGridColumnHeadersPresenterStyle" TargetType="DataGridColumnHeadersPresenter">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type DataGridColumnHeadersPresenter}">
+                <ControlTemplate TargetType="DataGridColumnHeadersPresenter">
                     <Grid>
                         <DataGridColumnHeader
                             IsHitTestVisible="False"
@@ -124,13 +124,13 @@
 
     <Style TargetType="DataGridColumnHeadersPresenter" BasedOn="{StaticResource DefaultDataGridColumnHeadersPresenterStyle}" />
 
-    <Style x:Key="ColumnHeaderGripperStyle" TargetType="{x:Type Thumb}">
+    <Style x:Key="ColumnHeaderGripperStyle" TargetType="Thumb">
         <Setter Property="Width" Value="8" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Cursor" Value="SizeWE" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Thumb}">
+                <ControlTemplate TargetType="Thumb">
                     <Border
                         Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}" />
@@ -299,13 +299,13 @@
 
     <!--<Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}" />-->
 
-    <Style x:Key="RowHeaderGripperStyle" TargetType="{x:Type Thumb}">
+    <Style x:Key="RowHeaderGripperStyle" TargetType="Thumb">
         <Setter Property="Height" Value="8" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Cursor" Value="SizeNS" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Thumb}">
+                <ControlTemplate TargetType="Thumb">
                     <Border
                         Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}" />
@@ -551,7 +551,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="DefaultDataGridRowStyle" TargetType="{x:Type DataGridRow}">
+    <Style x:Key="DefaultDataGridRowStyle" TargetType="DataGridRow">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
@@ -568,7 +568,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type DataGridRow}">
+                <ControlTemplate TargetType="DataGridRow">
                     <Grid>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -657,13 +657,13 @@
 
     <!--<Style TargetType="DataGridRow" BasedOn="{StaticResource DefaultDataGridRowStyle}" />-->
 
-    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type DataGrid}, ResourceId=DataGridSelectAllButtonStyle}" TargetType="{x:Type Button}">
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type DataGrid}, ResourceId=DataGridSelectAllButtonStyle}" TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource DataGridColumnHeaderBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource GridLinesBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource GridLinesBrush}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
+                <ControlTemplate TargetType="Button">
                     <Grid>
                         <Rectangle
                             x:Name="BackgroundRectangle"
@@ -724,7 +724,7 @@
         </Style.Resources>
     </Style>
 
-    <Style x:Key="DefaultDataGridStyle" TargetType="{x:Type DataGrid}">
+    <Style x:Key="DefaultDataGridStyle" TargetType="DataGrid">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="ColumnHeaderStyle" Value="{StaticResource DefaultDataGridColumnHeaderStyle}" />
         <Setter Property="RowHeaderStyle" Value="{StaticResource DefaultDataGridRowHeaderStyle}" />
@@ -753,7 +753,7 @@
         <Setter Property="primitives:DataGridHelper.IsEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type DataGrid}">
+                <ControlTemplate TargetType="DataGrid">
                     <Border
                         Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
@@ -765,7 +765,7 @@
                             Focusable="false"
                             primitives:ScrollViewerHelper.AutoHideScrollBars="False">
                             <ScrollViewer.Template>
-                                <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                                <ControlTemplate TargetType="ScrollViewer">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
@@ -859,10 +859,10 @@
 
     <Style TargetType="DataGrid" BasedOn="{StaticResource DefaultDataGridStyle}" />
 
-    <Style x:Key="DataGridRowGroupHeaderStyle" TargetType="{x:Type ToggleButton}">
+    <Style x:Key="DataGridRowGroupHeaderStyle" TargetType="ToggleButton">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                <ControlTemplate TargetType="ToggleButton">
                     <Grid
                         x:Name="RowGroupHeaderRoot"
                         Background="{DynamicResource DataGridRowGroupHeaderBackgroundBrush}"
@@ -908,7 +908,7 @@
     <Style x:Key="DataGridRowGroupContainerStyle" TargetType="GroupItem">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type GroupItem}">
+                <ControlTemplate TargetType="GroupItem">
                     <Expander
                         x:Name="PART_Header"
                         Foreground="{DynamicResource DataGridRowGroupHeaderForegroundBrush}"
@@ -919,7 +919,7 @@
                         HeaderStringFormat="{TemplateBinding ContentStringFormat}"
                         IsExpanded="True">
                         <Expander.Template>
-                            <ControlTemplate TargetType="{x:Type Expander}">
+                            <ControlTemplate TargetType="Expander">
                                 <Border
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"

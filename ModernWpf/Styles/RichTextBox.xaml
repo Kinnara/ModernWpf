@@ -121,10 +121,10 @@
             </Setter.Value>
         </Setter>
         <Style.Resources>
-            <Style x:Key="{x:Type FlowDocument}" TargetType="{x:Type FlowDocument}">
+            <Style x:Key="{x:Type FlowDocument}" TargetType="FlowDocument">
                 <Setter Property="OverridesDefaultStyle" Value="true" />
             </Style>
-            <Style x:Key="{x:Type Hyperlink}" BasedOn="{StaticResource {x:Type Hyperlink}}" TargetType="{x:Type Hyperlink}" />
+            <Style x:Key="{x:Type Hyperlink}" BasedOn="{StaticResource {x:Type Hyperlink}}" TargetType="Hyperlink" />
         </Style.Resources>
     </Style>
 

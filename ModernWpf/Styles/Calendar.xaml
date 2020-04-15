@@ -9,14 +9,14 @@
         <ResourceDictionary Source="Button.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style x:Key="DefaultCalendarItemStyle" TargetType="{x:Type CalendarItem}">
+    <Style x:Key="DefaultCalendarItemStyle" TargetType="CalendarItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type CalendarItem}">
+                <ControlTemplate TargetType="CalendarItem">
                     <ControlTemplate.Resources>
                         <Style TargetType="TextBlock" x:Key="WeekDayNameStyle">
                             <Setter Property="FontWeight" Value="Normal" />
@@ -190,7 +190,7 @@
 
     <Style TargetType="CalendarItem" BasedOn="{StaticResource DefaultCalendarItemStyle}" />
 
-    <Style x:Key="DefaultCalendarDayButtonStyle" TargetType="{x:Type CalendarDayButton}">
+    <Style x:Key="DefaultCalendarDayButtonStyle" TargetType="CalendarDayButton">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource CalendarViewCalendarItemRevealBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource CalendarViewCalendarItemForeground}" />
@@ -206,7 +206,7 @@
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-2" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type CalendarDayButton}">
+                <ControlTemplate TargetType="CalendarDayButton">
                     <Grid SnapsToDevicePixels="True">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DayStates">
@@ -297,7 +297,7 @@
 
     <Style TargetType="CalendarDayButton" BasedOn="{StaticResource DefaultCalendarDayButtonStyle}" />
 
-    <Style x:Key="DefaultCalendarButtonStyle" TargetType="{x:Type CalendarButton}">
+    <Style x:Key="DefaultCalendarButtonStyle" TargetType="CalendarButton">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource CalendarViewCalendarItemRevealBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource CalendarViewCalendarItemForeground}" />
@@ -314,7 +314,7 @@
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-2" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type CalendarButton}">
+                <ControlTemplate TargetType="CalendarButton">
                     <Grid SnapsToDevicePixels="True">
                         <Border
                             x:Name="Background"
@@ -373,7 +373,7 @@
 
     <Style TargetType="CalendarButton" BasedOn="{StaticResource DefaultCalendarButtonStyle}" />
 
-    <Style x:Key="DefaultCalendarStyle" TargetType="{x:Type Calendar}">
+    <Style x:Key="DefaultCalendarStyle" TargetType="Calendar">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="CalendarItemStyle" Value="{StaticResource DefaultCalendarItemStyle}" />
         <Setter Property="CalendarDayButtonStyle" Value="{StaticResource DefaultCalendarDayButtonStyle}" />
@@ -389,7 +389,7 @@
         <Setter Property="primitives:CalendarHelper.AutoReleaseMouseCapture" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Calendar}">
+                <ControlTemplate TargetType="Calendar">
                     <StackPanel
                         x:Name="PART_Root"
                         SnapsToDevicePixels="True">
@@ -411,7 +411,7 @@
     <Style x:Key="DatePickerCalendarStyle" TargetType="Calendar" BasedOn="{StaticResource DefaultCalendarStyle}">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Calendar}">
+                <ControlTemplate TargetType="Calendar">
                     <primitives:ThemeShadowChrome
                         x:Name="Shdw"
                         IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"

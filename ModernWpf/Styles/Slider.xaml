@@ -24,14 +24,14 @@
     <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
     <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
 
-    <Style x:Key="RepeatButtonTransparent" TargetType="{x:Type RepeatButton}">
+    <Style x:Key="RepeatButtonTransparent" TargetType="RepeatButton">
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Focusable" Value="false" />
         <Setter Property="IsTabStop" Value="false" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                <ControlTemplate TargetType="RepeatButton">
                     <Rectangle
                         Width="{TemplateBinding Width}"
                         Height="{TemplateBinding Height}"

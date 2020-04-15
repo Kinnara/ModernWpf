@@ -174,12 +174,12 @@
 
     <Style TargetType="TabItem" BasedOn="{StaticResource DefaultTabItemStyle}" />
 
-    <Style x:Key="DefaultTabControlStyle" TargetType="{x:Type TabControl}">
+    <Style x:Key="DefaultTabControlStyle" TargetType="TabControl">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource TabViewBackground}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type TabControl}">
+                <ControlTemplate TargetType="TabControl">
                     <Grid
                         x:Name="templateRoot"
                         ClipToBounds="true"

@@ -5,10 +5,10 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
-    <Style x:Key="ExpanderDownHeaderStyle" TargetType="{x:Type ToggleButton}">
+    <Style x:Key="ExpanderDownHeaderStyle" TargetType="ToggleButton">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                <ControlTemplate TargetType="ToggleButton">
                     <Border Padding="{TemplateBinding Padding}">
                         <Grid
                             Background="Transparent"
@@ -54,10 +54,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ExpanderUpHeaderStyle" TargetType="{x:Type ToggleButton}">
+    <Style x:Key="ExpanderUpHeaderStyle" TargetType="ToggleButton">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                <ControlTemplate TargetType="ToggleButton">
                     <Border Padding="{TemplateBinding Padding}">
                         <Grid
                             Background="Transparent"
@@ -114,10 +114,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ExpanderLeftHeaderStyle" TargetType="{x:Type ToggleButton}">
+    <Style x:Key="ExpanderLeftHeaderStyle" TargetType="ToggleButton">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                <ControlTemplate TargetType="ToggleButton">
                     <Border Padding="{TemplateBinding Padding}">
                         <Grid
                             Background="Transparent"
@@ -174,10 +174,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ExpanderRightHeaderStyle" TargetType="{x:Type ToggleButton}">
+    <Style x:Key="ExpanderRightHeaderStyle" TargetType="ToggleButton">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                <ControlTemplate TargetType="ToggleButton">
                     <Border Padding="{TemplateBinding Padding}">
                         <Grid
                             Background="Transparent"
@@ -234,7 +234,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="DefaultExpanderStyle" TargetType="{x:Type Expander}">
+    <Style x:Key="DefaultExpanderStyle" TargetType="Expander">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="Background" Value="Transparent" />
@@ -243,7 +243,7 @@
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Expander}">
+                <ControlTemplate TargetType="Expander">
                     <Border
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"

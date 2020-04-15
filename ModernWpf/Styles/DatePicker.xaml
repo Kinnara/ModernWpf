@@ -7,7 +7,7 @@
 
     <Thickness x:Key="CalendarDatePickerTopHeaderMargin">0,0,0,4</Thickness>
 
-    <Style x:Key="DefaultDatePickerTextBoxStyle" TargetType="{x:Type DatePickerTextBox}">
+    <Style x:Key="DefaultDatePickerTextBoxStyle" TargetType="DatePickerTextBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Foreground" Value="{DynamicResource CalendarDatePickerTextForegroundSelected}" />
         <Setter Property="Background" Value="Transparent" />
@@ -18,7 +18,7 @@
         <Setter Property="local:TextContextMenu.UsingTextContextMenu" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type DatePickerTextBox}">
+                <ControlTemplate TargetType="DatePickerTextBox">
                     <Grid SnapsToDevicePixels="True">
                         <Border
                             x:Name="BorderElement"
@@ -88,7 +88,7 @@
 
     <Style TargetType="DatePickerTextBox" BasedOn="{StaticResource DefaultDatePickerTextBoxStyle}" />
 
-    <Style x:Key="DefaultDatePickerStyle" TargetType="{x:Type DatePicker}">
+    <Style x:Key="DefaultDatePickerStyle" TargetType="DatePicker">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Foreground" Value="{DynamicResource CalendarDatePickerForeground}" />
         <Setter Property="IsTodayHighlighted" Value="True" />
@@ -108,7 +108,7 @@
         <Setter Property="primitives:DatePickerHelper.IsEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type DatePicker}">
+                <ControlTemplate TargetType="DatePicker">
                     <Grid SnapsToDevicePixels="True">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -127,7 +127,7 @@
                             x:Name="PART_Root"
                             Grid.Row="1">
                             <Grid.Resources>
-                                <ControlTemplate x:Key="DropDownButtonTemplate" TargetType="{x:Type Button}">
+                                <ControlTemplate x:Key="DropDownButtonTemplate" TargetType="Button">
                                     <Grid>
                                         <Rectangle
                                             Fill="{TemplateBinding Background}"

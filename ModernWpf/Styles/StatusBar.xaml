@@ -9,14 +9,14 @@
 
     <Style TargetType="StatusBar" BasedOn="{StaticResource DefaultStatusBarStyle}" />
 
-    <Style x:Key="{x:Static StatusBar.SeparatorStyleKey}" TargetType="{x:Type Separator}">
+    <Style x:Key="{x:Static StatusBar.SeparatorStyleKey}" TargetType="Separator">
         <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
         <Setter Property="MinWidth" Value="1" />
         <Setter Property="MinHeight" Value="1" />
         <Setter Property="Margin" Value="2" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Separator}">
+                <ControlTemplate TargetType="Separator">
                     <Border
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
@@ -30,7 +30,7 @@
     <Style x:Key="DefaultStatusBarItemStyle" TargetType="StatusBarItem">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type StatusBarItem}">
+                <ControlTemplate TargetType="StatusBarItem">
                     <Border
                         Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"

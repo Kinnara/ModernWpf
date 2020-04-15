@@ -104,7 +104,7 @@
         <Setter Property="ItemContainerStyle" Value="{StaticResource TabItemPivotStyle}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type TabControl}">
+                <ControlTemplate TargetType="TabControl">
                     <Grid
                         x:Name="templateRoot"
                         Background="{TemplateBinding Background}"

@@ -91,14 +91,14 @@
     <sys:TimeSpan x:Key="ScrollBarExpandBeginTime">00:00:00.40</sys:TimeSpan>
     <sys:TimeSpan x:Key="ScrollBarContractBeginTime">00:00:02.00</sys:TimeSpan>
 
-    <Style x:Key="RepeatButtonTransparent" TargetType="{x:Type RepeatButton}">
+    <Style x:Key="RepeatButtonTransparent" TargetType="RepeatButton">
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Focusable" Value="false" />
         <Setter Property="IsTabStop" Value="false" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                <ControlTemplate TargetType="RepeatButton">
                     <Rectangle
                         Width="{TemplateBinding Width}"
                         Height="{TemplateBinding Height}"
