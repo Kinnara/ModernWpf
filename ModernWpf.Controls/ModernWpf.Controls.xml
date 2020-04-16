@@ -1484,6 +1484,18 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Identifies the <see cref="ModernWpf.Controls.LayoutPanel.Padding?text=Padding" /> dependency property.</summary>
       <returns>The identifier for the <see cref="ModernWpf.Controls.LayoutPanel.Padding?text=Padding" /> dependency property.</returns>
     </member>
+    <member name="T:ModernWpf.Controls.LightDismissOverlayMode">
+      <summary>Defines constants that specify whether the area outside of a *light-dismiss* UI is darkened.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.LightDismissOverlayMode.Auto">
+      <summary>The device-family the app is running on determines whether the area outside of a *light-dismiss* UI is darkened.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.LightDismissOverlayMode.Off">
+      <summary>The area outside of a *light-dismiss* UI is not darkened for all device families.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.LightDismissOverlayMode.On">
+      <summary>The area outside of a *light-dismiss* UI is darkened for all device families.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.ListView">
       <summary>Represents a control that displays data items in a vertical stack.</summary>
     </member>
@@ -2295,6 +2307,135 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     </member>
     <member name="T:ModernWpf.Controls.SplitButtonClickEventArgs">
       <summary>Provides event data for the SplitButton.Click event.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.SplitView">
+      <summary>Represents a container with two views; one view for the main content and another view that is typically used for navigation commands.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.SplitView.#ctor">
+      <summary>Initializes a new instance of the SplitView class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitView.CompactPaneLength">
+      <summary>Gets or sets the width of the SplitView pane in its compact display mode.</summary>
+      <returns>The width of the pane in it's compact display mode. The default is 48 device-independent pixel (DIP) (defined by the **SplitViewCompactPaneThemeLength** resource).</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitView.CompactPaneLengthProperty">
+      <summary>Identifies the CompactPaneLength  dependency property.</summary>
+      <returns>The identifier for the CompactPaneLength  dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitView.Content">
+      <summary>Gets or sets the contents of the main panel of a SplitView.</summary>
+      <returns>The contents of the main panel of a SplitView. The default is **null**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitView.ContentProperty">
+      <summary>Identifies the Content  dependency property.</summary>
+      <returns>The identifier for the Content  dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitView.DisplayMode">
+      <summary>Gets of sets a value that specifies how the pane and content areas of a SplitView are shown.</summary>
+      <returns>A value of the enumeration that specifies how the pane and content areas of a SplitView are shown. The default is **Overlay**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitView.DisplayModeProperty">
+      <summary>Identifies the DisplayMode  dependency property.</summary>
+      <returns>The identifier for the DisplayMode  dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitView.IsPaneOpen">
+      <summary>Gets or sets a value that specifies whether the SplitView pane is expanded to its full width.</summary>
+      <returns>**true** if the pane is expanded to its full width; otherwise, **false**. The default is **true**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitView.IsPaneOpenProperty">
+      <summary>Identifies the IsPaneOpen  dependency property.</summary>
+      <returns>The identifier for the IsPaneOpen  dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitView.LightDismissOverlayMode">
+      <summary>Gets or sets a value that specifies whether the area outside of a *light-dismiss* UI is darkened.</summary>
+      <returns>A value of the enumeration that specifies whether the area outside of a light-dismiss UI is darkened. The default is **Auto**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitView.LightDismissOverlayModeProperty">
+      <summary>Identifies the LightDismissOverlayMode dependency property.</summary>
+      <returns>The identifier for the LightDismissOverlayMode dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitView.OpenPaneLength">
+      <summary>Gets or sets the width of the SplitView pane when it's fully expanded.</summary>
+      <returns>The width of the SplitView pane when it's fully expanded. The default is 320 device-independent pixel (DIP).</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitView.OpenPaneLengthProperty">
+      <summary>Identifies the  OpenPaneLength dependency property.</summary>
+      <returns>The identifier for the OpenPaneLength  dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitView.Pane">
+      <summary>Gets or sets the contents of the pane of a SplitView.</summary>
+      <returns>The contents of the pane of a SplitView. The default is **null**.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitView.PaneBackground">
+      <summary>Gets or sets the Brush to apply to the background of the Pane area of the control.</summary>
+      <returns>The Brush to apply to the background of the Pane area of the control.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitView.PaneBackgroundProperty">
+      <summary>Identifies the PaneBackground  dependency property.</summary>
+      <returns>The identifier for the   PaneBackground dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitView.PanePlacement">
+      <summary>Gets or sets a value that specifies whether the pane is shown on the right or left side of the SplitView.</summary>
+      <returns>A value of the enumeration that specifies whether the pane is shown on the right or left side of the SplitView. The default is **Left**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitView.PanePlacementProperty">
+      <summary>Identifies the PanePlacement  dependency property.</summary>
+      <returns>The identifier for the   PanePlacement dependency property.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitView.PaneProperty">
+      <summary>Identifies the Pane  dependency property.</summary>
+      <returns>The identifier for the  Pane dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitView.TemplateSettings">
+      <summary>Gets an object that provides calculated values that can be referenced as **TemplateBinding** sources when defining templates for a SplitView control.</summary>
+      <returns>An object that provides calculated values for templates.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitView.TemplateSettingsProperty">
+      <summary>Identifies the TemplateSettings  dependency property.</summary>
+      <returns>The identifier for the TemplateSettings  dependency property.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.SplitView.PaneClosed">
+      <summary>Occurs when the SplitView pane is closed.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.SplitView.PaneClosing">
+      <summary>Occurs when the SplitView pane is closing.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.SplitView.PaneOpened">
+      <summary>Occurs when the SplitView pane is opened.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.SplitView.PaneOpening">
+      <summary>Occurs when the SplitView pane is opening.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.SplitViewDisplayMode">
+      <summary>Defines constants that specify how the pane is shown in a SplitView.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitViewDisplayMode.CompactInline">
+      <summary>The amount of the pane defined by the CompactPaneLength property is shown side-by-side with the content and takes up space in the control layout. The remaining part of the pane pushes the content to the side when it's open and takes up space in the control layout. The pane does not close when the user taps outside of it.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitViewDisplayMode.CompactOverlay">
+      <summary>The amount of the pane defined by the CompactPaneLength property is shown side-by-side with the content and takes up space in the control layout. The remaining part of the pane covers the content when it's open and does not take up space in the control layout. The pane closes when the user taps outside of it.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitViewDisplayMode.Inline">
+      <summary>The pane is shown side-by-side with the content and takes up space in the control layout. The pane does not close when the user taps outside of it.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitViewDisplayMode.Overlay">
+      <summary>The pane covers the content when it's open and does not take up space in the control layout. The pane closes when the user taps outside of it.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.SplitViewPaneClosingEventArgs">
+      <summary>Provides event data for the SplitView.PaneClosing event.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.SplitViewPaneClosingEventArgs.Cancel">
+      <summary>Gets or sets a value that indicates whether the pane closing action should be canceled.</summary>
+      <returns>**true** to cancel the pane closing action; otherwise, **false**.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.SplitViewPanePlacement">
+      <summary>Defines constants that specify whether the pane is to the left or right of the content in a SplitView.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitViewPanePlacement.Left">
+      <summary>The pane is shown to the left of the SplitView content .</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.SplitViewPanePlacement.Right">
+      <summary>The pane is shown to the right of the SplitView content .</summary>
     </member>
     <member name="T:ModernWpf.Controls.StackLayout">
       <summary>Arranges elements into a single line (with spacing) that can be oriented horizontally or vertically.</summary>

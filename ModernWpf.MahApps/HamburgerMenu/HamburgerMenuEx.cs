@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using SplitView = MahApps.Metro.Controls.SplitView;
+using SplitViewDisplayMode = MahApps.Metro.Controls.SplitViewDisplayMode;
 
 namespace ModernWpf.MahApps.Controls
 {

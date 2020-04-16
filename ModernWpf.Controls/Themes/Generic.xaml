@@ -22,6 +22,7 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/ProgressRing/ProgressRing.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/RatingControl/RatingControl.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/SplitButton/SplitButton.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/SplitView/SplitView.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/RadioButtons/RadioButtons.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/RadioMenuItem/RadioMenuItem.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ToggleSwitch/ToggleSwitch.xaml" />

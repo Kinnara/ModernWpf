@@ -1,0 +1,79 @@
+﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+<local:TestPage
+    x:Class="MUXControlsTestApp.SplitViewPage"
+    x:Name="SplitViewTestPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:MUXControlsTestApp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:controls="http://schemas.modernwpf.com/2019"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
+        <controls:SplitView
+            x:Name="splitView"
+            DisplayMode="Inline"
+            PaneOpening="Pane_Opening"
+            PaneOpened="Pane_Opened"
+            PaneClosing="Pane_Closing"
+            PaneClosed="Pane_Closed"
+            PanePlacement="Left"
+            OpenPaneLength="296">
+            <controls:SplitView.Pane>
+                <TextBlock
+                    Text="Pane"
+                    FontSize="24"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center" />
+            </controls:SplitView.Pane>
+
+            <Grid>
+                <StackPanel
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+                    <TextBlock
+                        Text="Content"
+                        Margin="0,0,0,8"
+                        FontSize="36" />
+                    <Border Style="{DynamicResource StandardGroupingBorder}">
+                        <StackPanel>
+                            <TextBlock
+                                Text="Options"
+                                Margin="0,0,0,4"
+                                Style="{DynamicResource StandardGroupHeader}" />
+                            <CheckBox
+                                x:Name="paneOpenCheckbox"
+                                Content="Pane open"
+                                IsChecked="True"
+                                Unchecked="PaneOpenCheckbox_CheckChanged"
+                                Checked="PaneOpenCheckbox_CheckChanged" />
+                            <controls:ToggleSwitch
+                                OffContent="Left"
+                                OnContent="Right"
+                                Header="Placement"
+                                Toggled="PanePlacement_Toggled"
+                                Margin="0,12,0,0"
+                                MinWidth="120" />
+                            <ComboBox
+                                x:Name="DisplayModeCombobox"
+                                SelectionChanged="DisplayModeCombobox_SelectionChanged"
+                                Width="196"
+                                SelectedIndex="0"
+                                Margin="0,4,0,0"
+                                VerticalAlignment="Center"
+                                controls:ControlHelper.Header="DisplayMode">
+                                <ComboBoxItem>Inline</ComboBoxItem>
+                                <ComboBoxItem>CompactInline</ComboBoxItem>
+                                <ComboBoxItem>Overlay</ComboBoxItem>
+                                <ComboBoxItem>CompactOverlay</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+
+            </Grid>
+        </controls:SplitView>
+    </Grid>
+</local:TestPage>

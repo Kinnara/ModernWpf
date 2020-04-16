@@ -1115,6 +1115,13 @@
     <m:StaticResource x:Key="SplitButtonBorderBrushCheckedDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
     <Thickness x:Key="SplitButtonBorderThemeThickness">1</Thickness>
 
+    <!-- Resources for SplitView -->
+    <sys:Double x:Key="SplitViewOpenPaneThemeLength">320</sys:Double>
+    <sys:Double x:Key="SplitViewCompactPaneThemeLength">48</sys:Double>
+    <Thickness x:Key="SplitViewLeftBorderThemeThickness">0,0,1,0</Thickness>
+    <Thickness x:Key="SplitViewRightBorderThemeThickness">1,0,0,0</Thickness>
+    <m:StaticResource x:Key="SplitViewLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
+
     <!-- Resources for TabView -->
     <m:StaticResource x:Key="TabViewBackground" ResourceKey="SystemControlBackgroundListLowBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackground" ResourceKey="SystemControlTransparentBrush" />
