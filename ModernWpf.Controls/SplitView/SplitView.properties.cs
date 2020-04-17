@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using System.Windows.Media;
 
 namespace ModernWpf.Controls
@@ -16,7 +12,7 @@ namespace ModernWpf.Controls
                 nameof(CompactPaneLength),
                 typeof(double),
                 typeof(SplitView),
-                new PropertyMetadata(48d, OnCompactPaneLengthPropertyChanged));
+                new PropertyMetadata(OnCompactPaneLengthPropertyChanged));
 
         public double CompactPaneLength
         {
@@ -32,7 +28,7 @@ namespace ModernWpf.Controls
         private void OnCompactPaneLengthPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
             UpdateTemplateSettings();
-            UpdateVisualState();
+            UpdateDisplayModeState();
         }
 
         #endregion
@@ -43,23 +39,12 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(Content),
                 typeof(UIElement),
-                typeof(SplitView),
-                new PropertyMetadata(null, OnContentPropertyChanged));
+                typeof(SplitView));
 
         public UIElement Content
         {
             get => (UIElement)GetValue(ContentProperty);
             set => SetValue(ContentProperty, value);
-        }
-
-        private static void OnContentPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((SplitView)sender).OnContentPropertyChanged(args);
-        }
-
-        private void OnContentPropertyChanged(DependencyPropertyChangedEventArgs args)
-        {
-
         }
 
         #endregion
@@ -86,7 +71,7 @@ namespace ModernWpf.Controls
 
         private void OnDisplayModePropertyChanged(DependencyPropertyChangedEventArgs args)
         {
-            UpdateLightDismiss();
+            UpdateIsLightDismissActive();
             UpdateVisualState();
         }
 
@@ -99,7 +84,7 @@ namespace ModernWpf.Controls
                 nameof(IsPaneOpen),
                 typeof(bool),
                 typeof(SplitView),
-                new PropertyMetadata(false, OnIsPaneOpenPropertyChanged));
+                new PropertyMetadata(OnIsPaneOpenPropertyChanged));
 
         public bool IsPaneOpen
         {
@@ -116,16 +101,16 @@ namespace ModernWpf.Controls
         {
             if ((bool)args.NewValue)
             {
-                _paneClosing = false;
+                _isPaneClosing = false;
                 OpenPane();
             }
             else
             {
-                _paneOpening = false;
+                _isPaneOpening = false;
                 ClosePane();
             }
 
-            UpdateLightDismiss();
+            UpdateIsLightDismissActive();
             UpdateOverlayVisibilityState();
         }
 
@@ -138,7 +123,7 @@ namespace ModernWpf.Controls
                 nameof(OpenPaneLength),
                 typeof(double),
                 typeof(SplitView),
-                new PropertyMetadata(320d, OnOpenPaneLengthPropertyChanged));
+                new PropertyMetadata(OnOpenPaneLengthPropertyChanged));
 
         public double OpenPaneLength
         {
@@ -165,23 +150,12 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(PaneBackground),
                 typeof(Brush),
-                typeof(SplitView),
-                new PropertyMetadata(null, OnPaneBackgroundPropertyChanged));
+                typeof(SplitView));
 
         public Brush PaneBackground
         {
             get => (Brush)GetValue(PaneBackgroundProperty);
             set => SetValue(PaneBackgroundProperty, value);
-        }
-
-        private static void OnPaneBackgroundPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((SplitView)sender).OnPaneBackgroundPropertyChanged(args);
-        }
-
-        private void OnPaneBackgroundPropertyChanged(DependencyPropertyChangedEventArgs args)
-        {
-
         }
 
         #endregion
@@ -208,7 +182,7 @@ namespace ModernWpf.Controls
 
         private void OnPanePlacementPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
-            UpdateVisualState();
+            UpdateDisplayModeState();
         }
 
         #endregion
@@ -219,23 +193,12 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(Pane),
                 typeof(UIElement),
-                typeof(SplitView),
-                new PropertyMetadata(null, OnPanePropertyChanged));
+                typeof(SplitView));
 
         public UIElement Pane
         {
             get => (UIElement)GetValue(PaneProperty);
             set => SetValue(PaneProperty, value);
-        }
-
-        private static void OnPanePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((SplitView)sender).OnPanePropertyChanged(args);
-        }
-
-        private void OnPanePropertyChanged(DependencyPropertyChangedEventArgs args)
-        {
-
         }
 
         #endregion

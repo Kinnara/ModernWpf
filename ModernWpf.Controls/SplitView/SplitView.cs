@@ -43,9 +43,9 @@ namespace ModernWpf.Controls
             base.OnApplyTemplate();
 
             _templateRoot = this.GetTemplateRoot();
-            _paneRoot = GetTemplateChild("PaneRoot") as FrameworkElement;
-            _displayModeStates = GetTemplateChild("DisplayModeStates") as VisualStateGroup;
-            _paneClipRectangle = GetTemplateChild("PaneClipRectangle") as RectangleGeometry;
+            _paneRoot = GetTemplateChild(PaneRootName) as FrameworkElement;
+            _displayModeStates = GetTemplateChild(DisplayModeStatesName) as VisualStateGroup;
+            _paneClipRectangle = GetTemplateChild(PaneClipRectangleName) as RectangleGeometry;
 
             if (_displayModeStates != null)
             {
@@ -65,26 +65,26 @@ namespace ModernWpf.Controls
 
         private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            UpdateLightDismiss();
+            UpdateIsLightDismissActive();
         }
 
         private void OnDisplayModeStatesCurrentStateChanging(object sender, VisualStateChangedEventArgs e)
         {
-            _displayModeStatesChanging = true;
+            _isDisplayModeStateChanging = true;
         }
 
         private void OnDisplayModeStatesCurrentStateChanged(object sender, VisualStateChangedEventArgs e)
         {
-            _displayModeStatesChanging = false;
+            _isDisplayModeStateChanging = false;
 
-            if (_paneOpening)
+            if (_isPaneOpening)
             {
-                _paneOpening = false;
+                _isPaneOpening = false;
                 PaneOpened?.Invoke(this, null);
             }
-            else if (_paneClosing)
+            else if (_isPaneClosing)
             {
-                _paneClosing = false;
+                _isPaneClosing = false;
                 PaneClosed?.Invoke(this, null);
             }
         }
@@ -109,14 +109,16 @@ namespace ModernWpf.Controls
 
         private void OpenPane()
         {
-            if (_paneOpening)
+            if (_isPaneOpening)
+            {
                 return;
+            }
 
             PaneOpening?.Invoke(this, null);
 
             if (UpdateDisplayModeState())
             {
-                _paneOpening = true;
+                _isPaneOpening = true;
             }
             else
             {
@@ -126,21 +128,24 @@ namespace ModernWpf.Controls
 
         private void ClosePane()
         {
-            if (_paneClosing)
+            if (_isPaneClosing)
+            {
                 return;
+            }
 
             var paneClosing = PaneClosing;
             if (paneClosing != null)
             {
                 var args = new SplitViewPaneClosingEventArgs();
                 paneClosing(this, args);
+
                 if (args.Cancel && IsPaneOpen)
                 {
                     return;
                 }
             }
 
-            _paneClosing = true;
+            _isPaneClosing = true;
 
             if (IsPaneOpen)
             {
@@ -149,7 +154,7 @@ namespace ModernWpf.Controls
 
             if (!UpdateDisplayModeState())
             {
-                _paneClosing = false;
+                _isPaneClosing = false;
                 PaneClosed?.Invoke(this, null);
             }
         }
@@ -168,7 +173,7 @@ namespace ModernWpf.Controls
             templateSettings.OpenPaneLength = openPaneLength;
             templateSettings.OpenPaneLengthMinusCompactLength = openPaneLengthMinusCompactLength;
 
-            RefreshDisplayModeStates();
+            RefreshDisplayModeState();
         }
 
         private void UpdatePaneClipRectangle()
@@ -179,14 +184,15 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void UpdateLightDismiss()
+        private void UpdateIsLightDismissActive()
         {
             bool value = IsVisible && IsPaneOpen && IsLightDismissible;
 
-            if (_lightDismiss != value)
+            if (_isLightDismissActive != value)
             {
-                _lightDismiss = value;
-                if (_lightDismiss)
+                _isLightDismissActive = value;
+
+                if (_isLightDismissActive)
                 {
                     _window = Window.GetWindow(this);
                     if (_window != null)
@@ -266,7 +272,7 @@ namespace ModernWpf.Controls
             }
 
             Debug.Assert(stateName != null);
-            return VisualStateManager.GoToState(this, stateName, useTransitions);
+            return this.GoToState(stateName, useTransitions);
         }
 
         private void UpdateOverlayVisibilityState(bool useTransitions = true)
@@ -282,7 +288,7 @@ namespace ModernWpf.Controls
                 stateName = "OverlayNotVisible";
             }
 
-            VisualStateManager.GoToState(this, stateName, useTransitions);
+            this.GoToState(stateName, useTransitions);
         }
 
         private void UpdateVisualState(bool useTransitions = true)
@@ -291,15 +297,18 @@ namespace ModernWpf.Controls
             UpdateOverlayVisibilityState(useTransitions);
         }
 
-        private void RefreshDisplayModeStates()
+        private void RefreshDisplayModeState()
         {
-            if (!_displayModeStatesChanging)
+            if (!_isDisplayModeStateChanging)
             {
                 var storyboard = _displayModeStates?.CurrentState?.Storyboard;
                 if (storyboard != null && _templateRoot != null)
                 {
-                    storyboard.Remove(_templateRoot);
-                    storyboard.Begin(_templateRoot, HandoffBehavior.SnapshotAndReplace, true);
+                    if (!storyboard.CanFreeze)
+                    {
+                        storyboard.Remove(_templateRoot);
+                        storyboard.Begin(_templateRoot, HandoffBehavior.SnapshotAndReplace, true);
+                    }
                 }
             }
         }
@@ -311,9 +320,13 @@ namespace ModernWpf.Controls
 
         private Window _window;
 
-        private bool _lightDismiss;
-        private bool _paneOpening;
-        private bool _paneClosing;
-        private bool _displayModeStatesChanging;
+        private bool _isLightDismissActive;
+        private bool _isPaneOpening;
+        private bool _isPaneClosing;
+        private bool _isDisplayModeStateChanging;
+
+        private const string PaneRootName = "PaneRoot";
+        private const string DisplayModeStatesName = "DisplayModeStates";
+        private const string PaneClipRectangleName = "PaneClipRectangle";
     }
 }
