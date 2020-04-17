@@ -1,9 +1,13 @@
 ﻿using System.Windows;
 
-namespace ModernWpf.Controls
+namespace ModernWpf.Controls.Primitives
 {
     public sealed class SplitViewTemplateSettings : DependencyObject
     {
+        internal SplitViewTemplateSettings()
+        {
+        }
+
         #region CompactPaneGridLength
 
         private static readonly DependencyPropertyKey CompactPaneGridLengthPropertyKey =

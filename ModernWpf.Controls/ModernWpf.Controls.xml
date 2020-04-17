@@ -1798,6 +1798,33 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     <member name="M:ModernWpf.Controls.Primitives.RadioButtonsListViewItem.#ctor">
       <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.Primitives.RadioButtonsListViewItem?text=RadioButtonsListViewItem" /> class.</summary>
     </member>
+    <member name="T:ModernWpf.Controls.Primitives.SplitViewTemplateSettings">
+      <summary>Provides calculated values that can be referenced as **TemplatedParent** sources when defining templates for a SplitView. Not intended for general use.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.SplitViewTemplateSettings.CompactPaneGridLength">
+      <summary>Gets the CompactPaneLength value as a GridLength.</summary>
+      <returns>The CompactPaneLength value as a GridLength.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.SplitViewTemplateSettings.NegativeOpenPaneLength">
+      <summary>Gets the negative of the OpenPaneLength value.</summary>
+      <returns>The negative of the OpenPaneLength value.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.SplitViewTemplateSettings.NegativeOpenPaneLengthMinusCompactLength">
+      <summary>Gets the negative of the value calculated by subtracting the CompactPaneLength value from the OpenPaneLength value.</summary>
+      <returns>The negative of the OpenPaneLength value minus the CompactPaneLength value.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.SplitViewTemplateSettings.OpenPaneGridLength">
+      <summary>Gets the OpenPaneLength value as a GridLength.</summary>
+      <returns>The OpenPaneLength value as a GridLength.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.SplitViewTemplateSettings.OpenPaneLength">
+      <summary>Gets the OpenPaneLength value.</summary>
+      <returns>The OpenPaneLength value.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.SplitViewTemplateSettings.OpenPaneLengthMinusCompactLength">
+      <summary>Gets a value calculated by subtracting the CompactPaneLength value from the OpenPaneLength value.</summary>
+      <returns>The value calculated by subtracting the CompactPaneLength value from the OpenPaneLength value.</returns>
+    </member>
     <member name="T:ModernWpf.Controls.RadioButtons" />
     <member name="M:ModernWpf.Controls.RadioButtons.#ctor">
       <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.RadioButtons?text=RadioButtons" /> class.</summary>
