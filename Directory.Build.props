@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <Version>0.8.3-preview.200410.1</Version>
+    <Version>0.8.3-preview.200415.0</Version>
     <Authors>Yimeng Wu</Authors>
     <Product>ModernWPF UI Library</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

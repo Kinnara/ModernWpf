@@ -317,6 +317,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(ShadowPage));
             AddPage(typeof(SimpleStackPanelPage));
             AddPage(typeof(SliderPage));
+            AddPage(typeof(SplitViewPage));
             //AddPage(typeof(StatusBarPage));
             AddPage(typeof(TabControlPage));
             AddPage(typeof(PivotPage), "TabControlPivotStyle");

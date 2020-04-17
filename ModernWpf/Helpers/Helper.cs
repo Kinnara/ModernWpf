@@ -75,6 +75,12 @@ namespace ModernWpf
         {
             return !HasDefaultValue(d, dp);
         }
+
+        public static bool GoToState(this FrameworkElement control, string stateName, bool useTransitions)
+        {
+            useTransitions &= IsAnimationsEnabled;
+            return VisualStateManager.GoToState(control, stateName, useTransitions);
+        }
     }
 
     internal enum InterestPoint
