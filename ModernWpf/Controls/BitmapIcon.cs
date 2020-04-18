@@ -84,7 +84,7 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        internal override void InitializeChildren()
+        private protected override void InitializeChildren()
         {
             _image = new Image
             {
@@ -105,6 +105,19 @@ namespace ModernWpf.Controls
             ApplyShowAsMonochrome();
         }
 
+        private protected override void OnShouldInheritForegroundFromVisualParentChanged()
+        {
+            ApplyForeground();
+        }
+
+        private protected override void OnVisualParentForegroundPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            if (ShouldInheritForegroundFromVisualParent)
+            {
+                ApplyForeground();
+            }
+        }
+
         private static void OnForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((BitmapIcon)d).ApplyForeground();
@@ -114,7 +127,7 @@ namespace ModernWpf.Controls
         {
             if (_foreground != null)
             {
-                _foreground.Fill = Foreground;
+                _foreground.Fill = ShouldInheritForegroundFromVisualParent ? VisualParentForeground : Foreground;
             }
         }
 

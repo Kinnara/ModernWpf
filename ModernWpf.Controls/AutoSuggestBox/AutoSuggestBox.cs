@@ -189,13 +189,6 @@ namespace ModernWpf.Controls
 
             if (newQueryIcon != null && m_queryButton != null)
             {
-                newQueryIcon.SetBinding(IconElement.ForegroundProperty,
-                    new Binding
-                    {
-                        Path = new PropertyPath(TextElement.ForegroundProperty),
-                        RelativeSource = new RelativeSource { AncestorType = typeof(ContentPresenter) }
-                    });
-
                 if (newQueryIcon is SymbolIcon)
                 {
                     newQueryIcon.SetBinding(SymbolIcon.FontSizeProperty,

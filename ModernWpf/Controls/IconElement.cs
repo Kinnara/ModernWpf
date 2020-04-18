@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
 
@@ -13,7 +14,7 @@ namespace ModernWpf.Controls
     [TypeConverter(typeof(IconElementConverter))]
     public abstract class IconElement : FrameworkElement
     {
-        internal IconElement()
+        private protected IconElement()
         {
         }
 
@@ -39,7 +40,65 @@ namespace ModernWpf.Controls
             set { SetValue(ForegroundProperty, value); }
         }
 
-        internal UIElementCollection Children
+        #region VisualParentForeground
+
+        private static readonly DependencyProperty VisualParentForegroundProperty =
+            DependencyProperty.Register(
+                nameof(VisualParentForeground),
+                typeof(Brush),
+                typeof(IconElement),
+                new PropertyMetadata(null, OnVisualParentForegroundPropertyChanged));
+
+        private protected Brush VisualParentForeground
+        {
+            get => (Brush)GetValue(VisualParentForegroundProperty);
+            set => SetValue(VisualParentForegroundProperty, value);
+        }
+
+        private static void OnVisualParentForegroundPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((IconElement)sender).OnVisualParentForegroundPropertyChanged(args);
+        }
+
+        private protected virtual void OnVisualParentForegroundPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+        }
+
+        #endregion
+
+        private protected bool ShouldInheritForegroundFromVisualParent
+        {
+            get => _shouldInheritForegroundFromVisualParent;
+            private set
+            {
+                if (_shouldInheritForegroundFromVisualParent != value)
+                {
+                    _shouldInheritForegroundFromVisualParent = value;
+
+                    if (_shouldInheritForegroundFromVisualParent)
+                    {
+                        SetBinding(VisualParentForegroundProperty,
+                            new Binding
+                            {
+                                Path = new PropertyPath(TextElement.ForegroundProperty),
+                                Source = VisualParent
+                            });
+                    }
+                    else
+                    {
+                        ClearValue(VisualParentForegroundProperty);
+                    }
+
+                    OnShouldInheritForegroundFromVisualParentChanged();
+                }
+            }
+        }
+
+        private protected virtual void OnShouldInheritForegroundFromVisualParentChanged()
+        {
+        }
+
+        private protected UIElementCollection Children
         {
             get
             {
@@ -48,7 +107,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        internal abstract void InitializeChildren();
+        private protected abstract void InitializeChildren();
 
         protected override int VisualChildrenCount => 1;
 
@@ -79,6 +138,13 @@ namespace ModernWpf.Controls
             return finalSize;
         }
 
+        protected override void OnVisualParentChanged(DependencyObject oldParent)
+        {
+            base.OnVisualParentChanged(oldParent);
+
+            ShouldInheritForegroundFromVisualParent = Parent != null && VisualParent != null && Parent != VisualParent;
+        }
+
         private void EnsureLayoutRoot()
         {
             if (_layoutRoot != null)
@@ -86,6 +152,7 @@ namespace ModernWpf.Controls
 
             _layoutRoot = new Grid
             {
+                Background = Brushes.Transparent,
                 SnapsToDevicePixels = true,
             };
             InitializeChildren();
@@ -94,5 +161,6 @@ namespace ModernWpf.Controls
         }
 
         private Grid _layoutRoot;
+        private bool _shouldInheritForegroundFromVisualParent;
     }
 }

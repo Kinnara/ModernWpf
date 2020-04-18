@@ -48,7 +48,7 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        internal override void InitializeChildren()
+        private protected override void InitializeChildren()
         {
             _path = new Path
             {
@@ -62,6 +62,19 @@ namespace ModernWpf.Controls
             Children.Add(_path);
         }
 
+        private protected override void OnShouldInheritForegroundFromVisualParentChanged()
+        {
+            ApplyForeground();
+        }
+
+        private protected override void OnVisualParentForegroundPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            if (ShouldInheritForegroundFromVisualParent)
+            {
+                ApplyForeground();
+            }
+        }
+
         private static void OnForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((PathIcon)d).ApplyForeground();
@@ -71,7 +84,7 @@ namespace ModernWpf.Controls
         {
             if (_path != null)
             {
-                _path.Fill = Foreground;
+                _path.Fill = ShouldInheritForegroundFromVisualParent ? VisualParentForeground : Foreground;
             }
         }
 

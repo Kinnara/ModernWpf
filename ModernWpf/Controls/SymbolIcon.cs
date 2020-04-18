@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ModernWpf.Controls
 {
@@ -97,7 +98,7 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        internal override void InitializeChildren()
+        private protected override void InitializeChildren()
         {
             _textBlock = new TextBlock
             {
@@ -110,8 +111,38 @@ namespace ModernWpf.Controls
                 FontWeight = FontWeights.Normal,
                 Text = ConvertToString(Symbol)
             };
+
             _textBlock.SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
+
+            if (ShouldInheritForegroundFromVisualParent)
+            {
+                _textBlock.Foreground = VisualParentForeground;
+            }
+
             Children.Add(_textBlock);
+        }
+
+        private protected override void OnShouldInheritForegroundFromVisualParentChanged()
+        {
+            if (_textBlock != null)
+            {
+                if (ShouldInheritForegroundFromVisualParent)
+                {
+                    _textBlock.Foreground = VisualParentForeground;
+                }
+                else
+                {
+                    _textBlock.ClearValue(TextBlock.ForegroundProperty);
+                }
+            }
+        }
+
+        private protected override void OnVisualParentForegroundPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            if (ShouldInheritForegroundFromVisualParent && _textBlock != null)
+            {
+                _textBlock.Foreground = (Brush)args.NewValue;
+            }
         }
 
         private static string ConvertToString(Symbol symbol)

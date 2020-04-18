@@ -833,7 +833,6 @@
                                                 x:Name="EllipsisIcon"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
-                                                Foreground="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource AncestorType={x:Type ContentPresenter}}}"
                                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                                 FontSize="16"
                                                 Glyph="&#xE10C;" />

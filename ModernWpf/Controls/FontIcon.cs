@@ -177,7 +177,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        internal override void InitializeChildren()
+        private protected override void InitializeChildren()
         {
             _textBlock = new TextBlock
             {
@@ -191,7 +191,36 @@ namespace ModernWpf.Controls
                 FontWeight = FontWeight,
                 Text = Glyph
             };
+
+            if (ShouldInheritForegroundFromVisualParent)
+            {
+                _textBlock.Foreground = VisualParentForeground;
+            }
+
             Children.Add(_textBlock);
+        }
+
+        private protected override void OnShouldInheritForegroundFromVisualParentChanged()
+        {
+            if (_textBlock != null)
+            {
+                if (ShouldInheritForegroundFromVisualParent)
+                {
+                    _textBlock.Foreground = VisualParentForeground;
+                }
+                else
+                {
+                    _textBlock.ClearValue(TextBlock.ForegroundProperty);
+                }
+            }
+        }
+
+        private protected override void OnVisualParentForegroundPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            if (ShouldInheritForegroundFromVisualParent && _textBlock != null)
+            {
+                _textBlock.Foreground = (Brush)args.NewValue;
+            }
         }
 
         private TextBlock _textBlock;
