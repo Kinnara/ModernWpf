@@ -58,6 +58,7 @@ namespace ModernWpf.Controls
             {
                 _displayModeStates.CurrentStateChanging += OnDisplayModeStatesCurrentStateChanging;
                 _displayModeStates.CurrentStateChanged += OnDisplayModeStatesCurrentStateChanged;
+                AnimationHelper.DeferTransitions(_displayModeStates);
             }
 
             UpdateTemplateSettings();

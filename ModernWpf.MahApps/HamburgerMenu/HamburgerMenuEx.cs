@@ -11,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 using SplitView = MahApps.Metro.Controls.SplitView;
 using SplitViewDisplayMode = MahApps.Metro.Controls.SplitViewDisplayMode;
 
@@ -788,16 +787,8 @@ namespace ModernWpf.MahApps.Controls
 
             var indicatorAsFE = (FrameworkElement)indicator;
             SetElementAnimation(indicatorAsFE, storyboard);
+            AnimationHelper.DeferBegin(storyboard);
             storyboard.Begin(indicatorAsFE, true);
-            storyboard.Pause(indicatorAsFE);
-            Dispatcher.BeginInvoke(() =>
-            {
-                var animation = GetElementAnimation(indicatorAsFE);
-                if (animation == storyboard)
-                {
-                    animation.Resume(indicatorAsFE);
-                }
-            }, DispatcherPriority.Render);
         }
 
         private void OnAnimationComplete()

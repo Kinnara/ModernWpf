@@ -12,6 +12,7 @@ using System.Windows.Markup;
 )]
 
 [assembly: InternalsVisibleTo("ModernWpf.Controls")]
+[assembly: InternalsVisibleTo("ModernWpf.MahApps")]
 
 [assembly: XmlnsPrefix("http://schemas.modernwpf.com/2019", "ui")]
 [assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf")]
