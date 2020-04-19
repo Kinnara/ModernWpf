@@ -29,7 +29,6 @@ namespace ModernWpf.Controls
         private void OnCompactPaneLengthPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
             UpdateTemplateSettings();
-            UpdateDisplayModeState();
         }
 
         #endregion

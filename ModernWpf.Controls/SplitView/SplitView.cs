@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -41,6 +41,12 @@ namespace ModernWpf.Controls
 
         public override void OnApplyTemplate()
         {
+            if (_displayModeStates != null)
+            {
+                _displayModeStates.CurrentStateChanging -= OnDisplayModeStatesCurrentStateChanging;
+                _displayModeStates.CurrentStateChanged -= OnDisplayModeStatesCurrentStateChanged;
+            }
+
             base.OnApplyTemplate();
 
             _templateRoot = this.GetTemplateRoot();
@@ -174,7 +180,7 @@ namespace ModernWpf.Controls
             templateSettings.OpenPaneLength = openPaneLength;
             templateSettings.OpenPaneLengthMinusCompactLength = openPaneLengthMinusCompactLength;
 
-            RefreshDisplayModeState();
+            ReapplyDisplayModeState();
         }
 
         private void UpdatePaneClipRectangle()
@@ -298,7 +304,7 @@ namespace ModernWpf.Controls
             UpdateOverlayVisibilityState(useTransitions);
         }
 
-        private void RefreshDisplayModeState()
+        private void ReapplyDisplayModeState()
         {
             if (!_isDisplayModeStateChanging)
             {
@@ -307,8 +313,10 @@ namespace ModernWpf.Controls
                 {
                     if (!storyboard.CanFreeze)
                     {
-                        storyboard.Remove(_templateRoot);
-                        storyboard.Begin(_templateRoot, HandoffBehavior.SnapshotAndReplace, true);
+                        // Wait for data binding to update the storyboard
+                        Dispatcher.Invoke(() => { }, DispatcherPriority.DataBind);
+
+                        storyboard.Begin(_templateRoot, true);
                     }
                 }
             }
