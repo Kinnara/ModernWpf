@@ -1,10 +1,11 @@
 ﻿<Project>
   <PropertyGroup>
-    <Version>0.8.3-preview.200417.3</Version>
+    <Version>0.8.3</Version>
     <Authors>Yimeng Wu</Authors>
     <Product>ModernWPF UI Library</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Kinnara/ModernWpf</PackageProjectUrl>
     <PackageTags>WPF XAML UI Theme Controls Fluent Modern Metro WinUI</PackageTags>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)localpackages</PackageOutputPath>  
   </PropertyGroup>
 </Project>
