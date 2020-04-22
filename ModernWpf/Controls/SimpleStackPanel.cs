@@ -107,7 +107,7 @@ namespace ModernWpf.Controls
 
                 if (child == null) { continue; }
 
-                bool isVisible = child.Visibility == Visibility.Visible;
+                bool isVisible = child.Visibility != Visibility.Collapsed;
 
                 if (isVisible && !hasVisibleChild)
                 {
@@ -178,7 +178,10 @@ namespace ModernWpf.Controls
                     rcChild.Width = Math.Max(arrangeSize.Width, child.DesiredSize.Width);
                 }
 
-                previousChildSize += spacing;
+                if (child.Visibility != Visibility.Collapsed)
+                {
+                    previousChildSize += spacing;
+                }
 
                 child.Arrange(rcChild);
             }
