@@ -62,7 +62,7 @@ namespace ModernWpf.Controls
                 nameof(ExpandedModeThresholdWidth),
                 typeof(double),
                 typeof(NavigationView),
-                new PropertyMetadata(1008.0, OnExpandedModeThresholdWidthPropertyChanged));
+                new PropertyMetadata(1008.0, OnExpandedModeThresholdWidthPropertyChanged, CoerceToGreaterThanZero));
 
         public double ExpandedModeThresholdWidth
         {
