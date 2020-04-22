@@ -169,7 +169,7 @@ namespace ModernWpf.Controls.Primitives
         public event EventHandler<object> Opening;
         public event EventHandler<object> Opened;
         public event EventHandler<object> Closed;
-        internal event EventHandler<object> Closing;
+        internal event TypedEventHandler<FlyoutBase, FlyoutBaseClosingEventArgs> Closing;
 
         public void ShowAt(FrameworkElement placementTarget)
         {
@@ -436,7 +436,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupClosing(object sender, EventArgs e)
         {
-            Closing?.Invoke(this, null);
+            Closing?.Invoke(this, new FlyoutBaseClosingEventArgs()); // TODO: Cancel
             m_closing = true;
         }
 

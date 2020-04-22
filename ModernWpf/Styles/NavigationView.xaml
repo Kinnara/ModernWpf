@@ -33,6 +33,8 @@
     <Thickness x:Key="NavigationViewCompactItemSeparatorMargin">16,10</Thickness>
     <Thickness x:Key="TopNavigationViewItemSeparatorMargin">10,0</Thickness>
 
+    <sys:String x:Key="NavigationViewItemExpandedGlyph">&#xE70D;</sys:String>
+
     <Style x:Key="PaneToggleButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
         <Setter Property="FontSize" Value="16" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />

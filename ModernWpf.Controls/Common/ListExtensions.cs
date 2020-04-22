@@ -31,5 +31,10 @@ namespace ModernWpf.Controls
         {
             list.RemoveAt(list.Count - 1);
         }
+
+        public static bool Empty<T>(this List<T> list)
+        {
+            return list.Count == 0;
+        }
     }
 }

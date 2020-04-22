@@ -39,6 +39,10 @@ namespace ModernWpf.Controls
         public event TypedEventHandler<SplitView, SplitViewPaneClosingEventArgs> PaneClosing;
         public event TypedEventHandler<SplitView, object> PaneClosed;
 
+        internal event DependencyPropertyChangedCallback IsPaneOpenChanged;
+        internal event DependencyPropertyChangedCallback DisplayModeChanged;
+        internal event DependencyPropertyChangedCallback CompactPaneLengthChanged;
+
         public override void OnApplyTemplate()
         {
             if (_displayModeStates != null)
@@ -64,6 +68,11 @@ namespace ModernWpf.Controls
             UpdateTemplateSettings();
             UpdatePaneClipRectangle();
             UpdateVisualState(false);
+
+            Dispatcher.BeginInvoke(() =>
+            {
+                ReapplyDisplayModeState(false);
+            }, DispatcherPriority.DataBind);
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -305,7 +314,7 @@ namespace ModernWpf.Controls
             UpdateOverlayVisibilityState(useTransitions);
         }
 
-        private void ReapplyDisplayModeState()
+        private void ReapplyDisplayModeState(bool waitForDataBinding = true)
         {
             if (!_isDisplayModeStateChanging)
             {
@@ -314,8 +323,11 @@ namespace ModernWpf.Controls
                 {
                     if (!storyboard.CanFreeze)
                     {
-                        // Wait for data binding to update the storyboard
-                        Dispatcher.Invoke(() => { }, DispatcherPriority.DataBind);
+                        if (waitForDataBinding)
+                        {
+                            // Wait for data binding to update the storyboard
+                            Dispatcher.Invoke(() => { }, DispatcherPriority.DataBind);
+                        }
 
                         storyboard.Begin(_templateRoot, true);
                     }

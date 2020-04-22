@@ -6,8 +6,16 @@ namespace ModernWpf.Controls
 {
     partial class ItemsRepeater
     {
+        internal bool AlwaysInvalidateMeasureOnChildDesiredSizeChanged { get; set; }
+
         protected override void OnChildDesiredSizeChanged(UIElement child)
         {
+            if (AlwaysInvalidateMeasureOnChildDesiredSizeChanged)
+            {
+                base.OnChildDesiredSizeChanged(child);
+                return;
+            }
+
             bool ignore = true;
 
             var last = m_layoutEvents.Last;
@@ -52,6 +60,11 @@ namespace ModernWpf.Controls
 
         private void OnLayoutEvent(LayoutEvent e)
         {
+            if (AlwaysInvalidateMeasureOnChildDesiredSizeChanged)
+            {
+                return;
+            }
+
             if (m_layoutEvents.Count >= 2)
             {
                 m_layoutEvents.RemoveFirst();

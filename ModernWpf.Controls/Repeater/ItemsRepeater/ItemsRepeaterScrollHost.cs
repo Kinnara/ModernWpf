@@ -201,7 +201,7 @@ namespace ModernWpf.Controls
             {
                 var elem = element;
                 bool hasLockedViewport = HasPendingBringIntoView;
-                var transformer = elem.TransformToVisual(hasLockedViewport ? scrollViewer.GetContentTemplateRoot() : scrollViewer);
+                var transformer = elem.SafeTransformToVisual(hasLockedViewport ? scrollViewer.GetContentTemplateRoot() : scrollViewer);
                 var zoomFactor = 1.0;
                 double viewportWidth = scrollViewer.ViewportWidth / zoomFactor;
                 double viewportHeight = scrollViewer.ViewportHeight / zoomFactor;
@@ -253,7 +253,7 @@ namespace ModernWpf.Controls
             // Arrange bounds are absolute.
             var arrangeBounds = bringIntoView
                 .TargetElement
-                .TransformToVisual(scrollViewer.GetContentTemplateRoot())
+                .SafeTransformToVisual(scrollViewer.GetContentTemplateRoot())
                 .TransformBounds(new Rect(0, 0, layoutSlot.Width, layoutSlot.Height));
 
             var scrollableArea = new Point(
@@ -283,7 +283,7 @@ namespace ModernWpf.Controls
         private double TrackElement(UIElement element, Rect previousBounds, ScrollViewer scrollViewer)
         {
             var bounds = LayoutInformation.GetLayoutSlot((FrameworkElement)element);
-            var transformer = element.TransformToVisual(scrollViewer.GetContentTemplateRoot());
+            var transformer = element.SafeTransformToVisual(scrollViewer.GetContentTemplateRoot());
             var newBounds = transformer.TransformBounds(new Rect(
                 0.0,
                 0.0,
@@ -373,7 +373,7 @@ namespace ModernWpf.Controls
                         if (!candidate.IsRelativeBoundsSet)
                         {
                             var bounds = LayoutInformation.GetLayoutSlot((FrameworkElement)element);
-                            var transformer = element.TransformToVisual(scrollViewer.GetContentTemplateRoot());
+                            var transformer = element.SafeTransformToVisual(scrollViewer.GetContentTemplateRoot());
                             candidate.RelativeBounds = transformer.TransformBounds(new Rect(
                                 0.0,
                                 0.0,

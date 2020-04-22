@@ -306,6 +306,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(ListView2Page), "ListView (ModernWPF)");
             AddPage(typeof(MenuPage));
             AddPage(typeof(MenuFlyoutPage));
+            AddPage(typeof(NavigationViewPage));
             AddPage(typeof(NumberBoxPage));
             AddPage(typeof(PasswordBoxPage));
             AddPage(typeof(PersonPicturePage));

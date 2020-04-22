@@ -21,6 +21,31 @@ namespace ModernWpf.Controls
         public static bool IsAnimationsEnabled => SystemParameters.ClientAreaAnimation &&
                                                   RenderCapability.Tier > 0;
 
+        public static bool IsRS1OrHigher() => true;
+
+        public static bool IsRS2OrHigher() => true;
+
+        public static bool IsRS4OrHigher() => true;
+
+        public static bool IsRS5OrHigher() => true;
+
+        public static bool IsThemeShadowAvailable() => false;
+
+        public static bool IsOnXbox() => false;
+
+        public static void QueueCallbackForCompositionRendering(Action callback)
+        {
+            CompositionTarget.Rendering += onRendering;
+
+            void onRendering(object sender, EventArgs e)
+            {
+                // Detach event or Rendering will keep calling us back.
+                CompositionTarget.Rendering -= onRendering;
+
+                callback();
+            }
+        }
+
         public static bool DoRectsIntersect(
             Rect rect1,
             Rect rect2)
@@ -34,9 +59,53 @@ namespace ModernWpf.Controls
             return doIntersect;
         }
 
+        public static object FindResource(string resource, ResourceDictionary resources, object defaultValue)
+        {
+            var boxedResource = resource;
+            return resources.Contains(boxedResource) ? resources[boxedResource] : defaultValue;
+        }
+
+        public static object FindInApplicationResources(string resource, object defaultValue)
+        {
+            return SharedHelpers.FindResource(resource, Application.Current.Resources, defaultValue);
+        }
+
+        public static void SetBinding(
+            string pathString,
+            DependencyObject target,
+            DependencyProperty targetProperty)
+        {
+            Binding binding = new Binding(pathString)
+            {
+                RelativeSource = RelativeSource.TemplatedParent
+            };
+
+            BindingOperations.SetBinding(target, targetProperty, binding);
+        }
+
         public static bool IsFrameworkElementLoaded(FrameworkElement frameworkElement)
         {
             return frameworkElement.IsLoaded;
+        }
+
+        public static AncestorType GetAncestorOfType<AncestorType>(DependencyObject firstGuess) where AncestorType : DependencyObject
+        {
+            var obj = firstGuess;
+            AncestorType matchedAncestor = null;
+            while (obj != null && matchedAncestor == null)
+            {
+                matchedAncestor = obj as AncestorType;
+                obj = VisualTreeHelper.GetParent(obj);
+            }
+
+            if (matchedAncestor != null)
+            {
+                return matchedAncestor;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         // TODO
@@ -156,6 +225,11 @@ namespace ModernWpf.Controls
                 index = 0;
                 return false;
             }
+        }
+
+        public static string TryGetStringRepresentationFromObject(object obj)
+        {
+            return obj?.ToString() ?? string.Empty;
         }
     }
 }
