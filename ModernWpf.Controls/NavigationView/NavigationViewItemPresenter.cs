@@ -130,7 +130,7 @@ namespace ModernWpf.Controls.Primitives
             return m_helper.GetSelectionIndicator();
         }
 
-        // TODO
+        // TODO: GoToElementStateCore
         /*
         bool GoToElementStateCore(string state, bool useTransitions)
         {

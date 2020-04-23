@@ -41,7 +41,7 @@ namespace ModernWpf.Controls
             UpdateVisualState(false /*useTransitions*/);
             UpdateItemIndentation();
 
-            // TODO: Animation
+            // TODO: Header Animation
             /*
             var visual = ElementCompositionPreview.GetElementVisual(*this);
             NavigationView.CreateAndAttachHeaderAnimation(visual);

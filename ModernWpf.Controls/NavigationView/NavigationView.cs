@@ -1154,7 +1154,11 @@ namespace ModernWpf.Controls
             if (m_lastSelectedItemPendingAnimationInTopNav is { } lastSelectedItemInTopNav)
             {
                 m_lastSelectedItemPendingAnimationInTopNav = null;
-                AnimateSelectionChanged(lastSelectedItemInTopNav);
+                // WPF: Wait for layout
+                Dispatcher.BeginInvoke(() =>
+                {
+                    AnimateSelectionChanged(lastSelectedItemInTopNav);
+                }, DispatcherPriority.Send);
             }
         }
 
@@ -1694,9 +1698,8 @@ namespace ModernWpf.Controls
                         areElementsAtSameDepth = prevPosPoint.X == nextPosPoint.X;
                     }
 
-                    // TODO: Animation
-                    //Visual visual = ElementCompositionPreview.GetElementVisual(*this);
-                    //CompositionScopedBatch scopedBatch = visual.Compositor().CreateScopedBatch(CompositionBatchTypes.Animation);
+                    //Visual visual = ElementCompositionPreview.GetElementVisual(this);
+                    //CompositionScopedBatch scopedBatch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
                     if (!areElementsAtSameDepth)
                     {
@@ -1741,19 +1744,19 @@ namespace ModernWpf.Controls
                             false);
                     }
 
-                    // TODO: Animation
                     //scopedBatch.End();
                     m_prevIndicator = prevIndicator;
                     m_nextIndicator = nextIndicator;
 
-                    // TODO: Animation
-                    /*var strongThis = get_strong();
+                    /*
+                    var strongThis = get_strong();
                     scopedBatch.Completed(
         
                         [strongThis](var sender, var args)
                         {
                         strongThis.OnAnimationComplete(sender, args);
-                    });*/
+                    });
+                    */
                 }
                 else
                 {
@@ -1768,55 +1771,59 @@ namespace ModernWpf.Controls
 
         void PlayIndicatorNonSameLevelAnimations(UIElement indicator, bool isOutgoing, bool fromTop)
         {
-            // TODO: Animation
-            /*
-            Visual visual = ElementCompositionPreview.GetElementVisual(indicator);
-            Compositor comp = visual.Compositor();
+            var animations = new TimelineCollection();
 
             // Determine scaling of indicator (whether it is appearing or dissapearing)
             float beginScale = isOutgoing ? 1.0f : 0.0f;
             float endScale = isOutgoing ? 0.0f : 1.0f;
-            ScalarKeyFrameAnimation scaleAnim = comp.CreateScalarKeyFrameAnimation();
-            scaleAnim.InsertKeyFrame(0.0f, beginScale);
-            scaleAnim.InsertKeyFrame(1.0f, endScale);
-            scaleAnim.Duration(600ms);
+            var scaleAnim = new DoubleAnimationUsingKeyFrames
+            {
+                KeyFrames =
+                {
+                    new DiscreteDoubleKeyFrame(beginScale, KeyTime.FromPercent(0.0)),
+                    new SplineDoubleKeyFrame(endScale, KeyTime.FromPercent(1.0), new KeySpline(new Point(0.8,0), c_frame2point2)),
+                },
+                Duration = TimeSpan.FromMilliseconds(600)
+            };
+            animations.Add(scaleAnim);
 
             // Determine where the indicator is animating from/to
-            Size size = indicator.RenderSize();
-            float dimension = IsTopNavigationView() ? size.Width : size.Height;
-            float newCenter = fromTop ? 0.0f : dimension;
-            var indicatorCenterPoint = visual.CenterPoint();
-            indicatorCenterPoint.y = newCenter;
-            visual.CenterPoint(indicatorCenterPoint);
+            Size size = indicator.RenderSize;
+            double dimension = IsTopNavigationView() ? size.Width : size.Height;
+            double newCenter = fromTop ? 0.0f : dimension;
+            var indicatorCenterPoint = new Point();
+            indicatorCenterPoint.Y = newCenter;
 
-            visual.StartAnimation(L"Scale.Y", scaleAnim);
-            */
+            Storyboard.SetTargetProperty(scaleAnim, s_scaleYPath);
+            PlayIndicatorAnimationsHelper(indicator, animations, indicatorCenterPoint);
         }
 
         void PlayIndicatorNonSameLevelTopPrimaryAnimation(UIElement indicator, bool isOutgoing)
         {
-            // TODO: Animation
-            /*
-            Visual visual = ElementCompositionPreview.GetElementVisual(indicator);
-            Compositor comp = visual.Compositor();
+            var animations = new TimelineCollection();
 
             // Determine scaling of indicator (whether it is appearing or dissapearing)
             float beginScale = isOutgoing ? 1.0f : 0.0f;
             float endScale = isOutgoing ? 0.0f : 1.0f;
-            ScalarKeyFrameAnimation scaleAnim = comp.CreateScalarKeyFrameAnimation();
-            scaleAnim.InsertKeyFrame(0.0f, beginScale);
-            scaleAnim.InsertKeyFrame(1.0f, endScale);
-            scaleAnim.Duration(600ms);
+            var scaleAnim = new DoubleAnimationUsingKeyFrames
+            {
+                KeyFrames =
+                {
+                    new DiscreteDoubleKeyFrame(beginScale, KeyTime.FromPercent(0.0)),
+                    new SplineDoubleKeyFrame(endScale, KeyTime.FromPercent(1.0), new KeySpline(new Point(0.8,0), c_frame2point2)),
+                },
+                Duration = TimeSpan.FromMilliseconds(600)
+            };
+            animations.Add(scaleAnim);
 
             // Determine where the indicator is animating from/to
-            Size size = indicator.RenderSize();
-            float newCenter = size.Width / 2;
-            var indicatorCenterPoint = visual.CenterPoint();
-            indicatorCenterPoint.y = newCenter;
-            visual.CenterPoint(indicatorCenterPoint);
+            Size size = indicator.RenderSize;
+            double newCenter = size.Width / 2;
+            var indicatorCenterPoint = new Point();
+            indicatorCenterPoint.Y = newCenter;
 
-            visual.StartAnimation(L"Scale.X", scaleAnim);
-            */
+            Storyboard.SetTargetProperty(scaleAnim, s_scaleXPath);
+            PlayIndicatorAnimationsHelper(indicator, animations, indicatorCenterPoint);
         }
 
         void PlayIndicatorAnimations(UIElement indicator, float from, float to, Size beginSize, Size endSize, bool isOutgoing)
@@ -1832,7 +1839,7 @@ namespace ModernWpf.Controls
                 endScale = endSize.Width / size.Width;
             }
 
-            var storyboard = new Storyboard { FillBehavior = FillBehavior.Stop };
+            var animations = new TimelineCollection();
 
             if (isOutgoing)
             {
@@ -1848,7 +1855,7 @@ namespace ModernWpf.Controls
                     Duration = TimeSpan.FromMilliseconds(600)
                 };
                 Storyboard.SetTargetProperty(opacityAnim, s_opacityPath);
-                storyboard.Children.Add(opacityAnim);
+                animations.Add(opacityAnim);
             }
 
             var posAnim = new DoubleAnimationUsingKeyFrames
@@ -1860,7 +1867,7 @@ namespace ModernWpf.Controls
                 },
                 Duration = TimeSpan.FromMilliseconds(600)
             };
-            storyboard.Children.Add(posAnim);
+            animations.Add(posAnim);
 
             var scaleAnim = new DoubleAnimationUsingKeyFrames
             {
@@ -1875,7 +1882,7 @@ namespace ModernWpf.Controls
                 },
                 Duration = TimeSpan.FromMilliseconds(600)
             };
-            storyboard.Children.Add(scaleAnim);
+            animations.Add(scaleAnim);
 
             var centerAnim = new DoubleAnimationUsingKeyFrames
             {
@@ -1886,7 +1893,7 @@ namespace ModernWpf.Controls
                 },
                 Duration = TimeSpan.FromMilliseconds(200)
             };
-            storyboard.Children.Add(centerAnim);
+            animations.Add(centerAnim);
 
             if (IsTopNavigationView())
             {
@@ -1901,6 +1908,11 @@ namespace ModernWpf.Controls
                 Storyboard.SetTargetProperty(centerAnim, s_centerYPath);
             }
 
+            PlayIndicatorAnimationsHelper(indicator, animations);
+        }
+
+        void PlayIndicatorAnimationsHelper(UIElement indicator, TimelineCollection animations, Point? centerPoint = null)
+        {
             if (!(indicator.RenderTransform is TransformGroup transformGroup &&
                   transformGroup.Children.Count == 2 &&
                   transformGroup.Children[0] is ScaleTransform &&
@@ -1916,13 +1928,26 @@ namespace ModernWpf.Controls
                 };
             }
 
+            if (centerPoint.HasValue)
+            {
+                var scaleTransform = (ScaleTransform)((TransformGroup)indicator.RenderTransform).Children[0];
+                scaleTransform.CenterX = centerPoint.Value.X;
+                scaleTransform.CenterY = centerPoint.Value.Y;
+            }
+
             if (indicator.CacheMode == null)
             {
                 indicator.CacheMode = m_bitmapCache;
             }
 
-            AnimationHelper.DeferBegin(storyboard);
+            var storyboard = new Storyboard
+            {
+                FillBehavior = FillBehavior.Stop,
+                Children = animations
+            };
             storyboard.Completed += OnAnimationComplete;
+
+            AnimationHelper.DeferBegin(storyboard);
             storyboard.Begin((FrameworkElement)indicator, true);
         }
 
@@ -1952,6 +1977,8 @@ namespace ModernWpf.Controls
                     translateTransform.BeginAnimation(TranslateTransform.YProperty, null);
                     scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, null);
                     scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, null);
+                    scaleTransform.ClearValue(ScaleTransform.CenterXProperty);
+                    scaleTransform.ClearValue(ScaleTransform.CenterYProperty);
                 }
                 else
                 {
