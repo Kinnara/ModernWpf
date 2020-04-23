@@ -154,8 +154,9 @@ namespace ModernWpf.Controls
                 m_leftNavRepeater.ElementPrepared -= OnRepeaterElementPrepared;
                 m_leftNavRepeater.ElementClearing -= OnRepeaterElementClearing;
                 m_leftNavRepeater.Loaded -= OnRepeaterLoaded;
-                // TODO
-                //m_leftNavRepeater.GettingFocus -= OnRepeaterGettingFocus;
+                m_leftNavRepeaterFocusHelper.GettingFocus -= OnRepeaterGettingFocus;
+                m_leftNavRepeaterFocusHelper.Dispose();
+                m_leftNavRepeaterFocusHelper = null;
                 m_leftNavRepeater = null;
             }
 
@@ -164,8 +165,9 @@ namespace ModernWpf.Controls
                 m_topNavRepeater.ElementPrepared -= OnRepeaterElementPrepared;
                 m_topNavRepeater.ElementClearing -= OnRepeaterElementClearing;
                 m_topNavRepeater.Loaded -= OnRepeaterLoaded;
-                // TODO
-                //m_topNavRepeater.GettingFocus -= OnRepeaterGettingFocus;
+                m_topNavRepeaterFocusHelper.GettingFocus -= OnRepeaterGettingFocus;
+                m_topNavRepeaterFocusHelper.Dispose();
+                m_topNavRepeaterFocusHelper = null;
                 m_topNavRepeater = null;
             }
 
@@ -371,7 +373,7 @@ namespace ModernWpf.Controls
 
                 SetPaneToggleButtonAutomationName();
 
-                // TODO
+                // TODO: KeyboardAccelerator
                 /*
                 if (SharedHelpers::IsRS3OrHigher())
                 {
@@ -398,7 +400,7 @@ namespace ModernWpf.Controls
                 splitView.IsPaneOpenChanged += OnSplitViewClosedCompactChanged;
                 splitView.DisplayModeChanged += OnSplitViewClosedCompactChanged;
 
-                //if (SharedHelpers::IsRS3OrHigher()) // These events are new to RS3/v5 API
+                if (SharedHelpers.IsRS3OrHigher()) // These events are new to RS3/v5 API
                 {
                     splitView.PaneClosed += OnSplitViewPaneClosed;
                     splitView.PaneClosing += OnSplitViewPaneClosing;
@@ -426,8 +428,8 @@ namespace ModernWpf.Controls
 
                 leftNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
                 leftNavRepeater.ElementClearing += OnRepeaterElementClearing;
-                // TODO
-                //leftNavRepeater.GettingFocus += OnRepeaterGettingFocus;
+                m_leftNavRepeaterFocusHelper = new FocusHelper(leftNavRepeater);
+                m_leftNavRepeaterFocusHelper.GettingFocus += OnRepeaterGettingFocus;
 
                 leftNavRepeater.Loaded += OnRepeaterLoaded;
 
@@ -449,8 +451,8 @@ namespace ModernWpf.Controls
 
                 topNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
                 topNavRepeater.ElementClearing += OnRepeaterElementClearing;
-                // TODO
-                //topNavRepeater.GettingFocus += OnRepeaterGettingFocus;
+                m_topNavRepeaterFocusHelper = new FocusHelper(topNavRepeater);
+                m_topNavRepeaterFocusHelper.GettingFocus += OnRepeaterGettingFocus;
 
                 topNavRepeater.Loaded += OnRepeaterLoaded;
 
@@ -483,7 +485,7 @@ namespace ModernWpf.Controls
                 m_topNavOverflowButton = topNavOverflowButton;
                 AutomationProperties.SetName(topNavOverflowButton, Strings.NavigationOverflowButtonText);
                 topNavOverflowButton.Content = Strings.NavigationOverflowButtonText;
-                // TODO
+                // TODO: Header Animation
                 /*
                 auto visual = winrt::ElementCompositionPreview::GetElementVisual(topNavOverflowButton);
                 CreateAndAttachHeaderAnimation(visual);
@@ -579,7 +581,7 @@ namespace ModernWpf.Controls
                 closeButtonToolTip.Content = navigationCloseButtonToolTip;
             }
 
-            // TODO
+            // TODO: AccessKey
             //m_accessKeyInvokedRevoker = AccessKeyInvoked(winrt::auto_revoke, { this, &NavigationView::OnAccessKeyInvoked });
 
             UpdatePaneShadow();
@@ -2432,8 +2434,6 @@ namespace ModernWpf.Controls
             }
         }
 
-        // TODO
-        /*
         void OnRepeaterGettingFocus(object sender, GettingFocusEventArgs args)
         {
             if (args.InputDevice == FocusInputDeviceKind.Keyboard)
@@ -2470,7 +2470,6 @@ namespace ModernWpf.Controls
                 }
             }
         }
-        */
 
         void OnNavigationViewItemOnGotFocus(object sender, RoutedEventArgs e)
         {
@@ -5217,6 +5216,9 @@ namespace ModernWpf.Controls
         int m_indexOfLastFocusedItem = -1;
 
         bool m_moveTopNavOverflowItemOnFlyoutClose = false;
+
+        FocusHelper m_leftNavRepeaterFocusHelper;
+        FocusHelper m_topNavRepeaterFocusHelper;
 
         readonly BitmapCache m_bitmapCache;
 

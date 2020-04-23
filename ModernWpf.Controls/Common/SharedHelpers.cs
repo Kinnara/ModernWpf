@@ -25,6 +25,8 @@ namespace ModernWpf.Controls
 
         public static bool IsRS2OrHigher() => true;
 
+        public static bool IsRS3OrHigher() => true;
+
         public static bool IsRS4OrHigher() => true;
 
         public static bool IsRS5OrHigher() => true;
