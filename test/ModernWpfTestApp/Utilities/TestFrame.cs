@@ -29,6 +29,15 @@ namespace MUXControlsTestApp
             Navigated += OnNavigated;
         }
 
+        public void ChangeBarVisibility(Visibility visibility)
+        {
+            UIElement bar = (UIElement)GetTemplateChild("TestFrameBar");
+            if (bar != null)
+            {
+                bar.Visibility = visibility;
+            }
+        }
+
         private void TestFrame_Navigated(object sender, NavigationEventArgs e)
         {
             if (e.Content?.GetType() == _mainPageType)

@@ -8,7 +8,7 @@ namespace MUXControlsTestApp
 {
     internal static class VisualTreeHelperEx
     {
-        public static IReadOnlyList<Popup> GetOpenPopups()
+        public static IReadOnlyList<Popup> GetOpenPopups(Window window)
         {
             return PresentationSource.CurrentSources
                 .OfType<HwndSource>()

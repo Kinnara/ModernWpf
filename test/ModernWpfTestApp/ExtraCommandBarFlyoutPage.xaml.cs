@@ -19,7 +19,7 @@ namespace MUXControlsTestApp
 
         private void OnCountPopupsClicked(object sender, object args)
         {
-            PopupCountTextBox.Text = VisualTreeHelperEx.GetOpenPopups().Count.ToString();
+            PopupCountTextBox.Text = VisualTreeHelperEx.GetOpenPopups(WindowEx.Current).Count.ToString();
         }
     }
 }

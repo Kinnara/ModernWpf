@@ -185,7 +185,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                     }
                 };
 
-                Content.UpdateLayoutAndWaitForIdleDispatcher();
+                Content.UpdateLayout(true);
 
                 Verify.IsGreaterThan(measureCount, 1);
                 Verify.IsGreaterThan(arrangeCount, 1);

@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.Collections;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -29,7 +29,7 @@ namespace ModernWpf.Controls
         {
             SetCurrentValue(ItemTemplateProperty, new RadioButtonsElementFactory());
 
-            var items = new List<object>();
+            var items = new ObservableCollection<object>();
             SetValue(ItemsProperty, items);
 
             // Override normal up/down/left/right behavior -- down should always go to the next item and up to the previous.

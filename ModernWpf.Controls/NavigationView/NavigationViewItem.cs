@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
@@ -60,7 +60,7 @@ namespace ModernWpf.Controls
 
         public NavigationViewItem()
         {
-            SetValue(MenuItemsPropertyKey, new List<object>());
+            SetValue(MenuItemsPropertyKey, new ObservableCollection<object>());
         }
 
         public override void OnApplyTemplate()

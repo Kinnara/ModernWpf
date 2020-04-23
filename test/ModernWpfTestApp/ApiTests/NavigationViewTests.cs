@@ -422,54 +422,35 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         [TestMethod]
         public void VerifySingleSelection()
         {
-            NavigationView navView = null;
-            NavigationViewItem menuItem1 = null;
-            NavigationViewItem menuItem2 = null;
-
             RunOnUIThread.Execute(() =>
             {
-                navView = new NavigationView();
+                var navView = new NavigationView();
                 Content = navView;
 
-                menuItem1 = new NavigationViewItem();
-                menuItem2 = new NavigationViewItem();
+                var menuItem1 = new NavigationViewItem();
+                var menuItem2 = new NavigationViewItem();
                 menuItem1.Content = "Item 1";
                 menuItem2.Content = "Item 2";
 
                 navView.MenuItems.Add(menuItem1);
                 navView.MenuItems.Add(menuItem2);
                 navView.Width = 1008; // forces the control into Expanded mode so that the menu renders
-                Content.UpdateLayout();
-            });
+                Content.UpdateLayout(true);
 
-            IdleSynchronizer.Wait();
-
-            RunOnUIThread.Execute(() =>
-            {
                 Verify.IsFalse(menuItem1.IsSelected);
                 Verify.IsFalse(menuItem2.IsSelected);
                 Verify.AreEqual(navView.SelectedItem, null);
 
                 menuItem1.IsSelected = true;
-                Content.UpdateLayout();
-            });
+                Content.UpdateLayout(true);
 
-            IdleSynchronizer.Wait();
-
-            RunOnUIThread.Execute(() =>
-            {
                 Verify.IsTrue(menuItem1.IsSelected);
                 Verify.IsFalse(menuItem2.IsSelected);
                 Verify.AreEqual(navView.SelectedItem, menuItem1);
 
                 menuItem2.IsSelected = true;
-                Content.UpdateLayout();
-            });
+                Content.UpdateLayout(true);
 
-            IdleSynchronizer.Wait();
-
-            RunOnUIThread.Execute(() =>
-            {
                 Verify.IsTrue(menuItem2.IsSelected);
                 Verify.IsFalse(menuItem1.IsSelected, "MenuItem1 should have been deselected when MenuItem2 was selected");
                 Verify.AreEqual(navView.SelectedItem, menuItem2);
@@ -617,23 +598,17 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         [TestMethod]
         public void VerifyMenuItemAndContainerMappingMenuItemsSource()
         {
-            NavigationView navView = null;
-
             RunOnUIThread.Execute(() =>
             {
-                navView = new NavigationView();
+                var navView = new NavigationView();
                 MUXControlsTestApp.App.TestContentRoot = navView;
 
                 navView.MenuItemsSource = new ObservableCollection<String> { "Item 1", "Item 2" }; ;
                 navView.Width = 1008; // forces the control into Expanded mode so that the menu renders
 
-                MUXControlsTestApp.App.TestContentRoot.UpdateLayout();
-            });
+                MUXControlsTestApp.App.TestContentRoot.UpdateLayout(true);
 
-            IdleSynchronizer.Wait();
 
-            RunOnUIThread.Execute(() =>
-            {
                 var menuItem = "Item 2";
                 // Get container for item
                 var itemContainer = navView.ContainerFromMenuItem(menuItem) as NavigationViewItem;
@@ -652,17 +627,13 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         [TestMethod]
         public void VerifyMenuItemAndContainerMappingMenuItems()
         {
-            NavigationView navView = null;
-            NavigationViewItem menuItem1 = null;
-            NavigationViewItem menuItem2 = null;
-
             RunOnUIThread.Execute(() =>
             {
-                navView = new NavigationView();
+                var navView = new NavigationView();
                 MUXControlsTestApp.App.TestContentRoot = navView;
 
-                menuItem1 = new NavigationViewItem();
-                menuItem2 = new NavigationViewItem();
+                var menuItem1 = new NavigationViewItem();
+                var menuItem2 = new NavigationViewItem();
                 menuItem1.Content = "Item 1";
                 menuItem2.Content = "Item 2";
 
@@ -670,13 +641,8 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
                 navView.MenuItems.Add(menuItem2);
                 navView.Width = 1008; // forces the control into Expanded mode so that the menu renders
 
-                MUXControlsTestApp.App.TestContentRoot.UpdateLayout();
-            });
+                MUXControlsTestApp.App.TestContentRoot.UpdateLayout(true);
 
-            IdleSynchronizer.Wait();
-
-            RunOnUIThread.Execute(() =>
-            {
                 // Get container for item
                 var itemContainer = navView.ContainerFromMenuItem(menuItem2) as NavigationViewItem;
                 bool correctContainerReturned = itemContainer != null && itemContainer == menuItem2;
