@@ -1057,8 +1057,8 @@
                                     <local:ItemsRepeaterScrollHost
                                             Grid.Column="3">
                                         <ScrollViewer
-                                            HorizontalScrollBarVisibility="Disabled"
-                                            VerticalScrollBarVisibility="Disabled">
+                                            HorizontalScrollBarVisibility="Hidden"
+                                            VerticalScrollBarVisibility="Hidden">
                                             <local:ItemsRepeater 
                                                 AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}"
                                                 x:Name="TopNavMenuItemsHost">
@@ -1473,6 +1473,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:NavigationViewItemHeader">
                     <Grid x:Name="NavigationViewItemHeaderRootGrid">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:SimpleVisualStateManager />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PaneStates">
                                 <VisualStateGroup.Transitions>

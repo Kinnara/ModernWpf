@@ -35,6 +35,9 @@
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
 
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:SimpleVisualStateManager />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ToggleStates">
                                 <VisualStateGroup.Transitions>

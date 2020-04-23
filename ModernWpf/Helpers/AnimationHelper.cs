@@ -14,7 +14,7 @@ namespace ModernWpf
 
             static void OnStoryboardCurrentStateInvalidated(object sender, EventArgs e)
             {
-                if (sender is ClockGroup clock &&
+                if (sender is Clock clock &&
                     clock.HasControllableRoot &&
                     clock.CurrentState == ClockState.Active &&
                     !clock.IsPaused)

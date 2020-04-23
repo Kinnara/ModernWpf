@@ -29,6 +29,9 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:SimpleVisualStateManager />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="MultiSelectStates">
                                 <VisualStateGroup.Transitions>
