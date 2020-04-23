@@ -37,6 +37,7 @@ namespace ModernWpf.Controls.Primitives
 
         public NavigationViewItemPresenter()
         {
+            InputHelper.SetIsTapEnabled(this, true);
         }
 
         #region Icon

@@ -35,12 +35,14 @@ namespace ModernWpf.Input
                 element.MouseLeftButtonDown += OnMouseLeftButtonDown;
                 element.MouseLeftButtonUp += OnMouseLeftButtonUp;
                 element.LostMouseCapture += OnLostMouseCapture;
+                element.MouseLeave += OnMouseLeave;
             }
             else
             {
                 element.MouseLeftButtonDown -= OnMouseLeftButtonDown;
                 element.MouseLeftButtonUp -= OnMouseLeftButtonUp;
                 element.LostMouseCapture -= OnLostMouseCapture;
+                element.MouseLeave -= OnMouseLeave;
             }
         }
 
@@ -79,7 +81,7 @@ namespace ModernWpf.Input
         public static readonly RoutedEvent TappedEvent =
             EventManager.RegisterRoutedEvent(
                 "Tapped",
-                RoutingStrategy.Direct,
+                RoutingStrategy.Bubble,
                 typeof(TappedEventHandler),
                 typeof(InputHelper));
 
@@ -93,29 +95,22 @@ namespace ModernWpf.Input
             element.RemoveHandler(TappedEvent, handler);
         }
 
-        private static void RaiseTapped(UIElement element)
+        private static void RaiseTapped(UIElement element, int timestamp)
         {
-            element.RaiseEvent(new TappedRoutedEventArgs { RoutedEvent = TappedEvent, Source = element });
+            var e = new TappedRoutedEventArgs { RoutedEvent = TappedEvent, Source = element, Timestamp = timestamp };
+            _lastTappedArgs = e;
+            element.RaiseEvent(e);
         }
 
         #endregion
 
         private static void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ButtonState == MouseButtonState.Pressed)
+            var element = (UIElement)sender;
+
+            if (!GetIsPressed(element))
             {
-                var element = (UIElement)sender;
-                element.CaptureMouse();
-                if (element.IsMouseCaptured)
-                {
-                    if (e.ButtonState == MouseButtonState.Pressed)
-                    {
-                        if (!GetIsPressed(element))
-                        {
-                            SetIsPressed(element, true);
-                        }
-                    }
-                }
+                SetIsPressed(element, true);
             }
         }
 
@@ -123,25 +118,33 @@ namespace ModernWpf.Input
         {
             var element = (UIElement)sender;
 
-            bool tapped = GetIsPressed(element);
-
-            if (element.IsMouseCaptured)
+            if (GetIsPressed(element))
             {
-                element.ReleaseMouseCapture();
-            }
+                SetIsPressed((UIElement)sender, false);
 
-            if (tapped)
-            {
-                RaiseTapped(element);
+                var lastArgs = _lastTappedArgs;
+
+                if (lastArgs != null && lastArgs.Handled && lastArgs.Timestamp == e.Timestamp)
+                {
+                    // Handled by a child element, don't raise
+                }
+                else
+                {
+                    RaiseTapped(element, e.Timestamp);
+                }
             }
         }
 
         private static void OnLostMouseCapture(object sender, MouseEventArgs e)
         {
-            if (e.OriginalSource == sender)
-            {
-                SetIsPressed((UIElement)sender, false);
-            }
+            SetIsPressed((UIElement)sender, false);
         }
+
+        private static void OnMouseLeave(object sender, MouseEventArgs e)
+        {
+            SetIsPressed((UIElement)sender, false);
+        }
+
+        private static TappedRoutedEventArgs _lastTappedArgs;
     }
 }

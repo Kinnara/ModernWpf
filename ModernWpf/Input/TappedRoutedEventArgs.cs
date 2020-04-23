@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 
 namespace ModernWpf.Input
 {
@@ -14,5 +11,7 @@ namespace ModernWpf.Input
         //public Point GetPosition(UIElement relativeTo);
 
         //public PointerDeviceType PointerDeviceType { get; }
+
+        internal int Timestamp { get; set; }
     }
 }

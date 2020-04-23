@@ -94,12 +94,12 @@ namespace ModernWpf.Controls
         const float c_paneElevationTranslationZ = 32;
 
         const int s_itemNotFound = -1;
-        private const bool Value = true;
+
         static readonly Size c_infSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
 
         ~NavigationView()
         {
-            UnhookEventsAndClearFields(Value);
+            UnhookEventsAndClearFields(true);
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
@@ -210,7 +210,7 @@ namespace ModernWpf.Controls
             Unloaded += OnUnloaded;
             Loaded += OnLoaded;
 
-            m_selectionModel.SingleSelect = Value;
+            m_selectionModel.SingleSelect = true;
             m_selectionModel.SelectionChanged += OnSelectionModelSelectionChanged;
             m_selectionModel.ChildrenRequested += OnSelectionModelChildrenRequested;
 
@@ -228,7 +228,7 @@ namespace ModernWpf.Controls
             {
                 e.Children = GetChildren(nvi);
             }
-            else if (GetChildrenForItemInIndexPath(e.SourceIndex, Value /*forceRealize*/) is { } children)
+            else if (GetChildrenForItemInIndexPath(e.SourceIndex, true /*forceRealize*/) is { } children)
             {
                 e.Children = children;
             }
@@ -250,7 +250,7 @@ namespace ModernWpf.Controls
                 return;
             }
 
-            bool setSelectedItem = Value;
+            bool setSelectedItem = true;
             var selectedIndex = selectionModel.SelectedIndex;
             if (IsTopNavigationView())
             {
@@ -273,19 +273,19 @@ namespace ModernWpf.Controls
                                     }
                                 }
                             }
-                            return Value;
+                            return true;
                         }
                         itemShouldBeMoved = init();
                     }
 
                     if (itemShouldBeMoved)
                     {
-                        SelectandMoveOverflowItem(selectedItem, selectedIndex, Value /*closeFlyout*/);
+                        SelectandMoveOverflowItem(selectedItem, selectedIndex, true /*closeFlyout*/);
                         setSelectedItem = false;
                     }
                     else
                     {
-                        m_moveTopNavOverflowItemOnFlyoutClose = Value;
+                        m_moveTopNavOverflowItemOnFlyoutClose = true;
                     }
                 }
             }
@@ -301,7 +301,7 @@ namespace ModernWpf.Controls
             // SelectOverflowItem is moving data in/out of overflow.
             try
             {
-                m_selectionChangeFromOverflowMenu = Value;
+                m_selectionChangeFromOverflowMenu = true;
 
                 if (closeFlyout)
                 {
@@ -423,7 +423,7 @@ namespace ModernWpf.Controls
                 if (leftNavRepeater.Layout is StackLayout stackLayout)
                 {
                     var stackLayoutImpl = stackLayout;
-                    stackLayoutImpl.DisableVirtualization = Value;
+                    stackLayoutImpl.DisableVirtualization = true;
                 }
 
                 leftNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
@@ -434,7 +434,7 @@ namespace ModernWpf.Controls
                 leftNavRepeater.Loaded += OnRepeaterLoaded;
 
                 leftNavRepeater.ItemTemplate = m_navigationViewItemsFactory;
-                leftNavRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = Value;
+                leftNavRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = true;
             }
 
             // Change code to NOT do this if we're in left nav mode, to prevent it from being realized:
@@ -446,7 +446,7 @@ namespace ModernWpf.Controls
                 if (topNavRepeater.Layout is StackLayout stackLayout)
                 {
                     var stackLayoutImpl = stackLayout;
-                    stackLayoutImpl.DisableVirtualization = Value;
+                    stackLayoutImpl.DisableVirtualization = true;
                 }
 
                 topNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
@@ -457,7 +457,7 @@ namespace ModernWpf.Controls
                 topNavRepeater.Loaded += OnRepeaterLoaded;
 
                 topNavRepeater.ItemTemplate = m_navigationViewItemsFactory;
-                topNavRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = Value;
+                topNavRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = true;
             }
 
             // Change code to NOT do this if we're in left nav mode, to prevent it from being realized:
@@ -470,14 +470,14 @@ namespace ModernWpf.Controls
                 if (topNavListOverflowRepeater.Layout is StackLayout stackLayout)
                 {
                     var stackLayoutImpl = stackLayout;
-                    stackLayoutImpl.DisableVirtualization = Value;
+                    stackLayoutImpl.DisableVirtualization = true;
                 }
 
                 topNavListOverflowRepeater.ElementPrepared += OnRepeaterElementPrepared;
                 topNavListOverflowRepeater.ElementClearing += OnRepeaterElementClearing;
 
                 topNavListOverflowRepeater.ItemTemplate = m_navigationViewItemsFactory;
-                topNavListOverflowRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = Value;
+                topNavListOverflowRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = true;
             }
 
             if (GetTemplateChild(c_topNavOverflowButton) is Button topNavOverflowButton)
@@ -586,7 +586,7 @@ namespace ModernWpf.Controls
 
             UpdatePaneShadow();
 
-            m_appliedTemplate = Value;
+            m_appliedTemplate = true;
 
             // Do initial setup
             UpdatePaneDisplayMode();
@@ -992,7 +992,6 @@ namespace ModernWpf.Controls
                     }
 
                     // Register for item events
-                    InputHelper.SetIsTapEnabled(nvi, Value);
                     InputHelper.AddTappedHandler(nvi, OnNavigationViewItemTapped);
                     nvi.KeyDown += OnNavigationViewItemKeyDown;
                     nvi.KeyUp += OnNavigationViewItemKeyUp;
@@ -1061,7 +1060,7 @@ namespace ModernWpf.Controls
                 {
                     try
                     {
-                        m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore = Value;
+                        m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore = true;
                         SetSelectedItemAndExpectItemInvokeWhenSelectionChangedIfNotInvokedFromAPI(null);
                     }
                     finally
@@ -1075,7 +1074,6 @@ namespace ModernWpf.Controls
                 settingsItem.KeyUp -= OnNavigationViewItemKeyUp;
 
                 m_settingsItem = settingsItem;
-                InputHelper.SetIsTapEnabled(settingsItem, Value);
                 InputHelper.AddTappedHandler(settingsItem, OnNavigationViewItemTapped);
                 settingsItem.KeyDown += OnNavigationViewItemKeyDown;
                 settingsItem.KeyUp += OnNavigationViewItemKeyUp;
@@ -1103,7 +1101,7 @@ namespace ModernWpf.Controls
                 {
                     try
                     {
-                        m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore = Value;
+                        m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore = true;
                         SetSelectedItemAndExpectItemInvokeWhenSelectionChangedIfNotInvokedFromAPI(m_settingsItem);
                     }
                     finally
@@ -1138,7 +1136,7 @@ namespace ModernWpf.Controls
 
             LayoutUpdated -= OnLayoutUpdated;
             LayoutUpdated += OnLayoutUpdated;
-            m_layoutUpdatedToken = Value;
+            m_layoutUpdatedToken = true;
 
             return base.MeasureOverride(availableSize);
         }
@@ -1253,7 +1251,7 @@ namespace ModernWpf.Controls
         {
             if (IsPaneOpen)
             {
-                m_wasForceClosed = Value;
+                m_wasForceClosed = true;
                 ClosePane();
             }
             else
@@ -1283,8 +1281,8 @@ namespace ModernWpf.Controls
         {
             try
             {
-                m_isOpenPaneForInteraction = Value;
-                IsPaneOpen = Value;
+                m_isOpenPaneForInteraction = true;
+                IsPaneOpen = true;
             }
             finally
             {
@@ -1298,7 +1296,7 @@ namespace ModernWpf.Controls
             CollapseMenuItemsInRepeater(m_leftNavRepeater);
             try
             {
-                m_isOpenPaneForInteraction = Value;
+                m_isOpenPaneForInteraction = true;
                 IsPaneOpen = false; // the SplitView is two-way bound to this value 
             }
             finally
@@ -1322,9 +1320,9 @@ namespace ModernWpf.Controls
 
             if (!pendingPaneClosingCancel || m_wasForceClosed)
             {
-                m_blockNextClosingEvent = Value;
+                m_blockNextClosingEvent = true;
                 ClosePane();
-                return Value;
+                return true;
             }
 
             return false;
@@ -1371,7 +1369,7 @@ namespace ModernWpf.Controls
                         if (splitView.DisplayMode == SplitViewDisplayMode.CompactOverlay || splitView.DisplayMode == SplitViewDisplayMode.CompactInline)
                         {
                             // See UpdateIsClosedCompact 'RS3+ animation timing enhancement' for explanation:
-                            VisualStateManager.GoToState(this, "ListSizeCompact", Value /*useTransitions*/);
+                            VisualStateManager.GoToState(this, "ListSizeCompact", true /*useTransitions*/);
                             UpdatePaneToggleSize();
                         }
                     }
@@ -1389,7 +1387,7 @@ namespace ModernWpf.Controls
             if (m_leftNavRepeater != null)
             {
                 // See UpdateIsClosedCompact 'RS3+ animation timing enhancement' for explanation:
-                VisualStateManager.GoToState(this, "ListSizeFull", Value /*useTransitions*/);
+                VisualStateManager.GoToState(this, "ListSizeFull", true /*useTransitions*/);
             }
 
             PaneOpening?.Invoke(this, null);
@@ -1402,13 +1400,13 @@ namespace ModernWpf.Controls
                 // Check if the pane is closed and if the splitview is in either compact mode.
                 var splitViewDisplayMode = splitView.DisplayMode;
                 m_isClosedCompact = !splitView.IsPaneOpen && (splitViewDisplayMode == SplitViewDisplayMode.CompactOverlay || splitViewDisplayMode == SplitViewDisplayMode.CompactInline);
-                VisualStateManager.GoToState(this, m_isClosedCompact ? "ClosedCompact" : "NotClosedCompact", Value /*useTransitions*/);
+                VisualStateManager.GoToState(this, m_isClosedCompact ? "ClosedCompact" : "NotClosedCompact", true /*useTransitions*/);
 
                 // Set the initial state of the list size
                 if (!m_initialListSizeStateSet)
                 {
-                    m_initialListSizeStateSet = Value;
-                    VisualStateManager.GoToState(this, m_isClosedCompact ? "ListSizeCompact" : "ListSizeFull", Value /*useTransitions*/);
+                    m_initialListSizeStateSet = true;
+                    VisualStateManager.GoToState(this, m_isClosedCompact ? "ListSizeCompact" : "ListSizeFull", true /*useTransitions*/);
                 }
                 else if (false /*!SharedHelpers.IsRS3OrHigher()*/) // Do any changes that would otherwise happen on opening/closing for RS2 and earlier:
                 {
@@ -1419,7 +1417,7 @@ namespace ModernWpf.Controls
                     // close the pane, the PaneTitle will disappear *immediately* which
                     // looks janky. But on RS4, it'll have its visibility set after the
                     // closed event fires.
-                    VisualStateManager.GoToState(this, m_isClosedCompact ? "ListSizeCompact" : "ListSizeFull", Value /*useTransitions*/);
+                    VisualStateManager.GoToState(this, m_isClosedCompact ? "ListSizeCompact" : "ListSizeFull", true /*useTransitions*/);
                 }
 
                 UpdateTitleBarPadding();
@@ -1655,7 +1653,7 @@ namespace ModernWpf.Controls
                     {
                         ResetElementAnimationProperties(prevIndicator, 0.0f);
                     }
-                    haveValidAnimation = Value;
+                    haveValidAnimation = true;
                 }
                 else
                 {
@@ -1706,16 +1704,16 @@ namespace ModernWpf.Controls
                         bool isNextBelow = prevPosPoint.Y < nextPosPoint.Y;
                         if (prevIndicator.RenderSize.Height > prevIndicator.RenderSize.Width)
                         {
-                            PlayIndicatorNonSameLevelAnimations(prevIndicator, Value, isNextBelow ? false : Value);
+                            PlayIndicatorNonSameLevelAnimations(prevIndicator, true, isNextBelow ? false : true);
                         }
                         else
                         {
-                            PlayIndicatorNonSameLevelTopPrimaryAnimation(prevIndicator, Value);
+                            PlayIndicatorNonSameLevelTopPrimaryAnimation(prevIndicator, true);
                         }
 
                         if (nextIndicator.RenderSize.Height > nextIndicator.RenderSize.Width)
                         {
-                            PlayIndicatorNonSameLevelAnimations(nextIndicator, false, isNextBelow ? Value : false);
+                            PlayIndicatorNonSameLevelAnimations(nextIndicator, false, isNextBelow ? true : false);
                         }
                         else
                         {
@@ -1735,7 +1733,7 @@ namespace ModernWpf.Controls
                             outgoingEndPosition,
                             prevSize,
                             nextSize,
-                            Value);
+                            true);
                         PlayIndicatorAnimations(nextIndicator,
                             incomingStartPosition,
                             0,
@@ -2115,7 +2113,7 @@ namespace ModernWpf.Controls
                 // To keep the logic the same as RS4, ItemInvoke is before unselect the old item
                 // And SelectionChanged is after we selected the new item.
                 UnselectPrevItem(prevItem, nextItem);
-                ChangeSelectStatusForItem(nextItem, Value /*selected*/);
+                ChangeSelectStatusForItem(nextItem, true /*selected*/);
                 RaiseSelectionChangedEvent(nextItem, isSettingsItem, recommendedDirection);
                 AnimateSelectionChanged(nextItem);
 
@@ -2142,7 +2140,7 @@ namespace ModernWpf.Controls
 
             if (nextIP != null && nextIP.GetSize() > 0)
             {
-                UpdateIsChildSelectedForIndexPath(nextIP, Value /*isChildSelected*/);
+                UpdateIsChildSelectedForIndexPath(nextIP, true /*isChildSelected*/);
             }
         }
 
@@ -2334,7 +2332,7 @@ namespace ModernWpf.Controls
                     OnNavigationViewItemInvoked(nvi);
                 }
                 nvi.Focus();
-                args.Handled = Value;
+                args.Handled = true;
             }
         }
 
@@ -2369,7 +2367,7 @@ namespace ModernWpf.Controls
                 if (key == Key.Space ||
                     key == Key.Enter)
                 {
-                    args.Handled = Value;
+                    args.Handled = true;
                     OnSettingsInvoked();
                 }
             }
@@ -2379,15 +2377,15 @@ namespace ModernWpf.Controls
                 {
                     case Key.Enter:
                     case Key.Space:
-                        args.Handled = Value;
+                        args.Handled = true;
                         OnNavigationViewItemInvoked(nvi);
                         break;
                     case Key.Home:
-                        args.Handled = Value;
+                        args.Handled = true;
                         KeyboardFocusFirstItemFromItem(nvi);
                         break;
                     case Key.End:
-                        args.Handled = Value;
+                        args.Handled = true;
                         KeyboardFocusLastItemFromItem(nvi);
                         break;
                 }
@@ -2546,7 +2544,7 @@ namespace ModernWpf.Controls
             var settingsItem = m_settingsItem;
             if (IsSettingsItem(prevItem))
             {
-                RaiseItemInvoked(settingsItem, Value /*isSettings*/);
+                RaiseItemInvoked(settingsItem, true /*isSettings*/);
             }
             else if (settingsItem != null)
             {
@@ -2848,7 +2846,7 @@ namespace ModernWpf.Controls
             if (oldItem != newItem && m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore)
             {
                 ChangeSelectStatusForItem(oldItem, false /*selected*/);
-                ChangeSelectStatusForItem(newItem, Value /*selected*/);
+                ChangeSelectStatusForItem(newItem, true /*selected*/);
                 AnimateSelectionChanged(newItem);
             }
 
@@ -2888,7 +2886,7 @@ namespace ModernWpf.Controls
                     // in the SelectionModel selection changed callback.
                     try
                     {
-                        m_shouldIgnoreNextSelectionChange = Value;
+                        m_shouldIgnoreNextSelectionChange = true;
                         UpdateSelectionModelSelection(ip);
                     }
                     finally
@@ -2919,7 +2917,7 @@ namespace ModernWpf.Controls
                 var setIgnoreNextSelectionChangeToFalse = !m_shouldIgnoreNextSelectionChange;
                 try
                 {
-                    m_shouldIgnoreNextSelectionChange = Value;
+                    m_shouldIgnoreNextSelectionChange = true;
                     ChangeSelectStatusForItem(prevItem, false /*selected*/);
                 }
                 finally
@@ -2943,7 +2941,7 @@ namespace ModernWpf.Controls
                 }
                 else
                 {
-                    ChangeSelectStatusForItem(prevSelectedItem, Value /*selected*/);
+                    ChangeSelectStatusForItem(prevSelectedItem, true /*selected*/);
                     AnimateSelectionChangedToItem(prevSelectedItem);
                     selectedItem = prevSelectedItem;
                 }
@@ -3230,7 +3228,7 @@ namespace ModernWpf.Controls
 
                 if (m_topDataProvider.HasInvalidWidth(itemsToBeAdded))
                 {
-                    needInvalidMeasure = Value;
+                    needInvalidMeasure = true;
                 }
                 else
                 {
@@ -3242,7 +3240,7 @@ namespace ModernWpf.Controls
 
                     if (NeedRearrangeOfTopElementsAfterOverflowSelectionChanged(selectedOverflowItemIndex))
                     {
-                        needInvalidMeasure = Value;
+                        needInvalidMeasure = true;
                     }
 
                     if (!needInvalidMeasure)
@@ -3291,7 +3289,7 @@ namespace ModernWpf.Controls
                     var prevOriginalIndexOfPrevPrimaryItem = m_topDataProvider.ConvertPrimaryIndexToIndex(prevIndexInVector);
                     if (prevOriginalIndexOfPrevPrimaryItem[0] != prevIndexInOriginal)
                     {
-                        needRearrange = Value;
+                        needRearrange = true;
                     }
                 }
 
@@ -3304,7 +3302,7 @@ namespace ModernWpf.Controls
                     var originalIndex = m_topDataProvider.ConvertPrimaryIndexToIndex(nextIndexInVector);
                     if (nextIndexInOriginal != originalIndex[0])
                     {
-                        needRearrange = Value;
+                        needRearrange = true;
                         break;
                     }
                     nextIndexInPrimary++;
@@ -3327,7 +3325,7 @@ namespace ModernWpf.Controls
                 // Remove all items which is not visible except first item and selected item.
                 var itemToBeRemoved = FindMovableItemsBeyondAvailableWidth(possibleWidthForPrimaryList);
                 // should keep at least one item in primary
-                KeepAtLeastOneItemInPrimaryList(itemToBeRemoved, Value/*shouldKeepFirst*/);
+                KeepAtLeastOneItemInPrimaryList(itemToBeRemoved, true/*shouldKeepFirst*/);
                 m_topDataProvider.MoveItemsOutOfPrimaryList(itemToBeRemoved);
             }
 
@@ -3426,7 +3424,7 @@ namespace ModernWpf.Controls
                 {
                     if (i != selectedItemIndexInPrimary)
                     {
-                        bool shouldMove = Value;
+                        bool shouldMove = true;
                         if (requiredWidth <= availableWidth)
                         {
                             var container = ir.TryGetElement(i);
@@ -3576,11 +3574,11 @@ namespace ModernWpf.Controls
             }
             else if (property == MenuItemsSourceProperty)
             {
-                UpdateRepeaterItemsSource(Value /*forceSelectionModelUpdate*/);
+                UpdateRepeaterItemsSource(true /*forceSelectionModelUpdate*/);
             }
             else if (property == MenuItemsProperty)
             {
-                UpdateRepeaterItemsSource(Value /*forceSelectionModelUpdate*/);
+                UpdateRepeaterItemsSource(true /*forceSelectionModelUpdate*/);
             }
             else if (property == PaneDisplayModeProperty)
             {
@@ -3683,7 +3681,7 @@ namespace ModernWpf.Controls
                 {
                     if (NavigationViewItemOrSettingsContentFromData(item) is { } navViewItem)
                     {
-                        navViewItem.IsSelected = Value;
+                        navViewItem.IsSelected = true;
                     }
                 }
 
@@ -3740,7 +3738,7 @@ namespace ModernWpf.Controls
                     // nav.IsPaneOpen=false. We don't need to set force flag in this situation
                     if (splitView.IsPaneOpen)
                     {
-                        m_wasForceClosed = Value;
+                        m_wasForceClosed = true;
                     }
                 }
             }
@@ -3783,7 +3781,7 @@ namespace ModernWpf.Controls
             }
             if (!IsTopNavigationView())
             {
-                UpdateAdaptiveLayout(ActualWidth, Value /*forceSetDisplayMode*/);
+                UpdateAdaptiveLayout(ActualWidth, true /*forceSetDisplayMode*/);
 
                 SwapPaneHeaderContent(m_leftNavPaneHeaderContentBorder, m_paneHeaderOnTopPane, "PaneHeader");
                 SwapPaneHeaderContent(m_leftNavPaneCustomContentBorder, m_paneCustomContentOnTopPane, "PaneCustomContent");
@@ -3805,7 +3803,7 @@ namespace ModernWpf.Controls
             else
             {
                 ClosePane();
-                SetDisplayMode(NavigationViewDisplayMode.Minimal, Value);
+                SetDisplayMode(NavigationViewDisplayMode.Minimal, true);
 
                 SwapPaneHeaderContent(m_paneHeaderOnTopPane, m_leftNavPaneHeaderContentBorder, "PaneHeader");
                 SwapPaneHeaderContent(m_paneCustomContentOnTopPane, m_leftNavPaneCustomContentBorder, "PaneCustomContent");
@@ -4192,9 +4190,9 @@ namespace ModernWpf.Controls
                                 {
                                     try
                                     {
-                                        m_shouldIgnoreNextSelectionChange = Value;
+                                        m_shouldIgnoreNextSelectionChange = true;
                                         SelectedItem = nvi;
-                                        foundFirstSelected = Value;
+                                        foundFirstSelected = true;
                                     }
                                     finally
                                     {
@@ -4257,7 +4255,7 @@ namespace ModernWpf.Controls
                 {
                     if (ShouldPreserveNavigationViewRS3Behavior())
                     {
-                        needsTopPadding = Value;
+                        needsTopPadding = true;
                     }
                     else if (ShouldPreserveNavigationViewRS4Behavior())
                     {
@@ -4565,7 +4563,7 @@ namespace ModernWpf.Controls
             {
                 if (DoesRepeaterHaveRealizedContainers(childrenRepeater))
                 {
-                    areChildrenRealized = Value;
+                    areChildrenRealized = true;
                     for (int i = 0; i < GetContainerCountInRepeater(childrenRepeater); i++)
                     {
                         if (childrenRepeater.TryGetElement(i) is { } container)
@@ -4686,7 +4684,7 @@ namespace ModernWpf.Controls
             {
                 if (ir.TryGetElement(0) != null)
                 {
-                    return Value;
+                    return true;
                 }
             }
             return false;
@@ -4812,7 +4810,7 @@ namespace ModernWpf.Controls
                             if (nviRepeater.TryGetElement(ip.GetAt(i)) is { } nextContainer)
                             {
                                 container = nextContainer;
-                                succeededGettingNextContainer = Value;
+                                succeededGettingNextContainer = true;
                             }
                         }
                     }
@@ -4853,7 +4851,7 @@ namespace ModernWpf.Controls
                 var parentIR = GetParentItemsRepeaterForContainer(nvib);
                 if (parentIR == m_topNavRepeaterOverflowView)
                 {
-                    return Value;
+                    return true;
                 }
             }
             return false;
@@ -4877,7 +4875,7 @@ namespace ModernWpf.Controls
 
         internal void Expand(NavigationViewItem item)
         {
-            ChangeIsExpandedNavigationViewItem(item, Value /*isExpanded*/);
+            ChangeIsExpandedNavigationViewItem(item, true /*isExpanded*/);
         }
 
         internal void Collapse(NavigationViewItem item)
@@ -5019,7 +5017,7 @@ namespace ModernWpf.Controls
                             if (nviRepeater.TryGetElement(nextContainerIndex) is { } nextContainer)
                             {
                                 container = nextContainer;
-                                succeededGettingNextContainer = Value;
+                                succeededGettingNextContainer = true;
                             }
                         }
                         else if (forceRealize)
@@ -5059,8 +5057,8 @@ namespace ModernWpf.Controls
                                             //}
 
                                             container = nextContainer;
-                                            shouldRecycleContainer = Value;
-                                            succeededGettingNextContainer = Value;
+                                            shouldRecycleContainer = true;
+                                            succeededGettingNextContainer = true;
                                         }
                                     }
                                 }
@@ -5152,7 +5150,7 @@ namespace ModernWpf.Controls
         }
 #endif
 
-        bool m_InitialNonForcedModeUpdate = Value;
+        bool m_InitialNonForcedModeUpdate = true;
 
         NavigationViewItemsFactory m_navigationViewItemsFactory;
 
