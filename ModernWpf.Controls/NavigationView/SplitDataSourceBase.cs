@@ -28,7 +28,7 @@ namespace ModernWpf.Controls
             m_vectorID = id;
             m_indexFunctionFromDataSource = indexOfFunction;
 
-            // TODO
+            // TODO: WPF
             /*
             m_vector.set(winrt::make<Vector<T, MakeVectorParam<VectorFlag::Observable, VectorFlag::DependencyObjectBase>()>>(
                 [this](const T& value)

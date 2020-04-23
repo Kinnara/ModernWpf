@@ -373,7 +373,7 @@ namespace ModernWpf.Controls
 
                 SetPaneToggleButtonAutomationName();
 
-                // TODO: KeyboardAccelerator
+                // TODO: WPF - KeyboardAccelerator
                 /*
                 if (SharedHelpers::IsRS3OrHigher())
                 {
@@ -485,7 +485,7 @@ namespace ModernWpf.Controls
                 m_topNavOverflowButton = topNavOverflowButton;
                 AutomationProperties.SetName(topNavOverflowButton, Strings.NavigationOverflowButtonText);
                 topNavOverflowButton.Content = Strings.NavigationOverflowButtonText;
-                // TODO: Header Animation
+                // TODO: WPF - Header Animation
                 /*
                 auto visual = winrt::ElementCompositionPreview::GetElementVisual(topNavOverflowButton);
                 CreateAndAttachHeaderAnimation(visual);
@@ -581,7 +581,7 @@ namespace ModernWpf.Controls
                 closeButtonToolTip.Content = navigationCloseButtonToolTip;
             }
 
-            // TODO: AccessKey
+            // TODO: WPF - AccessKey
             //m_accessKeyInvokedRevoker = AccessKeyInvoked(winrt::auto_revoke, { this, &NavigationView::OnAccessKeyInvoked });
 
             UpdatePaneShadow();

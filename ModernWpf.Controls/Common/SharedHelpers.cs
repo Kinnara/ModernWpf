@@ -110,7 +110,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        // TODO
+        // TODO: WPF
         internal static void ForwardCollectionChange<T>(
             ObservableCollection<T> source,
             ObservableCollection<T> destination,

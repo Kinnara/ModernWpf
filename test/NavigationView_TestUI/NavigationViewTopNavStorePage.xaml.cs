@@ -210,7 +210,7 @@ namespace MUXControlsTestApp
                 TopPaddingRenderedValue.Text = paneContentGrid.ActualHeight.ToString();
             }
 
-            // TODO: TitleBar
+            // TODO: WPF - TitleBar
             //if (CoreApplication.GetCurrentView().TitleBar.IsVisible)
             //{
             //    TitleBarIsVisible.Text = "True";

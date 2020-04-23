@@ -95,7 +95,7 @@ namespace ModernWpf.Controls.Primitives
 
 
                 // We probably switched displaymode, so restore width now, otherwise the next time we will restore is when the CompactPaneLength changes
-                // TODO: Refactor null check
+                // TODO: WPF - Refactor null check
                 if (navigationViewItem.GetNavigationView()?.PaneDisplayMode != NavigationViewPaneDisplayMode.Top)
                 {
                     UpdateCompactPaneLength(m_compactPaneLengthValue, true);
@@ -131,7 +131,7 @@ namespace ModernWpf.Controls.Primitives
             return m_helper.GetSelectionIndicator();
         }
 
-        // TODO: GoToElementStateCore
+        // TODO: WPF - GoToElementStateCore
         /*
         bool GoToElementStateCore(string state, bool useTransitions)
         {

@@ -38,7 +38,7 @@ namespace MUXControlsTestApp
             NavView.ItemInvoked += NavView_ItemInvoked;
             NavView.SelectionChanged += NavView_SelectionChanged;
 
-            // TODO: TitleBar
+            // TODO: WPF - TitleBar
             /*
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
 
@@ -50,7 +50,7 @@ namespace MUXControlsTestApp
             */
 
             WindowEx.Current.SizeChanged += (s, e) => UpdateAppTitle();
-            // TODO: TitleBar
+            // TODO: WPF - TitleBar
             //coreTitleBar.LayoutMetricsChanged += (s, e) => UpdateAppTitle();
         }
 
@@ -234,14 +234,14 @@ namespace MUXControlsTestApp
 
         private void FlipExtendViewIntoTitleBar_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: TitleBar
+            // TODO: WPF - TitleBar
             //var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             //coreTitleBar.ExtendViewIntoTitleBar = !coreTitleBar.ExtendViewIntoTitleBar;
         }
 
         private void UpdateAppTitle()
         {
-            // TODO: UpdateAppTitle
+            // TODO: WPF - UpdateAppTitle
             //var full = (ApplicationView.GetForCurrentView().IsFullScreenMode);
             //var left = 12 + (full ? 0 : CoreApplication.GetCurrentView().TitleBar.SystemOverlayLeftInset);
             //AppTitle.Margin = new Thickness(left, 8, 0, 0);
