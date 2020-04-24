@@ -117,6 +117,12 @@ namespace ModernWpf.Controls
                 }
             }
 
+            if (e.OriginalSource is UIElement originalElement &&
+                TitleBarControl.GetInsideTitleBar(originalElement))
+            {
+                return;
+            }
+
             if (IsPaneOpen)
             {
                 e.Handled = true;
