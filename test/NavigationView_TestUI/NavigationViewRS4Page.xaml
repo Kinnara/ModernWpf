@@ -12,7 +12,7 @@
     Loaded="TestPage_Loaded">
 
     <Page.Resources>
-        <Style x:Name="AlternateToggleButtonStyle" TargetType="Button">
+        <Style x:Key="AlternateToggleButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
             <Setter Property="Content" Value="yo"/>
             <Setter Property="Background" Value="Chartreuse"/>
         </Style>
