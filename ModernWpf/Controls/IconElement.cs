@@ -18,6 +18,8 @@ namespace ModernWpf.Controls
         {
         }
 
+        #region Foreground
+
         /// <summary>
         /// Identifies the Foreground dependency property.
         /// </summary>
@@ -25,7 +27,20 @@ namespace ModernWpf.Controls
                 TextElement.ForegroundProperty.AddOwner(
                         typeof(IconElement),
                         new FrameworkPropertyMetadata(SystemColors.ControlTextBrush,
-                            FrameworkPropertyMetadataOptions.Inherits));
+                            FrameworkPropertyMetadataOptions.Inherits,
+                            OnForegroundPropertyChanged));
+
+        private static void OnForegroundPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((IconElement)sender).OnForegroundPropertyChanged(args);
+        }
+
+        private void OnForegroundPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            var baseValueSource = DependencyPropertyHelper.GetValueSource(this, args.Property).BaseValueSource;
+            _isForegroundDefaultOrInherited = baseValueSource <= BaseValueSource.Inherited;
+            UpdateShouldInheritForegroundFromVisualParent();
+        }
 
         /// <summary>
         /// Gets or sets a brush that describes the foreground color.
@@ -39,6 +54,8 @@ namespace ModernWpf.Controls
             get { return (Brush)GetValue(ForegroundProperty); }
             set { SetValue(ForegroundProperty, value); }
         }
+
+        #endregion
 
         #region VisualParentForeground
 
@@ -98,6 +115,15 @@ namespace ModernWpf.Controls
         {
         }
 
+        private void UpdateShouldInheritForegroundFromVisualParent()
+        {
+            ShouldInheritForegroundFromVisualParent =
+                _isForegroundDefaultOrInherited &&
+                Parent != null &&
+                VisualParent != null &&
+                Parent != VisualParent;
+        }
+
         private protected UIElementCollection Children
         {
             get
@@ -141,8 +167,7 @@ namespace ModernWpf.Controls
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
             base.OnVisualParentChanged(oldParent);
-
-            ShouldInheritForegroundFromVisualParent = Parent != null && VisualParent != null && Parent != VisualParent;
+            UpdateShouldInheritForegroundFromVisualParent();
         }
 
         private void EnsureLayoutRoot()
@@ -161,6 +186,7 @@ namespace ModernWpf.Controls
         }
 
         private Grid _layoutRoot;
+        private bool _isForegroundDefaultOrInherited = true;
         private bool _shouldInheritForegroundFromVisualParent;
     }
 }
