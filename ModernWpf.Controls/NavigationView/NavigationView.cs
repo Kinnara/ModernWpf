@@ -2722,7 +2722,7 @@ namespace ModernWpf.Controls
                 m_topDataProvider.MoveAllItemsToPrimaryList();
             }
 
-            m_lastSelectedItemPendingAnimationInTopNav = (null);
+            m_lastSelectedItemPendingAnimationInTopNav = null;
         }
 
         internal int GetNavigationViewItemCountInPrimaryList()
@@ -2884,7 +2884,7 @@ namespace ModernWpf.Controls
                 // If we unselect an item, ListView doesn't tolerate setting the SelectedItem to null. 
                 // Instead we remove IsSelected from the item itself, and it make ListView to unselect it.
                 // If we select an item, we follow the unselect to simplify the code.
-                container.IsSelected = (selected);
+                container.IsSelected = selected;
             }
             else if (selected)
             {
@@ -2964,7 +2964,7 @@ namespace ModernWpf.Controls
                 // because listview doesn't raise SelectionChange.
                 ChangeSelectStatusForItem(nextItem, false /*selected*/);
             }
-            SelectedItem = (selectedItem);
+            SelectedItem = selectedItem;
         }
 
         void CloseTopNavigationViewFlyout()
@@ -3220,7 +3220,7 @@ namespace ModernWpf.Controls
                 CollectionHelper.unique_push_back(itemsToBeAdded, selectedOverflowItemIndex);
 
                 // Keep track of the item being moved in order to know where to animate selection indicator
-                m_lastSelectedItemPendingAnimationInTopNav = (itemBeingMoved);
+                m_lastSelectedItemPendingAnimationInTopNav = itemBeingMoved;
                 if (ip != null && ip.GetSize() > 0)
                 {
                     foreach (var it in itemsToBeRemoved)
@@ -3307,7 +3307,7 @@ namespace ModernWpf.Controls
 
 
                 // Check whether items following the selected item are out of order
-                while (!needRearrange && nextIndexInPrimary < (int)(primaryListSize))
+                while (!needRearrange && nextIndexInPrimary < (int)primaryListSize)
                 {
                     List<int> nextIndexInVector = new List<int>();
                     nextIndexInVector.Add(nextIndexInPrimary);
@@ -4372,9 +4372,9 @@ namespace ModernWpf.Controls
 
         void RaiseDisplayModeChanged(NavigationViewDisplayMode displayMode)
         {
-            SetValue(DisplayModeProperty, (displayMode));
+            SetValue(DisplayModeProperty, displayMode);
             var eventArgs = new NavigationViewDisplayModeChangedEventArgs();
-            eventArgs.DisplayMode = (displayMode);
+            eventArgs.DisplayMode = displayMode;
             DisplayModeChanged?.Invoke(this, eventArgs);
         }
 
@@ -4570,7 +4570,7 @@ namespace ModernWpf.Controls
         IndexPath SearchEntireTreeForIndexPath(NavigationViewItem parentContainer, object data, IndexPath ip)
         {
             bool areChildrenRealized = false;
-            if ((parentContainer).GetRepeater() is { } childrenRepeater)
+            if (parentContainer.GetRepeater() is { } childrenRepeater)
             {
                 if (DoesRepeaterHaveRealizedContainers(childrenRepeater))
                 {
@@ -4908,7 +4908,7 @@ namespace ModernWpf.Controls
         {
             if (DoesNavigationViewItemHaveChildren(nvi))
             {
-                nvi.IsExpanded = (isExpanded);
+                nvi.IsExpanded = isExpanded;
             }
         }
 
@@ -5131,14 +5131,14 @@ namespace ModernWpf.Controls
         void RaiseExpandingEvent(NavigationViewItemBase container)
         {
             var eventArgs = new NavigationViewItemExpandingEventArgs(this);
-            eventArgs.ExpandingItemContainer = (container);
+            eventArgs.ExpandingItemContainer = container;
             Expanding?.Invoke(this, eventArgs);
         }
 
         void RaiseCollapsedEvent(NavigationViewItemBase container)
         {
             var eventArgs = new NavigationViewItemCollapsedEventArgs(this);
-            eventArgs.CollapsedItemContainer = (container);
+            eventArgs.CollapsedItemContainer = container;
             Collapsed?.Invoke(this, eventArgs);
         }
 

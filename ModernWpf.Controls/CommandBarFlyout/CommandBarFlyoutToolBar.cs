@@ -765,7 +765,7 @@ namespace ModernWpf.Controls.Primitives
                         {
                             Control focusedControl = null;
                             int startIndex = 0;
-                            int endIndex = (PrimaryCommands.Count);
+                            int endIndex = PrimaryCommands.Count;
                             int deltaIndex = 1;
 
                             if (isLeft || isUp)

@@ -35,7 +35,7 @@ namespace ModernWpf.Controls
 
             if (GetTemplateChild(c_rootGrid) is Grid rootGrid)
             {
-                m_rootGrid = (rootGrid);
+                m_rootGrid = rootGrid;
             }
 
             UpdateVisualState(false /*useTransitions*/);

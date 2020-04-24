@@ -344,7 +344,7 @@ namespace ModernWpf.Controls
 
                 Clear();
 
-                m_dataSource = (newValue);
+                m_dataSource = newValue;
                 SyncAndInitVectorFlagsWithID(NavigationViewSplitVectorID.NotInitialized, DefaultAttachedData());
 
                 if (newValue != null)

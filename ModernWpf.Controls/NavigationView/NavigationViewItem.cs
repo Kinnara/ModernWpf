@@ -128,7 +128,7 @@ namespace ModernWpf.Controls
                 UpdateRepeaterItemsSource();
             }
 
-            m_flyoutContentGrid = (GetTemplateChildT<Grid>(c_flyoutContentGrid, controlProtected));
+            m_flyoutContentGrid = GetTemplateChildT<Grid>(c_flyoutContentGrid, controlProtected);
 
             m_appliedTemplate = true;
             UpdateItemIndentation();
