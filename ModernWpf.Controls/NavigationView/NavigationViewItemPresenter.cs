@@ -17,6 +17,7 @@ namespace ModernWpf.Controls.Primitives
         const string c_expandCollapseChevron = "ExpandCollapseChevron";
         const string c_expandCollapseRotateExpandedStoryboard = "ExpandCollapseRotateExpandedStoryboard";
         const string c_expandCollapseRotateCollapsedStoryboard = "ExpandCollapseRotateCollapsedStoryboard";
+        const string c_expandCollapseRotateTransform = "ExpandCollapseChevronRotateTransform";
 
         const string c_iconBoxColumnDefinitionName = "IconColumn";
 
@@ -102,8 +103,15 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
-            m_chevronExpandedStoryboard = GetTemplateChildT<Storyboard>(c_expandCollapseRotateExpandedStoryboard, this);
-            m_chevronCollapsedStoryboard = GetTemplateChildT<Storyboard>(c_expandCollapseRotateCollapsedStoryboard, this);
+            //m_chevronExpandedStoryboard = GetTemplateChildT<Storyboard>(c_expandCollapseRotateExpandedStoryboard, this);
+            //m_chevronCollapsedStoryboard = GetTemplateChildT<Storyboard>(c_expandCollapseRotateCollapsedStoryboard, this);
+            if (this.GetTemplateRoot() is FrameworkElement templateRoot)
+            {
+                m_chevronExpandedStoryboard = templateRoot.Resources[c_expandCollapseRotateExpandedStoryboard] as Storyboard;
+                m_chevronCollapsedStoryboard = templateRoot.Resources[c_expandCollapseRotateCollapsedStoryboard] as Storyboard;
+            }
+
+            m_expandCollapseRotateTransform = GetTemplateChildT<RotateTransform>(c_expandCollapseRotateTransform, this);
 
             UpdateMargin();
         }
@@ -116,12 +124,22 @@ namespace ModernWpf.Controls.Primitives
                 {
                     openStoryboard.Begin();
                 }
+
+                if (m_expandCollapseRotateTransform != null)
+                {
+                    m_expandCollapseRotateTransform.Angle = 180;
+                }
             }
             else
             {
                 if (m_chevronCollapsedStoryboard is { } closedStoryboard)
                 {
                     closedStoryboard.Begin();
+                }
+
+                if (m_expandCollapseRotateTransform != null)
+                {
+                    m_expandCollapseRotateTransform.Angle = 0;
                 }
             }
         }
@@ -206,5 +224,7 @@ namespace ModernWpf.Controls.Primitives
 
         Storyboard m_chevronExpandedStoryboard;
         Storyboard m_chevronCollapsedStoryboard;
+
+        RotateTransform m_expandCollapseRotateTransform;
     }
 }
