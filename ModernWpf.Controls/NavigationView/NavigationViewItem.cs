@@ -32,7 +32,8 @@ namespace ModernWpf.Controls
         const string c_enabled = "Enabled";
         const string c_normal = "Normal";
         const string c_chevronHidden = "ChevronHidden";
-        const string c_chevronVisible = "ChevronVisible";
+        const string c_chevronVisibleOpen = "ChevronVisibleOpen";
+        const string c_chevronVisibleClosed = "ChevronVisibleClosed";
 
         internal void UpdateVisualStateNoTransition()
         {
@@ -133,6 +134,11 @@ namespace ModernWpf.Controls
             UpdateItemIndentation();
             UpdateVisualStateNoTransition();
             ReparentRepeater();
+            // We dont want to update the repeater visibilty during OnApplyTemplate if NavigationView is in a mode when items are shown in a flyout
+            if (!ShouldRepeaterShowInFlyout())
+            {
+                ShowHideChildren();
+            }
 
             /*
             var visual = ElementCompositionPreview.GetElementVisual(this);
@@ -484,7 +490,7 @@ namespace ModernWpf.Controls
         {
             if (m_navigationViewItemPresenter is { } presenter)
             {
-                var chevronState = HasChildren() && !(m_isClosedCompact && ShouldRepeaterShowInFlyout()) ? c_chevronVisible : c_chevronHidden;
+                var chevronState = HasChildren() && !(m_isClosedCompact && ShouldRepeaterShowInFlyout()) ? (IsExpanded ? c_chevronVisibleOpen : c_chevronVisibleClosed) : c_chevronHidden;
                 VisualStateManager.GoToState(m_navigationViewItemPresenter, chevronState, true);
             }
         }
@@ -534,33 +540,36 @@ namespace ModernWpf.Controls
 
         internal void ShowHideChildren()
         {
-            bool shouldShowChildren = IsExpanded;
-            var visibility = shouldShowChildren ? Visibility.Visible : Visibility.Collapsed;
-            m_repeater.Visibility = (visibility);
-
-            if (ShouldRepeaterShowInFlyout())
+            if (m_repeater is { } repeater)
             {
-                if (shouldShowChildren)
-                {
-                    // Verify that repeater is parented correctly
-                    if (!m_isRepeaterParentedToFlyout)
-                    {
-                        ReparentRepeater();
-                    }
+                bool shouldShowChildren = IsExpanded;
+                var visibility = shouldShowChildren ? Visibility.Visible : Visibility.Collapsed;
+                repeater.Visibility = visibility;
 
-                    // There seems to be a race condition happening which sometimes
-                    // prevents the opening of the flyout. Queue callback as a workaround.
-                    SharedHelpers.QueueCallbackForCompositionRendering(
-                        () =>
-                        {
-                            FlyoutBase.ShowAttachedFlyout(m_rootGrid);
-                        });
-                }
-                else
+                if (ShouldRepeaterShowInFlyout())
                 {
-                    if (FlyoutBase.GetAttachedFlyout(m_rootGrid) is { } flyout)
+                    if (shouldShowChildren)
                     {
-                        flyout.Hide();
+                        // Verify that repeater is parented correctly
+                        if (!m_isRepeaterParentedToFlyout)
+                        {
+                            ReparentRepeater();
+                        }
+
+                        // There seems to be a race condition happening which sometimes
+                        // prevents the opening of the flyout. Queue callback as a workaround.
+                        SharedHelpers.QueueCallbackForCompositionRendering(
+                            () =>
+                            {
+                                FlyoutBase.ShowAttachedFlyout(m_rootGrid);
+                            });
+                    }
+                    else
+                    {
+                        if (FlyoutBase.GetAttachedFlyout(m_rootGrid) is { } flyout)
+                        {
+                            flyout.Hide();
+                        }
                     }
                 }
             }

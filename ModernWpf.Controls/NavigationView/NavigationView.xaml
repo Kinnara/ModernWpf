@@ -208,11 +208,24 @@
 
                             <VisualStateGroup x:Name="ChevronStates">
                                 <VisualState x:Name="ChevronHidden"/>
-                                <VisualState x:Name="ChevronVisible">
+                                <VisualState x:Name="ChevronVisibleOpen">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="180" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ChevronVisibleClosed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -509,11 +522,24 @@
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ChevronStates">
                                 <VisualState x:Name="ChevronHidden"/>
-                                <VisualState x:Name="ChevronVisible">
+                                <VisualState x:Name="ChevronVisibleOpen">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="180" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ChevronVisibleClosed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -686,11 +712,24 @@
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ChevronStates">
                                 <VisualState x:Name="ChevronHidden"/>
-                                <VisualState x:Name="ChevronVisible">
+                                <VisualState x:Name="ChevronVisibleOpen">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="180" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ChevronVisibleClosed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -1237,6 +1276,7 @@
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Top">
                                             <ScrollViewer
+                                                KeyboardNavigation.TabNavigation="Once"
                                                 VerticalScrollBarVisibility="Auto">
                                                 <local:ItemsRepeater 
                                                         x:Name="MenuItemsHost"
@@ -1356,6 +1396,7 @@
         <!--<Setter Property="UseSystemFocusVisuals" Value="True" />-->
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="Once"/>
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -1436,6 +1477,7 @@
                             Content="{TemplateBinding Content}"
                             CornerRadius="{TemplateBinding CornerRadius}"
                             IsTabStop="False">
+                            <!-- TODO: Control.IsTemplateFocusTarget="True" -->
                         </primitives:NavigationViewItemPresenter>
                         <local:ItemsRepeater
                                 Grid.Row="1"

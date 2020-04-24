@@ -123,7 +123,6 @@ namespace ModernWpf.Controls
             {
                 InputHelper.RemoveTappedHandler(m_settingsItem, OnNavigationViewItemTapped);
                 m_settingsItem.KeyDown -= OnNavigationViewItemKeyDown;
-                m_settingsItem.KeyUp -= OnNavigationViewItemKeyUp;
                 m_settingsItem = null;
             }
 
@@ -154,9 +153,6 @@ namespace ModernWpf.Controls
                 m_leftNavRepeater.ElementPrepared -= OnRepeaterElementPrepared;
                 m_leftNavRepeater.ElementClearing -= OnRepeaterElementClearing;
                 m_leftNavRepeater.Loaded -= OnRepeaterLoaded;
-                m_leftNavRepeaterFocusHelper.GettingFocus -= OnRepeaterGettingFocus;
-                m_leftNavRepeaterFocusHelper.Dispose();
-                m_leftNavRepeaterFocusHelper = null;
                 m_leftNavRepeater = null;
             }
 
@@ -165,9 +161,6 @@ namespace ModernWpf.Controls
                 m_topNavRepeater.ElementPrepared -= OnRepeaterElementPrepared;
                 m_topNavRepeater.ElementClearing -= OnRepeaterElementClearing;
                 m_topNavRepeater.Loaded -= OnRepeaterLoaded;
-                m_topNavRepeaterFocusHelper.GettingFocus -= OnRepeaterGettingFocus;
-                m_topNavRepeaterFocusHelper.Dispose();
-                m_topNavRepeaterFocusHelper = null;
                 m_topNavRepeater = null;
             }
 
@@ -428,8 +421,6 @@ namespace ModernWpf.Controls
 
                 leftNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
                 leftNavRepeater.ElementClearing += OnRepeaterElementClearing;
-                m_leftNavRepeaterFocusHelper = new FocusHelper(leftNavRepeater);
-                m_leftNavRepeaterFocusHelper.GettingFocus += OnRepeaterGettingFocus;
 
                 leftNavRepeater.Loaded += OnRepeaterLoaded;
 
@@ -451,8 +442,6 @@ namespace ModernWpf.Controls
 
                 topNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
                 topNavRepeater.ElementClearing += OnRepeaterElementClearing;
-                m_topNavRepeaterFocusHelper = new FocusHelper(topNavRepeater);
-                m_topNavRepeaterFocusHelper.GettingFocus += OnRepeaterGettingFocus;
 
                 topNavRepeater.Loaded += OnRepeaterLoaded;
 
@@ -995,7 +984,6 @@ namespace ModernWpf.Controls
                     // Register for item events
                     InputHelper.AddTappedHandler(nvi, OnNavigationViewItemTapped);
                     nvi.KeyDown += OnNavigationViewItemKeyDown;
-                    nvi.KeyUp += OnNavigationViewItemKeyUp;
                     nvi.GotFocus += OnNavigationViewItemOnGotFocus;
                     nvi.IsSelectedChanged += OnNavigationViewItemIsSelectedPropertyChanged;
                     nvi.IsExpandedChanged += OnNavigationViewItemExpandedPropertyChanged;
@@ -1036,7 +1024,6 @@ namespace ModernWpf.Controls
                     // Revoke all the events that we were listing to on the item
                     InputHelper.RemoveTappedHandler(nvi, OnNavigationViewItemTapped);
                     nvi.KeyDown -= OnNavigationViewItemKeyDown;
-                    nvi.KeyUp -= OnNavigationViewItemKeyUp;
                     nvi.GotFocus -= OnNavigationViewItemOnGotFocus;
                     nvi.IsSelectedChanged -= OnNavigationViewItemIsSelectedPropertyChanged;
                     nvi.IsExpandedChanged -= OnNavigationViewItemExpandedPropertyChanged;
@@ -1072,12 +1059,10 @@ namespace ModernWpf.Controls
 
                 InputHelper.RemoveTappedHandler(settingsItem, OnNavigationViewItemTapped);
                 settingsItem.KeyDown -= OnNavigationViewItemKeyDown;
-                settingsItem.KeyUp -= OnNavigationViewItemKeyUp;
 
                 m_settingsItem = settingsItem;
                 InputHelper.AddTappedHandler(settingsItem, OnNavigationViewItemTapped);
                 settingsItem.KeyDown += OnNavigationViewItemKeyDown;
-                settingsItem.KeyUp += OnNavigationViewItemKeyUp;
 
                 var nvibImpl = settingsItem;
                 nvibImpl.SetNavigationViewParent(this);
@@ -2337,20 +2322,6 @@ namespace ModernWpf.Controls
             }
         }
 
-        void OnNavigationViewItemKeyUp(object sender, KeyEventArgs args)
-        {
-            // Because ListViewItem eats the events, we only get these keys on KeyUp.
-            /*
-            if (args.OriginalKey == Key.GamepadA)
-            {
-                if (sender is NavigationViewItem nvi)
-                {
-                    HandleKeyEventForNavigationViewItem(nvi, args);
-                }
-            }
-            */
-        }
-
         void OnNavigationViewItemKeyDown(object sender, KeyEventArgs args)
         {
             if (sender is NavigationViewItem nvi)
@@ -2364,7 +2335,6 @@ namespace ModernWpf.Controls
             var key = args.Key;
             if (IsSettingsItem(nvi))
             {
-                // Because ListViewItem eats the events, we only get these keys on KeyDown.
                 if (key == Key.Space ||
                     key == Key.Enter)
                 {
@@ -2389,6 +2359,95 @@ namespace ModernWpf.Controls
                         args.Handled = true;
                         KeyboardFocusLastItemFromItem(nvi);
                         break;
+                    case Key.Down:
+                        FocusNextDownItem(nvi, args);
+                        break;
+                    case Key.Up:
+                        FocusNextUpItem(nvi, args);
+                        break;
+                }
+            }
+        }
+
+        void FocusNextUpItem(NavigationViewItem nvi, KeyEventArgs args)
+        {
+            if (args.OriginalSource != nvi)
+            {
+                return;
+            }
+
+            bool shouldHandleFocus = true;
+            var nviImpl = nvi;
+            var nextFocusableElement = FocusManagerEx.FindNextFocusableElement(FocusNavigationDirection.Up);
+
+            if (nextFocusableElement is NavigationViewItem nextFocusableNVI)
+            {
+
+                var nextFocusableNVIImpl = nextFocusableNVI;
+
+                if (nextFocusableNVIImpl.Depth == nviImpl.Depth)
+                {
+                    // If we not at the top of the list for our current depth and the item above us has children, check whether we should move focus onto a child
+                    if (DoesNavigationViewItemHaveChildren(nextFocusableNVI))
+                    {
+                        // Focus on last lowest level visible container
+                        if (nextFocusableNVIImpl.GetRepeater() is { } childRepeater)
+                        {
+                            //if (FocusManager.FindLastFocusableElement(childRepeater) is { } lastFocusableElement)
+                            //{
+                            //    if (lastFocusableElement is Control lastFocusableNVI)
+                            //    {
+                            //        args.Handled = lastFocusableNVI.Focus(/*FocusState.Keyboard*/);
+                            //    }
+                            //}
+                            if (childRepeater.MoveFocus(new TraversalRequest(FocusNavigationDirection.Last)))
+                            {
+                                args.Handled = true;
+                            }
+                            else
+                            {
+                                args.Handled = nextFocusableNVIImpl.Focus(/*FocusState.Keyboard*/);
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        // Traversing up a list where XYKeyboardFocus will result in correct behavior
+                        shouldHandleFocus = false;
+                    }
+                }
+            }
+
+            // We are at the top of the list, focus on parent
+            if (shouldHandleFocus && !args.Handled && nviImpl.Depth > 0)
+            {
+                if (GetParentNavigationViewItemForContainer(nvi) is { } parentContainer)
+                {
+                    args.Handled = parentContainer.Focus(/*FocusState.Keyboard*/);
+                }
+            }
+        }
+
+        // If item has focusable children, move focus to first focusable child, otherise just defer to default XYKeyboardFocus behavior
+        void FocusNextDownItem(NavigationViewItem nvi, KeyEventArgs args)
+        {
+            if (args.OriginalSource != nvi)
+            {
+                return;
+            }
+
+            if (DoesNavigationViewItemHaveChildren(nvi))
+            {
+                var nviImpl = nvi;
+                if (nviImpl.GetRepeater() is { } childRepeater)
+                {
+                    //var firstFocusableElement = FocusManager.FindFirstFocusableElement(childRepeater);
+                    //if (firstFocusableElement is Control controlFirst)
+                    //{
+                    //    args.Handled = controlFirst.Focus(/*FocusState.Keyboard*/);
+                    //}
+                    args.Handled = childRepeater.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
                 }
             }
         }
@@ -2460,61 +2519,10 @@ namespace ModernWpf.Controls
             }
         }
 
-        void OnRepeaterGettingFocus(object sender, GettingFocusEventArgs args)
-        {
-            if (args.InputDevice == FocusInputDeviceKind.Keyboard)
-            {
-                if (args.OldFocusedElement is { } oldFocusedElement)
-                {
-                    var oldElementParent = VisualTreeHelper.GetParent(oldFocusedElement);
-                    ItemsRepeater rootRepeater;
-                    {
-                        ItemsRepeater init()
-                        {
-                            if (IsTopNavigationView())
-                            {
-                                return m_topNavRepeater;
-                            }
-                            return m_leftNavRepeater;
-                        }
-                        rootRepeater = init();
-                    }
-                    // If focus is coming from outside the root repeater, put focus on last focused item
-                    if (rootRepeater != oldElementParent)
-                    {
-                        if (args is IGettingFocusEventArgs2 argsAsIGettingFocusEventArgs2)
-                        {
-                            if (rootRepeater.TryGetElement(m_indexOfLastFocusedItem) is { } lastFocusedNvi)
-                            {
-                                if (argsAsIGettingFocusEventArgs2.TrySetNewFocusedElement(lastFocusedNvi))
-                                {
-                                    args.Handled = true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         void OnNavigationViewItemOnGotFocus(object sender, RoutedEventArgs e)
         {
             if (sender is NavigationViewItem nvi)
             {
-                // Store index of last focused item in order to get proper focus behavior.
-                // No need to keep track of last focused item if the item is in the overflow menu.
-                {
-                    int init()
-                    {
-                        if (IsTopNavigationView())
-                        {
-                            return m_topNavRepeater.GetElementIndex(nvi); ;
-                        }
-                        return m_leftNavRepeater.GetElementIndex(nvi);
-                    }
-                    m_indexOfLastFocusedItem = init();
-                }
-
                 // Achieve selection follows focus behavior
                 if (IsNavigationViewListSingleSelectionFollowsFocus())
                 {
@@ -5238,8 +5246,6 @@ namespace ModernWpf.Controls
         // 3, customer changed PaneDisplayMode.
         // 2 and 3 are internal implementation and will call by ClosePane/OpenPane. the flag is to indicate 1 if it's false
         bool m_isOpenPaneForInteraction = false;
-
-        int m_indexOfLastFocusedItem = -1;
 
         bool m_moveTopNavOverflowItemOnFlyoutClose = false;
 
