@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Shell;
 using System.Windows.Threading;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Input;
@@ -376,6 +377,8 @@ namespace ModernWpf.Controls
                     paneToggleButton.KeyboardAccelerators().Append(keyboardAccelerator);
                 }
                 */
+
+                WindowChrome.SetIsHitTestVisibleInChrome(paneToggleButton, true);
             }
 
             m_leftNavPaneHeaderContentBorder = GetTemplateChild(c_leftNavPaneHeaderContentBorder) as ContentControl;
@@ -534,6 +537,8 @@ namespace ModernWpf.Controls
 
                 string navigationName = Strings.NavigationBackButtonName;
                 AutomationProperties.SetName(backButton, navigationName);
+
+                WindowChrome.SetIsHitTestVisibleInChrome(backButton, true);
             }
 
             // Register for changes in title bar layout
@@ -563,6 +568,8 @@ namespace ModernWpf.Controls
 
                 string navigationName = Strings.NavigationCloseButtonName;
                 AutomationProperties.SetName(closeButton, navigationName);
+
+                WindowChrome.SetIsHitTestVisibleInChrome(closeButton, true);
             }
 
             if (GetTemplateChild(c_navViewCloseButtonToolTip) is ToolTip closeButtonToolTip)

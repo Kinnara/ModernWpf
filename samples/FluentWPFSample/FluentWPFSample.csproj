@@ -20,12 +20,10 @@
 
   <ItemGroup>
     <PackageReference Include="FluentWPF" Version="0.8.0" />
-    <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0748" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
-    <ProjectReference Include="..\..\ModernWpf.MahApps\ModernWpf.MahApps.csproj" />
     <ProjectReference Include="..\..\ModernWpf\ModernWpf.csproj" />
     <ProjectReference Include="..\SamplesCommon\SamplesCommon.csproj" />
   </ItemGroup>
