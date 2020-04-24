@@ -500,6 +500,7 @@ namespace ModernWpf.Controls
                     }
                     */
                     flyoutBase.Closing += OnFlyoutClosing;
+                    flyoutBase.Offset = 0;
                 }
             }
 

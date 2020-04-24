@@ -8,6 +8,7 @@ namespace ModernWpf.Controls
 {
     internal static class VisualStateUtil
     {
+        /*
         public static VisualStateGroup GetVisualStateGroup(FrameworkElement control, string groupName)
         {
             VisualStateGroup group = null;
@@ -22,11 +23,12 @@ namespace ModernWpf.Controls
             }
             return group;
         }
+        */
 
         public static void GotToStateIfGroupExists(Control control, string groupName, string stateName, bool useTransitions)
         {
-            var visualStateGroup = GetVisualStateGroup(control, groupName);
-            if (visualStateGroup != null)
+            //var visualStateGroup = GetVisualStateGroup(control, groupName);
+            //if (visualStateGroup != null)
             {
                 VisualStateManager.GoToState(control, stateName, useTransitions);
             }
