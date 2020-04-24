@@ -19,6 +19,7 @@ using NavigationViewItemInvokedEventArgs = ModernWpf.Controls.NavigationViewItem
 using NavigationViewOverflowLabelMode = ModernWpf.Controls.NavigationViewOverflowLabelMode;
 using NavigationViewBackButtonVisible = ModernWpf.Controls.NavigationViewBackButtonVisible;
 using ModernWpf.Media.Animation;
+using ModernWpf;
 
 namespace MUXControlsTestApp
 {
@@ -38,11 +39,10 @@ namespace MUXControlsTestApp
             NavView.ItemInvoked += NavView_ItemInvoked;
             NavView.SelectionChanged += NavView_SelectionChanged;
 
-            // TODO: WPF - TitleBar
-            /*
-            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            var coreTitleBar = CoreApplicationViewTitleBar.GetTitleBar(Application.Current.MainWindow);
 
             //remove the solid-colored backgrounds behind the caption controls and system back button
+            /*
             var viewTitleBar = ApplicationView.GetForCurrentView().TitleBar;
             viewTitleBar.ButtonBackgroundColor = Colors.Transparent;
             viewTitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
@@ -50,8 +50,7 @@ namespace MUXControlsTestApp
             */
 
             WindowEx.Current.SizeChanged += (s, e) => UpdateAppTitle();
-            // TODO: WPF - TitleBar
-            //coreTitleBar.LayoutMetricsChanged += (s, e) => UpdateAppTitle();
+            coreTitleBar.LayoutMetricsChanged += (s, e) => UpdateAppTitle();
         }
 
         private void PaneDisplayModeCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -234,17 +233,15 @@ namespace MUXControlsTestApp
 
         private void FlipExtendViewIntoTitleBar_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: WPF - TitleBar
-            //var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            //coreTitleBar.ExtendViewIntoTitleBar = !coreTitleBar.ExtendViewIntoTitleBar;
+            var coreTitleBar = CoreApplicationViewTitleBar.GetTitleBar(this);
+            coreTitleBar.ExtendViewIntoTitleBar = !coreTitleBar.ExtendViewIntoTitleBar;
         }
 
         private void UpdateAppTitle()
         {
-            // TODO: WPF - UpdateAppTitle
-            //var full = (ApplicationView.GetForCurrentView().IsFullScreenMode);
-            //var left = 12 + (full ? 0 : CoreApplication.GetCurrentView().TitleBar.SystemOverlayLeftInset);
-            //AppTitle.Margin = new Thickness(left, 8, 0, 0);
+            var full = false /*ApplicationView.GetForCurrentView().IsFullScreenMode*/;
+            var left = 12 + (full ? 0 : CoreApplicationViewTitleBar.GetTitleBar(Application.Current.MainWindow).SystemOverlayLeftInset);
+            AppTitle.Margin = new Thickness(left, 8, 0, 0);
         }
 
         private void TestFrameCheckbox_Checked(object sender, RoutedEventArgs e)

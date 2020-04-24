@@ -19,6 +19,7 @@ using NavigationViewItemBase = ModernWpf.Controls.NavigationViewItemBase;
 using NavigationViewSelectionFollowsFocus = ModernWpf.Controls.NavigationViewSelectionFollowsFocus;
 using NavigationViewItemInvokedEventArgs = ModernWpf.Controls.NavigationViewItemInvokedEventArgs;
 using ModernWpf.Controls;
+using ModernWpf;
 
 namespace MUXControlsTestApp
 {
@@ -210,15 +211,14 @@ namespace MUXControlsTestApp
                 TopPaddingRenderedValue.Text = paneContentGrid.ActualHeight.ToString();
             }
 
-            // TODO: WPF - TitleBar
-            //if (CoreApplication.GetCurrentView().TitleBar.IsVisible)
-            //{
-            //    TitleBarIsVisible.Text = "True";
-            //}
-            //else
-            //{
-            //    TitleBarIsVisible.Text = "False";
-            //}
+            if (CoreApplicationViewTitleBar.GetTitleBar(this).IsVisible)
+            {
+                TitleBarIsVisible.Text = "True";
+            }
+            else
+            {
+                TitleBarIsVisible.Text = "False";
+            }
         }
 
         private void EnableSelectionFollowsFocus_Click(object sender, RoutedEventArgs e)

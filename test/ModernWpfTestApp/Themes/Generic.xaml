@@ -24,7 +24,8 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal"
+                                        WindowChrome.IsHitTestVisibleInChrome="True">
                                 <Button x:Name="BackButton" Margin="0,0,4,0"
                                         Style="{DynamicResource AccentButtonStyle}"
                                         AutomationProperties.AutomationId="__BackButton" 

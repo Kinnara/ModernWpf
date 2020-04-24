@@ -3715,21 +3715,20 @@ namespace ModernWpf.Controls
         // So we do hook it in Loaded and Unhook it in Unloaded
         void OnUnloaded(object sender, RoutedEventArgs args)
         {
-            /*
-            m_titleBarMetricsChangedRevoker.revoke();
-            m_titleBarIsVisibleChangedRevoker.revoke();
-            */
+            if (m_coreTitleBar is { } coreTitleBar)
+            {
+                coreTitleBar.LayoutMetricsChanged -= OnTitleBarMetricsChanged;
+                coreTitleBar.IsVisibleChanged -= OnTitleBarIsVisibleChanged;
+            }
         }
 
         void OnLoaded(object sender, RoutedEventArgs args)
         {
-            /*
             if (m_coreTitleBar is { } coreTitleBar)
             {
-                m_titleBarMetricsChangedRevoker = coreTitleBar.LayoutMetricsChanged(auto_revoke, { this, NavigationView.OnTitleBarMetricsChanged });
-                m_titleBarIsVisibleChangedRevoker = coreTitleBar.IsVisibleChanged(auto_revoke, { this, NavigationView.OnTitleBarIsVisibleChanged });
+                coreTitleBar.LayoutMetricsChanged += OnTitleBarMetricsChanged;
+                coreTitleBar.IsVisibleChanged += OnTitleBarIsVisibleChanged;
             }
-            */
         }
 
         void OnIsPaneOpenChanged()
@@ -4283,7 +4282,7 @@ namespace ModernWpf.Controls
                     // Only add extra padding if the NavView is the "root" of the app,
                     // but not if the app is expanding into the titlebar
                     UIElement root = (Window.GetWindow(this) ?? Application.Current.MainWindow).Content as UIElement;
-                    GeneralTransform gt = TransformToVisual(root);
+                    GeneralTransform gt = this.SafeTransformToVisual(root);
                     Point pos = gt.Transform(new Point());
 
                     if (pos.Y == 0.0f)
