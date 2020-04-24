@@ -1254,7 +1254,10 @@ namespace ModernWpf.Controls
 
             if (AutoSuggestBox is { } autoSuggestBox)
             {
-                autoSuggestBox.Focus();
+                Dispatcher.BeginInvoke(() =>
+                {
+                    autoSuggestBox.Focus();
+                }, DispatcherPriority.Loaded);
             }
         }
 
