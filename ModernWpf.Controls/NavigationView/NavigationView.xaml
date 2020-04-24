@@ -1376,7 +1376,7 @@
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <!--<Setter Property="UseSystemFocusVisuals" Value="True" />-->
-        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource EmptyFocusVisual}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="Once"/>
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
@@ -1469,6 +1469,9 @@
                                 <local:StackLayout Orientation="Vertical"/>
                             </local:ItemsRepeater.Layout>
                         </local:ItemsRepeater>
+                        <Control
+                            x:Name="FocusVisual"
+                            Style="{DynamicResource CustomFocusVisual}" />
                         <primitives:FlyoutBase.AttachedFlyout>
                             <local:Flyout x:Name="ChildrenFlyout"
                                        Placement="RightEdgeAlignedTop">
@@ -1485,6 +1488,11 @@
                             </local:Flyout>
                         </primitives:FlyoutBase.AttachedFlyout>
                     </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ui:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
+                            <Setter TargetName="FocusVisual" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
