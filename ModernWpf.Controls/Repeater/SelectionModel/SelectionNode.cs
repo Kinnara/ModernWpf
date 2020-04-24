@@ -50,7 +50,7 @@ namespace ModernWpf.Controls
                         newDataSource = new InspectingDataSource(value); // newDataSource = winrt::ItemsSourceView(value);
                     }
 
-                    m_dataSource = (newDataSource);
+                    m_dataSource = newDataSource;
 
                     HookupCollectionChangedHandler();
                     OnSelectionChanged();
@@ -514,7 +514,7 @@ namespace ModernWpf.Controls
             bool selectionInvalidated = false;
             // Update ranges for leaf items
             List<IndexRange> toAdd = new List<IndexRange>();
-            for (int i = 0; i < (m_selected.Count); i++)
+            for (int i = 0; i < m_selected.Count; i++)
             {
                 var range = m_selected[i];
 

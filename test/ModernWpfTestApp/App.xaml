@@ -38,6 +38,12 @@
                 <Setter Property="Margin" Value="0,0,0,8" />
             </Style>
 
+            <Style x:Key="StandardGroupingStackPanel" TargetType="StackPanelEx">
+                <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundChromeGrayBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="8"/>
+            </Style>
+
             <Style x:Key="StandardGroupingBorder" TargetType="Border">
                 <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundChromeGrayBrush}" />
                 <Setter Property="BorderThickness" Value="1" />

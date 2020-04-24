@@ -166,10 +166,12 @@ namespace ModernWpf.Controls.Primitives
 
         internal PopupEx InternalPopup => m_popup;
 
+        internal double Offset { get; set; } = s_offset;
+
         public event EventHandler<object> Opening;
         public event EventHandler<object> Opened;
         public event EventHandler<object> Closed;
-        internal event EventHandler<object> Closing;
+        internal event TypedEventHandler<FlyoutBase, FlyoutBaseClosingEventArgs> Closing;
 
         public void ShowAt(FrameworkElement placementTarget)
         {
@@ -410,8 +412,8 @@ namespace ModernWpf.Controls.Primitives
                     case FlyoutPlacementMode.BottomEdgeAlignedLeft:
                     case FlyoutPlacementMode.BottomEdgeAlignedRight:
                         value = new Rect(
-                            new Point(0, -s_offset),
-                            new Point(targetSize.Width, targetSize.Height + s_offset));
+                            new Point(0, -Offset),
+                            new Point(targetSize.Width, targetSize.Height + Offset));
                         break;
                     case FlyoutPlacementMode.Left:
                     case FlyoutPlacementMode.Right:
@@ -420,8 +422,8 @@ namespace ModernWpf.Controls.Primitives
                     case FlyoutPlacementMode.RightEdgeAlignedTop:
                     case FlyoutPlacementMode.RightEdgeAlignedBottom:
                         value = new Rect(
-                            new Point(-s_offset, 0),
-                            new Point(targetSize.Width + s_offset, targetSize.Height));
+                            new Point(-Offset, 0),
+                            new Point(targetSize.Width + Offset, targetSize.Height));
                         break;
                 }
             }
@@ -436,7 +438,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupClosing(object sender, EventArgs e)
         {
-            Closing?.Invoke(this, null);
+            Closing?.Invoke(this, new FlyoutBaseClosingEventArgs()); // TODO: Cancel
             m_closing = true;
         }
 

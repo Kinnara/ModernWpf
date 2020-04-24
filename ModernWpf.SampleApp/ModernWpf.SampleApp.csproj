@@ -5,6 +5,7 @@
     <TargetFrameworks>netcoreapp3.1;net45;net462</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">

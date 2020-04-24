@@ -40,7 +40,7 @@ namespace MUXControlsTestApp
                 if (primaryEllipse != null)
                 {
                     // Capture initial state of the property
-                    PrimaryEllipseFillChanged(primaryEllipse, EventArgs.Empty);
+                    PrimaryEllipseFillChanged(primaryEllipse, Ellipse.FillProperty);
 
                     primaryEllipse.RegisterPropertyChangedCallback(Ellipse.FillProperty, PrimaryEllipseFillChanged);
                     primaryEllipseLoaded = true;
@@ -97,7 +97,7 @@ namespace MUXControlsTestApp
             }
         }
 
-        private void PrimaryEllipseFillChanged(object o, EventArgs e)
+        private void PrimaryEllipseFillChanged(DependencyObject o, DependencyProperty p)
         {
             if (((Ellipse)o).Fill != null)
             {

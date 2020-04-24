@@ -101,7 +101,7 @@
             <Border
                 x:Name="InfoGrid"
                 Margin="12,0,0,0"
-                Style="{DynamicResource StandardGroupingStackPanel}"
+                Style="{DynamicResource StandardGroupingBorder}"
                 MinWidth="250"
                 VerticalAlignment="Top">
                 <StackPanel>

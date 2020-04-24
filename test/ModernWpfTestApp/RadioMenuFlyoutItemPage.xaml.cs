@@ -6,6 +6,7 @@ using MUXControlsTestApp.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 
@@ -57,7 +58,7 @@ namespace MUXControlsTestApp
             }
         }
 
-        private void IsCheckedChanged(object o, EventArgs e)
+        private void IsCheckedChanged(DependencyObject o, DependencyProperty p)
         {
             RadioMenuItem radioItem = o as RadioMenuItem;
             TextBlock stateText;

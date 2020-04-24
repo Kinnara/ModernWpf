@@ -330,6 +330,9 @@
                                 </BooleanAnimationUsingKeyFrames>
                             </Storyboard>
                         </Border.Resources>
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:SimpleVisualStateManager />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <root:VisualStateGroupEx x:Name="ConsciousStates">
                                 <VisualStateGroup.Transitions>
@@ -566,6 +569,9 @@
                                         </BooleanAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </Border.Resources>
+                                <VisualStateManager.CustomVisualStateManager>
+                                    <root:SimpleVisualStateManager />
+                                </VisualStateManager.CustomVisualStateManager>
                                 <VisualStateManager.VisualStateGroups>
                                     <root:VisualStateGroupEx x:Name="ConsciousStates">
                                         <VisualStateGroup.Transitions>

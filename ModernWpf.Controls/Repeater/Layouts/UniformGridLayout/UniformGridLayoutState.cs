@@ -115,7 +115,7 @@ namespace ModernWpf.Controls
                 }
 
                 var usedSpace = (numItemsPerColumn * (itemSizeMinor + minorItemSpacing)) - minorItemSpacing;
-                var remainingSpace = ((int)(availableSizeMinor - usedSpace));
+                var remainingSpace = (int)(availableSizeMinor - usedSpace);
                 extraMinorPixelsForEachItem = remainingSpace / ((int)numItemsPerColumn);
             }
 

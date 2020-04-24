@@ -35,9 +35,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerShellSample", "samples
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModernWpfTestApp", "test\ModernWpfTestApp\ModernWpfTestApp.csproj", "{BB64399B-330B-45BA-BE71-5FFA6CE841A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragablzSample", "samples\DragablzSample\DragablzSample.csproj", "{917743DB-EF8A-465C-91F1-FCAD2AB6430F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DragablzSample", "samples\DragablzSample\DragablzSample.csproj", "{917743DB-EF8A-465C-91F1-FCAD2AB6430F}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NavigationView_TestUI", "test\NavigationView_TestUI\NavigationView_TestUI.shproj", "{02CA89C3-68D7-4C80-9278-9A0F53FBE199}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAppUtils", "test\TestAppUtils\TestAppUtils.csproj", "{48F790D9-2231-477E-839B-C4F5C6A20595}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		test\NavigationView_TestUI\NavigationView_TestUI.projitems*{02ca89c3-68d7-4c80-9278-9a0f53fbe199}*SharedItemsImports = 13
+		test\NavigationView_TestUI\NavigationView_TestUI.projitems*{bb64399b-330b-45ba-be71-5ffa6ce841a8}*SharedItemsImports = 5
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM = Debug|ARM
@@ -291,6 +299,26 @@ Global
 		{917743DB-EF8A-465C-91F1-FCAD2AB6430F}.Release|x64.Build.0 = Release|Any CPU
 		{917743DB-EF8A-465C-91F1-FCAD2AB6430F}.Release|x86.ActiveCfg = Release|Any CPU
 		{917743DB-EF8A-465C-91F1-FCAD2AB6430F}.Release|x86.Build.0 = Release|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Debug|ARM.Build.0 = Debug|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Debug|x64.Build.0 = Debug|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Debug|x86.Build.0 = Debug|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Release|ARM.ActiveCfg = Release|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Release|ARM.Build.0 = Release|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Release|ARM64.Build.0 = Release|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Release|x64.ActiveCfg = Release|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Release|x64.Build.0 = Release|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Release|x86.ActiveCfg = Release|Any CPU
+		{48F790D9-2231-477E-839B-C4F5C6A20595}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -304,6 +332,8 @@ Global
 		{0A0A2998-856F-48CE-AC75-F500E5DF8ECB} = {A96F98E9-18B5-4863-8F28-9B7BDF70A128}
 		{BB64399B-330B-45BA-BE71-5FFA6CE841A8} = {0F1BC12B-7013-4238-8001-39C8F53E9363}
 		{917743DB-EF8A-465C-91F1-FCAD2AB6430F} = {A96F98E9-18B5-4863-8F28-9B7BDF70A128}
+		{02CA89C3-68D7-4C80-9278-9A0F53FBE199} = {0F1BC12B-7013-4238-8001-39C8F53E9363}
+		{48F790D9-2231-477E-839B-C4F5C6A20595} = {0F1BC12B-7013-4238-8001-39C8F53E9363}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6251E140-0FAA-4DE9-B245-1C5BE188E578}

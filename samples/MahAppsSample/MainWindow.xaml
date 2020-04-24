@@ -13,13 +13,18 @@
     Title="MahApps.Metro Integration"
     Width="1366"
     Height="768"
+    MinWidth="500"
+    MinHeight="500"
     WindowStartupLocation="CenterScreen"
     ui:WindowHelper.UseModernWindowStyle="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <ui:HamburgerMenuTitleBarPaddingConverter x:Key="TitleBarPaddingConverter" />
+
+        <DataTemplate x:Key="NavigationViewHeaderTemplate">
+            <TextBlock Text="{Binding}" Margin="12,32,0,0" />
+        </DataTemplate>
     </Window.Resources>
 
     <Grid>
@@ -40,145 +45,68 @@
                 Style="{StaticResource CaptionTextBlockStyle}" />
         </Grid>
 
-        <ui:HamburgerMenuEx
+        <ui:NavigationView
             x:Name="NavView"
-            PaneTitle="Pane Title"
-            BackButtonCommand="BrowseBack"
-            BackButtonCommandTarget="{Binding ElementName=ContentFrame}"
-            IsBackButtonVisible="True"
+            AlwaysShowHeader="True"
+            Header="{Binding SelectedItem.Content, RelativeSource={RelativeSource Self}, FallbackValue=' '}"
+            HeaderTemplate="{StaticResource NavigationViewHeaderTemplate}"
+            IsBackButtonVisible="Visible"
+            IsTitleBarAutoPaddingEnabled="False"
             IsPaneOpen="True"
+            OpenPaneLength="240"
             IsBackEnabled="{Binding ElementName=ContentFrame, Path=CanGoBack}"
+            BackRequested="NavView_BackRequested"
             ItemInvoked="NavView_ItemInvoked"
-            PaneOpened="NavView_PaneOpened"
-            PaneClosed="NavView_PaneClosed">
-            <ui:HamburgerMenuEx.Padding>
-                <MultiBinding Converter="{StaticResource TitleBarPaddingConverter}">
-                    <Binding Path="(ui:TitleBar.ExtendViewIntoTitleBar)" ElementName="Window" />
-                    <Binding Path="(ui:TitleBar.Height)" ElementName="Window" />
-                </MultiBinding>
-            </ui:HamburgerMenuEx.Padding>
-            <ui:HamburgerMenuEx.HeaderTemplate>
-                <DataTemplate>
-                    <TextBlock
-                        Text="{Binding}"
-                        Margin="12,0,0,0" />
-                </DataTemplate>
-            </ui:HamburgerMenuEx.HeaderTemplate>
-            <ui:HamburgerMenuEx.AutoSuggestBox>
-                <ui:AutoSuggestBox
-                    PlaceholderText="Hint text"
-                    QueryIcon="Find" />
-            </ui:HamburgerMenuEx.AutoSuggestBox>
+            PaneOpening="NavView_PaneOpening"
+            PaneClosing="NavView_PaneClosing"
+            DisplayModeChanged="NavView_DisplayModeChanged">
+            <ui:NavigationView.AutoSuggestBox>
+                <ui:AutoSuggestBox PlaceholderText="Hint text" QueryIcon="Find" />
+            </ui:NavigationView.AutoSuggestBox>
 
-            <mah:HamburgerMenu.ItemsSource>
-                <mah:HamburgerMenuItemCollection x:Name="NavViewItems">
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItemHeader Content="Controls" />
 
-                    <mah:HamburgerMenuHeaderItem Label="Controls" />
+                <ui:NavigationViewItem Content="Overview" Tag="ControlPages/ControlsPage.xaml">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon Glyph="&#xE71D;" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
 
-                    <mah:HamburgerMenuIconItem
-                        Label="Overview"
-                        Tag="ControlPages/ControlsPage.xaml">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:FontIcon Glyph="&#xE71D;" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
+                <ui:NavigationViewItem Content="Theme" Tag="ControlPages/ThemePage.xaml">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon Glyph="&#xE790;" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
 
-                    <mah:HamburgerMenuIconItem
-                        Label="Theme"
-                        Tag="ControlPages/ThemePage.xaml">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:FontIcon Glyph="&#xE790;" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
+                <ui:NavigationViewItem Content="FlipView" Tag="ControlPages/FlipViewPage.xaml">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:BitmapIcon UriSource="/Assets/FlipView.png" ShowAsMonochrome="False" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
 
-                    <mah:HamburgerMenuIconItem
-                        Label="FlipView"
-                        Tag="ControlPages/FlipViewPage.xaml">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <Image
-                                Stretch="None"
-                                Source="/Assets/FlipView.png" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
+                <ui:NavigationViewItem Content="HamburgerMenuEx" Tag="ControlPages/HamburgerMenuExPage.xaml" Icon="GlobalNavigationButton"/>
 
-                    <mah:HamburgerMenuIconItem
-                        Label="HamburgerMenuEx"
-                        Tag="ControlPages/HamburgerMenuExPage.xaml">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:SymbolIcon Symbol="GlobalNavigationButton" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
+                <ui:NavigationViewItem Content="NumericUpDown" Tag="ControlPages/NumericUpDownPage.xaml">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:FontIcon Glyph="&#xEC8F;" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
 
-                    <mah:HamburgerMenuIconItem
-                        Label="NumericUpDown"
-                        Tag="ControlPages/NumericUpDownPage.xaml">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:FontIcon Glyph="&#xEC8F;" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
+                <ui:NavigationViewItem Content="SimpleTimePicker" Tag="ControlPages/SimpleTimePickerPage.xaml">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:BitmapIcon UriSource="/Assets/TimePicker.png" ShowAsMonochrome="False" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
 
-                    <mah:HamburgerMenuIconItem
-                        Label="SimpleTimePicker"
-                        Tag="ControlPages/SimpleTimePickerPage.xaml">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <Image
-                                Stretch="None"
-                                Source="/Assets/TimePicker.png" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
+                <ui:NavigationViewItemHeader Content="Sample Pages" />
+                <ui:NavigationViewItem Content="Sample Page 1" Tag="{x:Static sc:SamplePageSources.SamplePage1}" Icon="Home"/>
+                <ui:NavigationViewItem Content="Sample Page 2" Tag="{x:Static sc:SamplePageSources.SamplePage2}" Icon="Keyboard"/>
+                <ui:NavigationViewItem Content="Sample Page 3" Tag="{x:Static sc:SamplePageSources.SamplePage3}" Icon="Library"/>
+                <ui:NavigationViewItem Content="Sample Page 4" Tag="{x:Static sc:SamplePageSources.SamplePage4}" Icon="Mail"/>
+            </ui:NavigationView.MenuItems>
 
-                    <mah:HamburgerMenuHeaderItem Label="Sample Pages" />
-
-                    <mah:HamburgerMenuIconItem
-                        Label="Sample Page 1"
-                        Tag="{x:Static sc:SamplePageSources.SamplePage1}">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:SymbolIcon Symbol="Home" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
-
-                    <mah:HamburgerMenuIconItem
-                        Label="Sample Page 2"
-                        Tag="{x:Static sc:SamplePageSources.SamplePage2}">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:SymbolIcon Symbol="Keyboard" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
-
-                    <mah:HamburgerMenuIconItem
-                        Label="Sample Page 3"
-                        Tag="{x:Static sc:SamplePageSources.SamplePage3}">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:SymbolIcon Symbol="Library" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
-
-                    <mah:HamburgerMenuIconItem
-                        Label="Sample Page 4"
-                        Tag="{x:Static sc:SamplePageSources.SamplePage4}">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:SymbolIcon Symbol="Mail" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
-
-                </mah:HamburgerMenuItemCollection>
-            </mah:HamburgerMenu.ItemsSource>
-
-            <mah:HamburgerMenu.OptionsItemsSource>
-                <mah:HamburgerMenuItemCollection x:Name="NavViewOptions">
-                    <mah:HamburgerMenuIconItem
-                        Label="Settings"
-                        Tag="SettingsPage.xaml">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:SymbolIcon Symbol="Setting" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
-                </mah:HamburgerMenuItemCollection>
-            </mah:HamburgerMenu.OptionsItemsSource>
-
-            <ui:TransitionFrame
-                x:Name="ContentFrame"
-                Navigated="ContentFrame_Navigated" />
-        </ui:HamburgerMenuEx>
+            <ui:TransitionFrame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
+        </ui:NavigationView>
     </Grid>
 </Window>

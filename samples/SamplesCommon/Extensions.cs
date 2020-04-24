@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls.Primitives;
+﻿using System;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace SamplesCommon
@@ -25,6 +27,16 @@ namespace SamplesCommon
             var command = new RoutedCommand { InputGestures = { keyGesture } };
             button.Command = command;
             button.CommandBindings.Add(new CommandBinding(command, null, (s, e) => e.CanExecute = true));
+        }
+
+        public static bool NavigateEx(this Frame frame, Type sourcePageType)
+        {
+            return frame.Navigate(Activator.CreateInstance(sourcePageType));
+        }
+
+        public static bool NavigateEx(this Frame frame, Type sourcePageType, object parameter)
+        {
+            return frame.Navigate(Activator.CreateInstance(sourcePageType), parameter);
         }
     }
 }

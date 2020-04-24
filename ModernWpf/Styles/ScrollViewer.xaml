@@ -2,6 +2,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:root="clr-namespace:ModernWpf"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
@@ -34,6 +35,9 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
 
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:SimpleVisualStateManager />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ScrollingIndicatorStates">
                                 <VisualStateGroup.Transitions>

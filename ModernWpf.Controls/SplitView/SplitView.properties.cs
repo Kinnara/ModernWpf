@@ -29,6 +29,7 @@ namespace ModernWpf.Controls
         private void OnCompactPaneLengthPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
             UpdateTemplateSettings();
+            CompactPaneLengthChanged?.Invoke(this, args.Property);
         }
 
         #endregion
@@ -73,6 +74,8 @@ namespace ModernWpf.Controls
         {
             UpdateIsLightDismissActive();
             UpdateVisualState();
+
+            DisplayModeChanged?.Invoke(this, args.Property);
         }
 
         #endregion
@@ -112,6 +115,8 @@ namespace ModernWpf.Controls
 
             UpdateIsLightDismissActive();
             UpdateOverlayVisibilityState();
+
+            IsPaneOpenChanged?.Invoke(this, args.Property);
         }
 
         #endregion

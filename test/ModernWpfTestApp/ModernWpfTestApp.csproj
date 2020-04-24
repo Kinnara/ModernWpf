@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
     <ProjectReference Include="..\..\ModernWpf.MahApps\ModernWpf.MahApps.csproj" />
     <ProjectReference Include="..\..\ModernWpf\ModernWpf.csproj" />
+    <ProjectReference Include="..\TestAppUtils\TestAppUtils.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,5 +51,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+
+  <Import Project="..\NavigationView_TestUI\NavigationView_TestUI.projitems" Label="Shared" />
 
 </Project>

@@ -2,6 +2,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:root="clr-namespace:ModernWpf"
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:animation="clr-namespace:ModernWpf.Media.Animation">
@@ -158,6 +159,9 @@
                             </Storyboard>
                         </Grid.Resources>
 
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:SimpleVisualStateManager />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
 

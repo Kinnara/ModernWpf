@@ -37,6 +37,8 @@ namespace ModernWpf.Controls.Primitives
             CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, MaximizeWindow));
             CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, RestoreWindow));
             CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, CloseWindow));
+
+            SetInsideTitleBar(this, true);
         }
 
         #region IsActive
@@ -290,6 +292,27 @@ namespace ModernWpf.Controls.Primitives
         {
             get => (bool)GetValue(ExtendViewIntoTitleBarProperty);
             set => SetValue(ExtendViewIntoTitleBarProperty, value);
+        }
+
+        #endregion
+
+        #region InsideTitleBar
+
+        internal static readonly DependencyProperty InsideTitleBarProperty =
+            DependencyProperty.RegisterAttached(
+                "InsideTitleBar",
+                typeof(bool),
+                typeof(TitleBarControl),
+                new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits));
+
+        internal static bool GetInsideTitleBar(UIElement element)
+        {
+            return (bool)element.GetValue(InsideTitleBarProperty);
+        }
+
+        internal static void SetInsideTitleBar(UIElement element, bool value)
+        {
+            element.SetValue(InsideTitleBarProperty, value);
         }
 
         #endregion

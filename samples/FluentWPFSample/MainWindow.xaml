@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:local="clr-namespace:FluentWPFSample"
@@ -23,43 +22,18 @@
     </Window.Resources>
 
     <Grid>
-        <ui:HamburgerMenuEx
+        <ui:NavigationView
             x:Name="NavView"
-            IsBackButtonVisible="True"
+            IsBackButtonVisible="Visible"
             IsBackEnabled="False"
-            PaneBackground="Transparent"
-            IsPaneOpen="True"
-            SelectedIndex="0">
+            IsPaneOpen="True">
 
-            <mah:HamburgerMenu.ItemsSource>
-                <mah:HamburgerMenuItemCollection x:Name="NavViewItems">
-
-                    <mah:HamburgerMenuIconItem Label="Sample Item 1">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:SymbolIcon Symbol="Home" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
-
-                    <mah:HamburgerMenuIconItem Label="Sample Item 2">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:SymbolIcon Symbol="Keyboard" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
-
-                    <mah:HamburgerMenuIconItem Label="Sample Item 3">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:SymbolIcon Symbol="Library" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
-
-                    <mah:HamburgerMenuIconItem Label="Sample Item 4">
-                        <mah:HamburgerMenuIconItem.Icon>
-                            <ui:SymbolIcon Symbol="Mail" />
-                        </mah:HamburgerMenuIconItem.Icon>
-                    </mah:HamburgerMenuIconItem>
-
-                </mah:HamburgerMenuItemCollection>
-            </mah:HamburgerMenu.ItemsSource>
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItem Icon="Home" Content="Sample Item 1" />
+                <ui:NavigationViewItem Icon="Keyboard" Content="Sample Item 2" />
+                <ui:NavigationViewItem Icon="Library" Content="Sample Item 3" />
+                <ui:NavigationViewItem Icon="Mail" Content="Sample Item 4" />
+            </ui:NavigationView.MenuItems>
 
             <Border Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
                 <ui:SimpleStackPanel
@@ -102,6 +76,6 @@
                         Click="ToggleTheme" />
                 </ui:SimpleStackPanel>
             </Border>
-        </ui:HamburgerMenuEx>
+        </ui:NavigationView>
     </Grid>
 </fw:AcrylicWindow>

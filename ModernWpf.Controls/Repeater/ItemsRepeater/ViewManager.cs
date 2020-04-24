@@ -732,7 +732,7 @@ namespace ModernWpf.Controls
                     UpdatePin(focusedElement, true /* addPin */);
                 }
 
-                m_lastFocusedElement = (focusedElement);
+                m_lastFocusedElement = focusedElement;
             }
         }
 

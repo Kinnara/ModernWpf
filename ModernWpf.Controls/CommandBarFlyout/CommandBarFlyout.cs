@@ -47,7 +47,7 @@ namespace ModernWpf.Controls
                     // do anything.
                     RoutedEventHandler closeFlyoutFunc = delegate { Hide(); };
 
-                    // TODO
+                    // TODO: WPF
                     switch (args.Action)
                     {
                         case NotifyCollectionChangedAction.Replace:
