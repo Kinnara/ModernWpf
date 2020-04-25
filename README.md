@@ -10,9 +10,9 @@ Modern styles and controls for your WPF applications.
 
 * [Additional controls](https://github.com/Kinnara/ModernWpf/wiki/Controls#additional-controls) to help you build modern applications. Some are ported from the [Windows UI Library](https://github.com/microsoft/microsoft-ui-xaml).
 
-* Targets .NET Framework 4.5 and .NET Core 3.0. Runs on Windows Vista SP2 and above.
+* Targets .NET Framework 4.5 and .NET Core 3. Runs on Windows Vista SP2 and above.
 
-![Styled MahApps HamburgerMenu (Light)](docs/images/Controls.Light.png "Styled MahApps HamburgerMenu (Light)")
+![Overview of controls (light theme)](docs/images/Controls.Light.png "Overview of controls (light theme)")
 
 ## Quick start
 1. Create a new WPF app.
@@ -58,9 +58,9 @@ Modern styles and controls for your WPF applications.
 | [ModernWpfUI.MahApps][NuGet.MahApps] | [![latest stable version](https://img.shields.io/nuget/v/ModernWpfUI.MahApps)][NuGet.MahApps]<br />[![latest prerelease version](https://img.shields.io/nuget/vpre/ModernWpfUI.MahApps)][NuGet.MahApps.Pre] |
 
 ## Screenshots
-![Styled MahApps HamburgerMenu (Dark)](docs/images/Controls.Dark.png "Styled MahApps HamburgerMenu (Dark)")
+![Overview of controls (dark theme)](docs/images/Controls.Dark.png "Overview of controls (dark theme)")
 
-![Control Palette](docs/images/ControlPalette1.png "Control Palette")
+![Control palette](docs/images/ControlPalette1.png "Control palette")
 
 ![Easily customize colors](docs/images/Nighttime.png "Easily customize colors")
 
