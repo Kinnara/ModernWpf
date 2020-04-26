@@ -585,7 +585,7 @@ namespace ModernWpf.Controls
                     {
                         // Reparent repeater to flyout
                         // TODO: Replace removeatend with something more specific
-                        m_rootGrid.Children.RemoveAtEnd();
+                        m_rootGrid.Children.Remove(repeater);
                         m_flyoutContentGrid.Children.Add(repeater);
                         m_isRepeaterParentedToFlyout = true;
 
@@ -593,7 +593,7 @@ namespace ModernWpf.Controls
                     }
                     else if (!ShouldRepeaterShowInFlyout() && m_isRepeaterParentedToFlyout)
                     {
-                        m_flyoutContentGrid.Children.RemoveAtEnd();
+                        m_flyoutContentGrid.Children.Remove(repeater);
                         m_rootGrid.Children.Add(repeater);
                         m_isRepeaterParentedToFlyout = false;
 

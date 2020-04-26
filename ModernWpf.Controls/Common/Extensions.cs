@@ -14,15 +14,19 @@ namespace ModernWpf.Controls
             return FlyoutService.GetFlyout(button);
         }
 
+        /*
         public static void RemoveAtEnd(this IList list)
         {
             list.RemoveAt(list.Count - 1);
         }
+        */
 
+        /*
         public static void RemoveAtEnd<T>(this IList<T> list)
         {
             list.RemoveAt(list.Count - 1);
         }
+        */
 
         public static void UseSystemFocusVisuals(this Control control, bool value)
         {
