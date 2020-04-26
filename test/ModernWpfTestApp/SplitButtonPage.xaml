@@ -161,7 +161,7 @@
             VerticalAlignment="Top"
             HorizontalAlignment="Left"
             Margin="8,0,0,0"
-            Style="{DynamicResource StandardGroupingStackPanel}">
+            Style="{DynamicResource StandardGroupingBorder}">
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
                     <controls:ToggleSplitButton

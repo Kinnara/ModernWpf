@@ -30,7 +30,7 @@
             </Style>
         </Grid.Resources>
 
-        <StackPanel
+        <StackPanelEx
             HorizontalAlignment="Left"
             Style="{DynamicResource StandardGroupingStackPanel}">
             <TextBlock
@@ -145,7 +145,7 @@
                     IsChecked="True"
                     Margin="10,0,10,0" />
             </StackPanel>
-        </StackPanel>
+        </StackPanelEx>
 
         <StackPanel Grid.Column="1">
             <TextBlock
