@@ -123,6 +123,23 @@
                 <Setter Property="VerticalContentAlignment" Value="Stretch" />
                 <Setter Property="MaxContentWidth" Value="{x:Static sys:Double.PositiveInfinity}" />
             </Style>
+
+            <Style x:Key="RichTextBlockStyle" TargetType="RichTextBox" BasedOn="{StaticResource DefaultRichTextBoxStyle}">
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="IsReadOnly" Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RichTextBox">
+                            <ScrollViewer x:Name="PART_ContentHost" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Resources>
+                    <Style TargetType="Paragraph">
+                        <Setter Property="Margin" Value="0" />
+                    </Style>
+                </Style.Resources>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

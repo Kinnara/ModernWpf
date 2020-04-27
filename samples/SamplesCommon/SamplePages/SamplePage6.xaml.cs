@@ -2,9 +2,9 @@
 
 namespace SamplesCommon.SamplePages
 {
-    public partial class SampleCompactSizingPage : UserControl
+    public partial class SamplePage6 : Page
     {
-        public SampleCompactSizingPage()
+        public SamplePage6()
         {
             InitializeComponent();
         }

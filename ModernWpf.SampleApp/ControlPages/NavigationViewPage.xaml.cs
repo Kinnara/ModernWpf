@@ -34,6 +34,7 @@ namespace ModernWpf.SampleApp.ControlPages
             nvSample5.SelectedItem = nvSample5.MenuItems.OfType<ModernWpf.Controls.NavigationViewItem>().First();
             nvSample6.SelectedItem = nvSample6.MenuItems.OfType<ModernWpf.Controls.NavigationViewItem>().First();
             nvSample7.SelectedItem = nvSample7.MenuItems.OfType<ModernWpf.Controls.NavigationViewItem>().First();
+            nvSample8.SelectedItem = nvSample8.MenuItems.OfType<ModernWpf.Controls.NavigationViewItem>().First();
 
             Categories = new ObservableCollection<CategoryBase>();
             Category firstCategory = new Category { Name = "Category 1", Glyph = Symbol.Home, Tooltip = "This is category 1" };
@@ -172,6 +173,30 @@ namespace ModernWpf.SampleApp.ControlPages
             }
         }
 
+        private void NavigationView_SelectionChanged8(ModernWpf.Controls.NavigationView sender, ModernWpf.Controls.NavigationViewSelectionChangedEventArgs args)
+        {
+            /* NOTE: for this function to work, every NavigationView must follow the same naming convention: nvSample# (i.e. nvSample3),
+            and every corresponding content frame must follow the same naming convention: contentFrame# (i.e. contentFrame3) */
+
+            // Get the sample number
+            string sampleNum = (sender.Name).Substring(8);
+            Debug.Print("num: " + sampleNum + "\n");
+
+            if (args.IsSettingsSelected)
+            {
+                contentFrame8.NavigateEx(typeof(SampleSettingsPage));
+            }
+            else
+            {
+                var selectedItem = (ModernWpf.Controls.NavigationViewItem)args.SelectedItem;
+                string selectedItemTag = ((string)selectedItem.Tag);
+                sender.Header = "Sample Page " + selectedItemTag.Substring(selectedItemTag.Length - 1);
+                string pageName = "SamplesCommon.SamplePages." + selectedItemTag;
+                Type pageType = typeof(SamplePage1).Assembly.GetType(pageName);
+                contentFrame8.NavigateEx(pageType);
+            }
+        }
+
         private void databindHeader_Checked(object sender, RoutedEventArgs e)
         {
             Categories = new ObservableCollection<CategoryBase>()
@@ -282,22 +307,50 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void panePositionLeft_Checked(object sender, RoutedEventArgs e)
         {
-            if ((sender as RadioButton).IsChecked == true && nvSample != null)
+            if ((sender as RadioButton).IsChecked == true)
             {
-                nvSample.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left;
-                nvSample.IsPaneOpen = true;
-                FooterStackPanel.Orientation = Orientation.Vertical;
+                if ((sender as RadioButton).Name == "nvSampleLeft" && nvSample != null)
+                {
+                    nvSample.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left;
+                    nvSample.IsPaneOpen = true;
+                    FooterStackPanel.Orientation = Orientation.Vertical;
+                }
+                else if ((sender as RadioButton).Name == "nvSample8Left" && nvSample8 != null)
+                {
+                    nvSample8.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left;
+                    nvSample8.IsPaneOpen = true;
+                }
             }
         }
 
 
         private void panePositionTop_Checked(object sender, RoutedEventArgs e)
         {
-            if ((sender as RadioButton).IsChecked == true && nvSample != null)
+            if ((sender as RadioButton).IsChecked == true)
             {
-                nvSample.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top;
-                nvSample.IsPaneOpen = false;
-                FooterStackPanel.Orientation = Orientation.Horizontal;
+                if ((sender as RadioButton).Name == "nvSampleTop" && nvSample != null)
+                {
+                    nvSample.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top;
+                    nvSample.IsPaneOpen = false;
+                    FooterStackPanel.Orientation = Orientation.Horizontal;
+                }
+                else if ((sender as RadioButton).Name == "nvSample8Top" && nvSample8 != null)
+                {
+                    nvSample8.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top;
+                    nvSample8.IsPaneOpen = false;
+                }
+            }
+        }
+
+        private void panePositionLeftCompact_Checked(object sender, RoutedEventArgs e)
+        {
+            if ((sender as RadioButton).IsChecked == true)
+            {
+                if ((sender as RadioButton).Name == "nvSample8LeftCompact" && nvSample8 != null)
+                {
+                    nvSample8.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftCompact;
+                    nvSample8.IsPaneOpen = false;
+                }
             }
         }
 
