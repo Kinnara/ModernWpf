@@ -196,6 +196,9 @@
     <SolidColorBrush x:Key="ListViewItemRevealBorderBrushPressed" Color="Transparent" />
     <SolidColorBrush x:Key="GridViewItemRevealBorderBrush" Color="Transparent" />
 
+    <!-- Legacy brushes -->
+    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+
     <!-- Resources for AppBarButton -->
     <sys:Double x:Key="AppBarExpandButtonThemeHeight">24</sys:Double>
     <sys:Double x:Key="AppBarExpandButtonThemeWidth">48</sys:Double>
