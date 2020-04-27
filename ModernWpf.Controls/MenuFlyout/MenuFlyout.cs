@@ -89,7 +89,7 @@ namespace ModernWpf.Controls
 
         internal override void OnAreOpenCloseAnimationsEnabledChanged(DependencyPropertyChangedEventArgs e)
         {
-            m_presenter?.UpdatePopupAnimation((bool)e.NewValue);
+            m_presenter?.UpdatePopupAnimation();
         }
 
         private void Show(FrameworkElement placementTarget, PlacementMode placement = PlacementMode.Custom)
@@ -143,8 +143,9 @@ namespace ModernWpf.Controls
                     CustomPopupPlacementCallback = PositionPopup,
                     StaysOpen = false
                 };
+                presenter.SetOwningFlyout(this);
                 BindPlacement(presenter);
-                presenter.UpdatePopupAnimation(AreOpenCloseAnimationsEnabled);
+                presenter.UpdatePopupAnimation();
                 presenter.Opened += OnPresenterOpened;
                 presenter.Closed += OnPresenterClosed;
                 presenter.IsOpenChanged += OnPresenterIsOpenChanged;

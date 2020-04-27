@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -52,15 +53,33 @@ namespace ModernWpf.Controls
 
         internal event EventHandler<DependencyPropertyChangedEventArgs> IsOpenChanged;
 
-        internal void UpdatePopupAnimation(bool areOpenCloseAnimationsEnabled)
+        protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
-            if (areOpenCloseAnimationsEnabled)
+            base.OnVisualParentChanged(oldParent);
+
+            if (_parentPopup == null)
             {
-                Resources.Remove(SystemParameters.MenuPopupAnimationKey);
+                HookupParentPopup();
             }
-            else
+        }
+
+        internal void SetOwningFlyout(MenuFlyout owningFlyout)
+        {
+            m_owningFlyout = new WeakReference<MenuFlyout>(owningFlyout);
+        }
+
+        internal void UpdatePopupAnimation()
+        {
+            if (_parentPopup != null && m_owningFlyout.TryGetTarget(out var owningFlyout))
             {
-                Resources[SystemParameters.MenuPopupAnimationKey] = PopupAnimation.None;
+                if (owningFlyout.AreOpenCloseAnimationsEnabled)
+                {
+                    _parentPopup.Resources.Remove(SystemParameters.MenuPopupAnimationKey);
+                }
+                else
+                {
+                    _parentPopup.Resources[SystemParameters.MenuPopupAnimationKey] = PopupAnimation.None;
+                }
             }
         }
 
@@ -75,28 +94,39 @@ namespace ModernWpf.Controls
 
             if ((bool)e.NewValue)
             {
-                if (m_parentPopup == null)
+                if (_parentPopup == null)
                 {
-                    m_parentPopup = Parent as Popup;
-                    if (m_parentPopup != null)
-                    {
-                        m_parentPopup.PreviewMouseLeftButtonDown += HandlePopupMouseButtonEvent;
-                        m_parentPopup.PreviewMouseRightButtonDown += HandlePopupMouseButtonEvent;
-                        m_parentPopup.PreviewMouseLeftButtonUp += HandlePopupMouseButtonEvent;
-                        m_parentPopup.PreviewMouseRightButtonUp += HandlePopupMouseButtonEvent;
-                    }
+                    HookupParentPopup();
                 }
+            }
+        }
+
+        private void HookupParentPopup()
+        {
+            Debug.Assert(_parentPopup == null, "_parentPopup should be null");
+
+            _parentPopup = Parent as Popup;
+
+            if (_parentPopup != null)
+            {
+                _parentPopup.PreviewMouseLeftButtonDown += HandlePopupMouseButtonEvent;
+                _parentPopup.PreviewMouseRightButtonDown += HandlePopupMouseButtonEvent;
+                _parentPopup.PreviewMouseLeftButtonUp += HandlePopupMouseButtonEvent;
+                _parentPopup.PreviewMouseRightButtonUp += HandlePopupMouseButtonEvent;
+
+                UpdatePopupAnimation();
             }
         }
 
         private void HandlePopupMouseButtonEvent(object sender, MouseButtonEventArgs e)
         {
-            if (!m_parentPopup.IsOpen)
+            if (!_parentPopup.IsOpen)
             {
                 e.Handled = true;
             }
         }
 
-        private Popup m_parentPopup;
+        private Popup _parentPopup;
+        private WeakReference<MenuFlyout> m_owningFlyout;
     }
 }
