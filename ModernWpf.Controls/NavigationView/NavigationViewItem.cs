@@ -20,6 +20,7 @@ namespace ModernWpf.Controls
         const string c_navigationViewItemPresenterName = "NavigationViewItemPresenter";
         const string c_repeater = "NavigationViewItemMenuItemsHost";
         const string c_rootGrid = "NVIRootGrid";
+        const string c_childrenFlyout = "ChildrenFlyout";
         const string c_flyoutContentGrid = "FlyoutContentGrid";
 
         // Visual States
@@ -126,6 +127,11 @@ namespace ModernWpf.Controls
                 }
 
                 UpdateRepeaterItemsSource();
+            }
+
+            if (GetTemplateChildT<FlyoutBase>(c_childrenFlyout, controlProtected) is { } childrenFlyout)
+            {
+                childrenFlyout.Offset = 0;
             }
 
             m_flyoutContentGrid = GetTemplateChildT<Grid>(c_flyoutContentGrid, controlProtected);
