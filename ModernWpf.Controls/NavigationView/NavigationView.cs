@@ -1083,9 +1083,11 @@ namespace ModernWpf.Controls
                 }
 
                 InputHelper.RemoveTappedHandler(settingsItem, OnNavigationViewItemTapped);
+                settingsItem.ClearValue(InputHelper.IsTapEnabledProperty);
                 settingsItem.KeyDown -= OnNavigationViewItemKeyDown;
 
                 m_settingsItem = settingsItem;
+                InputHelper.SetIsTapEnabled(settingsItem, true);
                 InputHelper.AddTappedHandler(settingsItem, OnNavigationViewItemTapped);
                 settingsItem.KeyDown += OnNavigationViewItemKeyDown;
 

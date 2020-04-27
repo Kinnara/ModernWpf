@@ -98,6 +98,15 @@ namespace ModernWpf.Controls
                 presenter.MouseLeave += OnPresenterPointerCanceled;
                 presenter.LostMouseCapture += OnPresenterPointerCaptureLost;
             }
+            // WPF
+            else
+            {
+                MouseDown += OnPresenterPointerPressed;
+                MouseUp += OnPresenterPointerReleased;
+                MouseEnter += OnPresenterPointerEntered;
+                MouseLeave += OnPresenterPointerCanceled;
+                LostMouseCapture += OnPresenterPointerCaptureLost;
+            }
 
             m_toolTip = GetTemplateChildT<ToolTip>("ToolTip", controlProtected);
 
