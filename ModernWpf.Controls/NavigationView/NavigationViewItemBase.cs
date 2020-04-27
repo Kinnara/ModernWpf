@@ -4,6 +4,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace ModernWpf.Controls
 {
@@ -18,6 +19,10 @@ namespace ModernWpf.Controls
             VerticalContentAlignmentProperty.OverrideMetadata(
                 typeof(NavigationViewItemBase),
                 new FrameworkPropertyMetadata(VerticalAlignment.Center));
+
+            KeyboardNavigation.DirectionalNavigationProperty.OverrideMetadata(
+                typeof(NavigationViewItemBase),
+                new FrameworkPropertyMetadata(KeyboardNavigationMode.None));
         }
 
         internal NavigationViewItemBase()

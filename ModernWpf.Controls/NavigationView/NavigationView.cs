@@ -359,6 +359,8 @@ namespace ModernWpf.Controls
 
             UnhookEventsAndClearFields();
 
+            IControlProtected controlProtected = this;
+
             // Set up the pane toggle button click handler
             if (GetTemplateChild(c_togglePaneButtonName) is Button paneToggleButton)
             {
@@ -576,6 +578,22 @@ namespace ModernWpf.Controls
             {
                 string navigationCloseButtonToolTip = Strings.NavigationButtonOpenName;
                 closeButtonToolTip.Content = navigationCloseButtonToolTip;
+            }
+
+            if (SharedHelpers.IsRS2OrHigher())
+            {
+                // Get hold of the outermost grid and enable XYKeyboardNavigationMode
+                // However, we only want this to work in the content pane + the hamburger button (which is not inside the splitview)
+                // so disable it on the grid in the content area of the SplitView
+                if (GetTemplateChildT<Grid>(c_rootGridName, controlProtected) is { } rootGrid)
+                {
+                    KeyboardNavigation.SetDirectionalNavigation(rootGrid, KeyboardNavigationMode.Contained);
+                }
+
+                if (GetTemplateChildT<Grid>(c_contentGridName, controlProtected) is { } contentGrid)
+                {
+                    KeyboardNavigation.SetDirectionalNavigation(contentGrid, KeyboardNavigationMode.None);
+                }
             }
 
             // TODO: WPF - AccessKey

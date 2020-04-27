@@ -19,7 +19,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SplitView">
-                    <Grid Background="{TemplateBinding Background}">
+                    <Grid Background="{TemplateBinding Background}"
+                          KeyboardNavigation.TabNavigation="Local">
 
                         <Grid.Resources>
                             <Storyboard x:Key="FromClosedToOpenOverlayLeft">
@@ -592,7 +593,7 @@
                             <ColumnDefinition x:Name="ColumnDefinition1" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
                             <ColumnDefinition x:Name="ColumnDefinition2" Width="*" />
                         </Grid.ColumnDefinitions>
-                        <!-- Pane Content Area -->
+                        <!-- Pane Content Area -->  
                         <Grid
                             x:Name="PaneRoot"
                             Grid.ColumnSpan="2"
@@ -600,7 +601,9 @@
                             Visibility="Collapsed"
                             Background="{TemplateBinding PaneBackground}"
                             Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLength}"
-                            Canvas.ZIndex="1">
+                            Canvas.ZIndex="1"
+                            KeyboardNavigation.TabNavigation="Local"
+                            KeyboardNavigation.TabIndex="0">
                             <Grid.Clip>
                                 <RectangleGeometry x:Name="PaneClipRectangle">
                                     <RectangleGeometry.Transform>

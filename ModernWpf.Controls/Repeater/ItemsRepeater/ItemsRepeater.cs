@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using ModernWpf.Automation.Peers;
@@ -19,6 +20,12 @@ namespace ModernWpf.Controls
         internal static readonly Point ClearedElementsArrangePosition = new Point(-10000.0, -10000.0);
         // A convention we use in the ItemsRepeater codebase for an invalid Rect value.
         internal static readonly Rect InvalidRect = Rect.Empty;
+
+        static ItemsRepeater()
+        {
+            KeyboardNavigation.TabNavigationProperty.OverrideMetadata(typeof(ItemsRepeater),
+                new FrameworkPropertyMetadata(KeyboardNavigationMode.Once));
+        }
 
         public ItemsRepeater()
         {

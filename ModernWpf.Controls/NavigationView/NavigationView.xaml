@@ -829,7 +829,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NavigationView">
-                    <Grid x:Name="RootGrid">
+                    <Grid x:Name="RootGrid"
+                          KeyboardNavigation.TabNavigation="Local">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DisplayModeGroup">
                                 <VisualState x:Name="Compact" />
@@ -961,7 +962,9 @@
                             Margin="0,0,0,8"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
-                            Canvas.ZIndex="100">
+                            Canvas.ZIndex="100"
+                            KeyboardNavigation.TabNavigation="Local"
+                            KeyboardNavigation.TabIndex="0">
 
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
