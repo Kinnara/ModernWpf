@@ -74,7 +74,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             var colorString = (e.AddedItems[0] as ComboBoxItem).Content.ToString();
 
-            VisualStateManager.GoToState(this, colorString, false);
+            VisualStateManager.GoToElementState((FrameworkElement)Content, colorString, false);
         }
     }
 

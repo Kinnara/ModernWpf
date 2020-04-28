@@ -18,7 +18,7 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void UpdateVisualState()
         {
-            VisualStateManager.GoToState(this, expander.ExpandDirection.ToString(), false);
+            VisualStateManager.GoToElementState((FrameworkElement)Content, expander.ExpandDirection.ToString(), false);
         }
     }
 }

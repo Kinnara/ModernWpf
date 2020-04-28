@@ -17,7 +17,7 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="expander" Storyboard.TargetProperty="(DockPanel.Dock)">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Dock.Bottom}" />
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="expander" Storyboard.TargetProperty="(FrameworkElement.VerticalAlignment)">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="expander" Storyboard.TargetProperty="VerticalAlignment">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static VerticalAlignment.Bottom}" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
