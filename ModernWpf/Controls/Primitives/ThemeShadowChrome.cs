@@ -421,6 +421,17 @@ namespace ModernWpf.Controls.Primitives
 
         private void SetParentPopupControl(PopupControl value)
         {
+            if (_parentPopupControl == value)
+            {
+                return;
+            }
+
+            if (_popupPositioner != null)
+            {
+                _popupPositioner.Dispose();
+                _popupPositioner = null;
+            }
+
             if (_parentPopupControl != null)
             {
                 _parentPopupControl.Opened -= OnParentPopupControlOpened;
@@ -441,7 +452,35 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnParentPopupControlOpened(object sender, EventArgs e)
         {
-            PositionParentPopupControl();
+            if (_popupPositioner != null)
+            {
+                return;
+            }
+
+            if (_parentPopupControl != null)
+            {
+                if (_parentPopupControl.Control is { } control)
+                {
+                    if (control is ToolTip toolTip && toolTip.PlacementTarget is Thumb thumb && thumb.TemplatedParent is Slider)
+                    {
+                        // Do not reposition slider auto tool tip
+                        return;
+                    }
+                    else
+                    {
+                        var popup = (control as Popup) ?? (control.Parent as Popup);
+                        if (popup != null && PopupPositioner.IsSupported)
+                        {
+                            _popupPositioner = new PopupPositioner(popup);
+                        }
+                    }
+                }
+            }
+
+            if (_popupPositioner == null)
+            {
+                PositionParentPopupControl();
+            }
         }
 
         private void OnParentPopupControlClosed(object sender, EventArgs e)
@@ -849,6 +888,7 @@ namespace ModernWpf.Controls.Primitives
         private Border _shadow2;
         private PopupControl _parentPopupControl;
         private TranslateTransform _transform;
+        private PopupPositioner _popupPositioner;
 
         private static readonly Brush s_bg1, s_bg2, s_bg3, s_bg4;
         private static readonly Vector s_noTranslation = new Vector(0, 0);

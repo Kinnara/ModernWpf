@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using System.Windows.Controls.Primitives;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -13,32 +13,37 @@ namespace ModernWpf.Controls
                 throw new ArgumentNullException(nameof(popup));
             }
 
-            if (s_repositionDelegate == null && !s_failedToCreateRepositionDelegate)
+            if (PopupPositioner.GetPositioner(popup) is { } positioner)
             {
-                try
-                {
-                    var method = typeof(Popup).GetMethod("Reposition", BindingFlags.Instance | BindingFlags.NonPublic);
-                    s_repositionDelegate = (Action<Popup>)Delegate.CreateDelegate(typeof(Action<Popup>), method);
-                }
-                catch (Exception)
-                {
-                    s_failedToCreateRepositionDelegate = true;
-                }
-            }
-
-            if (s_repositionDelegate != null)
-            {
-                s_repositionDelegate(popup);
+                positioner.Reposition();
             }
             else
             {
-                var offset = popup.HorizontalOffset;
-                popup.SetCurrentValue(Popup.HorizontalOffsetProperty, offset + 0.1);
-                popup.SetCurrentValue(Popup.HorizontalOffsetProperty, offset);
+                if (s_reposition.Value is { } reposition)
+                {
+                    reposition(popup);
+                }
+                else
+                {
+                    var offset = popup.HorizontalOffset;
+                    popup.SetCurrentValue(Popup.HorizontalOffsetProperty, offset + 0.1);
+                    popup.InvalidateProperty(Popup.HorizontalOffsetProperty);
+                }
             }
         }
 
-        private static Action<Popup> s_repositionDelegate;
-        private static bool s_failedToCreateRepositionDelegate;
+        private static Action<Popup> CreateRepositionDelegate()
+        {
+            try
+            {
+                return DelegateHelper.CreateDelegate<Action<Popup>>(typeof(Popup), nameof(Reposition), true);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static readonly Lazy<Action<Popup>> s_reposition = new Lazy<Action<Popup>>(CreateRepositionDelegate);
     }
 }
