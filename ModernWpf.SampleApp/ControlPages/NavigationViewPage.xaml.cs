@@ -15,7 +15,7 @@ using VirtualKey = System.Windows.Input.Key;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public sealed partial class NavigationViewPage : Page
+    public sealed partial class NavigationViewPage
     {
         public static bool CameFromToggle = false;
 

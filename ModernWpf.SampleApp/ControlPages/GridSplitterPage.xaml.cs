@@ -2,7 +2,7 @@
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class GridSplitterPage : UserControl
+    public partial class GridSplitterPage
     {
         public GridSplitterPage()
         {

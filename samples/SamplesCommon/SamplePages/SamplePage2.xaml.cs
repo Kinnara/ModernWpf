@@ -1,8 +1,6 @@
-﻿using System.Windows.Controls;
-
-namespace SamplesCommon.SamplePages
+﻿namespace SamplesCommon.SamplePages
 {
-    public partial class SamplePage2 : Page
+    public partial class SamplePage2
     {
         public SamplePage2()
         {

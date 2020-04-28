@@ -9,7 +9,7 @@ namespace MUXControlsTestApp
         void InternalOnNavigatingFrom(NavigatingCancelEventArgs e);
     }
 
-    public class BasePage : System.Windows.Controls.Page, IPage
+    public class BasePage : PageFunctionBase, IPage
     {
         public NavigationService Frame => NavigationService;
 

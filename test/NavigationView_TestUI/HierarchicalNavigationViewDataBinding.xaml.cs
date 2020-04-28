@@ -31,7 +31,7 @@ namespace MUXControlsTestApp
         }
     }
 
-    public sealed partial class HierarchicalNavigationViewDataBinding : Page
+    public sealed partial class HierarchicalNavigationViewDataBinding
     {
 
         ObservableCollection<Category> categories = new ObservableCollection<Category>();

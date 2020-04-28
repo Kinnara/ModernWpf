@@ -5,7 +5,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class FlyoutPage : UserControl
+    public partial class FlyoutPage
     {
         public FlyoutPage()
         {

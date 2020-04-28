@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<PageFunctionBase
     x:Class="ModernWpf.SampleApp.ControlPages.SliderPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,18 +7,16 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
-    d:DesignWidth="1200"
-    d:DesignHeight="900"
-    Style="{StaticResource ControlPageStyle}">
+    Style="{StaticResource PageStyle}">
 
-    <UserControl.Resources>
+    <Page.Resources>
         <Style TargetType="Slider" BasedOn="{StaticResource DefaultSliderStyle}">
             <Setter Property="Maximum" Value="100" />
             <Setter Property="TickFrequency" Value="1" />
             <Setter Property="IsSnapToTickEnabled" Value="True" />
             <Setter Property="AutoToolTipPlacement" Value="TopLeft" />
         </Style>
-    </UserControl.Resources>
+    </Page.Resources>
 
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
@@ -137,4 +135,4 @@
             </sc:ControlExample>
         </ui:SimpleStackPanel>
     </ScrollViewer>
-</UserControl>
+</PageFunctionBase>

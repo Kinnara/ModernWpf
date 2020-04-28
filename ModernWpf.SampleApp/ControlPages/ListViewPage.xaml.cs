@@ -11,7 +11,7 @@ using System.Windows.Data;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class ListViewPage : UserControl
+    public partial class ListViewPage
     {
         public ListViewPage()
         {

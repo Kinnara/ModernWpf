@@ -8,7 +8,7 @@ using System.Windows.Navigation;
 
 namespace MUXControlsTestApp.Samples
 {
-    public partial class BasicDemo : Page
+    public partial class BasicDemo
     {
         public BasicDemo()
         {

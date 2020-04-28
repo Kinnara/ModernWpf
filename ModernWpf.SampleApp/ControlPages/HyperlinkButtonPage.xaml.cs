@@ -1,14 +1,10 @@
-﻿using System;
+﻿using SamplesCommon;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Navigation;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    /// <summary>
-    /// Interaction logic for HyperlinkButtonPage.xaml
-    /// </summary>
-    public partial class HyperlinkButtonPage : Page
+    public partial class HyperlinkButtonPage
     {
         public HyperlinkButtonPage()
         {
@@ -17,7 +13,7 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void GoToHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new Uri("ControlPages/ListBoxPage.xaml", UriKind.Relative));
+            NavigationService.NavigateToType(typeof(ListBoxPage));
         }
     }
 }

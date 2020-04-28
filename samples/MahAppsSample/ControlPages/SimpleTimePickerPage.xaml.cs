@@ -6,7 +6,7 @@ using System.Windows.Controls;
 
 namespace MahAppsSample.ControlPages
 {
-    public partial class SimpleTimePickerPage : Page
+    public partial class SimpleTimePickerPage
     {
         public SimpleTimePickerPage()
         {

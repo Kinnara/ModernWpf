@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class ComboBoxPage : UserControl
+    public partial class ComboBoxPage
     {
         public List<Tuple<string, FontFamily>> Fonts { get; } = new List<Tuple<string, FontFamily>>()
             {

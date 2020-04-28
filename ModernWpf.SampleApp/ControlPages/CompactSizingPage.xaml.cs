@@ -1,10 +1,11 @@
-﻿using SamplesCommon.SamplePages;
+﻿using ModernWpf.Media.Animation;
+using SamplesCommon;
+using SamplesCommon.SamplePages;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class CompactSizingPage : UserControl
+    public partial class CompactSizingPage
     {
         public CompactSizingPage()
         {
@@ -13,17 +14,17 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void Example1_Loaded(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(new SampleStandardSizingPage());
+            ContentFrame.Navigate(typeof(SampleStandardSizingPage), null, new SuppressNavigationTransitionInfo());
         }
 
         private void Standard_Checked(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(new SampleStandardSizingPage());
+            ContentFrame.Navigate(typeof(SampleStandardSizingPage), null, new SuppressNavigationTransitionInfo());
         }
 
         private void Compact_Checked(object sender, RoutedEventArgs e)
         {
-            ContentFrame.Navigate(new SampleCompactSizingPage());
+            ContentFrame.Navigate(typeof(SampleCompactSizingPage), null, new SuppressNavigationTransitionInfo());
         }
     }
 }

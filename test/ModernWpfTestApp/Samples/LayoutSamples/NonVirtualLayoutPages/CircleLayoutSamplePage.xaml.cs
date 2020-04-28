@@ -12,7 +12,7 @@ using ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests.Common;
 
 namespace MUXControlsTestApp.Samples
 {
-    public partial class CircleLayoutSamplePage : Page
+    public partial class CircleLayoutSamplePage
     {
         private ObservableCollection<Person> _data;
         private int _lastId;

@@ -2,7 +2,7 @@
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class RadioButtonsPage : UserControl
+    public partial class RadioButtonsPage
     {
         public RadioButtonsPage()
         {

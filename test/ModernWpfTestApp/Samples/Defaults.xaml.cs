@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace MUXControlsTestApp.Samples
 {
-    public partial class Defaults : Page
+    public partial class Defaults
     {
         public List<string> Data { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using ModernWpf.Controls;
 using ModernWpf.MahApps.Controls;
+using SamplesCommon;
 using System;
 using System.Linq;
 using System.Windows;
@@ -9,8 +10,6 @@ namespace MahAppsSample
 {
     public partial class MainWindow : Window
     {
-        private static readonly Uri SettingsUri = new Uri("SettingsPage.xaml", UriKind.Relative);
-
         public MainWindow()
         {
             InitializeComponent();
@@ -49,7 +48,7 @@ namespace MahAppsSample
         {
             if (args.IsSettingsInvoked)
             {
-                Navigate(SettingsUri);
+                Navigate(typeof(SettingsPage));
             }
             else
             {
@@ -85,13 +84,13 @@ namespace MahAppsSample
 
         private void ContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            if (e.Uri == SettingsUri)
+            if (e.SourcePageType() == typeof(SettingsPage))
             {
                 NavView.SelectedItem = NavView.SettingsItem;
             }
             else
             {
-                NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(x => GetNavigateUri(x) == e.Uri);
+                NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault(x => GetPageType(x) == e.SourcePageType());
             }
         }
 
@@ -116,29 +115,25 @@ namespace MahAppsSample
         {
             if (item is NavigationViewItem menuItem)
             {
-                Uri navigateUri = GetNavigateUri(menuItem);
-                if (ContentFrame.CurrentSource != navigateUri)
+                Type pageType = GetPageType(menuItem);
+                if (ContentFrame.CurrentSourcePageType() != pageType)
                 {
-                    ContentFrame.Navigate(navigateUri);
+                    ContentFrame.NavigateToType(pageType);
                 }
             }
         }
 
-        private void Navigate(Uri source)
+        private void Navigate(Type sourcePageType)
         {
-            if (ContentFrame.CurrentSource != source)
+            if (ContentFrame.CurrentSourcePageType() != sourcePageType)
             {
-                ContentFrame.Navigate(source);
+                ContentFrame.NavigateToType(sourcePageType);
             }
         }
 
-        private Uri GetNavigateUri(NavigationViewItem item)
+        private Type GetPageType(NavigationViewItem item)
         {
-            if (item.Tag is Uri uri)
-            {
-                return uri;
-            }
-            return new Uri((string)item.Tag, UriKind.Relative);
+            return item.Tag as Type;
         }
     }
 }

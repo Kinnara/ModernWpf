@@ -31,7 +31,7 @@ namespace MUXControlsTestApp
             var pageName = "MUXControlsTestApp.NavigationView" + pageTag;
             var pageType = Type.GetType(pageName);
 
-            ContentFrame.Navigate(pageType);
+            ContentFrame.NavigateEx(pageType);
         }
 
         private void FlipOrientation_Click(object sender, RoutedEventArgs e)

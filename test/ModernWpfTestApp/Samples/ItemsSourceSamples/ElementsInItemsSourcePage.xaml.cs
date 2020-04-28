@@ -8,7 +8,7 @@ using System.Windows.Navigation;
 
 namespace MUXControlsTestApp.Samples
 {
-    public partial class ElementsInItemsSourcePage : Page
+    public partial class ElementsInItemsSourcePage
     {
         public ElementsInItemsSourcePage()
         {

@@ -5,10 +5,11 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Linq;
+using SamplesCommon.SamplePages;
 
 namespace MahAppsSample.ControlPages
 {
-    public partial class HamburgerMenuExPage : Page
+    public partial class HamburgerMenuExPage
     {
         private DataTemplate _paneHeaderTemplate;
 
@@ -28,15 +29,15 @@ namespace MahAppsSample.ControlPages
             {
                 if (selectedItem == settingsItem)
                 {
-                    contentFrame.Navigate(SamplePageSources.SampleSettingsPage);
+                    contentFrame.NavigateToType(typeof(SampleSettingsPage));
                 }
                 else
                 {
                     string selectedItemTag = ((string)selectedItem.Tag);
                     ((HamburgerMenuEx)sender).Header = "Sample Page " + selectedItemTag.Substring(selectedItemTag.Length - 1);
-                    string pageName = selectedItemTag;
-                    Uri pageSource = SamplePageSources.GetUri(pageName);
-                    contentFrame.Navigate(pageSource);
+                    string pageName = "SamplesCommon.SamplePages." + selectedItemTag;
+                    Type pageType = typeof(SamplePage1).Assembly.GetType(pageName);
+                    contentFrame.NavigateToType(pageType);
                 }
             }
         }

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace MUXControlsTestApp.Samples
 {
-    public sealed partial class NonVirtualStackLayoutSamplePage : Page
+    public sealed partial class NonVirtualStackLayoutSamplePage
     {
         public NonVirtualStackLayoutSamplePage()
         {

@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<PageFunctionBase
     x:Class="ModernWpf.SampleApp.ControlPages.ItemsRepeaterPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,13 +9,11 @@
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
     xmlns:l="clr-namespace:ModernWpf.SampleApp.ControlPages"
     mc:Ignorable="d"
-    d:DesignWidth="1200"
-    d:DesignHeight="900"
-    Style="{StaticResource ControlPageStyle}"
+    Style="{StaticResource PageStyle}"
     SnapsToDevicePixels="True"
     Loaded="OnLoaded">
 
-    <UserControl.Resources>
+    <Page.Resources>
         <Style TargetType="ui:NumberBox">
             <Setter Property="SpinButtonPlacementMode" Value="Inline" />
             <Setter Property="Minimum" Value="0" />
@@ -199,7 +197,7 @@
                     Margin="12,0,0,6" />
             </Grid>
         </DataTemplate>
-    </UserControl.Resources>
+    </Page.Resources>
 
     <TabControl
         x:Name="tabControl"
@@ -497,4 +495,4 @@
             </sc:ControlExample>
         </TabItem>
     </TabControl>
-</UserControl>
+</PageFunctionBase>

@@ -10,7 +10,7 @@ using System.Windows.Controls;
 
 namespace MUXControlsTestApp.Samples
 {
-    public sealed partial class SortingAndFilteringPage : Page
+    public sealed partial class SortingAndFilteringPage
     {
         MyCollection SourceForRepeater = new MyCollection(null);
         private bool IsSortDescending = false;

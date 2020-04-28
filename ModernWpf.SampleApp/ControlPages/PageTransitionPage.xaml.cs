@@ -1,28 +1,31 @@
 ﻿using SamplesCommon;
-using System.Linq;
 using System.Windows;
 using System.Windows.Navigation;
+using SamplePages = SamplesCommon.SamplePages;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class PageTransitionsPage
+    public partial class PageTransitionPage
     {
-        public PageTransitionsPage()
+        public PageTransitionPage()
         {
             InitializeComponent();
 
-            frame.Navigate(SamplePageSources.SamplePage1);
+            ContentFrame.NavigateToType(typeof(SamplePages.SamplePage1));
         }
 
         private void NavigateForward(object sender, RoutedEventArgs e)
         {
-            var pageToNavigateTo = frame.BackStack.Cast<JournalEntry>().Count() % 2 == 1 ? SamplePageSources.SamplePage1 : SamplePageSources.SamplePage2;
-            frame.Navigate(pageToNavigateTo);
+            var pageToNavigateTo = ContentFrame.BackStackDepth() % 2 == 1 ? typeof(SamplePages.SamplePage1) : typeof(SamplePages.SamplePage2);
+            ContentFrame.NavigateToType(pageToNavigateTo);
         }
 
         private void NavigateBackward(object sender, RoutedEventArgs e)
         {
-            frame.GoBack();
+            if (ContentFrame.BackStackDepth() > 0)
+            {
+                ContentFrame.GoBack();
+            }
         }
 
         private void Frame_Navigated(object sender, NavigationEventArgs e)
@@ -33,27 +36,27 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void DefaultRB_Checked(object sender, RoutedEventArgs e)
         {
-            frame.ClearValue(StyleProperty);
+            ContentFrame.ClearValue(StyleProperty);
         }
 
         private void DrillRB_Checked(object sender, RoutedEventArgs e)
         {
-            frame.Style = (Style)Resources["DrillFrameStyle"];
+            ContentFrame.Style = (Style)Resources["DrillFrameStyle"];
         }
 
         private void SuppressRB_Checked(object sender, RoutedEventArgs e)
         {
-            frame.Style = (Style)Resources["SuppressFrameStyle"];
+            ContentFrame.Style = (Style)Resources["SuppressFrameStyle"];
         }
 
         private void SlideFromRightRB_Checked(object sender, RoutedEventArgs e)
         {
-            frame.Style = (Style)Resources["SlideFromRightFrameStyle"];
+            ContentFrame.Style = (Style)Resources["SlideFromRightFrameStyle"];
         }
 
         private void SlideFromLeftRB_Checked(object sender, RoutedEventArgs e)
         {
-            frame.Style = (Style)Resources["SlideFromLeftFrameStyle"];
+            ContentFrame.Style = (Style)Resources["SlideFromLeftFrameStyle"];
         }
     }
 }

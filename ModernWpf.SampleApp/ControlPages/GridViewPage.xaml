@@ -9,8 +9,6 @@
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     mc:Ignorable="d"
-    d:DesignWidth="1200"
-    d:DesignHeight="900"
     Style="{StaticResource PageStyle}">
 
     <Page.Resources>

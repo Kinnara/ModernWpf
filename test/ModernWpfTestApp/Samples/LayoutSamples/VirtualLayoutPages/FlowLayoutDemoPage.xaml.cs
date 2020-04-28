@@ -6,7 +6,7 @@ using System.Windows.Controls;
 
 namespace MUXControlsTestApp.Samples
 {
-    public partial class FlowLayoutDemoPage : Page
+    public partial class FlowLayoutDemoPage
     {
         public FlowLayoutDemoPage()
         {

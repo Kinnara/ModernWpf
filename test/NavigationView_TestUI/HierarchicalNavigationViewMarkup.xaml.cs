@@ -15,7 +15,7 @@ using NavigationViewPaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDispl
 
 namespace MUXControlsTestApp
 {
-    public sealed partial class HierarchicalNavigationViewMarkup : Page
+    public sealed partial class HierarchicalNavigationViewMarkup
     {
 
         public HierarchicalNavigationViewMarkup()

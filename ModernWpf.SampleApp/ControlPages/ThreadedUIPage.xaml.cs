@@ -8,7 +8,7 @@ using System.Windows.Data;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class ThreadedUIPage : Page
+    public partial class ThreadedUIPage
     {
         public ThreadedUIPage()
         {

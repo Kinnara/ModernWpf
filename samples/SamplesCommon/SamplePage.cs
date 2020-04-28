@@ -1,9 +1,8 @@
-﻿using System.Windows.Controls;
-using System.Windows.Navigation;
+﻿using System.Windows.Navigation;
 
 namespace SamplesCommon
 {
-    public class SamplePage : Page
+    public class SamplePage : PageFunctionBase
     {
         protected virtual void OnNavigatedTo(NavigationEventArgs e) { }
         protected virtual void OnNavigatedFrom(NavigationEventArgs e) { }

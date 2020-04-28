@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class NumberBoxPage : UserControl
+    public partial class NumberBoxPage
     {
         public NumberBoxPage()
         {

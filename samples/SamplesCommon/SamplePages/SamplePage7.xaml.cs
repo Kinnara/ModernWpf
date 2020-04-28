@@ -2,7 +2,7 @@
 
 namespace SamplesCommon.SamplePages
 {
-    public partial class SamplePage7 : Page
+    public partial class SamplePage7
     {
         public SamplePage7()
         {

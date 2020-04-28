@@ -1,6 +1,7 @@
 ﻿using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using SamplesCommon;
+using SamplesCommon.SamplePages;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -51,13 +52,13 @@ namespace ModernWpf.SampleApp.ControlPages
             switch (index % 3)
             {
                 case 0:
-                    frame.Navigate(SamplePageSources.SamplePage1);
+                    frame.NavigateToType(typeof(SamplePage1));
                     break;
                 case 1:
-                    frame.Navigate(SamplePageSources.SamplePage2);
+                    frame.NavigateToType(typeof(SamplePage2));
                     break;
                 case 2:
-                    frame.Navigate(SamplePageSources.SamplePage3);
+                    frame.NavigateToType(typeof(SamplePage3));
                     break;
             }
 

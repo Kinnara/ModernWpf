@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace MUXControlsTestApp.Samples
 {
-    public sealed partial class VirtualizingUniformStackLayoutSamplePage : Page
+    public sealed partial class VirtualizingUniformStackLayoutSamplePage
     {
         private RecyclingElementFactory elementFactory;
 

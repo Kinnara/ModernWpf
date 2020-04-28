@@ -1,4 +1,5 @@
 ﻿using ModernWpf.Controls;
+using SamplesCommon;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,7 +12,7 @@ namespace ModernWpf.SampleApp.ControlPages
     /// <summary>
     /// Interaction logic for AutoSuggestBoxPage.xaml
     /// </summary>
-    public partial class AutoSuggestBoxPage : UserControl
+    public partial class AutoSuggestBoxPage
     {
         private readonly ControlPagesData _controlPages = new ControlPagesData();
 
@@ -122,7 +123,7 @@ namespace ModernWpf.SampleApp.ControlPages
 
                 ControlTitle.Text = control.Title;
                 ControlLink.Content = "Go to " + control.Title;
-                ControlLink.NavigateUri = control.NavigateUri;
+                ControlLink.Tag = control.PageType;
             }
         }
 
@@ -148,6 +149,14 @@ namespace ModernWpf.SampleApp.ControlPages
                     return flag;
                 });
             return suggestions.OrderByDescending(i => i.Title.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ThenBy(i => i.Title).ToList();
+        }
+
+        private void ControlLink_Click(object sender, RoutedEventArgs e)
+        {
+            if (ControlLink.Tag is Type pageType)
+            {
+                NavigationService.NavigateToType(pageType);
+            }
         }
     }
 }

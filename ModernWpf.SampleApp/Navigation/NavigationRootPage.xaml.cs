@@ -1,6 +1,7 @@
 ﻿using ModernWpf.Controls;
 using ModernWpf.SampleApp.ControlPages;
 using ModernWpf.SampleApp.Presets;
+using SamplesCommon;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,7 +21,7 @@ namespace ModernWpf.SampleApp
 
         private bool _ignoreSelectionChange;
         private readonly ControlPagesData _controlPagesData = new ControlPagesData();
-        private string _startPage;
+        private Type _startPage;
 
         public NavigationRootPage()
         {
@@ -35,10 +36,9 @@ namespace ModernWpf.SampleApp
             RootFrame = rootFrame;
 
             SetStartPage();
-            if (!string.IsNullOrEmpty(_startPage))
+            if (_startPage != null)
             {
-                PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(
-                    x => x.NavigateUri.ToString().Split('/').Last().Equals(_startPage + ".xaml", StringComparison.OrdinalIgnoreCase));
+                PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(x => x.PageType == _startPage);
             }
 
             NavigateToSelectedPage();
@@ -96,9 +96,9 @@ namespace ModernWpf.SampleApp
 
         private void NavigateToSelectedPage()
         {
-            if (PagesList.SelectedValue is Uri source)
+            if (PagesList.SelectedValue is Type type)
             {
-                RootFrame?.Navigate(source);
+                RootFrame?.NavigateToType(type);
             }
         }
 
@@ -154,15 +154,15 @@ namespace ModernWpf.SampleApp
         {
             if (args.ChosenSuggestion != null && args.ChosenSuggestion is ControlInfoDataItem)
             {
-                var navigateUri = (args.ChosenSuggestion as ControlInfoDataItem).NavigateUri;
-                RootFrame.Navigate(navigateUri);
+                var pageType = (args.ChosenSuggestion as ControlInfoDataItem).PageType;
+                RootFrame.NavigateToType(pageType);
             }
             else if (!string.IsNullOrEmpty(args.QueryText))
             {
                 var item = _controlPagesData.FirstOrDefault(i => i.Title.Equals(args.QueryText, StringComparison.OrdinalIgnoreCase));
                 if (item != null)
                 {
-                    RootFrame.Navigate(item.NavigateUri);
+                    RootFrame.NavigateToType(item.PageType);
                 }
             }
         }
@@ -180,7 +180,7 @@ namespace ModernWpf.SampleApp
             Debug.Assert(!RootFrame.CanGoForward);
 
             _ignoreSelectionChange = true;
-            PagesList.SelectedValue = RootFrame.CurrentSource;
+            PagesList.SelectedValue = RootFrame.CurrentSourcePageType();
             _ignoreSelectionChange = false;
         }
 
@@ -278,7 +278,7 @@ namespace ModernWpf.SampleApp
             AddPage(typeof(ThemesPage));
             AddPage(typeof(ThemeResourcesPage), "Theme Resources");
             AddPage(typeof(CompactSizingPage), "Compact Sizing");
-            AddPage(typeof(PageTransitionsPage), "Page Transitions");
+            AddPage(typeof(PageTransitionPage), "Page Transitions");
             AddPage(typeof(ThreadedUIPage), "Threaded UI");
             AddPage(typeof(AppBarButtonPage));
             AddPage(typeof(AppBarSeparatorPage));
@@ -339,13 +339,13 @@ namespace ModernWpf.SampleApp
     {
         public ControlInfoDataItem(Type pageType, string title = null)
         {
+            PageType = pageType;
             Title = title ?? pageType.Name.Replace("Page", null);
-            NavigateUri = new Uri($"ControlPages/{pageType.Name}.xaml", UriKind.Relative);
         }
 
         public string Title { get; }
 
-        public Uri NavigateUri { get; }
+        public Type PageType { get; }
 
         public override string ToString()
         {

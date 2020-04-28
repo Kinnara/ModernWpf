@@ -10,7 +10,7 @@ using System.Windows.Controls;
 
 namespace MUXControlsTestApp.Samples.Selection
 {
-    public sealed partial class TreeViewSample : Page
+    public sealed partial class TreeViewSample
     {
         private SelectionModel selectionModel;
 

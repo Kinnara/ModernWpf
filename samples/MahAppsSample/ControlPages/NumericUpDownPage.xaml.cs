@@ -16,7 +16,7 @@ namespace MahAppsSample.ControlPages
     /// <summary>
     /// Interaction logic for NumericUpDownPage.xaml
     /// </summary>
-    public partial class NumericUpDownPage : Page
+    public partial class NumericUpDownPage
     {
         public NumericUpDownPage()
         {

@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class CommandBarFlyoutPage : UserControl
+    public partial class CommandBarFlyoutPage
     {
         private CommandBarFlyout CommandBarFlyout1;
 

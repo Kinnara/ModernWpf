@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class CommandBarPage : UserControl
+    public partial class CommandBarPage
     {
         public CommandBarPage()
         {

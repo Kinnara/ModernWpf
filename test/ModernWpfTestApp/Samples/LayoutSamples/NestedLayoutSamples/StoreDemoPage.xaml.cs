@@ -7,7 +7,7 @@ using System.Windows.Controls;
 
 namespace MUXControlsTestApp.Samples
 {
-    public partial class StoreDemoPage : Page
+    public partial class StoreDemoPage
     {
         public StoreDemoPage()
         {

@@ -1,8 +1,6 @@
-﻿using System.Windows.Controls;
-
-namespace SamplesCommon.SamplePages
+﻿namespace SamplesCommon.SamplePages
 {
-    public partial class SampleCompactSizingPage : UserControl
+    public partial class SampleCompactSizingPage
     {
         public SampleCompactSizingPage()
         {

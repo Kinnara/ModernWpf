@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class TreeViewPage : UserControl
+    public partial class TreeViewPage
     {
         private ObservableCollection<ExplorerItem> DataSource;
 
@@ -106,9 +106,9 @@ namespace ModernWpf.SampleApp.ControlPages
             return list;
         }
 
-        private class EmptyAutomationPeer : UserControlAutomationPeer
+        private class EmptyAutomationPeer : FrameworkElementAutomationPeer
         {
-            public EmptyAutomationPeer(UserControl owner) : base(owner)
+            public EmptyAutomationPeer(FrameworkElement owner) : base(owner)
             {
             }
 

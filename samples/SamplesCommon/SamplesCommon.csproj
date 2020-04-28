@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="SamplePageSources.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Remove="Properties\DesignTimeResources.xaml" />
   </ItemGroup>
 
@@ -42,6 +46,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </None>
+    <None Include="SamplePageSources.cs" />
   </ItemGroup>
 
 </Project>

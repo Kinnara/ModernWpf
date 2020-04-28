@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class ContentDialogPage : UserControl
+    public partial class ContentDialogPage
     {
         public ContentDialogPage()
         {

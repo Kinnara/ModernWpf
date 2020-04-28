@@ -163,7 +163,7 @@
                 x:Name="PagesList"
                 DockPanel.Dock="Top"
                 DisplayMemberPath="Title"
-                SelectedValuePath="NavigateUri"
+                SelectedValuePath="PageType"
                 SelectedIndex="0"
                 SelectionChanged="PagesList_SelectionChanged">
                 <ui:ListView.ItemsSource>

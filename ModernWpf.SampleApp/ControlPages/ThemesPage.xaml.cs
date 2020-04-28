@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class ThemesPage : UserControl
+    public partial class ThemesPage
     {
         public ThemesPage()
         {

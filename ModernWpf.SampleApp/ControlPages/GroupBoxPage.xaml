@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<PageFunctionBase
     x:Class="ModernWpf.SampleApp.ControlPages.GroupBoxPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,9 +7,9 @@
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d"
-    Style="{StaticResource ControlPageStyle}">
+    Style="{StaticResource PageStyle}">
 
-    <UserControl.Resources>
+    <Page.Resources>
         <Style x:Key="ComboBoxHeaderStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyTextBlockStyle}">
             <Setter Property="Margin" Value="0,0,0,4" />
         </Style>
@@ -17,7 +17,7 @@
             <Setter Property="MinWidth" Value="180" />
             <Setter Property="Margin" Value="0,0,0,12" />
         </Style>
-    </UserControl.Resources>
+    </Page.Resources>
 
     <ScrollViewer>
         <ui:SimpleStackPanel
@@ -76,4 +76,4 @@
             </GroupBox>
         </ui:SimpleStackPanel>
     </ScrollViewer>
-</UserControl>
+</PageFunctionBase>

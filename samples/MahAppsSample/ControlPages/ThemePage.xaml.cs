@@ -2,7 +2,7 @@
 
 namespace MahAppsSample.ControlPages
 {
-    public partial class ThemePage : Page
+    public partial class ThemePage
     {
         public ThemePage()
         {

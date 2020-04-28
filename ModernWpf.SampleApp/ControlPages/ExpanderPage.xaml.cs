@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class ExpanderPage : UserControl
+    public partial class ExpanderPage
     {
         public ExpanderPage()
         {

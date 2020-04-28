@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace MUXControlsTestApp.Samples
 {
-    public partial class ItemTemplateDemo : Page
+    public partial class ItemTemplateDemo
     {
         public List<int> Data { get; set; }
         public ItemTemplateDemo()

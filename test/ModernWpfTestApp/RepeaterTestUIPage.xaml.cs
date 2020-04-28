@@ -15,7 +15,7 @@ using VirtualizingLayout = ModernWpf.Controls.VirtualizingLayout;
 namespace MUXControlsTestApp
 {
     [TopLevelTestPage(Name = "ItemsRepeater", Icon = "ListView.png")]
-    public sealed partial class RepeaterTestUIPage : Page
+    public sealed partial class RepeaterTestUIPage
     {
         private VirtualizingLayout _stackLayout;
         private VirtualizingLayout _gridLayout;

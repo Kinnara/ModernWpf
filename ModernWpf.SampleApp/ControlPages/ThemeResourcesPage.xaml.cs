@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class ThemeResourcesPage : Page
+    public partial class ThemeResourcesPage
     {
         private List<ScrollViewer> _scrollViewers;
         private bool _syncingScroll;

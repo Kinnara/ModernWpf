@@ -2,7 +2,7 @@
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class CheckBoxPage : UserControl
+    public partial class CheckBoxPage
     {
         public CheckBoxPage()
         {

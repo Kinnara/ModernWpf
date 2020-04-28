@@ -2,7 +2,7 @@
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class MenuFlyoutPage : UserControl
+    public partial class MenuFlyoutPage
     {
         public MenuFlyoutPage()
         {

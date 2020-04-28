@@ -2,7 +2,7 @@
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class PopupPlacementPage : UserControl
+    public partial class PopupPlacementPage
     {
         public PopupPlacementPage()
         {

@@ -2,7 +2,7 @@
 
 namespace MahAppsSample
 {
-    public partial class SettingsPage : Page
+    public partial class SettingsPage
     {
         public SettingsPage()
         {

@@ -10,7 +10,7 @@ using System.Windows.Controls;
 
 namespace MUXControlsTestApp.Samples.Selection
 {
-    public sealed partial class GroupedSample : Page
+    public sealed partial class GroupedSample
     {
         private SelectionModel selectionModel;
 
@@ -51,7 +51,7 @@ namespace MUXControlsTestApp.Samples.Selection
 
         private void OnTreeViewClicked(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new TreeViewSample());
+            NavigationService.NavigateWithoutAnimation(typeof(TreeViewSample));
         }
 
         private void groupRepeater_ElementIndexChanged(ItemsRepeater sender, ItemsRepeaterElementIndexChangedEventArgs args)

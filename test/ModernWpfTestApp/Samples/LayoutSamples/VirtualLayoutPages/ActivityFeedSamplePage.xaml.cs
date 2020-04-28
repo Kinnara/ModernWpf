@@ -6,7 +6,7 @@ using System.Windows.Controls;
 
 namespace MUXControlsTestApp.Samples
 {
-    public sealed partial class ActivityFeedSamplePage : Page
+    public sealed partial class ActivityFeedSamplePage
     {
         public ActivityFeedSamplePage()
         {

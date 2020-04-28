@@ -5,7 +5,7 @@ using System.Windows.Controls;
 
 namespace MUXControlsTestApp
 {
-    public sealed partial class NavigationViewBlankPage1 : Page
+    public sealed partial class NavigationViewBlankPage1
     {
         public NavigationViewBlankPage1()
         {

@@ -5,7 +5,7 @@ using System.Windows.Controls.Primitives;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class AppBarToggleButtonPage : UserControl
+    public partial class AppBarToggleButtonPage
     {
         AppBarToggleButton compactButton = null;
         AppBarSeparator separator = null;

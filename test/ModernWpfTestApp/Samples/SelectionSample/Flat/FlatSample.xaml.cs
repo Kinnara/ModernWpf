@@ -10,7 +10,7 @@ using System.Windows.Controls;
 
 namespace MUXControlsTestApp.Samples.Selection
 {
-    public sealed partial class FlatSample : Page
+    public sealed partial class FlatSample
     {
         private SelectionModel selectionModel;
         private RecyclingElementFactory elementFactory;
@@ -82,7 +82,7 @@ namespace MUXControlsTestApp.Samples.Selection
 
         private void OnGroupedClicked(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new GroupedSample());
+            NavigationService.NavigateWithoutAnimation(typeof(GroupedSample));
         }
 
         private void OnBackClicked(object sender, RoutedEventArgs e)

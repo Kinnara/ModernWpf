@@ -1,4 +1,4 @@
-﻿<Page
+﻿<PageFunctionBase
     x:Class="ModernWpf.SampleApp.ControlPages.ShadowPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -43,4 +43,4 @@
             </sc:ControlExample.Options>
         </sc:ControlExample>
     </ui:SimpleStackPanel>
-</Page>
+</PageFunctionBase>

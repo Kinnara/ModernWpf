@@ -7,7 +7,7 @@ using System.Windows.Shapes;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class ButtonsPage : UserControl
+    public partial class ButtonsPage
     {
         public ButtonsPage()
         {

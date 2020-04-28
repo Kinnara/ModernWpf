@@ -8,7 +8,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class ItemsRepeaterPage : UserControl
+    public partial class ItemsRepeaterPage
     {
         private Random random = new Random();
         private int MaxLength = 425;

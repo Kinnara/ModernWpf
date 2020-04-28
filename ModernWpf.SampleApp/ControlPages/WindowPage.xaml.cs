@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class WindowPage : UserControl
+    public partial class WindowPage
     {
         public WindowPage()
         {

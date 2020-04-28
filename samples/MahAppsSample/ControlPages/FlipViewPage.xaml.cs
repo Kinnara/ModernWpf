@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace MahAppsSample.ControlPages
 {
-    public partial class FlipViewPage : Page
+    public partial class FlipViewPage
     {
         public FlipViewPage()
         {

@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<PageFunctionBase
     x:Class="ModernWpf.SampleApp.ControlPages.ButtonsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,13 +8,11 @@
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     mc:Ignorable="d"
-    d:DesignWidth="1200"
-    d:DesignHeight="900"
-    Style="{StaticResource ControlPageStyle}">
+    Style="{StaticResource PageStyle}">
 
-    <UserControl.Resources>
+    <Page.Resources>
         <sys:Double x:Key="SwatchSize">32</sys:Double>
-    </UserControl.Resources>
+    </Page.Resources>
 
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
@@ -237,4 +235,4 @@
             </sc:ControlExample>
         </ui:SimpleStackPanel>
     </ScrollViewer>
-</UserControl>
+</PageFunctionBase>

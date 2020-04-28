@@ -2,7 +2,7 @@
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class PersonPicturePage : UserControl
+    public partial class PersonPicturePage
     {
         public PersonPicturePage()
         {

@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<PageFunctionBase
     x:Class="ModernWpf.SampleApp.ControlPages.ExpanderPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,10 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
-    d:DesignWidth="1200"
-    d:DesignHeight="900"
     mc:Ignorable="d"
-    Style="{StaticResource ControlPageStyle}">
+    Style="{StaticResource PageStyle}">
     <Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ExpandDirectionStates">
@@ -61,4 +59,4 @@
             </ui:SimpleStackPanel>
         </ScrollViewer>
     </Grid>
-</UserControl>
+</PageFunctionBase>

@@ -6,7 +6,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public sealed partial class SplitViewPage : UserControl
+    public sealed partial class SplitViewPage
     {
         private ObservableCollection<NavLink> _navLinks = new ObservableCollection<NavLink>()
         {
