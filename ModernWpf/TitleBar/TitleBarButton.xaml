@@ -20,6 +20,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:TitleBarButton">
