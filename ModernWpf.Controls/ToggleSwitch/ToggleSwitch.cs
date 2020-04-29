@@ -73,9 +73,7 @@ namespace ModernWpf.Controls
         }
 
         public static readonly DependencyProperty HeaderProperty =
-            DependencyProperty.Register(
-                nameof(Header),
-                typeof(object),
+            ControlHelper.HeaderProperty.AddOwner(
                 typeof(ToggleSwitch),
                 new FrameworkPropertyMetadata(OnHeaderChanged));
 
@@ -101,9 +99,7 @@ namespace ModernWpf.Controls
         }
 
         public static readonly DependencyProperty HeaderTemplateProperty =
-            DependencyProperty.Register(
-                nameof(HeaderTemplate),
-                typeof(DataTemplate),
+            ControlHelper.HeaderTemplateProperty.AddOwner(
                 typeof(ToggleSwitch),
                 new FrameworkPropertyMetadata(OnHeaderTemplateChanged));
 
