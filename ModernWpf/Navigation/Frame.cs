@@ -352,8 +352,18 @@ namespace ModernWpf.Controls
         public bool Navigate(Type sourcePageType, object parameter, NavigationTransitionInfo infoOverride)
         {
             _transitionInfoOverride = infoOverride;
-
             return Navigate(Activator.CreateInstance(sourcePageType), parameter);
+        }
+
+        /// <summary>
+        /// Navigates to the most recent item in back navigation history, if a Frame manages
+        /// its own navigation history, and specifies the animated transition to use.
+        /// </summary>
+        /// <param name="transitionInfoOverride">Info about the animated transition to use.</param>
+        public void GoBack(NavigationTransitionInfo transitionInfoOverride)
+        {
+            _transitionInfoOverride = transitionInfoOverride;
+            GoBack();
         }
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
@@ -406,9 +416,9 @@ namespace ModernWpf.Controls
         /// <param name="e">The event arguments.</param>
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
         {
-            if (Content is Page page)
+            if (Content is Page newPage)
             {
-                page.InternalOnNavigatingFrom(e);
+                newPage.InternalOnNavigatingFrom(e);
 
                 if (e.Cancel)
                 {
@@ -421,10 +431,10 @@ namespace ModernWpf.Controls
             // e.g. do not play a transition when the 
             // application gets deactivated because the shell
             // will animate the frame out automatically.
-            if (!e.IsNavigationInitiator)
-            {
-                //return;
-            }
+            //if (!e.IsNavigationInitiator)
+            //{
+            //    return;
+            //}
 
             _isForwardNavigation = e.NavigationMode != NavigationMode.Back;
 
@@ -444,18 +454,20 @@ namespace ModernWpf.Controls
 
             if (Helper.IsAnimationsEnabled)
             {
-                NavigationTransitionInfo transitionInfo;
-
-                if (!_isForwardNavigation &&
-                    BackEntry is { } backEntry &&
-                    GetNavigationTransitionInfo(backEntry) is { } info)
+                var transitionInfo = _transitionInfoOverride;
+                if (transitionInfo == null)
                 {
-                    transitionInfo = info;
-                    _transitionInfoOverride = info;
-                }
-                else
-                {
-                    transitionInfo = _transitionInfoOverride ?? DefaultNavigationTransitionInfo;
+                    if (!_isForwardNavigation &&
+                        BackEntry is { } backEntry &&
+                        GetNavigationTransitionInfo(backEntry) is { } info)
+                    {
+                        transitionInfo = info;
+                        _transitionInfoOverride = info;
+                    }
+                    else
+                    {
+                        transitionInfo = DefaultNavigationTransitionInfo;
+                    }
                 }
 
                 navigationOutTransition = transitionInfo.GetNavigationOutTransition();
@@ -530,11 +542,13 @@ namespace ModernWpf.Controls
         private void OnNavigationStopped(object sender, NavigationEventArgs e)
         {
             _navigationStopped = true;
+            _transitionInfoOverride = null;
             _oldPage = null;
         }
 
         private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
+            _transitionInfoOverride = null;
             _oldPage = null;
         }
 
@@ -680,7 +694,6 @@ namespace ModernWpf.Controls
             if (oldElement != null && newElement != null && Helper.IsAnimationsEnabled)
             {
                 var transitionInfo = _transitionInfoOverride ?? DefaultNavigationTransitionInfo;
-
                 navigationInTransition = transitionInfo.GetNavigationInTransition();
 
                 TransitionElement newTransitionElement = null;
