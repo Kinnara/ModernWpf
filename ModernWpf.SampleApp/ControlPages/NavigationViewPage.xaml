@@ -1,4 +1,4 @@
-﻿<PageFunctionBase
+﻿<ui:Page
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -105,7 +105,7 @@
                         <muxc:NavigationViewItem Content="Menu Item3" Tag="SamplePage3" Icon="Refresh" />
                         <muxc:NavigationViewItem Content="Menu Item4" Tag="SamplePage4" Icon="Download" />
                     </muxc:NavigationView.MenuItems>
-                    <ui:TransitionFrame Margin="0,0,0,0" x:Name="contentFrame5" />
+                    <ui:Frame Margin="0,0,0,0" x:Name="contentFrame5" />
                 </muxc:NavigationView>
             </Grid>
         </sc:ControlExample>
@@ -137,7 +137,7 @@
                         <muxc:NavigationViewItem Content="Menu Item4" Tag="SamplePage3" />
                     </muxc:NavigationView.MenuItems>
 
-                    <ui:TransitionFrame x:Name="contentFrame6" />
+                    <ui:Frame x:Name="contentFrame6" />
                 </muxc:NavigationView>
             </Grid>
         </sc:ControlExample>
@@ -166,7 +166,7 @@
                     </muxc:NavigationView.MenuItems>
 
                     <muxc:NavigationView.Content>
-                        <ui:TransitionFrame x:Name="contentFrame2" />
+                        <ui:Frame x:Name="contentFrame2" />
                     </muxc:NavigationView.Content>
                 </muxc:NavigationView>
             </Grid>
@@ -194,7 +194,7 @@
                         <muxc:NavigationViewItem Content="Item3" Tag="SamplePage3" />
                         <muxc:NavigationViewItem Content="Item4" Tag="SamplePage4" />
                     </muxc:NavigationView.MenuItems>
-                    <ui:TransitionFrame x:Name="contentFrame7" />
+                    <ui:Frame x:Name="contentFrame7" />
                 </muxc:NavigationView>
             </Grid>
         </sc:ControlExample>
@@ -217,7 +217,7 @@
                                             MenuItemsSource="{Binding Categories, Mode=OneWay}" 
                                             IsTabStop="False" SelectionChanged="NavigationView_SelectionChanged4">
                     <StackPanel>
-                        <ui:TransitionFrame Margin="0,0,0,0" x:Name="contentFrame4" />
+                        <ui:Frame Margin="0,0,0,0" x:Name="contentFrame4" />
                     </StackPanel>
                 </muxc:NavigationView>
             </Grid>
@@ -280,7 +280,7 @@
                             </muxc:NavigationViewItem.MenuItems>
                         </muxc:NavigationViewItem>
                     </muxc:NavigationView.MenuItems>
-                    <ui:TransitionFrame x:Name="contentFrame8" />
+                    <ui:Frame x:Name="contentFrame8" />
                 </muxc:NavigationView>
             </Grid>
         </sc:ControlExample>
@@ -353,8 +353,8 @@
                     </StackPanel>
                 </muxc:NavigationView.PaneFooter>
 
-                <ui:TransitionFrame x:Name="contentFrame"/>
+                <ui:Frame x:Name="contentFrame"/>
             </muxc:NavigationView>
         </sc:ControlExample>
     </StackPanel>
-</PageFunctionBase>
+</ui:Page>

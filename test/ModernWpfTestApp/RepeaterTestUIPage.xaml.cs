@@ -276,8 +276,6 @@ namespace MUXControlsTestApp
 
             return _flowLayout;
         }
-
-        private NavigationService Frame => NavigationService;
     }
 
     public class PageInfo

@@ -19,8 +19,7 @@
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:data="clr-namespace:ModernWpf.SampleApp.Data"
     xmlns:local1="clr-namespace:ModernWpf.SampleApp.ControlPages"
-    xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-    Style="{StaticResource PageStyle}">
+    xmlns:cm="clr-namespace:System.ComponentModel;assembly=WindowsBase">
     <Page.Resources>
         <local1:ContactGroupKeyConverter x:Key="ContactGroupKeyConverter" />
 

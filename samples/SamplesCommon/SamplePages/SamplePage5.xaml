@@ -1,13 +1,13 @@
-﻿<PageFunctionBase
+﻿<ui:Page
     x:Class="SamplesCommon.SamplePages.SamplePage5"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:SamplesCommon.SamplePages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    mc:Ignorable="d"
-    Style="{StaticResource PageStyle}">
+    mc:Ignorable="d">
 
     <ScrollViewer>
         <Grid Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
@@ -37,4 +37,4 @@
             </Grid>
         </Grid>
     </ScrollViewer>
-</PageFunctionBase>
+</ui:Page>

@@ -1,4 +1,4 @@
-﻿<PageFunctionBase
+﻿<ui:Page
     x:Class="MahAppsSample.ControlPages.HamburgerMenuExPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,8 +7,7 @@
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-    mc:Ignorable="d"
-    Style="{StaticResource PageStyle}">
+    mc:Ignorable="d">
 
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
@@ -164,9 +163,9 @@
                         </mah:HamburgerMenuItemCollection>
                     </ui:HamburgerMenuEx.OptionsItemsSource>
 
-                    <ui:TransitionFrame x:Name="contentFrame" />
+                    <ui:Frame x:Name="contentFrame" />
                 </ui:HamburgerMenuEx>
             </sc:ControlExample>
         </ui:SimpleStackPanel>
     </ScrollViewer>
-</PageFunctionBase>
+</ui:Page>

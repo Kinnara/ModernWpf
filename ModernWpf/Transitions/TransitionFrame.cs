@@ -17,9 +17,10 @@ namespace ModernWpf.Controls
     /// Enables navigation transitions for pages.
     /// </summary>
     /// <QualityBand>Preview</QualityBand>
+    [Obsolete]
     [TemplatePart(Name = FirstTemplatePartName, Type = typeof(ContentPresenter))]
     [TemplatePart(Name = SecondTemplatePartName, Type = typeof(ContentPresenter))]
-    public class TransitionFrame : Frame
+    public class TransitionFrame : System.Windows.Controls.Frame
     {
         #region Constants and Statics
         /// <summary>

@@ -1,20 +1,18 @@
 ﻿using ModernWpf;
-using ModernWpf.Controls;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using Frame = ModernWpf.Controls.Frame;
 
 namespace MUXControlsTestApp
 {
-    public class TestFrame : ThemeAwareFrame
+    public class TestFrame : Frame
     {
         private Button _backButton = null;
         private Button _toggleThemeButton = null;
         private TextBlock _currentPageTextBlock = null;
         private Type _mainPageType = null;
-
-        private object _oldContent;
 
         static TestFrame()
         {
@@ -24,9 +22,6 @@ namespace MUXControlsTestApp
         public TestFrame(Type mainPageType)
         {
             _mainPageType = mainPageType;
-
-            Navigating += OnNavigating;
-            Navigated += OnNavigated;
         }
 
         public void ChangeBarVisibility(Visibility visibility)
@@ -90,28 +85,6 @@ namespace MUXControlsTestApp
             }
             // Invert theme
             tm.ApplicationTheme = (tm.ActualApplicationTheme == ApplicationTheme.Light) ? ApplicationTheme.Dark : ApplicationTheme.Light;
-        }
-
-        protected override void OnContentChanged(object oldContent, object newContent)
-        {
-            base.OnContentChanged(oldContent, newContent);
-            _oldContent = oldContent;
-        }
-
-        private void OnNavigating(object sender, NavigatingCancelEventArgs e)
-        {
-            (Content as IPage)?.InternalOnNavigatingFrom(e);
-        }
-
-        private void OnNavigated(object sender, NavigationEventArgs e)
-        {
-            if (_oldContent != null)
-            {
-                (_oldContent as IPage)?.InternalOnNavigatedFrom(e);
-                _oldContent = null;
-            }
-
-            (e.Content as IPage)?.InternalOnNavigatedTo(e);
         }
     }
 }

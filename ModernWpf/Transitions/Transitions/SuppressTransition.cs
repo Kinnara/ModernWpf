@@ -4,6 +4,7 @@ using System.Windows.Media.Animation;
 
 namespace ModernWpf.Controls
 {
+    [Obsolete]
     public class SuppressTransition : TransitionElement
     {
         public override ITransition GetTransition(UIElement element)

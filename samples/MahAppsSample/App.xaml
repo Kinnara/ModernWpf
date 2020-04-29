@@ -51,13 +51,6 @@
 
             <sc:EnumValuesConverter x:Key="EnumValuesConverter" />
 
-            <Style x:Key="PageStyle" TargetType="Page">
-                <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundAltHighBrush}" />
-                <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
-                <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
-                <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
-            </Style>
-
             <Style x:Key="OptionsPanelStyle" TargetType="ui:SimpleStackPanel">
                 <Setter Property="Spacing" Value="12" />
                 <Style.Resources>

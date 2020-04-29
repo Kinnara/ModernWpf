@@ -3,6 +3,7 @@
 // Please see http://go.microsoft.com/fwlink/?LinkID=131993 for details.
 // All other rights reserved.
 
+using System;
 using System.Windows;
 
 namespace ModernWpf.Controls
@@ -10,6 +11,7 @@ namespace ModernWpf.Controls
     /// <summary>
     /// Provides slide <see cref="T:ModernWpf.Controls.ITransition"/>s.
     /// </summary>
+    [Obsolete]
     public class SlideTransition : TransitionElement
     {
         /// <summary>

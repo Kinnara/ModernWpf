@@ -69,7 +69,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (args.IsSettingsSelected)
             {
-                contentFrame.NavigateEx(typeof(SampleSettingsPage));
+                contentFrame.Navigate(typeof(SampleSettingsPage));
             }
             else
             {
@@ -80,7 +80,7 @@ namespace ModernWpf.SampleApp.ControlPages
                     sender.Header = "Sample Page " + selectedItemTag.Substring(selectedItemTag.Length - 1);
                     string pageName = "SamplesCommon.SamplePages." + selectedItemTag;
                     Type pageType = typeof(SamplePage1).Assembly.GetType(pageName);
-                    contentFrame.NavigateEx(pageType);
+                    contentFrame.Navigate(pageType);
                 }
             }
         }
@@ -91,7 +91,7 @@ namespace ModernWpf.SampleApp.ControlPages
             {
                 if (args.IsSettingsSelected)
                 {
-                    contentFrame2.NavigateEx(typeof(SampleSettingsPage));
+                    contentFrame2.Navigate(typeof(SampleSettingsPage));
                 }
                 else
                 {
@@ -99,7 +99,7 @@ namespace ModernWpf.SampleApp.ControlPages
                     string selectedItemTag = (string)selectedItem.Tag;
                     string pageName = "SamplesCommon.SamplePages." + selectedItemTag;
                     Type pageType = typeof(SamplePage1).Assembly.GetType(pageName);
-                    contentFrame2.NavigateEx(pageType);
+                    contentFrame2.Navigate(pageType);
                 }
             }
 
@@ -110,7 +110,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (args.IsSettingsSelected)
             {
-                contentFrame4.NavigateEx(typeof(SampleSettingsPage));
+                contentFrame4.Navigate(typeof(SampleSettingsPage));
             }
             else
             {
@@ -121,7 +121,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 sender.Header = "Sample Page " + selectedItemTag.Substring(selectedItemTag.Length - 1);
                 string pageName = "SamplesCommon.SamplePages." + "SamplePage1";
                 Type pageType = typeof(SamplePage1).Assembly.GetType(pageName);
-                contentFrame4.NavigateEx(pageType);
+                contentFrame4.Navigate(pageType);
             }
         }
 
@@ -130,7 +130,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (args.IsSettingsSelected)
             {
-                contentFrame5.NavigateEx(typeof(SampleSettingsPage));
+                contentFrame5.Navigate(typeof(SampleSettingsPage));
             }
             else
             {
@@ -139,21 +139,21 @@ namespace ModernWpf.SampleApp.ControlPages
                 sender.Header = "Sample Page " + selectedItemTag.Substring(selectedItemTag.Length - 1);
                 string pageName = "SamplesCommon.SamplePages." + selectedItemTag;
                 Type pageType = typeof(SamplePage1).Assembly.GetType(pageName);
-                contentFrame5.NavigateEx(pageType);
+                contentFrame5.Navigate(pageType);
             }
         }
         private void NavigationView_SelectionChanged6(ModernWpf.Controls.NavigationView sender, ModernWpf.Controls.NavigationViewSelectionChangedEventArgs args)
         {
             if (args.IsSettingsSelected)
             {
-                contentFrame6.NavigateEx(typeof(SampleSettingsPage));
+                contentFrame6.Navigate(typeof(SampleSettingsPage));
             }
             else
             {
                 var selectedItem = (ModernWpf.Controls.NavigationViewItem)args.SelectedItem;
                 string pageName = "SamplesCommon.SamplePages." + (string)selectedItem.Tag;
                 Type pageType = typeof(SamplePage1).Assembly.GetType(pageName);
-                contentFrame6.NavigateEx(pageType);
+                contentFrame6.Navigate(pageType);
             }
         }
 
@@ -161,7 +161,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (args.IsSettingsSelected)
             {
-                contentFrame7.NavigateEx(typeof(SampleSettingsPage));
+                contentFrame7.Navigate(typeof(SampleSettingsPage));
             }
             else
             {
@@ -169,7 +169,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 string pageName = "SamplesCommon.SamplePages." + (string)selectedItem.Tag;
                 Type pageType = typeof(SamplePage1).Assembly.GetType(pageName);
 
-                contentFrame7.NavigateEx(pageType, null/*, args.RecommendedNavigationTransitionInfo*/);
+                contentFrame7.Navigate(pageType, null, args.RecommendedNavigationTransitionInfo);
             }
         }
 
@@ -184,7 +184,7 @@ namespace ModernWpf.SampleApp.ControlPages
 
             if (args.IsSettingsSelected)
             {
-                contentFrame8.NavigateEx(typeof(SampleSettingsPage));
+                contentFrame8.Navigate(typeof(SampleSettingsPage));
             }
             else
             {
@@ -193,7 +193,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 sender.Header = "Sample Page " + selectedItemTag.Substring(selectedItemTag.Length - 1);
                 string pageName = "SamplesCommon.SamplePages." + selectedItemTag;
                 Type pageType = typeof(SamplePage1).Assembly.GetType(pageName);
-                contentFrame8.NavigateEx(pageType);
+                contentFrame8.Navigate(pageType);
             }
         }
 

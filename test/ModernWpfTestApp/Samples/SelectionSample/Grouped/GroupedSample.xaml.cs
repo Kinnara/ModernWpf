@@ -46,12 +46,12 @@ namespace MUXControlsTestApp.Samples.Selection
 
         private void OnBackClicked(object sender, RoutedEventArgs e)
         {
-            NavigationService.GoBack();
+            Frame.GoBack();
         }
 
         private void OnTreeViewClicked(object sender, RoutedEventArgs e)
         {
-            NavigationService.NavigateWithoutAnimation(typeof(TreeViewSample));
+            Frame.NavigateWithoutAnimation(typeof(TreeViewSample));
         }
 
         private void groupRepeater_ElementIndexChanged(ItemsRepeater sender, ItemsRepeaterElementIndexChangedEventArgs args)

@@ -1,4 +1,4 @@
-﻿<PageFunctionBase
+﻿<ui:Page
     x:Class="MahAppsSample.ControlPages.ControlsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,7 +8,6 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     mc:Ignorable="d"
-    Style="{StaticResource PageStyle}"
     Background="Transparent">
 
     <Page.Resources>
@@ -260,4 +259,4 @@
         </sc:NonClippingStackPanel>
 
     </sc:NonClippingStackPanel>
-</PageFunctionBase>
+</ui:Page>

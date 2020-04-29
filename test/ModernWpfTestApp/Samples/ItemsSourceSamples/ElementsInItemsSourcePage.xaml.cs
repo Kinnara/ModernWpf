@@ -13,7 +13,7 @@ namespace MUXControlsTestApp.Samples
         public ElementsInItemsSourcePage()
         {
             InitializeComponent();
-            goBackButton.Click += delegate { NavigationService.GoBack(); };
+            goBackButton.Click += delegate { Frame.GoBack(); };
         }
     }
 

@@ -1,7 +1,9 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace ModernWpf.Controls
 {
+    [Obsolete]
     public class FadeTransition : TransitionElement
     {
         public static readonly DependencyProperty ModeProperty =

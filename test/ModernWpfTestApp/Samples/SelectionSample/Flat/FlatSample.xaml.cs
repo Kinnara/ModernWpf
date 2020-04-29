@@ -82,12 +82,12 @@ namespace MUXControlsTestApp.Samples.Selection
 
         private void OnGroupedClicked(object sender, RoutedEventArgs e)
         {
-            NavigationService.NavigateWithoutAnimation(typeof(GroupedSample));
+            Frame.NavigateWithoutAnimation(typeof(GroupedSample));
         }
 
         private void OnBackClicked(object sender, RoutedEventArgs e)
         {
-            NavigationService.GoBack();
+            Frame.GoBack();
         }
 
         private void insert_Click(object sender, RoutedEventArgs e)

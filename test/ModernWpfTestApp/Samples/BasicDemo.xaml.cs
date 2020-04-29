@@ -13,7 +13,7 @@ namespace MUXControlsTestApp.Samples
         public BasicDemo()
         {
             InitializeComponent();
-            goBackButton.Click += delegate { NavigationService.GoBack(); };
+            goBackButton.Click += delegate { Frame.GoBack(); };
             repeater.ItemTemplate = Resources["elementFactory"];
             var stack = repeater.Layout as StackLayout;
             int numItems = (stack != null && stack.DisableVirtualization) ? 10 : 10000;
