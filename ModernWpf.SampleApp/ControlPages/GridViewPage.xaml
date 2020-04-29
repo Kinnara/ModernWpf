@@ -8,8 +8,7 @@
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    mc:Ignorable="d"
-    Style="{StaticResource PageStyle}">
+    mc:Ignorable="d">
 
     <Page.Resources>
         <DataTemplate x:Key="ImageTemplate">

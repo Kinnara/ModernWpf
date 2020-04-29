@@ -6,7 +6,7 @@ using System.Windows.Threading;
 
 namespace SamplesCommon
 {
-    public class SampleFrame : TransitionFrame
+    public class SampleFrame : Frame
     {
         private object _oldContent;
 
@@ -24,20 +24,12 @@ namespace SamplesCommon
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
         {
-            (Content as SamplePage)?.InternalOnNavigatingFrom(e);
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
             bool firstNavigation = _oldContent == null;
-
-            if (_oldContent != null)
-            {
-                (_oldContent as SamplePage)?.InternalOnNavigatedFrom(e);
-                _oldContent = null;
-            }
-
-            (e.Content as SamplePage)?.InternalOnNavigatedTo(e);
+            _oldContent = null;
 
             if (!firstNavigation && e.Content is UIElement element)
             {

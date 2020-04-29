@@ -3,11 +3,14 @@
 // Please see http://go.microsoft.com/fwlink/?LinkID=131993 for details.
 // All other rights reserved.
 
+using System;
+
 namespace ModernWpf.Controls
 {
     /// <summary>
     /// The slide transition modes.
     /// </summary>
+    [Obsolete]
     public enum SlideTransitionMode
     {
         /// <summary>

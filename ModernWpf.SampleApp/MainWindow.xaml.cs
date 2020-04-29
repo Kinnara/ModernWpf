@@ -20,7 +20,7 @@ namespace ModernWpf.SampleApp
 
             var rootFrame = NavigationRootPage.RootFrame;
             SetBinding(TitleBar.IsBackButtonVisibleProperty,
-                new Binding { Path = new PropertyPath(Frame.CanGoBackProperty), Source = rootFrame });
+                new Binding { Path = new PropertyPath(System.Windows.Controls.Frame.CanGoBackProperty), Source = rootFrame });
 
             SubscribeToResourcesChanged();            
         }

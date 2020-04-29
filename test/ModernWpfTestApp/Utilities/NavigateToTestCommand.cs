@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using ModernWpf.Media.Animation;
 using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
+using Frame = ModernWpf.Controls.Frame;
 
 namespace MUXControlsTestApp
 {
@@ -16,8 +16,12 @@ namespace MUXControlsTestApp
 
         public NavigateToTestCommand()
         {
-            CanExecuteChanged?.Invoke(this, null);
+            if (CanExecuteChanged != null)
+            {
+                CanExecuteChanged(this, null);
+            }
         }
+
 
         public bool CanExecute(object parameter)
         {
@@ -28,40 +32,34 @@ namespace MUXControlsTestApp
         {
             var testDeclaration = parameter as TestDeclaration;
             var rootFrame = Frame != null ? Frame : Application.Current.MainWindow.Content as Frame;
-            rootFrame.NavigateEx(testDeclaration.PageType, testDeclaration.Name);
+            rootFrame.NavigateWithoutAnimation(testDeclaration.PageType, testDeclaration.Name);
         }
     }
 
-    static class NavigationExtensions
+    static class FrameExtensions
     {
         public static void NavigateWithoutAnimation(this Frame frame, Type sourcePageType)
         {
-            frame.NavigateEx(sourcePageType);
+            //if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.Animation.SuppressNavigationTransitionInfo"))
+            {
+                frame.Navigate(sourcePageType, null, new SuppressNavigationTransitionInfo());
+            }
+            //else
+            //{
+            //    frame.Navigate(sourcePageType);
+            //}
         }
 
         public static void NavigateWithoutAnimation(this Frame frame, Type sourcePageType, object parameter)
         {
-            frame.NavigateEx(sourcePageType, parameter);
-        }
-
-        public static void NavigateEx(this Frame frame, Type sourcePageType, object extraData = null)
-        {
-            frame.Navigate(Activator.CreateInstance(sourcePageType), extraData);
-        }
-
-        public static void NavigateWithoutAnimation(this NavigationService frame, Type sourcePageType)
-        {
-            frame.NavigateEx(sourcePageType);
-        }
-
-        public static void NavigateWithoutAnimation(this NavigationService frame, Type sourcePageType, object parameter)
-        {
-            frame.NavigateEx(sourcePageType, parameter);
-        }
-
-        public static void NavigateEx(this NavigationService frame, Type sourcePageType, object extraData = null)
-        {
-            frame.Navigate(Activator.CreateInstance(sourcePageType), extraData);
+            //if (ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.Animation.SuppressNavigationTransitionInfo"))
+            {
+                frame.Navigate(sourcePageType, parameter, new SuppressNavigationTransitionInfo());
+            }
+            //else
+            //{
+            //    frame.Navigate(sourcePageType, parameter);
+            //}
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace ModernWpf.Controls
 {
+    [Obsolete]
     public class DrillTransition : TransitionElement
     {
         public static readonly DependencyProperty ModeProperty =

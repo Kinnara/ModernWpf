@@ -10,10 +10,12 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using Frame = ModernWpf.Controls.Frame;
+using Page = ModernWpf.Controls.Page;
 
 namespace MUXControlsTestApp
 {
-    public class TestPage : BasePage
+    public class TestPage : Page
     {
         public TestPage()
         {
@@ -35,8 +37,6 @@ namespace MUXControlsTestApp
             };
             Resources = resources;
         }
-
-        public Frame Frame => Application.Current.MainWindow.Content as Frame;
 
         private static DependencyProperty s_currentTheme = DependencyProperty.RegisterAttached("CurrentTheme", typeof(ApplicationTheme), typeof(TestPage),
             new PropertyMetadata(ApplicationTheme.Light, OnCurrentThemeChangedStatic));

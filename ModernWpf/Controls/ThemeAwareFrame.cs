@@ -1,10 +1,11 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System;
+using System.Windows;
 using System.Windows.Navigation;
 
 namespace ModernWpf.Controls
 {
-    public class ThemeAwareFrame : Frame
+    [Obsolete]
+    public class ThemeAwareFrame : System.Windows.Controls.Frame
     {
         static ThemeAwareFrame()
         {

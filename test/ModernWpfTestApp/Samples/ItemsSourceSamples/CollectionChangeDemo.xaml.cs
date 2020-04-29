@@ -20,7 +20,7 @@ namespace MUXControlsTestApp.Samples
         public CollectionChangeDemo()
         {
             this.InitializeComponent();
-            goBackButton.Click += delegate { NavigationService.GoBack(); };
+            goBackButton.Click += delegate { Frame.GoBack(); };
             insertButton.Click += delegate { _dataSource.Insert(int.Parse(newStartIndex.Text), int.Parse(newCount.Text), resetMode.IsChecked ?? false); };
             removeButton.Click += delegate { _dataSource.Remove(int.Parse(oldStartIndex.Text), int.Parse(oldCount.Text), resetMode.IsChecked ?? false); };
             replaceButton.Click += delegate { _dataSource.Replace(int.Parse(oldStartIndex.Text), int.Parse(oldCount.Text), int.Parse(newCount.Text), resetMode.IsChecked ?? false); };

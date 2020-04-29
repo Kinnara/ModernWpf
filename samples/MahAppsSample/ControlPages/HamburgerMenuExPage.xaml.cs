@@ -29,7 +29,7 @@ namespace MahAppsSample.ControlPages
             {
                 if (selectedItem == settingsItem)
                 {
-                    contentFrame.NavigateToType(typeof(SampleSettingsPage));
+                    contentFrame.Navigate(typeof(SampleSettingsPage));
                 }
                 else
                 {
@@ -37,7 +37,7 @@ namespace MahAppsSample.ControlPages
                     ((HamburgerMenuEx)sender).Header = "Sample Page " + selectedItemTag.Substring(selectedItemTag.Length - 1);
                     string pageName = "SamplesCommon.SamplePages." + selectedItemTag;
                     Type pageType = typeof(SamplePage1).Assembly.GetType(pageName);
-                    contentFrame.NavigateToType(pageType);
+                    contentFrame.Navigate(pageType);
                 }
             }
         }

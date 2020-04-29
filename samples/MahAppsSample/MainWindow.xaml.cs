@@ -1,5 +1,6 @@
 ﻿using ModernWpf.Controls;
 using ModernWpf.MahApps.Controls;
+using ModernWpf.Navigation;
 using SamplesCommon;
 using System;
 using System.Linq;
@@ -116,18 +117,18 @@ namespace MahAppsSample
             if (item is NavigationViewItem menuItem)
             {
                 Type pageType = GetPageType(menuItem);
-                if (ContentFrame.CurrentSourcePageType() != pageType)
+                if (ContentFrame.CurrentSourcePageType != pageType)
                 {
-                    ContentFrame.NavigateToType(pageType);
+                    ContentFrame.Navigate(pageType);
                 }
             }
         }
 
         private void Navigate(Type sourcePageType)
         {
-            if (ContentFrame.CurrentSourcePageType() != sourcePageType)
+            if (ContentFrame.CurrentSourcePageType != sourcePageType)
             {
-                ContentFrame.NavigateToType(sourcePageType);
+                ContentFrame.Navigate(sourcePageType);
             }
         }
 

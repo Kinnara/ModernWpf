@@ -13,6 +13,7 @@ namespace ModernWpf.Controls
     /// <see cref="T:ModernWpf.Controls.ITransition"/>s.
     /// </summary>
     /// <QualityBand>Preview</QualityBand>
+    [Obsolete]
     public static class TransitionService
     {
         /// <summary>

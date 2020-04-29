@@ -16,10 +16,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using GridView = ModernWpf.Controls.GridView;
+using Page = ModernWpf.Controls.Page;
 
 namespace ModernWpf.SampleApp
 {
-    public abstract class ItemsPageBase : SamplePage, INotifyPropertyChanged
+    public abstract class ItemsPageBase : Page, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -95,13 +95,6 @@
                 <Setter Property="Spacing" Value="16" />
             </Style>
 
-            <Style x:Key="PageStyle" TargetType="Page">
-                <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundAltHighBrush}" />
-                <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
-                <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
-                <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
-            </Style>
-
             <Style x:Key="ScrollableContentDialogStyle" TargetType="ui:ContentDialog">
                 <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
                 <Style.Resources>

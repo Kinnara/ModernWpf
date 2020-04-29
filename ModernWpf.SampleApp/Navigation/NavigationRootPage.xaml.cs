@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using Frame = ModernWpf.Controls.Frame;
 
 namespace ModernWpf.SampleApp
 {
@@ -98,7 +99,7 @@ namespace ModernWpf.SampleApp
         {
             if (PagesList.SelectedValue is Type type)
             {
-                RootFrame?.NavigateToType(type);
+                RootFrame?.Navigate(type);
             }
         }
 
@@ -155,14 +156,14 @@ namespace ModernWpf.SampleApp
             if (args.ChosenSuggestion != null && args.ChosenSuggestion is ControlInfoDataItem)
             {
                 var pageType = (args.ChosenSuggestion as ControlInfoDataItem).PageType;
-                RootFrame.NavigateToType(pageType);
+                RootFrame.Navigate(pageType);
             }
             else if (!string.IsNullOrEmpty(args.QueryText))
             {
                 var item = _controlPagesData.FirstOrDefault(i => i.Title.Equals(args.QueryText, StringComparison.OrdinalIgnoreCase));
                 if (item != null)
                 {
-                    RootFrame.NavigateToType(item.PageType);
+                    RootFrame.Navigate(item.PageType);
                 }
             }
         }
@@ -180,7 +181,7 @@ namespace ModernWpf.SampleApp
             Debug.Assert(!RootFrame.CanGoForward);
 
             _ignoreSelectionChange = true;
-            PagesList.SelectedValue = RootFrame.CurrentSourcePageType();
+            PagesList.SelectedValue = RootFrame.CurrentSourcePageType;
             _ignoreSelectionChange = false;
         }
 
