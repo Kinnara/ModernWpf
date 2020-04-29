@@ -13,7 +13,7 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void GoToHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.NavigateToType(typeof(ListBoxPage));
+            Frame.Navigate(typeof(ListBoxPage));
         }
     }
 }

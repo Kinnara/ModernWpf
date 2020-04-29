@@ -24,6 +24,7 @@ namespace ModernWpf.Controls
     /// values for the
     /// <see cref="T:System.Windows.UIElement"/>.
     /// </summary>
+    [Obsolete]
     public class Transition : ITransition
     {
         /// <summary>

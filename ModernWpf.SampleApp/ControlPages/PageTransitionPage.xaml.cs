@@ -1,62 +1,77 @@
-﻿using SamplesCommon;
+﻿using ModernWpf.Media.Animation;
 using System.Windows;
-using System.Windows.Navigation;
+using System.Windows.Controls;
+using Page = ModernWpf.Controls.Page;
 using SamplePages = SamplesCommon.SamplePages;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class PageTransitionPage
+    public sealed partial class PageTransitionPage : Page
     {
+        private NavigationTransitionInfo _transitionInfo = null;
+
         public PageTransitionPage()
         {
             InitializeComponent();
 
-            ContentFrame.NavigateToType(typeof(SamplePages.SamplePage1));
+            ContentFrame.Navigate(typeof(SamplePages.SamplePage1));
         }
 
-        private void NavigateForward(object sender, RoutedEventArgs e)
+        private void ForwardButton1_Click(object sender, RoutedEventArgs e)
         {
-            var pageToNavigateTo = ContentFrame.BackStackDepth() % 2 == 1 ? typeof(SamplePages.SamplePage1) : typeof(SamplePages.SamplePage2);
-            ContentFrame.NavigateToType(pageToNavigateTo);
+
+            var pageToNavigateTo = ContentFrame.BackStackDepth % 2 == 1 ? typeof(SamplePages.SamplePage1) : typeof(SamplePages.SamplePage2);
+
+            if (_transitionInfo == null)
+            {
+                // Default behavior, no transition set or used.
+                ContentFrame.Navigate(pageToNavigateTo, null);
+            }
+            else
+            {
+                // Explicit transition info used.
+                ContentFrame.Navigate(pageToNavigateTo, null, _transitionInfo);
+            }
         }
 
-        private void NavigateBackward(object sender, RoutedEventArgs e)
+        private void BackwardButton1_Click(object sender, RoutedEventArgs e)
         {
-            if (ContentFrame.BackStackDepth() > 0)
+            if (ContentFrame.BackStackDepth > 0)
             {
                 ContentFrame.GoBack();
             }
         }
 
-        private void Frame_Navigated(object sender, NavigationEventArgs e)
+        private void TransitionRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            var page = (FrameworkElement)e.Content;
-            page.Margin = new Thickness(-18, 0, -18, 0);
-        }
-
-        private void DefaultRB_Checked(object sender, RoutedEventArgs e)
-        {
-            ContentFrame.ClearValue(StyleProperty);
-        }
-
-        private void DrillRB_Checked(object sender, RoutedEventArgs e)
-        {
-            ContentFrame.Style = (Style)Resources["DrillFrameStyle"];
-        }
-
-        private void SuppressRB_Checked(object sender, RoutedEventArgs e)
-        {
-            ContentFrame.Style = (Style)Resources["SuppressFrameStyle"];
-        }
-
-        private void SlideFromRightRB_Checked(object sender, RoutedEventArgs e)
-        {
-            ContentFrame.Style = (Style)Resources["SlideFromRightFrameStyle"];
-        }
-
-        private void SlideFromLeftRB_Checked(object sender, RoutedEventArgs e)
-        {
-            ContentFrame.Style = (Style)Resources["SlideFromLeftFrameStyle"];
+            var senderTransitionString = (sender as RadioButton).Content.ToString();
+            if (senderTransitionString != "Default")
+            {
+                if (senderTransitionString == "Entrance")
+                {
+                    _transitionInfo = new EntranceNavigationTransitionInfo();
+                }
+                else if (senderTransitionString == "DrillIn")
+                {
+                    _transitionInfo = new DrillInNavigationTransitionInfo();
+                }
+                else if (senderTransitionString == "Suppress")
+                {
+                    _transitionInfo = new SuppressNavigationTransitionInfo();
+                }
+                else if (senderTransitionString == "Slide from Right")
+                {
+                    _transitionInfo = new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight };
+                }
+                else if (senderTransitionString == "Slide from Left")
+                {
+                    _transitionInfo = new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromLeft };
+                }
+            }
+            else
+            {
+                _transitionInfo = null;
+            }
         }
     }
 }

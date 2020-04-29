@@ -11,6 +11,7 @@ namespace ModernWpf.Controls
     /// <summary>
     /// Controls the behavior of transitions.
     /// </summary>
+    [Obsolete]
     public interface ITransition
     {
         /// <summary>

@@ -42,7 +42,7 @@ namespace MUXControlsTestApp.Samples.Selection
             GC.Collect();
             GC.WaitForPendingFinalizers();
             GC.Collect();
-            NavigationService.GoBack();
+            Frame.GoBack();
         }
 
         private void OnMultipleSelectionClicked(object sender, RoutedEventArgs e)

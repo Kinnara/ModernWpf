@@ -105,7 +105,7 @@
                 <ui:NavigationViewItem Content="Sample Page 4" Tag="{x:Type samplepages:SamplePage4}" Icon="Mail"/>
             </ui:NavigationView.MenuItems>
 
-            <ui:TransitionFrame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
+            <ui:Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
         </ui:NavigationView>
     </Grid>
 </Window>

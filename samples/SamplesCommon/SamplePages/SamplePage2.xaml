@@ -1,60 +1,34 @@
-﻿<PageFunctionBase
+﻿<ui:Page
     x:Class="SamplesCommon.SamplePages.SamplePage2"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:sc="clr-namespace:SamplesCommon"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    mc:Ignorable="d"
-    Style="{StaticResource PageStyle}">
+    mc:Ignorable="d">
 
-    <Page.Resources>
-        <sc:ColorToBrushConverter x:Key="ColorToBrushConverter" />
-    </Page.Resources>
+    <ScrollViewer>
+        <Grid Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
+            <Grid.Resources>
+                <sys:Double x:Key="TileHeight">150</sys:Double>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-    <Grid
-        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-        Margin="12,0">
-        <Grid.Resources>
-            <sys:Double x:Key="TileHeight">150</sys:Double>
-        </Grid.Resources>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+            <Grid x:Name="DestinationElement" Grid.Row="1" Grid.Column="0" MinHeight="{StaticResource TileHeight}" Background="{DynamicResource SystemControlBackgroundAccentBrush}" Margin="12" Width="150" Height="200" VerticalAlignment="Top" />
 
-        <Grid
-            x:Uid="DestinationElement"
-            Grid.Row="1"
-            Grid.Column="0"
-            MinHeight="{StaticResource TileHeight}"
-            Tag="{DynamicResource SystemAccentColor}"
-            Background="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource ColorToBrushConverter}}"
-            Margin="12"
-            Width="150"
-            Height="200"
-            VerticalAlignment="Top" />
+            <StackPanel x:Name="ContentPanel" Grid.Row="1" Grid.Column="1" MinHeight="200" Margin="12">
+                <TextBlock Style="{DynamicResource TitleTextBlockStyle}" TextWrapping="Wrap" Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit" Margin="0,0,0,12"/>
+                <TextBlock TextWrapping="Wrap" Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
+            </StackPanel>
 
-        <StackPanel
-            x:Uid="ContentPanel"
-            Grid.Row="1"
-            Grid.Column="1"
-            MinHeight="200"
-            Margin="12">
-            <TextBlock
-                Style="{StaticResource TitleTextBlockStyle}"
-                TextWrapping="Wrap"
-                Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit"
-                Margin="0,0,0,12" />
-            <TextBlock
-                TextWrapping="Wrap"
-                Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
-        </StackPanel>
-
-    </Grid>
-</PageFunctionBase>
+        </Grid>
+    </ScrollViewer>
+</ui:Page>

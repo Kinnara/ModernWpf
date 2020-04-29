@@ -1,5 +1,4 @@
 ﻿using ModernWpf.Media.Animation;
-using SamplesCommon;
 using SamplesCommon.SamplePages;
 using System.Windows;
 

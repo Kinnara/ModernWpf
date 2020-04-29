@@ -1,4 +1,4 @@
-﻿<PageFunctionBase
+﻿<ui:Page
     x:Class="ModernWpf.SampleApp.ControlPages.ControlPalettePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,7 +7,6 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
     mc:Ignorable="d"
-    Style="{StaticResource PageStyle}"
     Background="{DynamicResource AppBackgroundBrush}">
 
     <Grid
@@ -66,4 +65,4 @@
             </Grid>
         </ScrollViewer>
     </Grid>
-</PageFunctionBase>
+</ui:Page>

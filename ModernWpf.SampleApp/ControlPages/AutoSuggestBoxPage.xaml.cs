@@ -155,7 +155,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (ControlLink.Tag is Type pageType)
             {
-                NavigationService.NavigateToType(pageType);
+                Frame.Navigate(pageType);
             }
         }
     }
