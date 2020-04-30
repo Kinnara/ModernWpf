@@ -100,6 +100,7 @@
                                             Background="{DynamicResource TextControlButtonBackground}"
                                             BorderBrush="{DynamicResource TextControlButtonBorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                                             Padding="{TemplateBinding Padding}">
                                             <ContentPresenter
                                                 x:Name="ContentPresenter"
@@ -215,6 +216,7 @@
                         <Button
                             x:Name="QueryButton"
                             Grid.Row="1"
+                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}"
                             Style="{StaticResource QueryButtonStyle}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Focusable="False"
