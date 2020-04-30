@@ -2,11 +2,11 @@
 
 namespace System.Windows.Controls
 {
-    public class ComboBoxEx : ComboBox
+    public class SliderEx : Slider
     {
         #region Header
 
-        public static readonly DependencyProperty HeaderProperty = ControlHelper.HeaderProperty.AddOwner(typeof(ComboBoxEx));
+        public static readonly DependencyProperty HeaderProperty = ControlHelper.HeaderProperty.AddOwner(typeof(SliderEx));
 
         public object Header
         {
@@ -18,7 +18,7 @@ namespace System.Windows.Controls
 
         #region CornerRadius
 
-        public static readonly DependencyProperty CornerRadiusProperty = ControlHelper.CornerRadiusProperty.AddOwner(typeof(ComboBoxEx));
+        public static readonly DependencyProperty CornerRadiusProperty = ControlHelper.CornerRadiusProperty.AddOwner(typeof(SliderEx));
 
         public CornerRadius CornerRadius
         {

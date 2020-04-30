@@ -98,11 +98,40 @@ namespace ModernWpf.Controls
                 }
             }
 
-            if (GetTemplateChild(c_numberBoxTextBoxName) is TextBox textBox)
+            m_textBox = GetTextBox();
+            TextBox GetTextBox()
             {
-                textBox.PreviewKeyDown += OnNumberBoxKeyDown;
-                textBox.KeyUp += OnNumberBoxKeyUp;
-                m_textBox = textBox;
+                var textBox = GetTemplateChild(c_numberBoxTextBoxName) as TextBox;
+                if (textBox != null)
+                {
+                    if (SharedHelpers.IsRS3OrHigher())
+                    {
+                        // Listen to PreviewKeyDown because textbox eats the down arrow key in some circumstances.
+                        textBox.PreviewKeyDown += OnNumberBoxKeyDown;
+                    }
+                    else
+                    {
+                        // This is better than nothing.
+                        textBox.KeyDown += OnNumberBoxKeyDown;
+                    }
+
+                    textBox.KeyUp += OnNumberBoxKeyUp;
+
+                    // Listen to NumberBox::CornerRadius changes so that we can enfore the T-rule for the textbox in SpinButtonPlacementMode::Inline.
+                    // We need to explicitly go to the corresponding visual state each time the NumberBox' CornerRadius is changed in order for the new
+                    // corner radius values to be filtered correctly.
+                    // If we only go to the SpinButtonsVisible visual state whenever the SpinButtonPlacementMode is changed to Inline, all subsequent
+                    // corner radius changes would apply to all four textbox corners (this can be easily seen in the CornerRadius test page of the MUXControlsTestApp).
+                    // This will break the T-rule in the Inline SpinButtonPlacementMode.
+                    // Not needed for WPF.
+                    /*
+                    if (SharedHelpers.IsControlCornerRadiusAvailable())
+                    {
+                        RegisterPropertyChanged(Control.CornerRadiusProperty, OnCornerRadiusPropertyChanged);
+                    }
+                    */
+                }
+                return textBox;
             }
 
             m_popup = GetTemplateChild(c_numberBoxPopupName) as Popup;
@@ -144,6 +173,18 @@ namespace ModernWpf.Controls
                 UpdateTextToValue();
             }
         }
+
+        // Not needed for WPF.
+        /*
+        void OnCornerRadiusPropertyChanged(DependencyObject sender, DependencyProperty args)
+        {
+            if (this.SpinButtonPlacementMode == NumberBoxSpinButtonPlacementMode.Inline)
+            {
+                // Enforce T-rule for the textbox in Inline SpinButtonPlacementMode.
+                VisualStateManager.GoToState(this, "SpinButtonsVisible", false);
+            }
+        }
+        */
 
         private void OnValuePropertyChanged(DependencyPropertyChangedEventArgs args)
         {

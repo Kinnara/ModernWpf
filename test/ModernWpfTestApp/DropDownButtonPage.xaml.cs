@@ -5,6 +5,7 @@ using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using System.Windows;
 using System.Windows.Controls;
+using Flyout = ModernWpf.Controls.Flyout;
 
 namespace MUXControlsTestApp
 {

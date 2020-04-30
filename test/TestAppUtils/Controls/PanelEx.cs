@@ -1,29 +1,55 @@
-﻿using ModernWpf.Controls;
+﻿using System.Collections;
 using System.Windows.Markup;
 using System.Windows.Media;
 
 namespace System.Windows.Controls
 {
     [ContentProperty(nameof(Children))]
-    public class StackPanelEx : SimpleStackPanel
+    public abstract class PanelEx<T> : FrameworkElement where T : Panel, new()
     {
-        static StackPanelEx()
+        protected PanelEx()
         {
-            OrientationProperty.OverrideMetadata(typeof(StackPanelEx), new FrameworkPropertyMetadata(OnOrientationPropertyChanged));
-            SpacingProperty.OverrideMetadata(typeof(StackPanelEx), new FrameworkPropertyMetadata(OnSpacingPropertyChanged));
-        }
-
-        public StackPanelEx()
-        {
-            _itemsHost = new ItemsHost(this);
-            _border = new Border { Child = _itemsHost };
+            ItemsHost = new T();
+            _border = new Border { Child = ItemsHost };
+            AddLogicalChild(_border);
             AddVisualChild(_border);
         }
+
+        public UIElementCollection Children => ItemsHost.Children;
+
+        protected T ItemsHost { get; }
+
+        #region Background
+
+        public static readonly DependencyProperty BackgroundProperty =
+                Panel.BackgroundProperty.AddOwner(typeof(PanelEx<T>),
+                    new FrameworkPropertyMetadata(
+                        Panel.BackgroundProperty.DefaultMetadata.DefaultValue,
+                        FrameworkPropertyMetadataOptions.None,
+                        OnBackgroundPropertyChanged));
+
+        public Brush Background
+        {
+            get => (Brush)GetValue(BackgroundProperty);
+            set => SetValue(BackgroundProperty, value);
+        }
+
+        private static void OnBackgroundPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((PanelEx<T>)sender).OnBackgroundPropertyChanged(args);
+        }
+
+        private void OnBackgroundPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            _border.Background = (Brush)args.NewValue;
+        }
+
+        #endregion
 
         #region BorderBrush
 
         public static readonly DependencyProperty BorderBrushProperty
-                = Border.BorderBrushProperty.AddOwner(typeof(StackPanelEx),
+                = Border.BorderBrushProperty.AddOwner(typeof(PanelEx<T>),
                     new FrameworkPropertyMetadata(
                         Border.BorderBrushProperty.DefaultMetadata.DefaultValue,
                         FrameworkPropertyMetadataOptions.None,
@@ -37,7 +63,7 @@ namespace System.Windows.Controls
 
         private static void OnBorderBrushPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            ((StackPanelEx)sender).OnBorderBrushPropertyChanged(args);
+            ((PanelEx<T>)sender).OnBorderBrushPropertyChanged(args);
         }
 
         private void OnBorderBrushPropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -50,7 +76,7 @@ namespace System.Windows.Controls
         #region BorderThickness
 
         public static readonly DependencyProperty BorderThicknessProperty
-                = Border.BorderThicknessProperty.AddOwner(typeof(StackPanelEx),
+                = Border.BorderThicknessProperty.AddOwner(typeof(PanelEx<T>),
                     new FrameworkPropertyMetadata(
                         Border.BorderThicknessProperty.DefaultMetadata.DefaultValue,
                         FrameworkPropertyMetadataOptions.None,
@@ -64,7 +90,7 @@ namespace System.Windows.Controls
 
         private static void OnBorderThicknessPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            ((StackPanelEx)sender).OnBorderThicknessPropertyChanged(args);
+            ((PanelEx<T>)sender).OnBorderThicknessPropertyChanged(args);
         }
 
         private void OnBorderThicknessPropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -77,7 +103,7 @@ namespace System.Windows.Controls
         #region Padding
 
         public static readonly DependencyProperty PaddingProperty
-                = Border.PaddingProperty.AddOwner(typeof(StackPanelEx),
+                = Border.PaddingProperty.AddOwner(typeof(PanelEx<T>),
                     new FrameworkPropertyMetadata(
                         Border.PaddingProperty.DefaultMetadata.DefaultValue,
                         FrameworkPropertyMetadataOptions.None,
@@ -91,7 +117,7 @@ namespace System.Windows.Controls
 
         private static void OnPaddingPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            ((StackPanelEx)sender).OnPaddingPropertyChanged(args);
+            ((PanelEx<T>)sender).OnPaddingPropertyChanged(args);
         }
 
         private void OnPaddingPropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -100,6 +126,11 @@ namespace System.Windows.Controls
         }
 
         #endregion
+
+        protected override IEnumerator LogicalChildren
+        {
+            get { yield return _border; }
+        }
 
         protected override int VisualChildrenCount => 1;
 
@@ -125,37 +156,6 @@ namespace System.Windows.Controls
             return finalSize;
         }
 
-        protected override UIElementCollection CreateUIElementCollection(FrameworkElement logicalParent)
-        {
-            return _itemsHost.Children;
-        }
-
-        private static void OnOrientationPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((StackPanelEx)d)._itemsHost.Orientation = (Orientation)e.NewValue;
-        }
-
-        private static void OnSpacingPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((StackPanelEx)d)._itemsHost.Spacing = (double)e.NewValue;
-        }
-
-        private readonly Border _border;
-        private readonly ItemsHost _itemsHost;
-
-        private class ItemsHost : SimpleStackPanel
-        {
-            public ItemsHost(StackPanelEx owner)
-            {
-                _owner = owner;
-            }
-
-            protected override UIElementCollection CreateUIElementCollection(FrameworkElement logicalParent)
-            {
-                return new UIElementCollection(this, _owner);
-            }
-
-            private readonly StackPanelEx _owner;
-        }
+        Border _border;
     }
 }

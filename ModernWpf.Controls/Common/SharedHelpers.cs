@@ -31,6 +31,8 @@ namespace ModernWpf.Controls
 
         public static bool IsRS5OrHigher() => true;
 
+        public static bool IsControlCornerRadiusAvailable() => true;
+
         public static bool IsThemeShadowAvailable() => false;
 
         public static bool IsOnXbox() => false;

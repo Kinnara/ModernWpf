@@ -1,7 +1,9 @@
 ﻿using ModernWpf;
+using ModernWpf.Controls.Primitives;
 using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace MUXControlsTestApp.Utilities
@@ -49,6 +51,11 @@ namespace MUXControlsTestApp.Utilities
             {
                 callback((DependencyObject)sender, dp);
             }
+        }
+
+        public static CornerRadius CornerRadius(this Control control)
+        {
+            return ControlHelper.GetCornerRadius(control);
         }
     }
 }

@@ -412,7 +412,7 @@
                         <Trigger Property="SpinButtonPlacementMode" Value="Inline">
                             <Setter TargetName="DownSpinButton" Property="Visibility" Value="Visible" />
                             <Setter TargetName="UpSpinButton" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="InputBox" Property="ui:ControlHelper.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
+                            <Setter TargetName="InputBox" Property="ui:ControlHelper.CornerRadius" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
                         </Trigger>
                         <!-- SpinButtonsPopup -->
                         <Trigger Property="SpinButtonPlacementMode" Value="Compact">
