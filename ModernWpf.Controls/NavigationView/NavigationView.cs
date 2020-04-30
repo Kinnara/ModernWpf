@@ -806,20 +806,20 @@ namespace ModernWpf.Controls
 
         internal void OnNavigationViewItemInvoked(NavigationViewItem nvi)
         {
+            m_shouldRaiseItemInvokedAfterSelection = true;
+
             var selectedItem = SelectedItem;
-            RaiseItemInvokedForNavigationViewItem(nvi);
-
-            // User changed selectionstate in the ItemInvoked callback
-            if (selectedItem != SelectedItem)
-            {
-                return;
-            }
-
             bool updateSelection = m_selectionModel != null && nvi.SelectsOnInvoked;
             if (updateSelection)
             {
                 var ip = GetIndexPathForContainer(nvi);
                 UpdateSelectionModelSelection(ip);
+            }
+
+            // Item was invoked but already selected, so raise event here.
+            if (selectedItem == SelectedItem)
+            {
+                RaiseItemInvokedForNavigationViewItem(nvi);
             }
 
             ToggleIsExpandedNavigationViewItem(nvi);
@@ -2128,8 +2128,21 @@ namespace ModernWpf.Controls
                 // Bug 17850504, Customer may use NavigationViewItem.IsSelected in ItemInvoke or SelectionChanged Event.
                 // To keep the logic the same as RS4, ItemInvoke is before unselect the old item
                 // And SelectionChanged is after we selected the new item.
+                var selectedItem = SelectedItem;
+                if (m_shouldRaiseItemInvokedAfterSelection)
+                {
+                    // If selection changed inside ItemInvoked, the flag does not get said to false and the event get's raised again,so we need to set it to false now!
+                    m_shouldRaiseItemInvokedAfterSelection = false;
+                    RaiseItemInvoked(nextItem, isSettingsItem, NavigationViewItemOrSettingsContentFromData(nextItem), recommendedDirection);
+                }
+                // Selection was modified inside ItemInvoked, skip everything here!
+                if (selectedItem != SelectedItem)
+                {
+                    return;
+                }
                 UnselectPrevItem(prevItem, nextItem);
                 ChangeSelectStatusForItem(nextItem, true /*selected*/);
+
                 RaiseSelectionChangedEvent(nextItem, isSettingsItem, recommendedDirection);
                 AnimateSelectionChanged(nextItem);
 
@@ -5265,6 +5278,8 @@ namespace ModernWpf.Controls
         bool m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore = false;
         // A flag to track that the selectionchange is caused by selection a item in topnav overflow menu
         bool m_selectionChangeFromOverflowMenu = false;
+        // Flag indicating whether selection change should raise item invoked. This is needed to be able to raise ItemInvoked before SelectionChanged while SelectedItem should point to the clicked item
+        bool m_shouldRaiseItemInvokedAfterSelection = false;
 
         TopNavigationViewLayoutState m_topNavigationMode = TopNavigationViewLayoutState.Uninitialized;
 
