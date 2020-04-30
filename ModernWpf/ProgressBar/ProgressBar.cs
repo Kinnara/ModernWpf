@@ -219,7 +219,7 @@ namespace ModernWpf.Controls
         {
             SetProgressBarIndicatorWidth();
             UpdateWidthBasedTemplateSettings();
-            RestartIndeterminateStoryboard();
+            ReapplyIndeterminateStoryboard();
         }
 
         protected override void OnValueChanged(double oldValue, double newValue)
@@ -249,7 +249,7 @@ namespace ModernWpf.Controls
         {
             SetProgressBarIndicatorWidth();
             UpdateStates();
-            RestartIndeterminateStoryboard();
+            ReapplyIndeterminateStoryboard();
         }
 
         private void OnShowPausedPropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -391,6 +391,29 @@ namespace ModernWpf.Controls
             }
 
             templateSettings.ClipRect = rectangle;
+
+            // TemplateSetting properties from WUXC for backwards compatibility.
+            templateSettings.EllipseAnimationEndPosition = (1.0 / 3.0) * width;
+            templateSettings.EllipseAnimationWellPosition = (2.0 / 3.0) * width;
+
+            if (width <= 180.0)
+            {
+                // Small ellipse diameter and offset.
+                templateSettings.EllipseDiameter = 4.0;
+                templateSettings.EllipseOffset = 4.0;
+            }
+            else if (width <= 280.0)
+            {
+                // Medium ellipse diameter and offset.
+                templateSettings.EllipseDiameter = 5.0;
+                templateSettings.EllipseOffset = 7.0;
+            }
+            else
+            {
+                // Large ellipse diameter and offset.
+                templateSettings.EllipseDiameter = 6.0;
+                templateSettings.EllipseOffset = 9.0;
+            }
         }
 
         private static object CoerceBrush(DependencyObject d, object baseValue)
@@ -415,7 +438,7 @@ namespace ModernWpf.Controls
             UpdateStates(false);
         }
 
-        private void RestartIndeterminateStoryboard()
+        private void ReapplyIndeterminateStoryboard()
         {
             Dispatcher.BeginInvoke(
                 () =>

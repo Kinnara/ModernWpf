@@ -4,6 +4,12 @@ namespace ModernWpf.Controls.Primitives
 {
     public sealed class ProgressRingTemplateSettings : DependencyObject
     {
+        internal ProgressRingTemplateSettings()
+        {
+        }
+
+        // TemplateSetting properties from WUXC for backwards compatibility.
+
         #region EllipseDiameter
 
         private static readonly DependencyPropertyKey EllipseDiameterPropertyKey =

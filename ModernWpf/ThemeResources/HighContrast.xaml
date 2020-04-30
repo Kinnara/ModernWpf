@@ -956,6 +956,10 @@
     <Thickness x:Key="ProgressBarBorderThemeThickness">1</Thickness>
     <Color x:Key="SystemControlErrorBackgroundColor">#33FFFFFF</Color>
 
+    <!-- Resources for ProgressRing -->
+    <m:StaticResource x:Key="ProgressRingForegroundThemeBrush" ResourceKey="SystemControlHighlightAccentBrush" />
+    <m:StaticResource x:Key="ProgressRingBackgroundThemeBrush" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+
     <!-- Resources for RadioButton -->
     <sys:Double x:Key="RadioButtonBorderThemeThickness">1</sys:Double>
     <m:StaticResource x:Key="RadioButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />

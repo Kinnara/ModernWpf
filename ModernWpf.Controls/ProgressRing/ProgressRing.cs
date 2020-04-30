@@ -7,19 +7,12 @@ using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    [TemplateVisualState(GroupName = SizeStatesGroup, Name = LargeState)]
-    [TemplateVisualState(GroupName = SizeStatesGroup, Name = SmallState)]
-    [TemplateVisualState(GroupName = ActiveStatesGroup, Name = InactiveState)]
-    [TemplateVisualState(GroupName = ActiveStatesGroup, Name = ActiveState)]
     public class ProgressRing : Control
     {
-        private const string SizeStatesGroup = "SizeStates";
-        private const string LargeState = "Large";
-        private const string SmallState = "Small";
-
-        private const string ActiveStatesGroup = "ActiveStates";
-        private const string InactiveState = "Inactive";
-        private const string ActiveState = "Active";
+        const string s_ActiveStateName = "Active";
+        const string s_InactiveStateName = "Inactive";
+        const string s_SmallStateName = "Small";
+        const string s_LargeStateName = "Large";
 
         static ProgressRing()
         {
@@ -28,12 +21,9 @@ namespace ModernWpf.Controls
 
         public ProgressRing()
         {
-            TemplateSettings = new ProgressRingTemplateSettings();
-        }
+            SetValue(TemplateSettingsPropertyKey, new ProgressRingTemplateSettings());
 
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new ProgressRingAutomationPeer(this);
+            SizeChanged += OnSizeChanged;
         }
 
         #region IsActive
@@ -49,47 +39,102 @@ namespace ModernWpf.Controls
                 nameof(IsActive),
                 typeof(bool),
                 typeof(ProgressRing),
-                new FrameworkPropertyMetadata(OnIsActiveChanged));
+                new FrameworkPropertyMetadata(OnIsActivePropertyChanged));
 
-        private static void OnIsActiveChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnIsActivePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            ((ProgressRing)d).ChangeVisualState(true);
+            ((ProgressRing)sender).OnIsActivePropertyChanged(args);
         }
 
         #endregion
 
-        public ProgressRingTemplateSettings TemplateSettings { get; }
+        #region TemplateSettings
+
+        private static readonly DependencyPropertyKey TemplateSettingsPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(TemplateSettings),
+                typeof(ProgressRingTemplateSettings),
+                typeof(ProgressRing),
+                null);
+
+        public static readonly DependencyProperty TemplateSettingsProperty =
+            TemplateSettingsPropertyKey.DependencyProperty;
+
+        public ProgressRingTemplateSettings TemplateSettings
+        {
+            get => (ProgressRingTemplateSettings)GetValue(TemplateSettingsProperty);
+        }
+
+        #endregion
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ProgressRingAutomationPeer(this);
+        }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 
-            ChangeVisualState(false);
+            ChangeVisualState();
         }
 
-        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            base.OnRenderSizeChanged(sizeInfo);
+            ApplyTemplateSettings();
+            ChangeVisualState();
+        }
 
-            double maxSideLength = Math.Min(sizeInfo.NewSize.Width, sizeInfo.NewSize.Height);
-            double ellipseDiameter = 0.1 * maxSideLength;
-            if (maxSideLength <= 40)
-            {
-                ellipseDiameter += 1;
-            }
+        void OnIsActivePropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            ChangeVisualState();
+        }
 
+        void ChangeVisualState()
+        {
+            VisualStateManager.GoToState(this, IsActive ? s_ActiveStateName : s_InactiveStateName, true);
+            VisualStateManager.GoToState(this, TemplateSettings.MaxSideLength < 60 ? s_SmallStateName : s_LargeStateName, true);
+        }
+
+        void ApplyTemplateSettings()
+        {
+            // TemplateSetting properties from WUXC for backwards compatibility.
             var templateSettings = TemplateSettings;
-            templateSettings.EllipseDiameter = ellipseDiameter;
-            templateSettings.EllipseOffset = new Thickness(0, maxSideLength / 2 - ellipseDiameter, 0, 0);
-            templateSettings.MaxSideLength = maxSideLength;
 
-            ChangeVisualState(true);
-        }
+            var (width, diameterValue, anchorPoint) = calcSettings();
+            (double, double, double) calcSettings()
+            {
+                if (ActualWidth != 0)
+                {
+                    double width = Math.Min(ActualWidth, ActualHeight);
 
-        private void ChangeVisualState(bool useTransitions)
-        {
-            VisualStateManager.GoToState(this, IsActive ? ActiveState : InactiveState, useTransitions);
-            VisualStateManager.GoToState(this, TemplateSettings.MaxSideLength < 60 ? SmallState : LargeState, useTransitions);
+                    double diameterAdditive;
+                    {
+                        double init()
+                        {
+                            if (width <= 40.0)
+                            {
+                                return 1.0;
+                            }
+                            return 0.0;
+                        }
+                        diameterAdditive = init();
+                    }
+
+                    double diamaterValue = (width * 0.1) + diameterAdditive;
+                    double anchorPoint = (width * 0.5) - diamaterValue;
+                    return (width, diamaterValue, anchorPoint);
+                }
+
+                return (0.0, 0.0, 0.0);
+            };
+
+            templateSettings.EllipseDiameter = diameterValue;
+
+            Thickness thicknessEllipseOffset = new Thickness(0, anchorPoint, 0, 0);
+
+            templateSettings.EllipseOffset = thicknessEllipseOffset;
+            templateSettings.MaxSideLength = width;
         }
     }
 }
