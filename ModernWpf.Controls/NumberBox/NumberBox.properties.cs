@@ -142,7 +142,9 @@ namespace ModernWpf.Controls
         #region Header
 
         public static readonly DependencyProperty HeaderProperty =
-            ControlHelper.HeaderProperty.AddOwner(typeof(NumberBox));
+            ControlHelper.HeaderProperty.AddOwner(
+                typeof(NumberBox),
+                new FrameworkPropertyMetadata(OnHeaderPropertyChanged));
 
         public object Header
         {
@@ -150,17 +152,29 @@ namespace ModernWpf.Controls
             set => SetValue(HeaderProperty, value);
         }
 
+        private static void OnHeaderPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((NumberBox)sender).OnHeaderPropertyChanged(args);
+        }
+
         #endregion
 
         #region HeaderTemplate
 
         public static readonly DependencyProperty HeaderTemplateProperty =
-            ControlHelper.HeaderTemplateProperty.AddOwner(typeof(NumberBox));
+            ControlHelper.HeaderTemplateProperty.AddOwner(
+                typeof(NumberBox),
+                new FrameworkPropertyMetadata(OnHeaderTemplatePropertyChanged));
 
         public DataTemplate HeaderTemplate
         {
             get => (DataTemplate)GetValue(HeaderTemplateProperty);
             set => SetValue(HeaderTemplateProperty, value);
+        }
+
+        private static void OnHeaderTemplatePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            ((NumberBox)sender).OnHeaderTemplatePropertyChanged(args);
         }
 
         #endregion

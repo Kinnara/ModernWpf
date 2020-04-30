@@ -324,7 +324,7 @@
                             Margin="{DynamicResource TextBoxTopHeaderMargin}"
                             TextWrapping="Wrap"
                             VerticalAlignment="Top"
-                            Visibility="{TemplateBinding ui:ControlHelper.HeaderVisibility}"
+                            Visibility="Collapsed"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
                         <TextBox

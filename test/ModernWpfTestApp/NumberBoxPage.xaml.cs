@@ -5,9 +5,15 @@ using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows;
-using System.Windows.Controls;
+using System.IO;
+using System.Xml;
 using Windows.Globalization.NumberFormatting;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Markup;
+using MUXControlsTestApp.Utilities;
+using ModernWpf;
 
 namespace MUXControlsTestApp
 {
@@ -18,7 +24,9 @@ namespace MUXControlsTestApp
 
         public NumberBoxPage()
         {
-            InitializeComponent();
+            this.InitializeComponent();
+
+            TestNumberBox.RegisterPropertyChangedCallback(NumberBox.TextProperty, new DependencyPropertyChangedCallback(TextPropertyChanged));
         }
 
         private void SpinMode_Changed(object sender, RoutedEventArgs e)
@@ -113,7 +121,7 @@ namespace MUXControlsTestApp
 
         private void SetNaNButton_Click(object sender, RoutedEventArgs e)
         {
-            TestNumberBox.Value = double.NaN;
+            TestNumberBox.Value = Double.NaN;
         }
 
         private void SetTwoWayBoundNaNButton_Click(object sender, RoutedEventArgs e)
@@ -122,39 +130,62 @@ namespace MUXControlsTestApp
             TwoWayBoundNumberBoxValue.Text = TwoWayBoundNumberBox.Value.ToString();
         }
 
-        private void ScrollviewerWithScroll_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void ToggleHeaderValueButton_Click(object sender, RoutedEventArgs e)
         {
-            if (e.VerticalChange != 0)
+            if(HeaderTestingNumberBox.Header is null)
             {
-                VerticalOffsetDisplayBlock.Text = (sender as ScrollViewer).VerticalOffset.ToString();
+                var demoHeader = new TextBlock();
+                demoHeader.SetValue(AutomationProperties.NameProperty, "NumberBoxHeaderClippingDemoHeader");
+                demoHeader.Text = "Test header";
+                HeaderTestingNumberBox.Header = demoHeader;
+            }
+            else
+            {
+                // Switching between normal header and empty string header
+                if(HeaderTestingNumberBox.Header as string is null)
+                {
+                    HeaderTestingNumberBox.Header = "";
+                }
+                else
+                {
+                    HeaderTestingNumberBox.Header = null;
+                }
             }
         }
 
-        private class WinRTNumberFormatter : INumberBoxNumberFormatter
+        private void ToggleHeaderTemplateValueButton_Click(object sender, RoutedEventArgs e)
         {
-            private readonly DecimalFormatter _formatter;
-
-            public WinRTNumberFormatter(DecimalFormatter formatter)
+            if (HeaderTemplateTestingNumberBox.HeaderTemplate is null)
             {
-                _formatter = formatter;
+                string templateString = 
+                @"<DataTemplate 
+                xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""> 
+                    <TextBlock AutomationProperties.Name=""HeaderTemplateTestingBlock"" Text=""Some text""/> 
+                </DataTemplate>";
+                HeaderTemplateTestingNumberBox.HeaderTemplate = XamlReader.Parse(templateString) as DataTemplate;
             }
-
-            public string FormatDouble(double value)
+            else
             {
-                return _formatter.FormatDouble(value);
+                // Switching between normal header and empty string header
+                HeaderTemplateTestingNumberBox.HeaderTemplate = null;
             }
+        }
 
-            public double? ParseDouble(string text)
-            {
-                return _formatter.ParseDouble(text);
-            }
+        private void TextPropertyChanged(DependencyObject o, DependencyProperty p)
+        {
+            TextTextBox.Text = TestNumberBox.Text;
+        }
+
+        private void ScrollviewerWithScroll_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            VerticalOffsetDisplayBlock.Text = (sender as System.Windows.Controls.ScrollViewer).VerticalOffset.ToString();
         }
     }
 
     public class DataModelWithINPC : INotifyPropertyChanged
     {
         private double _value;
-
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -170,7 +201,7 @@ namespace MUXControlsTestApp
                 if (value != _value)
                 {
                     _value = value;
-                    OnPropertyChanged(nameof(Value));
+                    OnPropertyChanged(nameof(this.Value));
                 }
             }
         }

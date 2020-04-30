@@ -48,10 +48,21 @@ namespace System.Windows
                     if (!string.IsNullOrEmpty(path))
                     {
                         var names = path.Split('.');
-                        if (names.Length == 2)
+                        if (names.Length >= 2)
                         {
-                            elementName = names[0];
-                            effectivePath = new PropertyPath(names[1]);
+                            if (rootElement.GetType().GetProperty(names[0]) == null)
+                            {
+                                elementName = names[0];
+
+                                if (names.Length == 3 && names[1] == "IsChecked" && names[2] == "Value")
+                                {
+                                    effectivePath = new PropertyPath(names[1]);
+                                }
+                                else
+                                {
+                                    effectivePath = new PropertyPath(path.Substring(names[0].Length + 1));
+                                }
+                            }
                         }
                     }
                 }

@@ -32,6 +32,7 @@ namespace ModernWpf.Controls
     [TemplatePart(Name = c_numberBoxPopupUpButtonName, Type = typeof(RepeatButton))]
     public partial class NumberBox : Control
     {
+        const string c_numberBoxHeaderName = "HeaderContentPresenter";
         const string c_numberBoxDownButtonName = "DownSpinButton";
         const string c_numberBoxUpButtonName = "UpSpinButton";
         const string c_numberBoxTextBoxName = "InputBox";
@@ -97,6 +98,8 @@ namespace ModernWpf.Controls
                     AutomationProperties.SetName(spinUp, spinUpName);
                 }
             }
+
+            UpdateHeaderPresenterState();
 
             m_textBox = GetTextBox();
             TextBox GetTextBox()
@@ -283,6 +286,16 @@ namespace ModernWpf.Controls
                 m_textBox.Text = Text;
                 ValidateInput();
             }
+        }
+
+        private void OnHeaderPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            UpdateHeaderPresenterState();
+        }
+
+        private void OnHeaderTemplatePropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            UpdateHeaderPresenterState();
         }
 
         private void OnValidationModePropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -590,12 +603,57 @@ namespace ModernWpf.Controls
             return value >= Minimum && value <= Maximum;
         }
 
+        private void UpdateHeaderPresenterState()
+        {
+            bool shouldShowHeader = false;
+
+            // Load header presenter as late as possible
+
+            // To enable lightweight styling, collapse header presenter if there is no header specified
+            if (Header is { } header)
+            {
+                // Check if header is string or not
+                if (header is string headerAsString)
+                {
+                    if (!string.IsNullOrEmpty(headerAsString))
+                    {
+                        // Header is not empty string
+                        shouldShowHeader = true;
+                    }
+                }
+                else
+                {
+                    // Header is not a string, so let's show header presenter
+                    shouldShowHeader = true;
+                }
+            }
+            if (HeaderTemplate is { } headerTemplate)
+            {
+                shouldShowHeader = true;
+            }
+
+            if (shouldShowHeader && m_headerPresenter == null)
+            {
+                if (GetTemplateChild(c_numberBoxHeaderName) is ContentPresenter headerPresenter)
+                {
+                    // Set presenter to enable lightweight styling of the headers margin
+                    m_headerPresenter = headerPresenter;
+                }
+            }
+
+            if (m_headerPresenter != null)
+            {
+                m_headerPresenter.Visibility = shouldShowHeader ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
         bool m_valueUpdating = false;
         bool m_textUpdating = false;
 
         DefaultNumberRounder m_displayRounder = new DefaultNumberRounder();
 
         TextBox m_textBox;
+        ContentPresenter m_headerPresenter;
         Popup m_popup;
         PopupRepositionHelper m_popupRepositionHelper;
     }
