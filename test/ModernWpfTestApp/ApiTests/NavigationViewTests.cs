@@ -662,5 +662,37 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
                 MUXControlsTestApp.App.TestContentRoot = null;
             });
         }
+
+        [TestMethod]
+        public void VerifySelectedItemIsNullWhenNoItemIsSelected()
+        {
+            RunOnUIThread.Execute(() =>
+            {
+                var navView = new NavigationView();
+                Content = navView;
+
+                var menuItem1 = new NavigationViewItem();
+                menuItem1.Content = "Item 1";
+
+                navView.MenuItems.Add(menuItem1);
+                navView.Width = 1008; // forces the control into Expanded mode so that the menu renders
+                Content.UpdateLayout(true);
+
+                Verify.IsFalse(menuItem1.IsSelected);
+                Verify.AreEqual(null, navView.SelectedItem);
+
+                menuItem1.IsSelected = true;
+                Content.UpdateLayout(true);
+
+                Verify.IsTrue(menuItem1.IsSelected);
+                Verify.AreEqual(menuItem1, navView.SelectedItem);
+
+                menuItem1.IsSelected = false;
+                Content.UpdateLayout(true);
+
+                Verify.IsFalse(menuItem1.IsSelected);
+                Verify.AreEqual(null, navView.SelectedItem, "SelectedItem should have been [null] as no item is selected");
+            });
+        }
     }
 }
