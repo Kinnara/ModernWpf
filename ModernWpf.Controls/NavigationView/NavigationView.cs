@@ -3759,6 +3759,8 @@ namespace ModernWpf.Controls
                 coreTitleBar.LayoutMetricsChanged += OnTitleBarMetricsChanged;
                 coreTitleBar.IsVisibleChanged += OnTitleBarIsVisibleChanged;
             }
+            // Update pane buttons now since we the CompactPaneLength is actually known now.
+            UpdatePaneButtonsWidths();
         }
 
         void OnIsPaneOpenChanged()
