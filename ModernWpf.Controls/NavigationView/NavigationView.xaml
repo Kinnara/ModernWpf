@@ -267,7 +267,7 @@
                                 <!-- Padding="{TemplateBinding Padding}" -->
                                 <ContentPresenter x:Name="ContentPresenter"
                                     Grid.Column="1"
-                                    Margin="0,0,16,0"
+                                    Margin="{DynamicResource NavigationViewItemContentPresenterMargin}"
                                     ContentTemplate="{TemplateBinding ContentTemplate}"
                                     Content="{TemplateBinding Content}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -279,7 +279,7 @@
                                     Visibility="Collapsed"
                                     HorizontalAlignment="Right"
                                     Width="40"
-                                    Margin="-16,0,0,0"
+                                    Margin="{DynamicResource NavigationViewItemExpandChevronMargin}"
                                     Background="Transparent">
                                     <TextBlock
                                             Width="12" Height="12"
@@ -561,7 +561,7 @@
                             <ui:ContentPresenterEx
                                 x:Name="ContentPresenter"
                                 Grid.Column="1"
-                                Margin="8,0,16,0"
+                                Margin="{DynamicResource TopNavigationViewItemContentPresenterMargin}"
                                 TextWrapping="NoWrap"
                                 Foreground="{TemplateBinding Foreground}"
                                 ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -574,7 +574,7 @@
                                     Visibility="Collapsed"
                                     HorizontalAlignment="Right"
                                     Width="24"
-                                    Margin="-16,0,0,0"
+                                    Margin="{DynamicResource TopNavigationViewItemExpandChevronMargin}"
                                     Background="Transparent">
                                 <TextBlock Foreground="{DynamicResource NavigationViewItemForeground}"
                                             RenderTransformOrigin="0.5, 0.5"
@@ -753,7 +753,7 @@
                                 <ui:ContentPresenterEx
                                     x:Name="ContentPresenter"
                                     Grid.Column="1"
-                                    Margin="12,0,16,0"
+                                    Margin="{DynamicResource TopNavigationViewItemOnOverflowContentPresenterMargin}"
                                     Foreground="{TemplateBinding Foreground}"
                                     TextWrapping="NoWrap"
                                     ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -767,7 +767,7 @@
                                     HorizontalAlignment="Right"
                                     Width="40"
                                     Background="Transparent">
-                                    <Border Padding="12,0,12,0">
+                                    <Border Padding="{DynamicResource TopNavigationViewItemOnOverflowExpandChevronPadding}">
                                         <TextBlock Foreground="{DynamicResource NavigationViewItemForeground}"
                                                 Width="12" Height="12"
                                                 RenderTransformOrigin="0.5, 0.5"
