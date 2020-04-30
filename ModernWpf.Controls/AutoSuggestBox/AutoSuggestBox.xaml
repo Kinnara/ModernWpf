@@ -9,6 +9,10 @@
     <Style TargetType="local:AutoSuggestBox">
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
+        <Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThickness}" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="TextBoxStyle" Value="{DynamicResource AutoSuggestBoxTextBoxStyle}" />
@@ -35,6 +39,10 @@
                             ui:ControlHelper.Header="{TemplateBinding Header}"
                             Width="{TemplateBinding Width}"
                             ui:ControlHelper.Description="{TemplateBinding Description}"
+                            Foreground="{TemplateBinding Foreground}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             FontSize="{TemplateBinding FontSize}"
                             FontFamily="{TemplateBinding FontFamily}"
                             FontWeight="{TemplateBinding FontWeight}"
