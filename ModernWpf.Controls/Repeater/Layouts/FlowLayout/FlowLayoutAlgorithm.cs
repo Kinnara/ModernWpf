@@ -56,10 +56,10 @@ namespace ModernWpf.Controls
             bool disableVirtualization,
             string layoutId)
         {
-            OrientationBasedMeasures.ScrollOrientation = orientation;
+            OM.ScrollOrientation = orientation;
 
             // If minor size is infinity, there is only one line and no need to align that line.
-            m_scrollOrientationSameAsFlow = double.IsInfinity(OrientationBasedMeasures.Minor(availableSize));
+            m_scrollOrientationSameAsFlow = double.IsInfinity(OM.Minor(availableSize));
 
             var suggestedAnchorIndex = m_context.RecommendedAnchorIndex;
             if (m_elementManager.IsIndexValidInData(suggestedAnchorIndex))
@@ -79,7 +79,7 @@ namespace ModernWpf.Controls
             if (isWrapping && IsReflowRequired)
             {
                 var firstElementBounds = m_elementManager.GetLayoutBoundsForRealizedIndex(0);
-                OrientationBasedMeasures.SetMinorStart(ref firstElementBounds, 0);
+                OM.SetMinorStart(ref firstElementBounds, 0);
                 m_elementManager.SetLayoutBoundsForRealizedIndex(0, firstElementBounds);
                 Generate(GenerateDirection.Forward, 0 /*anchorIndex*/, availableSize, minItemSpacing, lineSpacing, maxItemsPerLine, disableVirtualization, layoutId);
             }
@@ -174,12 +174,12 @@ namespace ModernWpf.Controls
             }
             else
             {
-                bool isRealizationWindowConnected = m_elementManager.IsWindowConnected(RealizationRect, OrientationBasedMeasures.ScrollOrientation, m_scrollOrientationSameAsFlow);
+                bool isRealizationWindowConnected = m_elementManager.IsWindowConnected(RealizationRect, OM.ScrollOrientation, m_scrollOrientationSameAsFlow);
                 // Item spacing and size in non-virtualizing direction change can cause elements to reflow
                 // and get a new column position. In that case we need the anchor to be positioned in the
                 // correct column.
                 bool needAnchorColumnRevaluation = isWrapping && (
-                    OrientationBasedMeasures.Minor(m_lastAvailableSize) != OrientationBasedMeasures.Minor(availableSize) ||
+                    OM.Minor(m_lastAvailableSize) != OM.Minor(availableSize) ||
                     m_lastItemSpacing != minItemSpacing ||
                     m_collectionChangePending);
 
@@ -203,7 +203,7 @@ namespace ModernWpf.Controls
                             // We were provided a valid anchor, but its position might be incorrect because for example it is in
                             // the wrong column. We do know that the anchor is the first element in the row, so we can force the minor position
                             // to start at 0.
-                            anchorPosition = OrientationBasedMeasures.MinorMajorPoint(0, OrientationBasedMeasures.MajorStart(anchorBounds));
+                            anchorPosition = OM.MinorMajorPoint(0, OM.MajorStart(anchorBounds));
                         }
                         else
                         {
@@ -224,7 +224,7 @@ namespace ModernWpf.Controls
                         }
 
                         var anchorBounds = m_elementManager.GetLayoutBoundsForDataIndex(suggestedAnchorIndex);
-                        anchorPosition = OrientationBasedMeasures.MinorMajorPoint(0, OrientationBasedMeasures.MajorStart(anchorBounds));
+                        anchorPosition = OM.MinorMajorPoint(0, OM.MajorStart(anchorBounds));
                     }
                 }
                 else if (needAnchorColumnRevaluation || !isRealizationWindowConnected)
@@ -233,7 +233,7 @@ namespace ModernWpf.Controls
                     // but not the visible window. In that situation, we still need to produce a valid anchor.
                     var anchorInfo = m_algorithmCallbacks.Algorithm_GetAnchorForRealizationRect(availableSize, m_context);
                     anchorIndex = anchorInfo.Index;
-                    anchorPosition = OrientationBasedMeasures.MinorMajorPoint(0, anchorInfo.Offset);
+                    anchorPosition = OM.MinorMajorPoint(0, anchorInfo.Offset);
                 }
                 else
                 {
@@ -292,8 +292,8 @@ namespace ModernWpf.Controls
                 int previousIndex = anchorIndex;
                 int currentIndex = anchorIndex + step;
                 var anchorBounds = m_elementManager.GetLayoutBoundsForDataIndex(anchorIndex);
-                double lineOffset = OrientationBasedMeasures.MajorStart(anchorBounds);
-                double lineMajorSize = OrientationBasedMeasures.MajorSize(anchorBounds);
+                double lineOffset = OM.MajorStart(anchorBounds);
+                double lineMajorSize = OM.MajorSize(anchorBounds);
                 uint countInLine = 1;
                 bool lineNeedsReposition = false;
 
@@ -312,12 +312,12 @@ namespace ModernWpf.Controls
 
                     if (direction == GenerateDirection.Forward)
                     {
-                        double remainingSpace = OrientationBasedMeasures.Minor(availableSize) - (OrientationBasedMeasures.MinorStart(previousElementBounds) + OrientationBasedMeasures.MinorSize(previousElementBounds) + minItemSpacing + OrientationBasedMeasures.Minor(desiredSize));
+                        double remainingSpace = OM.Minor(availableSize) - (OM.MinorStart(previousElementBounds) + OM.MinorSize(previousElementBounds) + minItemSpacing + OM.Minor(desiredSize));
                         if (countInLine >= maxItemsPerLine || m_algorithmCallbacks.Algorithm_ShouldBreakLine(currentIndex, remainingSpace))
                         {
                             // No more space in this row. wrap to next row.
-                            OrientationBasedMeasures.SetMinorStart(ref currentBounds, 0);
-                            OrientationBasedMeasures.SetMajorStart(ref currentBounds, OrientationBasedMeasures.MajorStart(previousElementBounds) + lineMajorSize + lineSpacing);
+                            OM.SetMinorStart(ref currentBounds, 0);
+                            OM.SetMajorStart(ref currentBounds, OM.MajorStart(previousElementBounds) + lineMajorSize + lineSpacing);
 
                             if (lineNeedsReposition)
                             {
@@ -326,41 +326,41 @@ namespace ModernWpf.Controls
                                 {
                                     var dataIndex = currentIndex - 1 - i;
                                     var bounds = m_elementManager.GetLayoutBoundsForDataIndex((int)dataIndex);
-                                    OrientationBasedMeasures.SetMajorSize(ref bounds, lineMajorSize);
+                                    OM.SetMajorSize(ref bounds, lineMajorSize);
                                     m_elementManager.SetLayoutBoundsForDataIndex((int)dataIndex, bounds);
                                 }
                             }
 
                             // Setup for next line.
-                            lineMajorSize = OrientationBasedMeasures.MajorSize(currentBounds);
-                            lineOffset = OrientationBasedMeasures.MajorStart(currentBounds);
+                            lineMajorSize = OM.MajorSize(currentBounds);
+                            lineOffset = OM.MajorStart(currentBounds);
                             lineNeedsReposition = false;
                             countInLine = 1;
                         }
                         else
                         {
                             // More space is available in this row.
-                            OrientationBasedMeasures.SetMinorStart(ref currentBounds, OrientationBasedMeasures.MinorStart(previousElementBounds) + OrientationBasedMeasures.MinorSize(previousElementBounds) + (minItemSpacing));
-                            OrientationBasedMeasures.SetMajorStart(ref currentBounds, lineOffset);
-                            lineMajorSize = Math.Max(lineMajorSize, OrientationBasedMeasures.MajorSize(currentBounds));
-                            lineNeedsReposition = OrientationBasedMeasures.MajorSize(previousElementBounds) != OrientationBasedMeasures.MajorSize(currentBounds);
+                            OM.SetMinorStart(ref currentBounds, OM.MinorStart(previousElementBounds) + OM.MinorSize(previousElementBounds) + (minItemSpacing));
+                            OM.SetMajorStart(ref currentBounds, lineOffset);
+                            lineMajorSize = Math.Max(lineMajorSize, OM.MajorSize(currentBounds));
+                            lineNeedsReposition = OM.MajorSize(previousElementBounds) != OM.MajorSize(currentBounds);
                             countInLine++;
                         }
                     }
                     else
                     {
                         // Backward
-                        double remainingSpace = OrientationBasedMeasures.MinorStart(previousElementBounds) - (OrientationBasedMeasures.Minor(desiredSize) + minItemSpacing);
+                        double remainingSpace = OM.MinorStart(previousElementBounds) - (OM.Minor(desiredSize) + minItemSpacing);
                         if (countInLine >= maxItemsPerLine || m_algorithmCallbacks.Algorithm_ShouldBreakLine(currentIndex, remainingSpace))
                         {
                             // Does not fit, wrap to the previous row
-                            var availableSizeMinor = OrientationBasedMeasures.Minor(availableSize);
-                            OrientationBasedMeasures.SetMinorStart(ref currentBounds, !double.IsInfinity(availableSizeMinor) ? availableSizeMinor - OrientationBasedMeasures.Minor(desiredSize) : 0.0);
-                            OrientationBasedMeasures.SetMajorStart(ref currentBounds, lineOffset - OrientationBasedMeasures.Major(desiredSize) - lineSpacing);
+                            var availableSizeMinor = OM.Minor(availableSize);
+                            OM.SetMinorStart(ref currentBounds, !double.IsInfinity(availableSizeMinor) ? availableSizeMinor - OM.Minor(desiredSize) : 0.0);
+                            OM.SetMajorStart(ref currentBounds, lineOffset - OM.Major(desiredSize) - lineSpacing);
 
                             if (lineNeedsReposition)
                             {
-                                var previousLineOffset = OrientationBasedMeasures.MajorStart(m_elementManager.GetLayoutBoundsForDataIndex((int)(currentIndex + countInLine + 1)));
+                                var previousLineOffset = OM.MajorStart(m_elementManager.GetLayoutBoundsForDataIndex((int)(currentIndex + countInLine + 1)));
                                 // reposition the previous line (countInLine items)
                                 for (uint i = 0; i < countInLine; i++)
                                 {
@@ -368,26 +368,26 @@ namespace ModernWpf.Controls
                                     if (dataIndex != anchorIndex)
                                     {
                                         var bounds = m_elementManager.GetLayoutBoundsForDataIndex(dataIndex);
-                                        OrientationBasedMeasures.SetMajorStart(ref bounds, previousLineOffset - lineMajorSize - lineSpacing);
-                                        OrientationBasedMeasures.SetMajorSize(ref bounds, lineMajorSize);
+                                        OM.SetMajorStart(ref bounds, previousLineOffset - lineMajorSize - lineSpacing);
+                                        OM.SetMajorSize(ref bounds, lineMajorSize);
                                         m_elementManager.SetLayoutBoundsForDataIndex(dataIndex, bounds);
                                     }
                                 }
                             }
 
                             // Setup for next line.
-                            lineMajorSize = OrientationBasedMeasures.MajorSize(currentBounds);
-                            lineOffset = OrientationBasedMeasures.MajorStart(currentBounds);
+                            lineMajorSize = OM.MajorSize(currentBounds);
+                            lineOffset = OM.MajorStart(currentBounds);
                             lineNeedsReposition = false;
                             countInLine = 1;
                         }
                         else
                         {
                             // Fits in this row. put it in the previous position
-                            OrientationBasedMeasures.SetMinorStart(ref currentBounds, OrientationBasedMeasures.MinorStart(previousElementBounds) - OrientationBasedMeasures.Minor(desiredSize) - minItemSpacing);
-                            OrientationBasedMeasures.SetMajorStart(ref currentBounds, lineOffset);
-                            lineMajorSize = Math.Max(lineMajorSize, OrientationBasedMeasures.MajorSize(currentBounds));
-                            lineNeedsReposition = OrientationBasedMeasures.MajorSize(previousElementBounds) != OrientationBasedMeasures.MajorSize(currentBounds);
+                            OM.SetMinorStart(ref currentBounds, OM.MinorStart(previousElementBounds) - OM.Minor(desiredSize) - minItemSpacing);
+                            OM.SetMajorStart(ref currentBounds, lineOffset);
+                            lineMajorSize = Math.Max(lineMajorSize, OM.MajorSize(currentBounds));
+                            lineNeedsReposition = OM.MajorSize(previousElementBounds) != OM.MajorSize(currentBounds);
                             countInLine++;
                         }
                     }
@@ -443,7 +443,7 @@ namespace ModernWpf.Controls
             // If first element is realized and is not at the very beginning we need to reflow.
             m_elementManager.GetRealizedElementCount() > 0 &&
             m_elementManager.GetDataIndexFromRealizedRangeIndex(0) == 0 &&
-            OrientationBasedMeasures.MinorStart(m_elementManager.GetLayoutBoundsForRealizedIndex(0)) != 0;
+            OM.MinorStart(m_elementManager.GetLayoutBoundsForRealizedIndex(0)) != 0;
 
         private bool ShouldContinueFillingUpSpace(
             int index,
@@ -459,15 +459,15 @@ namespace ModernWpf.Controls
                 var realizationRect = m_context.RealizationRect;
                 var elementBounds = m_elementManager.GetLayoutBoundsForDataIndex(index);
 
-                var elementMajorStart = OrientationBasedMeasures.MajorStart(elementBounds);
-                var elementMajorEnd = OrientationBasedMeasures.MajorEnd(elementBounds);
-                var rectMajorStart = OrientationBasedMeasures.MajorStart(realizationRect);
-                var rectMajorEnd = OrientationBasedMeasures.MajorEnd(realizationRect);
+                var elementMajorStart = OM.MajorStart(elementBounds);
+                var elementMajorEnd = OM.MajorEnd(elementBounds);
+                var rectMajorStart = OM.MajorStart(realizationRect);
+                var rectMajorEnd = OM.MajorEnd(realizationRect);
 
-                var elementMinorStart = OrientationBasedMeasures.MinorStart(elementBounds);
-                var elementMinorEnd = OrientationBasedMeasures.MinorEnd(elementBounds);
-                var rectMinorStart = OrientationBasedMeasures.MinorStart(realizationRect);
-                var rectMinorEnd = OrientationBasedMeasures.MinorEnd(realizationRect);
+                var elementMinorStart = OM.MinorStart(elementBounds);
+                var elementMinorEnd = OM.MinorEnd(elementBounds);
+                var rectMinorStart = OM.MinorStart(realizationRect);
+                var rectMinorEnd = OM.MinorEnd(realizationRect);
 
                 // Ensure that both minor and major directions are taken into consideration so that if the scrolling direction
                 // is the same as the flow direction we still stop at the end of the viewport rectangle.
@@ -524,21 +524,21 @@ namespace ModernWpf.Controls
                     Debug.Assert(m_firstRealizedDataIndexInsideRealizationWindow != -1 && m_lastRealizedDataIndexInsideRealizationWindow != -1);
                     int countInLine = 0;
                     var previousElementBounds = m_elementManager.GetLayoutBoundsForDataIndex(m_firstRealizedDataIndexInsideRealizationWindow);
-                    var currentLineOffset = OrientationBasedMeasures.MajorStart(previousElementBounds);
-                    var currentLineSize = OrientationBasedMeasures.MajorSize(previousElementBounds);
+                    var currentLineOffset = OM.MajorStart(previousElementBounds);
+                    var currentLineSize = OM.MajorSize(previousElementBounds);
                     for (int currentDataIndex = m_firstRealizedDataIndexInsideRealizationWindow; currentDataIndex <= m_lastRealizedDataIndexInsideRealizationWindow; currentDataIndex++)
                     {
                         var currentBounds = m_elementManager.GetLayoutBoundsForDataIndex(currentDataIndex);
-                        if (OrientationBasedMeasures.MajorStart(currentBounds) != currentLineOffset)
+                        if (OM.MajorStart(currentBounds) != currentLineOffset)
                         {
                             // Staring a new line
                             m_algorithmCallbacks.Algorithm_OnLineArranged(currentDataIndex - countInLine, countInLine, currentLineSize, m_context);
                             countInLine = 0;
-                            currentLineOffset = OrientationBasedMeasures.MajorStart(currentBounds);
+                            currentLineOffset = OM.MajorStart(currentBounds);
                             currentLineSize = 0;
                         }
 
-                        currentLineSize = Math.Max(currentLineSize, OrientationBasedMeasures.MajorSize(currentBounds));
+                        currentLineSize = Math.Max(currentLineSize, OM.MajorSize(currentBounds));
                         countInLine++;
                     }
 
@@ -561,25 +561,25 @@ namespace ModernWpf.Controls
             {
                 int countInLine = 1;
                 var previousElementBounds = m_elementManager.GetLayoutBoundsForRealizedIndex(0);
-                var currentLineOffset = OrientationBasedMeasures.MajorStart(previousElementBounds);
-                var spaceAtLineStart = OrientationBasedMeasures.MinorStart(previousElementBounds);
+                var currentLineOffset = OM.MajorStart(previousElementBounds);
+                var spaceAtLineStart = OM.MinorStart(previousElementBounds);
                 double spaceAtLineEnd = 0;
-                double currentLineSize = OrientationBasedMeasures.MajorSize(previousElementBounds);
+                double currentLineSize = OM.MajorSize(previousElementBounds);
                 for (int i = 1; i < realizedElementCount; i++)
                 {
                     var currentBounds = m_elementManager.GetLayoutBoundsForRealizedIndex(i);
-                    if (OrientationBasedMeasures.MajorStart(currentBounds) != currentLineOffset)
+                    if (OM.MajorStart(currentBounds) != currentLineOffset)
                     {
-                        spaceAtLineEnd = OrientationBasedMeasures.Minor(finalSize) - OrientationBasedMeasures.MinorStart(previousElementBounds) - OrientationBasedMeasures.MinorSize(previousElementBounds);
+                        spaceAtLineEnd = OM.Minor(finalSize) - OM.MinorStart(previousElementBounds) - OM.MinorSize(previousElementBounds);
                         PerformLineAlignment(i - countInLine, countInLine, spaceAtLineStart, spaceAtLineEnd, currentLineSize, lineAlignment, isWrapping, finalSize, layoutId);
-                        spaceAtLineStart = OrientationBasedMeasures.MinorStart(currentBounds);
+                        spaceAtLineStart = OM.MinorStart(currentBounds);
                         countInLine = 0;
-                        currentLineOffset = OrientationBasedMeasures.MajorStart(currentBounds);
+                        currentLineOffset = OM.MajorStart(currentBounds);
                         currentLineSize = 0;
                     }
 
                     countInLine++; // for current element
-                    currentLineSize = Math.Max(currentLineSize, OrientationBasedMeasures.MajorSize(currentBounds));
+                    currentLineSize = Math.Max(currentLineSize, OM.MajorSize(currentBounds));
                     previousElementBounds = currentBounds;
                 }
 
@@ -587,7 +587,7 @@ namespace ModernWpf.Controls
                 // aligning the last line or not.
                 if (countInLine > 0)
                 {
-                    double spaceAtEnd = OrientationBasedMeasures.Minor(finalSize) - OrientationBasedMeasures.MinorStart(previousElementBounds) - OrientationBasedMeasures.MinorSize(previousElementBounds);
+                    double spaceAtEnd = OM.Minor(finalSize) - OM.MinorStart(previousElementBounds) - OM.MinorSize(previousElementBounds);
                     PerformLineAlignment(realizedElementCount - countInLine, countInLine, spaceAtLineStart, spaceAtEnd, currentLineSize, lineAlignment, isWrapping, finalSize, layoutId);
                 }
             }
@@ -609,7 +609,7 @@ namespace ModernWpf.Controls
             for (int rangeIndex = lineStartIndex; rangeIndex < lineStartIndex + countInLine; ++rangeIndex)
             {
                 var bounds = m_elementManager.GetLayoutBoundsForRealizedIndex(rangeIndex);
-                OrientationBasedMeasures.SetMajorSize(ref bounds, lineSize);
+                OM.SetMajorSize(ref bounds, lineSize);
 
                 if (!m_scrollOrientationSameAsFlow)
                 {
@@ -621,44 +621,44 @@ namespace ModernWpf.Controls
                         {
                             case LineAlignment.Start:
                                 {
-                                    OrientationBasedMeasures.SetMinorStart(ref bounds, OrientationBasedMeasures.MinorStart(bounds) - spaceAtLineStart);
+                                    OM.SetMinorStart(ref bounds, OM.MinorStart(bounds) - spaceAtLineStart);
                                     break;
                                 }
 
                             case LineAlignment.End:
                                 {
-                                    OrientationBasedMeasures.SetMinorStart(ref bounds, OrientationBasedMeasures.MinorStart(bounds) + spaceAtLineEnd);
+                                    OM.SetMinorStart(ref bounds, OM.MinorStart(bounds) + spaceAtLineEnd);
                                     break;
                                 }
 
                             case LineAlignment.Center:
                                 {
-                                    OrientationBasedMeasures.SetMinorStart(ref bounds, OrientationBasedMeasures.MinorStart(bounds) - spaceAtLineStart);
-                                    OrientationBasedMeasures.SetMinorStart(ref bounds, OrientationBasedMeasures.MinorStart(bounds) + totalSpace / 2);
+                                    OM.SetMinorStart(ref bounds, OM.MinorStart(bounds) - spaceAtLineStart);
+                                    OM.SetMinorStart(ref bounds, OM.MinorStart(bounds) + totalSpace / 2);
                                     break;
                                 }
 
                             case LineAlignment.SpaceAround:
                                 {
                                     double interItemSpace = countInLine >= 1 ? totalSpace / (countInLine * 2) : 0;
-                                    OrientationBasedMeasures.SetMinorStart(ref bounds, OrientationBasedMeasures.MinorStart(bounds) - spaceAtLineStart);
-                                    OrientationBasedMeasures.SetMinorStart(ref bounds, OrientationBasedMeasures.MinorStart(bounds) + interItemSpace * ((rangeIndex - lineStartIndex + 1) * 2 - 1));
+                                    OM.SetMinorStart(ref bounds, OM.MinorStart(bounds) - spaceAtLineStart);
+                                    OM.SetMinorStart(ref bounds, OM.MinorStart(bounds) + interItemSpace * ((rangeIndex - lineStartIndex + 1) * 2 - 1));
                                     break;
                                 }
 
                             case LineAlignment.SpaceBetween:
                                 {
                                     double interItemSpace = countInLine > 1 ? totalSpace / (countInLine - 1) : 0;
-                                    OrientationBasedMeasures.SetMinorStart(ref bounds, OrientationBasedMeasures.MinorStart(bounds) - spaceAtLineStart);
-                                    OrientationBasedMeasures.SetMinorStart(ref bounds, OrientationBasedMeasures.MinorStart(bounds) + interItemSpace * (rangeIndex - lineStartIndex));
+                                    OM.SetMinorStart(ref bounds, OM.MinorStart(bounds) - spaceAtLineStart);
+                                    OM.SetMinorStart(ref bounds, OM.MinorStart(bounds) + interItemSpace * (rangeIndex - lineStartIndex));
                                     break;
                                 }
 
                             case LineAlignment.SpaceEvenly:
                                 {
                                     double interItemSpace = countInLine >= 1 ? totalSpace / (countInLine + 1) : 0;
-                                    OrientationBasedMeasures.SetMinorStart(ref bounds, OrientationBasedMeasures.MinorStart(bounds) - spaceAtLineStart);
-                                    OrientationBasedMeasures.SetMinorStart(ref bounds, OrientationBasedMeasures.MinorStart(bounds) + interItemSpace * (rangeIndex - lineStartIndex + 1));
+                                    OM.SetMinorStart(ref bounds, OM.MinorStart(bounds) - spaceAtLineStart);
+                                    OM.SetMinorStart(ref bounds, OM.MinorStart(bounds) + interItemSpace * (rangeIndex - lineStartIndex + 1));
                                     break;
                                 }
                         }
@@ -670,7 +670,7 @@ namespace ModernWpf.Controls
 
                 if (!isWrapping)
                 {
-                    OrientationBasedMeasures.SetMinorSize(ref bounds, Math.Max(OrientationBasedMeasures.MinorSize(bounds), OrientationBasedMeasures.Minor(finalSize)));
+                    OM.SetMinorSize(ref bounds, Math.Max(OM.MinorSize(bounds), OM.Minor(finalSize)));
                 }
 
                 var element = m_elementManager.GetAt(rangeIndex);
@@ -730,6 +730,6 @@ namespace ModernWpf.Controls
         // anyway.
         private bool m_scrollOrientationSameAsFlow = false;
 
-        private OrientationBasedMeasures OrientationBasedMeasures { get; } = new OrientationBasedMeasures();
+        private OrientationBasedMeasures OM { get; } = new OrientationBasedMeasures();
     }
 }

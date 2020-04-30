@@ -175,7 +175,7 @@ namespace ModernWpf.Controls
                 MinItemSpacing,
                 LineSpacing,
                 m_maximumRowsOrColumns /* maxItemsPerLine */,
-                OrientationBasedMeasures.ScrollOrientation,
+                OM.ScrollOrientation,
                 false /* disableVirtualization */,
                 LayoutId);
 
@@ -249,18 +249,18 @@ namespace ModernWpf.Controls
 
             int itemsCount = context.ItemCount;
             var realizationRect = context.RealizationRect;
-            if (itemsCount > 0 && OrientationBasedMeasures.MajorSize(realizationRect) > 0)
+            if (itemsCount > 0 && OM.MajorSize(realizationRect) > 0)
             {
                 var gridState = GetAsGridState(context.LayoutState);
                 var lastExtent = gridState.FlowAlgorithm.LastExtent;
                 int itemsPerLine = (int)Math.Min( // note use of unsigned ints
-                   Math.Max(1u, (uint)(OrientationBasedMeasures.Minor(availableSize) / GetMinorSizeWithSpacing(context))),
+                   Math.Max(1u, (uint)(OM.Minor(availableSize) / GetMinorSizeWithSpacing(context))),
                    Math.Max(1u, m_maximumRowsOrColumns));
                 double majorSize = (itemsCount / itemsPerLine) * GetMajorSizeWithSpacing(context);
-                double realizationWindowStartWithinExtent = OrientationBasedMeasures.MajorStart(realizationRect) - OrientationBasedMeasures.MajorStart(lastExtent);
-                if ((realizationWindowStartWithinExtent + OrientationBasedMeasures.MajorSize(realizationRect)) >= 0 && realizationWindowStartWithinExtent <= majorSize)
+                double realizationWindowStartWithinExtent = OM.MajorStart(realizationRect) - OM.MajorStart(lastExtent);
+                if ((realizationWindowStartWithinExtent + OM.MajorSize(realizationRect)) >= 0 && realizationWindowStartWithinExtent <= majorSize)
                 {
-                    double offset = Math.Max(0.0, OrientationBasedMeasures.MajorStart(realizationRect) - OrientationBasedMeasures.MajorStart(lastExtent));
+                    double offset = Math.Max(0.0, OM.MajorStart(realizationRect) - OM.MajorStart(lastExtent));
                     int anchorRowIndex = (int)(offset / GetMajorSizeWithSpacing(context));
 
                     anchorIndex = Math.Max(0, Math.Min(itemsCount - 1, anchorRowIndex * itemsPerLine));
@@ -271,7 +271,7 @@ namespace ModernWpf.Controls
             return new FlowLayoutAnchorInfo
             {
                 Index = anchorIndex,
-                Offset = OrientationBasedMeasures.MajorStart(bounds)
+                Offset = OM.MajorStart(bounds)
             };
         }
 
@@ -286,12 +286,12 @@ namespace ModernWpf.Controls
             if (targetIndex >= 0 && targetIndex < count)
             {
                 int itemsPerLine = (int)Math.Min( // note use of unsigned ints
-                    Math.Max(1u, (uint)OrientationBasedMeasures.Minor(availableSize) / GetMinorSizeWithSpacing(context)),
+                    Math.Max(1u, (uint)OM.Minor(availableSize) / GetMinorSizeWithSpacing(context)),
                     Math.Max(1u, m_maximumRowsOrColumns));
                 int indexOfFirstInLine = (targetIndex / itemsPerLine) * itemsPerLine;
                 index = indexOfFirstInLine;
                 var state = GetAsGridState(context.LayoutState);
-                offset = OrientationBasedMeasures.MajorStart(GetLayoutRectForDataIndex(availableSize, indexOfFirstInLine, state.FlowAlgorithm.LastExtent, context));
+                offset = OM.MajorStart(GetLayoutRectForDataIndex(availableSize, indexOfFirstInLine, state.FlowAlgorithm.LastExtent, context));
             }
 
             return new FlowLayoutAnchorInfo
@@ -318,7 +318,7 @@ namespace ModernWpf.Controls
 
             // Constants
             int itemsCount = context.ItemCount;
-            double availableSizeMinor = OrientationBasedMeasures.Minor(availableSize);
+            double availableSizeMinor = OM.Minor(availableSize);
             int itemsPerLine =
                 (int)Math.Min( // note use of unsigned ints
                     Math.Max(1u, !double.IsInfinity(availableSizeMinor)
@@ -330,19 +330,19 @@ namespace ModernWpf.Controls
             if (itemsCount > 0)
             {
                 // Only use all of the space if item stretch is fill, otherwise size layout according to items placed
-                OrientationBasedMeasures.SetMinorSize(ref extent,
+                OM.SetMinorSize(ref extent,
                     !double.IsInfinity(availableSizeMinor) && m_itemsStretch == UniformGridLayoutItemsStretch.Fill ?
                     availableSizeMinor :
                     Math.Max(0.0, itemsPerLine * GetMinorSizeWithSpacing(context) - MinItemSpacing));
-                OrientationBasedMeasures.SetMajorSize(ref extent, Math.Max(0.0, (itemsCount / itemsPerLine) * lineSize - LineSpacing));
+                OM.SetMajorSize(ref extent, Math.Max(0.0, (itemsCount / itemsPerLine) * lineSize - LineSpacing));
 
                 if (firstRealized != null)
                 {
                     Debug.Assert(lastRealized != null);
 
-                    OrientationBasedMeasures.SetMajorStart(ref extent, OrientationBasedMeasures.MajorStart(firstRealizedLayoutBounds) - (firstRealizedItemIndex / itemsPerLine) * lineSize);
+                    OM.SetMajorStart(ref extent, OM.MajorStart(firstRealizedLayoutBounds) - (firstRealizedItemIndex / itemsPerLine) * lineSize);
                     int remainingItems = itemsCount - lastRealizedItemIndex - 1;
-                    OrientationBasedMeasures.SetMajorSize(ref extent, OrientationBasedMeasures.MajorEnd(lastRealizedLayoutBounds) - OrientationBasedMeasures.MajorStart(extent) + (remainingItems / itemsPerLine) * lineSize);
+                    OM.SetMajorSize(ref extent, OM.MajorEnd(lastRealizedLayoutBounds) - OM.MajorStart(extent) + (remainingItems / itemsPerLine) * lineSize);
                 }
             }
             else
@@ -383,7 +383,7 @@ namespace ModernWpf.Controls
                 //Note: For UniformGridLayout Vertical Orientation means we have a Horizontal ScrollOrientation. Horizontal Orientation means we have a Vertical ScrollOrientation.
                 //i.e. the properties are the inverse of each other.
                 ScrollOrientation scrollOrientation = (orientation == Orientation.Horizontal) ? ScrollOrientation.Vertical : ScrollOrientation.Horizontal;
-                OrientationBasedMeasures.ScrollOrientation = scrollOrientation;
+                OM.ScrollOrientation = scrollOrientation;
             }
             else if (property == MinColumnSpacingProperty)
             {
@@ -423,7 +423,7 @@ namespace ModernWpf.Controls
         {
             var minItemSpacing = MinItemSpacing;
             var gridState = GetAsGridState(context.LayoutState);
-            return OrientationBasedMeasures.ScrollOrientation == ScrollOrientation.Vertical ?
+            return OM.ScrollOrientation == ScrollOrientation.Vertical ?
                 (gridState.EffectiveItemWidth+ minItemSpacing) :
                 (gridState.EffectiveItemHeight+ minItemSpacing);
         }
@@ -432,7 +432,7 @@ namespace ModernWpf.Controls
         {
             var lineSpacing = LineSpacing;
             var gridState = GetAsGridState(context.LayoutState);
-            return OrientationBasedMeasures.ScrollOrientation == ScrollOrientation.Vertical ?
+            return OM.ScrollOrientation == ScrollOrientation.Vertical ?
                 (gridState.EffectiveItemHeight+ lineSpacing) :
                 (gridState.EffectiveItemWidth+ lineSpacing);
 
@@ -445,17 +445,17 @@ namespace ModernWpf.Controls
             VirtualizingLayoutContext context)
         {
             int itemsPerLine = (int)Math.Min( //note use of unsigned ints
-                Math.Max(1u, (uint)(OrientationBasedMeasures.Minor(availableSize) / GetMinorSizeWithSpacing(context))),
+                Math.Max(1u, (uint)(OM.Minor(availableSize) / GetMinorSizeWithSpacing(context))),
                 Math.Max(1u, m_maximumRowsOrColumns));
             int rowIndex = index / itemsPerLine;
             int indexInRow = index - (rowIndex * itemsPerLine);
 
             var gridState = GetAsGridState(context.LayoutState);
-            Rect bounds = OrientationBasedMeasures.MinorMajorRect(
-                indexInRow * GetMinorSizeWithSpacing(context) + OrientationBasedMeasures.MinorStart(lastExtent),
-                rowIndex * GetMajorSizeWithSpacing(context) + OrientationBasedMeasures.MajorStart(lastExtent),
-                OrientationBasedMeasures.ScrollOrientation == ScrollOrientation.Vertical ? gridState.EffectiveItemWidth: gridState.EffectiveItemHeight,
-                OrientationBasedMeasures.ScrollOrientation == ScrollOrientation.Vertical ? gridState.EffectiveItemHeight: gridState.EffectiveItemWidth);
+            Rect bounds = OM.MinorMajorRect(
+                indexInRow * GetMinorSizeWithSpacing(context) + OM.MinorStart(lastExtent),
+                rowIndex * GetMajorSizeWithSpacing(context) + OM.MajorStart(lastExtent),
+                OM.ScrollOrientation == ScrollOrientation.Vertical ? gridState.EffectiveItemWidth: gridState.EffectiveItemHeight,
+                OM.ScrollOrientation == ScrollOrientation.Vertical ? gridState.EffectiveItemHeight: gridState.EffectiveItemWidth);
 
             return bounds;
         }
@@ -487,7 +487,7 @@ namespace ModernWpf.Controls
         private UniformGridLayoutItemsStretch m_itemsStretch = UniformGridLayoutItemsStretch.None;
         private uint m_maximumRowsOrColumns = uint.MaxValue;
 
-        private OrientationBasedMeasures OrientationBasedMeasures { get; } = new OrientationBasedMeasures();
+        private OrientationBasedMeasures OM { get; } = new OrientationBasedMeasures();
     }
 
     public enum UniformGridLayoutItemsJustification

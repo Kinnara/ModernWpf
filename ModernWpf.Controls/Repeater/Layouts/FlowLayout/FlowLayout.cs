@@ -120,7 +120,7 @@ namespace ModernWpf.Controls
                 MinItemSpacing,
                 LineSpacing,
                 uint.MaxValue /* maxItemsPerLine */,
-                OrientationBasedMeasures.ScrollOrientation,
+                OM.ScrollOrientation,
                 false /* disableVirtualization */,
                 LayoutId);
             return desiredSize;
@@ -195,18 +195,18 @@ namespace ModernWpf.Controls
                 double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + LineSpacing;
                 Debug.Assert(averageItemsPerLine != 0);
 
-                double extentMajorSize = OrientationBasedMeasures.MajorSize(lastExtent) == 0 ? (itemsCount / averageItemsPerLine) * averageLineSize : OrientationBasedMeasures.MajorSize(lastExtent);
+                double extentMajorSize = OM.MajorSize(lastExtent) == 0 ? (itemsCount / averageItemsPerLine) * averageLineSize : OM.MajorSize(lastExtent);
                 if (itemsCount > 0 &&
-                    OrientationBasedMeasures.MajorSize(realizationRect) > 0 &&
-                    DoesRealizationWindowOverlapExtent(realizationRect, OrientationBasedMeasures.MinorMajorRect(OrientationBasedMeasures.MinorStart(lastExtent), OrientationBasedMeasures.MajorStart(lastExtent), OrientationBasedMeasures.Minor(availableSize), extentMajorSize)))
+                    OM.MajorSize(realizationRect) > 0 &&
+                    DoesRealizationWindowOverlapExtent(realizationRect, OM.MinorMajorRect(OM.MinorStart(lastExtent), OM.MajorStart(lastExtent), OM.Minor(availableSize), extentMajorSize)))
                 {
-                    double realizationWindowStartWithinExtent = OrientationBasedMeasures.MajorStart(realizationRect) - OrientationBasedMeasures.MajorStart(lastExtent);
+                    double realizationWindowStartWithinExtent = OM.MajorStart(realizationRect) - OM.MajorStart(lastExtent);
                     int lineIndex = Math.Max(0, (int)(realizationWindowStartWithinExtent / averageLineSize));
                     anchorIndex = (int)(lineIndex * averageItemsPerLine);
 
                     // Clamp it to be within valid range
                     anchorIndex = Math.Max(0, Math.Min(itemsCount - 1, anchorIndex));
-                    offset = lineIndex * averageLineSize + OrientationBasedMeasures.MajorStart(lastExtent);
+                    offset = lineIndex * averageLineSize + OM.MajorStart(lastExtent);
                 }
             }
 
@@ -230,7 +230,7 @@ namespace ModernWpf.Controls
                 double averageItemsPerLine = 0;
                 double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + LineSpacing;
                 int lineIndex = (int)(targetIndex / averageItemsPerLine);
-                offset = lineIndex * averageLineSize + OrientationBasedMeasures.MajorStart(flowState.FlowAlgorithm.LastExtent);
+                offset = lineIndex * averageLineSize + OM.MajorStart(flowState.FlowAlgorithm.LastExtent);
             }
 
             return new FlowLayoutAnchorInfo { Index = index, Offset = offset };
@@ -254,7 +254,7 @@ namespace ModernWpf.Controls
 
             if (itemsCount > 0)
             {
-                double availableSizeMinor = OrientationBasedMeasures.Minor(availableSize);
+                double availableSizeMinor = OM.Minor(availableSize);
                 var state = context.LayoutState;
                 var flowState = GetAsFlowState(state);
                 double averageItemsPerLine = 0;
@@ -265,20 +265,20 @@ namespace ModernWpf.Controls
                 {
                     Debug.Assert(lastRealized != null);
                     int linesBeforeFirst = (int)(firstRealizedItemIndex / averageItemsPerLine);
-                    double extentMajorStart = OrientationBasedMeasures.MajorStart(firstRealizedLayoutBounds) - linesBeforeFirst * averageLineSize;
-                    OrientationBasedMeasures.SetMajorStart(ref extent, extentMajorStart);
+                    double extentMajorStart = OM.MajorStart(firstRealizedLayoutBounds) - linesBeforeFirst * averageLineSize;
+                    OM.SetMajorStart(ref extent, extentMajorStart);
                     int remainingItems = itemsCount - lastRealizedItemIndex - 1;
                     int remainingLinesAfterLast = (int)(remainingItems / averageItemsPerLine);
-                    double extentMajorSize = OrientationBasedMeasures.MajorEnd(lastRealizedLayoutBounds) - OrientationBasedMeasures.MajorStart(extent) + remainingLinesAfterLast * averageLineSize;
-                    OrientationBasedMeasures.SetMajorSize(ref extent, extentMajorSize);
+                    double extentMajorSize = OM.MajorEnd(lastRealizedLayoutBounds) - OM.MajorStart(extent) + remainingLinesAfterLast * averageLineSize;
+                    OM.SetMajorSize(ref extent, extentMajorSize);
 
                     // If the available size is infinite, we will have realized all the items in one line.
                     // In that case, the extent in the non virtualizing direction should be based on the
                     // right/bottom of the last realized element.
-                    OrientationBasedMeasures.SetMinorSize(ref extent,
+                    OM.SetMinorSize(ref extent,
                         !double.IsInfinity(availableSizeMinor) ?
                         availableSizeMinor :
-                        Math.Max(0.0, OrientationBasedMeasures.MinorEnd(lastRealizedLayoutBounds)));
+                        Math.Max(0.0, OM.MinorEnd(lastRealizedLayoutBounds)));
                 }
                 else
                 {
@@ -288,11 +288,11 @@ namespace ModernWpf.Controls
                     int numLines = (int)Math.Ceiling(itemsCount / averageItemsPerLine);
                     extent =
                         !double.IsInfinity(availableSizeMinor) ?
-                        OrientationBasedMeasures.MinorMajorRect(0, 0, availableSizeMinor, Math.Max(0.0, numLines * averageLineSize - lineSpacing)) :
-                        OrientationBasedMeasures.MinorMajorRect(
+                        OM.MinorMajorRect(0, 0, availableSizeMinor, Math.Max(0.0, numLines * averageLineSize - lineSpacing)) :
+                        OM.MinorMajorRect(
                             0,
                             0,
-                            Math.Max(0.0, (OrientationBasedMeasures.Minor(flowState.SpecialElementDesiredSize) + minItemSpacing) * itemsCount - minItemSpacing),
+                            Math.Max(0.0, (OM.Minor(flowState.SpecialElementDesiredSize) + minItemSpacing) * itemsCount - minItemSpacing),
                             Math.Max(0.0, (averageLineSize - lineSpacing)));
                 }
             }
@@ -425,7 +425,7 @@ namespace ModernWpf.Controls
                 //Note: For FlowLayout Vertical Orientation means we have a Horizontal ScrollOrientation. Horizontal Orientation means we have a Vertical ScrollOrientation.
                 //i.e. the properties are the inverse of each other.
                 ScrollOrientation scrollOrientation = (orientation == Orientation.Horizontal) ? ScrollOrientation.Vertical : ScrollOrientation.Horizontal;
-                OrientationBasedMeasures.ScrollOrientation = scrollOrientation;
+                OM.ScrollOrientation = scrollOrientation;
             }
             else if (property == MinColumnSpacingProperty)
             {
@@ -460,8 +460,8 @@ namespace ModernWpf.Controls
                 var desiredSize = flowState.FlowAlgorithm.MeasureElement(tmpElement, 0, availableSize, context);
                 context.RecycleElement(tmpElement);
 
-                int estimatedCountInLine = Math.Max(1, (int)(OrientationBasedMeasures.Minor(availableSize) / OrientationBasedMeasures.Minor(desiredSize)));
-                flowState.OnLineArranged(0, estimatedCountInLine, OrientationBasedMeasures.Major(desiredSize), context);
+                int estimatedCountInLine = Math.Max(1, (int)(OM.Minor(availableSize) / OM.Minor(desiredSize)));
+                flowState.OnLineArranged(0, estimatedCountInLine, OM.Major(desiredSize), context);
                 flowState.SpecialElementDesiredSize = desiredSize;
             }
 
@@ -488,12 +488,12 @@ namespace ModernWpf.Controls
 
         private bool DoesRealizationWindowOverlapExtent(Rect realizationWindow, Rect extent)
         {
-            return OrientationBasedMeasures.MajorEnd(realizationWindow) >= OrientationBasedMeasures.MajorStart(extent) && OrientationBasedMeasures.MajorStart(realizationWindow) <= OrientationBasedMeasures.MajorEnd(extent);
+            return OM.MajorEnd(realizationWindow) >= OM.MajorStart(extent) && OM.MajorStart(realizationWindow) <= OM.MajorEnd(extent);
         }
 
-        private double LineSpacing => OrientationBasedMeasures.ScrollOrientation == ScrollOrientation.Vertical ? m_minRowSpacing : m_minColumnSpacing;
+        private double LineSpacing => OM.ScrollOrientation == ScrollOrientation.Vertical ? m_minRowSpacing : m_minColumnSpacing;
 
-        private double MinItemSpacing => OrientationBasedMeasures.ScrollOrientation == ScrollOrientation.Vertical ? m_minColumnSpacing : m_minRowSpacing;
+        private double MinItemSpacing => OM.ScrollOrientation == ScrollOrientation.Vertical ? m_minColumnSpacing : m_minRowSpacing;
 
         // Fields
         private double m_minRowSpacing;
@@ -504,7 +504,7 @@ namespace ModernWpf.Controls
         // Any storage here needs to be related to layout configuration. 
         // layout specific state needs to be stored in FlowLayoutState.
 
-        private OrientationBasedMeasures OrientationBasedMeasures { get; } = new OrientationBasedMeasures();
+        private OrientationBasedMeasures OM { get; } = new OrientationBasedMeasures();
     }
 
     public enum FlowLayoutLineAlignment

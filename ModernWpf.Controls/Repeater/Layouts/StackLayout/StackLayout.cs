@@ -107,7 +107,7 @@ namespace ModernWpf.Controls
                 0 /* minItemSpacing */,
                 m_itemSpacing,
                 uint.MaxValue /* maxItemsPerLine */,
-                OrientationBasedMeasures.ScrollOrientation,
+                OM.ScrollOrientation,
                 DisableVirtualization,
                 LayoutId);
             return desiredSize;
@@ -153,18 +153,18 @@ namespace ModernWpf.Controls
                 var lastExtent = state.FlowAlgorithm.LastExtent;
 
                 double averageElementSize = GetAverageElementSize(availableSize, context, state) + m_itemSpacing;
-                double realizationWindowOffsetInExtent = OrientationBasedMeasures.MajorStart(realizationRect) - OrientationBasedMeasures.MajorStart(lastExtent);
-                double majorSize = OrientationBasedMeasures.MajorSize(lastExtent) == 0 ? Math.Max(0.0, averageElementSize * itemsCount - m_itemSpacing) : OrientationBasedMeasures.MajorSize(lastExtent);
+                double realizationWindowOffsetInExtent = OM.MajorStart(realizationRect) - OM.MajorStart(lastExtent);
+                double majorSize = OM.MajorSize(lastExtent) == 0 ? Math.Max(0.0, averageElementSize * itemsCount - m_itemSpacing) : OM.MajorSize(lastExtent);
                 if (itemsCount > 0 &&
-                    OrientationBasedMeasures.MajorSize(realizationRect) >= 0 &&
+                    OM.MajorSize(realizationRect) >= 0 &&
                     // MajorSize = 0 will account for when a nested repeater is outside the realization rect but still being measured. Also,
                     // note that if we are measuring this repeater, then we are already realizing an element to figure out the size, so we could
                     // just keep that element alive. It also helps in XYFocus scenarios to have an element realized for XYFocus to find a candidate
                     // in the navigating direction.
-                    realizationWindowOffsetInExtent + OrientationBasedMeasures.MajorSize(realizationRect) >= 0 && realizationWindowOffsetInExtent <= majorSize)
+                    realizationWindowOffsetInExtent + OM.MajorSize(realizationRect) >= 0 && realizationWindowOffsetInExtent <= majorSize)
                 {
                     anchorIndex = (int)(realizationWindowOffsetInExtent / averageElementSize);
-                    offset = anchorIndex * averageElementSize + OrientationBasedMeasures.MajorStart(lastExtent);
+                    offset = anchorIndex * averageElementSize + OM.MajorStart(lastExtent);
                     anchorIndex = Math.Max(0, Math.Min(itemsCount - 1, anchorIndex));
                 }
             }
@@ -191,16 +191,16 @@ namespace ModernWpf.Controls
             var stackState = GetAsStackState(context.LayoutState);
             double averageElementSize = GetAverageElementSize(availableSize, context, stackState) + m_itemSpacing;
 
-            OrientationBasedMeasures.SetMinorSize(ref extent, stackState.MaxArrangeBounds);
-            OrientationBasedMeasures.SetMajorSize(ref extent, Math.Max(0.0, itemsCount * averageElementSize - m_itemSpacing));
+            OM.SetMinorSize(ref extent, stackState.MaxArrangeBounds);
+            OM.SetMajorSize(ref extent, Math.Max(0.0, itemsCount * averageElementSize - m_itemSpacing));
             if (itemsCount > 0)
             {
                 if (firstRealized != null)
                 {
                     Debug.Assert(lastRealized != null);
-                    OrientationBasedMeasures.SetMajorStart(ref extent, OrientationBasedMeasures.MajorStart(firstRealizedLayoutBounds) - firstRealizedItemIndex * averageElementSize);
+                    OM.SetMajorStart(ref extent, OM.MajorStart(firstRealizedLayoutBounds) - firstRealizedItemIndex * averageElementSize);
                     var remainingItems = itemsCount - lastRealizedItemIndex - 1;
-                    OrientationBasedMeasures.SetMajorSize(ref extent, OrientationBasedMeasures.MajorEnd(lastRealizedLayoutBounds) - OrientationBasedMeasures.MajorStart(extent) + (remainingItems * averageElementSize));
+                    OM.SetMajorSize(ref extent, OM.MajorEnd(lastRealizedLayoutBounds) - OM.MajorStart(extent) + (remainingItems * averageElementSize));
                 }
             }
             else
@@ -227,8 +227,8 @@ namespace ModernWpf.Controls
                 var provisionalArrangeSizeWinRt = provisionalArrangeSize;
                 stackState.OnElementMeasured(
                     index,
-                    OrientationBasedMeasures.Major(provisionalArrangeSizeWinRt),
-                    OrientationBasedMeasures.Minor(provisionalArrangeSizeWinRt));
+                    OM.Major(provisionalArrangeSizeWinRt),
+                    OM.Minor(provisionalArrangeSizeWinRt));
             }
         }
 
@@ -239,12 +239,12 @@ namespace ModernWpf.Controls
 
         Size IFlowLayoutAlgorithmDelegates.Algorithm_GetProvisionalArrangeSize(int index, Size measureSize, Size desiredSize, VirtualizingLayoutContext context)
         {
-            var measureSizeMinor = OrientationBasedMeasures.Minor(measureSize);
-            return OrientationBasedMeasures.MinorMajorSize(
+            var measureSizeMinor = OM.Minor(measureSize);
+            return OM.MinorMajorSize(
                 !double.IsInfinity(measureSizeMinor) ?
-                    Math.Max(measureSizeMinor, OrientationBasedMeasures.Minor(desiredSize)) :
-                    OrientationBasedMeasures.Minor(desiredSize),
-                OrientationBasedMeasures.Major(desiredSize));
+                    Math.Max(measureSizeMinor, OM.Minor(desiredSize)) :
+                    OM.Minor(desiredSize),
+                OM.Major(desiredSize));
         }
 
         bool IFlowLayoutAlgorithmDelegates.Algorithm_ShouldBreakLine(int index, double remainingSpace)
@@ -273,7 +273,7 @@ namespace ModernWpf.Controls
                 index = targetIndex;
                 var state = GetAsStackState(context.LayoutState);
                 double averageElementSize = GetAverageElementSize(availableSize, context, state) + m_itemSpacing;
-                offset = index * averageElementSize + OrientationBasedMeasures.MajorStart(state.FlowAlgorithm.LastExtent);
+                offset = index * averageElementSize + OM.MajorStart(state.FlowAlgorithm.LastExtent);
             }
 
             return new FlowLayoutAnchorInfo { Index = index, Offset = offset };
@@ -336,7 +336,7 @@ namespace ModernWpf.Controls
                 //Note: For StackLayout Vertical Orientation means we have a Vertical ScrollOrientation.
                 //Horizontal Orientation means we have a Horizontal ScrollOrientation.
                 ScrollOrientation scrollOrientation = (orientation == Orientation.Horizontal) ? ScrollOrientation.Horizontal : ScrollOrientation.Vertical;
-                OrientationBasedMeasures.ScrollOrientation = scrollOrientation;
+                OM.ScrollOrientation = scrollOrientation;
             }
             else if (property == SpacingProperty)
             {
@@ -390,7 +390,7 @@ namespace ModernWpf.Controls
         // Any storage here needs to be related to layout configuration. 
         // layout specific state needs to be stored in StackLayoutState.
 
-        private OrientationBasedMeasures OrientationBasedMeasures { get; } = new OrientationBasedMeasures();
+        private OrientationBasedMeasures OM { get; } = new OrientationBasedMeasures();
     }
 
     public struct FlowLayoutAnchorInfo
