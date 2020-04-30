@@ -333,7 +333,7 @@ namespace ModernWpf.Controls
                     parent = CachedVisualTreeHelpers.GetParent(parent);
                 }
 
-                if (m_parentScrollers.Count == 0)
+                if (m_parentScrollers.Empty())
                 {
                     // We usually update the viewport in the post arrange handler. But, since we don't have
                     // a scroller, let's do it now.
@@ -341,7 +341,7 @@ namespace ModernWpf.Controls
                 }
                 else
                 {
-                    var outerScrollerInfo = m_parentScrollers[m_parentScrollers.Count - 1];
+                    var outerScrollerInfo = m_parentScrollers.Last();
                     outerScrollerInfo.Scroller.PostArrange += OnPostArrange;
                     //outerScrollerInfo.PostArrangeToken = outerScrollerInfo.Scroller().PostArrange(winrt::auto_revoke, { this, &ViewportManagerDownLevel::OnPostArrange });
                 }
@@ -484,9 +484,9 @@ namespace ModernWpf.Controls
         {
             IRepeaterScrollingSurface scroller = null;
 
-            if (m_parentScrollers.Count > 0)
+            if (!m_parentScrollers.Empty())
             {
-                scroller = m_parentScrollers[m_parentScrollers.Count - 1].Scroller;
+                scroller = m_parentScrollers.Last().Scroller;
             }
 
             return scroller;
@@ -495,7 +495,7 @@ namespace ModernWpf.Controls
         private string GetLayoutId()
         {
             string layoutId = null;
-            if (m_owner.Layout is Layout layout)
+            if (m_owner.Layout is { } layout)
             {
                 layoutId = layout.LayoutId;
             }

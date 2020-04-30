@@ -19,8 +19,6 @@ using ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests.Common;
 
 using Task = System.Threading.Tasks.Task;
 
-using static ModernWpf.Controls.ScrollViewerExtensions;
-
 #if USING_TAEF
 using WEX.TestExecution;
 using WEX.TestExecution.Markup;
@@ -38,18 +36,19 @@ using RecyclingElementFactory = ModernWpf.Controls.RecyclingElementFactory;
 using StackLayout = ModernWpf.Controls.StackLayout;
 using UniformGridLayout = ModernWpf.Controls.UniformGridLayout;
 using ItemsRepeaterScrollHost = ModernWpf.Controls.ItemsRepeaterScrollHost;
-//using Scroller = Microsoft.UI.Xaml.Controls.Primitives.Scroller;
-//using ScrollCompletedEventArgs = Microsoft.UI.Xaml.Controls.ScrollCompletedEventArgs;
-//using ZoomCompletedEventArgs = Microsoft.UI.Xaml.Controls.ZoomCompletedEventArgs;
-//using AnimationMode = Microsoft.UI.Xaml.Controls.AnimationMode;
-//using SnapPointsMode = Microsoft.UI.Xaml.Controls.SnapPointsMode;
-//using ScrollOptions = Microsoft.UI.Xaml.Controls.ScrollOptions;
-//using ZoomOptions = Microsoft.UI.Xaml.Controls.ZoomOptions;
-//using ContentOrientation = Microsoft.UI.Xaml.Controls.ContentOrientation;
+//using Scroller = ModernWpf.Controls.Primitives.Scroller;
+//using ScrollCompletedEventArgs = ModernWpf.Controls.ScrollCompletedEventArgs;
+//using ZoomCompletedEventArgs = ModernWpf.Controls.ZoomCompletedEventArgs;
+//using AnimationMode = ModernWpf.Controls.AnimationMode;
+//using SnapPointsMode = ModernWpf.Controls.SnapPointsMode;
+//using ScrollOptions = ModernWpf.Controls.ScrollOptions;
+//using ZoomOptions = ModernWpf.Controls.ZoomOptions;
+//using ContentOrientation = ModernWpf.Controls.ContentOrientation;
 using IRepeaterScrollingSurface = ModernWpf.Controls.IRepeaterScrollingSurface;
 using ConfigurationChangedEventHandler = ModernWpf.Controls.ConfigurationChangedEventHandler;
 using PostArrangeEventHandler = ModernWpf.Controls.PostArrangeEventHandler;
 using ViewportChangedEventHandler = ModernWpf.Controls.ViewportChangedEventHandler;
+using ScrollViewer = System.Windows.Controls.ScrollViewerEx;
 
 
 namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
@@ -77,11 +76,11 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 Verify.AreEqual(2, realizationRects.Count);
                 Verify.AreEqual(new Rect(0, 0, 0, 0), realizationRects[0]);
 
-                //if (!PlatformConfiguration.IsOsVersionGreaterThanOrEqual(OSVersion.Redstone5))
+                if (true /*!PlatformConfiguration.IsOsVersionGreaterThanOrEqual(OSVersion.Redstone5)*/)
                 {
                     Verify.AreEqual(new Rect(0, 0, float.MaxValue, float.MaxValue), realizationRects[1]);
                 }
-                /*else
+                else
                 {
                     // Using Effective Viewport
                     Verify.AreEqual(0, realizationRects[1].X);
@@ -91,7 +90,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                     // validating something reasonable here to avoid flakiness.
                     Verify.IsLessThan(500.0, realizationRects[1].Width);
                     Verify.IsLessThan(500.0, realizationRects[1].Height);
-                }*/
+                }
 
                 realizationRects.Clear();
             });
@@ -121,9 +120,9 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                     VerticalScrollBarVisibility = ScrollBarVisibility.Hidden,
                 };
 
-                scrollViewer.ScrollChanged += (sender, args) =>
+                scrollViewer.ViewChanged += (sender, args) =>
                 {
-                    if (args.HorizontalChange != 0 || args.VerticalChange != 0)
+                    if (!args.IsIntermediate)
                     {
                         viewChangedEvent.Set();
                     }
@@ -193,11 +192,13 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
         [TestMethod]
         public void CanRegisterElementsWithScrollingSurfaces()
         {
-            /*if (PlatformConfiguration.IsOsVersionGreaterThanOrEqual(OSVersion.Redstone5))
+            /*
+            if (PlatformConfiguration.IsOsVersionGreaterThanOrEqual(OSVersion.Redstone5))
             {
                 Log.Warning("Skipping since RS5+ we use effective viewport instead of IRepeaterScrollingSurface");
                 return;
-            }*/
+            }
+            */
 
             // In this test, we validate that ItemsRepeater can register and unregister its children
             // with one or two scrollers.
@@ -220,29 +221,29 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 var actualActionSequence = new List<string>();
                 var expectedActionSequence = new List<string>()
                 {
-                    "S2: GetRelativeViewport ItemsRepeater_0",
-                    "S2: Register Item_0_0",
-                    "S2: Register Item_0_1",
-                    "S2: Register Item_0_2",
-                    "S2: GetRelativeViewport ItemsRepeater_1",
-                    "S2: Register Item_1_0",
-                    "S2: Register Item_1_1",
-                    "S2: Register Item_1_2",
-                    "S2: GetRelativeViewport Root_ItemsRepeater",
-                    "S2: Register Group_0",
-                    "S2: Register Group_1"
+                    "S2: GetRelativeViewport ItemsRepeater #0",
+                    "S2: Register Item #0.0",
+                    "S2: Register Item #0.1",
+                    "S2: Register Item #0.2",
+                    "S2: GetRelativeViewport ItemsRepeater #1",
+                    "S2: Register Item #1.0",
+                    "S2: Register Item #1.1",
+                    "S2: Register Item #1.2",
+                    "S2: GetRelativeViewport Root ItemsRepeater",
+                    "S2: Register Group #0",
+                    "S2: Register Group #1"
                 };
 
                 var registerAnchorCandidateFunc = (Action<TestScrollingSurface, UIElement, bool>)((scroller, element, expectedInPostArrange) =>
                 {
-                    actualActionSequence.Add(scroller.Name + ": Register " + ((FrameworkElement)element).Name);
+                    actualActionSequence.Add(scroller.Tag + ": Register " + ((FrameworkElement)element).Tag);
                     Log.Comment(actualActionSequence.Last());
                     Verify.AreEqual(expectedInPostArrange, scroller.InPostArrange);
                 });
 
                 var unregisterAnchorCandidateFunc = (Action<TestScrollingSurface, UIElement>)((scroller, element) =>
                 {
-                    actualActionSequence.Add(scroller.Name + ": Unregister " + ((FrameworkElement)element).Name);
+                    actualActionSequence.Add(scroller.Tag + ": Unregister " + ((FrameworkElement)element).Tag);
                     Log.Comment(actualActionSequence.Last());
                     Verify.IsFalse(scroller.InArrange);
                     Verify.IsFalse(scroller.InPostArrange);
@@ -250,7 +251,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
 
                 var getRelativeViewportFunc = (Func<TestScrollingSurface, UIElement, bool, Rect>)((scroller, element, expectedInPostArrange) =>
                 {
-                    actualActionSequence.Add(scroller.Name + ": GetRelativeViewport " + ((FrameworkElement)element).Name);
+                    actualActionSequence.Add(scroller.Tag + ": GetRelativeViewport " + ((FrameworkElement)element).Tag);
                     Log.Comment(actualActionSequence.Last());
                     Verify.AreEqual(expectedInPostArrange, scroller.InPostArrange);
                     var outerScroller = scrollers.Last();
@@ -258,7 +259,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 });
 
                 // Step 1.0:
-                // - Make Scroller_2 scrollable in both directions.
+                // - Make scroller 2 scrollable in both directions.
                 // - Validate that the correct methods are called on it from repeater at the right moment.
                 scrollers[2].IsHorizontallyScrollable = true;
                 scrollers[2].IsVerticallyScrollable = true;
@@ -275,28 +276,28 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 // - Validate that the recycled element is no longer a candidate for tracking.
                 data[0].RemoveAt(1);
                 Content.UpdateLayout();
-                Verify.AreEqual(string.Join(", ",
+                Verify.AreEqual(string.Join( ", ",
                     new List<string>()
                     {
-                        "S2: Unregister Item_0_1",
-                        "S2: GetRelativeViewport ItemsRepeater_0",
-                        "S2: Register Item_0_0",
-                        "S2: Register Item_0_2",
-                        "S2: GetRelativeViewport ItemsRepeater_1",
-                        "S2: Register Item_1_0",
-                        "S2: Register Item_1_1",
-                        "S2: Register Item_1_2",
-                        "S2: GetRelativeViewport Root_ItemsRepeater",
-                        "S2: Register Group_0",
-                        "S2: Register Group_1"
+                        "S2: Unregister Item #0.1",
+                        "S2: GetRelativeViewport ItemsRepeater #0",
+                        "S2: Register Item #0.0",
+                        "S2: Register Item #0.2",
+                        "S2: GetRelativeViewport ItemsRepeater #1",
+                        "S2: Register Item #1.0",
+                        "S2: Register Item #1.1",
+                        "S2: Register Item #1.2",
+                        "S2: GetRelativeViewport Root ItemsRepeater",
+                        "S2: Register Group #0",
+                        "S2: Register Group #1"
                     }),
                     string.Join(", ", actualActionSequence));
                 actualActionSequence.Clear();
 
                 // Step 2.0:
                 // - Reset the scrollers configuration.
-                // - Configure Scroller_1 and 3 to be, respectively, vertically and horizontally scrollable.
-                // - Validate that the correct methods are called on Scroller_1 and 3 from repeater at the right moment.
+                // - Configure scroller 1 and 3 to be, respectively, vertically and horizontally scrollable.
+                // - Validate that the correct methods are called on scroller 1 and 3 from repeater at the right moment.
                 resetScrollers();
                 scrollers[1].IsVerticallyScrollable = true;
                 scrollers[3].IsHorizontallyScrollable = true;
@@ -313,58 +314,58 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 Verify.AreEqual(string.Join(", ",
                     new List<string>()
                     {
-                        "S3: GetRelativeViewport ItemsRepeater_0",
-                        "S1: GetRelativeViewport ItemsRepeater_0",
-                        "S3: Register Item_0_0",
-                        "S1: Register Item_0_0",
-                        "S3: Register Item_0_2",
-                        "S1: Register Item_0_2",
-                        "S3: GetRelativeViewport ItemsRepeater_1",
-                        "S1: GetRelativeViewport ItemsRepeater_1",
-                        "S3: Register Item_1_0",
-                        "S1: Register Item_1_0",
-                        "S3: Register Item_1_1",
-                        "S1: Register Item_1_1",
-                        "S3: Register Item_1_2",
-                        "S1: Register Item_1_2",
-                        "S3: GetRelativeViewport Root_ItemsRepeater",
-                        "S1: GetRelativeViewport Root_ItemsRepeater",
-                        "S3: Register Group_0",
-                        "S1: Register Group_0",
-                        "S3: Register Group_1",
-                        "S1: Register Group_1"
+                        "S3: GetRelativeViewport ItemsRepeater #0",
+                        "S1: GetRelativeViewport ItemsRepeater #0",
+                        "S3: Register Item #0.0",
+                        "S1: Register Item #0.0",
+                        "S3: Register Item #0.2",
+                        "S1: Register Item #0.2",
+                        "S3: GetRelativeViewport ItemsRepeater #1",
+                        "S1: GetRelativeViewport ItemsRepeater #1",
+                        "S3: Register Item #1.0",
+                        "S1: Register Item #1.0",
+                        "S3: Register Item #1.1",
+                        "S1: Register Item #1.1",
+                        "S3: Register Item #1.2",
+                        "S1: Register Item #1.2",
+                        "S3: GetRelativeViewport Root ItemsRepeater",
+                        "S1: GetRelativeViewport Root ItemsRepeater",
+                        "S3: Register Group #0",
+                        "S1: Register Group #0",
+                        "S3: Register Group #1",
+                        "S1: Register Group #1"
                     }),
                     string.Join(", ", actualActionSequence));
                 actualActionSequence.Clear();
 
                 // Step 2.1:
                 // - Remove an item from the data.
-                // - Validate that Scroller_1 and 3 are no longer tracking the recycled element because it's not registered anymore.
+                // - Validate that scroller 1 and 3 are no longer tracking the recycled element because it's not registered anymore.
                 data[1].RemoveAt(1);
                 Content.UpdateLayout();
                 Verify.AreEqual(string.Join(", ",
                     new List<string>()
                     {
-                        "S3: Unregister Item_1_1",
-                        "S1: Unregister Item_1_1",
-                        "S3: GetRelativeViewport ItemsRepeater_0",
-                        "S1: GetRelativeViewport ItemsRepeater_0",
-                        "S3: Register Item_0_0",
-                        "S1: Register Item_0_0",
-                        "S3: Register Item_0_2",
-                        "S1: Register Item_0_2",
-                        "S3: GetRelativeViewport ItemsRepeater_1",
-                        "S1: GetRelativeViewport ItemsRepeater_1",
-                        "S3: Register Item_1_0",
-                        "S1: Register Item_1_0",
-                        "S3: Register Item_1_2",
-                        "S1: Register Item_1_2",
-                        "S3: GetRelativeViewport Root_ItemsRepeater",
-                        "S1: GetRelativeViewport Root_ItemsRepeater",
-                        "S3: Register Group_0",
-                        "S1: Register Group_0",
-                        "S3: Register Group_1",
-                        "S1: Register Group_1"
+                        "S3: Unregister Item #1.1",
+                        "S1: Unregister Item #1.1",
+                        "S3: GetRelativeViewport ItemsRepeater #0",
+                        "S1: GetRelativeViewport ItemsRepeater #0",
+                        "S3: Register Item #0.0",
+                        "S1: Register Item #0.0",
+                        "S3: Register Item #0.2",
+                        "S1: Register Item #0.2",
+                        "S3: GetRelativeViewport ItemsRepeater #1",
+                        "S1: GetRelativeViewport ItemsRepeater #1",
+                        "S3: Register Item #1.0",
+                        "S1: Register Item #1.0",
+                        "S3: Register Item #1.2",
+                        "S1: Register Item #1.2",
+                        "S3: GetRelativeViewport Root ItemsRepeater",
+                        "S1: GetRelativeViewport Root ItemsRepeater",
+                        "S3: Register Group #0",
+                        "S1: Register Group #0",
+                        "S3: Register Group #1",
+                        "S1: Register Group #1"
                     }),
                     string.Join(", ", actualActionSequence));
                 actualActionSequence.Clear();
@@ -375,11 +376,13 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
         [TestMethod]
         public void ValidateSuggestedElement()
         {
-            /*if (PlatformConfiguration.IsOsVersionGreaterThanOrEqual(OSVersion.Redstone5))
+            /*
+            if (PlatformConfiguration.IsOsVersionGreaterThanOrEqual(OSVersion.Redstone5))
             {
                 Log.Warning("Skipping since RS5+ we use effective viewport instead of IRepeaterScrollingSurface");
                 return;
-            }*/
+            }
+            */
 
             // In this test, we validate that ItemsRepeater can suggested the correct anchor element
             // to its layout.
@@ -391,12 +394,12 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 scrollers[3].IsVerticallyScrollable = true;
                 scrollers[1].IsHorizontallyScrollable = true;
 
-                foreach (var scrollableScroller in new[] { scrollers[1], scrollers[3] })
+                foreach(var scrollableScroller in new [] { scrollers[1], scrollers[3] })
                 {
-                    scrollableScroller.RegisterAnchorCandidateFunc = (element) => { Log.Comment("Register {0}", ((FrameworkElement)element).Name); };
-                    scrollableScroller.UnregisterAnchorCandidateFunc = (element) => { Log.Comment("Unregister {0}", ((FrameworkElement)element).Name); };
-                    scrollableScroller.GetRelativeViewportFunc = (element) => { Log.Comment("GetRelativeViewport {0}", ((FrameworkElement)element).Name); return new Rect(0, 0, outerScroller.Width, outerScroller.Height); };
-                }
+                    scrollableScroller.RegisterAnchorCandidateFunc = (element) => { Log.Comment("Register {0}", ((FrameworkElement)element).Tag); };
+                    scrollableScroller.UnregisterAnchorCandidateFunc = (element) => { Log.Comment("Unregister {0}", ((FrameworkElement)element).Tag); };
+                    scrollableScroller.GetRelativeViewportFunc = (element) => { Log.Comment("GetRelativeViewport {0}", ((FrameworkElement)element).Tag); return new Rect(0, 0, outerScroller.Width, outerScroller.Height); };
+                }                
 
                 var groups = Enumerable.Range(0, data.Count).Select(i =>
                 {
@@ -409,9 +412,9 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                     };
                 }).ToArray();
 
-                // Scroller 3 will be tracking the first group header while Scroller_1 will
+                // Scroller 3 will be tracking the first group header while scroller 1 will
                 // be tracking the second group header. Our repeaters (root repeater and the two inner
-                // "group" repeaters) should only care about what Scroller_1 is tracking because
+                // "group" repeaters) should only care about what scroller 1 is tracking because
                 // it's the inner most scrollable scroller.
                 scrollers[3].AnchorElement = groups[0].Header;
                 scrollers[1].AnchorElement = groups[1].Header;
@@ -447,11 +450,13 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
         // [TestMethod] Temporarily disabled for bug 18866003
         public void ValidateLoadUnload()
         {
-            /*if (!PlatformConfiguration.IsOsVersionGreaterThan(OSVersion.Redstone2))
+            /*
+            if (!PlatformConfiguration.IsOsVersionGreaterThan(OSVersion.Redstone2))
             {
                 Log.Warning("Skipping: Test has instability on rs1 and rs2. Tracked by bug 18919096");
                 return;
-            }*/
+            }
+            */
 
             // In this test, we will repeatedly put a repeater in and out
             // of the visual tree, under the same or a different parent.
@@ -479,14 +484,14 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 };
 
                 var host = new Grid();
-                scroller1 = new TestScrollingSurface() { Name = "Scroller_1" };
-                scroller2 = new TestScrollingSurface() { Name = "Scroller_2" };
+                scroller1 = new TestScrollingSurface() { Tag = "Scroller 1" };
+                scroller2 = new TestScrollingSurface() { Tag = "Scroller 2" };
                 repeater = new ItemsRepeater();
                 repeaterWeakRef = new WeakReference(repeater);
 
                 repeater.Loaded += delegate
                 {
-                    Log.Comment("ItemsRepeater Loaded in " + ((FrameworkElement)repeater.Parent).Name);
+                    Log.Comment("ItemsRepeater Loaded in " + ((FrameworkElement)repeater.Parent).Tag);
                     unorderedLoadEvent |= (++loadCounter > unloadCounter + 1);
                 };
                 repeater.Unloaded += delegate
@@ -521,7 +526,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
             Verify.IsTrue(renderingEvent.WaitOne(), "Waiting for rendering event");
 
             renderingEvent.Reset();
-            Log.Comment("Putting repeater in and out of Scroller_1 until we observe two out-of-sync loaded/unloaded events.");
+            Log.Comment("Putting repeater in and out of scroller 1 until we observe two out-of-sync loaded/unloaded events.");
             for (int i = 0; i < 2; ++i)
             {
                 while (!unorderedLoadEvent)
@@ -549,7 +554,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 Verify.AreEqual(1, scroller1SubscriberCount);
                 Verify.AreEqual(0, scroller2SubscriberCount);
 
-                Log.Comment("Moving repeater from Scroller_1 to Scroller_2.");
+                Log.Comment("Moving repeater from scroller 1 to scroller 2.");
                 scroller1.Content = null;
                 scroller2.Content = repeater;
             });
@@ -562,7 +567,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 Verify.AreEqual(0, scroller1SubscriberCount);
                 Verify.AreEqual(1, scroller2SubscriberCount);
 
-                Log.Comment("Moving repeater out of Scroller_2.");
+                Log.Comment("Moving repeater out of scroller 2.");
                 scroller2.Content = null;
                 repeater = null;
             });
@@ -634,7 +639,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                         {
                             var itemElement = innerRepeater.TryGetElement(itemIndex);
 
-                            if (itemElement != null)
+                            if(itemElement != null)
                             {
                                 actualFirstItemGroupIndex =
                                     actualFirstItemGroupIndex == -1 ?
@@ -683,15 +688,15 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
 
                 var data = new ObservableCollection<ObservableCollection<string>>(
                     Enumerable.Range(0, groupCount).Select(i => new ObservableCollection<string>(
-                        Enumerable.Range(0, itemsPerGroup).Select(j => string.Format("Item_{0}_{1}", i, j)))));
+                        Enumerable.Range(0, itemsPerGroup).Select(j => string.Format("Item #{0}.{1}", i, j)))));
 
                 var itemElements = Enumerable.Range(0, groupCount).Select(i =>
-                    Enumerable.Range(0, itemsPerGroup).Select(j => new Border { Name = data[i][j], Width = 50, Height = 50, Background = new SolidColorBrush(Colors.Red) }).ToList()).ToArray();
+                    Enumerable.Range(0, itemsPerGroup).Select(j => new Border { Tag = data[i][j], Width = 50, Height = 50, Background = new SolidColorBrush(Colors.Red) }).ToList()).ToArray();
 
-                var headerElements = Enumerable.Range(0, groupCount).Select(i => new TextBlock { Text = "Header_" + i }).ToList();
+                var headerElements = Enumerable.Range(0, groupCount).Select(i => new TextBlock { Text = "Header #" + i }).ToList();
                 var groupRepeaters = Enumerable.Range(0, groupCount).Select(i => new ItemsRepeater
                 {
-                    Name = "ItemsRepeater_" + i,
+                    Tag = "ItemsRepeater #" + i,
                     ItemsSource = data[i],
                     ItemTemplate = MockElementFactory.CreateElementFactory(itemElements[i]),
                     Layout = new TestGridLayout { Orientation = Orientation.Horizontal, MinItemWidth = 50, MinItemHeight = 50, MinRowSpacing = 10, MinColumnSpacing = 10 }
@@ -699,7 +704,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 var groupElement = Enumerable.Range(0, groupCount).Select(i =>
                 {
                     var panel = new StackPanel();
-                    panel.Name = "Group_" + i;
+                    panel.Tag = "Group #" + i;
                     panel.Children.Add(headerElements[i]);
                     panel.Children.Add(groupRepeaters[i]);
                     return panel;
@@ -707,7 +712,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
 
                 var rootRepeater = new ItemsRepeater
                 {
-                    Name = "Root_ItemsRepeater",
+                    Tag = "Root ItemsRepeater",
                     ItemsSource = data,
                     ItemTemplate = MockElementFactory.CreateElementFactory(groupElement),
                     Layout = new TestStackLayout { Orientation = Orientation.Vertical }
@@ -718,7 +723,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 {
                     scrollers[i] = new TestScrollingSurface()
                     {
-                        Name = "S" + i,
+                        Tag = "S" + i,
                         Content = i > 0 ? (UIElement)scrollers[i - 1] : rootRepeater
                     };
                 }
@@ -810,7 +815,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                         ConfigurationChangedAddFunc();
                     }
 
-                    EventRegistrationTokenTable<ConfigurationChangedEventHandler>
+                    /*return*/ EventRegistrationTokenTable<ConfigurationChangedEventHandler>
                         .GetOrCreateEventRegistrationTokenTable(ref _configurationChangedTokenTable)
                         .AddEventHandler(value);
                 }

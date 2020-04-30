@@ -13,6 +13,45 @@
     {
         public event EventHandler<ScrollViewerViewChangedEventArgs> ViewChanged;
 
+        public bool ChangeView(
+            double? horizontalOffset,
+            double? verticalOffset,
+            float? zoomFactor)
+        {
+            return ChangeView(horizontalOffset, verticalOffset, zoomFactor, false);
+        }
+
+        public bool ChangeView(
+            double? horizontalOffset,
+            double? verticalOffset,
+            float? zoomFactor,
+            bool disableAnimation)
+        {
+            bool changed = false;
+
+            if (horizontalOffset.HasValue)
+            {
+                if (horizontalOffset.Value != HorizontalOffset)
+                {
+                    changed = true;
+                }
+
+                ScrollToHorizontalOffset(horizontalOffset.Value);
+            }
+
+            if (verticalOffset.HasValue)
+            {
+                if (verticalOffset.Value != VerticalOffset)
+                {
+                    changed = true;
+                }
+
+                ScrollToHorizontalOffset(verticalOffset.Value);
+            }
+
+            return changed;
+        }
+
         protected override void OnScrollChanged(ScrollChangedEventArgs e)
         {
             base.OnScrollChanged(e);
