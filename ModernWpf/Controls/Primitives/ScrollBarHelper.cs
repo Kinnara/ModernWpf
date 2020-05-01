@@ -166,8 +166,6 @@ namespace ModernWpf.Controls.Primitives
                 {
                     stateName = StateExpanded;
                 }
-
-                useTransitions &= Helper.IsAnimationsEnabled;
             }
             else
             {

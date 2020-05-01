@@ -3,10 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Text;
 using System.Windows;
 using System.Windows.Media.Animation;
 
@@ -14,36 +12,16 @@ namespace ModernWpf
 {
     internal static class VisualStateGroupHelper
     {
-        internal static bool CanSetCurrentState
-        {
-            get
-            {
-                if (!_canSetCurrentState.HasValue)
-                {
-                    try
-                    {
-                        var setMethod = typeof(VisualStateGroup).GetProperty(nameof(VisualStateGroup.CurrentState)).GetSetMethod(true);
-                        _setCurrentState = (Action<VisualStateGroup, VisualState>)Delegate.CreateDelegate(typeof(Action<VisualStateGroup, VisualState>), setMethod);
-                        _canSetCurrentState = true;
-                    }
-                    catch (Exception)
-                    {
-                        _canSetCurrentState = false;
-                    }
-                }
-
-                return _canSetCurrentState.Value;
-            }
-        }
+        internal static bool IsSupported => _setCurrentState.Value != null;
 
         internal static void SetCurrentState(this VisualStateGroup group, VisualState value)
         {
-            if (!CanSetCurrentState)
+            if (!IsSupported)
             {
                 throw new InvalidOperationException();
             }
 
-            _setCurrentState(group, value);
+            _setCurrentState.Value(group, value);
             Debug.Assert(group.CurrentState == value);
         }
 
@@ -122,7 +100,21 @@ namespace ModernWpf
 
         }
 
-        private static bool? _canSetCurrentState;
-        private static Action<VisualStateGroup, VisualState> _setCurrentState;
+        private static Action<VisualStateGroup, VisualState> CreateSetCurrentStateDelegate()
+        {
+            try
+            {
+                return DelegateHelper.CreatePropertySetter<VisualStateGroup, VisualState>(
+                    nameof(VisualStateGroup.CurrentState),
+                    nonPublic: true);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private static readonly Lazy<Action<VisualStateGroup, VisualState>> _setCurrentState =
+            new Lazy<Action<VisualStateGroup, VisualState>>(CreateSetCurrentStateDelegate);
     }
 }

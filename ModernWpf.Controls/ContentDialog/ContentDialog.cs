@@ -866,7 +866,7 @@ namespace ModernWpf.Controls
         private void UpdateVisualStates(bool useTransitions)
         {
             UpdateDialogShowingStates(useTransitions);
-            GoToState(FullSizeDesired ? FullDialogSizingState : DefaultDialogSizingState, useTransitions);
+            VisualStateManager.GoToState(this, FullSizeDesired ? FullDialogSizingState : DefaultDialogSizingState, useTransitions);
             UpdateButtonsVisibilityStates(useTransitions);
             UpdateDefaultButtonStates(useTransitions);
         }
@@ -880,7 +880,7 @@ namespace ModernWpf.Controls
                 stateName = DialogShowingState;
             }
 
-            GoToState(stateName, useTransitions);
+            VisualStateManager.GoToState(this, stateName, useTransitions);
         }
 
         private void UpdateButtonsVisibilityStates(bool useTransitions)
@@ -928,7 +928,7 @@ namespace ModernWpf.Controls
                 stateName = AllVisibleState;
             }
 
-            GoToState(stateName, useTransitions);
+            VisualStateManager.GoToState(this, stateName, useTransitions);
         }
 
         private void UpdateDefaultButtonStates(bool useTransitions)
@@ -948,12 +948,6 @@ namespace ModernWpf.Controls
                     break;
             }
 
-            GoToState(stateName, useTransitions);
-        }
-
-        private void GoToState(string stateName, bool useTransitions)
-        {
-            useTransitions &= SharedHelpers.IsAnimationsEnabled;
             VisualStateManager.GoToState(this, stateName, useTransitions);
         }
 

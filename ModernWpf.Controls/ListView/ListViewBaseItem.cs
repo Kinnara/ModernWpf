@@ -93,7 +93,6 @@ namespace ModernWpf.Controls
             if (parent != null)
             {
                 bool enabled = parent.MultiSelectEnabled && parent.IsMultiSelectCheckBoxEnabled;
-                useTransitions &= SharedHelpers.IsAnimationsEnabled;
                 VisualStateManager.GoToState(this, enabled ? "MultiSelectEnabled" : "MultiSelectDisabled", useTransitions);
             }
         }

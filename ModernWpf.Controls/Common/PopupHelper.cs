@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Windows.Controls.Primitives;
 using ModernWpf.Controls.Primitives;
 
@@ -36,7 +37,10 @@ namespace ModernWpf.Controls
         {
             try
             {
-                return DelegateHelper.CreateDelegate<Action<Popup>>(typeof(Popup), nameof(Reposition), true);
+                return DelegateHelper.CreateDelegate<Action<Popup>>(
+                    typeof(Popup),
+                    nameof(Reposition),
+                    BindingFlags.Instance | BindingFlags.NonPublic);
             }
             catch
             {

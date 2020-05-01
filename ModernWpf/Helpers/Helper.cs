@@ -80,12 +80,6 @@ namespace ModernWpf
         {
             return d.ReadLocalValue(dp) != DependencyProperty.UnsetValue;
         }
-
-        public static bool GoToState(this FrameworkElement control, string stateName, bool useTransitions)
-        {
-            useTransitions &= IsAnimationsEnabled;
-            return VisualStateManager.GoToState(control, stateName, useTransitions);
-        }
     }
 
     internal enum InterestPoint

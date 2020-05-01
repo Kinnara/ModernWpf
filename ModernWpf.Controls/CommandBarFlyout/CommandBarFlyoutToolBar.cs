@@ -412,8 +412,6 @@ namespace ModernWpf.Controls.Primitives
         void UpdateVisualState(
             bool useTransitions)
         {
-            useTransitions &= SharedHelpers.IsAnimationsEnabled;
-
             if (IsOpen)
             {
                 // If we're currently open, have overflow items, and haven't yet sized our overflow item root,

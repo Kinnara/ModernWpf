@@ -430,8 +430,6 @@ namespace ModernWpf.Controls
 
         private void UpdateVisualStates(bool useTransitions)
         {
-            useTransitions &= SharedHelpers.IsAnimationsEnabled;
-
             string stateName;
 
             if (!IsEnabled)

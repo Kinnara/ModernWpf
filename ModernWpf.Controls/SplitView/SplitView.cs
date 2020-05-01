@@ -295,7 +295,7 @@ namespace ModernWpf.Controls
             }
 
             Debug.Assert(stateName != null);
-            return this.GoToState(stateName, useTransitions);
+            return VisualStateManager.GoToState(this, stateName, useTransitions);
         }
 
         private void UpdateOverlayVisibilityState(bool useTransitions = true)
@@ -311,7 +311,7 @@ namespace ModernWpf.Controls
                 stateName = "OverlayNotVisible";
             }
 
-            this.GoToState(stateName, useTransitions);
+            VisualStateManager.GoToState(this, stateName, useTransitions);
         }
 
         private void UpdateVisualState(bool useTransitions = true)

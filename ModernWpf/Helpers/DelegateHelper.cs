@@ -15,11 +15,11 @@ namespace ModernWpf
             return (T)Delegate.CreateDelegate(typeof(T), firstArgument, method);
         }
 
-        public static T CreateDelegate<T>(Type target, string method, bool nonPublic = false) where T : Delegate
+        public static T CreateDelegate<T>(Type target, string method, BindingFlags bindingAttr = DefaultLookup) where T : Delegate
         {
-            if (nonPublic)
+            if (bindingAttr != DefaultLookup)
             {
-                var methodInfo = target.GetMethod(method, NonPublicLookup);
+                var methodInfo = target.GetMethod(method, bindingAttr);
                 if (methodInfo != null)
                 {
                     return CreateDelegate<T>(methodInfo);
@@ -32,11 +32,11 @@ namespace ModernWpf
             }
         }
 
-        public static T CreateDelegate<T>(object target, string method, bool nonPublic = false) where T : Delegate
+        public static T CreateDelegate<T>(object target, string method, BindingFlags bindingAttr = DefaultLookup) where T : Delegate
         {
-            if (nonPublic)
+            if (bindingAttr != DefaultLookup)
             {
-                var methodInfo = target.GetType().GetMethod(method, NonPublicLookup);
+                var methodInfo = target.GetType().GetMethod(method, bindingAttr);
                 if (methodInfo != null)
                 {
                     return CreateDelegate<T>(target, methodInfo);
@@ -49,9 +49,9 @@ namespace ModernWpf
             }
         }
 
-        public static Func<TType, TProperty> CreatePropertyGetter<TType, TProperty>(string name, bool nonPublic = false)
+        public static Func<TType, TProperty> CreatePropertyGetter<TType, TProperty>(string name, BindingFlags bindingAttr = DefaultLookup, bool nonPublic = false)
         {
-            var property = typeof(TType).GetProperty(name, nonPublic ? NonPublicLookup : DefaultLookup);
+            var property = typeof(TType).GetProperty(name, bindingAttr);
             if (property != null)
             {
                 var getMethod = property.GetGetMethod(nonPublic);
@@ -63,9 +63,9 @@ namespace ModernWpf
             return null;
         }
 
-        public static Action<TType, TProperty> CreatePropertySetter<TType, TProperty>(string name, bool nonPublic = false)
+        public static Action<TType, TProperty> CreatePropertySetter<TType, TProperty>(string name, BindingFlags bindingAttr = DefaultLookup, bool nonPublic = false)
         {
-            var property = typeof(TType).GetProperty(name, nonPublic ? NonPublicLookup : DefaultLookup);
+            var property = typeof(TType).GetProperty(name, bindingAttr);
             if (property != null)
             {
                 var setMethod = property.GetSetMethod(nonPublic);
@@ -78,6 +78,5 @@ namespace ModernWpf
         }
 
         private const BindingFlags DefaultLookup = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
-        private const BindingFlags NonPublicLookup = BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic;
     }
 }

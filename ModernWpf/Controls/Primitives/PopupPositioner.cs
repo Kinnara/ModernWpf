@@ -846,25 +846,52 @@ namespace ModernWpf.Controls.Primitives
             {
                 try
                 {
-                    GetPlacementInternal = DelegateHelper.CreatePropertyGetter<Popup, PlacementMode>(nameof(PlacementInternal), true);
+                    GetPlacementInternal = DelegateHelper.CreatePropertyGetter<Popup, PlacementMode>(
+                        nameof(PlacementInternal),
+                        BindingFlags.Instance | BindingFlags.NonPublic,
+                        true);
 
-                    GetDropOpposite = DelegateHelper.CreatePropertyGetter<Popup, bool>(nameof(DropOpposite), true);
-                    SetDropOpposite = DelegateHelper.CreatePropertySetter<Popup, bool>(nameof(DropOpposite), true);
+                    GetDropOpposite = DelegateHelper.CreatePropertyGetter<Popup, bool>(
+                        nameof(DropOpposite),
+                        BindingFlags.Instance | BindingFlags.NonPublic,
+                        true);
+                    SetDropOpposite = DelegateHelper.CreatePropertySetter<Popup, bool>(
+                        nameof(DropOpposite),
+                        BindingFlags.Instance | BindingFlags.NonPublic,
+                        true);
 
-                    GetAnimateFromRight = DelegateHelper.CreatePropertyGetter<Popup, bool>(nameof(AnimateFromRight), true);
-                    SetAnimateFromRight = DelegateHelper.CreatePropertySetter<Popup, bool>(nameof(AnimateFromRight), true);
+                    GetAnimateFromRight = DelegateHelper.CreatePropertyGetter<Popup, bool>(
+                        nameof(AnimateFromRight),
+                        BindingFlags.Instance | BindingFlags.NonPublic,
+                        true);
+                    SetAnimateFromRight = DelegateHelper.CreatePropertySetter<Popup, bool>(
+                        nameof(AnimateFromRight),
+                        BindingFlags.Instance | BindingFlags.NonPublic,
+                        true);
 
-                    GetAnimateFromBottom = DelegateHelper.CreatePropertyGetter<Popup, bool>(nameof(AnimateFromBottom), true);
-                    SetAnimateFromBottom = DelegateHelper.CreatePropertySetter<Popup, bool>(nameof(AnimateFromBottom), true);
+                    GetAnimateFromBottom = DelegateHelper.CreatePropertyGetter<Popup, bool>(
+                        nameof(AnimateFromBottom),
+                        BindingFlags.Instance | BindingFlags.NonPublic,
+                        true);
+                    SetAnimateFromBottom = DelegateHelper.CreatePropertySetter<Popup, bool>(
+                        nameof(AnimateFromBottom),
+                        BindingFlags.Instance | BindingFlags.NonPublic,
+                        true);
 
                     GetPlacementTargetInterestPoints = DelegateHelper.CreateDelegate<Func<Popup, PlacementMode, Point[]>>(
-                        typeof(Popup), nameof(GetPlacementTargetInterestPoints), true);
+                        typeof(Popup),
+                        nameof(GetPlacementTargetInterestPoints),
+                        BindingFlags.Instance | BindingFlags.NonPublic);
 
                     GetChildInterestPoints = DelegateHelper.CreateDelegate<Func<Popup, PlacementMode, Point[]>>(
-                        typeof(Popup), nameof(GetChildInterestPoints), true);
+                        typeof(Popup),
+                        nameof(GetChildInterestPoints),
+                        BindingFlags.Instance | BindingFlags.NonPublic);
 
                     GetScreenBounds = DelegateHelper.CreateDelegate<Func<Popup, Rect, Point, Rect>>(
-                        typeof(Popup), nameof(GetScreenBounds), true);
+                        typeof(Popup),
+                        nameof(GetScreenBounds),
+                        BindingFlags.Instance | BindingFlags.NonPublic);
                 }
                 catch { }
             }
