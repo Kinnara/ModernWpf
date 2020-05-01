@@ -148,47 +148,47 @@
     <value>Пропустить</value>
   </data>
   <data name="BadgeIcon" xml:space="preserve">
-    <value>{0}!s!, значок</value>
+    <value>{0}, значок</value>
     <comment>This text is used with the badging glyph. {0} is the contact name.</comment>
   </data>
   <data name="BadgeIconTextOverride" xml:space="preserve">
-    <value>{0}!s!, {1}!s!</value>
+    <value>{0}, {1}</value>
     <comment>This format string is used for the automation name. It is 'Person Name, badgetext', where badgetext is a user specified string like skype.</comment>
   </data>
   <data name="BadgeItemPlural1" xml:space="preserve">
-    <value>{0}!s!, {1}!u! элемент</value>
+    <value>{0}, {1:d} элемент</value>
     <comment>This text is used to show the number of items in the person picture badging area, when that number is 21,31,41,etc. {0} is the contact name and {1} is the number of items.</comment>
   </data>
   <data name="BadgeItemPlural2" xml:space="preserve">
-    <value>{0}!s!, {1}!u! элемента</value>
+    <value>{0}, {1:d} элемента</value>
     <comment>This text is used to show the number of items in the person picture badging area, when that number is 3-4. {0} is the contact name and {1} is the number of items.</comment>
   </data>
   <data name="BadgeItemPlural3" xml:space="preserve">
-    <value>{0}!s!, {1}!u! элемента</value>
+    <value>{0}, {1:d} элемента</value>
     <comment>This text is used to show the number of items in the person picture badging area, when that number is  22-24, 32-34, 42-44, etc. {0} is the contact name and {1} is the number of items.</comment>
   </data>
   <data name="BadgeItemPlural4" xml:space="preserve">
-    <value>{0}!s!, {1}!u! элементов</value>
+    <value>{0}, {1:d} элементов</value>
     <comment>This text is used to show the number of items in the person picture badging area, when that number is  0, 20, 25-30, 35-40, etc. (fallback plural). {0} is the contact name and {1} is the number of items.</comment>
   </data>
   <data name="BadgeItemPlural5" xml:space="preserve">
-    <value>{0}!s!, {1}!u! элементов</value>
+    <value>{0}, {1:d} элементов</value>
     <comment>This text is used to show the number of items in the person picture badging area, when that number is  5-10. {0} is the contact name and {1} is the number of items.</comment>
   </data>
   <data name="BadgeItemPlural6" xml:space="preserve">
-    <value>{0}!s!, {1}!u! элементов</value>
+    <value>{0}, {1:d} элементов</value>
     <comment>This text is used to show the number of items in the person picture badging area, when that number is  11-19. {0} is the contact name and {1} is the number of items.</comment>
   </data>
   <data name="BadgeItemPlural7" xml:space="preserve">
-    <value>{0}!s!, {1}!u! элемента</value>
+    <value>{0}, {1:d} элемента</value>
     <comment>This text is used to show the number of items in the person picture badging area, when that number is  2. {0} is the contact name and {1} is the number of items.</comment>
   </data>
   <data name="BadgeItemSingular" xml:space="preserve">
-    <value>{0}!s!, {1}!u! элемент</value>
+    <value>{0}, {1:d} элемент</value>
     <comment>This text is used to show the number of items in the person picture badging area, when that number is  1. {0} is the contact name and {1} is the number of items.</comment>
   </data>
   <data name="BadgeItemTextOverride" xml:space="preserve">
-    <value>{0}!s!, {1}!u! {2}!s!</value>
+    <value>{0}, {1:d} {2}</value>
     <comment>This format string is used for the automation name. It is 'Person Name, badgenumber badgetext', where badge text is a user specified string overriding 'item(s)'.</comment>
   </data>
   <data name="GroupName" xml:space="preserve">

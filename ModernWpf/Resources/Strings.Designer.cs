@@ -88,7 +88,7 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}!s!, icon.
+        ///   Looks up a localized string similar to {0}, icon.
         /// </summary>
         internal static string BadgeIcon {
             get {
@@ -97,7 +97,7 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}!s!, {1}!s!.
+        ///   Looks up a localized string similar to {0}, {1}.
         /// </summary>
         internal static string BadgeIconTextOverride {
             get {
@@ -106,7 +106,7 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
+        ///   Looks up a localized string similar to {0}, {1:d} items.
         /// </summary>
         internal static string BadgeItemPlural1 {
             get {
@@ -115,7 +115,7 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
+        ///   Looks up a localized string similar to {0}, {1:d} items.
         /// </summary>
         internal static string BadgeItemPlural2 {
             get {
@@ -124,7 +124,7 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
+        ///   Looks up a localized string similar to {0}, {1:d} items.
         /// </summary>
         internal static string BadgeItemPlural3 {
             get {
@@ -133,7 +133,7 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
+        ///   Looks up a localized string similar to {0}, {1:d} items.
         /// </summary>
         internal static string BadgeItemPlural4 {
             get {
@@ -142,7 +142,7 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
+        ///   Looks up a localized string similar to {0}, {1:d} items.
         /// </summary>
         internal static string BadgeItemPlural5 {
             get {
@@ -151,7 +151,7 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
+        ///   Looks up a localized string similar to {0}, {1:d} items.
         /// </summary>
         internal static string BadgeItemPlural6 {
             get {
@@ -160,7 +160,7 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}!s!, {1}!u! items.
+        ///   Looks up a localized string similar to {0}, {1:d} items.
         /// </summary>
         internal static string BadgeItemPlural7 {
             get {
@@ -169,7 +169,7 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}!s!, {1}!u! item.
+        ///   Looks up a localized string similar to {0}, {1:d} item.
         /// </summary>
         internal static string BadgeItemSingular {
             get {
@@ -178,7 +178,7 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}!s!, {1}!u! {2}!s!.
+        ///   Looks up a localized string similar to {0}, {1:d} {2}.
         /// </summary>
         internal static string BadgeItemTextOverride {
             get {
