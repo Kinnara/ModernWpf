@@ -53,9 +53,14 @@ namespace MUXControlsTestApp.Utilities
             }
         }
 
-        public static CornerRadius CornerRadius(this Control control)
+        public static CornerRadius GetCornerRadius(this Control control)
         {
             return ControlHelper.GetCornerRadius(control);
+        }
+
+        public static void SetCornerRadius(this Control control, CornerRadius value)
+        {
+            ControlHelper.SetCornerRadius(control, value);
         }
     }
 }

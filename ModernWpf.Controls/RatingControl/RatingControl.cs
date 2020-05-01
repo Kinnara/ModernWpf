@@ -106,7 +106,7 @@ namespace ModernWpf.Controls
             // consistently pick "distance from glyph"/"distance from edge of textbox"
             // so it's not possible to actually just have a consistent sizing model
             // here based on the redlines.
-            SetCurrentValue(FocusVisualHelper.FocusVisualMarginProperty, c_focusVisualMargin);
+            SetValue(FocusVisualHelper.FocusVisualMarginProperty, c_focusVisualMargin);
 
             IsEnabledChanged += OnIsEnabledChanged;
 
@@ -514,17 +514,17 @@ namespace ModernWpf.Controls
 
                 if (Value > coercedValue)
                 {
-                    SetCurrentValue(ValueProperty, coercedValue);
+                    Value = coercedValue;
                 }
 
                 if (PlaceholderValue > coercedValue)
                 {
-                    SetCurrentValue(PlaceholderValueProperty, coercedValue);
+                    PlaceholderValue = coercedValue;
                 }
 
                 if (coercedValue != value)
                 {
-                    SetCurrentValue(property, coercedValue);
+                    SetValue(property, coercedValue);
                     return;
                 }
             }
@@ -534,7 +534,7 @@ namespace ModernWpf.Controls
                 var coercedValue = CoerceValueBetweenMinAndMax(value);
                 if (value != coercedValue)
                 {
-                    SetCurrentValue(property, coercedValue);
+                    SetValue(property, coercedValue);
                     // early return, we'll come back to handle the change to the corced value.
                     return;
                 }
