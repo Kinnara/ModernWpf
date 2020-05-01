@@ -152,7 +152,6 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:NavigationViewItemPresenter">
-                    <!-- Control.IsTemplateFocusTarget="True" -->
                     <Grid
                         x:Name="LayoutRoot"
                         MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"
@@ -356,7 +355,6 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NavigationViewItem">
-                    <!-- Control.IsTemplateFocusTarget="True" -->
                     <Grid 
                         x:Name="LayoutRoot" 
                         Background="{TemplateBinding Background}">
@@ -451,7 +449,6 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:NavigationViewItemPresenter">
-                    <!-- Control.IsTemplateFocusTarget="True" -->
                     <Grid 
                         x:Name="LayoutRoot" 
                         Background="{TemplateBinding Background}">
@@ -651,7 +648,6 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:NavigationViewItemPresenter">
-                    <!-- Control.IsTemplateFocusTarget="True" -->
                     <Grid
                         x:Name="LayoutRoot"
                         Height="40" 
@@ -1453,7 +1449,6 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            FocusVisualStyle="{TemplateBinding FocusVisualStyle}"
                             VerticalAlignment="{TemplateBinding VerticalAlignment}"
                             HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                             VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -1461,8 +1456,8 @@
                             ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                             Content="{TemplateBinding Content}"
                             CornerRadius="{TemplateBinding CornerRadius}"
-                            IsTabStop="False">
-                            <!-- TODO: Control.IsTemplateFocusTarget="True" -->
+                            IsTabStop="False"
+                            ui:FocusVisualHelper.IsTemplateFocusTarget="True">
                         </primitives:NavigationViewItemPresenter>
                         <local:ItemsRepeater
                                 Grid.Row="1"
@@ -1472,9 +1467,6 @@
                                 <local:StackLayout Orientation="Vertical"/>
                             </local:ItemsRepeater.Layout>
                         </local:ItemsRepeater>
-                        <Control
-                            x:Name="FocusVisual"
-                            Style="{DynamicResource CustomFocusVisual}" />
                         <primitives:FlyoutBase.AttachedFlyout>
                             <local:Flyout x:Name="ChildrenFlyout"
                                        Placement="RightEdgeAlignedTop">
@@ -1491,11 +1483,6 @@
                             </local:Flyout>
                         </primitives:FlyoutBase.AttachedFlyout>
                     </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="ui:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
-                            <Setter TargetName="FocusVisual" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -216,12 +216,8 @@
                                     Grid.RowSpan="3"
                                     Grid.ColumnSpan="3"
                                     Margin="0,5"
-                                    Background="{DynamicResource ToggleSwitchContainerBackground}">
-                                    <Control
-                                        x:Name="FocusVisual"
-                                        Style="{DynamicResource CustomFocusVisual}"
-                                        Margin="{TemplateBinding ui:FocusVisualHelper.FocusVisualMargin}" />
-                                </Grid>
+                                    ui:FocusVisualHelper.IsTemplateFocusTarget="True"
+                                    Background="{DynamicResource ToggleSwitchContainerBackground}" />
                                 <ContentPresenter
                                     x:Name="OffContentPresenter"
                                     Grid.RowSpan="3"
@@ -345,10 +341,6 @@
                             <Setter TargetName="OuterBorder" Property="Opacity" Value="0" />
                             <Setter TargetName="SwitchKnobOn" Property="Opacity" Value="1" />
                             <Setter TargetName="SwitchKnobOff" Property="Opacity" Value="0" />
-                        </Trigger>
-
-                        <Trigger Property="ui:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
-                            <Setter TargetName="FocusVisual" Property="Visibility" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

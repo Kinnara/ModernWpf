@@ -120,7 +120,6 @@
                             VerticalAlignment="Top"
                             Visibility="{TemplateBinding ui:ControlHelper.HeaderVisibility}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        <!-- Control.IsTemplateFocusTarget="True" -->
                         <Border
                             x:Name="BorderElement"
                             Grid.Row="1"

@@ -1384,6 +1384,7 @@
         </Setter>
     </Style>
 
+    <!-- Obsolete -->
     <Style x:Key="CustomFocusVisual" BasedOn="{StaticResource HighVisibilityFocusVisual}">
         <Setter Property="Control.IsHitTestVisible" Value="False" />
         <Setter Property="Control.IsEnabled" Value="False" />

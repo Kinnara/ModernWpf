@@ -82,11 +82,11 @@
                 TextWrapping="Wrap"
                 Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-            <!-- Control.IsTemplateFocusTarget="True" -->
             <Grid
                 x:Name="SliderContainer"
                 Grid.Row="1"
-                Background="{DynamicResource SliderContainerBackground}">
+                Background="{DynamicResource SliderContainerBackground}"
+                primitives:FocusVisualHelper.IsTemplateFocusTarget="True">
                 <Grid
                     x:Name="HorizontalTemplate"
                     MinHeight="{DynamicResource SliderHorizontalHeight}">
@@ -170,11 +170,6 @@
                     </Track>
                 </Grid>
             </Grid>
-            <Control
-                x:Name="FocusVisual"
-                Grid.Row="1"
-                Style="{DynamicResource CustomFocusVisual}"
-                Margin="{TemplateBinding primitives:FocusVisualHelper.FocusVisualMargin}" />
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="TickPlacement" Value="TopLeft">
@@ -208,9 +203,6 @@
                 <Setter TargetName="BottomTickBar" Property="Fill" Value="{DynamicResource SliderTickBarFillDisabled}" />
                 <Setter TargetName="SliderContainer" Property="Background" Value="{DynamicResource SliderContainerBackgroundDisabled}" />
             </Trigger>
-            <Trigger Property="primitives:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
-                <Setter TargetName="FocusVisual" Property="Visibility" Value="Visible" />
-            </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
@@ -235,11 +227,11 @@
                 Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
             </local:ContentPresenterEx>
-            <!-- Control.IsTemplateFocusTarget="True" -->
             <Grid
                 x:Name="SliderContainer"
                 Grid.Row="1"
-                Background="{DynamicResource SliderContainerBackground}">
+                Background="{DynamicResource SliderContainerBackground}"
+                primitives:FocusVisualHelper.IsTemplateFocusTarget="True">
                 <Grid
                     x:Name="VerticalTemplate"
                     MinWidth="{DynamicResource SliderVerticalWidth}">
@@ -324,11 +316,6 @@
                     </Track>
                 </Grid>
             </Grid>
-            <Control
-                x:Name="FocusVisual"
-                Grid.Row="1"
-                Style="{DynamicResource CustomFocusVisual}"
-                Margin="{TemplateBinding primitives:FocusVisualHelper.FocusVisualMargin}" />
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="TickPlacement" Value="TopLeft">
@@ -362,9 +349,6 @@
                 <Setter TargetName="RightTickBar" Property="Fill" Value="{DynamicResource SliderTickBarFillDisabled}" />
                 <Setter TargetName="SliderContainer" Property="Background" Value="{DynamicResource SliderContainerBackgroundDisabled}" />
             </Trigger>
-            <Trigger Property="primitives:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
-                <Setter TargetName="FocusVisual" Property="Visibility" Value="Visible" />
-            </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
@@ -379,7 +363,6 @@
         <!--<Setter Property="ManipulationMode" Value="None" />-->
         <Setter Property="FocusVisualStyle" Value="{DynamicResource EmptyFocusVisual}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-7,0,-7,0" />
-        <!--<Setter Property="IsFocusEngagementEnabled" Value="True" />-->
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template" Value="{StaticResource SliderHorizontal}" />
         <Style.Triggers>

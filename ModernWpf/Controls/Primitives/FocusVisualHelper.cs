@@ -1,4 +1,10 @@
-﻿using System.Windows;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -192,6 +198,61 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
+        #region IsTemplateFocusTarget
+
+        /// <summary>
+        /// Identifies the Control.IsTemplateFocusTarget XAML attached property.
+        /// </summary>
+        public static readonly DependencyProperty IsTemplateFocusTargetProperty =
+            DependencyProperty.RegisterAttached(
+                "IsTemplateFocusTarget",
+                typeof(bool),
+                typeof(FocusVisualHelper),
+                new PropertyMetadata(OnIsTemplateFocusTargetChanged));
+
+        /// <summary>
+        /// Gets the value of the Control.IsTemplateFocusTarget XAML attached property for
+        /// the target element.
+        /// </summary>
+        /// <param name="element">The object from which the property value is read.</param>
+        /// <returns>
+        /// The Control.IsTemplateFocusTarget XAML attached property value of the specified
+        /// object.
+        /// </returns>
+        public static bool GetIsTemplateFocusTarget(FrameworkElement element)
+        {
+            return (bool)element.GetValue(IsTemplateFocusTargetProperty);
+        }
+
+        /// <summary>
+        /// Sets the value of the Control.IsTemplateFocusTarget XAML attached property for
+        /// a target element.
+        /// </summary>
+        /// <param name="element">The object to which the property value is written.</param>
+        /// <param name="value">The value to set.</param>
+        public static void SetIsTemplateFocusTarget(FrameworkElement element, bool value)
+        {
+            element.SetValue(IsTemplateFocusTargetProperty, value);
+        }
+
+        private static void OnIsTemplateFocusTargetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var element = (FrameworkElement)d;
+            if (element.TemplatedParent is Control control)
+            {
+                if ((bool)e.NewValue)
+                {
+                    SetTemplateFocusTarget(control, element);
+                }
+                else
+                {
+                    control.ClearValue(TemplateFocusTargetProperty);
+                }
+            }
+        }
+
+        #endregion
+
         #region IsSystemFocusVisual
 
         public static bool GetIsSystemFocusVisual(Control control)
@@ -244,10 +305,75 @@ namespace ModernWpf.Controls.Primitives
                 "IsSystemFocusVisualVisible",
                 typeof(bool),
                 typeof(FocusVisualHelper),
-                null);
+                new PropertyMetadata(OnIsSystemFocusVisualVisibleChanged));
 
         public static readonly DependencyProperty IsSystemFocusVisualVisibleProperty =
             IsSystemFocusVisualVisiblePropertyKey.DependencyProperty;
+
+        private static void OnIsSystemFocusVisualVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Control control && GetTemplateFocusTarget(control) is { } target)
+            {
+                if ((bool)e.NewValue)
+                {
+                    ShowFocusVisual(control, target);
+                }
+                else
+                {
+                    HideFocusVisual();
+                }
+            }
+
+            static void HideFocusVisual()
+            {
+                // Remove the existing focus visual
+                if (_focusVisualAdornerCache != null)
+                {
+                    AdornerLayer adornerlayer = VisualTreeHelper.GetParent(_focusVisualAdornerCache) as AdornerLayer;
+                    Debug.Assert(adornerlayer != null);
+                    if (adornerlayer != null)
+                    {
+                        adornerlayer.Remove(_focusVisualAdornerCache);
+                    }
+                    _focusVisualAdornerCache = null;
+                }
+            }
+
+            static void ShowFocusVisual(Control control, FrameworkElement target)
+            {
+                HideFocusVisual();
+
+                AdornerLayer adornerlayer = AdornerLayer.GetAdornerLayer(target);
+                if (adornerlayer == null)
+                    return;
+
+                Style fvs = target.FocusVisualStyle;
+
+                if (fvs != null && fvs.BasedOn == null && fvs.Setters.Count == 0)
+                {
+                    fvs = target.TryFindResource(SystemParameters.FocusVisualStyleKey) as Style;
+                }
+
+                if (fvs != null)
+                {
+                    _focusVisualAdornerCache = new FocusVisualAdorner(control, target, fvs);
+                    adornerlayer.Add(_focusVisualAdornerCache);
+
+                    // Hide the focus visual when IsVisible changes to avoid an internal WPF exception
+                    control.IsVisibleChanged += OnControlIsVisibleChanged;
+                }
+            }
+
+            static void OnControlIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+            {
+                ((Control)sender).IsVisibleChanged -= OnControlIsVisibleChanged;
+                Debug.Assert((bool)e.NewValue == false);
+                if (_focusVisualAdornerCache != null && _focusVisualAdornerCache.FocusedElement == sender)
+                {
+                    HideFocusVisual();
+                }
+            }
+        }
 
         #endregion
 
@@ -271,6 +397,26 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
+        #region TemplateFocusTarget
+
+        private static readonly DependencyProperty TemplateFocusTargetProperty =
+            DependencyProperty.RegisterAttached(
+                "TemplateFocusTarget",
+                typeof(FrameworkElement),
+                typeof(FocusVisualHelper));
+
+        private static FrameworkElement GetTemplateFocusTarget(Control control)
+        {
+            return (FrameworkElement)control.GetValue(TemplateFocusTargetProperty);
+        }
+
+        private static void SetTemplateFocusTarget(Control control, FrameworkElement value)
+        {
+            control.SetValue(TemplateFocusTargetProperty, value);
+        }
+
+        #endregion
+
         private static void OnFocusVisualIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var focusVisual = (Control)sender;
@@ -283,7 +429,7 @@ namespace ModernWpf.Controls.Primitives
                     TransferValue(focusedElement, focusVisual, FocusVisualPrimaryBrushProperty);
                     TransferValue(focusedElement, focusVisual, FocusVisualPrimaryThicknessProperty);
                     TransferValue(focusedElement, focusVisual, FocusVisualSecondaryBrushProperty);
-                    TransferValue(focusedElement, focusVisual, FocusVisualSecondaryThicknessProperty);                    
+                    TransferValue(focusedElement, focusVisual, FocusVisualSecondaryThicknessProperty);
                     focusVisual.Margin = GetFocusVisualMargin(focusedElement);
 
                     SetFocusedElement(focusVisual, focusedElement);
@@ -312,5 +458,102 @@ namespace ModernWpf.Controls.Primitives
                 target.SetValue(dp, source.GetValue(dp));
             }
         }
+
+        private sealed class FocusVisualAdorner : Adorner
+        {
+            public FocusVisualAdorner(Control focusedElement, UIElement adornedElement, Style focusVisualStyle) : base(adornedElement)
+            {
+                Debug.Assert(focusedElement != null, "focusedElement should not be null");
+                Debug.Assert(adornedElement != null, "adornedElement should not be null");
+                Debug.Assert(focusVisualStyle != null, "focusVisual should not be null");
+
+                FocusedElement = focusedElement;
+
+                Control control = new Control();
+                SetIsSystemFocusVisual(control, false);
+                control.Style = focusVisualStyle;
+                control.Margin = GetFocusVisualMargin(focusedElement);
+                TransferValue(focusedElement, control, FocusVisualPrimaryBrushProperty);
+                TransferValue(focusedElement, control, FocusVisualPrimaryThicknessProperty);
+                TransferValue(focusedElement, control, FocusVisualSecondaryBrushProperty);
+                TransferValue(focusedElement, control, FocusVisualSecondaryThicknessProperty);
+                _adorderChild = control;
+                IsClipEnabled = true;
+                IsHitTestVisible = false;
+                IsEnabled = false;
+                AddVisualChild(_adorderChild);
+            }
+
+            public Control FocusedElement { get; }
+
+            /// <summary>
+            /// Measure adorner. Default behavior is to size to match the adorned element.
+            /// </summary>
+            protected override Size MeasureOverride(Size constraint)
+            {
+                Size desiredSize = AdornedElement.RenderSize;
+
+                // Measure the child
+                ((UIElement)GetVisualChild(0)).Measure(desiredSize);
+
+                return desiredSize;
+            }
+
+            /// <summary>
+            ///     Default control arrangement is to only arrange
+            ///     the first visual child. No transforms will be applied.
+            /// </summary>
+            protected override Size ArrangeOverride(Size size)
+            {
+                Size finalSize = base.ArrangeOverride(size);
+
+                ((UIElement)GetVisualChild(0)).Arrange(new Rect(new Point(), finalSize));
+
+                return finalSize;
+            }
+
+            /// <summary>
+            ///  Derived classes override this property to enable the Visual code to enumerate
+            ///  the Visual children. Derived classes need to return the number of children
+            ///  from this method.
+            ///
+            ///    By default a Visual does not have any children.
+            ///
+            ///  Remark:
+            ///      During this virtual method the Visual tree must not be modified.
+            /// </summary>
+            protected override int VisualChildrenCount
+            {
+                get
+                {
+                    return 1; // _adorderChild created in ctor.
+                }
+            }
+
+            /// <summary>
+            ///   Derived class must implement to support Visual children. The method must return
+            ///    the child at the specified index. Index must be between 0 and GetVisualChildrenCount-1.
+            ///
+            ///    By default a Visual does not have any children.
+            ///
+            ///  Remark:
+            ///       During this virtual call it is not valid to modify the Visual tree.
+            /// </summary>
+            protected override Visual GetVisualChild(int index)
+            {
+                if (index == 0)
+                {
+                    return _adorderChild;
+                }
+                else
+                {
+                    throw new ArgumentOutOfRangeException("index");
+                }
+            }
+
+            private UIElement _adorderChild;
+        }
+
+        private static FocusVisualAdorner _focusVisualAdornerCache = null;
     }
 }

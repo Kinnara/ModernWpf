@@ -167,6 +167,7 @@
                                     Background="{DynamicResource TabViewItemHeaderBackground}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
+                                    ui:FocusVisualHelper.IsTemplateFocusTarget="True"
                                     Padding="{DynamicResource TabViewItemHeaderPadding}"
                                     CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}">
                                     <Grid>
@@ -234,12 +235,6 @@
 
                                     </Grid>
                                 </Border>
-
-                                <Control
-                                    x:Name="FocusVisual"
-                                    Grid.Column="1"
-                                    Style="{DynamicResource CustomFocusVisual}"
-                                    Margin="{TemplateBinding ui:FocusVisualHelper.FocusVisualMargin}" />
                             </Grid>
                         </Border>
                     </ui:ThemeShadowChrome>
@@ -278,9 +273,6 @@
                         <!-- NoIcon -->
                         <Trigger SourceName="IconControl" Property="Content" Value="{x:Null}">
                             <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
-                        <Trigger Property="ui:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
-                            <Setter TargetName="FocusVisual" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="dragablz:TabablzControl.IsWrappingTabItem" Value="True">
                             <Setter TargetName="ContentPresenter" Property="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DataContext.Header}" />

@@ -70,6 +70,7 @@
                                     Background="{DynamicResource TabViewItemHeaderBackground}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
+                                    primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
                                     Padding="{DynamicResource TabViewItemHeaderPadding}"
                                     CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}">
                                     <Grid>
@@ -107,12 +108,6 @@
 
                                     </Grid>
                                 </Border>
-
-                                <Control
-                                    x:Name="FocusVisual"
-                                    Grid.Column="1"
-                                    Style="{DynamicResource CustomFocusVisual}"
-                                    Margin="{TemplateBinding primitives:FocusVisualHelper.FocusVisualMargin}" />
                             </Grid>
                         </Border>
                     </primitives:ThemeShadowChrome>
@@ -151,9 +146,6 @@
                         <!-- NoIcon -->
                         <Trigger Property="primitives:TabItemHelper.Icon" Value="{x:Null}">
                             <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
-                        <Trigger Property="primitives:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
-                            <Setter TargetName="FocusVisual" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <DataTrigger Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Bottom">
                             <Setter TargetName="TabContainer" Property="CornerRadius" Value="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />

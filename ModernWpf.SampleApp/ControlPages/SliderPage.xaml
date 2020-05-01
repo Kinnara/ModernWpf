@@ -99,7 +99,20 @@
                         AutoToolTipPlacement="TopLeft"
                         TickFrequency="10"
                         TickPlacement="Both"
-                        ui:ControlHelper.Header="Control header" />
+                        ui:ControlHelper.Header="Control header">
+                        <Slider.Style>
+                            <Style TargetType="Slider" BasedOn="{StaticResource DefaultSliderStyle}">
+                                <Style.Triggers>
+                                    <Trigger Property="Orientation" Value="Horizontal">
+                                        <Setter Property="VerticalAlignment" Value="Top" />
+                                    </Trigger>
+                                    <Trigger Property="Orientation" Value="Vertical">
+                                        <Setter Property="HorizontalAlignment" Value="Left" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Slider.Style>
+                    </Slider>
                 </Grid>
 
                 <sc:ControlExample.Options>
