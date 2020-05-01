@@ -76,6 +76,11 @@ namespace ModernWpf
             return !HasDefaultValue(d, dp);
         }
 
+        public static bool HasLocalValue(this DependencyObject d, DependencyProperty dp)
+        {
+            return d.ReadLocalValue(dp) != DependencyProperty.UnsetValue;
+        }
+
         public static bool GoToState(this FrameworkElement control, string stateName, bool useTransitions)
         {
             useTransitions &= IsAnimationsEnabled;

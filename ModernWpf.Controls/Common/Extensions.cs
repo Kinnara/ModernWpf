@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -14,20 +11,6 @@ namespace ModernWpf.Controls
             return FlyoutService.GetFlyout(button);
         }
 
-        /*
-        public static void RemoveAtEnd(this IList list)
-        {
-            list.RemoveAt(list.Count - 1);
-        }
-        */
-
-        /*
-        public static void RemoveAtEnd<T>(this IList<T> list)
-        {
-            list.RemoveAt(list.Count - 1);
-        }
-        */
-
         public static void UseSystemFocusVisuals(this Control control, bool value)
         {
             if (value)
@@ -38,15 +21,6 @@ namespace ModernWpf.Controls
             {
                 control.FocusVisualStyle = null;
             }
-        }
-
-        public static GeneralTransform SafeTransformToVisual(this Visual self, Visual visual)
-        {
-            if (self.FindCommonVisualAncestor(visual) != null)
-            {
-                return self.TransformToVisual(visual);
-            }
-            return Transform.Identity;
         }
     }
 }

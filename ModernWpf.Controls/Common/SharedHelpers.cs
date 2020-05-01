@@ -173,11 +173,6 @@ namespace ModernWpf.Controls
             }
         }
 
-        public static bool HasLocalValue(this DependencyObject d, DependencyProperty dp)
-        {
-            return d.ReadLocalValue(dp) != DependencyProperty.UnsetValue;
-        }
-
         public static Window GetActiveWindow()
         {
             var active = UnsafeNativeMethods.GetActiveWindow();

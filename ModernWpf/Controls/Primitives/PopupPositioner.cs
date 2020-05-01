@@ -1,4 +1,8 @@
-﻿using MS.Internal;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using MS.Internal;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -7,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace ModernWpf.Controls.Primitives
@@ -60,6 +65,8 @@ namespace ModernWpf.Controls.Primitives
                 return;
             }
 
+            _isDisposed = true;
+
             if (_popup != null)
             {
                 _popup.Opened -= OnPopupOpened;
@@ -68,16 +75,15 @@ namespace ModernWpf.Controls.Primitives
 
             ClearValue(IsOpenProperty);
 
-            if (_window != null)
+            if (_secHelper.Window != null)
             {
-                _window.AutoResized -= OnWindowResize;
-                _window = null;
+                _secHelper.Window.AutoResized -= OnWindowResize;
+                _secHelper.Window = null;
             }
 
+            _popupRoot = null;
             _secHelper = null;
             _positionInfo = null;
-
-            _isDisposed = true;
         }
 
         public static bool IsSupported { get; }
@@ -166,7 +172,7 @@ namespace ModernWpf.Controls.Primitives
         //       the browser area for partial trust
         private void UpdatePosition()
         {
-            if (_window == null || _window.RootVisual == null)
+            if (_popupRoot == null)
                 return;
 
             PlacementMode placement = PlacementInternal;
@@ -290,6 +296,104 @@ namespace ModernWpf.Controls.Primitives
                 DropOpposite = !DropOpposite;
             }
 
+            // Check to see if the pop needs to be nudged onto the screen.
+            // Popups are not nudged if their axes do not align with the screen axes
+
+            // Use the size of the popupRoot in case it is clipping the popup content
+            Matrix transformToDevice = _secHelper.GetTransformToDevice();
+            childBounds = new Rect((Size)transformToDevice.Transform((Point)GetChildSize()));
+
+            childBounds.Offset(bestTranslation);
+
+            Vector childTranslation = (Vector)transformToDevice.Transform(GetChildTranslation());
+            childBounds.Offset(childTranslation);
+
+            screenBounds = GetScreenBounds(targetBounds, placementTargetInterestPoints[(int)InterestPoint.TopLeft]);
+            Rect intersection = Rect.Intersect(screenBounds, childBounds);
+
+            // See if width/height of intersection are less than child's
+            if (Math.Abs(intersection.Width - childBounds.Width) > Tolerance ||
+                Math.Abs(intersection.Height - childBounds.Height) > Tolerance)
+            {
+                // Nudge Horizontally
+                Point topLeft = placementTargetInterestPoints[(int)InterestPoint.TopLeft];
+                Point topRight = placementTargetInterestPoints[(int)InterestPoint.TopRight];
+
+                // Create a vector pointing from the top of the placement target to the bottom
+                // to determine which direction the popup should be nudged in.
+                // If the vector is zero (NaN's after normalization), nudge horizontally
+                Vector horizontalAxis = topRight - topLeft;
+                horizontalAxis.Normalize();
+
+                // See if target's horizontal axis is aligned with screen
+                // (For opaque windows always translate horizontally)
+                if (!IsTransparent || double.IsNaN(horizontalAxis.Y) || Math.Abs(horizontalAxis.Y) < Tolerance)
+                {
+                    // Nudge horizontally
+                    if (childBounds.Right > screenBounds.Right)
+                    {
+                        bestTranslation.X = screenBounds.Right - childBounds.Width;
+                        bestTranslation.X -= childTranslation.X;
+                    }
+                    else if (childBounds.Left < screenBounds.Left)
+                    {
+                        bestTranslation.X = screenBounds.Left;
+                        bestTranslation.X -= childTranslation.X;
+                    }
+                }
+                else if (IsTransparent && Math.Abs(horizontalAxis.X) < Tolerance)
+                {
+                    // Nudge vertically, limit horizontally
+                    if (childBounds.Bottom > screenBounds.Bottom)
+                    {
+                        bestTranslation.Y = screenBounds.Bottom - childBounds.Height;
+                        bestTranslation.Y -= childTranslation.Y;
+                    }
+                    else if (childBounds.Top < screenBounds.Top)
+                    {
+                        bestTranslation.Y = screenBounds.Top;
+                        bestTranslation.Y -= childTranslation.Y;
+                    }
+                }
+
+                // Nudge Vertically
+                Point bottomLeft = placementTargetInterestPoints[(int)InterestPoint.BottomLeft];
+
+                // Create a vector pointing from the top of the placement target to the bottom
+                // to determine which direction the popup should be nudged in
+                // If the vector is zero (NaN's after normalization), nudge vertically
+                Vector verticalAxis = topLeft - bottomLeft;
+                verticalAxis.Normalize();
+
+                // Axis is aligned with screen, nudge
+                if (!IsTransparent || double.IsNaN(verticalAxis.X) || Math.Abs(verticalAxis.X) < Tolerance)
+                {
+                    if (childBounds.Bottom > screenBounds.Bottom)
+                    {
+                        bestTranslation.Y = screenBounds.Bottom - childBounds.Height;
+                        bestTranslation.Y -= childTranslation.Y;
+                    }
+                    else if (childBounds.Top < screenBounds.Top)
+                    {
+                        bestTranslation.Y = screenBounds.Top;
+                        bestTranslation.Y -= childTranslation.Y;
+                    }
+                }
+                else if (IsTransparent && Math.Abs(verticalAxis.Y) < Tolerance)
+                {
+                    if (childBounds.Right > screenBounds.Right)
+                    {
+                        bestTranslation.X = screenBounds.Right - childBounds.Width;
+                        bestTranslation.X -= childTranslation.X;
+                    }
+                    else if (childBounds.Left < screenBounds.Left)
+                    {
+                        bestTranslation.X = screenBounds.Left;
+                        bestTranslation.X -= childTranslation.X;
+                    }
+                }
+            }
+
             // Finally, take the best position and apply it to the popup
             int bestX = DoubleUtil.DoubleToInt(bestTranslation.X);
             int bestY = DoubleUtil.DoubleToInt(bestTranslation.Y);
@@ -298,6 +402,24 @@ namespace ModernWpf.Controls.Primitives
                 _positionInfo.X = bestX;
                 _positionInfo.Y = bestY;
                 _secHelper.SetPopupPos(true, bestX, bestY, false, 0, 0);
+            }
+
+            Size GetChildSize()
+            {
+                if (_popup.Child is { } child)
+                {
+                    return child.RenderSize;
+                }
+                return _popupRoot.RenderSize;
+            }
+
+            Point GetChildTranslation()
+            {
+                if (_popup.Child is { } child)
+                {
+                    return child.TranslatePoint(new Point(), _popupRoot);
+                }
+                return new Point();
             }
         }
 
@@ -462,6 +584,8 @@ namespace ModernWpf.Controls.Primitives
             return Delegates.GetScreenBounds(_popup, boundingBox, p);
         }
 
+        private bool IsTransparent => _popup.AllowsTransparency;
+
         private bool AnimateFromRight
         {
             get => Delegates.GetAnimateFromRight(_popup);
@@ -475,6 +599,12 @@ namespace ModernWpf.Controls.Primitives
         }
 
         internal const double Tolerance = 1.0e-2; // allow errors in double calculations
+
+        private PositionInfo _positionInfo;
+
+        private FrameworkElement _popupRoot;
+
+        private PopupSecurityHelper _secHelper;
 
         #endregion
 
@@ -544,12 +674,13 @@ namespace ModernWpf.Controls.Primitives
                 DependencyPropertyDescriptor.FromProperty(Popup.VerticalOffsetProperty, typeof(Popup)).RemoveValueChanged(_popup, OnPopupPropertyChanged);
                 DependencyPropertyDescriptor.FromProperty(Popup.PlacementRectangleProperty, typeof(Popup)).RemoveValueChanged(_popup, OnPopupPropertyChanged);
 
-                if (_window != null)
+                if (_secHelper.Window != null)
                 {
-                    _window.AutoResized -= OnWindowResize;
-                    _window = null;
+                    _secHelper.Window.AutoResized -= OnWindowResize;
+                    _secHelper.Window = null;
                 }
 
+                _popupRoot = null;
                 _positionInfo = null;
             }
         }
@@ -558,13 +689,13 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupOpened(object sender, EventArgs e)
         {
-            if (_window == null && _popup.Child is { } child)
+            if (_secHelper.Window == null && _popup.Child is { } child &&
+                PresentationSource.FromVisual(child) is HwndSource window)
             {
-                _window = PresentationSource.FromVisual(child) as HwndSource;
-                if (_window != null)
-                {
-                    _window.AutoResized += OnWindowResize;
-                }
+                _secHelper.Window = window;
+                _popupRoot = window.RootVisual as FrameworkElement;
+                Debug.Assert(_popupRoot != null && _popupRoot.GetType().Name == "PopupRoot");
+                window.AutoResized += OnWindowResize;
             }
 
             Reposition();
@@ -576,9 +707,6 @@ namespace ModernWpf.Controls.Primitives
         }
 
         private readonly Popup _popup;
-        private PopupSecurityHelper _secHelper;
-        private PositionInfo _positionInfo;
-        private HwndSource _window;
         private bool _isDisposed;
 
         private class PositionInfo
@@ -656,6 +784,12 @@ namespace ModernWpf.Controls.Primitives
 
             public static bool IsSupported { get; }
 
+            internal HwndSource Window
+            {
+                get => _window;
+                set => _window = value;
+            }
+
             internal bool IsWindowAlive()
             {
                 return _isWindowAlive();
@@ -665,6 +799,25 @@ namespace ModernWpf.Controls.Primitives
             {
                 _setPopupPos(position, x, y, size, width, height);
             }
+
+            internal Matrix GetTransformToDevice()
+            {
+                CompositionTarget ct = _window.CompositionTarget;
+                if (ct != null)
+                {
+                    try
+                    {
+                        return ct.TransformToDevice;
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+                }
+
+                return Matrix.Identity;
+            }
+
+            private HwndSource _window;
 
             private Func<bool> _isWindowAlive;
             private Action<bool, int, int, bool, int, int> _setPopupPos;
