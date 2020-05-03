@@ -3,13 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using MS.Internal;
+using MS.Win32;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -22,18 +23,9 @@ namespace ModernWpf.Controls.Primitives
         {
             IsSupported = Delegates.GetPlacementInternal != null &&
                           Delegates.GetDropOpposite != null &&
-                          Delegates.SetDropOpposite != null &&
-                          Delegates.GetAnimateFromRight != null &&
-                          Delegates.SetAnimateFromRight != null &&
-                          Delegates.GetAnimateFromBottom != null &&
-                          Delegates.SetAnimateFromBottom != null &&
                           Delegates.GetPlacementTargetInterestPoints != null &&
                           Delegates.GetChildInterestPoints != null &&
-                          Delegates.GetScreenBounds != null &&
-                          Fields._positionInfo != null &&
-                          Fields._secHelper != null &&
-                          PopupSecurityHelper.IsSupported &&
-                          PositionInfo.IsSupported;
+                          Delegates.GetScreenBounds != null;
         }
 
         public PopupPositioner(Popup popup)
@@ -44,13 +36,12 @@ namespace ModernWpf.Controls.Primitives
             }
 
             _popup = popup;
-            _secHelper = new PopupSecurityHelper(Fields._secHelper.GetValue(_popup));
+            _secHelper = new PopupSecurityHelper();
 
             SetPositioner(popup, this);
 
-            BindingOperations.SetBinding(this, IsOpenProperty, new Binding { Path = new PropertyPath(Popup.IsOpenProperty), Source = popup });
-
             popup.Opened += OnPopupOpened;
+            popup.Closed += OnPopupClosed;
 
             if (popup.IsOpen)
             {
@@ -70,20 +61,11 @@ namespace ModernWpf.Controls.Primitives
             if (_popup != null)
             {
                 _popup.Opened -= OnPopupOpened;
+                _popup.Closed -= OnPopupClosed;
                 _popup.ClearValue(PositionerProperty);
             }
 
-            ClearValue(IsOpenProperty);
-
-            if (_secHelper.Window != null)
-            {
-                _secHelper.Window.AutoResized -= OnWindowResize;
-                _secHelper.Window = null;
-            }
-
-            _popupRoot = null;
-            _secHelper = null;
-            _positionInfo = null;
+            OnPopupClosed(null, null);
         }
 
         public static bool IsSupported { get; }
@@ -106,11 +88,7 @@ namespace ModernWpf.Controls.Primitives
         public double HorizontalOffset => _popup.HorizontalOffset;
         public double VerticalOffset => _popup.VerticalOffset;
 
-        internal bool DropOpposite
-        {
-            get => Delegates.GetDropOpposite(_popup);
-            set => Delegates.SetDropOpposite(_popup, value);
-        }
+        internal bool DropOpposite => Delegates.GetDropOpposite(_popup);
 
         private void OnWindowResize(object sender, AutoResizedEventArgs e)
         {
@@ -164,6 +142,16 @@ namespace ModernWpf.Controls.Primitives
             public InterestPoint ChildInterestPoint;
         }
 
+        private class PositionInfo
+        {
+            // The position of the upper left corner of the popup after nudging
+            public int X;
+            public int Y;
+
+            // The size of the popup
+            public Size ChildSize;
+        }
+
         // To position the popup, we find the InterestPoints of the placement rectangle/point
         // in the screen coordinate space.  We also find the InterestPoints of the child in
         // the popup's space.  Then we attempt all valid combinations of matching InterestPoints
@@ -188,7 +176,11 @@ namespace ModernWpf.Controls.Primitives
 
             double childArea = childBounds.Width * childBounds.Height;
 
-            _positionInfo ??= new PositionInfo(Fields._positionInfo.GetValue(_popup));
+            Rect windowRect = _secHelper.GetWindowRect();
+            _positionInfo ??= new PositionInfo();
+            _positionInfo.X = (int)windowRect.X;
+            _positionInfo.Y = (int)windowRect.Y;
+            _positionInfo.ChildSize = windowRect.Size;
 
             // Rank possible positions
             int bestIndex = -1;
@@ -224,9 +216,6 @@ namespace ModernWpf.Controls.Primitives
             {
                 Vector popupTranslation;
 
-                bool animateFromRight = false;
-                bool animateFromBottom = false;
-
                 PopupPrimaryAxis axis;
 
                 // Get the ith Position to rank
@@ -250,10 +239,6 @@ namespace ModernWpf.Controls.Primitives
                     // that will cause the the two interest points to overlap
                     popupTranslation = placementTargetInterestPoints[(int)targetInterestPoint]
                                        - childInterestPoints[(int)childInterestPoint];
-
-                    // Check the matching points to see which direction to animate
-                    animateFromRight = childInterestPoint == InterestPoint.TopRight || childInterestPoint == InterestPoint.BottomRight;
-                    animateFromBottom = childInterestPoint == InterestPoint.BottomLeft || childInterestPoint == InterestPoint.BottomRight;
                 }
 
                 // Find percent of popup on screen by translating the popup bounds
@@ -277,23 +262,12 @@ namespace ModernWpf.Controls.Primitives
                     bestScore = score;
                     bestAxis = axis;
 
-                    AnimateFromRight = animateFromRight;
-                    AnimateFromBottom = animateFromBottom;
-
                     // Stop when we find a popup that is completely on screen
                     if (Math.Abs(score - childArea) < Tolerance)
                     {
                         break;
                     }
                 }
-            }
-
-            // When going left/right, if the edge of the monitor is hit
-            // the next popup going left/right must also go in the opposite direction
-            if (bestIndex >= 2 && (placement == PlacementMode.Right || placement == PlacementMode.Left))
-            {
-                // We switched sides, so flip the DropOpposite flag
-                DropOpposite = !DropOpposite;
             }
 
             // Check to see if the pop needs to be nudged onto the screen.
@@ -586,18 +560,6 @@ namespace ModernWpf.Controls.Primitives
 
         private bool IsTransparent => _popup.AllowsTransparency;
 
-        private bool AnimateFromRight
-        {
-            get => Delegates.GetAnimateFromRight(_popup);
-            set => Delegates.SetAnimateFromRight(_popup, value);
-        }
-
-        private bool AnimateFromBottom
-        {
-            get => Delegates.GetAnimateFromBottom(_popup);
-            set => Delegates.SetAnimateFromBottom(_popup, value);
-        }
-
         internal const double Tolerance = 1.0e-2; // allow errors in double calculations
 
         private PositionInfo _positionInfo;
@@ -605,6 +567,130 @@ namespace ModernWpf.Controls.Primitives
         private FrameworkElement _popupRoot;
 
         private PopupSecurityHelper _secHelper;
+
+        private class PopupSecurityHelper
+        {
+            internal PopupSecurityHelper()
+            {
+            }
+
+            internal bool AttachedToWindow => _window != null;
+
+            internal void AttachToWindow(HwndSource window, AutoResizedEventHandler handler)
+            {
+                if (_window == null)
+                {
+                    _window = window;
+
+                    window.AutoResized += handler;
+                }
+                else
+                {
+                    Debug.Assert(_window == window);
+                }
+            }
+
+            internal void DetachFromWindow(AutoResizedEventHandler onAutoResizedEventHandler)
+            {
+                if (_window != null)
+                {
+                    HwndSource hwnd = _window;
+
+                    _window = null;
+
+                    hwnd.AutoResized -= onAutoResizedEventHandler;
+                }
+            }
+
+            internal bool IsWindowAlive()
+            {
+                if (_window != null)
+                {
+                    HwndSource hwnd = _window;
+                    return (hwnd != null) && !hwnd.IsDisposed;
+                }
+
+                return false;
+            }
+
+            internal void SetPopupPos(bool position, int x, int y, bool size, int width, int height)
+            {
+                int flags = NativeMethods.SWP_NOZORDER | NativeMethods.SWP_NOACTIVATE;
+                if (!position)
+                {
+                    flags |= NativeMethods.SWP_NOMOVE;
+                }
+                if (!size)
+                {
+                    flags |= NativeMethods.SWP_NOSIZE;
+                }
+
+                UnsafeNativeMethods.SetWindowPos(new HandleRef(null, Handle), new HandleRef(null, IntPtr.Zero),
+                    x, y, width, height, flags);
+            }
+
+            internal Rect GetWindowRect()
+            {
+                NativeMethods.RECT rect = new NativeMethods.RECT(0, 0, 0, 0);
+
+                if (IsWindowAlive())
+                {
+                    SafeNativeMethods.GetWindowRect(_window.CreateHandleRef(), ref rect);
+                }
+
+                return PointUtil.ToRect(rect);
+            }
+
+            internal Matrix GetTransformToDevice()
+            {
+                CompositionTarget ct = _window.CompositionTarget;
+                if (ct != null)
+                {
+                    try
+                    {
+                        return ct.TransformToDevice;
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+                }
+
+                return Matrix.Identity;
+            }
+
+            internal Matrix GetTransformFromDevice()
+            {
+                CompositionTarget ct = _window.CompositionTarget;
+                if (ct != null)
+                {
+                    try
+                    {
+                        return ct.TransformFromDevice;
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+                }
+
+                return Matrix.Identity;
+            }
+
+            private static IntPtr GetHandle(HwndSource hwnd)
+            {
+                // add hook to the popup's window
+                return (hwnd != null ? hwnd.Handle : IntPtr.Zero);
+            }
+
+            private IntPtr Handle
+            {
+                get
+                {
+                    return (GetHandle(_window));
+                }
+            }
+
+            private HwndSource _window;
+        }
 
         #endregion
 
@@ -637,36 +723,29 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        #region IsOpen
-
-        private static readonly DependencyProperty IsOpenProperty =
-            DependencyProperty.Register(
-                nameof(IsOpen),
-                typeof(bool),
-                typeof(PopupPositioner),
-                new PropertyMetadata(false, OnIsOpenChanged));
-
-        private static void OnIsOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private void OnPopupOpened(object sender, EventArgs e)
         {
-            ((PopupPositioner)d).OnIsOpenChanged(e);
-        }
-
-        private void OnIsOpenChanged(DependencyPropertyChangedEventArgs e)
-        {
-            if (_popup is null)
+            if (!_secHelper.AttachedToWindow &&
+                _popup.Child is { } child &&
+                PresentationSource.FromVisual(child) is HwndSource window)
             {
-                return;
-            }
+                _secHelper.AttachToWindow(window, OnWindowResize);
+                _popupRoot = window.RootVisual as FrameworkElement;
+                Debug.Assert(_popupRoot != null && _popupRoot.GetType().Name == "PopupRoot");
 
-            if ((bool)e.NewValue)
-            {
                 DependencyPropertyDescriptor.FromProperty(Popup.ChildProperty, typeof(Popup)).AddValueChanged(_popup, OnPopupPropertyChanged);
                 DependencyPropertyDescriptor.FromProperty(Popup.PlacementProperty, typeof(Popup)).AddValueChanged(_popup, OnPopupPropertyChanged);
                 DependencyPropertyDescriptor.FromProperty(Popup.HorizontalOffsetProperty, typeof(Popup)).AddValueChanged(_popup, OnPopupPropertyChanged);
                 DependencyPropertyDescriptor.FromProperty(Popup.VerticalOffsetProperty, typeof(Popup)).AddValueChanged(_popup, OnPopupPropertyChanged);
                 DependencyPropertyDescriptor.FromProperty(Popup.PlacementRectangleProperty, typeof(Popup)).AddValueChanged(_popup, OnPopupPropertyChanged);
+
+                Reposition();
             }
-            else
+        }
+
+        private void OnPopupClosed(object sender, EventArgs e)
+        {
+            if (_secHelper.AttachedToWindow)
             {
                 DependencyPropertyDescriptor.FromProperty(Popup.ChildProperty, typeof(Popup)).RemoveValueChanged(_popup, OnPopupPropertyChanged);
                 DependencyPropertyDescriptor.FromProperty(Popup.PlacementProperty, typeof(Popup)).RemoveValueChanged(_popup, OnPopupPropertyChanged);
@@ -674,31 +753,10 @@ namespace ModernWpf.Controls.Primitives
                 DependencyPropertyDescriptor.FromProperty(Popup.VerticalOffsetProperty, typeof(Popup)).RemoveValueChanged(_popup, OnPopupPropertyChanged);
                 DependencyPropertyDescriptor.FromProperty(Popup.PlacementRectangleProperty, typeof(Popup)).RemoveValueChanged(_popup, OnPopupPropertyChanged);
 
-                if (_secHelper.Window != null)
-                {
-                    _secHelper.Window.AutoResized -= OnWindowResize;
-                    _secHelper.Window = null;
-                }
-
+                _secHelper.DetachFromWindow(OnWindowResize);
                 _popupRoot = null;
                 _positionInfo = null;
             }
-        }
-
-        #endregion
-
-        private void OnPopupOpened(object sender, EventArgs e)
-        {
-            if (_secHelper.Window == null && _popup.Child is { } child &&
-                PresentationSource.FromVisual(child) is HwndSource window)
-            {
-                _secHelper.Window = window;
-                _popupRoot = window.RootVisual as FrameworkElement;
-                Debug.Assert(_popupRoot != null && _popupRoot.GetType().Name == "PopupRoot");
-                window.AutoResized += OnWindowResize;
-            }
-
-            Reposition();
         }
 
         private void OnPopupPropertyChanged(object sender, EventArgs e)
@@ -708,137 +766,6 @@ namespace ModernWpf.Controls.Primitives
 
         private readonly Popup _popup;
         private bool _isDisposed;
-
-        private class PositionInfo
-        {
-            static PositionInfo()
-            {
-                IsSupported = Fields.X != null &&
-                              Fields.Y != null &&
-                              Fields.ChildSize != null;
-            }
-
-            public PositionInfo(object obj)
-            {
-                _obj = obj;
-            }
-
-            public static bool IsSupported { get; }
-
-            public int X
-            {
-                get => (int)Fields.X.GetValue(_obj);
-                set => Fields.X.SetValue(_obj, value);
-            }
-
-            public int Y
-            {
-                get => (int)Fields.Y.GetValue(_obj);
-                set => Fields.Y.SetValue(_obj, value);
-            }
-
-            public Size ChildSize
-            {
-                get => (Size)Fields.ChildSize.GetValue(_obj);
-                set => Fields.ChildSize.SetValue(_obj, value);
-            }
-
-            private readonly object _obj;
-
-            private static class Fields
-            {
-                static Fields()
-                {
-                    try
-                    {
-                        var type = typeof(Popup).Assembly.GetType("System.Windows.Controls.Primitives.Popup+PositionInfo");
-                        if (type != null)
-                        {
-                            X = type.GetField(nameof(X));
-                            Y = type.GetField(nameof(Y));
-                            ChildSize = type.GetField(nameof(ChildSize));
-                        }
-                    }
-                    catch { }
-                }
-
-                public static FieldInfo X { get; }
-                public static FieldInfo Y { get; }
-                public static FieldInfo ChildSize { get; }
-            }
-        }
-
-        private class PopupSecurityHelper
-        {
-            static PopupSecurityHelper()
-            {
-                IsSupported = Methods.IsWindowAlive != null &&
-                              Methods.SetPopupPos != null;
-            }
-
-            public PopupSecurityHelper(object obj)
-            {
-                _isWindowAlive = DelegateHelper.CreateDelegate<Func<bool>>(obj, Methods.IsWindowAlive);
-                _setPopupPos = DelegateHelper.CreateDelegate<Action<bool, int, int, bool, int, int>>(obj, Methods.SetPopupPos);
-            }
-
-            public static bool IsSupported { get; }
-
-            internal HwndSource Window
-            {
-                get => _window;
-                set => _window = value;
-            }
-
-            internal bool IsWindowAlive()
-            {
-                return _isWindowAlive();
-            }
-
-            internal void SetPopupPos(bool position, int x, int y, bool size, int width, int height)
-            {
-                _setPopupPos(position, x, y, size, width, height);
-            }
-
-            internal Matrix GetTransformToDevice()
-            {
-                CompositionTarget ct = _window.CompositionTarget;
-                if (ct != null)
-                {
-                    try
-                    {
-                        return ct.TransformToDevice;
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                    }
-                }
-
-                return Matrix.Identity;
-            }
-
-            private HwndSource _window;
-
-            private Func<bool> _isWindowAlive;
-            private Action<bool, int, int, bool, int, int> _setPopupPos;
-
-            private static class Methods
-            {
-                static Methods()
-                {
-                    try
-                    {
-                        var type = typeof(Popup).Assembly.GetType("System.Windows.Controls.Primitives.Popup+PopupSecurityHelper");
-                        IsWindowAlive = type.GetMethod(nameof(IsWindowAlive), BindingFlags.Instance | BindingFlags.NonPublic);
-                        SetPopupPos = type.GetMethod(nameof(SetPopupPos), BindingFlags.Instance | BindingFlags.NonPublic);
-                    }
-                    catch { }
-                }
-
-                public static MethodInfo IsWindowAlive { get; }
-                public static MethodInfo SetPopupPos { get; }
-            }
-        }
 
         private static class Delegates
         {
@@ -853,28 +780,6 @@ namespace ModernWpf.Controls.Primitives
 
                     GetDropOpposite = DelegateHelper.CreatePropertyGetter<Popup, bool>(
                         nameof(DropOpposite),
-                        BindingFlags.Instance | BindingFlags.NonPublic,
-                        true);
-                    SetDropOpposite = DelegateHelper.CreatePropertySetter<Popup, bool>(
-                        nameof(DropOpposite),
-                        BindingFlags.Instance | BindingFlags.NonPublic,
-                        true);
-
-                    GetAnimateFromRight = DelegateHelper.CreatePropertyGetter<Popup, bool>(
-                        nameof(AnimateFromRight),
-                        BindingFlags.Instance | BindingFlags.NonPublic,
-                        true);
-                    SetAnimateFromRight = DelegateHelper.CreatePropertySetter<Popup, bool>(
-                        nameof(AnimateFromRight),
-                        BindingFlags.Instance | BindingFlags.NonPublic,
-                        true);
-
-                    GetAnimateFromBottom = DelegateHelper.CreatePropertyGetter<Popup, bool>(
-                        nameof(AnimateFromBottom),
-                        BindingFlags.Instance | BindingFlags.NonPublic,
-                        true);
-                    SetAnimateFromBottom = DelegateHelper.CreatePropertySetter<Popup, bool>(
-                        nameof(AnimateFromBottom),
                         BindingFlags.Instance | BindingFlags.NonPublic,
                         true);
 
@@ -899,34 +804,10 @@ namespace ModernWpf.Controls.Primitives
             public static Func<Popup, PlacementMode> GetPlacementInternal { get; }
 
             public static Func<Popup, bool> GetDropOpposite { get; }
-            public static Action<Popup, bool> SetDropOpposite { get; }
-
-            public static Func<Popup, bool> GetAnimateFromRight { get; }
-            public static Action<Popup, bool> SetAnimateFromRight { get; }
-
-            public static Func<Popup, bool> GetAnimateFromBottom { get; }
-            public static Action<Popup, bool> SetAnimateFromBottom { get; }
 
             public static Func<Popup, PlacementMode, Point[]> GetPlacementTargetInterestPoints { get; }
             public static Func<Popup, PlacementMode, Point[]> GetChildInterestPoints { get; }
             public static Func<Popup, Rect, Point, Rect> GetScreenBounds { get; }
-        }
-
-        private static class Fields
-        {
-            static Fields()
-            {
-                try
-                {
-                    _secHelper = typeof(Popup).GetField(nameof(_secHelper), BindingFlags.Instance | BindingFlags.NonPublic);
-                    _positionInfo = typeof(Popup).GetField(nameof(_positionInfo), BindingFlags.Instance | BindingFlags.NonPublic);
-                }
-                catch { }
-            }
-
-            public static FieldInfo _secHelper { get; }
-
-            public static FieldInfo _positionInfo { get; }
         }
     }
 }
