@@ -11,6 +11,7 @@
         <Setter Property="ScrollViewer.PanningMode" Value="VerticalOnly" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -117,7 +118,8 @@
         <Setter Property="Foreground" Value="{DynamicResource TimePickerButtonForeground}" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="FocusVisualStyle" Value="{DynamicResource EmptyFocusVisual}" />
+        <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource IsApplicationFocusVisualKindReveal}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="PickerVisibility" Value="HourMinute" />
         <Setter Property="MinutesItemStringFormat" Value="D2" />
@@ -168,7 +170,7 @@
                                                     <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TimePickerButtonForegroundDisabled}" />
                                                 </Trigger>
                                                 <!-- Focused -->
-                                                <Trigger Property="ui:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
+                                                <Trigger Property="ui:FocusVisualHelper.ShowFocusVisual" Value="True">
                                                     <Setter TargetName="Border" Property="Background" Value="{DynamicResource TimePickerButtonBackgroundFocused}" />
                                                     <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TimePickerButtonForegroundFocused}" />
                                                 </Trigger>
@@ -209,6 +211,7 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
                             VerticalAlignment="Top"
+                            ui:FocusVisualHelper.UseSystemFocusVisuals="{TemplateBinding UseSystemFocusVisuals}"
                             FocusVisualStyle="{TemplateBinding FocusVisualStyle}"
                             ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}">
                             <Grid x:Name="FlyoutButtonContentGrid">

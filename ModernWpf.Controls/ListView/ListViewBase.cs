@@ -88,6 +88,32 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region UseSystemFocusVisuals
+
+        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
+            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(ListViewBase));
+
+        public bool UseSystemFocusVisuals
+        {
+            get => (bool)GetValue(UseSystemFocusVisualsProperty);
+            set => SetValue(UseSystemFocusVisualsProperty, value);
+        }
+
+        #endregion
+
+        #region FocusVisualMargin
+
+        public static readonly DependencyProperty FocusVisualMarginProperty =
+            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(ListViewBase));
+
+        public Thickness FocusVisualMargin
+        {
+            get => (Thickness)GetValue(FocusVisualMarginProperty);
+            set => SetValue(FocusVisualMarginProperty, value);
+        }
+
+        #endregion
+
         #region CornerRadius
 
         public static readonly DependencyProperty CornerRadiusProperty =

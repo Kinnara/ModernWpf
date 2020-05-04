@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
@@ -14,6 +15,7 @@ namespace MUXControlsTestApp.Samples.Selection
         public RepeaterItem()
         {
             IsTabStop = true;
+            FocusVisualHelper.SetUseSystemFocusVisuals(this, true);
             SetResourceReference(FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
             Margin = new Thickness(3);
         }

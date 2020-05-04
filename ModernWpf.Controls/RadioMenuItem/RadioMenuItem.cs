@@ -3,6 +3,7 @@
 
 using System.Windows;
 using System.Windows.Controls;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -35,6 +36,15 @@ namespace ModernWpf.Controls
         private static void OnGroupNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((RadioMenuItem)d).UpdateSiblings();
+        }
+
+        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
+            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(RadioMenuItem));
+
+        public bool UseSystemFocusVisuals
+        {
+            get => (bool)GetValue(UseSystemFocusVisualsProperty);
+            set => SetValue(UseSystemFocusVisualsProperty, value);
         }
 
         protected override void OnChecked(RoutedEventArgs e)

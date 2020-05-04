@@ -34,6 +34,19 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region UseSystemFocusVisuals
+
+        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
+            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(DropDownButton));
+
+        public bool UseSystemFocusVisuals
+        {
+            get => (bool)GetValue(UseSystemFocusVisualsProperty);
+            set => SetValue(UseSystemFocusVisualsProperty, value);
+        }
+
+        #endregion
+
         #region FocusVisualMargin
 
         public static readonly DependencyProperty FocusVisualMarginProperty =

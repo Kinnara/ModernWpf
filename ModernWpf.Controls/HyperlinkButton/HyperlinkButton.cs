@@ -6,6 +6,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Navigation;
 using ModernWpf.Automation.Peers;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -13,8 +14,17 @@ namespace ModernWpf.Controls
     {
         static HyperlinkButton()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(HyperlinkButton),
+            DefaultStyleKeyProperty.OverrideMetadata(
+                typeof(HyperlinkButton),
                 new FrameworkPropertyMetadata(typeof(HyperlinkButton)));
+
+            HorizontalContentAlignmentProperty.OverrideMetadata(
+                typeof(HyperlinkButton),
+                new FrameworkPropertyMetadata(HorizontalAlignment.Center));
+
+            VerticalContentAlignmentProperty.OverrideMetadata(
+                typeof(HyperlinkButton),
+                new FrameworkPropertyMetadata(VerticalAlignment.Center));
         }
 
         public HyperlinkButton()
@@ -58,6 +68,24 @@ namespace ModernWpf.Controls
         private static void OnTargetNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((HyperlinkButton)d).m_hyperlink.TargetName = (string)e.NewValue;
+        }
+
+        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
+            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(HyperlinkButton));
+
+        public bool UseSystemFocusVisuals
+        {
+            get => (bool)GetValue(UseSystemFocusVisualsProperty);
+            set => SetValue(UseSystemFocusVisualsProperty, value);
+        }
+
+        public static readonly DependencyProperty FocusVisualMarginProperty =
+            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(HyperlinkButton));
+
+        public Thickness FocusVisualMargin
+        {
+            get => (Thickness)GetValue(FocusVisualMarginProperty);
+            set => SetValue(FocusVisualMarginProperty, value);
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()

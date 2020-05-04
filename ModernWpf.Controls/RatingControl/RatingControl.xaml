@@ -9,6 +9,7 @@
         <Setter Property="Height" Value="32" />
         <!-- 9794813: retire these two properties as customisation points once all resource keys available -->
         <Setter Property="Foreground" Value="{DynamicResource RatingControlCaptionForeground}" />
+        <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="ItemInfo" Value="{DynamicResource RatingControlDefaultFontInfo}" />

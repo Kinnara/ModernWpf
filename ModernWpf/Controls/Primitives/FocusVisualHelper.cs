@@ -198,6 +198,46 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
+        #region UseSystemFocusVisuals
+
+        /// <summary>
+        /// Identifies the UseSystemFocusVisuals dependency property.
+        /// </summary>
+        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
+            DependencyProperty.RegisterAttached(
+                "UseSystemFocusVisuals",
+                typeof(bool),
+                typeof(FocusVisualHelper),
+                new PropertyMetadata(false));
+
+        /// <summary>
+        /// Gets a value that indicates whether the control uses focus visuals that
+        /// are drawn by the system or those defined in the control template.
+        /// </summary>
+        /// <param name="control">The object from which the property value is read.</param>
+        /// <returns>
+        /// **true** if the control uses focus visuals drawn by the system; **false** if
+        /// the control uses focus visuals defined in the ControlTemplate. The default is
+        /// **false**; see Remarks.
+        /// </returns>
+        public static bool GetUseSystemFocusVisuals(Control control)
+        {
+            return (bool)control.GetValue(UseSystemFocusVisualsProperty);
+        }
+
+        /// <summary>
+        /// Sets a value that indicates whether the control uses focus visuals that
+        /// are drawn by the system or those defined in the control template.
+        /// </summary>
+        /// <param name="control">The object to which the property value is written.</param>
+        /// <param name="value">The value to set.</param>
+        public static void SetUseSystemFocusVisuals(Control control, bool value)
+        {
+            control.SetValue(UseSystemFocusVisualsProperty, value);
+        }
+
+        #endregion
+
         #region IsTemplateFocusTarget
 
         /// <summary>
@@ -282,7 +322,6 @@ namespace ModernWpf.Controls.Primitives
             else
             {
                 control.IsVisibleChanged -= OnFocusVisualIsVisibleChanged;
-                control.ClearValue(FrameworkElement.MarginProperty);
             }
         }
 
@@ -290,14 +329,10 @@ namespace ModernWpf.Controls.Primitives
 
         #region IsSystemFocusVisualVisible
 
+        [Obsolete]
         public static bool GetIsSystemFocusVisualVisible(FrameworkElement element)
         {
             return (bool)element.GetValue(IsSystemFocusVisualVisibleProperty);
-        }
-
-        private static void SetIsSystemFocusVisualVisible(FrameworkElement element, bool value)
-        {
-            element.SetValue(IsSystemFocusVisualVisiblePropertyKey, value);
         }
 
         private static readonly DependencyPropertyKey IsSystemFocusVisualVisiblePropertyKey =
@@ -305,18 +340,54 @@ namespace ModernWpf.Controls.Primitives
                 "IsSystemFocusVisualVisible",
                 typeof(bool),
                 typeof(FocusVisualHelper),
-                new PropertyMetadata(OnIsSystemFocusVisualVisibleChanged));
+                null);
 
+        [Obsolete]
         public static readonly DependencyProperty IsSystemFocusVisualVisibleProperty =
             IsSystemFocusVisualVisiblePropertyKey.DependencyProperty;
 
-        private static void OnIsSystemFocusVisualVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        #endregion
+
+        #region ShowFocusVisual
+
+        public static bool GetShowFocusVisual(FrameworkElement element)
         {
+            return (bool)element.GetValue(ShowFocusVisualProperty);
+        }
+
+        private static void SetShowFocusVisual(FrameworkElement element, bool value)
+        {
+            element.SetValue(ShowFocusVisualPropertyKey, value);
+        }
+
+        private static readonly DependencyPropertyKey ShowFocusVisualPropertyKey =
+            DependencyProperty.RegisterAttachedReadOnly(
+                "ShowFocusVisual",
+                typeof(bool),
+                typeof(FocusVisualHelper),
+                new PropertyMetadata(OnShowFocusVisualChanged));
+
+        public static readonly DependencyProperty ShowFocusVisualProperty =
+            ShowFocusVisualPropertyKey.DependencyProperty;
+
+        private static void OnShowFocusVisualChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            d.SetValue(IsSystemFocusVisualVisiblePropertyKey, e.NewValue);
+
             if (d is Control control && GetTemplateFocusTarget(control) is { } target)
             {
                 if ((bool)e.NewValue)
                 {
-                    ShowFocusVisual(control, target);
+                    bool shouldShowFocusVisual = true;
+                    if (target is Control targetAsControl)
+                    {
+                        shouldShowFocusVisual = GetUseSystemFocusVisuals(targetAsControl);
+                    }
+
+                    if (shouldShowFocusVisual)
+                    {
+                        ShowFocusVisual(control, target);
+                    }
                 }
                 else
                 {
@@ -379,14 +450,14 @@ namespace ModernWpf.Controls.Primitives
 
         #region FocusedElement
 
-        private static FrameworkElement GetFocusedElement(Control control)
+        private static FrameworkElement GetFocusedElement(Control focusVisual)
         {
-            return (FrameworkElement)control.GetValue(FocusedElementProperty);
+            return (FrameworkElement)focusVisual.GetValue(FocusedElementProperty);
         }
 
-        private static void SetFocusedElement(Control control, FrameworkElement value)
+        private static void SetFocusedElement(Control focusVisual, FrameworkElement value)
         {
-            control.SetValue(FocusedElementProperty, value);
+            focusVisual.SetValue(FocusedElementProperty, value);
         }
 
         private static readonly DependencyProperty FocusedElementProperty =
@@ -424,13 +495,21 @@ namespace ModernWpf.Controls.Primitives
             {
                 if ((VisualTreeHelper.GetParent(focusVisual) as Adorner)?.AdornedElement is FrameworkElement focusedElement)
                 {
-                    SetIsSystemFocusVisualVisible(focusedElement, true);
+                    SetShowFocusVisual(focusedElement, true);
 
-                    TransferValue(focusedElement, focusVisual, FocusVisualPrimaryBrushProperty);
-                    TransferValue(focusedElement, focusVisual, FocusVisualPrimaryThicknessProperty);
-                    TransferValue(focusedElement, focusVisual, FocusVisualSecondaryBrushProperty);
-                    TransferValue(focusedElement, focusVisual, FocusVisualSecondaryThicknessProperty);
-                    focusVisual.Margin = GetFocusVisualMargin(focusedElement);
+                    if (focusedElement is Control focusedControl &&
+                        (!GetUseSystemFocusVisuals(focusedControl) || GetTemplateFocusTarget(focusedControl) != null))
+                    {
+                        focusVisual.Template = null;
+                    }
+                    else
+                    {
+                        TransferValue(focusedElement, focusVisual, FocusVisualPrimaryBrushProperty);
+                        TransferValue(focusedElement, focusVisual, FocusVisualPrimaryThicknessProperty);
+                        TransferValue(focusedElement, focusVisual, FocusVisualSecondaryBrushProperty);
+                        TransferValue(focusedElement, focusVisual, FocusVisualSecondaryThicknessProperty);
+                        focusVisual.Margin = GetFocusVisualMargin(focusedElement);
+                    }
 
                     SetFocusedElement(focusVisual, focusedElement);
                 }
@@ -440,12 +519,14 @@ namespace ModernWpf.Controls.Primitives
                 FrameworkElement focusedElement = GetFocusedElement(focusVisual);
                 if (focusedElement != null)
                 {
+                    focusedElement.ClearValue(ShowFocusVisualPropertyKey);
                     focusedElement.ClearValue(IsSystemFocusVisualVisiblePropertyKey);
                     focusVisual.ClearValue(FocusVisualPrimaryBrushProperty);
                     focusVisual.ClearValue(FocusVisualPrimaryThicknessProperty);
                     focusVisual.ClearValue(FocusVisualSecondaryBrushProperty);
                     focusVisual.ClearValue(FocusVisualSecondaryThicknessProperty);
                     focusVisual.ClearValue(FrameworkElement.MarginProperty);
+                    focusVisual.ClearValue(Control.TemplateProperty);
                     focusVisual.ClearValue(FocusedElementProperty);
                 }
             }

@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.Windows;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -179,6 +180,19 @@ namespace ModernWpf.Controls
         private static void OnValuePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             ((RatingControl)sender).PrivateOnPropertyChanged(args);
+        }
+
+        #endregion
+
+        #region UseSystemFocusVisuals
+
+        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
+            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(RatingControl));
+
+        public bool UseSystemFocusVisuals
+        {
+            get => (bool)GetValue(UseSystemFocusVisualsProperty);
+            set => SetValue(UseSystemFocusVisualsProperty, value);
         }
 
         #endregion

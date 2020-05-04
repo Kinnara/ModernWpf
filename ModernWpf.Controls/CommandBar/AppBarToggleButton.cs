@@ -33,6 +33,32 @@ namespace ModernWpf.Controls
             IsVisibleChanged += OnIsVisibleChanged;
         }
 
+        #region UseSystemFocusVisuals
+
+        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
+            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(AppBarToggleButton));
+
+        public bool UseSystemFocusVisuals
+        {
+            get => (bool)GetValue(UseSystemFocusVisualsProperty);
+            set => SetValue(UseSystemFocusVisualsProperty, value);
+        }
+
+        #endregion
+
+        #region FocusVisualMargin
+
+        public static readonly DependencyProperty FocusVisualMarginProperty =
+            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(AppBarToggleButton));
+
+        public Thickness FocusVisualMargin
+        {
+            get => (Thickness)GetValue(FocusVisualMarginProperty);
+            set => SetValue(FocusVisualMarginProperty, value);
+        }
+
+        #endregion
+
         #region CornerRadius
 
         public static readonly DependencyProperty CornerRadiusProperty =

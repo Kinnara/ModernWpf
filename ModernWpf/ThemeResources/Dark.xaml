@@ -1366,6 +1366,9 @@
     <m:StaticResource x:Key="AccentButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
     <m:StaticResource x:Key="AccentButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
 
+    <sys:Boolean x:Key="UseSystemFocusVisuals">True</sys:Boolean>
+    <sys:Boolean x:Key="IsApplicationFocusVisualKindReveal">False</sys:Boolean>
+
     <Style x:Key="HighVisibilityFocusVisual">
         <Setter Property="primitives:FocusVisualHelper.FocusVisualPrimaryBrush" Value="{StaticResource SystemControlFocusVisualPrimaryBrush}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualSecondaryBrush" Value="{StaticResource SystemControlFocusVisualSecondaryBrush}" />

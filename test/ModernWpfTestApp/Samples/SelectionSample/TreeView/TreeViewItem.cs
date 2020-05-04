@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
@@ -17,6 +18,7 @@ namespace MUXControlsTestApp.Samples.Selection
         public TreeViewItem()
         {
             IsTabStop = true;
+            FocusVisualHelper.SetUseSystemFocusVisuals(this, true);
             SetResourceReference(FocusVisualStyleProperty, SystemParameters.FocusVisualStyleKey);
             Margin = new Thickness(5);
         }

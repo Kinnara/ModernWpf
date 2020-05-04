@@ -25,6 +25,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBoxItem">
@@ -208,10 +209,11 @@
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="primitives:ControlHelper.PlaceholderForeground" Value="{DynamicResource ComboBoxPlaceHolderForeground}" />
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource IsApplicationFocusVisualKindReveal}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:ComboBoxHelper.KeepInteriorCornersSquare" Value="True" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
-        <Setter Property="primitives:ControlHelper.PlaceholderForeground" Value="{DynamicResource ComboBoxPlaceHolderForeground}" />
-        <Setter Property="FocusVisualStyle" Value="{DynamicResource EmptyFocusVisual}" />
         <Setter Property="Validation.ErrorTemplate" Value="{DynamicResource TextControlValidationErrorTemplate}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -430,7 +432,7 @@
                         </Trigger>
 
                         <!-- Focused -->
-                        <Trigger Property="primitives:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True">
+                        <Trigger Property="primitives:FocusVisualHelper.ShowFocusVisual" Value="True">
                             <Setter TargetName="HighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="HighlightBackground" Property="BorderBrush" Value="{DynamicResource ComboBoxBackgroundBorderBrushFocused}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundFocused}" />
@@ -440,7 +442,7 @@
                         <!-- FocusedPressed -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition Property="primitives:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True" />
+                                <Condition Property="primitives:FocusVisualHelper.ShowFocusVisual" Value="True" />
                                 <Condition SourceName="ToggleButton" Property="IsPressed" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="HighlightBackground" Property="Opacity" Value="1" />
@@ -451,7 +453,7 @@
                         <!-- FocusedDropDown -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
-                                <Condition Property="primitives:FocusVisualHelper.IsSystemFocusVisualVisible" Value="True" />
+                                <Condition Property="primitives:FocusVisualHelper.ShowFocusVisual" Value="True" />
                                 <Condition Property="IsDropDownOpen" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="PopupBorder" Property="Visibility" Value="Visible" />

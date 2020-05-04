@@ -28,6 +28,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="IsTabStop" Value="True" />
@@ -54,6 +55,7 @@
                                 <Setter Property="FontWeight" Value="Normal" />
                                 <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
                                 <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+                                <Setter Property="ui:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
                                 <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="-3" />
                                 <Setter Property="Template">
                                     <Setter.Value>

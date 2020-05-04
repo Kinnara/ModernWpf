@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using ModernWpf.Controls.Primitives;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -24,6 +25,31 @@ namespace ModernWpf.MahApps.Controls
             UpdateHeight();
             IsVisibleChanged += OnIsVisibleChanged;
         }
+
+        #region UseSystemFocusVisuals
+
+        /// <summary>
+        /// Identifies the UseSystemFocusVisuals dependency property.
+        /// </summary>
+        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
+            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(DateTimeComponentSelector));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether the control uses focus visuals that
+        /// are drawn by the system or those defined in the control template.
+        /// </summary>
+        /// <returns>
+        /// **true** if the control uses focus visuals drawn by the system; **false** if
+        /// the control uses focus visuals defined in the ControlTemplate. The default is
+        /// **false**; see Remarks.
+        /// </returns>
+        public bool UseSystemFocusVisuals
+        {
+            get => (bool)GetValue(UseSystemFocusVisualsProperty);
+            set => SetValue(UseSystemFocusVisualsProperty, value);
+        }
+
+        #endregion
 
         #region SuppressItemMouseOver
 

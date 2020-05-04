@@ -16,7 +16,8 @@
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="TextBoxStyle" Value="{DynamicResource AutoSuggestBoxTextBoxStyle}" />
-        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource IsApplicationFocusVisualKindReveal}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="ItemContainerStyle" Value="{DynamicResource {x:Type ListViewItem}}" />
         <Setter Property="Template">
@@ -50,6 +51,7 @@
                             Canvas.ZIndex="0"
                             Margin="0"
                             FocusVisualStyle="{TemplateBinding FocusVisualStyle}"
+                            ui:FocusVisualHelper.UseSystemFocusVisuals="{TemplateBinding UseSystemFocusVisuals}"
                             ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}" />
 
                         <Popup

@@ -113,6 +113,7 @@
             <Style x:Key="RichTextBlockStyle" TargetType="RichTextBox" BasedOn="{StaticResource DefaultRichTextBoxStyle}">
                 <Setter Property="Padding" Value="0" />
                 <Setter Property="IsReadOnly" Value="True" />
+                <Setter Property="IsTabStop" Value="False" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="RichTextBox">

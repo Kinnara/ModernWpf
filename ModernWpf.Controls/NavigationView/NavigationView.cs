@@ -1003,7 +1003,7 @@ namespace ModernWpf.Controls
 
                     if (ir != m_topNavRepeaterOverflowView)
                     {
-                        nvibImpl.UseSystemFocusVisuals(ShouldShowFocusVisual());
+                        nvibImpl.UseSystemFocusVisuals = ShouldShowFocusVisual();
                     }
 
                     // Register for item events
@@ -3081,7 +3081,7 @@ namespace ModernWpf.Controls
                             if (nvib is NavigationViewItem nvi)
                             {
                                 var nviImpl = nvi;
-                                nviImpl.UseSystemFocusVisuals(showFocusVisual);
+                                nviImpl.UseSystemFocusVisuals = showFocusVisual;
                             }
                         }
 

@@ -17,7 +17,8 @@
         <DataTemplate x:Key="RecipeTemplate">
             <UserControl
                 IsTabStop="True"
-                FocusVisualStyle="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}">
+                FocusVisualStyle="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}"
+                controls:FocusVisualHelper.UseSystemFocusVisuals="True">
                 <Border
                     x:Name="borderRecipeTemplate"
                     HorizontalAlignment="Stretch"
@@ -69,7 +70,8 @@
                 <StackPanel x:Name="stackPanelRecipeGroupTemplate">
                     <UserControl
                         IsTabStop="True"
-                        FocusVisualStyle="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}">
+                        FocusVisualStyle="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}"
+                        controls:FocusVisualHelper.UseSystemFocusVisuals="True">
                         <TextBlock
                             x:Name="groupName"
                             FontSize="24" />
@@ -103,7 +105,8 @@
                         <UserControl
                             Grid.Column="1"
                             IsTabStop="True"
-                            FocusVisualStyle="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}">
+                            FocusVisualStyle="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}"
+                            controls:FocusVisualHelper.UseSystemFocusVisuals="True">
                             <TextBlock
                                 x:Name="yearName"
                                 FontSize="24"

@@ -41,7 +41,7 @@
                                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                                 <Setter Property="VerticalAlignment" Value="Stretch" />
                                 <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
-                                <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-3" />
+                                <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
                                 <Setter Property="FontSize" Value="20" />
                                 <Setter Property="Background" Value="{DynamicResource CalendarViewNavigationButtonBackground}" />
                                 <Setter Property="Template">
@@ -203,6 +203,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="True" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-2" />
         <Setter Property="Template">
             <Setter.Value>
@@ -311,6 +312,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="True" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-2" />
         <Setter Property="Template">
             <Setter.Value>
