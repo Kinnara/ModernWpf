@@ -1,5 +1,6 @@
 ﻿using ModernWpf.Controls.Primitives;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -233,9 +234,11 @@ namespace ModernWpf.Controls
                 null);
 
         [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static readonly DependencyProperty IsPressedProperty = IsPressedPropertyKey.DependencyProperty;
 
         [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool IsPressed
         {
             get => (bool)GetValue(IsPressedProperty);

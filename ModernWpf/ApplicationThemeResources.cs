@@ -1,9 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace ModernWpf
 {
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class ApplicationThemeResources : ResourceDictionary
     {
         private string _key;

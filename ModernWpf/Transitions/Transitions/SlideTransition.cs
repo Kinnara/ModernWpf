@@ -4,6 +4,7 @@
 // All other rights reserved.
 
 using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace ModernWpf.Controls
@@ -12,6 +13,7 @@ namespace ModernWpf.Controls
     /// Provides slide <see cref="T:ModernWpf.Controls.ITransition"/>s.
     /// </summary>
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class SlideTransition : TransitionElement
     {
         /// <summary>

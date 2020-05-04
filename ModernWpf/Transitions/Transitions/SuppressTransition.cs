@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Animation;
 
 namespace ModernWpf.Controls
 {
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class SuppressTransition : TransitionElement
     {
         public override ITransition GetTransition(UIElement element)

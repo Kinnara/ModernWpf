@@ -4,6 +4,7 @@
 // All other rights reserved.
 
 using System;
+using System.ComponentModel;
 using System.Windows.Media.Animation;
 
 namespace ModernWpf.Controls
@@ -12,6 +13,7 @@ namespace ModernWpf.Controls
     /// Controls the behavior of transitions.
     /// </summary>
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public interface ITransition
     {
         /// <summary>

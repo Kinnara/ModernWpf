@@ -4,6 +4,7 @@
 // All other rights reserved.
 
 using System;
+using System.ComponentModel;
 
 namespace ModernWpf.Controls
 {
@@ -11,6 +12,7 @@ namespace ModernWpf.Controls
     /// The slide transition modes.
     /// </summary>
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public enum SlideTransitionMode
     {
         /// <summary>

@@ -9,6 +9,7 @@ namespace ModernWpf
     ///     Contains bindable properties that are queries into the system's various colors.
     /// </summary>
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static class BindableSystemColors
     {
         static BindableSystemColors()

@@ -4,6 +4,7 @@
 // All other rights reserved.
 
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -25,6 +26,7 @@ namespace ModernWpf.Controls
     /// <see cref="T:System.Windows.UIElement"/>.
     /// </summary>
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class Transition : ITransition
     {
         /// <summary>

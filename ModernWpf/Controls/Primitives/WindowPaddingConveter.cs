@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -6,6 +7,7 @@ using System.Windows.Data;
 namespace ModernWpf.Controls.Primitives
 {
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class WindowPaddingConveter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

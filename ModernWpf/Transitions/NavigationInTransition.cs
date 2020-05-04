@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace ModernWpf.Controls
 {
@@ -8,6 +9,7 @@ namespace ModernWpf.Controls
     /// for the designer experiences.
     /// </summary>
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class NavigationInTransition : NavigationTransition
     {
     }

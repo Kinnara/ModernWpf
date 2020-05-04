@@ -4,6 +4,7 @@
 // All other rights reserved.
 
 using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace ModernWpf.Controls
@@ -14,6 +15,7 @@ namespace ModernWpf.Controls
     /// for the designer experiences.
     /// </summary>
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class NavigationTransition : DependencyObject
     {
         /// <summary>

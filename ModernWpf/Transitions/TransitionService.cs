@@ -4,6 +4,7 @@
 // All other rights reserved.
 
 using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace ModernWpf.Controls
@@ -14,6 +15,7 @@ namespace ModernWpf.Controls
     /// </summary>
     /// <QualityBand>Preview</QualityBand>
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static class TransitionService
     {
         /// <summary>

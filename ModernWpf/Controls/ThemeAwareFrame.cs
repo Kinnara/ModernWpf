@@ -1,10 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Navigation;
 
 namespace ModernWpf.Controls
 {
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class ThemeAwareFrame : System.Windows.Controls.Frame
     {
         static ThemeAwareFrame()

@@ -4,6 +4,7 @@
 // All other rights reserved.
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,6 +19,7 @@ namespace ModernWpf.Controls
     /// </summary>
     /// <QualityBand>Preview</QualityBand>
     [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     [TemplatePart(Name = FirstTemplatePartName, Type = typeof(ContentPresenter))]
     [TemplatePart(Name = SecondTemplatePartName, Type = typeof(ContentPresenter))]
     public class TransitionFrame : System.Windows.Controls.Frame

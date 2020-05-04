@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -330,6 +331,7 @@ namespace ModernWpf.Controls.Primitives
         #region IsSystemFocusVisualVisible
 
         [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static bool GetIsSystemFocusVisualVisible(FrameworkElement element)
         {
             return (bool)element.GetValue(IsSystemFocusVisualVisibleProperty);
@@ -343,6 +345,7 @@ namespace ModernWpf.Controls.Primitives
                 null);
 
         [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static readonly DependencyProperty IsSystemFocusVisualVisibleProperty =
             IsSystemFocusVisualVisiblePropertyKey.DependencyProperty;
 
