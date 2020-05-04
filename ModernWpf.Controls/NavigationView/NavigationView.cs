@@ -1667,7 +1667,7 @@ namespace ModernWpf.Controls
                 {
                     if (prevIndicator != null && prevIndicator != m_prevIndicator)
                     {
-                        ResetElementAnimationProperties(prevIndicator, 0.0f);
+                        ResetElementAnimationProperties(prevIndicator, 0.0);
                     }
                     haveValidAnimation = true;
                 }
@@ -1685,8 +1685,8 @@ namespace ModernWpf.Controls
                 if ((prevIndicator != nextIndicator) && paneContentGrid != null && prevIndicator != null && nextIndicator != null && SharedHelpers.IsAnimationsEnabled)
                 {
                     // Make sure both indicators are visible and in their original locations
-                    ResetElementAnimationProperties(prevIndicator, 1.0f);
-                    ResetElementAnimationProperties(nextIndicator, 1.0f);
+                    ResetElementAnimationProperties(prevIndicator, 1.0);
+                    ResetElementAnimationProperties(nextIndicator, 1.0);
 
                     // get the item positions in the pane
                     Point point = new Point(0, 0);
@@ -1740,8 +1740,8 @@ namespace ModernWpf.Controls
                     else
                     {
 
-                        float outgoingEndPosition = (float)(nextPos - prevPos);
-                        float incomingStartPosition = (float)(prevPos - nextPos);
+                        double outgoingEndPosition = nextPos - prevPos;
+                        double incomingStartPosition = prevPos - nextPos;
 
                         // Play the animation on both the previous and next indicators
                         PlayIndicatorAnimations(prevIndicator,
@@ -1775,8 +1775,8 @@ namespace ModernWpf.Controls
                 else
                 {
                     // if all else fails, or if animations are turned off, attempt to correctly set the positions and opacities of the indicators.
-                    ResetElementAnimationProperties(prevIndicator, 0.0f);
-                    ResetElementAnimationProperties(nextIndicator, 1.0f);
+                    ResetElementAnimationProperties(prevIndicator, 0.0);
+                    ResetElementAnimationProperties(nextIndicator, 1.0);
                 }
 
                 m_activeIndicator = nextIndicator;
@@ -1788,8 +1788,8 @@ namespace ModernWpf.Controls
             var animations = new TimelineCollection();
 
             // Determine scaling of indicator (whether it is appearing or dissapearing)
-            float beginScale = isOutgoing ? 1.0f : 0.0f;
-            float endScale = isOutgoing ? 0.0f : 1.0f;
+            double beginScale = isOutgoing ? 1.0 : 0.0;
+            double endScale = isOutgoing ? 0.0 : 1.0;
             var scaleAnim = new DoubleAnimationUsingKeyFrames
             {
                 KeyFrames =
@@ -1804,7 +1804,7 @@ namespace ModernWpf.Controls
             // Determine where the indicator is animating from/to
             Size size = indicator.RenderSize;
             double dimension = IsTopNavigationView() ? size.Width : size.Height;
-            double newCenter = fromTop ? 0.0f : dimension;
+            double newCenter = fromTop ? 0.0 : dimension;
             var indicatorCenterPoint = new Point();
             indicatorCenterPoint.Y = newCenter;
 
@@ -1817,8 +1817,8 @@ namespace ModernWpf.Controls
             var animations = new TimelineCollection();
 
             // Determine scaling of indicator (whether it is appearing or dissapearing)
-            float beginScale = isOutgoing ? 1.0f : 0.0f;
-            float endScale = isOutgoing ? 0.0f : 1.0f;
+            double beginScale = isOutgoing ? 1.0 : 0.0;
+            double endScale = isOutgoing ? 0.0 : 1.0;
             var scaleAnim = new DoubleAnimationUsingKeyFrames
             {
                 KeyFrames =
@@ -1840,7 +1840,7 @@ namespace ModernWpf.Controls
             PlayIndicatorAnimationsHelper(indicator, animations, indicatorCenterPoint);
         }
 
-        void PlayIndicatorAnimations(UIElement indicator, float from, float to, Size beginSize, Size endSize, bool isOutgoing)
+        void PlayIndicatorAnimations(UIElement indicator, double from, double to, Size beginSize, Size endSize, bool isOutgoing)
         {
             Size size = indicator.RenderSize;
             double dimension = IsTopNavigationView() ? size.Width : size.Height;
@@ -1854,23 +1854,6 @@ namespace ModernWpf.Controls
             }
 
             var animations = new TimelineCollection();
-
-            if (isOutgoing)
-            {
-                // fade the outgoing indicator so it looks nice when animating over the scroll area
-                var opacityAnim = new DoubleAnimationUsingKeyFrames
-                {
-                    KeyFrames =
-                    {
-                        new DiscreteDoubleKeyFrame(1.0, KeyTime.FromPercent(0.0)),
-                        new DiscreteDoubleKeyFrame(1.0, KeyTime.FromPercent(0.333)),
-                        new SplineDoubleKeyFrame(0.0, KeyTime.FromPercent(1.0), new KeySpline(c_frame2point1, c_frame2point2)),
-                    },
-                    Duration = TimeSpan.FromMilliseconds(600)
-                };
-                Storyboard.SetTargetProperty(opacityAnim, s_opacityPath);
-                animations.Add(opacityAnim);
-            }
 
             var posAnim = new DoubleAnimationUsingKeyFrames
             {
@@ -1908,6 +1891,23 @@ namespace ModernWpf.Controls
                 Duration = TimeSpan.FromMilliseconds(200)
             };
             animations.Add(centerAnim);
+
+            if (isOutgoing)
+            {
+                // fade the outgoing indicator so it looks nice when animating over the scroll area
+                var opacityAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(1.0, KeyTime.FromPercent(0.0)),
+                        new DiscreteDoubleKeyFrame(1.0, KeyTime.FromPercent(0.333)),
+                        new SplineDoubleKeyFrame(0.0, KeyTime.FromPercent(1.0), new KeySpline(c_frame2point1, c_frame2point2)),
+                    },
+                    Duration = TimeSpan.FromMilliseconds(600)
+                };
+                Storyboard.SetTargetProperty(opacityAnim, s_opacityPath);
+                animations.Add(opacityAnim);
+            }
 
             if (IsTopNavigationView())
             {
@@ -1968,15 +1968,15 @@ namespace ModernWpf.Controls
         void OnAnimationComplete(object sender, EventArgs args)
         {
             var indicator = m_prevIndicator;
-            ResetElementAnimationProperties(indicator, 0.0f);
+            ResetElementAnimationProperties(indicator, 0.0);
             m_prevIndicator = null;
 
             indicator = m_nextIndicator;
-            ResetElementAnimationProperties(indicator, 1.0f);
+            ResetElementAnimationProperties(indicator, 1.0);
             m_nextIndicator = null;
         }
 
-        void ResetElementAnimationProperties(UIElement element, float desiredOpacity)
+        void ResetElementAnimationProperties(UIElement element, double desiredOpacity)
         {
             if (element != null)
             {
@@ -4330,7 +4330,7 @@ namespace ModernWpf.Controls
                     GeneralTransform gt = this.SafeTransformToVisual(root);
                     Point pos = gt.Transform(new Point());
 
-                    if (pos.Y == 0.0f)
+                    if (pos.Y == 0.0)
                     {
                         topPadding = coreTitleBar.Height;
                     }
