@@ -302,7 +302,7 @@
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="true" />
-                                <Condition Property="IsPressed" Value="false" />
+                                <Condition SourceName="SwitchThumb" Property="IsDragging" Value="false" />
                             </MultiTrigger.Conditions>
                             <Setter Property="Stroke" TargetName="OuterBorder" Value="{DynamicResource ToggleSwitchStrokeOffPointerOver}" />
                             <Setter Property="Fill" TargetName="OuterBorder" Value="{DynamicResource ToggleSwitchFillOffPointerOver}" />
@@ -313,7 +313,7 @@
                             <Setter Property="Background" TargetName="SwitchAreaGrid" Value="{DynamicResource ToggleSwitchContainerBackgroundPointerOver}" />
                         </MultiTrigger>
                         <!-- Pressed -->
-                        <Trigger Property="IsPressed" Value="true">
+                        <Trigger SourceName="SwitchThumb" Property="IsDragging" Value="true">
                             <Setter Property="Stroke" TargetName="OuterBorder" Value="{DynamicResource ToggleSwitchStrokeOffPressed}" />
                             <Setter Property="Fill" TargetName="OuterBorder" Value="{DynamicResource ToggleSwitchFillOffPressed}" />
                             <Setter Property="Fill" TargetName="SwitchKnobOff" Value="{DynamicResource ToggleSwitchKnobFillOffPressed}" />
@@ -334,13 +334,6 @@
                             <Setter Property="Fill" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchFillOnDisabled}" />
                             <Setter Property="Stroke" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchStrokeOnDisabled}" />
                             <Setter Property="Background" TargetName="SwitchAreaGrid" Value="{DynamicResource ToggleSwitchContainerBackgroundDisabled}" />
-                        </Trigger>
-
-                        <Trigger Property="IsOn" Value="true">
-                            <Setter TargetName="SwitchKnobBounds" Property="Opacity" Value="1" />
-                            <Setter TargetName="OuterBorder" Property="Opacity" Value="0" />
-                            <Setter TargetName="SwitchKnobOn" Property="Opacity" Value="1" />
-                            <Setter TargetName="SwitchKnobOff" Property="Opacity" Value="0" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -23,7 +23,7 @@ namespace ModernWpf
             {
                 useTransitions &= Helper.IsAnimationsEnabled;
 
-                if (useTransitions && group.Transitions.Count > 0 && VisualStateGroupHelper.IsSupported)
+                if (group.Transitions.Count > 0 && VisualStateGroupHelper.IsSupported)
                 {
                     return GoToStateInternal(control, stateGroupsRoot, group, state, useTransitions);
                 }

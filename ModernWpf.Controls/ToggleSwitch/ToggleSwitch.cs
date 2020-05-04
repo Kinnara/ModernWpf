@@ -232,12 +232,14 @@ namespace ModernWpf.Controls
                 typeof(ToggleSwitch),
                 null);
 
+        [Obsolete]
         public static readonly DependencyProperty IsPressedProperty = IsPressedPropertyKey.DependencyProperty;
 
+        [Obsolete]
         public bool IsPressed
         {
             get => (bool)GetValue(IsPressedProperty);
-            protected set => SetValue(IsPressedPropertyKey, value);
+            private set => SetValue(IsPressedPropertyKey, value);
         }
 
         #endregion
