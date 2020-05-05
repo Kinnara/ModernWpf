@@ -10,25 +10,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid
-        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-        Margin="12">
-        <TabControl
-            x:Name="rootPivot"
-            Style="{StaticResource TabControlPivotStyle}"
-            controls:PivotHelper.Title="PIVOT TITLE">
-            <controls:PivotHelper.RightHeader>
-                <TextBlock Text="This is the right header" />
-            </controls:PivotHelper.RightHeader>
-            <TabItem Header="Pivot Item 1">
-                <TextBlock Text="Content of pivot item 1." />
-            </TabItem>
-            <TabItem Header="Pivot Item 2">
-                <TextBlock Text="Content of pivot item 2." />
-            </TabItem>
-            <TabItem Header="Pivot Item 3">
-                <TextBlock Text="Content of pivot item 3." />
-            </TabItem>
-        </TabControl>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12">
+        <Pivot x:Name="rootPivot" Title="PIVOT TITLE">
+            <Pivot.RightHeader>
+                <TextBlock Text="This is the right header"/>
+            </Pivot.RightHeader>
+            <PivotItem Header="Pivot Item 1">
+                <TextBlock Text="Content of pivot item 1."/>
+            </PivotItem>
+            <PivotItem Header="Pivot Item 2">
+                <TextBlock Text="Content of pivot item 2."/>
+            </PivotItem>
+            <PivotItem Header="Pivot Item 3">
+                <TextBlock Text="Content of pivot item 3."/>
+            </PivotItem>
+        </Pivot>
     </Grid>
 </local:TestPage>

@@ -102,6 +102,8 @@
     <Style x:Key="TabControlPivotStyle" TargetType="TabControl">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource PivotBackground}" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="ItemContainerStyle" Value="{StaticResource TabItemPivotStyle}" />
         <Setter Property="Template">
             <Setter.Value>
