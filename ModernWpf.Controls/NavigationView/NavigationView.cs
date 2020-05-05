@@ -2408,6 +2408,9 @@ namespace ModernWpf.Controls
                     case Key.Up:
                         FocusNextUpItem(nvi, args);
                         break;
+                    case Key.Right:
+                        FocusNextRightItem(nvi, args);
+                        break;
                 }
             }
         }
@@ -2493,6 +2496,18 @@ namespace ModernWpf.Controls
                     args.Handled = childRepeater.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
                 }
             }
+
+            // WPF
+            if (!args.Handled)
+            {
+                args.Handled = nvi.MoveFocus(new TraversalRequest(FocusNavigationDirection.Down));
+            }
+        }
+
+        // WPF
+        void FocusNextRightItem(NavigationViewItem nvi, KeyEventArgs args)
+        {
+            args.Handled = nvi.MoveFocus(new TraversalRequest(FocusNavigationDirection.Right));
         }
 
         void KeyboardFocusFirstItemFromItem(NavigationViewItemBase nvib)

@@ -95,7 +95,6 @@ namespace ModernWpf.Controls.Primitives
             if (currentState != null)
             {
                 CurrentStateName = currentState.Name;
-                Debug.WriteLine(currentState.Name);
             }
             else
             {
