@@ -19,21 +19,22 @@
                         VerticalAlignment="Top"
                         SnapsToDevicePixels="True">
                         <VisualStateManager.VisualStateGroups>
-                            <ui:VisualStateGroupEx x:Name="ApplicationViewStates">
+                            <VisualStateGroup x:Name="ApplicationViewStates">
                                 <VisualState x:Name="FullSize" />
                                 <VisualState x:Name="Compact" />
                                 <VisualState x:Name="Overflow" />
-                            </ui:VisualStateGroupEx>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" GroupName="ApplicationViewStates" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <!-- Overflow -->
-                        <DataTrigger Binding="{Binding CurrentStateName, ElementName=ApplicationViewStates}" Value="Overflow">
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="SeparatorRectangle" Property="Width" Value="NaN" />
                             <Setter TargetName="SeparatorRectangle" Property="HorizontalAlignment" Value="Stretch" />
                             <Setter TargetName="SeparatorRectangle" Property="Height" Value="1" />
                             <Setter TargetName="SeparatorRectangle" Property="Margin" Value="12,4,12,4" />
-                        </DataTrigger>
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

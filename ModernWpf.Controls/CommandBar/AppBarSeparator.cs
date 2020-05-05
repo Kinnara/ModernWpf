@@ -57,11 +57,6 @@ namespace ModernWpf.Controls
             get => (AppBarElementApplicationViewState)GetValue(ApplicationViewStateProperty);
         }
 
-        void IAppBarElement.UpdateApplicationViewState()
-        {
-            UpdateApplicationViewState();
-        }
-
         private void UpdateApplicationViewState()
         {
             AppBarElementApplicationViewState value;
@@ -80,6 +75,16 @@ namespace ModernWpf.Controls
             }
 
             SetValue(AppBarElementProperties.ApplicationViewStatePropertyKey, value);
+        }
+
+        void IAppBarElement.UpdateApplicationViewState()
+        {
+            UpdateApplicationViewState();
+        }
+
+        void IAppBarElement.ApplyApplicationViewState()
+        {
+            UpdateVisualState();
         }
 
         #endregion
@@ -113,11 +118,6 @@ namespace ModernWpf.Controls
         private void UpdateVisualState(bool useTransitions = true)
         {
             VisualStateManager.GoToState(this, ApplicationViewState.ToString(), useTransitions);
-        }
-
-        void IAppBarElement.UpdateVisualState()
-        {
-            UpdateVisualState();
         }
     }
 }

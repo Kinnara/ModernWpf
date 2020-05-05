@@ -62,7 +62,7 @@ namespace ModernWpf.Controls.Primitives
                     }
                 }
 
-                AssertGroupIsNotNull();
+                VerifyGroup();
             }
 
             UpdateCurrentStateName(_group?.CurrentState);
@@ -95,6 +95,7 @@ namespace ModernWpf.Controls.Primitives
             if (currentState != null)
             {
                 CurrentStateName = currentState.Name;
+                Debug.WriteLine(currentState.Name);
             }
             else
             {
@@ -108,7 +109,7 @@ namespace ModernWpf.Controls.Primitives
         }
 
         [Conditional("DEBUG")]
-        private void AssertGroupIsNotNull()
+        private void VerifyGroup()
         {
             if (!DesignerProperties.GetIsInDesignMode(this))
             {

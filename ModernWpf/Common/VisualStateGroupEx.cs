@@ -1,7 +1,11 @@
-﻿using System.Windows;
+﻿using System;
+using System.ComponentModel;
+using System.Windows;
 
 namespace ModernWpf
 {
+    [Obsolete]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public class VisualStateGroupEx : VisualStateGroup
     {
         public VisualStateGroupEx()

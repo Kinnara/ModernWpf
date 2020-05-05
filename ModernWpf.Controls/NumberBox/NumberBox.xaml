@@ -265,7 +265,7 @@
                                 </VisualState>
                             </VisualStateGroup>
 
-                            <ui:VisualStateGroupEx x:Name="DownSpinButtonEnabledStates">
+                            <VisualStateGroup x:Name="DownSpinButtonEnabledStates">
                                 <VisualState x:Name="DownSpinButtonEnabled" />
                                 <VisualState x:Name="DownSpinButtonDisabled">
                                     <Storyboard>
@@ -277,7 +277,7 @@
                                         </BooleanAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-                            </ui:VisualStateGroupEx>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
                         <Grid.Resources>

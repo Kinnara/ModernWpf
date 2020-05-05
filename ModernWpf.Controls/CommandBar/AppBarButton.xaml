@@ -38,17 +38,23 @@
                                 <VisualState x:Name="OverflowWithMenuIcons" />
                                 <VisualState x:Name="OverflowWithToggleButtonsAndMenuIcons" />
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Disabled" />
+                                <VisualState x:Name="OverflowNormal" />
+                                <VisualState x:Name="OverflowPointerOver" />
+                                <VisualState x:Name="OverflowPressed" />
+                                <!--<VisualState x:Name="OverflowSubMenuOpened" />-->
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
+                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
+                            </VisualStateGroup>
                             <VisualStateGroup x:Name="FlyoutStates">
                                 <VisualState x:Name="NoFlyout" />
-                                <VisualState x:Name="HasFlyout">
-                                    <VisualState.Storyboard>
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SubItemChevron" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState.Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="HasFlyout" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid>
@@ -126,6 +132,9 @@
 
                             </Grid>
                             <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" GroupName="ApplicationViewStates" />
+                            <ui:VisualStateGroupListener x:Name="CommonStatesListener" GroupName="CommonStates" />
+                            <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" GroupName="KeyboardAcceleratorTextVisibility" />
+                            <ui:VisualStateGroupListener x:Name="FlyoutStatesListener" GroupName="FlyoutStates" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -191,11 +200,7 @@
                         <!--#endregion-->
                         <!--#region CommonStates-->
                         <!-- PointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="False" />
-                                <Condition Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOver">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
                             <Setter TargetName="AppBarButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
@@ -203,13 +208,9 @@
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- Pressed -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="False" />
-                                <Condition Property="IsPressed" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Pressed">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
                             <Setter TargetName="AppBarButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
@@ -217,9 +218,9 @@
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- Disabled -->
-                        <Trigger Property="IsEnabled" Value="False">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundDisabled}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushDisabled}" />
                             <Setter TargetName="AppBarButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarButtonBorderBrushDisabled}" />
@@ -229,11 +230,7 @@
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundDisabled}" />
                         </Trigger>
                         <!-- OverflowPointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="True" />
-                                <Condition Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPointerOver">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
                             <Setter TargetName="AppBarButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
@@ -241,14 +238,10 @@
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />
-                            <!--<Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPointerOver}" />-->
-                        </MultiTrigger>
+                            <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPointerOver}" />
+                        </Trigger>
                         <!-- OverflowPressed -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="True" />
-                                <Condition Property="IsPressed" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPressed">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
                             <Setter TargetName="AppBarButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
@@ -256,10 +249,10 @@
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />
-                            <!--<Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPressed}" />-->
-                        </MultiTrigger>
+                            <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPressed}" />
+                        </Trigger>
                         <!-- OverflowSubMenuOpened -->
-                        <!--<MultiTrigger>
+                        <!--<Trigger>
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundSubMenuOpened}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushSubMenuOpened}" />
                             <Setter TargetName="AppBarButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarButtonBorderBrushSubMenuOpened}" />
@@ -268,16 +261,16 @@
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundSubMenuOpened}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened}" />
                             <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundSubMenuOpened}" />
-                        </MultiTrigger>-->
+                        </Trigger>-->
                         <!--#endregion-->
                         <!-- KeyboardAcceleratorTextVisible -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="HasInputGestureText" Value="True" />
-                                <Condition Property="IsInOverflow" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="KeyboardAcceleratorTextVisibilityListener" Property="CurrentStateName" Value="KeyboardAcceleratorTextVisible">
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
-                        </MultiTrigger>
+                        </Trigger>
+                        <!-- HasFlyout -->
+                        <Trigger SourceName="FlyoutStatesListener" Property="CurrentStateName" Value="HasFlyout">
+                            <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

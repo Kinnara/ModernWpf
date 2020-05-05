@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using ModernWpf.Controls.Primitives;
@@ -11,6 +13,9 @@ namespace ModernWpf.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AppBarToggleButton),
                 new FrameworkPropertyMetadata(typeof(AppBarToggleButton)));
+
+            IsEnabledProperty.OverrideMetadata(typeof(AppBarToggleButton),
+                new FrameworkPropertyMetadata(OnIsEnabledChanged));
 
             CommandProperty.OverrideMetadata(typeof(AppBarToggleButton),
                 new FrameworkPropertyMetadata(OnCommandPropertyChanged));
@@ -26,6 +31,12 @@ namespace ModernWpf.Controls
 
             CommandBarToolBar.DefaultLabelPositionProperty.OverrideMetadata(typeof(AppBarToggleButton),
                 new FrameworkPropertyMetadata(OnDefaultLabelPositionPropertyChanged));
+
+            AppBarElementProperties.IsInOverflowPropertyKey.OverrideMetadata(typeof(AppBarToggleButton),
+                new FrameworkPropertyMetadata(OnIsInOverflowChanged));
+
+            AppBarElementProperties.ShowKeyboardAcceleratorTextProperty.OverrideMetadata(typeof(AppBarToggleButton),
+                new FrameworkPropertyMetadata(OnShowKeyboardAcceleratorTextPropertyChanged));
         }
 
         public AppBarToggleButton()
@@ -134,6 +145,12 @@ namespace ModernWpf.Controls
             get => (bool)GetValue(IsInOverflowProperty);
         }
 
+        private static void OnIsInOverflowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var button = (AppBarToggleButton)d;
+            button.UpdateCommonState();
+        }
+
         #endregion
 
         #region ApplicationViewState
@@ -144,11 +161,6 @@ namespace ModernWpf.Controls
         private AppBarElementApplicationViewState ApplicationViewState
         {
             get => (AppBarElementApplicationViewState)GetValue(ApplicationViewStateProperty);
-        }
-
-        void IAppBarElement.UpdateApplicationViewState()
-        {
-            UpdateApplicationViewState();
         }
 
         private void UpdateApplicationViewState()
@@ -200,6 +212,21 @@ namespace ModernWpf.Controls
                                  AppBarElementApplicationViewState.Overflow;
         }
 
+        private void ApplyApplicationViewState(bool useTransitions = true)
+        {
+            VisualStateManager.GoToState(this, ApplicationViewState.ToString(), useTransitions);
+        }
+
+        void IAppBarElement.UpdateApplicationViewState()
+        {
+            UpdateApplicationViewState();
+        }
+
+        void IAppBarElement.ApplyApplicationViewState()
+        {
+            ApplyApplicationViewState();
+        }
+
         #endregion
 
         #region IsCheckedOrIndeterminate
@@ -211,9 +238,13 @@ namespace ModernWpf.Controls
                 typeof(AppBarToggleButton),
                 new PropertyMetadata(false));
 
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static readonly DependencyProperty IsCheckedOrIndeterminateProperty =
             IsCheckedOrIndeterminatePropertyKey.DependencyProperty;
 
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool IsCheckedOrIndeterminate
         {
             get => (bool)GetValue(IsCheckedOrIndeterminateProperty);
@@ -242,9 +273,13 @@ namespace ModernWpf.Controls
 
         #region HasInputGestureText
 
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static readonly DependencyProperty HasInputGestureTextProperty =
             AppBarElementProperties.HasInputGestureTextProperty.AddOwner(typeof(AppBarToggleButton));
 
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool HasInputGestureText
         {
             get => (bool)GetValue(HasInputGestureTextProperty);
@@ -255,6 +290,13 @@ namespace ModernWpf.Controls
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+
+            if (this.GetTemplateRoot() is { } templateRoot)
+            {
+                _vsm = new AppBarElementVisualStateManager();
+                VisualStateManager.SetCustomVisualStateManager(templateRoot, _vsm);
+            }
+
             UpdateVisualState(false);
         }
 
@@ -269,10 +311,26 @@ namespace ModernWpf.Controls
         {
             base.OnPropertyChanged(e);
 
-            if (e.Property == ToolBar.IsOverflowItemProperty)
+            if (e.Property == IsMouseOverProperty)
+            {
+                UpdateCommonState();
+            }
+            else if (e.Property == ToolBar.IsOverflowItemProperty)
             {
                 AppBarElementProperties.UpdateIsInOverflow(this);
             }
+        }
+
+        protected override void OnIsPressedChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnIsPressedChanged(e);
+            UpdateCommonState();
+        }
+
+        private static void OnIsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var button = (AppBarToggleButton)d;
+            button.UpdateCommonState();
         }
 
         private static void OnCommandPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -284,7 +342,9 @@ namespace ModernWpf.Controls
 
         private static void OnIsCheckedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AppBarToggleButton)d).UpdateIsCheckedOrIndeterminate();
+            var button = (AppBarToggleButton)d;
+            button.UpdateIsCheckedOrIndeterminate();
+            button.UpdateCommonState();
         }
 
         private static void OnOverflowModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -297,6 +357,11 @@ namespace ModernWpf.Controls
             ((AppBarToggleButton)d).UpdateApplicationViewState();
         }
 
+        private static void OnShowKeyboardAcceleratorTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AppBarToggleButton)d).UpdateKeyboardAcceleratorTextVisibility();
+        }
+
         private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             UpdateApplicationViewState();
@@ -304,12 +369,62 @@ namespace ModernWpf.Controls
 
         private void UpdateVisualState(bool useTransitions = true)
         {
-            VisualStateManager.GoToState(this, ApplicationViewState.ToString(), useTransitions);
+            ApplyApplicationViewState(useTransitions);
+            UpdateCommonState(useTransitions);
         }
 
-        void IAppBarElement.UpdateVisualState()
+        private void UpdateCommonState(bool useTransitions = true)
         {
-            UpdateVisualState();
+            string stateName;
+            bool isChecked = IsChecked != false;
+
+            if (!IsEnabled)
+            {
+                stateName = "Disabled";
+            }
+            else if (IsPressed)
+            {
+                stateName = "Pressed";
+            }
+            else if (IsMouseOver)
+            {
+                stateName = "PointerOver";
+            }
+            else if (!isChecked)
+            {
+                stateName = "Normal";
+            }
+            else
+            {
+                stateName = string.Empty;
+            }
+
+            if (isChecked)
+            {
+                stateName = "Checked" + stateName;
+            }
+
+            if (IsInOverflow)
+            {
+                stateName = "Overflow" + stateName;
+            }
+
+            if (_vsm != null)
+            {
+                _vsm.CanChangeCommonState = true;
+                VisualStateManager.GoToState(this, stateName, useTransitions);
+                _vsm.CanChangeCommonState = false;
+            }
         }
+
+        private void UpdateKeyboardAcceleratorTextVisibility(bool useTransitions = true)
+        {
+            string stateName = AppBarElementProperties.GetShowKeyboardAcceleratorText(this) ?
+                "KeyboardAcceleratorTextVisible" :
+                "KeyboardAcceleratorTextCollapsed";
+            VisualStateManager.GoToState(this, stateName, useTransitions);
+        }
+
+        private AppBarElementVisualStateManager _vsm;
     }
 }

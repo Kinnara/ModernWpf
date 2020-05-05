@@ -334,13 +334,13 @@
                             <root:SimpleVisualStateManager />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
-                            <root:VisualStateGroupEx x:Name="ConsciousStates">
+                            <VisualStateGroup x:Name="ConsciousStates">
                                 <VisualStateGroup.Transitions>
                                     <VisualTransition From="Expanded" To="Collapsed" Storyboard="{StaticResource ExpandedToCollapsedStoryboard}" />
                                 </VisualStateGroup.Transitions>
                                 <VisualState x:Name="Collapsed" />
                                 <VisualState x:Name="Expanded" Storyboard="{StaticResource ExpandedStoryboard}" />
-                            </root:VisualStateGroupEx>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <Grid.RowDefinitions>
@@ -418,15 +418,16 @@
                                 Content="&#xE0E5;"
                                 Template="{StaticResource ScrollBarButtonTemplate}"
                                 HorizontalAlignment="Center" />
+                            <primitives:VisualStateGroupListener x:Name="ConsciousStatesListener" GroupName="ConsciousStates" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=ConsciousStates, Path=CurrentStateName}" Value="Expanded">
+                        <Trigger SourceName="ConsciousStatesListener" Property="CurrentStateName" Value="Expanded">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource ScrollBarBackgroundPointerOver}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrushPointerOver}" />
                             <Setter TargetName="VerticalTrackRect" Property="Stroke" Value="{DynamicResource ScrollBarTrackStrokePointerOver}" />
                             <Setter TargetName="VerticalTrackRect" Property="Fill" Value="{DynamicResource ScrollBarTrackFillPointerOver}" />
-                        </DataTrigger>
+                        </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource ScrollBarBackgroundDisabled}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrushDisabled}" />
@@ -573,13 +574,13 @@
                                     <root:SimpleVisualStateManager />
                                 </VisualStateManager.CustomVisualStateManager>
                                 <VisualStateManager.VisualStateGroups>
-                                    <root:VisualStateGroupEx x:Name="ConsciousStates">
+                                    <VisualStateGroup x:Name="ConsciousStates">
                                         <VisualStateGroup.Transitions>
                                             <VisualTransition From="Expanded" To="Collapsed" Storyboard="{StaticResource ExpandedToCollapsedStoryboard}" />
                                         </VisualStateGroup.Transitions>
                                         <VisualState x:Name="Collapsed" />
                                         <VisualState x:Name="Expanded" Storyboard="{StaticResource ExpandedStoryboard}" />
-                                    </root:VisualStateGroupEx>
+                                    </VisualStateGroup>
                                 </VisualStateManager.VisualStateGroups>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -657,15 +658,16 @@
                                         Template="{StaticResource ScrollBarButtonTemplate}"
                                         Width="{StaticResource ScrollBarSize}"
                                         VerticalAlignment="Center" />
+                                    <primitives:VisualStateGroupListener x:Name="ConsciousStatesListener" GroupName="ConsciousStates" />
                                 </Grid>
                             </Border>
                             <ControlTemplate.Triggers>
-                                <DataTrigger Binding="{Binding ElementName=ConsciousStates, Path=CurrentStateName}" Value="Expanded">
+                                <Trigger SourceName="ConsciousStatesListener" Property="CurrentStateName" Value="Expanded">
                                     <Setter TargetName="Root" Property="Background" Value="{DynamicResource ScrollBarBackgroundPointerOver}" />
                                     <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrushPointerOver}" />
                                     <Setter TargetName="HorizontalTrackRect" Property="Stroke" Value="{DynamicResource ScrollBarTrackStrokePointerOver}" />
                                     <Setter TargetName="HorizontalTrackRect" Property="Fill" Value="{DynamicResource ScrollBarTrackFillPointerOver}" />
-                                </DataTrigger>
+                                </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter TargetName="Root" Property="Background" Value="{DynamicResource ScrollBarBackgroundDisabled}" />
                                     <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrushDisabled}" />

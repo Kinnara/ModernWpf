@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,7 +10,7 @@ namespace ModernWpf.Controls
     internal interface IAppBarElement
     {
         void UpdateApplicationViewState();
-        void UpdateVisualState();
+        void ApplyApplicationViewState();
     }
 
     internal static class AppBarElementProperties
@@ -102,7 +101,7 @@ namespace ModernWpf.Controls
 
         #region IsInOverflow
 
-        private static readonly DependencyPropertyKey IsInOverflowPropertyKey =
+        internal static readonly DependencyPropertyKey IsInOverflowPropertyKey =
             DependencyProperty.RegisterAttachedReadOnly(
                 "IsInOverflow",
                 typeof(bool),
@@ -115,10 +114,11 @@ namespace ModernWpf.Controls
         private static void OnIsInOverflowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as IAppBarElement)?.UpdateApplicationViewState();
+            UpdateShowKeyboardAcceleratorText(d as FrameworkElement);
             (d as FrameworkElement)?.CoerceValue(FrameworkElement.ToolTipProperty);
         }
 
-        public static void UpdateIsInOverflow(DependencyObject element)
+        internal static void UpdateIsInOverflow(DependencyObject element)
         {
             bool value = ToolBar.GetIsOverflowItem(element) || ToolBar.GetOverflowMode(element) == OverflowMode.Always;
             element.SetValue(IsInOverflowPropertyKey, value);
@@ -142,7 +142,7 @@ namespace ModernWpf.Controls
 
         private static void OnApplicationViewStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            (d as IAppBarElement)?.UpdateVisualState();
+            (d as IAppBarElement)?.ApplyApplicationViewState();
         }
 
         #endregion
@@ -201,14 +201,49 @@ namespace ModernWpf.Controls
                 "HasInputGestureText",
                 typeof(bool),
                 typeof(AppBarElementProperties),
-                new PropertyMetadata(false));
+                new PropertyMetadata(false, OnHasInputGestureTextChanged));
 
         public static readonly DependencyProperty HasInputGestureTextProperty =
             HasInputGestureTextPropertyKey.DependencyProperty;
 
+        private static void OnHasInputGestureTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateShowKeyboardAcceleratorText(d as FrameworkElement);
+        }
+
         private static void UpdateHasInputGestureText(DependencyObject element, string inputGestureText)
         {
             element.SetValue(HasInputGestureTextPropertyKey, !string.IsNullOrEmpty(inputGestureText));
+        }
+
+        #endregion
+
+        #region ShowKeyboardAcceleratorText
+
+        internal static readonly DependencyProperty ShowKeyboardAcceleratorTextProperty =
+            DependencyProperty.RegisterAttached(
+                "ShowKeyboardAcceleratorText",
+                typeof(bool),
+                typeof(AppBarElementProperties));
+
+        internal static bool GetShowKeyboardAcceleratorText(DependencyObject element)
+        {
+            return (bool)element.GetValue(ShowKeyboardAcceleratorTextProperty);
+        }
+
+        private static void SetShowKeyboardAcceleratorText(DependencyObject element, bool value)
+        {
+            element.SetValue(ShowKeyboardAcceleratorTextProperty, value);
+        }
+
+        private static void UpdateShowKeyboardAcceleratorText(FrameworkElement element)
+        {
+            if (element != null)
+            {
+                bool value = (bool)element.GetValue(HasInputGestureTextProperty) &&
+                             (bool)element.GetValue(IsInOverflowProperty);
+                SetShowKeyboardAcceleratorText(element, value);
+            }
         }
 
         #endregion

@@ -44,6 +44,20 @@
                                 <VisualState x:Name="OverflowWithMenuIcons" />
                                 <VisualState x:Name="OverflowWithToggleButtonsAndMenuIcons" />
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Disabled" />
+                                <VisualState x:Name="OverflowNormal" />
+                                <VisualState x:Name="OverflowPointerOver" />
+                                <VisualState x:Name="OverflowPressed" />
+                                <!--<VisualState x:Name="OverflowSubMenuOpened" />-->
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
+                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="ContentRoot">
                             <Grid.ColumnDefinitions>
@@ -95,9 +109,12 @@
                                 VerticalAlignment="Center"
                                 Visibility="Collapsed" />-->
                             <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" GroupName="ApplicationViewStates" />
+                            <ui:VisualStateGroupListener x:Name="CommonStatesListener" GroupName="CommonStates" />
+                            <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" GroupName="KeyboardAcceleratorTextVisibility" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <!--#region ApplicationViewStates-->
                         <!-- Overflow -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
@@ -133,60 +150,43 @@
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Margin" Value="76,0,12,0" />
                         </Trigger>
+                        <!--#endregion-->
+                        <!--#region CommonStates-->
                         <!-- PointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="False" />
-                                <Condition Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOver">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- Pressed -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="False" />
-                                <Condition Property="IsPressed" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Pressed">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- Disabled -->
-                        <Trigger Property="IsEnabled" Value="False">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                         </Trigger>
                         <!-- OverflowPointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="True" />
-                                <Condition Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPointerOver">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- OverflowPressed -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="True" />
-                                <Condition Property="IsPressed" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPressed">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- OverflowSubMenuOpened -->
-                        <!--<MultiTrigger>
+                        <!--<Trigger>
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
-                        </MultiTrigger>-->
+                        </Trigger>-->
+                        <!--#endregion-->
                         <!-- KeyboardAcceleratorTextVisible -->
-                        <Trigger Property="HasInputGestureText" Value="True">
+                        <Trigger SourceName="KeyboardAcceleratorTextVisibilityListener" Property="CurrentStateName" Value="KeyboardAcceleratorTextVisible">
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <!-- HasFlyout -->
-                        <!--<MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="ToolBar.IsOverflowItem" Value="True" />
-                                <Condition Property="HasFlyout" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <!--<Trigger>
                             <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
-                        </MultiTrigger>-->
+                        </Trigger>-->
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -196,7 +196,7 @@
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="Width" Value="NaN" />
                 <Setter Property="Height" Value="32" />
-                <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="0" />
+                <Setter Property="FocusVisualMargin" Value="0" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -234,6 +234,26 @@
                                 <VisualState x:Name="LabelCollapsed" />
                                 <VisualState x:Name="Overflow" />
                                 <VisualState x:Name="OverflowWithMenuIcons" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Disabled" />
+                                <VisualState x:Name="Checked" />
+                                <VisualState x:Name="CheckedPointerOver" />
+                                <VisualState x:Name="CheckedPressed" />
+                                <VisualState x:Name="CheckedDisabled" />
+                                <VisualState x:Name="OverflowNormal" />
+                                <VisualState x:Name="OverflowPointerOver" />
+                                <VisualState x:Name="OverflowPressed" />
+                                <VisualState x:Name="OverflowChecked" />
+                                <VisualState x:Name="OverflowCheckedPointerOver" />
+                                <VisualState x:Name="OverflowCheckedPressed" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
+                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid>
@@ -292,9 +312,12 @@
                                     Visibility="Collapsed" />
                             </Grid>
                             <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" GroupName="ApplicationViewStates" />
+                            <ui:VisualStateGroupListener x:Name="CommonStatesListener" GroupName="CommonStates" />
+                            <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" GroupName="KeyboardAcceleratorTextVisibility" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <!--#region ApplicationViewStates-->
                         <!-- Overflow -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
@@ -317,71 +340,42 @@
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Margin" Value="76,0,12,0" />
                         </Trigger>
+                        <!--#endregion-->
+                        <!--#region CommonStates-->
                         <!-- PointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="False" />
-                                <Condition Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOver">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- Pressed -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="False" />
-                                <Condition Property="IsPressed" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Pressed">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- Disabled -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsCheckedOrIndeterminate" Value="False" />
-                                <Condition Property="IsEnabled" Value="False" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- Checked -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="False" />
-                                <Condition Property="IsCheckedOrIndeterminate" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Checked">
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- CheckedPointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="False" />
-                                <Condition Property="IsCheckedOrIndeterminate" Value="True" />
-                                <Condition Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPointerOver">
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- CheckedPressed -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="False" />
-                                <Condition Property="IsCheckedOrIndeterminate" Value="True" />
-                                <Condition Property="IsPressed" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPressed">
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- CheckedDisabled -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="False" />
-                                <Condition Property="IsCheckedOrIndeterminate" Value="True" />
-                                <Condition Property="IsEnabled" Value="False" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedDisabled">
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
@@ -389,56 +383,35 @@
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- OverflowPointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="True" />
-                                <Condition Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPointerOver">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- OverflowPressed -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="True" />
-                                <Condition Property="IsPressed" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPressed">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- OverflowChecked -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="True" />
-                                <Condition Property="IsCheckedOrIndeterminate" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowChecked">
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- OverflowCheckedPointerOver -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="True" />
-                                <Condition Property="IsCheckedOrIndeterminate" Value="True" />
-                                <Condition Property="IsMouseOver" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowCheckedPointerOver">
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
-                        </MultiTrigger>
+                        </Trigger>
                         <!-- OverflowCheckedPressed -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsInOverflow" Value="True" />
-                                <Condition Property="IsCheckedOrIndeterminate" Value="True" />
-                                <Condition Property="IsPressed" Value="True" />
-                            </MultiTrigger.Conditions>
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowCheckedPressed">
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
-                        </MultiTrigger>
+                        </Trigger>
+                        <!--#endregion-->
                         <!-- KeyboardAcceleratorTextVisible -->
-                        <Trigger Property="HasInputGestureText" Value="True">
+                        <Trigger SourceName="KeyboardAcceleratorTextVisibilityListener" Property="CurrentStateName" Value="KeyboardAcceleratorTextVisible">
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -450,7 +423,7 @@
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                 <Setter Property="Width" Value="NaN" />
                 <Setter Property="Height" Value="32" />
-                <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="0" />
+                <Setter Property="FocusVisualMargin" Value="0" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -545,10 +518,10 @@
                             </Storyboard>
                             <Storyboard x:Key="CollapsedToExpandedUpStoryboard">
                                 <DoubleAnimation
-                                        Storyboard.TargetName="OuterOverflowContentRoot"
-                                        Storyboard.TargetProperty="Opacity"
-                                        To="1"
-                                        Duration="0" />
+                                    Storyboard.TargetName="OuterOverflowContentRoot"
+                                    Storyboard.TargetProperty="Opacity"
+                                    To="1"
+                                    Duration="0" />
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandedWidth}" />
                                 </ObjectAnimationUsingKeyFrames>
@@ -612,10 +585,10 @@
                             </Storyboard>
                             <Storyboard x:Key="CollapsedToExpandedDownStoryboard">
                                 <DoubleAnimation
-                                        Storyboard.TargetName="OuterOverflowContentRoot"
-                                        Storyboard.TargetProperty="Opacity"
-                                        To="1"
-                                        Duration="0" />
+                                    Storyboard.TargetName="OuterOverflowContentRoot"
+                                    Storyboard.TargetProperty="Opacity"
+                                    To="1"
+                                    Duration="0" />
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandedWidth}" />
                                 </ObjectAnimationUsingKeyFrames>
@@ -733,30 +706,18 @@
                                 <VisualState x:Name="ExpandedUp" Storyboard="{StaticResource ExpandedUpStoryboard}" />
                                 <VisualState x:Name="ExpandedDown" Storyboard="{StaticResource ExpandedDownStoryboard}" />
                             </VisualStateGroup>
-                            <ui:VisualStateGroupEx x:Name="AvailableCommandsStates">
+                            <VisualStateGroup x:Name="AvailableCommandsStates">
                                 <VisualState x:Name="BothCommands" />
-                                <VisualState x:Name="PrimaryCommandsOnly">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRoot" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="SecondaryCommandsOnly">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PrimaryItemsRoot" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </ui:VisualStateGroupEx>
-                            <ui:VisualStateGroupEx x:Name="ExpansionStates2">
+                                <VisualState x:Name="PrimaryCommandsOnly" />
+                                <VisualState x:Name="SecondaryCommandsOnly" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CombinedStates">
                                 <VisualState x:Name="Default" />
                                 <VisualState x:Name="ExpandedUpWithPrimaryCommands" />
                                 <VisualState x:Name="ExpandedDownWithPrimaryCommands" />
                                 <VisualState x:Name="ExpandedUpWithoutPrimaryCommands" />
                                 <VisualState x:Name="ExpandedDownWithoutPrimaryCommands" />
-                            </ui:VisualStateGroupEx>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Border
                             x:Name="OuterContentRoot"
@@ -903,7 +864,8 @@
                                         </Border>
                                     </Border>
                                 </ui:PopupEx>
-                                <ui:VisualStateGroupListener x:Name="ExpansionStatesListener" GroupName="ExpansionStates" />
+                                <ui:VisualStateGroupListener x:Name="AvailableCommandsStatesListener" GroupName="AvailableCommandsStates" />
+                                <ui:VisualStateGroupListener x:Name="CombinedStatesListener" GroupName="CombinedStates" />
                             </Grid>
                         </Border>
                     </Border>
@@ -912,43 +874,48 @@
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="EllipsisIcon" Property="Foreground" Value="{DynamicResource CommandBarEllipsisIconForegroundDisabled}" />
                         </Trigger>
+                        <!-- PrimaryCommandsOnly -->
+                        <Trigger SourceName="AvailableCommandsStatesListener" Property="CurrentStateName" Value="PrimaryCommandsOnly">
+                            <Setter TargetName="OverflowContentRoot" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
                         <!-- SecondaryCommandsOnly -->
-                        <DataTrigger Binding="{Binding ElementName=AvailableCommandsStates, Path=CurrentStateName}" Value="SecondaryCommandsOnly">
+                        <Trigger SourceName="AvailableCommandsStatesListener" Property="CurrentStateName" Value="SecondaryCommandsOnly">
+                            <Setter TargetName="PrimaryItemsRoot" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowPopup" Property="Placement" Value="{x:Static PlacementMode.Relative}" />
                             <Setter TargetName="PART_ToolBarOverflowPanel" Property="Focusable" Value="True" />
-                        </DataTrigger>
+                        </Trigger>
                         <!-- ExpandedUpWithPrimaryCommands -->
-                        <DataTrigger Binding="{Binding ElementName=ExpansionStates2, Path=CurrentStateName}" Value="ExpandedUpWithPrimaryCommands">
+                        <Trigger SourceName="CombinedStatesListener" Property="CurrentStateName" Value="ExpandedUpWithPrimaryCommands">
                             <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderUpThemeThickness}" />
                             <Setter TargetName="LayoutRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
                             <Setter TargetName="PrimaryItemsRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
                             <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
                             <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
-                        </DataTrigger>
+                        </Trigger>
                         <!-- ExpandedDownWithPrimaryCommands -->
-                        <DataTrigger Binding="{Binding ElementName=ExpansionStates2, Path=CurrentStateName}" Value="ExpandedDownWithPrimaryCommands">
+                        <Trigger SourceName="CombinedStatesListener" Property="CurrentStateName" Value="ExpandedDownWithPrimaryCommands">
                             <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderDownThemeThickness}" />
                             <Setter TargetName="LayoutRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
                             <Setter TargetName="PrimaryItemsRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
                             <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
                             <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
-                        </DataTrigger>
+                        </Trigger>
                         <!-- ExpandedUpWithoutPrimaryCommands -->
-                        <DataTrigger Binding="{Binding ElementName=ExpansionStates2, Path=CurrentStateName}" Value="ExpandedUpWithoutPrimaryCommands">
+                        <Trigger SourceName="CombinedStatesListener" Property="CurrentStateName" Value="ExpandedUpWithoutPrimaryCommands">
                             <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderThemeThickness}" />
                             <Setter TargetName="LayoutRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                             <Setter TargetName="PrimaryItemsRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                             <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                             <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
-                        </DataTrigger>
+                        </Trigger>
                         <!-- ExpandedDownWithoutPrimaryCommands -->
-                        <DataTrigger Binding="{Binding ElementName=ExpansionStates2, Path=CurrentStateName}" Value="ExpandedDownWithoutPrimaryCommands">
+                        <Trigger SourceName="CombinedStatesListener" Property="CurrentStateName" Value="ExpandedDownWithoutPrimaryCommands">
                             <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderThemeThickness}" />
                             <Setter TargetName="LayoutRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                             <Setter TargetName="PrimaryItemsRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                             <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                             <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
-                        </DataTrigger>
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
