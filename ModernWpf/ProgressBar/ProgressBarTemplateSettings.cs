@@ -56,42 +56,42 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        #region ContainerAnimationStartPosition2
+        #region Container2AnimationStartPosition
 
-        private static readonly DependencyPropertyKey ContainerAnimationStartPosition2PropertyKey =
+        private static readonly DependencyPropertyKey Container2AnimationStartPositionPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                nameof(ContainerAnimationStartPosition2),
+                nameof(Container2AnimationStartPosition),
                 typeof(double),
                 typeof(ProgressBarTemplateSettings),
                 null);
 
-        public static readonly DependencyProperty ContainerAnimationStartPosition2Property =
-            ContainerAnimationStartPosition2PropertyKey.DependencyProperty;
+        public static readonly DependencyProperty Container2AnimationStartPositionProperty =
+            Container2AnimationStartPositionPropertyKey.DependencyProperty;
 
-        public double ContainerAnimationStartPosition2
+        public double Container2AnimationStartPosition
         {
-            get => (double)GetValue(ContainerAnimationStartPosition2Property);
-            internal set => SetValue(ContainerAnimationStartPosition2PropertyKey, value);
+            get => (double)GetValue(Container2AnimationStartPositionProperty);
+            internal set => SetValue(Container2AnimationStartPositionPropertyKey, value);
         }
 
         #endregion
 
-        #region ContainerAnimationEndPosition2
+        #region Container2AnimationEndPosition
 
-        private static readonly DependencyPropertyKey ContainerAnimationEndPosition2PropertyKey =
+        private static readonly DependencyPropertyKey Container2AnimationEndPositionPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                nameof(ContainerAnimationEndPosition2),
+                nameof(Container2AnimationEndPosition),
                 typeof(double),
                 typeof(ProgressBarTemplateSettings),
                 null);
 
-        public static readonly DependencyProperty ContainerAnimationEndPosition2Property =
-            ContainerAnimationEndPosition2PropertyKey.DependencyProperty;
+        public static readonly DependencyProperty Container2AnimationEndPositionProperty =
+            Container2AnimationEndPositionPropertyKey.DependencyProperty;
 
-        public double ContainerAnimationEndPosition2
+        public double Container2AnimationEndPosition
         {
-            get => (double)GetValue(ContainerAnimationEndPosition2Property);
-            internal set => SetValue(ContainerAnimationEndPosition2PropertyKey, value);
+            get => (double)GetValue(Container2AnimationEndPositionProperty);
+            internal set => SetValue(Container2AnimationEndPositionPropertyKey, value);
         }
 
         #endregion
