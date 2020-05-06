@@ -19,6 +19,9 @@
                     <Grid x:Name="LayoutRoot">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Disabled" />
                                 <VisualState x:Name="Placeholder" />
                                 <VisualState x:Name="PointerOverPlaceholder" />
@@ -27,10 +30,6 @@
                                 <VisualState x:Name="PointerOverSet" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-
-                        <ui:VisualStateGroupListener
-                            x:Name="CommonStatesListener"
-                            GroupName="CommonStates" />
 
                         <StackPanel
                             Orientation="Horizontal"

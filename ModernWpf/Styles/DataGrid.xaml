@@ -328,6 +328,9 @@
                     <Grid x:Name="RowHeaderRoot">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
+                                <primitives:VisualStateGroupListener.Listener>
+                                    <primitives:VisualStateGroupListener x:Name="CommonStatesListener" />
+                                </primitives:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="Normal_CurrentRow">
                                     <!-- For optional row currency and editing glyphs
@@ -420,10 +423,6 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <primitives:VisualStateGroupListener
-                            x:Name="CommonStatesProxy"
-                            GroupName="CommonStates" />
-
                         <Border
                             BorderBrush="{TemplateBinding SeparatorBrush}"
                             BorderThickness="0,0,1,0"
@@ -498,50 +497,50 @@
                         -->
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="Normal_Selected">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Normal_Selected">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedBackground}" />
                             <Setter TargetName="BackgroundRectangle" Property="Opacity" Value="{DynamicResource DataGridRowSelectedBackgroundOpacity}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="Normal_CurrentRow_Selected">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Normal_CurrentRow_Selected">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedBackground}" />
                             <Setter TargetName="BackgroundRectangle" Property="Opacity" Value="{DynamicResource DataGridRowSelectedBackgroundOpacity}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="MouseOver">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="MouseOver">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="MouseOver_CurrentRow">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="MouseOver_CurrentRow">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="MouseOver_Unfocused_EditingRow">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="MouseOver_Unfocused_EditingRow">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="MouseOver_EditingRow">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="MouseOver_EditingRow">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="MouseOver_Unfocused_Selected">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="MouseOver_Unfocused_Selected">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedHoveredUnfocusedBackground}" />
                             <Setter TargetName="BackgroundRectangle" Property="Opacity" Value="{DynamicResource DataGridRowSelectedHoveredUnfocusedBackgroundOpacity}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="MouseOver_Unfocused_CurrentRow_Selected">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="MouseOver_Unfocused_CurrentRow_Selected">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedHoveredUnfocusedBackground}" />
                             <Setter TargetName="BackgroundRectangle" Property="Opacity" Value="{DynamicResource DataGridRowSelectedHoveredUnfocusedBackgroundOpacity}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="MouseOver_CurrentRow_Selected">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="MouseOver_CurrentRow_Selected">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedHoveredBackground}" />
                             <Setter TargetName="BackgroundRectangle" Property="Opacity" Value="{DynamicResource DataGridRowSelectedHoveredBackgroundOpacity}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="MouseOver_Selected">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="MouseOver_Selected">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedHoveredBackground}" />
                             <Setter TargetName="BackgroundRectangle" Property="Opacity" Value="{DynamicResource DataGridRowSelectedHoveredBackgroundOpacity}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="Unfocused_EditingRow">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Unfocused_EditingRow">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedBackground}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="Unfocused_Selected">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Unfocused_Selected">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedUnfocusedBackground}" />
                             <Setter TargetName="BackgroundRectangle" Property="Opacity" Value="{DynamicResource DataGridRowSelectedUnfocusedBackgroundOpacity}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="Unfocused_CurrentRow_Selected">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Unfocused_CurrentRow_Selected">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedUnfocusedBackground}" />
                             <Setter TargetName="BackgroundRectangle" Property="Opacity" Value="{DynamicResource DataGridRowSelectedUnfocusedBackgroundOpacity}" />
                         </Trigger>
@@ -572,6 +571,9 @@
                     <Grid>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
+                                <primitives:VisualStateGroupListener.Listener>
+                                    <primitives:VisualStateGroupListener x:Name="CommonStatesListener" />
+                                </primitives:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="Normal_AlternatingRow" />
                                 <VisualState x:Name="MouseOver" />
@@ -581,9 +583,6 @@
                                 <VisualState x:Name="Unfocused_Selected" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <primitives:VisualStateGroupListener
-                            x:Name="CommonStatesProxy"
-                            GroupName="CommonStates" />
                         <Rectangle
                             x:Name="BackgroundRectangle"
                             Fill="Transparent" />
@@ -625,22 +624,22 @@
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="MouseOver">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="MouseOver">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="Normal_Selected">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Normal_Selected">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedBackground}" />
                             <Setter TargetName="BackgroundRectangle" Property="Opacity" Value="{DynamicResource DataGridRowSelectedBackgroundOpacity}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="MouseOver_Selected">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="MouseOver_Selected">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedHoveredBackground}" />
                             <Setter TargetName="BackgroundRectangle" Property="Opacity" Value="{DynamicResource DataGridRowSelectedHoveredBackgroundOpacity}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="MouseOver_Unfocused_Selected">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="MouseOver_Unfocused_Selected">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedHoveredUnfocusedBackground}" />
                             <Setter TargetName="BackgroundRectangle" Property="Opacity" Value="{DynamicResource DataGridRowSelectedHoveredUnfocusedBackgroundOpacity}" />
                         </Trigger>
-                        <Trigger SourceName="CommonStatesProxy" Property="CurrentStateName" Value="Unfocused_Selected">
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Unfocused_Selected">
                             <Setter TargetName="BackgroundRectangle" Property="Fill" Value="{DynamicResource DataGridRowSelectedUnfocusedBackground}" />
                             <Setter TargetName="BackgroundRectangle" Property="Opacity" Value="{DynamicResource DataGridRowSelectedUnfocusedBackgroundOpacity}" />
                         </Trigger>

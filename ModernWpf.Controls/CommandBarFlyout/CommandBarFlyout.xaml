@@ -35,6 +35,9 @@
                         BorderThickness="{TemplateBinding BorderThickness}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="FullSize" />
                                 <VisualState x:Name="Compact" />
                                 <VisualState x:Name="LabelOnRight" />
@@ -45,6 +48,9 @@
                                 <VisualState x:Name="OverflowWithToggleButtonsAndMenuIcons" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CommonStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver" />
                                 <VisualState x:Name="Pressed" />
@@ -55,6 +61,9 @@
                                 <!--<VisualState x:Name="OverflowSubMenuOpened" />-->
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
                                 <VisualState x:Name="KeyboardAcceleratorTextVisible" />
                             </VisualStateGroup>
@@ -108,9 +117,6 @@
                                 Margin="12,0,12,0"
                                 VerticalAlignment="Center"
                                 Visibility="Collapsed" />-->
-                            <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" GroupName="ApplicationViewStates" />
-                            <ui:VisualStateGroupListener x:Name="CommonStatesListener" GroupName="CommonStates" />
-                            <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" GroupName="KeyboardAcceleratorTextVisibility" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -228,6 +234,9 @@
                         BorderThickness="{TemplateBinding BorderThickness}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="FullSize" />
                                 <VisualState x:Name="Compact" />
                                 <VisualState x:Name="LabelOnRight" />
@@ -236,6 +245,9 @@
                                 <VisualState x:Name="OverflowWithMenuIcons" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CommonStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver" />
                                 <VisualState x:Name="Pressed" />
@@ -252,6 +264,9 @@
                                 <VisualState x:Name="OverflowCheckedPressed" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
                                 <VisualState x:Name="KeyboardAcceleratorTextVisible" />
                             </VisualStateGroup>
@@ -311,9 +326,6 @@
                                     VerticalAlignment="Center"
                                     Visibility="Collapsed" />
                             </Grid>
-                            <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" GroupName="ApplicationViewStates" />
-                            <ui:VisualStateGroupListener x:Name="CommonStatesListener" GroupName="CommonStates" />
-                            <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" GroupName="KeyboardAcceleratorTextVisibility" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -707,11 +719,17 @@
                                 <VisualState x:Name="ExpandedDown" Storyboard="{StaticResource ExpandedDownStoryboard}" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="AvailableCommandsStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="AvailableCommandsStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="BothCommands" />
                                 <VisualState x:Name="PrimaryCommandsOnly" />
                                 <VisualState x:Name="SecondaryCommandsOnly" />
                             </VisualStateGroup>
-                            <VisualStateGroup x:Name="CombinedStates">
+                            <VisualStateGroup>
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CombinedStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Default" />
                                 <VisualState x:Name="ExpandedUpWithPrimaryCommands" />
                                 <VisualState x:Name="ExpandedDownWithPrimaryCommands" />
@@ -864,8 +882,6 @@
                                         </Border>
                                     </Border>
                                 </ui:PopupEx>
-                                <ui:VisualStateGroupListener x:Name="AvailableCommandsStatesListener" GroupName="AvailableCommandsStates" />
-                                <ui:VisualStateGroupListener x:Name="CombinedStatesListener" GroupName="CombinedStates" />
                             </Grid>
                         </Border>
                     </Border>

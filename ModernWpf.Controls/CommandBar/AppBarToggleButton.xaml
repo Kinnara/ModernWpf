@@ -29,6 +29,9 @@
                         SnapsToDevicePixels="True">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="FullSize" />
                                 <VisualState x:Name="Compact" />
                                 <VisualState x:Name="LabelOnRight" />
@@ -37,6 +40,9 @@
                                 <VisualState x:Name="OverflowWithMenuIcons" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CommonStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver" />
                                 <VisualState x:Name="Pressed" />
@@ -53,6 +59,9 @@
                                 <VisualState x:Name="OverflowCheckedPressed" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
                                 <VisualState x:Name="KeyboardAcceleratorTextVisible" />
                             </VisualStateGroup>
@@ -141,9 +150,6 @@
                                     Visibility="Collapsed" />
 
                             </Grid>
-                            <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" GroupName="ApplicationViewStates" />
-                            <ui:VisualStateGroupListener x:Name="CommonStatesListener" GroupName="CommonStates" />
-                            <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" GroupName="KeyboardAcceleratorTextVisibility" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>

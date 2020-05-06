@@ -211,13 +211,13 @@
                     <Grid SnapsToDevicePixels="True">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DayStates">
+                                <primitives:VisualStateGroupListener.Listener>
+                                    <primitives:VisualStateGroupListener x:Name="DayStatesListener" />
+                                </primitives:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="RegularDay" />
                                 <VisualState x:Name="Today" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <primitives:VisualStateGroupListener
-                            x:Name="DayStatesProxy"
-                            GroupName="DayStates" />
                         <Border
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -268,21 +268,21 @@
                         <Trigger Property="IsInactive" Value="True">
                             <Setter TargetName="Background" Property="Fill" Value="{DynamicResource SystemControlDisabledChromeMediumLowBrush}" />
                         </Trigger>
-                        <Trigger SourceName="DayStatesProxy" Property="CurrentStateName" Value="Today">
+                        <Trigger SourceName="DayStatesListener" Property="CurrentStateName" Value="Today">
                             <Setter TargetName="Background" Property="Fill" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
                             <Setter TargetName="NormalText" Property="Foreground" Value="{DynamicResource CalendarViewTodayForeground}" />
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsBlackedOut" Value="True" />
-                                <Condition SourceName="DayStatesProxy" Property="CurrentStateName" Value="RegularDay" />
+                                <Condition SourceName="DayStatesListener" Property="CurrentStateName" Value="RegularDay" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="NormalText" Property="Foreground" Value="{DynamicResource CalendarViewBlackoutForeground}" />
                         </MultiTrigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsBlackedOut" Value="True" />
-                                <Condition SourceName="DayStatesProxy" Property="CurrentStateName" Value="Today" />
+                                <Condition SourceName="DayStatesListener" Property="CurrentStateName" Value="Today" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="Background" Property="Opacity" Value="0.5" />
                             <Setter TargetName="NormalText" Property="Opacity" Value="0.4" />

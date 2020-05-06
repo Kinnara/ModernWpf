@@ -176,6 +176,9 @@
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PointerStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="PointerStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver" />
                                 <VisualState x:Name="Pressed" />
@@ -185,6 +188,9 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="DisabledStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="DisabledStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Enabled"/>
                                 <VisualState x:Name="Disabled"/>
                             </VisualStateGroup>
@@ -297,9 +303,6 @@
                                 </Grid>
                             </Grid>
                         </Grid>
-
-                        <ui:VisualStateGroupListener x:Name="PointerStatesListener" GroupName="PointerStates" />
-                        <ui:VisualStateGroupListener x:Name="DisabledStatesListener" GroupName="DisabledStates" />
                     </Grid>
 
                     <ControlTemplate.Triggers>
@@ -362,6 +365,9 @@
                         Background="{TemplateBinding Background}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PointerStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="PointerStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver" />
                                 <VisualState x:Name="Pressed" />
@@ -370,6 +376,9 @@
                                 <VisualState x:Name="PressedSelected" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="DisabledStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="DisabledStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Enabled"/>
                                 <VisualState x:Name="Disabled">
                                 </VisualState>
@@ -407,8 +416,6 @@
                                     TextElement.Foreground="{TemplateBinding Foreground}" />
                             </Viewbox>
                         </Grid>
-                        <ui:VisualStateGroupListener x:Name="PointerStatesListener" GroupName="PointerStates" />
-                        <ui:VisualStateGroupListener x:Name="DisabledStatesListener" GroupName="DisabledStates" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOver">
@@ -470,6 +477,9 @@
                         </Grid.Resources>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PointerStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="PointerStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver" />
                                 <VisualState x:Name="Pressed" />
@@ -478,6 +488,9 @@
                                 <VisualState x:Name="PressedSelected" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="DisabledStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="DisabledStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Enabled"/>
                                 <VisualState x:Name="Disabled"/>
                             </VisualStateGroup>
@@ -600,8 +613,6 @@
                                 RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
                                 RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                         </Grid>
-                        <ui:VisualStateGroupListener x:Name="PointerStatesListener" GroupName="PointerStates" />
-                        <ui:VisualStateGroupListener x:Name="DisabledStatesListener" GroupName="DisabledStates" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOver">
@@ -671,6 +682,9 @@
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PointerStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="PointerStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver" />
                                 <VisualState x:Name="Pressed" />
@@ -679,6 +693,9 @@
                                 <VisualState x:Name="PressedSelected" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="DisabledStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="DisabledStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Enabled"/>
                                 <VisualState x:Name="Disabled"/>
                             </VisualStateGroup>
@@ -781,8 +798,6 @@
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <ui:VisualStateGroupListener x:Name="PointerStatesListener" GroupName="PointerStates" />
-                        <ui:VisualStateGroupListener x:Name="DisabledStatesListener" GroupName="DisabledStates" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOver">
@@ -831,14 +846,13 @@
                           KeyboardNavigation.TabNavigation="Local">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DisplayModeGroup">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="DisplayModeGroupListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Compact" />
-
                                 <VisualState x:Name="Expanded" />
-
                                 <VisualState x:Name="Minimal" />
-
                                 <VisualState x:Name="TopNavigationMinimal" />
-
                                 <VisualState x:Name="MinimalWithBackButton" />
                             </VisualStateGroup>
 
@@ -901,6 +915,9 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="PaneStateListSizeGroup">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="PaneStateListSizeGroupListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="ListSizeFull"/>
                                 <VisualState x:Name="ListSizeCompact"/>
                             </VisualStateGroup>
@@ -917,6 +934,9 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="OverflowLabelGroup">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="OverflowLabelGroupListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="OverflowButtonWithLabel" />
                                 <VisualState x:Name="OverflowButtonNoLabel" />
                             </VisualStateGroup>
@@ -1329,10 +1349,6 @@
                             </local:SplitView>
 
                         </Grid>
-
-                        <ui:VisualStateGroupListener x:Name="DisplayModeGroupListener" GroupName="DisplayModeGroup" />
-                        <ui:VisualStateGroupListener x:Name="PaneStateListSizeGroupListener" GroupName="PaneStateListSizeGroup" />
-                        <ui:VisualStateGroupListener x:Name="OverflowLabelGroupListener" GroupName="OverflowLabelGroup" />
                     </Grid>
 
                     <ControlTemplate.Triggers>
@@ -1589,6 +1605,9 @@
                     <Grid x:Name="NavigationViewItemSeparatorRootGrid">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="NavigationSeparatorLineStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="NavigationSeparatorLineStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="HorizontalLine" />
                                 <VisualState x:Name="HorizontalLineCompact" />
                                 <VisualState x:Name="VerticalLine" />
@@ -1599,7 +1618,6 @@
                             Height="{DynamicResource NavigationViewItemSeparatorHeight}"
                             Margin="{DynamicResource NavigationViewItemSeparatorMargin}"
                             Fill="{DynamicResource NavigationViewItemSeparatorForeground}" />
-                        <ui:VisualStateGroupListener x:Name="NavigationSeparatorLineStatesListener" GroupName="NavigationSeparatorLineStates" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <!-- HorizontalLineCompact -->

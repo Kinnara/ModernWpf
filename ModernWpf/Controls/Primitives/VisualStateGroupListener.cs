@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,8 +8,6 @@ namespace ModernWpf.Controls.Primitives
 {
     public class VisualStateGroupListener : FrameworkElement
     {
-        private VisualStateGroup _group;
-
         static VisualStateGroupListener()
         {
             VisibilityProperty.OverrideMetadata(typeof(VisualStateGroupListener), new FrameworkPropertyMetadata(Visibility.Collapsed));
@@ -18,8 +17,52 @@ namespace ModernWpf.Controls.Primitives
         {
         }
 
+        #region Group
+
+        public static readonly DependencyProperty GroupProperty =
+            DependencyProperty.Register(
+                nameof(Group),
+                typeof(VisualStateGroup),
+                typeof(VisualStateGroupListener),
+                new PropertyMetadata(OnGroupChanged));
+
+        public VisualStateGroup Group
+        {
+            get => (VisualStateGroup)GetValue(GroupProperty);
+            set => SetValue(GroupProperty, value);
+        }
+
+        private static void OnGroupChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((VisualStateGroupListener)d).OnGroupChanged((VisualStateGroup)e.OldValue, (VisualStateGroup)e.NewValue);
+        }
+
+        private void OnGroupChanged(VisualStateGroup oldGroup, VisualStateGroup newGroup)
+        {
+            if (oldGroup != null)
+            {
+                oldGroup.CurrentStateChanged -= OnCurrentStateChanged;
+            }
+
+            if (newGroup != null)
+            {
+                newGroup.CurrentStateChanged += OnCurrentStateChanged;
+            }
+
+            UpdateCurrentStateName(newGroup?.CurrentState);
+        }
+
+        private void OnCurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        {
+            UpdateCurrentStateName(e.NewState);
+        }
+
+        #endregion
+
         #region GroupName
 
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static readonly DependencyProperty GroupNameProperty =
             DependencyProperty.Register(
                 nameof(GroupName),
@@ -27,6 +70,8 @@ namespace ModernWpf.Controls.Primitives
                 typeof(VisualStateGroupListener),
                 new PropertyMetadata(OnGroupNameChanged));
 
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public string GroupName
         {
             get => (string)GetValue(GroupNameProperty);
@@ -40,12 +85,6 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnGroupNameChanged(DependencyPropertyChangedEventArgs e)
         {
-            if (_group != null)
-            {
-                _group.CurrentStateChanged -= OnCurrentStateChanged;
-                _group = null;
-            }
-
             string groupName = (string)e.NewValue;
             if (!string.IsNullOrEmpty(groupName))
             {
@@ -56,16 +95,13 @@ namespace ModernWpf.Controls.Primitives
                     {
                         if (templateRoot.FindName(groupName) is VisualStateGroup group)
                         {
-                            _group = group;
-                            _group.CurrentStateChanged += OnCurrentStateChanged;
+                            Group = group;
                         }
                     }
                 }
 
                 VerifyGroup();
             }
-
-            UpdateCurrentStateName(_group?.CurrentState);
         }
 
         #endregion
@@ -88,8 +124,6 @@ namespace ModernWpf.Controls.Primitives
             private set => SetValue(CurrentStateNamePropertyKey, value);
         }
 
-        #endregion
-
         private void UpdateCurrentStateName(VisualState currentState)
         {
             if (currentState != null)
@@ -102,17 +136,48 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private void OnCurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        #endregion
+
+        #region Listener
+
+        public static readonly DependencyProperty ListenerProperty =
+            DependencyProperty.RegisterAttached(
+                "Listener",
+                typeof(VisualStateGroupListener),
+                typeof(VisualStateGroupListener),
+                new PropertyMetadata(OnListenerChanged));
+
+        public static VisualStateGroupListener GetListener(VisualStateGroup group)
         {
-            UpdateCurrentStateName(e.NewState);
+            return (VisualStateGroupListener)group.GetValue(ListenerProperty);
         }
+
+        public static void SetListener(VisualStateGroup group, VisualStateGroupListener value)
+        {
+            group.SetValue(ListenerProperty, value);
+        }
+
+        private static void OnListenerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.OldValue is VisualStateGroupListener oldListener)
+            {
+                oldListener.ClearValue(GroupProperty);
+            }
+
+            if (e.NewValue is VisualStateGroupListener newListener)
+            {
+                newListener.Group = (VisualStateGroup)d;
+            }
+        }
+
+        #endregion
 
         [Conditional("DEBUG")]
         private void VerifyGroup()
         {
             if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                Debug.Assert(_group != null);
+                Debug.Assert(Group != null);
             }
         }
     }

@@ -335,6 +335,9 @@
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ConsciousStates">
+                                <primitives:VisualStateGroupListener.Listener>
+                                    <primitives:VisualStateGroupListener x:Name="ConsciousStatesListener" />
+                                </primitives:VisualStateGroupListener.Listener>
                                 <VisualStateGroup.Transitions>
                                     <VisualTransition From="Expanded" To="Collapsed" Storyboard="{StaticResource ExpandedToCollapsedStoryboard}" />
                                 </VisualStateGroup.Transitions>
@@ -418,7 +421,6 @@
                                 Content="&#xE0E5;"
                                 Template="{StaticResource ScrollBarButtonTemplate}"
                                 HorizontalAlignment="Center" />
-                            <primitives:VisualStateGroupListener x:Name="ConsciousStatesListener" GroupName="ConsciousStates" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -575,6 +577,9 @@
                                 </VisualStateManager.CustomVisualStateManager>
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup x:Name="ConsciousStates">
+                                        <primitives:VisualStateGroupListener.Listener>
+                                            <primitives:VisualStateGroupListener x:Name="ConsciousStatesListener" />
+                                        </primitives:VisualStateGroupListener.Listener>
                                         <VisualStateGroup.Transitions>
                                             <VisualTransition From="Expanded" To="Collapsed" Storyboard="{StaticResource ExpandedToCollapsedStoryboard}" />
                                         </VisualStateGroup.Transitions>
@@ -658,7 +663,6 @@
                                         Template="{StaticResource ScrollBarButtonTemplate}"
                                         Width="{StaticResource ScrollBarSize}"
                                         VerticalAlignment="Center" />
-                                    <primitives:VisualStateGroupListener x:Name="ConsciousStatesListener" GroupName="ConsciousStates" />
                                 </Grid>
                             </Border>
                             <ControlTemplate.Triggers>

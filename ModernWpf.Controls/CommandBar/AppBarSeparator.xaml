@@ -20,12 +20,14 @@
                         SnapsToDevicePixels="True">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="FullSize" />
                                 <VisualState x:Name="Compact" />
                                 <VisualState x:Name="Overflow" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" GroupName="ApplicationViewStates" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <!-- Overflow -->

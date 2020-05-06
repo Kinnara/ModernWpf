@@ -18,12 +18,18 @@
                     <Grid x:Name="RootGrid">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Photo" />
                                 <VisualState x:Name="Initials" />
                                 <VisualState x:Name="NoPhotoOrInitials" />
                                 <VisualState x:Name="Group" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="BadgeStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="BadgeStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="NoBadge" />
                                 <VisualState x:Name="BadgeWithoutImageSource" />
                                 <VisualState x:Name="BadgeWithImageSource">
@@ -41,9 +47,6 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-
-                        <ui:VisualStateGroupListener x:Name="CommonStatesListener" GroupName="CommonStates" />
-                        <ui:VisualStateGroupListener x:Name="BadgeStatesListener" GroupName="BadgeStates" />
 
                         <Ellipse
                             Fill="{DynamicResource PersonPictureEllipseFillThemeBrush}"
