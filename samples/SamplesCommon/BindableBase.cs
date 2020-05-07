@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace SamplesCommon
 {
-    public class ViewModelBase
+    public class BindableBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -15,9 +15,12 @@ namespace SamplesCommon
             }
 
             storage = value;
-            OnPropertyChanged(propertyName);
+            RaisePropertyChanged(propertyName);
         }
 
-        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void RaisePropertyChanged([CallerMemberName]string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

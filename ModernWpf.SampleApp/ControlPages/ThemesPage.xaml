@@ -22,7 +22,7 @@
 
             <ui:RadioButtons
                 Header="Theme Mode"
-                SelectedItem="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ApplicationTheme, Converter={StaticResource AppThemeConverter}}">
+                SelectedItem="{Binding Source={x:Static sc:ThemeManagerProxy.Current}, Path=ApplicationTheme, Converter={StaticResource AppThemeConverter}}">
                 <ui:RadioButtons.ItemsSource>
                     <sc:AppThemes />
                 </ui:RadioButtons.ItemsSource>
@@ -46,8 +46,8 @@
                 DisplayMemberPath="DisplayName"
                 SelectedValuePath="Value"
                 SelectedValue="{Binding ShapePreset, Source={x:Static presets:PresetManager.Current}}" />
-            
-            <sc:AccentColorPicker />
+
+            <sc:AccentColorPicker x:Name="AccentColorPicker" />
 
             <StackPanel>
                 <TextBlock
@@ -96,7 +96,7 @@
                 Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
                 Margin="-24,0,-24,0"
                 Padding="24,0,24,15"
-                ui:ThemeManager.RequestedTheme="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
+                ui:ThemeManager.RequestedTheme="{Binding Source={x:Static sc:ThemeManagerProxy.Current}, Path=ActualApplicationTheme, Converter={StaticResource InverseAppThemeConverter}}">
                 <GroupBox.Resources>
                     <Thickness x:Key="GroupBoxHeaderMargin">24,4,24,20</Thickness>
                 </GroupBox.Resources>
@@ -105,15 +105,14 @@
                         Width="{StaticResource ItemWidth}"
                         HorizontalAlignment="Left"
                         ui:ControlHelper.Header="Actual application theme"
-                        Text="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualApplicationTheme, Mode=OneWay}"
+                        Text="{Binding Source={x:Static sc:ThemeManagerProxy.Current}, Path=ActualApplicationTheme, Mode=OneWay}"
                         IsReadOnly="True" />
 
                     <TextBox
                         Width="{StaticResource ItemWidth}"
                         HorizontalAlignment="Left"
                         ui:ControlHelper.Header="Actual window theme"
-                        DataContext="{Binding MainWindow, Source={x:Static Application.Current}, Mode=OneTime}"
-                        Text="{Binding Path=(ui:ThemeManager.ActualTheme), Mode=OneWay}"
+                        Text="{Binding Path=(ui:ThemeManager.ActualTheme), RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay}"
                         IsReadOnly="True" />
 
                     <TextBox
@@ -128,7 +127,7 @@
                         Width="{StaticResource ItemWidth}"
                         HorizontalAlignment="Left"
                         ui:ControlHelper.Header="Actual accent color"
-                        Text="{Binding Source={x:Static ui:ThemeManager.Current}, Path=ActualAccentColor, Mode=OneWay}"
+                        Text="{Binding Source={x:Static sc:ThemeManagerProxy.Current}, Path=ActualAccentColor, Mode=OneWay}"
                         IsReadOnly="True" />
 
                     <ui:ToggleSwitch

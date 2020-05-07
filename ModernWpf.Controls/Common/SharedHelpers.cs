@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Interop;
 using System.Windows.Media;
+using MS.Win32;
 
 namespace ModernWpf.Controls
 {
@@ -175,13 +176,10 @@ namespace ModernWpf.Controls
 
         public static Window GetActiveWindow()
         {
-            var active = UnsafeNativeMethods.GetActiveWindow();
-            foreach (Window window in Application.Current.Windows)
+            var activeWindow = UnsafeNativeMethods.GetActiveWindow();
+            if (activeWindow != IntPtr.Zero)
             {
-                if (new WindowInteropHelper(window).Handle == active)
-                {
-                    return window;
-                }
+                return HwndSource.FromHwnd(activeWindow)?.RootVisual as Window;
             }
             return null;
         }

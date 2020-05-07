@@ -18,7 +18,7 @@
                 VerticalAlignment="Top"
                 SelectionMode="Single"
                 SelectedValuePath="Color"
-                SelectedValue="{Binding AccentColor, Source={x:Static ui:ThemeManager.Current}}"
+                SelectedValue="{Binding AccentColor, Source={x:Static local:ThemeManagerProxy.Current}}"
                 ScrollViewer.VerticalScrollBarVisibility="Disabled"
                 ui:ThemeManager.HasThemeResources="True">
                 <ui:GridView.ItemsPanel>

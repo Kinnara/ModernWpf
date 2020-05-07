@@ -113,5 +113,10 @@ namespace ModernWpf.Controls
         }
 
         #endregion
+
+        protected override Freezable CreateInstanceCore()
+        {
+            return new RatingItemImageInfo();
+        }
     }
 }

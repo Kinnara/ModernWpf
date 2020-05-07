@@ -1,9 +1,7 @@
 ﻿namespace ModernWpf.SampleApp
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App
     {
+        public static bool IsMultiThreaded { get; } = false;
     }
 }

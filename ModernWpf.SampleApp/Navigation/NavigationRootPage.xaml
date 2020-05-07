@@ -45,18 +45,19 @@
                 <MenuItem Header="Theme">
                     <ui:RadioMenuItem
                         Header="Default"
-                        IsChecked="{Binding ApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay, Converter={StaticResource IsDefaultConverter}}"
+                        IsChecked="{Binding ApplicationTheme, Source={x:Static sc:ThemeManagerProxy.Current}, Mode=OneWay, Converter={StaticResource IsDefaultConverter}}"
                         Checked="Default_Checked" />
                     <ui:RadioMenuItem
                         Header="Light"
-                        IsChecked="{Binding ApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay, Converter={StaticResource IsLightConverter}}"
+                        IsChecked="{Binding ApplicationTheme, Source={x:Static sc:ThemeManagerProxy.Current}, Mode=OneWay, Converter={StaticResource IsLightConverter}}"
                         Checked="Light_Checked" />
                     <ui:RadioMenuItem
                         Header="Dark"
-                        IsChecked="{Binding ApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay, Converter={StaticResource IsDarkConverter}}"
+                        IsChecked="{Binding ApplicationTheme, Source={x:Static sc:ThemeManagerProxy.Current}, Mode=OneWay, Converter={StaticResource IsDarkConverter}}"
                         Checked="Dark_Checked" />
                 </MenuItem>
                 <MenuItem
+                    x:Name="PresetsMenu"
                     Header="Presets"
                     MenuItem.Click="PresetMenuItem_Click">
                     <ui:RadioMenuItem
@@ -78,7 +79,7 @@
                 </MenuItem>
                 <MenuItem
                     Header="Title Bar"
-                    DataContext="{Binding MainWindow, Source={x:Static Application.Current}}">
+                    DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
                     <MenuItem
                         Header="IsBackButtonVisible"
                         IsEnabled="False"
@@ -128,6 +129,9 @@
                     <MenuItem
                         Header="Force GC"
                         Click="ForceGC" />
+                    <MenuItem
+                        Header="New window"
+                        Click="NewWindow" />
                 </MenuItem>
             </Menu>
 

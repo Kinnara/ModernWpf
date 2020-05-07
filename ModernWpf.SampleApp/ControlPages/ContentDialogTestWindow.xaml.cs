@@ -1,4 +1,5 @@
 ﻿using ModernWpf.Controls;
+using SamplesCommon;
 using System;
 using System.Windows;
 
@@ -16,21 +17,27 @@ namespace ModernWpf.SampleApp.ControlPages
             _ = new TestContentDialog().ShowAsync();
         }
 
-        private async void ShowDialogInMainWindow(object sender, RoutedEventArgs e)
+        private void ShowDialogInMainWindow(object sender, RoutedEventArgs e)
         {
-            try
+            DispatcherHelper.RunOnMainThread(async () =>
             {
-                await new TestContentDialog() { Owner = Application.Current.MainWindow }.ShowAsync();
-            }
-            catch (Exception ex)
-            {
-                _ = new ContentDialog
+                try
                 {
-                    Owner = this,
-                    Content = ex.Message,
-                    CloseButtonText = "Close"
-                }.ShowAsync();
-            }
+                    await new TestContentDialog() { Owner = Application.Current.MainWindow }.ShowAsync();
+                }
+                catch (Exception ex)
+                {
+                    this.RunOnUIThread(() =>
+                    {
+                        _ = new ContentDialog
+                        {
+                            Owner = this,
+                            Content = ex.Message,
+                            CloseButtonText = "Close"
+                        }.ShowAsync();
+                    });
+                }
+            });
         }
     }
 }

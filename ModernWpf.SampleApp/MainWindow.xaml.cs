@@ -1,14 +1,13 @@
 ﻿using ModernWpf.Controls;
 using ModernWpf.SampleApp.Helpers;
 using ModernWpf.SampleApp.Properties;
+using SamplesCommon;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
 
 namespace ModernWpf.SampleApp
 {
@@ -22,22 +21,36 @@ namespace ModernWpf.SampleApp
             SetBinding(TitleBar.IsBackButtonVisibleProperty,
                 new Binding { Path = new PropertyPath(System.Windows.Controls.Frame.CanGoBackProperty), Source = rootFrame });
 
-            SubscribeToResourcesChanged();            
+            SubscribeToResourcesChanged();
         }
 
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-            this.SetPlacement(Settings.Default.MainWindowPlacement);
+
+            DispatcherHelper.RunOnMainThread(() =>
+            {
+                if (this == Application.Current.MainWindow)
+                {
+                    this.SetPlacement(Settings.Default.MainWindowPlacement);
+                }
+            });
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
+
             if (!e.Cancel)
             {
-                Settings.Default.MainWindowPlacement = this.GetPlacement();
-                Settings.Default.Save();
+                DispatcherHelper.RunOnMainThread(() =>
+                {
+                    if (this == Application.Current.MainWindow)
+                    {
+                        Settings.Default.MainWindowPlacement = this.GetPlacement();
+                        Settings.Default.Save();
+                    }
+                });
             }
         }
 

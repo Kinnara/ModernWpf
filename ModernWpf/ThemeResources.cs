@@ -14,6 +14,8 @@ namespace ModernWpf
         private ResourceDictionary _darkResources;
         private ResourceDictionary _highContrastResources;
 
+        private bool _canBeAccessedAcrossThreads;
+
         public ThemeResources()
         {
             if (Current == null)
@@ -78,6 +80,25 @@ namespace ModernWpf
                         UpdateDesignTimeSystemColors();
                     }
                 }
+            }
+        }
+
+        public bool CanBeAccessedAcrossThreads
+        {
+            get => _canBeAccessedAcrossThreads;
+            set
+            {
+                if (DesignMode.DesignModeEnabled)
+                {
+                    return;
+                }
+
+                if (IsInitialized)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                _canBeAccessedAcrossThreads = value;
             }
         }
 
@@ -168,17 +189,21 @@ namespace ModernWpf
 
         #region ISupportInitialize
 
+        private bool IsInitialized { get; set; }
+
         private bool IsInitializePending { get; set; }
 
         void ISupportInitialize.BeginInit()
         {
             BeginInit();
             IsInitializePending = true;
+            IsInitialized = false;
         }
 
         void ISupportInitialize.EndInit()
         {
             IsInitializePending = false;
+            IsInitialized = true;
 
             if (DesignMode.DesignModeEnabled)
             {
@@ -187,6 +212,17 @@ namespace ModernWpf
             else
             {
                 ThemeManager.Current.Initialize();
+
+                if (CanBeAccessedAcrossThreads)
+                {
+                    EnsureLightResources();
+                    EnsureDarkResources();
+                    EnsureHighContrastResources();
+
+                    _lightResources.SealValues();
+                    _darkResources.SealValues();
+                    _highContrastResources.SealValues();
+                }
             }
 
             EndInit();
@@ -213,9 +249,20 @@ namespace ModernWpf
             if (SystemParameters.HighContrast)
             {
                 EnsureHighContrastResources();
-                MergedDictionaries.InsertOrReplace(targetIndex, _highContrastResources);
-                MergedDictionaries.RemoveIfNotNull(_lightResources);
-                MergedDictionaries.RemoveIfNotNull(_darkResources);
+
+                if (IsMerged(_highContrastResources))
+                {
+                    if (CanBeAccessedAcrossThreads)
+                    {
+                        RefreshHighContrastResources();
+                    }
+                }
+                else
+                {
+                    MergedDictionaries.InsertOrReplace(targetIndex, _highContrastResources);
+                    MergedDictionaries.RemoveIfNotNull(_lightResources);
+                    MergedDictionaries.RemoveIfNotNull(_darkResources);
+                }
             }
             else
             {
@@ -280,11 +327,40 @@ namespace ModernWpf
             }
         }
 
+        internal ResourceDictionary GetThemeDictionary(string key)
+        {
+            switch (key)
+            {
+                case ThemeManager.LightKey:
+                    EnsureLightResources();
+                    return _lightResources;
+                case ThemeManager.DarkKey:
+                    EnsureDarkResources();
+                    return _darkResources;
+                case ThemeManager.HighContrastKey:
+                    EnsureHighContrastResources();
+                    return _highContrastResources;
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        internal ResourceDictionary TryGetThemeDictionary(string key)
+        {
+            return key switch
+            {
+                ThemeManager.LightKey => _lightResources,
+                ThemeManager.DarkKey => _darkResources,
+                ThemeManager.HighContrastKey => _highContrastResources,
+                _ => null,
+            };
+        }
+
         private void EnsureLightResources()
         {
             if (_lightResources == null)
             {
-                _lightResources = GetThemeDictionary(ThemeManager.LightKey);
+                _lightResources = InitializeThemeDictionary(ThemeManager.LightKey);
             }
         }
 
@@ -292,7 +368,7 @@ namespace ModernWpf
         {
             if (_darkResources == null)
             {
-                _darkResources = GetThemeDictionary(ThemeManager.DarkKey);
+                _darkResources = InitializeThemeDictionary(ThemeManager.DarkKey);
             }
         }
 
@@ -300,7 +376,31 @@ namespace ModernWpf
         {
             if (_highContrastResources == null)
             {
-                _highContrastResources = GetThemeDictionary(ThemeManager.HighContrastKey);
+                _highContrastResources = InitializeThemeDictionary(ThemeManager.HighContrastKey);
+            }
+        }
+
+        private void RefreshHighContrastResources()
+        {
+            Debug.Assert(_highContrastResources != null);
+
+            var hcResources = _highContrastResources;
+            var mergedDictionaries = hcResources.MergedDictionaries;
+            var oldDefault = ThemeManager.GetDefaultThemeDictionary(ThemeManager.HighContrastKey);
+
+            for (int i = 0; i < mergedDictionaries.Count; i++)
+            {
+                var md = mergedDictionaries[i];
+                if (md.Source != null)
+                {
+                    var newMD = new ResourceDictionary { Source = md.Source };
+                    newMD.SealValues();
+                    if (md == oldDefault)
+                    {
+                        ThemeManager.SetDefaultThemeDictionary(ThemeManager.HighContrastKey, newMD);
+                    }
+                    mergedDictionaries[i] = newMD;
+                }
             }
         }
 
@@ -309,7 +409,7 @@ namespace ModernWpf
             return dictionary != null && MergedDictionaries.Contains(dictionary);
         }
 
-        private ResourceDictionary GetThemeDictionary(string key)
+        private ResourceDictionary InitializeThemeDictionary(string key)
         {
             ResourceDictionary defaultThemeDictionary = ThemeManager.GetDefaultThemeDictionary(key);
 
@@ -319,6 +419,11 @@ namespace ModernWpf
                 {
                     themeDictionary.MergedDictionaries.Insert(0, defaultThemeDictionary);
                 }
+            }
+            else if (key == ThemeManager.HighContrastKey)
+            {
+                themeDictionary = new ResourceDictionary();
+                themeDictionary.MergedDictionaries.Add(defaultThemeDictionary);
             }
             else
             {

@@ -12,8 +12,7 @@ namespace ModernWpf
 
         private static ResourceDictionary GetBaseThemeDictionary(string key)
         {
-            ResourceDictionary themeDictionary = null;
-            ThemeResources.Current?.ThemeDictionaries.TryGetValue(key, out themeDictionary);
+            ResourceDictionary themeDictionary = ThemeResources.Current?.TryGetThemeDictionary(key);
             return themeDictionary ?? ThemeManager.GetDefaultThemeDictionary(key);
         }
     }

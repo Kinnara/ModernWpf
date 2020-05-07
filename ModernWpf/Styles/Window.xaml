@@ -17,6 +17,14 @@
         <Setter Property="Content" Value="&#xE830;" />
     </Style>
 
+    <WindowChrome
+        x:Key="DefaultWindowChrome"
+        x:Shared="False"
+        CaptionHeight="{DynamicResource TitleBarHeight}"
+        CornerRadius="0"
+        GlassFrameThickness="0,1,0,0"
+        UseAeroCaptionButtons="False" />
+
     <Style x:Key="DefaultWindowStyle" TargetType="Window">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
@@ -26,15 +34,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="UseLayoutRounding" Value="True" />
-        <Setter Property="WindowChrome.WindowChrome">
-            <Setter.Value>
-                <WindowChrome
-                    CaptionHeight="{DynamicResource TitleBarHeight}"
-                    CornerRadius="0"
-                    GlassFrameThickness="0,1,0,0"
-                    UseAeroCaptionButtons="False" />
-            </Setter.Value>
-        </Setter>
+        <Setter Property="WindowChrome.WindowChrome" Value="{DynamicResource DefaultWindowChrome}" />
         <Setter Property="root:ThemeManager.IsThemeAware" Value="True" />
         <Setter Property="local:TitleBar.Background" Value="Transparent" />
         <Setter Property="local:TitleBar.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />

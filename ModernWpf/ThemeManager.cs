@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -21,6 +22,7 @@ namespace ModernWpf
 
         private static readonly Dictionary<string, ResourceDictionary> _defaultThemeDictionaries = new Dictionary<string, ResourceDictionary>();
 
+        private readonly Data _data;
         private bool _isInitialized;
         private bool _applicationInitialized;
 
@@ -41,6 +43,7 @@ namespace ModernWpf
 
         private ThemeManager()
         {
+            _data = new Data(this);
         }
 
         #region ApplicationTheme
@@ -97,8 +100,9 @@ namespace ModernWpf
         private static void OnActualApplicationThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var tm = (ThemeManager)d;
+            var newValue = (ApplicationTheme)e.NewValue;
 
-            switch ((ApplicationTheme)e.NewValue)
+            switch (newValue)
             {
                 case ModernWpf.ApplicationTheme.Light:
                     tm._defaultActualTheme = ElementTheme.Light;
@@ -108,6 +112,7 @@ namespace ModernWpf
                     break;
             }
 
+            tm._data.ActualApplicationTheme = newValue;
             tm.ApplyApplicationTheme();
             tm.ActualApplicationThemeChanged?.Invoke(tm, null);
         }
@@ -453,10 +458,9 @@ namespace ModernWpf
                 {
                     window.SetBinding(
                         InheritedApplicationThemeProperty,
-                        new Binding
+                        new Binding(nameof(ActualApplicationTheme))
                         {
-                            Path = new PropertyPath(ActualApplicationThemeProperty),
-                            Source = Current
+                            Source = Current._data
                         });
 
                     UpdateWindowTheme((Window)d);
@@ -719,6 +723,11 @@ namespace ModernWpf
             return dictionary;
         }
 
+        internal static void SetDefaultThemeDictionary(string key, ResourceDictionary dictionary)
+        {
+            _defaultThemeDictionaries[key] = dictionary;
+        }
+
         private static ApplicationTheme GetDefaultAppTheme()
         {
             return ColorsHelper.Current.SystemTheme.GetValueOrDefault(ModernWpf.ApplicationTheme.Light);
@@ -832,6 +841,38 @@ namespace ModernWpf
             {
                 Dispatcher.BeginInvoke(action);
             }
+        }
+
+        private class Data : INotifyPropertyChanged
+        {
+            public Data(ThemeManager owner)
+            {
+                _actualApplicationTheme = owner.ActualApplicationTheme;
+            }
+
+            public ApplicationTheme ActualApplicationTheme
+            {
+                get => _actualApplicationTheme;
+                set => Set(ref _actualApplicationTheme, value);
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private void RaisePropertyChanged([CallerMemberName]string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+
+            private void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)
+            {
+                if (!Equals(storage, value))
+                {
+                    storage = value;
+                    RaisePropertyChanged(propertyName);
+                }
+            }
+
+            private ApplicationTheme _actualApplicationTheme;
         }
     }
 
