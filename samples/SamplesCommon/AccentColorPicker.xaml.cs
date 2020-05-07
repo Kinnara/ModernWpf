@@ -15,7 +15,10 @@ namespace SamplesCommon
 
         private void ResetAccentColor(object sender, RoutedEventArgs e)
         {
-            ThemeManager.Current.AccentColor = null;
+            DispatcherHelper.RunOnMainThread(() =>
+            {
+                ThemeManager.Current.AccentColor = null;
+            });
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using ModernWpf.SampleApp.Common;
+﻿using SamplesCommon;
 using System;
 
 namespace ModernWpf.SampleApp.Presets

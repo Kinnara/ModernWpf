@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 using Frame = ModernWpf.Controls.Frame;
 
 namespace ModernWpf.SampleApp
@@ -17,8 +19,20 @@ namespace ModernWpf.SampleApp
     {
         private const string AutoHideScrollBarsKey = "AutoHideScrollBars";
 
-        public static NavigationRootPage Current { get; private set; }
-        public static Frame RootFrame { get; private set; }
+        public static NavigationRootPage Current
+        {
+            get => _current.Value;
+            private set => _current.Value = value;
+        }
+
+        public static Frame RootFrame
+        {
+            get => _rootFrame.Value;
+            private set => _rootFrame.Value = value;
+        }
+
+        private static readonly ThreadLocal<NavigationRootPage> _current = new ThreadLocal<NavigationRootPage>();
+        private static readonly ThreadLocal<Frame> _rootFrame = new ThreadLocal<Frame>();
 
         private bool _ignoreSelectionChange;
         private readonly ControlPagesData _controlPagesData = new ControlPagesData();
@@ -28,10 +42,24 @@ namespace ModernWpf.SampleApp
         {
             InitializeComponent();
 
+            if (App.IsMultiThreaded)
+            {
+                PresetsMenu.Visibility = Visibility.Collapsed;
+            }
+
             Loaded += delegate
             {
+                PresetManager.Current.ColorPresetChanged += OnColorPresetChanged;
+
                 controlsSearchBox.Focus();
             };
+
+            Unloaded += delegate
+            {
+                PresetManager.Current.ColorPresetChanged -= OnColorPresetChanged;
+            };
+
+            OnColorPresetChanged(null, null);
 
             Current = this;
             RootFrame = rootFrame;
@@ -187,17 +215,17 @@ namespace ModernWpf.SampleApp
 
         private void Default_Checked(object sender, RoutedEventArgs e)
         {
-            ThemeManager.Current.ApplicationTheme = null;
+            SetApplicationTheme(null);
         }
 
         private void Light_Checked(object sender, RoutedEventArgs e)
         {
-            ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+            SetApplicationTheme(ApplicationTheme.Light);
         }
 
         private void Dark_Checked(object sender, RoutedEventArgs e)
         {
-            ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+            SetApplicationTheme(ApplicationTheme.Dark);
         }
 
         private void PresetMenuItem_Click(object sender, RoutedEventArgs e)
@@ -258,16 +286,55 @@ namespace ModernWpf.SampleApp
             GC.WaitForPendingFinalizers();
         }
 
+        private void NewWindow(object sender, RoutedEventArgs e)
+        {
+            var thread = new Thread(() =>
+            {
+                var window = new MainWindow();
+                window.Closed += delegate
+                {
+                    Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Normal);
+                };
+                window.Show();
+                Dispatcher.Run();
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
         private void OnThemeButtonClick(object sender, RoutedEventArgs e)
         {
-            if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark)
+            DispatcherHelper.RunOnMainThread(() =>
             {
-                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
-            }
-            else
+                if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark)
+                {
+                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+                }
+                else
+                {
+                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+                }
+            });
+        }
+
+        private void SetApplicationTheme(ApplicationTheme? theme)
+        {
+            DispatcherHelper.RunOnMainThread(() =>
             {
-                ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
-            }
+                ThemeManager.Current.ApplicationTheme = theme;
+            });
+        }
+
+        private void OnColorPresetChanged(object sender, EventArgs e)
+        {
+            this.RunOnUIThread(() =>
+            {
+                PresetsMenu.Items
+                .OfType<RadioMenuItem>()
+                .Single(mi => mi.Header.ToString() == PresetManager.Current.ColorPreset)
+                .IsChecked = true;
+            });
         }
     }
 

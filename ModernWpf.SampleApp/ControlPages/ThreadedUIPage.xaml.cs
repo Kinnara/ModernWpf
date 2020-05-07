@@ -63,7 +63,7 @@ namespace ModernWpf.SampleApp.ControlPages
         }
     }
 
-    public class ThreadedUIPageViewModel : ViewModelBase
+    public class ThreadedUIPageViewModel : BindableBase
     {
         private bool _isBusy = true;
         public bool IsBusy

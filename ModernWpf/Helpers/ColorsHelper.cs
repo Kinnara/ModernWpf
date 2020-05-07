@@ -97,7 +97,7 @@ namespace ModernWpf
         {
             foreach (DictionaryEntry entry in themeDictionary)
             {
-                if (entry.Value is SolidColorBrush brush)
+                if (entry.Value is SolidColorBrush brush && !brush.IsFrozen)
                 {
                     object colorKey = ThemeResourceHelper.GetColorKey(brush);
                     if (colorKey != null && colors.Contains(colorKey))

@@ -6,7 +6,7 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    DataContext="{Binding Source={x:Static Application.Current}, Path=MainWindow}">
+    DataContext="{Binding RelativeSource={RelativeSource AncestorType=Window}}">
 
     <ScrollViewer>
         <ui:SimpleStackPanel

@@ -15,6 +15,13 @@ namespace ModernWpf.SampleApp.ControlPages
                 new ShapePreset("Default", "Default"),
                 new ShapePreset("PreFluent", "No Rounding, Thicker Borders"),
             };
+
+            if (App.IsMultiThreaded)
+            {
+                ColorPresetsComboBox.Visibility = Visibility.Collapsed;
+                ShapePresetsComboBox.Visibility = Visibility.Collapsed;
+                AccentColorPicker.Visibility = Visibility.Collapsed;
+            }
         }
 
         ~ThemesPage()
