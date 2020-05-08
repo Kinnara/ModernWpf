@@ -104,15 +104,16 @@ namespace ModernWpf.Controls.Primitives
                     InputHelper.SetIsTapEnabled(expandCollapseChevron, true);
                     InputHelper.AddTappedHandler(expandCollapseChevron, navigationViewItem.OnExpandCollapseChevronTapped);
                 }
-
                 navigationViewItem.UpdateVisualStateNoTransition();
 
 
                 // We probably switched displaymode, so restore width now, otherwise the next time we will restore is when the CompactPaneLength changes
-                // TODO: WPF - Refactor null check
-                if (navigationViewItem.GetNavigationView()?.PaneDisplayMode != NavigationViewPaneDisplayMode.Top)
+                if (navigationViewItem.GetNavigationView() is { } navigationView)
                 {
-                    UpdateCompactPaneLength(m_compactPaneLengthValue, true);
+                    if (navigationView.PaneDisplayMode != NavigationViewPaneDisplayMode.Top)
+                    {
+                        UpdateCompactPaneLength(m_compactPaneLengthValue, true);
+                    }
                 }
             }
 

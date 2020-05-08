@@ -694,5 +694,26 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
                 Verify.AreEqual(null, navView.SelectedItem, "SelectedItem should have been [null] as no item is selected");
             });
         }
+
+        [TestMethod]
+        public void VerifyNavigationViewItemInFooterDoesNotCrash()
+        {
+            RunOnUIThread.Execute(() =>
+            {
+                var navView = new NavigationView();
+
+                Content = navView;
+
+                var navViewItem = new NavigationViewItem() { Content = "Footer item" };
+
+                navView.PaneFooter = navViewItem;
+
+                navView.Width = 1008; // forces the control into Expanded mode so that the menu renders
+                Content.UpdateLayout(true);
+
+                // If we don't get here, app has crashed. This verify is just making sure code got run
+                Verify.IsTrue(true);
+            });
+        }
     }
 }
