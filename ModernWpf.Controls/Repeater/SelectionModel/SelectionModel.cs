@@ -66,15 +66,17 @@ namespace ModernWpf.Controls
                 {
                     m_singleSelect = value;
                     var selectedIndices = SelectedIndices;
-                    if (value && selectedIndices != null && selectedIndices.Count > 0)
+
+                    // Only update selection and raise SelectionChanged event when:
+                    // - we switch from SelectionMode::Multiple to SelectionMode::Single and
+                    // - more than one item was selected at the time of the switch
+                    if (value && selectedIndices != null && selectedIndices.Count > 1)
                     {
                         // We want to be single select, so make sure there is only 
                         // one selected item.
                         var firstSelectionIndexPath = selectedIndices[0];
                         ClearSelection(true /* resetAnchor */, false /*raiseSelectionChanged */);
-                        SelectWithPathImpl(firstSelectionIndexPath, true /* select */, false /* raiseSelectionChanged */);
-                        // Setting SelectedIndex will raise SelectionChanged event.
-                        SelectedIndex = firstSelectionIndexPath;
+                        SelectWithPathImpl(firstSelectionIndexPath, true /* select */, true /* raiseSelectionChanged */);
                     }
 
                     RaisePropertyChanged("SingleSelect");
