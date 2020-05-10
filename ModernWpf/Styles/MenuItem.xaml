@@ -153,6 +153,9 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuItemTemplateKey}" TargetType="MenuItem">
+        <ControlTemplate.Resources>
+            <StreamGeometry x:Key="CheckMark">F1 M 17.939453 5.439453 L 7.5 15.888672 L 2.060547 10.439453 L 2.939453 9.560547 L 7.5 14.111328 L 17.060547 4.560547 Z</StreamGeometry>
+        </ControlTemplate.Resources>
         <Border
             x:Name="LayoutRoot"
             SnapsToDevicePixels="true"
@@ -167,10 +170,10 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <local:FontIcon
+                <local:FontIconFallback
                     x:Name="CheckGlyph"
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                    Glyph="&#xE001;"
+                    Data="{StaticResource CheckMark}"
                     FontSize="16"
                     Foreground="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForeground}"
                     Opacity="0"
@@ -251,6 +254,9 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuHeaderTemplateKey}" TargetType="MenuItem">
+        <ControlTemplate.Resources>
+            <StreamGeometry x:Key="ChevronRight">M 5.029297 19.091797 L 14.111328 10 L 5.029297 0.908203 L 5.908203 0.029297 L 15.888672 10 L 5.908203 19.970703 Z</StreamGeometry>
+        </ControlTemplate.Resources>
         <Border
             x:Name="LayoutRoot"
             Padding="{TemplateBinding Padding}"
@@ -287,10 +293,10 @@
                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                <local:FontIcon
+                <local:FontIconFallback
                     x:Name="SubItemChevron"
                     Grid.Column="3"
-                    Glyph="&#xE0E3;"
+                    Data="{StaticResource ChevronRight}"
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                     FontSize="12"
                     Foreground="{DynamicResource MenuFlyoutSubItemChevron}"
@@ -298,7 +304,7 @@
                     <UIElement.RenderTransform>
                         <TranslateTransform Y="1" />
                     </UIElement.RenderTransform>
-                </local:FontIcon>
+                </local:FontIconFallback>
                 <Popup
                     x:Name="PART_Popup"
                     AllowsTransparency="true"

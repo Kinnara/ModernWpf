@@ -23,6 +23,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:RadioMenuItem">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="RadioBullet">M 10 6.25 C 10.514322 6.25 11 6.347656 11.455078 6.542969 C 11.910807 6.738281 12.30957 7.006836 12.651367 7.348633 C 12.993164 7.69043 13.261719 8.089193 13.457031 8.544922 C 13.652344 9 13.75 9.485678 13.75 10 C 13.75 10.520834 13.652344 11.007487 13.457031 11.459961 C 13.261719 11.912436 12.993164 12.30957 12.651367 12.651367 C 12.30957 12.993164 11.910807 13.261719 11.455078 13.457031 C 11 13.652344 10.514322 13.75 10 13.75 C 9.479166 13.75 8.992513 13.652344 8.540039 13.457031 C 8.087564 13.261719 7.69043 12.993164 7.348633 12.651367 C 7.006836 12.30957 6.738281 11.912436 6.542969 11.459961 C 6.347656 11.007487 6.25 10.520834 6.25 10 C 6.25 9.485678 6.347656 9 6.542969 8.544922 C 6.738281 8.089193 7.006836 7.69043 7.348633 7.348633 C 7.69043 7.006836 8.087564 6.738281 8.540039 6.542969 C 8.992513 6.347656 9.479166 6.25 10 6.25 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
                     <Border
                         x:Name="LayoutRoot"
                         SnapsToDevicePixels="true"
@@ -37,10 +40,10 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <ui:FontIcon
+                            <ui:FontIconFallback
                                 x:Name="CheckGlyph"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                Glyph="&#xE915;"
+                                Data="{StaticResource RadioBullet}"
                                 FontSize="16"
                                 Foreground="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForeground}"
                                 Opacity="0"

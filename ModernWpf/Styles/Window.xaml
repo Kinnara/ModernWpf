@@ -14,7 +14,14 @@
         <Setter Property="PressedForeground" Value="{DynamicResource AccentButtonForegroundPressed}" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Width" Value="48" />
-        <Setter Property="Content" Value="&#xE830;" />
+        <Setter Property="Content" Value="M 20 10 L 3.828125 10 L 10.410156 16.582031 L 9 18 L 0 9 L 9 0 L 10.410156 1.416016 L 3.828125 8 L 20 8 Z" />
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <local:FontIconFallback Data="{Binding}" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <WindowChrome

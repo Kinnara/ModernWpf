@@ -25,7 +25,11 @@
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="0" />
-        <Setter Property="Content" Value="&#xE72B;" />
+        <Setter Property="Content">
+            <Setter.Value>
+                <StreamGeometry>M 20 10.625 L 2.441406 10.625 L 10.126953 18.310547 L 9.248047 19.189453 L 0.058594 10 L 9.248047 0.810547 L 10.126953 1.689453 L 2.441406 9.375 L 20 9.375 Z</StreamGeometry>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -33,11 +37,11 @@
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
                         SnapsToDevicePixels="True">
-                        <local:FontIcon
+                        <local:FontIconFallback
                             x:Name="Content"
                             FontSize="{TemplateBinding FontSize}"
                             FontFamily="{TemplateBinding FontFamily}"
-                            Glyph="{TemplateBinding Content}"
+                            Data="{TemplateBinding Content}"
                             Foreground="{TemplateBinding Foreground}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />

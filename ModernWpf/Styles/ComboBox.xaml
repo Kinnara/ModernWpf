@@ -218,6 +218,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
+
                     <Grid
                         x:Name="LayoutRoot"
                         SnapsToDevicePixels="True">
@@ -338,7 +342,7 @@
                             Visibility="Collapsed"
                             Width="30"
                             HorizontalAlignment="Right" />
-                        <local:FontIcon
+                        <local:FontIconFallback
                             x:Name="DropDownGlyph"
                             MinHeight="{DynamicResource ComboBoxMinHeight}"
                             Grid.Row="1"
@@ -348,7 +352,7 @@
                             Foreground="{DynamicResource ComboBoxDropDownGlyphForeground}"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             FontSize="12"
-                            Glyph="&#xE0E5;"
+                            Data="{StaticResource ChevronDown}"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center" />
                         <ContentPresenter

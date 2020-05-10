@@ -42,20 +42,23 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="Button">
+                                        <ControlTemplate.Resources>
+                                            <StreamGeometry x:Key="Cancel">M 10.888672 10 L 17.626953 16.748047 L 16.748047 17.626953 L 10 10.888672 L 3.251953 17.626953 L 2.373047 16.748047 L 9.111328 10 L 2.373047 3.251953 L 3.251953 2.373047 L 10 9.111328 L 16.748047 2.373047 L 17.626953 3.251953 Z</StreamGeometry>
+                                        </ControlTemplate.Resources>
                                         <Border
                                             x:Name="ButtonLayoutGrid"
                                             BorderBrush="{DynamicResource TextControlButtonBorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             Background="{DynamicResource TextControlButtonBackground}"
                                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
-                                            <TextBlock
+                                            <local:FontIconFallback
                                                 x:Name="GlyphElement"
                                                 Foreground="{DynamicResource TextControlButtonForeground}"
                                                 VerticalAlignment="Center"
                                                 HorizontalAlignment="Center"
                                                 FontStyle="Normal"
                                                 FontSize="12"
-                                                Text="&#xE10A;"
+                                                Data="{StaticResource Cancel}"
                                                 FontFamily="{DynamicResource SymbolThemeFontFamily}" />
                                         </Border>
                                         <ControlTemplate.Triggers>

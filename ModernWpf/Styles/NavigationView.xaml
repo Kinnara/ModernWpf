@@ -2,6 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
     <ResourceDictionary.MergedDictionaries>
@@ -40,6 +41,7 @@
     <Thickness x:Key="TopNavigationViewItemOnOverflowExpandChevronPadding">12,0,12,0</Thickness>
 
     <sys:String x:Key="NavigationViewItemExpandedGlyph">&#xE70D;</sys:String>
+    <StreamGeometry x:Key="NavigationViewItemExpandedPath">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
 
     <Style x:Key="PaneToggleButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
         <Setter Property="FontSize" Value="16" />
@@ -81,9 +83,9 @@
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
 
-                            <TextBlock
+                            <local:FontIconFallback
                                 x:Name="Icon"
-                                Text="&#xE700;"
+                                Data="M 20 6.25 L 0 6.25 L 0 5 L 20 5 L 20 6.25 Z M 20 16.25 L 0 16.25 L 0 15 L 20 15 L 20 16.25 Z M 20 11.25 L 0 11.25 L 0 10 L 20 10 L 20 11.25 Z"
                                 FontSize="{TemplateBinding FontSize}" />
 
                         </Viewbox>
@@ -125,7 +127,13 @@
 
     <Style x:Key="NavigationViewPaneSearchButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
         <Setter Property="MinHeight" Value="40" />
-        <Setter Property="Content" Value="&#xE11A;" />
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <local:FontIconFallback Data="M 13.125 0 C 13.75651 0 14.365234 0.081381 14.951172 0.244141 C 15.537109 0.406902 16.083984 0.638021 16.591797 0.9375 C 17.099609 1.23698 17.563477 1.59668 17.983398 2.016602 C 18.40332 2.436523 18.76302 2.900391 19.0625 3.408203 C 19.361979 3.916016 19.593098 4.462891 19.755859 5.048828 C 19.918619 5.634766 20 6.24349 20 6.875 C 20 7.506511 19.918619 8.115234 19.755859 8.701172 C 19.593098 9.287109 19.361979 9.833984 19.0625 10.341797 C 18.76302 10.849609 18.40332 11.313477 17.983398 11.733398 C 17.563477 12.15332 17.099609 12.513021 16.591797 12.8125 C 16.083984 13.111979 15.537109 13.3431 14.951172 13.505859 C 14.365234 13.66862 13.75651 13.75 13.125 13.75 C 12.311197 13.75 11.531575 13.613281 10.786133 13.339844 C 10.040689 13.066406 9.355469 12.672526 8.730469 12.158203 L 1.064453 19.814453 C 0.940755 19.93815 0.794271 20 0.625 20 C 0.455729 20 0.309245 19.93815 0.185547 19.814453 C 0.061849 19.690756 0 19.544271 0 19.375 C 0 19.205729 0.061849 19.059244 0.185547 18.935547 L 7.841797 11.269531 C 7.327474 10.644531 6.933594 9.959311 6.660156 9.213867 C 6.386719 8.468425 6.25 7.688803 6.25 6.875 C 6.25 6.24349 6.33138 5.634766 6.494141 5.048828 C 6.6569 4.462891 6.888021 3.916016 7.1875 3.408203 C 7.486979 2.900391 7.84668 2.436523 8.266602 2.016602 C 8.686523 1.59668 9.150391 1.23698 9.658203 0.9375 C 10.166016 0.638021 10.712891 0.406902 11.298828 0.244141 C 11.884766 0.081381 12.493489 0 13.125 0 Z M 13.125 12.5 C 13.899739 12.5 14.628906 12.351889 15.3125 12.055664 C 16 11.75944 16.591797 11.357422 17.099609 10.849609 C 17.607422 10.341797 18.009439 9.746094 18.305664 9.0625 C 18.601887 8.378906 18.75 7.64974 18.75 6.875 C 18.75 6.100261 18.601887 5.371094 18.305664 4.6875 C 18.009439 4 17.607422 3.408203 17.099609 2.900391 C 16.591797 2.392578 16 1.990561 15.3125 1.694336 C 14.628906 1.398113 13.899739 1.25 13.125 1.25 C 12.35026 1.25 11.621094 1.398113 10.9375 1.694336 C 10.253906 1.990561 9.658203 2.392578 9.150391 2.900391 C 8.642578 3.408203 8.24056 4 7.944336 4.6875 C 7.648111 5.371094 7.5 6.100261 7.5 6.875 C 7.5 7.64974 7.648111 8.378906 7.944336 9.0625 C 8.24056 9.746094 8.642578 10.341797 9.150391 10.849609 C 9.658203 11.357422 10.253906 11.75944 10.9375 12.055664 C 11.621094 12.351889 12.35026 12.5 13.125 12.5 Z" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="BorderThickness" Value="{DynamicResource NavigationViewToggleBorderThickness}" />
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />

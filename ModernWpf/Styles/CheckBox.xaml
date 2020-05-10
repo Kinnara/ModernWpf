@@ -30,6 +30,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="CheckMark">M 17.939453 5.439453 L 7.5 15.888672 L 2.060547 10.439453 L 2.939453 9.560547 L 7.5 14.111328 L 17.060547 4.560547 Z</StreamGeometry>
+                        <StreamGeometry x:Key="CheckboxIndeterminate">M 15 5 L 15 15 L 5 15 L 5 5 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
                     <Border
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
@@ -53,10 +57,10 @@
                                     Width="20"
                                     RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
                                     RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
-                                <local:FontIcon
+                                <local:FontIconFallback
                                     x:Name="CheckGlyph"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE001;"
+                                    Data="{StaticResource CheckMark}"
                                     FontSize="16"
                                     Foreground="{DynamicResource CheckBoxCheckGlyphForegroundUnchecked}"
                                     Opacity="0" />
@@ -201,7 +205,7 @@
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminate}" />
                             <Setter TargetName="NormalRectangle" Property="Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminate}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundIndeterminate}" />
-                            <Setter TargetName="CheckGlyph" Property="Glyph" Value="&#xE73C;" />
+                            <Setter TargetName="CheckGlyph" Property="Data" Value="{StaticResource CheckboxIndeterminate}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
                         <!-- IndeterminatePointerOver -->
@@ -216,7 +220,7 @@
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminatePointerOver}" />
                             <Setter TargetName="NormalRectangle" Property="Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminatePointerOver}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundIndeterminatePointerOver}" />
-                            <Setter TargetName="CheckGlyph" Property="Glyph" Value="&#xE73C;" />
+                            <Setter TargetName="CheckGlyph" Property="Data" Value="{StaticResource CheckboxIndeterminate}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
                         <!-- IndeterminatePressed -->
@@ -231,7 +235,7 @@
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminatePressed}" />
                             <Setter TargetName="NormalRectangle" Property="Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminatePressed}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundIndeterminatePressed}" />
-                            <Setter TargetName="CheckGlyph" Property="Glyph" Value="&#xE73C;" />
+                            <Setter TargetName="CheckGlyph" Property="Data" Value="{StaticResource CheckboxIndeterminate}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
                         <!-- IndeterminateDisabled -->
@@ -246,7 +250,7 @@
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminateDisabled}" />
                             <Setter TargetName="NormalRectangle" Property="Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminateDisabled}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundIndeterminateDisabled}" />
-                            <Setter TargetName="CheckGlyph" Property="Glyph" Value="&#xE73C;" />
+                            <Setter TargetName="CheckGlyph" Property="Data" Value="{StaticResource CheckboxIndeterminate}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
                     </ControlTemplate.Triggers>

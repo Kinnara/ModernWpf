@@ -28,7 +28,8 @@ namespace ModernWpf.Controls
     {
         None,
         Font,
-        Image
+        Image,
+        Path
     }
 
     public partial class RatingControl : Control
@@ -161,6 +162,10 @@ namespace ModernWpf.Controls
             {
                 PopulateStackPanelWithItems("BackgroundImageDefaultTemplate", m_backgroundStackPanel, RatingControlStates.Unset);
             }
+            else if (IsItemInfoPresentAndPathInfo())
+            {
+                PopulateStackPanelWithItems("BackgroundPathDefaultTemplate", m_backgroundStackPanel, RatingControlStates.Unset);
+            }
 
             // Foreground initialization:
             m_foregroundStackPanel.Children.Clear();
@@ -171,6 +176,10 @@ namespace ModernWpf.Controls
             else if (IsItemInfoPresentAndImageInfo())
             {
                 PopulateStackPanelWithItems("ForegroundImageDefaultTemplate", m_foregroundStackPanel, RatingControlStates.Set);
+            }
+            else if (IsItemInfoPresentAndPathInfo())
+            {
+                PopulateStackPanelWithItems("ForegroundPathDefaultTemplate", m_foregroundStackPanel, RatingControlStates.Set);
             }
 
             UpdateRatingItemsAppearance();
@@ -319,6 +328,13 @@ namespace ModernWpf.Controls
                     image.Height = RenderingRatingFontSize; // MSFT #10030063 Replacing with Rating size DPs
                 }
             }
+            else if (IsItemInfoPresentAndPathInfo())
+            {
+                if (ui is FontIconFallback pathControl)
+                {
+                    pathControl.Data = GetAppropriatePathData(type);
+                }
+            }
             else
             {
                 Debug.Fail("Runtime error, ItemInfo property is null");
@@ -341,6 +357,10 @@ namespace ModernWpf.Controls
         bool IsItemInfoPresentAndImageInfo()
         {
             return m_infoType == RatingInfoType.Image;
+        }
+        bool IsItemInfoPresentAndPathInfo()
+        {
+            return m_infoType == RatingInfoType.Path;
         }
 
         string GetAppropriateGlyph(RatingControlStates type)
@@ -423,6 +443,47 @@ namespace ModernWpf.Controls
                 return GetAppropriateImageSource(fallbackType);
             }
             return image;
+        }
+
+        Geometry GetAppropriatePathData(RatingControlStates type)
+        {
+            if (!IsItemInfoPresentAndPathInfo())
+            {
+                Debug.Assert(false, "Runtime error, tried to retrieve a geometry when the ItemInfo is not a RatingItemPathInfo");
+            }
+
+            RatingItemPathInfo pathInfo = (RatingItemPathInfo)ItemInfo;
+
+            switch (type)
+            {
+                case RatingControlStates.Disabled:
+                    return GetNextGeometryIfNull(pathInfo.DisabledData, RatingControlStates.Set);
+                case RatingControlStates.PointerOverSet:
+                    return GetNextGeometryIfNull(pathInfo.PointerOverData, RatingControlStates.Set);
+                case RatingControlStates.PointerOverPlaceholder:
+                    return GetNextGeometryIfNull(pathInfo.PointerOverPlaceholderData, RatingControlStates.Placeholder);
+                case RatingControlStates.Placeholder:
+                    return GetNextGeometryIfNull(pathInfo.PlaceholderData, RatingControlStates.Set);
+                case RatingControlStates.Unset:
+                    return GetNextGeometryIfNull(pathInfo.UnsetData, RatingControlStates.Set);
+                case RatingControlStates.Null:
+                    return null;
+                default:
+                    return pathInfo.Data; // "Set" state
+            }
+        }
+
+        Geometry GetNextGeometryIfNull(Geometry geometry, RatingControlStates fallbackType)
+        {
+            if (geometry == null)
+            {
+                if (fallbackType == RatingControlStates.Null)
+                {
+                    return null;
+                }
+                return GetAppropriatePathData(fallbackType);
+            }
+            return geometry;
         }
 
         void ResetControlWidth()
@@ -635,6 +696,15 @@ namespace ModernWpf.Controls
                 if (m_infoType != RatingInfoType.Font && m_backgroundStackPanel != null /* prevent calling StampOutRatingItems() twice at initialisation */)
                 {
                     m_infoType = RatingInfoType.Font;
+                    StampOutRatingItems();
+                    changedType = true;
+                }
+            }
+            else if (ItemInfo is RatingItemPathInfo)
+            {
+                if (m_infoType != RatingInfoType.Path)
+                {
+                    m_infoType = RatingInfoType.Path;
                     StampOutRatingItems();
                     changedType = true;
                 }

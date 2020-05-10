@@ -18,6 +18,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarToggleButton">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="CheckMark">M 17.939453 5.439453 L 7.5 15.888672 L 2.060547 10.439453 L 2.939453 9.560547 L 7.5 14.111328 L 17.060547 4.560547 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
                     <Border
                         x:Name="Root"
                         MinWidth="{TemplateBinding MinWidth}"
@@ -91,9 +94,9 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <TextBlock
+                                <ui:FontIconFallback
                                     x:Name="OverflowCheckGlyph"
-                                    Text="&#xE73E;"
+                                    Data="{StaticResource CheckMark}"
                                     Foreground="{DynamicResource AppBarToggleButtonCheckGlyphForeground}"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="16"

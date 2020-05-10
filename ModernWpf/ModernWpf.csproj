@@ -31,15 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Assets\segmdl2.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Page Remove="Transitions\Storyboards\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\segmdl2.ttf" />
     <Resource Include="Transitions\Storyboards\**" />
   </ItemGroup>
 

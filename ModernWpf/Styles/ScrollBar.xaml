@@ -115,10 +115,10 @@
             Background="{DynamicResource ScrollBarButtonBackground}"
             BorderBrush="{DynamicResource ScrollBarButtonBorderBrush}"
             SnapsToDevicePixels="True">
-            <local:FontIcon
+            <local:FontIconFallback
                 x:Name="Arrow"
                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                Glyph="{TemplateBinding Content}"
+                Data="{TemplateBinding Content}"
                 Foreground="{DynamicResource ScrollBarButtonArrowForeground}"
                 FontSize="{StaticResource ScrollBarButtonArrowIconFontSize}" />
         </Border>
@@ -206,6 +206,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollBar">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
+                        <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
                     <Border
                         x:Name="Root"
                         Background="{TemplateBinding Background}"
@@ -368,7 +372,7 @@
                                 IsTabStop="False"
                                 Margin="0"
                                 Grid.Row="0"
-                                Content="&#xE0E4;"
+                                Content="{StaticResource ChevronUp}"
                                 Template="{StaticResource ScrollBarButtonTemplate}"
                                 HorizontalAlignment="Center" />
                             <Track
@@ -418,7 +422,7 @@
                                 IsTabStop="False"
                                 Margin="0"
                                 Grid.Row="2"
-                                Content="&#xE0E5;"
+                                Content="{StaticResource ChevronDown}"
                                 Template="{StaticResource ScrollBarButtonTemplate}"
                                 HorizontalAlignment="Center" />
                         </Grid>
@@ -448,6 +452,10 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ScrollBar">
+                            <ControlTemplate.Resources>
+                                <StreamGeometry x:Key="ChevronLeft">M 14.091797 19.970703 L 4.111328 10 L 14.091797 0.029297 L 14.970703 0.908203 L 5.888672 10 L 14.970703 19.091797 Z</StreamGeometry>
+                                <StreamGeometry x:Key="ChevronRight">M 5.029297 19.091797 L 14.111328 10 L 5.029297 0.908203 L 5.908203 0.029297 L 15.888672 10 L 5.908203 19.970703 Z</StreamGeometry>
+                            </ControlTemplate.Resources>
                             <Border
                                 x:Name="Root"
                                 Background="{TemplateBinding Background}"
@@ -609,7 +617,7 @@
                                         MinHeight="{StaticResource ScrollBarSize}"
                                         IsTabStop="False"
                                         Margin="0"
-                                        Content="&#xE0E2;"
+                                        Content="{StaticResource ChevronLeft}"
                                         Template="{StaticResource ScrollBarButtonTemplate}"
                                         Width="{StaticResource ScrollBarSize}"
                                         VerticalAlignment="Center" />
@@ -659,7 +667,7 @@
                                         MinHeight="{StaticResource ScrollBarSize}"
                                         IsTabStop="False"
                                         Margin="0"
-                                        Content="&#xE0E3;"
+                                        Content="{StaticResource ChevronRight}"
                                         Template="{StaticResource ScrollBarButtonTemplate}"
                                         Width="{StaticResource ScrollBarSize}"
                                         VerticalAlignment="Center" />

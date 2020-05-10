@@ -4,6 +4,10 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.MahApps.Controls">
 
+    <DataTemplate x:Key="IconTemplate">
+        <ui:FontIconFallback Data="{Binding}" />
+    </DataTemplate>
+
     <Style TargetType="local:DateTimeComponentSelector">
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
@@ -22,6 +26,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Control">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
+                        <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
                     <Grid SnapsToDevicePixels="True">
                         <ScrollViewer
                             x:Name="ScrollViewer"
@@ -32,7 +40,8 @@
                         </ScrollViewer>
                         <RepeatButton
                             x:Name="UpButton"
-                            Content="&#xE70E;"
+                            Content="{StaticResource ChevronUp}"
+                            ContentTemplate="{StaticResource IconTemplate}"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             FontSize="8"
                             Height="22"
@@ -45,7 +54,8 @@
                             IsTabStop="False" />
                         <RepeatButton
                             x:Name="DownButton"
-                            Content="&#xE70D;"
+                            Content="{StaticResource ChevronDown}"
+                            ContentTemplate="{StaticResource IconTemplate}"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             FontSize="8"
                             Height="22"
@@ -127,6 +137,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SimpleTimePicker">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="Accept">M 6.25 17.138672 L 0.185547 11.064453 L 1.064453 10.185547 L 6.25 15.361328 L 18.935547 2.685547 L 19.814453 3.564453 L 6.25 17.138672 Z</StreamGeometry>
+                        <StreamGeometry x:Key="Cancel">M 10.888672 10 L 17.626953 16.748047 L 16.748047 17.626953 L 10 10.888672 L 3.251953 17.626953 L 2.373047 16.748047 L 9.111328 10 L 2.373047 3.251953 L 3.251953 2.373047 L 10 9.111328 L 16.748047 2.373047 L 17.626953 3.251953 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
+                    
                     <Grid
                         x:Name="LayoutRoot"
                         Margin="{TemplateBinding Padding}"
@@ -388,7 +403,8 @@
                                                 <Button
                                                     x:Name="AcceptButton"
                                                     Grid.Column="0"
-                                                    Content="&#xE8FB;"
+                                                    Content="{StaticResource Accept}"
+                                                    ContentTemplate="{StaticResource IconTemplate}"
                                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                                     FontSize="16"
                                                     HorizontalAlignment="Stretch"
@@ -398,7 +414,8 @@
                                                 <Button
                                                     x:Name="DismissButton"
                                                     Grid.Column="1"
-                                                    Content="&#xE711;"
+                                                    Content="{StaticResource Cancel}"
+                                                    ContentTemplate="{StaticResource IconTemplate}"
                                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                                     FontSize="16"
                                                     HorizontalAlignment="Stretch"

@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -62,6 +64,8 @@ namespace ModernWpf.Controls.Primitives
         /// </summary>
         /// <param name="treeViewItem">The element from which to read the property value.</param>
         /// <returns>The glyph to show for a collapsed tree node.</returns>
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static string GetCollapsedGlyph(TreeViewItem treeViewItem)
         {
             return (string)treeViewItem.GetValue(CollapsedGlyphProperty);
@@ -72,6 +76,8 @@ namespace ModernWpf.Controls.Primitives
         /// </summary>
         /// <param name="treeViewItem">The element on which to set the attached property.</param>
         /// <param name="value">The property value to set.</param>
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static void SetCollapsedGlyph(TreeViewItem treeViewItem, string value)
         {
             treeViewItem.SetValue(CollapsedGlyphProperty, value);
@@ -80,6 +86,8 @@ namespace ModernWpf.Controls.Primitives
         /// <summary>
         /// Identifies the CollapsedGlyph dependency property.
         /// </summary>
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static readonly DependencyProperty CollapsedGlyphProperty =
             DependencyProperty.RegisterAttached(
                 "CollapsedGlyph",
@@ -96,6 +104,8 @@ namespace ModernWpf.Controls.Primitives
         /// </summary>
         /// <param name="treeViewItem">The element from which to read the property value.</param>
         /// <returns>The glyph to show for an expanded tree node.</returns>
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static string GetExpandedGlyph(TreeViewItem treeViewItem)
         {
             return (string)treeViewItem.GetValue(ExpandedGlyphProperty);
@@ -106,6 +116,8 @@ namespace ModernWpf.Controls.Primitives
         /// </summary>
         /// <param name="treeViewItem">The element on which to set the attached property.</param>
         /// <param name="value">The property value to set.</param>
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static void SetExpandedGlyph(TreeViewItem treeViewItem, string value)
         {
             treeViewItem.SetValue(ExpandedGlyphProperty, value);
@@ -114,12 +126,80 @@ namespace ModernWpf.Controls.Primitives
         /// <summary>
         /// Identifies the ExpandedGlyph dependency property.
         /// </summary>
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static readonly DependencyProperty ExpandedGlyphProperty =
             DependencyProperty.RegisterAttached(
                 "ExpandedGlyph",
                 typeof(string),
                 typeof(TreeViewItemHelper),
                 new PropertyMetadata("\uE70D"));
+
+        #endregion
+
+        #region CollapsedPath
+
+        /// <summary>
+        /// Gets the path to show for a collapsed tree node.
+        /// </summary>
+        /// <param name="treeViewItem">The element from which to read the property value.</param>
+        /// <returns>The glyph to show for a collapsed tree node.</returns>
+        public static Geometry GetCollapsedPath(TreeViewItem treeViewItem)
+        {
+            return (Geometry)treeViewItem.GetValue(CollapsedPathProperty);
+        }
+
+        /// <summary>
+        /// Sets the path to show for a collapsed tree node.
+        /// </summary>
+        /// <param name="treeViewItem">The element on which to set the attached property.</param>
+        /// <param name="value">The property value to set.</param>
+        public static void SetCollapsedPath(TreeViewItem treeViewItem, Geometry value)
+        {
+            treeViewItem.SetValue(CollapsedPathProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the CollapsedPath dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CollapsedPathProperty =
+            DependencyProperty.RegisterAttached(
+                "CollapsedPath",
+                typeof(Geometry),
+                typeof(TreeViewItemHelper));
+
+        #endregion
+
+        #region ExpandedPath
+
+        /// <summary>
+        /// Gets the glyph to show for an expanded tree node.
+        /// </summary>
+        /// <param name="treeViewItem">The element from which to read the property value.</param>
+        /// <returns>The glyph to show for an expanded tree node.</returns>
+        public static Geometry GetExpandedPath(TreeViewItem treeViewItem)
+        {
+            return (Geometry)treeViewItem.GetValue(ExpandedPathProperty);
+        }
+
+        /// <summary>
+        /// Sets the glyph to show for an expanded tree node.
+        /// </summary>
+        /// <param name="treeViewItem">The element on which to set the attached property.</param>
+        /// <param name="value">The property value to set.</param>
+        public static void SetExpandedPath(TreeViewItem treeViewItem, Geometry value)
+        {
+            treeViewItem.SetValue(ExpandedPathProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the ExpandedPath dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ExpandedPathProperty =
+            DependencyProperty.RegisterAttached(
+                "ExpandedPath",
+                typeof(Geometry),
+                typeof(TreeViewItemHelper));
 
         #endregion
 

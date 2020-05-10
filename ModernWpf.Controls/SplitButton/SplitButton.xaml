@@ -38,6 +38,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SplitButton">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
                     <Grid
                         x:Name="RootGrid"
                         Background="Transparent"
@@ -186,10 +189,10 @@
                             Padding="0,0,9,0"
                             Focusable="False">
                             <Button.Content>
-                                <TextBlock
+                                <ui:FontIconFallback
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="12"
-                                    Text="&#xE70D;"
+                                    Data="{StaticResource ChevronDown}"
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Right" />
                             </Button.Content>

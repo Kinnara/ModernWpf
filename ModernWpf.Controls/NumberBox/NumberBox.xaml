@@ -24,6 +24,13 @@
             <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="{DynamicResource NumberBoxSpinButtonBorderThickness}" />
             <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <ui:FontIconFallback Data="{Binding}" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
         </Style.Setters>
     </Style>
 
@@ -35,6 +42,13 @@
             <Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
             <Setter Property="BorderThickness" Value="{DynamicResource NumberBoxPopupSpinButtonBorderThickness}" />
             <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <ui:FontIconFallback Data="{Binding}" />
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
         </Style.Setters>
     </Style>
 
@@ -43,24 +57,28 @@
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="ScrollUpDown">M 10 2.138672 L 4.189453 7.939453 L 3.310547 7.060547 L 10 0.361328 L 16.689453 7.060547 L 15.810547 7.939453 Z M 10 17.861328 L 15.810547 12.060547 L 16.689453 12.939453 L 10 19.638672 L 3.310547 12.939453 L 4.189453 12.060547 Z</StreamGeometry>
                         <Style x:Key="DeleteButtonStyle" TargetType="Button">
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="Button">
+                                        <ControlTemplate.Resources>
+                                            <StreamGeometry x:Key="Cancel">M 10.888672 10 L 17.626953 16.748047 L 16.748047 17.626953 L 10 10.888672 L 3.251953 17.626953 L 2.373047 16.748047 L 9.111328 10 L 2.373047 3.251953 L 3.251953 2.373047 L 10 9.111328 L 16.748047 2.373047 L 17.626953 3.251953 Z</StreamGeometry>
+                                        </ControlTemplate.Resources>
                                         <Border
                                             x:Name="ButtonLayoutGrid"
                                             BorderBrush="{DynamicResource TextControlButtonBorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             Background="{DynamicResource TextControlButtonBackground}"
                                             CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}">
-                                            <TextBlock
+                                            <ui:FontIconFallback
                                                 x:Name="GlyphElement"
                                                 Foreground="{DynamicResource TextControlButtonForeground}"
                                                 VerticalAlignment="Center"
                                                 HorizontalAlignment="Center"
                                                 FontStyle="Normal"
                                                 FontSize="12"
-                                                Text="&#xE10A;"
+                                                Data="{StaticResource Cancel}"
                                                 FontFamily="{DynamicResource SymbolThemeFontFamily}" />
                                         </Border>
                                         <ControlTemplate.Triggers>
@@ -181,7 +199,7 @@
                             Visibility="{TemplateBinding ui:ControlHelper.DescriptionVisibility}"
                             TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        <TextBlock
+                        <ui:FontIconFallback
                             Grid.Row="1"
                             Grid.Column="2"
                             Margin="{StaticResource NumberBoxPopupIndicatorMargin}"
@@ -189,7 +207,7 @@
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             FontSize="12"
-                            Text="&#xEC8F;"
+                            Data="{StaticResource ScrollUpDown}"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}" />
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -243,6 +261,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NumberBox">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
+                        <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
+                    
                     <Grid ui:ThemeManager.HasThemeResources="True">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="SpinButtonStates">
@@ -362,13 +385,13 @@
                                         <RepeatButton
                                             x:Name="PopupUpSpinButton"
                                             Style="{StaticResource NumberBoxPopupSpinButtonStyle}"
-                                            Content="&#xE70E;" />
+                                            Content="{StaticResource ChevronUp}" />
 
                                         <RepeatButton
                                             x:Name="PopupDownSpinButton"
                                             Style="{StaticResource NumberBoxPopupSpinButtonStyle}"
                                             Grid.Row="1"
-                                            Content="&#xE70D;" />
+                                            Content="{StaticResource ChevronDown}" />
                                     </Grid>
                                 </Border>
                             </ui:ThemeShadowChrome>
@@ -380,7 +403,7 @@
                             Grid.Column="1"
                             Visibility="Collapsed"
                             FontSize="{TemplateBinding FontSize}"
-                            Content="&#xE70E;"
+                            Content="{StaticResource ChevronUp}"
                             Style="{StaticResource NumberBoxSpinButtonStyle}"
                             ui:ControlHelper.CornerRadius="0" />
 
@@ -390,7 +413,7 @@
                             Grid.Column="2"
                             Visibility="Collapsed"
                             FontSize="{TemplateBinding FontSize}"
-                            Content="&#xE70D;"
+                            Content="{StaticResource ChevronDown}"
                             Style="{StaticResource NumberBoxSpinButtonStyle}"
                             ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}" />
 

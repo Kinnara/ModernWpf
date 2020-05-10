@@ -43,6 +43,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="ChevronDownSmall">M 17.568359 3.408203 L 19.931641 5.761719 L 10 15.693359 L 0.068359 5.761719 L 2.431641 3.408203 L 10 10.976563 L 17.568359 3.408203 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
                     <Grid 
                         x:Name="RootGrid" 
                         Height="{TemplateBinding Height}"
@@ -54,13 +57,13 @@
                                 ContentTemplate="{TemplateBinding ContentTemplate}"
                                 TextElement.Foreground="{TemplateBinding Foreground}"
                                 VerticalAlignment="Center" />
-                            <ui:FontIcon
+                            <ui:FontIconFallback
                                 x:Name="Icon"
                                 Margin="8,0,0,-4"
                                 VerticalAlignment="Center"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 FontSize="8"
-                                Glyph="&#xE96E;"
+                                Data="{StaticResource ChevronDownSmall}"
                                 Foreground="{TemplateBinding Foreground}"
                                 IsHitTestVisible="False" />
                         </StackPanel>
@@ -102,6 +105,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
                     <Grid 
                         x:Name="RootGrid" 
                         Height="{TemplateBinding Height}"
@@ -110,13 +116,13 @@
                         <Rectangle 
                             x:Name="PointerRectangle" 
                             Fill="Transparent" />
-                        <ui:FontIcon
+                        <ui:FontIconFallback
                             x:Name="Icon"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             FontSize="16"
-                            Glyph="&#xE70D;"
+                            Data="{StaticResource ChevronDown}"
                             Foreground="{TemplateBinding Foreground}"
                             IsHitTestVisible="False" />
                     </Grid>
@@ -288,18 +294,18 @@
                                     Width="40"
                                     Margin="{DynamicResource NavigationViewItemExpandChevronMargin}"
                                     Background="Transparent">
-                                    <TextBlock
+                                    <ui:FontIconFallback
                                             Width="12" Height="12"
                                             RenderTransformOrigin="0.5, 0.5"
                                             Foreground="{DynamicResource NavigationViewItemForeground}"
                                             FontSize="12.0"
-                                            Text="{DynamicResource NavigationViewItemExpandedGlyph}"
+                                            Data="{DynamicResource NavigationViewItemExpandedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             VerticalAlignment="Center">
-                                        <TextBlock.RenderTransform>
+                                        <ui:FontIconFallback.RenderTransform>
                                             <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" Angle="0"/>
-                                        </TextBlock.RenderTransform>
-                                    </TextBlock>
+                                        </ui:FontIconFallback.RenderTransform>
+                                    </ui:FontIconFallback>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -588,17 +594,17 @@
                                     Width="24"
                                     Margin="{DynamicResource TopNavigationViewItemExpandChevronMargin}"
                                     Background="Transparent">
-                                <TextBlock Foreground="{DynamicResource NavigationViewItemForeground}"
+                                <ui:FontIconFallback Foreground="{DynamicResource NavigationViewItemForeground}"
                                             RenderTransformOrigin="0.5, 0.5"
                                             FontSize="8"
-                                            Text="{DynamicResource NavigationViewItemExpandedGlyph}"
+                                            Data="{DynamicResource NavigationViewItemExpandedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             VerticalAlignment="Center"
                                             HorizontalAlignment="Center">
-                                    <TextBlock.RenderTransform>
+                                    <ui:FontIconFallback.RenderTransform>
                                         <RotateTransform x:Name="ExpandCollapseChevronRotateTransform"/>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
+                                    </ui:FontIconFallback.RenderTransform>
+                                </ui:FontIconFallback>
                             </Grid>
                         </Grid>
                         <Grid 
@@ -783,17 +789,17 @@
                                     Width="40"
                                     Background="Transparent">
                                     <Border Padding="{DynamicResource TopNavigationViewItemOnOverflowExpandChevronPadding}">
-                                        <TextBlock Foreground="{DynamicResource NavigationViewItemForeground}"
+                                        <ui:FontIconFallback Foreground="{DynamicResource NavigationViewItemForeground}"
                                                 Width="12" Height="12"
                                                 RenderTransformOrigin="0.5, 0.5"
                                                 FontSize="12.0"
-                                                Text="{DynamicResource NavigationViewItemExpandedGlyph}"
+                                                Data="{DynamicResource NavigationViewItemExpandedPath}"
                                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                                 VerticalAlignment="Center">
-                                            <TextBlock.RenderTransform>
+                                            <ui:FontIconFallback.RenderTransform>
                                                 <RotateTransform x:Name="ExpandCollapseChevronRotateTransform"/>
-                                            </TextBlock.RenderTransform>
-                                        </TextBlock>
+                                            </ui:FontIconFallback.RenderTransform>
+                                        </ui:FontIconFallback>
                                     </Border>
                                 </Grid>
                             </Grid>

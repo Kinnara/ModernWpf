@@ -25,6 +25,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ListViewItem">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="CheckMark">M 17.939453 5.439453 L 7.5 15.888672 L 2.060547 10.439453 L 2.939453 9.560547 L 7.5 14.111328 L 17.060547 4.560547 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
                     <Border
                         x:Name="ContentBorder"
                         Background="{TemplateBinding Background}"
@@ -182,10 +185,10 @@
                                 <Border.RenderTransform>
                                     <TranslateTransform x:Name="MultiSelectCheckBoxTransform" />
                                 </Border.RenderTransform>
-                                <ui:FontIcon
+                                <ui:FontIconFallback
                                     x:Name="MultiSelectCheck"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    Glyph="&#xE73E;"
+                                    Data="{StaticResource CheckMark}"
                                     FontSize="16"
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumHighBrush}"
                                     Visibility="Collapsed"
