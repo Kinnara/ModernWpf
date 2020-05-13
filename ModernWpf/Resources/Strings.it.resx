@@ -228,4 +228,44 @@
   <data name="AppBarMoreButtonOpenToolTip" xml:space="preserve">
     <value>Meno dettagli</value>
   </data>
+  <data name="NavigationBackButtonName" xml:space="preserve">
+    <value>Indietro</value>
+    <comment>Automation name for the nav view provided back button</comment>
+  </data>
+  <data name="NavigationBackButtonToolTip" xml:space="preserve">
+    <value>Indietro</value>
+    <comment>ToolTip caption for the back button</comment>
+  </data>
+  <data name="NavigationButtonClosedName" xml:space="preserve">
+    <value>Apri menu di navigazione</value>
+    <comment>Automation name for the hamburger button when it is in a closed state</comment>
+  </data>
+  <data name="NavigationButtonOpenName" xml:space="preserve">
+    <value>Chiudi menu di navigazione</value>
+    <comment>Automation name and tooltip caption for the hamburger button when it is in an open state, and tooltip caption for the close button</comment>
+  </data>
+  <data name="NavigationCloseButtonName" xml:space="preserve">
+    <value>Chiudi</value>
+    <comment>Automation name for the nav view provided close button</comment>
+  </data>
+  <data name="NavigationOverflowButtonName" xml:space="preserve">
+    <value>Pulsante Altro</value>
+    <comment>Automation name for the nav view more button when panel is on top</comment>
+  </data>
+  <data name="NavigationOverflowButtonText" xml:space="preserve">
+    <value>Altro</value>
+    <comment>Text for the nav view more button when panel is on top</comment>
+  </data>
+  <data name="NavigationViewItemDefaultControlName" xml:space="preserve">
+    <value>NavigationViewItem</value>
+    <comment>Default automation id if no name or id is provided</comment>
+  </data>
+  <data name="NavigationViewSearchButtonName" xml:space="preserve">
+    <value>Fai clic per cercare</value>
+    <comment>Name for the compact view search button</comment>
+  </data>
+  <data name="SettingsButtonName" xml:space="preserve">
+    <value>Impostazioni</value>
+    <comment>Automation name for the settings button</comment>
+  </data>
 </root>

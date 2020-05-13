@@ -228,4 +228,44 @@
   <data name="AppBarMoreButtonOpenToolTip" xml:space="preserve">
     <value>表示を減らす</value>
   </data>
+  <data name="NavigationBackButtonName" xml:space="preserve">
+    <value>戻る</value>
+    <comment>Automation name for the nav view provided back button</comment>
+  </data>
+  <data name="NavigationBackButtonToolTip" xml:space="preserve">
+    <value>戻る</value>
+    <comment>ToolTip caption for the back button</comment>
+  </data>
+  <data name="NavigationButtonClosedName" xml:space="preserve">
+    <value>ナビゲーションを開く</value>
+    <comment>Automation name for the hamburger button when it is in a closed state</comment>
+  </data>
+  <data name="NavigationButtonOpenName" xml:space="preserve">
+    <value>ナビゲーションを閉じる</value>
+    <comment>Automation name and tooltip caption for the hamburger button when it is in an open state, and tooltip caption for the close button</comment>
+  </data>
+  <data name="NavigationCloseButtonName" xml:space="preserve">
+    <value>閉じる</value>
+    <comment>Automation name for the nav view provided close button</comment>
+  </data>
+  <data name="NavigationOverflowButtonName" xml:space="preserve">
+    <value>[詳細] ボタン</value>
+    <comment>Automation name for the nav view more button when panel is on top</comment>
+  </data>
+  <data name="NavigationOverflowButtonText" xml:space="preserve">
+    <value>さらに表示</value>
+    <comment>Text for the nav view more button when panel is on top</comment>
+  </data>
+  <data name="NavigationViewItemDefaultControlName" xml:space="preserve">
+    <value>NavigationViewItem</value>
+    <comment>Default automation id if no name or id is provided</comment>
+  </data>
+  <data name="NavigationViewSearchButtonName" xml:space="preserve">
+    <value>クリックして検索</value>
+    <comment>Name for the compact view search button</comment>
+  </data>
+  <data name="SettingsButtonName" xml:space="preserve">
+    <value>設定</value>
+    <comment>Automation name for the settings button</comment>
+  </data>
 </root>
