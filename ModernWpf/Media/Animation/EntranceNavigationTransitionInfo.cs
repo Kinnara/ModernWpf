@@ -1,5 +1,7 @@
-﻿using ModernWpf.Controls;
-using System.Threading;
+﻿using System;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace ModernWpf.Media.Animation
 {
@@ -15,32 +17,91 @@ namespace ModernWpf.Media.Animation
         {
         }
 
-        internal override NavigationInTransition GetNavigationInTransition()
+        internal override NavigationAnimation GetEnterAnimation(FrameworkElement element, bool movingBackwards)
         {
-            return In.Value;
+            var storyboard = new Storyboard();
+
+            if (movingBackwards)
+            {
+                var opacityAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(0, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(1, EnterDuration, DecelerateKeySpline)
+                    }
+                };
+                Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+                storyboard.Children.Add(opacityAnim);
+            }
+            else
+            {
+                var yAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(200, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(0, EnterDuration, DecelerateKeySpline)
+                    }
+                };
+                Storyboard.SetTargetProperty(yAnim, TranslateYPath);
+                storyboard.Children.Add(yAnim);
+
+                var opacityAnim = new DoubleAnimation(1, TimeSpan.Zero);
+                Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+                storyboard.Children.Add(opacityAnim);
+
+                element.SetCurrentValue(UIElement.RenderTransformProperty, new TranslateTransform());
+            }
+
+            return new NavigationAnimation(element, storyboard);
         }
 
-        internal override NavigationOutTransition GetNavigationOutTransition()
+        internal override NavigationAnimation GetExitAnimation(FrameworkElement element, bool movingBackwards)
         {
-            return Out.Value;
+            var storyboard = new Storyboard();
+
+            if (movingBackwards)
+            {
+                var yAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(0, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(200, ExitDuration, AccelerateKeySpline)
+                    }
+                };
+                Storyboard.SetTargetProperty(yAnim, TranslateYPath);
+                storyboard.Children.Add(yAnim);
+
+                var opacityAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(1, TimeSpan.Zero),
+                        new DiscreteDoubleKeyFrame(0, ExitDuration)
+                    }
+                };
+                Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+                storyboard.Children.Add(opacityAnim);
+
+                element.SetCurrentValue(UIElement.RenderTransformProperty, new TranslateTransform());
+            }
+            else
+            {
+                var opacityAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(1, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(0, ExitDuration, AccelerateKeySpline)
+                    }
+                };
+                Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+                storyboard.Children.Add(opacityAnim);
+            }
+
+            return new NavigationAnimation(element, storyboard);
         }
-
-        private static readonly ThreadLocal<NavigationInTransition> In = new ThreadLocal<NavigationInTransition>(() =>
-        {
-            return new NavigationInTransition
-            {
-                Forward = new SlideTransition { Mode = SlideTransitionMode.SlideUp },
-                Backward = new FadeTransition { Mode = FadeTransitionMode.FadeIn }
-            };
-        });
-
-        private static readonly ThreadLocal<NavigationOutTransition> Out = new ThreadLocal<NavigationOutTransition>(() =>
-        {
-            return new NavigationOutTransition
-            {
-                Forward = new FadeTransition { Mode = FadeTransitionMode.FadeOut },
-                Backward = new SlideTransition { Mode = SlideTransitionMode.SlideDown }
-            };
-        });
     }
 }
