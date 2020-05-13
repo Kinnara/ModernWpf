@@ -149,17 +149,18 @@ namespace ModernWpf.Controls
 
         #region DisplayMode
 
-        public static readonly DependencyProperty DisplayModeProperty =
-            DependencyProperty.Register(
+        private static readonly DependencyPropertyKey DisplayModePropertyKey =
+            DependencyProperty.RegisterReadOnly(
                 nameof(DisplayMode),
                 typeof(NavigationViewDisplayMode),
                 typeof(NavigationView),
                 new PropertyMetadata(NavigationViewDisplayMode.Minimal, OnDisplayModePropertyChanged));
 
+        public static readonly DependencyProperty DisplayModeProperty = DisplayModePropertyKey.DependencyProperty;
+
         public NavigationViewDisplayMode DisplayMode
         {
             get => (NavigationViewDisplayMode)GetValue(DisplayModeProperty);
-            set => SetValue(DisplayModeProperty, value);
         }
 
         private static void OnDisplayModePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
@@ -381,17 +382,18 @@ namespace ModernWpf.Controls
 
         #region SettingsItem
 
-        public static readonly DependencyProperty SettingsItemProperty =
-            DependencyProperty.Register(
+        private static readonly DependencyPropertyKey SettingsItemPropertyKey =
+            DependencyProperty.RegisterReadOnly(
                 nameof(SettingsItem),
                 typeof(object),
                 typeof(NavigationView),
                 new PropertyMetadata(OnSettingsItemPropertyChanged));
 
+        public static readonly DependencyProperty SettingsItemProperty = SettingsItemPropertyKey.DependencyProperty;
+
         public object SettingsItem
         {
             get => GetValue(SettingsItemProperty);
-            set => SetValue(SettingsItemProperty, value);
         }
 
         private static void OnSettingsItemPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)

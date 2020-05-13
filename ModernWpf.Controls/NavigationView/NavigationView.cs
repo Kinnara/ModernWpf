@@ -1108,7 +1108,7 @@ namespace ModernWpf.Controls
                 }
 
                 // hook up SettingsItem
-                SetValue(SettingsItemProperty, settingsItem);
+                SetValue(SettingsItemPropertyKey, settingsItem);
 
                 if (shouldSelectSetting)
                 {
@@ -4429,7 +4429,7 @@ namespace ModernWpf.Controls
 
         void RaiseDisplayModeChanged(NavigationViewDisplayMode displayMode)
         {
-            SetValue(DisplayModeProperty, displayMode);
+            SetValue(DisplayModePropertyKey, displayMode);
             var eventArgs = new NavigationViewDisplayModeChangedEventArgs();
             eventArgs.DisplayMode = displayMode;
             DisplayModeChanged?.Invoke(this, eventArgs);
