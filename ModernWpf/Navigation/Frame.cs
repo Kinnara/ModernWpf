@@ -238,7 +238,8 @@ namespace ModernWpf.Controls
         }
 
         /// <summary>
-        /// Causes the Frame to load content represented by the specified Page, also passing a parameter to be interpreted by the target of the navigation.
+        /// Causes the Frame to load content represented by the specified Page, also passing
+        /// a parameter to be interpreted by the target of the navigation.
         /// </summary>
         /// <param name="sourcePageType">The page to navigate to, specified as a type reference to its partial class type.</param>
         /// <param name="parameter">The navigation parameter to pass to the target page.</param>
@@ -249,7 +250,9 @@ namespace ModernWpf.Controls
         }
 
         /// <summary>
-        /// Causes the Frame to load content represented by the specified Page -derived data type, also passing a parameter to be interpreted by the target of the navigation, and a value indicating the animated transition to use.
+        /// Causes the Frame to load content represented by the specified Page -derived data
+        /// type, also passing a parameter to be interpreted by the target of the navigation,
+        /// and a value indicating the animated transition to use.
         /// </summary>
         /// <param name="sourcePageType">The page to navigate to, specified as a type reference to its partial class type.</param>
         /// <param name="parameter">The navigation parameter to pass to the target page.</param>
