@@ -1,0 +1,28 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style TargetType="local:FontIconFallback">
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:FontIconFallback">
+                    <Viewbox
+                        Width="{TemplateBinding FontSize}"
+                        Height="{TemplateBinding FontSize}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                        <Path
+                            Width="20"
+                            Height="20"
+                            Fill="{TemplateBinding Foreground}"
+                            Data="{TemplateBinding Data}" />
+                    </Viewbox>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

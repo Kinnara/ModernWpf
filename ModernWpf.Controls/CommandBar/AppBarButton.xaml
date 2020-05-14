@@ -18,6 +18,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarButton">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="ChevronRight">M 5.029297 19.091797 L 14.111328 10 L 5.029297 0.908203 L 5.908203 0.029297 L 15.888672 10 L 5.908203 19.970703 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
                     <Border
                         x:Name="Root"
                         MinWidth="{TemplateBinding MinWidth}"
@@ -132,10 +135,10 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     Visibility="Collapsed" />
-                                <ui:FontIcon
+                                <ui:FontIconFallback
                                     x:Name="SubItemChevron"
                                     Grid.Column="2"
-                                    Glyph="&#xE0E3;"
+                                    Data="{StaticResource ChevronRight}"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="12"
                                     Foreground="{DynamicResource MenuFlyoutSubItemChevron}"

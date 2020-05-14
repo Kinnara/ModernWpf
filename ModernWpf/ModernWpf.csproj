@@ -32,14 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Assets\segmdl2.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Assets\segmdl2.ttf" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Page Remove="Properties\DesignTimeResources.xaml" />
   </ItemGroup>
 

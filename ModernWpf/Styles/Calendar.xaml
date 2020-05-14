@@ -32,6 +32,11 @@
                                 Style="{StaticResource WeekDayNameStyle}"
                                 Text="{Binding}" />
                         </DataTemplate>
+                        <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
+                        <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
+                        <DataTemplate x:Key="IconTemplate">
+                            <local:FontIconFallback Data="{Binding}" />
+                        </DataTemplate>
                     </ControlTemplate.Resources>
                     <Grid
                         x:Name="PART_Root"
@@ -56,7 +61,6 @@
                                                     BorderThickness="{TemplateBinding BorderThickness}">
                                                     <ContentPresenter
                                                         x:Name="Text"
-                                                        Content="{TemplateBinding Content}"
                                                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                                                 </Border>
@@ -103,7 +107,8 @@
                                     <Button
                                         x:Name="PART_PreviousButton"
                                         Grid.Column="1"
-                                        Content="&#xE0E4;"
+                                        Content="{StaticResource ChevronUp}"
+                                        ContentTemplate="{StaticResource IconTemplate}"
                                         FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                         Focusable="False"
                                         Padding="1"
@@ -113,7 +118,8 @@
                                     <Button
                                         x:Name="PART_NextButton"
                                         Grid.Column="2"
-                                        Content="&#xE0E5;"
+                                        Content="{StaticResource ChevronDown}"
+                                        ContentTemplate="{StaticResource IconTemplate}"
                                         FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                         Focusable="False"
                                         Padding="1"

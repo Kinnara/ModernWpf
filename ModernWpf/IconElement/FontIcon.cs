@@ -15,7 +15,6 @@ namespace ModernWpf.Controls
         /// </summary>
         public FontIcon()
         {
-            SetResourceReference(FontFamilyProperty, "SymbolThemeFontFamily");
         }
 
         /// <summary>
@@ -59,7 +58,7 @@ namespace ModernWpf.Controls
                 nameof(FontSize),
                 typeof(double),
                 typeof(FontIcon),
-                new FrameworkPropertyMetadata(20d, OnFontSizeChanged));
+                new FrameworkPropertyMetadata(20.0, OnFontSizeChanged));
 
         /// <summary>
         /// Gets or sets the size of the icon glyph.

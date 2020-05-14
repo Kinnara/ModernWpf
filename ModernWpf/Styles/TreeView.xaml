@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
     <sys:Double x:Key="TreeViewItemMinHeight">32</sys:Double>
@@ -43,6 +44,8 @@
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:TreeViewItemHelper.IsEnabled" Value="True" />
         <Setter Property="primitives:TreeViewItemHelper.GlyphBrush" Value="{DynamicResource TreeViewItemForeground}" />
+        <Setter Property="primitives:TreeViewItemHelper.CollapsedPath" Value="M 5.029297 19.091797 L 14.111328 10 L 5.029297 0.908203 L 5.908203 0.029297 L 15.888672 10 L 5.908203 19.970703 Z" />
+        <Setter Property="primitives:TreeViewItemHelper.ExpandedPath" Value="M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TreeViewItem">
@@ -78,24 +81,24 @@
                                     IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
                                     Style="{StaticResource ExpandCollapseToggleStyle}">
                                     <Grid>
-                                        <TextBlock
+                                        <local:FontIconFallback
                                             x:Name="CollapsedGlyph"
                                             Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
                                             Width="12"
                                             Height="12"
                                             Visibility="Collapsed"
                                             FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
-                                            Text="{TemplateBinding primitives:TreeViewItemHelper.CollapsedGlyph}"
+                                            Data="{TemplateBinding primitives:TreeViewItemHelper.CollapsedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             VerticalAlignment="Center" />
-                                        <TextBlock
+                                        <local:FontIconFallback
                                             x:Name="ExpandedGlyph"
                                             Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
                                             Width="12"
                                             Height="12"
                                             Visibility="Collapsed"
                                             FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
-                                            Text="{TemplateBinding primitives:TreeViewItemHelper.ExpandedGlyph}"
+                                            Data="{TemplateBinding primitives:TreeViewItemHelper.ExpandedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             VerticalAlignment="Center" />
                                     </Grid>

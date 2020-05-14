@@ -1008,6 +1008,7 @@
     <m:StaticResource x:Key="RatingControlDisabledSelectedForeground" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
     <m:StaticResource x:Key="RatingControlCaptionForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
     <local:RatingItemFontInfo x:Key="RatingControlDefaultFontInfo" Glyph="&#xE735;" />
+    <local:RatingItemPathInfo x:Key="RatingControlDefaultPathInfo" Data="M 13.828125 12.246094 L 16.25 20 L 10 15.195313 L 3.75 20 L 6.171875 12.246094 L 0 7.5 L 7.65625 7.5 L 10 0 L 12.34375 7.5 L 20 7.5 Z" />
 
     <!-- Resources for RepeatButton -->
     <Thickness x:Key="RepeatButtonBorderThemeThickness">1</Thickness>

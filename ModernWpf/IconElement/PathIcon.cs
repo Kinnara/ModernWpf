@@ -53,7 +53,8 @@ namespace ModernWpf.Controls
             _path = new Path
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch
+                VerticalAlignment = VerticalAlignment.Stretch,
+                Stretch = Stretch.Uniform
             };
 
             ApplyForeground();

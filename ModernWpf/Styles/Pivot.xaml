@@ -108,6 +108,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabControl">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="ChevronLeft">M 14.091797 19.970703 L 4.111328 10 L 14.091797 0.029297 L 14.970703 0.908203 L 5.888672 10 L 14.970703 19.091797 Z</StreamGeometry>
+                        <StreamGeometry x:Key="ChevronRight">M 5.029297 19.091797 L 14.111328 10 L 5.029297 0.908203 L 5.908203 0.029297 L 15.888672 10 L 5.908203 19.970703 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
+                    
                     <Grid
                         x:Name="templateRoot"
                         Background="{TemplateBinding Background}"
@@ -164,12 +169,12 @@
                                         Background="{DynamicResource PivotNextButtonBackground}"
                                         BorderThickness="{DynamicResource PivotNavButtonBorderThemeThickness}"
                                         BorderBrush="{DynamicResource PivotNextButtonBorderBrush}">
-                                        <local:FontIcon
+                                        <local:FontIconFallback
                                             x:Name="Arrow"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             FontSize="12"
                                             Foreground="{DynamicResource PivotNextButtonForeground}"
-                                            Glyph="&#xE0E3;"
+                                            Data="{StaticResource ChevronRight}"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             UseLayoutRounding="False" />
@@ -193,12 +198,12 @@
                                         Background="{DynamicResource PivotPreviousButtonBackground}"
                                         BorderThickness="{DynamicResource PivotNavButtonBorderThemeThickness}"
                                         BorderBrush="{DynamicResource PivotPreviousButtonBorderBrush}">
-                                        <local:FontIcon
+                                        <local:FontIconFallback
                                             x:Name="Arrow"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             FontSize="12"
                                             Foreground="{DynamicResource PivotPreviousButtonForeground}"
-                                            Glyph="&#xE0E2;"
+                                            Data="{StaticResource ChevronLeft}"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             UseLayoutRounding="False" />

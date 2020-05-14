@@ -149,10 +149,14 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
                 Content = personPicture;
                 Content.UpdateLayout();
                 var initialsTextBlock = (TextBlock)VisualTreeUtils.FindVisualChildByName(personPicture, "InitialsTextBlock");
+                var placeholderIcon = (Controls.FontIconFallback)VisualTreeUtils.FindVisualChildByName(personPicture, "PlaceholderIcon");
                 personPicture.IsGroup = true;
                 Content.UpdateLayout();
-                Verify.IsTrue(initialsTextBlock.FontFamily.Source.Contains("Segoe MDL2 Assets"));
-                Verify.AreEqual(initialsTextBlock.Text, "\xE716");
+                //Verify.IsTrue(initialsTextBlock.FontFamily.Source.Contains("Segoe MDL2 Assets"));
+                //Verify.AreEqual(initialsTextBlock.Text, "\xE716");
+                Verify.IsTrue(initialsTextBlock.Visibility == System.Windows.Visibility.Collapsed);
+                Verify.IsTrue(placeholderIcon.Visibility == System.Windows.Visibility.Visible);
+                Verify.IsTrue(placeholderIcon.Data == placeholderIcon.FindResource("People"));
 
                 personPicture.IsGroup = false;
                 personPicture.Initials = "JS";
@@ -162,8 +166,11 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 
                 personPicture.Initials = "";
                 Content.UpdateLayout();
-                Verify.IsTrue(initialsTextBlock.FontFamily.Source.Contains("Segoe MDL2 Assets"));
-                Verify.AreEqual(initialsTextBlock.Text, "\xE77B");
+                //Verify.IsTrue(initialsTextBlock.FontFamily.Source.Contains("Segoe MDL2 Assets"));
+                //Verify.AreEqual(initialsTextBlock.Text, "\xE77B");
+                Verify.IsTrue(initialsTextBlock.Visibility == System.Windows.Visibility.Collapsed);
+                Verify.IsTrue(placeholderIcon.Visibility == System.Windows.Visibility.Visible);
+                Verify.IsTrue(placeholderIcon.Data == placeholderIcon.FindResource("Contact"));
 
                 // Make sure that custom FontFamily takes effect after the control is created
                 // and also goes back to the MDL2 font after setting IsGroup = true.
@@ -175,8 +182,11 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 
                 personPicture.IsGroup = true;
                 Content.UpdateLayout();
-                Verify.IsTrue(initialsTextBlock.FontFamily.Source.Contains("Segoe MDL2 Assets"));
-                Verify.AreEqual(initialsTextBlock.Text, "\xE716");
+                //Verify.IsTrue(initialsTextBlock.FontFamily.Source.Contains("Segoe MDL2 Assets"));
+                //Verify.AreEqual(initialsTextBlock.Text, "\xE716");
+                Verify.IsTrue(initialsTextBlock.Visibility == System.Windows.Visibility.Collapsed);
+                Verify.IsTrue(placeholderIcon.Visibility == System.Windows.Visibility.Visible);
+                Verify.IsTrue(placeholderIcon.Data == placeholderIcon.FindResource("People"));
             });
         }
     }
