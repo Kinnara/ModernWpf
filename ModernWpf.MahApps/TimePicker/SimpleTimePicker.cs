@@ -17,10 +17,13 @@ namespace ModernWpf.MahApps.Controls
     [ContentProperty(nameof(Header))]
     public class SimpleTimePicker : TimePicker
     {
+        private const string ElementPopup = "PART_Popup";
         private const string ElementAmPmSwitcher = "PART_AmPmSwitcher";
         private const string ElementHourPicker = "PART_HourPicker";
         private const string ElementMinutePicker = "PART_MinutePicker";
         private const string ElementSecondPicker = "PART_SecondPicker";
+
+        private Popup _popup;
 
         private DateTimeComponentSelector _ampmSwitcher;
         private DateTimeComponentSelector _hourInput;
@@ -38,6 +41,7 @@ namespace ModernWpf.MahApps.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SimpleTimePicker), new FrameworkPropertyMetadata(typeof(SimpleTimePicker)));
 
+            SelectedDateTimeProperty.OverrideMetadata(typeof(SimpleTimePicker), new FrameworkPropertyMetadata(OnSelectedDateTimeChanged));
             IsDropDownOpenProperty.OverrideMetadata(typeof(SimpleTimePicker), new FrameworkPropertyMetadata(OnIsDropDownOpenChanged));
         }
 
@@ -53,8 +57,8 @@ namespace ModernWpf.MahApps.Controls
         /// <summary>
         /// Identifies the UseSystemFocusVisuals dependency property.
         /// </summary>
-         public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(SimpleTimePicker));
+        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
+           FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(SimpleTimePicker));
 
         /// <summary>
         /// Gets or sets a value that indicates whether the control uses focus visuals that
@@ -206,6 +210,9 @@ namespace ModernWpf.MahApps.Controls
         /// </summary>
         public override void OnApplyTemplate()
         {
+            UnSubscribeEvents();
+
+            _popup = GetTemplateChild(ElementPopup) as Popup;
             _hourInput = GetTemplateChild(ElementHourPicker) as DateTimeComponentSelector;
             _minuteInput = GetTemplateChild(ElementMinutePicker) as DateTimeComponentSelector;
             _secondInput = GetTemplateChild(ElementSecondPicker) as DateTimeComponentSelector;
@@ -219,6 +226,7 @@ namespace ModernWpf.MahApps.Controls
 
             base.OnApplyTemplate();
 
+            SubscribeEvents();
             UpdateTextBlocks();
         }
 
@@ -230,13 +238,11 @@ namespace ModernWpf.MahApps.Controls
             }
         }
 
-        protected override void SubscribeEvents()
+        private void SubscribeEvents()
         {
-            base.SubscribeEvents();
-
-            if (Popup != null)
+            if (_popup != null)
             {
-                Popup.Opened += OnPopupOpened;
+                _popup.Opened += OnPopupOpened;
             }
 
             if (_acceptButton != null)
@@ -250,13 +256,11 @@ namespace ModernWpf.MahApps.Controls
             }
         }
 
-        protected override void UnSubscribeEvents()
+        private void UnSubscribeEvents()
         {
-            base.UnSubscribeEvents();
-
-            if (Popup != null)
+            if (_popup != null)
             {
-                Popup.Opened -= OnPopupOpened;
+                _popup.Opened -= OnPopupOpened;
             }
 
             if (_acceptButton != null)
@@ -288,11 +292,10 @@ namespace ModernWpf.MahApps.Controls
             }
         }
 
-        protected override void OnSelectedTimeChanged(TimePickerBaseSelectionChangedEventArgs<DateTime?> e)
+        private static void OnSelectedDateTimeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            base.OnSelectedTimeChanged(e);
-
-            UpdateTextBlocks();
+            var timePicker = (SimpleTimePicker)d;
+            timePicker.UpdateTextBlocks();
         }
 
         private static void OnIsDropDownOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -389,9 +392,9 @@ namespace ModernWpf.MahApps.Controls
         private void ClosePopup()
         {
             SetCurrentValue(IsDropDownOpenProperty, false);
-            if (Popup != null && Popup.IsOpen)
+            if (_popup != null && _popup.IsOpen)
             {
-                Popup.IsOpen = false;
+                _popup.IsOpen = false;
             }
         }
 

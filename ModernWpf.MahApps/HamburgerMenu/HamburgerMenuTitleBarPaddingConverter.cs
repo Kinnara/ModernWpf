@@ -5,6 +5,7 @@ using System.Windows.Data;
 
 namespace ModernWpf.MahApps.Controls
 {
+    [Obsolete]
     public class HamburgerMenuTitleBarPaddingConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

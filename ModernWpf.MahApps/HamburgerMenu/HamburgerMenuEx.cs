@@ -20,6 +20,7 @@ namespace ModernWpf.MahApps.Controls
     /// Represents a container that enables navigation of app content. It has a header,
     /// a view for the main content, and a menu pane for navigation commands.
     /// </summary>
+    [Obsolete]
     [TemplatePart(Name = c_navViewBackButton, Type = typeof(Button))]
     public class HamburgerMenuEx : HamburgerMenu
     {

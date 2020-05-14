@@ -2,7 +2,6 @@
 using System;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace MahAppsSample.ControlPages
 {
@@ -13,7 +12,7 @@ namespace MahAppsSample.ControlPages
             InitializeComponent();
         }
 
-        private void TimePicker_SelectedDateTimeChanged(object sender, TimePickerBaseSelectionChangedEventArgs<DateTime?> e)
+        private void TimePicker_SelectedDateTimeChanged(object sender, RoutedPropertyChangedEventArgs<DateTime?> e)
         {
             Debug.WriteLine(e.NewValue?.ToShortTimeString() ?? "null");
         }

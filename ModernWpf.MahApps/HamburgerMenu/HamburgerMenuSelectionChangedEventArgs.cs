@@ -1,8 +1,11 @@
-﻿namespace ModernWpf.MahApps.Controls
+﻿using System;
+
+namespace ModernWpf.MahApps.Controls
 {
     /// <summary>
     /// Provides data for the HamburgerMenuEx.SelectionChanged event.
     /// </summary>
+    [Obsolete]
     public sealed class HamburgerMenuSelectionChangedEventArgs
     {
         /// <summary>
