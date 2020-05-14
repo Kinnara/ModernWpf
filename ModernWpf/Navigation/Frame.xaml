@@ -19,10 +19,12 @@
                         <Grid>
                             <ContentPresenter
                                 x:Name="FirstContentPresenter"
+                                Content="{x:Null}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                             <ContentPresenter
                                 x:Name="SecondContentPresenter"
+                                Content="{x:Null}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Grid>

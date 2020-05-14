@@ -1,6 +1,7 @@
-﻿using ModernWpf.Controls;
-using System.Threading;
+﻿using System;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace ModernWpf.Media.Animation
 {
@@ -64,81 +65,165 @@ namespace ModernWpf.Media.Animation
 
         #endregion
 
-        internal override NavigationInTransition GetNavigationInTransition()
+        internal override NavigationAnimation GetEnterAnimation(FrameworkElement element, bool movingBackwards)
         {
-            return Effect switch
+            var storyboard = new Storyboard();
+
+            var effect = Effect;
+            if (effect == SlideNavigationTransitionEffect.FromBottom)
             {
-                SlideNavigationTransitionEffect.FromBottom => FromBottomIn.Value,
-                SlideNavigationTransitionEffect.FromLeft => FromLeftIn.Value,
-                SlideNavigationTransitionEffect.FromRight => FromRightIn.Value,
-                _ => null,
-            };
+                if (movingBackwards)
+                {
+                    var opacityAnim = new DoubleAnimationUsingKeyFrames
+                    {
+                        KeyFrames =
+                        {
+                            new DiscreteDoubleKeyFrame(0, TimeSpan.Zero),
+                            new SplineDoubleKeyFrame(1, EnterDuration, DecelerateKeySpline)
+                        }
+                    };
+                    Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+                    storyboard.Children.Add(opacityAnim);
+                }
+                else
+                {
+                    var yAnim = new DoubleAnimationUsingKeyFrames
+                    {
+                        KeyFrames =
+                        {
+                            new DiscreteDoubleKeyFrame(200, TimeSpan.Zero),
+                            new SplineDoubleKeyFrame(0, EnterDuration, DecelerateKeySpline)
+                        }
+                    };
+                    Storyboard.SetTargetProperty(yAnim, TranslateYPath);
+                    storyboard.Children.Add(yAnim);
+
+                    var opacityAnim = new DoubleAnimation(1, TimeSpan.Zero);
+                    Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+                    storyboard.Children.Add(opacityAnim);
+
+                    element.SetCurrentValue(UIElement.RenderTransformProperty, new TranslateTransform());
+                }
+            }
+            else
+            {
+                bool fromLeft;
+                if (effect == SlideNavigationTransitionEffect.FromLeft)
+                {
+                    fromLeft = !movingBackwards;
+                }
+                else
+                {
+                    fromLeft = movingBackwards;
+                }
+
+                var xAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(fromLeft ? -200 : 200, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(0, EnterDuration, DecelerateKeySpline)
+                    }
+                };
+                Storyboard.SetTargetProperty(xAnim, TranslateXPath);
+                storyboard.Children.Add(xAnim);
+
+                var opacityAnim = new DoubleAnimation(1, TimeSpan.Zero);
+                Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+                storyboard.Children.Add(opacityAnim);
+
+                element.SetCurrentValue(UIElement.RenderTransformProperty, new TranslateTransform());
+            }
+
+            return new NavigationAnimation(element, storyboard);
         }
 
-        internal override NavigationOutTransition GetNavigationOutTransition()
+        internal override NavigationAnimation GetExitAnimation(FrameworkElement element, bool movingBackwards)
         {
-            return Effect switch
+            var storyboard = new Storyboard();
+
+            var effect = Effect;
+            if (effect == SlideNavigationTransitionEffect.FromBottom)
             {
-                SlideNavigationTransitionEffect.FromBottom => FromBottomOut.Value,
-                SlideNavigationTransitionEffect.FromLeft => FromLeftOut.Value,
-                SlideNavigationTransitionEffect.FromRight => FromRightOut.Value,
-                _ => null,
-            };
+                if (movingBackwards)
+                {
+                    var yAnim = new DoubleAnimationUsingKeyFrames
+                    {
+                        KeyFrames =
+                        {
+                            new DiscreteDoubleKeyFrame(0, TimeSpan.Zero),
+                            new SplineDoubleKeyFrame(200, ExitDuration, AccelerateKeySpline)
+                        }
+                    };
+                    Storyboard.SetTargetProperty(yAnim, TranslateYPath);
+                    storyboard.Children.Add(yAnim);
+
+                    var opacityAnim = new DoubleAnimationUsingKeyFrames
+                    {
+                        KeyFrames =
+                        {
+                            new DiscreteDoubleKeyFrame(1, TimeSpan.Zero),
+                            new DiscreteDoubleKeyFrame(0, ExitDuration)
+                        }
+                    };
+                    Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+                    storyboard.Children.Add(opacityAnim);
+
+                    element.SetCurrentValue(UIElement.RenderTransformProperty, new TranslateTransform());
+                }
+                else
+                {
+                    var opacityAnim = new DoubleAnimationUsingKeyFrames
+                    {
+                        KeyFrames =
+                        {
+                            new DiscreteDoubleKeyFrame(1, TimeSpan.Zero),
+                            new SplineDoubleKeyFrame(0, ExitDuration, AccelerateKeySpline)
+                        }
+                    };
+                    Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+                    storyboard.Children.Add(opacityAnim);
+                }
+            }
+            else
+            {
+                bool toLeft;
+                if (effect == SlideNavigationTransitionEffect.FromLeft)
+                {
+                    toLeft = movingBackwards;
+                }
+                else
+                {
+                    toLeft = !movingBackwards;
+                }
+
+                var xAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(0, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(toLeft ? -200 : 200, ExitDuration, AccelerateKeySpline)
+                    }
+                };
+                Storyboard.SetTargetProperty(xAnim, TranslateXPath);
+                storyboard.Children.Add(xAnim);
+
+                var opacityAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(1, TimeSpan.Zero),
+                        new DiscreteDoubleKeyFrame(0, ExitDuration)
+                    }
+                };
+                Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+                storyboard.Children.Add(opacityAnim);
+
+                element.SetCurrentValue(UIElement.RenderTransformProperty, new TranslateTransform());
+            }
+
+            return new NavigationAnimation(element, storyboard);
         }
-
-        private static readonly ThreadLocal<NavigationInTransition> FromBottomIn = new ThreadLocal<NavigationInTransition>(() =>
-        {
-            return new NavigationInTransition
-            {
-                Forward = new SlideTransition { Mode = SlideTransitionMode.SlideUp },
-                Backward = new FadeTransition { Mode = FadeTransitionMode.FadeIn }
-            };
-        });
-
-        private static readonly ThreadLocal<NavigationOutTransition> FromBottomOut = new ThreadLocal<NavigationOutTransition>(() =>
-        {
-            return new NavigationOutTransition
-            {
-                Forward = new FadeTransition { Mode = FadeTransitionMode.FadeOut },
-                Backward = new SlideTransition { Mode = SlideTransitionMode.SlideDown }
-            };
-        });
-
-        private static readonly ThreadLocal<NavigationInTransition> FromLeftIn = new ThreadLocal<NavigationInTransition>(() =>
-        {
-            return new NavigationInTransition
-            {
-                Forward = new SlideTransition { Mode = SlideTransitionMode.SlideRightIn },
-                Backward = new SlideTransition { Mode = SlideTransitionMode.SlideLeftIn }
-            };
-        });
-
-        private static readonly ThreadLocal<NavigationOutTransition> FromLeftOut = new ThreadLocal<NavigationOutTransition>(() =>
-        {
-            return new NavigationOutTransition
-            {
-                Forward = new SlideTransition { Mode = SlideTransitionMode.SlideRightOut },
-                Backward = new SlideTransition { Mode = SlideTransitionMode.SlideLeftOut }
-            };
-        });
-
-        private static readonly ThreadLocal<NavigationInTransition> FromRightIn = new ThreadLocal<NavigationInTransition>(() =>
-        {
-            return new NavigationInTransition
-            {
-                Forward = new SlideTransition { Mode = SlideTransitionMode.SlideLeftIn },
-                Backward = new SlideTransition { Mode = SlideTransitionMode.SlideRightIn }
-            };
-        });
-
-        private static readonly ThreadLocal<NavigationOutTransition> FromRightOut = new ThreadLocal<NavigationOutTransition>(() =>
-        {
-            return new NavigationOutTransition
-            {
-                Forward = new SlideTransition { Mode = SlideTransitionMode.SlideLeftOut },
-                Backward = new SlideTransition { Mode = SlideTransitionMode.SlideRightOut }
-            };
-        });
     }
 
     internal interface ISlideNavigationTransitionInfo2

@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.7.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,12 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Remove="Transitions\Storyboards\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Assets\segmdl2.ttf" />
-    <Resource Include="Transitions\Storyboards\**" />
   </ItemGroup>
 
   <ItemGroup>

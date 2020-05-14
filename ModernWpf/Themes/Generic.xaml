@@ -10,7 +10,6 @@
         <ResourceDictionary Source="/ModernWpf;component/Themes/TextContextMenu.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/TitleBar/TitleBarButton.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/TitleBar/TitleBarControl.xaml" />
-        <ResourceDictionary Source="/ModernWpf;component/Transitions/TransitionFrame.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

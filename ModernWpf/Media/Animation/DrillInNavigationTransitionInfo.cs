@@ -1,5 +1,7 @@
-﻿using ModernWpf.Controls;
-using System.Threading;
+﻿using System;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace ModernWpf.Media.Animation
 {
@@ -16,32 +18,103 @@ namespace ModernWpf.Media.Animation
         {
         }
 
-        internal override NavigationInTransition GetNavigationInTransition()
+        internal override NavigationAnimation GetEnterAnimation(FrameworkElement element, bool movingBackwards)
         {
-            return In.Value;
+            var storyboard = new Storyboard();
+
+            if (movingBackwards)
+            {
+                var scaleXAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(1.15, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(1, EnterDuration, DecelerateKeySpline)
+                    }
+                };
+                Storyboard.SetTargetProperty(scaleXAnim, ScaleXPath);
+                storyboard.Children.Add(scaleXAnim);
+
+                var scaleYAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(1.15, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(1, EnterDuration, DecelerateKeySpline)
+                    }
+                };
+                Storyboard.SetTargetProperty(scaleYAnim, ScaleYPath);
+                storyboard.Children.Add(scaleYAnim);
+
+                var opacityAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(0, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(1, EnterDuration, DecelerateKeySpline)
+                    }
+                };
+                Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+                storyboard.Children.Add(opacityAnim);
+            }
+            else
+            {
+                var scaleXAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(0.9, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(1, MaxMoveDuration, DecelerateKeySpline)
+                    }
+                };
+                Storyboard.SetTargetProperty(scaleXAnim, ScaleXPath);
+                storyboard.Children.Add(scaleXAnim);
+
+                var scaleYAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(0.9, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(1, MaxMoveDuration, DecelerateKeySpline)
+                    }
+                };
+                Storyboard.SetTargetProperty(scaleYAnim, ScaleYPath);
+                storyboard.Children.Add(scaleYAnim);
+
+                var opacityAnim = new DoubleAnimationUsingKeyFrames
+                {
+                    KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(0, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(1, MaxMoveDuration, DecelerateKeySpline)
+                    }
+                };
+                Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+                storyboard.Children.Add(opacityAnim);
+            }
+
+            element.SetCurrentValue(UIElement.RenderTransformProperty, new ScaleTransform());
+            element.SetCurrentValue(UIElement.RenderTransformOriginProperty, new Point(0.5, 0.5));
+
+            return new NavigationAnimation(element, storyboard);
         }
 
-        internal override NavigationOutTransition GetNavigationOutTransition()
+        internal override NavigationAnimation GetExitAnimation(FrameworkElement element, bool movingBackwards)
         {
-            return Out.Value;
+            var storyboard = new Storyboard();
+
+            var opacityAnim = new DoubleAnimationUsingKeyFrames
+            {
+                KeyFrames =
+                    {
+                        new DiscreteDoubleKeyFrame(1, TimeSpan.Zero),
+                        new SplineDoubleKeyFrame(0, ExitDuration, AccelerateKeySpline)
+                    }
+            };
+            Storyboard.SetTargetProperty(opacityAnim, OpacityPath);
+            storyboard.Children.Add(opacityAnim);
+
+            return new NavigationAnimation(element, storyboard);
         }
-
-        private static readonly ThreadLocal<NavigationInTransition> In = new ThreadLocal<NavigationInTransition>(() =>
-        {
-            return new NavigationInTransition
-            {
-                Forward = new DrillTransition { Mode = DrillTransitionMode.DrillInIncoming },
-                Backward = new DrillTransition { Mode = DrillTransitionMode.DrillOutIncoming }
-            };
-        });
-
-        private static readonly ThreadLocal<NavigationOutTransition> Out = new ThreadLocal<NavigationOutTransition>(() =>
-        {
-            return new NavigationOutTransition
-            {
-                Forward = new DrillTransition { Mode = DrillTransitionMode.DrillInOutgoing },
-                Backward = new DrillTransition { Mode = DrillTransitionMode.DrillOutOutgoing }
-            };
-        });
     }
 }
