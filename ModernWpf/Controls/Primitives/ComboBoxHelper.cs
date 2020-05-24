@@ -163,7 +163,7 @@ namespace ModernWpf.Controls.Primitives
 
         private static object ResourceLookup(Control control, object key)
         {
-            return control.Resources.Contains(key) ? control.Resources[key] : Application.Current.TryFindResource(key);
+            return control.TryFindResource(key);
         }
 
         private static T GetTemplateChild<T>(string childName, Control control) where T : DependencyObject

@@ -544,7 +544,7 @@ namespace ModernWpf.Controls
 
         private object ResourceLookup(object key)
         {
-            return Resources.Contains(key) ? Resources[key] : Application.Current.TryFindResource(key);
+            return TryFindResource(key);
         }
 
         private TextBox m_textBox;

@@ -6,15 +6,22 @@
     Title="PowerShell Sample"
     Height="450"
     Width="800"
-    Background="{DynamicResource SystemControlPageBackgroundChromeMediumLowBrush}"
-    ui:TitleBar.IsIconVisible="True">
+    Style="{DynamicResource PowerShellWindowStyle}">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ui:ColorPaletteResources Accent="#FF0078D7" />
-                <ResourceDictionary Source="pack://application:,,,/ModernWpf;component/ThemeResources/Dark.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/ModernWpf;component/ControlsResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/ModernWpf;component/ThemeResources/Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/ModernWpf;component/ControlsResources.xaml" />              
             </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="PowerShellWindowStyle" TargetType="Window">
+                <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
+                <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundAltHighBrush}" />
+                <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+                <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+                <Setter Property="UseLayoutRounding" Value="True" />
+                <Setter Property="ui:ThemeManager.IsThemeAware" Value="True" />
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
     <ScrollViewer>
@@ -28,6 +35,11 @@
             <Button
                 Content="I am an accent button"
                 Style="{StaticResource AccentButtonStyle}" />
+            <ComboBox>
+                <ComboBoxItem Content="List Item" IsSelected="True" />
+                <ComboBoxItem Content="List Item" />
+                <ComboBoxItem Content="List Item" />
+            </ComboBox>
         </ui:SimpleStackPanel>
     </ScrollViewer>
 </Window>
