@@ -1,7 +1,5 @@
 ﻿using ModernWpf.Controls;
-using ModernWpf.MahApps.Controls;
 using ModernWpf.Navigation;
-using SamplesCommon;
 using System;
 using System.Linq;
 using System.Windows;
@@ -20,7 +18,7 @@ namespace MahAppsSample
                 Width = 1280;
                 Height = 640;
                 NavView.ClearValue(PaddingProperty);
-                NavView.ClearValue(HamburgerMenuEx.HeaderTemplateProperty);
+                NavView.ClearValue(NavigationView.HeaderTemplateProperty);
                 NavView.MenuItems.RemoveAt(NavView.MenuItems.Count - 1);
             }
 

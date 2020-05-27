@@ -84,14 +84,6 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
-                <ui:NavigationViewItem Content="HamburgerMenuEx" Tag="{x:Type controlpages:HamburgerMenuExPage}" Icon="GlobalNavigationButton"/>
-
-                <ui:NavigationViewItem Content="NumericUpDown" Tag="{x:Type controlpages:NumericUpDownPage}">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:FontIcon Glyph="&#xEC8F;" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-
                 <ui:NavigationViewItem Content="SimpleTimePicker" Tag="{x:Type controlpages:SimpleTimePickerPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:BitmapIcon UriSource="/Assets/TimePicker.png" ShowAsMonochrome="False" />

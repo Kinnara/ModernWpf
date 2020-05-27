@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MahApps.Metro" Version="2.0.0-alpha0821" />
+    <PackageReference Include="MahApps.Metro" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,16 +45,6 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
       <CustomToolNamespace>ModernWpf.MahApps</CustomToolNamespace>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Themes\HamburgerMenuEx.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Styles\Controls.NumericUpDown.xaml">
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
 
 </Project>

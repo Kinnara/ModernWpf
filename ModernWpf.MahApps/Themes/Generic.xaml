@@ -2,7 +2,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/ModernWpf.MahApps;component/Themes/HamburgerMenuEx.xaml" />
         <ResourceDictionary Source="/ModernWpf.MahApps;component/Themes/SimpleTimePicker.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>
