@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace MS.Win32
@@ -16,6 +15,25 @@ namespace MS.Win32
         SWP_SHOWWINDOW = 0x0040,
         SWP_HIDEWINDOW = 0x0080,
         SWP_DRAWFRAME = 0x0020;
+
+        [StructLayout(LayoutKind.Sequential)]
+        public class POINT {
+            public int x;
+            public int y;
+ 
+            public POINT() {
+            }
+ 
+            public POINT(int x, int y) {
+                this.x = x;
+                this.y = y;
+            }
+#if DEBUG
+            public override string ToString() {
+                return "{x=" + x + ", y=" + y + "}";
+            }
+#endif
+        }
 
         // NOTE:  this replaces the RECT struct in NativeMethodsCLR.cs because it adds an extra method IsEmpty
         [StructLayout(LayoutKind.Sequential)]
@@ -59,18 +77,6 @@ namespace MS.Win32
                     return left >= right || top >= bottom;
                 }
             }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct WINDOWPOS
-        {
-            public IntPtr hwnd;
-            public IntPtr hwndInsertAfter;
-            public int x;
-            public int y;
-            public int cx;
-            public int cy;
-            public int flags;
         }
     }
 }
