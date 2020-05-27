@@ -2367,6 +2367,15 @@ namespace ModernWpf.Controls
 
         void OnNavigationViewItemKeyDown(object sender, KeyEventArgs args)
         {
+            if (args.Key == Key.Enter ||
+                args.Key == Key.Space)
+            {
+                if (args.IsRepeat)
+                {
+                    return;
+                }
+            }
+
             if (sender is NavigationViewItem nvi)
             {
                 HandleKeyEventForNavigationViewItem(nvi, args);
