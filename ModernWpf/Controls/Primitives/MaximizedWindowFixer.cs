@@ -243,7 +243,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void UpdateWindowPadding()
         {
-            if (_hwndSource.IsDisposed || _hwndSource.CompositionTarget == null)
+            if (_hwndSource == null || _hwndSource.IsDisposed || _hwndSource.CompositionTarget == null)
             {
                 return;
             }
