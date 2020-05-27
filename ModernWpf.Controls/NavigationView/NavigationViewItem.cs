@@ -88,25 +88,26 @@ namespace ModernWpf.Controls
 
             }
 
-            if (GetTemplateChildT<NavigationViewItemPresenter>(c_navigationViewItemPresenterName, controlProtected) is { } presenter)
+            UIElement presenter;
             {
-                m_navigationViewItemPresenter = presenter;
+                presenter = init();
+                UIElement init()
+                {
+                    if (GetTemplateChildT<NavigationViewItemPresenter>(c_navigationViewItemPresenterName, controlProtected) is { } presenter)
+                    {
+                        m_navigationViewItemPresenter = presenter;
+                        return presenter;
+                    }
+                    // We don't have a presenter, so we are our own presenter.
+                    return this;
+                }
+            }
 
-                presenter.MouseDown += OnPresenterPointerPressed;
-                presenter.MouseUp += OnPresenterPointerReleased;
-                presenter.MouseEnter += OnPresenterPointerEntered;
-                presenter.MouseLeave += OnPresenterPointerCanceled;
-                presenter.LostMouseCapture += OnPresenterPointerCaptureLost;
-            }
-            // WPF
-            else
-            {
-                MouseDown += OnPresenterPointerPressed;
-                MouseUp += OnPresenterPointerReleased;
-                MouseEnter += OnPresenterPointerEntered;
-                MouseLeave += OnPresenterPointerCanceled;
-                LostMouseCapture += OnPresenterPointerCaptureLost;
-            }
+            presenter.MouseDown += OnPresenterPointerPressed;
+            presenter.MouseUp += OnPresenterPointerReleased;
+            presenter.MouseEnter += OnPresenterPointerEntered;
+            presenter.MouseLeave += OnPresenterPointerCanceled;
+            presenter.LostMouseCapture += OnPresenterPointerCaptureLost;
 
             m_toolTip = GetTemplateChildT<ToolTip>("ToolTip", controlProtected);
 
