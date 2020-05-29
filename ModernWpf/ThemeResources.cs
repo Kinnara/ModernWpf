@@ -193,14 +193,14 @@ namespace ModernWpf
 
         private bool IsInitializePending { get; set; }
 
-        void ISupportInitialize.BeginInit()
+        public new void BeginInit()
         {
-            BeginInit();
+            base.BeginInit();
             IsInitializePending = true;
             IsInitialized = false;
         }
 
-        void ISupportInitialize.EndInit()
+        public new void EndInit()
         {
             IsInitializePending = false;
             IsInitialized = true;
@@ -225,6 +225,16 @@ namespace ModernWpf
                 }
             }
 
+            base.EndInit();
+        }
+
+        void ISupportInitialize.BeginInit()
+        {
+            BeginInit();
+        }
+
+        void ISupportInitialize.EndInit()
+        {
             EndInit();
         }
 

@@ -22,10 +22,16 @@ namespace ModernWpf.DesignTime
             }
         }
 
-        void ISupportInitialize.EndInit()
+        public new void EndInit()
         {
             Clear();
             MergedDictionaries.Clear();
+            base.EndInit();
+        }
+
+        void ISupportInitialize.EndInit()
+        {
+            EndInit();
         }
     }
 }

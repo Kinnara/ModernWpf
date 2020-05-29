@@ -174,9 +174,9 @@ namespace ModernWpf.MahApps
             }
         }
 
-        void ISupportInitialize.EndInit()
+        public new void EndInit()
         {
-            EndInit();
+            base.EndInit();
 
             if (AccentBase == null && AccentBaseBinding == null)
             {
@@ -188,6 +188,11 @@ namespace ModernWpf.MahApps
                 AccentBaseBinding = defaultBinding;
                 HighlightBinding = defaultBinding;
             }
+        }
+
+        void ISupportInitialize.EndInit()
+        {
+            EndInit();
         }
 
         private class BindingHelper : DependencyObject
