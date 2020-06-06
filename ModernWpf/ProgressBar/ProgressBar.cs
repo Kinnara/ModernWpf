@@ -29,6 +29,7 @@ namespace ModernWpf.Controls
         static ProgressBar()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ProgressBar), new FrameworkPropertyMetadata(typeof(ProgressBar)));
+            PaddingProperty.OverrideMetadata(typeof(ProgressBar), new FrameworkPropertyMetadata(OnPaddingChanged));
             BackgroundProperty.OverrideMetadata(typeof(ProgressBar), new FrameworkPropertyMetadata { CoerceValueCallback = CoerceBrush });
             ForegroundProperty.OverrideMetadata(typeof(ProgressBar), new FrameworkPropertyMetadata { CoerceValueCallback = CoerceBrush });
         }
@@ -225,22 +226,27 @@ namespace ModernWpf.Controls
         protected override void OnValueChanged(double oldValue, double newValue)
         {
             base.OnValueChanged(oldValue, newValue);
-            OnRangeBasePropertyChanged();
+            OnIndicatorWidthComponentChanged();
         }
 
         protected override void OnMinimumChanged(double oldMinimum, double newMinimum)
         {
             base.OnMinimumChanged(oldMinimum, newMinimum);
-            OnRangeBasePropertyChanged();
+            OnIndicatorWidthComponentChanged();
         }
 
         protected override void OnMaximumChanged(double oldMaximum, double newMaximum)
         {
             base.OnMaximumChanged(oldMaximum, newMaximum);
-            OnRangeBasePropertyChanged();
+            OnIndicatorWidthComponentChanged();
         }
 
-        private void OnRangeBasePropertyChanged()
+        private static void OnPaddingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ProgressBar)d).OnIndicatorWidthComponentChanged();
+        }
+
+        private void OnIndicatorWidthComponentChanged()
         {
             SetProgressBarIndicatorWidth();
         }
