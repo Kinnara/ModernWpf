@@ -153,7 +153,7 @@ namespace ModernWpf.Controls
             {
                 m_leftNavRepeater.ElementPrepared -= OnRepeaterElementPrepared;
                 m_leftNavRepeater.ElementClearing -= OnRepeaterElementClearing;
-                m_leftNavRepeater.Loaded -= OnRepeaterLoaded;
+                m_leftNavRepeater.IsVisibleChanged -= OnRepeaterIsVisibleChanged;
                 m_leftNavRepeater = null;
             }
 
@@ -161,7 +161,7 @@ namespace ModernWpf.Controls
             {
                 m_topNavRepeater.ElementPrepared -= OnRepeaterElementPrepared;
                 m_topNavRepeater.ElementClearing -= OnRepeaterElementClearing;
-                m_topNavRepeater.Loaded -= OnRepeaterLoaded;
+                m_topNavRepeater.IsVisibleChanged -= OnRepeaterIsVisibleChanged;
                 m_topNavRepeater = null;
             }
 
@@ -427,7 +427,7 @@ namespace ModernWpf.Controls
                 leftNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
                 leftNavRepeater.ElementClearing += OnRepeaterElementClearing;
 
-                leftNavRepeater.Loaded += OnRepeaterLoaded;
+                leftNavRepeater.IsVisibleChanged += OnRepeaterIsVisibleChanged;
 
                 leftNavRepeater.ItemTemplate = m_navigationViewItemsFactory;
                 leftNavRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = true;
@@ -448,7 +448,7 @@ namespace ModernWpf.Controls
                 topNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
                 topNavRepeater.ElementClearing += OnRepeaterElementClearing;
 
-                topNavRepeater.Loaded += OnRepeaterLoaded;
+                topNavRepeater.IsVisibleChanged += OnRepeaterIsVisibleChanged;
 
                 topNavRepeater.ItemTemplate = m_navigationViewItemsFactory;
                 topNavRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = true;
@@ -3749,6 +3749,21 @@ namespace ModernWpf.Controls
             UpdateNavigationViewItemsFactory();
         }
 
+        void OnRepeaterIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue)
+            {
+                Dispatcher.BeginInvoke(() =>
+                {
+                    var repeater = (ItemsRepeater)sender;
+                    if (repeater.IsLoaded)
+                    {
+                        OnRepeaterLoaded(sender, null);
+                    }
+                }, DispatcherPriority.Loaded);
+            }
+        }
+
         void OnRepeaterLoaded(object sender, RoutedEventArgs args)
         {
             if (SelectedItem is { } item)
@@ -3760,20 +3775,7 @@ namespace ModernWpf.Controls
                         navViewItem.IsSelected = true;
                     }
                 }
-
                 AnimateSelectionChanged(item);
-
-                if (m_activeIndicator == null)
-                {
-                    // WPF: Wait for NavigationViewItem.OnApplyTemplate
-                    Dispatcher.BeginInvoke(() =>
-                    {
-                        if (m_activeIndicator == null && item == SelectedItem)
-                        {
-                            AnimateSelectionChanged(item);
-                        }
-                    }, DispatcherPriority.Send);
-                }
             }
         }
 
