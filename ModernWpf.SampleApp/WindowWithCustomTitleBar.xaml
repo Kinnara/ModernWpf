@@ -71,7 +71,8 @@
                 x:Name="ForwardButton"
                 Grid.Column="1"
                 Style="{StaticResource AppTitleBarBackButtonStyle}"
-                Content="&#xEA47;" />
+                Content="&#xEA47;"
+                ContentTemplate="{x:Null}" />
 
             <!-- Horizontally centered title -->
             <TextBlock
