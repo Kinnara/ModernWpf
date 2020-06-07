@@ -414,6 +414,7 @@ namespace ModernWpf.Controls
                     toggleButton.Checked += OnChildChecked;
                     toggleButton.Unchecked += OnChildUnchecked;
 
+                    // If the developer adds a checked toggle button to the collection, update selection to this item.
                     if (toggleButton.IsChecked == true)
                     {
                         m_blockSelecting = false; // WPF-specific fix to ensure IsChecked is honored
