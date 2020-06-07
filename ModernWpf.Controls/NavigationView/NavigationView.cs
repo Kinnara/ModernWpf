@@ -1712,28 +1712,27 @@ namespace ModernWpf.Controls
                         areElementsAtSameDepth = prevPosPoint.X == nextPosPoint.X;
                     }
 
-                    //Visual visual = ElementCompositionPreview.GetElementVisual(this);
-                    //CompositionScopedBatch scopedBatch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                    var storyboard = new Storyboard { FillBehavior = FillBehavior.Stop };
 
                     if (!areElementsAtSameDepth)
                     {
                         bool isNextBelow = prevPosPoint.Y < nextPosPoint.Y;
                         if (prevIndicator.RenderSize.Height > prevIndicator.RenderSize.Width)
                         {
-                            PlayIndicatorNonSameLevelAnimations(prevIndicator, true, isNextBelow ? false : true);
+                            PlayIndicatorNonSameLevelAnimations(prevIndicator, true, isNextBelow ? false : true, storyboard.Children);
                         }
                         else
                         {
-                            PlayIndicatorNonSameLevelTopPrimaryAnimation(prevIndicator, true);
+                            PlayIndicatorNonSameLevelTopPrimaryAnimation(prevIndicator, true, storyboard.Children);
                         }
 
                         if (nextIndicator.RenderSize.Height > nextIndicator.RenderSize.Width)
                         {
-                            PlayIndicatorNonSameLevelAnimations(nextIndicator, false, isNextBelow ? true : false);
+                            PlayIndicatorNonSameLevelAnimations(nextIndicator, false, isNextBelow ? true : false, storyboard.Children);
                         }
                         else
                         {
-                            PlayIndicatorNonSameLevelTopPrimaryAnimation(nextIndicator, false);
+                            PlayIndicatorNonSameLevelTopPrimaryAnimation(nextIndicator, false, storyboard.Children);
                         }
 
                     }
@@ -1749,28 +1748,29 @@ namespace ModernWpf.Controls
                             outgoingEndPosition,
                             prevSize,
                             nextSize,
-                            true);
+                            true,
+                            storyboard.Children);
                         PlayIndicatorAnimations(nextIndicator,
                             incomingStartPosition,
                             0,
                             prevSize,
                             nextSize,
-                            false);
+                            false,
+                            storyboard.Children);
                     }
 
-                    //scopedBatch.End();
                     m_prevIndicator = prevIndicator;
                     m_nextIndicator = nextIndicator;
 
-                    /*
-                    var strongThis = get_strong();
-                    scopedBatch.Completed(
-        
-                        [strongThis](var sender, var args)
-                        {
-                        strongThis.OnAnimationComplete(sender, args);
-                    });
-                    */
+                    storyboard.Completed += OnAnimationComplete;
+
+                    storyboard.Begin(this, true);
+                    storyboard.Pause(this);
+                    storyboard.SeekAlignedToLastTick(this, TimeSpan.Zero, TimeSeekOrigin.BeginTime);
+                    Dispatcher.BeginInvoke(() =>
+                    {
+                        storyboard.Resume(this);
+                    }, DispatcherPriority.Loaded);
                 }
                 else
                 {
@@ -1783,10 +1783,8 @@ namespace ModernWpf.Controls
             }
         }
 
-        void PlayIndicatorNonSameLevelAnimations(UIElement indicator, bool isOutgoing, bool fromTop)
+        void PlayIndicatorNonSameLevelAnimations(UIElement indicator, bool isOutgoing, bool fromTop, TimelineCollection animations)
         {
-            var animations = new TimelineCollection();
-
             // Determine scaling of indicator (whether it is appearing or dissapearing)
             double beginScale = isOutgoing ? 1.0 : 0.0;
             double endScale = isOutgoing ? 0.0 : 1.0;
@@ -1808,14 +1806,13 @@ namespace ModernWpf.Controls
             var indicatorCenterPoint = new Point();
             indicatorCenterPoint.Y = newCenter;
 
+            Storyboard.SetTarget(scaleAnim, indicator);
             Storyboard.SetTargetProperty(scaleAnim, s_scaleYPath);
-            PlayIndicatorAnimationsHelper(indicator, animations, indicatorCenterPoint);
+            PrepareIndicatorForAnimation(indicator, indicatorCenterPoint);
         }
 
-        void PlayIndicatorNonSameLevelTopPrimaryAnimation(UIElement indicator, bool isOutgoing)
+        void PlayIndicatorNonSameLevelTopPrimaryAnimation(UIElement indicator, bool isOutgoing, TimelineCollection animations)
         {
-            var animations = new TimelineCollection();
-
             // Determine scaling of indicator (whether it is appearing or dissapearing)
             double beginScale = isOutgoing ? 1.0 : 0.0;
             double endScale = isOutgoing ? 0.0 : 1.0;
@@ -1836,11 +1833,12 @@ namespace ModernWpf.Controls
             var indicatorCenterPoint = new Point();
             indicatorCenterPoint.Y = newCenter;
 
+            Storyboard.SetTarget(scaleAnim, indicator);
             Storyboard.SetTargetProperty(scaleAnim, s_scaleXPath);
-            PlayIndicatorAnimationsHelper(indicator, animations, indicatorCenterPoint);
+            PrepareIndicatorForAnimation(indicator, indicatorCenterPoint);
         }
 
-        void PlayIndicatorAnimations(UIElement indicator, double from, double to, Size beginSize, Size endSize, bool isOutgoing)
+        void PlayIndicatorAnimations(UIElement indicator, double from, double to, Size beginSize, Size endSize, bool isOutgoing, TimelineCollection animations)
         {
             Size size = indicator.RenderSize;
             double dimension = IsTopNavigationView() ? size.Width : size.Height;
@@ -1853,8 +1851,6 @@ namespace ModernWpf.Controls
                 endScale = endSize.Width / size.Width;
             }
 
-            var animations = new TimelineCollection();
-
             var posAnim = new DoubleAnimationUsingKeyFrames
             {
                 KeyFrames =
@@ -1864,6 +1860,7 @@ namespace ModernWpf.Controls
                 },
                 Duration = TimeSpan.FromMilliseconds(600)
             };
+            Storyboard.SetTarget(posAnim, indicator);
             animations.Add(posAnim);
 
             var scaleAnim = new DoubleAnimationUsingKeyFrames
@@ -1879,6 +1876,7 @@ namespace ModernWpf.Controls
                 },
                 Duration = TimeSpan.FromMilliseconds(600)
             };
+            Storyboard.SetTarget(scaleAnim, indicator);
             animations.Add(scaleAnim);
 
             var centerAnim = new DoubleAnimationUsingKeyFrames
@@ -1890,6 +1888,7 @@ namespace ModernWpf.Controls
                 },
                 Duration = TimeSpan.FromMilliseconds(200)
             };
+            Storyboard.SetTarget(centerAnim, indicator);
             animations.Add(centerAnim);
 
             if (isOutgoing)
@@ -1905,6 +1904,7 @@ namespace ModernWpf.Controls
                     },
                     Duration = TimeSpan.FromMilliseconds(600)
                 };
+                Storyboard.SetTarget(opacityAnim, indicator);
                 Storyboard.SetTargetProperty(opacityAnim, s_opacityPath);
                 animations.Add(opacityAnim);
             }
@@ -1922,10 +1922,10 @@ namespace ModernWpf.Controls
                 Storyboard.SetTargetProperty(centerAnim, s_centerYPath);
             }
 
-            PlayIndicatorAnimationsHelper(indicator, animations);
+            PrepareIndicatorForAnimation(indicator);
         }
 
-        void PlayIndicatorAnimationsHelper(UIElement indicator, TimelineCollection animations, Point? centerPoint = null)
+        void PrepareIndicatorForAnimation(UIElement indicator, Point? centerPoint = null)
         {
             if (!(indicator.RenderTransform is TransformGroup transformGroup &&
                   transformGroup.Children.Count == 2 &&
@@ -1953,16 +1953,6 @@ namespace ModernWpf.Controls
             {
                 indicator.CacheMode = m_bitmapCache;
             }
-
-            var storyboard = new Storyboard
-            {
-                FillBehavior = FillBehavior.Stop,
-                Children = animations
-            };
-            storyboard.Completed += OnAnimationComplete;
-
-            AnimationHelper.DeferBegin(storyboard);
-            storyboard.Begin((FrameworkElement)indicator, true);
         }
 
         void OnAnimationComplete(object sender, EventArgs args)
