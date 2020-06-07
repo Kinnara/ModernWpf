@@ -48,7 +48,7 @@
         <Setter Property="local:TitleBar.InactiveBackground" Value="Transparent" />
         <Setter Property="local:TitleBar.InactiveForeground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
         <Setter Property="local:TitleBar.BackButtonStyle" Value="{StaticResource TitleBarBackButtonStyle}" />
-        <Setter Property="primitives:WindowHelper.IsAutoPaddingEnabled" Value="True" />
+        <Setter Property="primitives:WindowHelper.FixMaximizedWindow" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Window">
@@ -140,6 +140,11 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="WindowChrome.WindowChrome" Value="{x:Null}">
+                <Setter Property="primitives:WindowHelper.FixMaximizedWindow" Value="False" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="Window" BasedOn="{StaticResource DefaultWindowStyle}" />

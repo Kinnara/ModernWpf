@@ -1,11 +1,6 @@
-﻿using System;
-using System.ComponentModel;
-using System.Globalization;
-using System.Runtime.InteropServices;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Media;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -80,29 +75,29 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        #region IsAutoPaddingEnabled
+        #region FixMaximizedWindow
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static readonly DependencyProperty IsAutoPaddingEnabledProperty =
+        public static readonly DependencyProperty FixMaximizedWindowProperty =
             DependencyProperty.RegisterAttached(
-                "IsAutoPaddingEnabled",
+                "FixMaximizedWindow",
                 typeof(bool),
                 typeof(WindowHelper),
-                new PropertyMetadata(false, OnIsAutoPaddingEnabledChanged));
+                new PropertyMetadata(false, OnFixMaximizedWindowChanged));
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static bool GetIsAutoPaddingEnabled(Window window)
+        public static bool GetFixMaximizedWindow(Window window)
         {
-            return (bool)window.GetValue(IsAutoPaddingEnabledProperty);
+            return (bool)window.GetValue(FixMaximizedWindowProperty);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static void SetIsAutoPaddingEnabled(Window window, bool value)
+        public static void SetFixMaximizedWindow(Window window, bool value)
         {
-            window.SetValue(IsAutoPaddingEnabledProperty, value);
+            window.SetValue(FixMaximizedWindowProperty, value);
         }
 
-        private static void OnIsAutoPaddingEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnFixMaximizedWindowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is Window window)
             {
