@@ -25,12 +25,12 @@
 
         protected override void AddHandler(SplitView source, DependencyPropertyChangedCallback handler)
         {
-            source.IsPaneOpenChanged += handler;
+            source.DisplayModeChanged += handler;
         }
 
         protected override void RemoveHandler(SplitView source, DependencyPropertyChangedCallback handler)
         {
-            source.IsPaneOpenChanged -= handler;
+            source.DisplayModeChanged -= handler;
         }
     }
 
@@ -42,12 +42,12 @@
 
         protected override void AddHandler(SplitView source, DependencyPropertyChangedCallback handler)
         {
-            source.IsPaneOpenChanged += handler;
+            source.CompactPaneLengthChanged += handler;
         }
 
         protected override void RemoveHandler(SplitView source, DependencyPropertyChangedCallback handler)
         {
-            source.IsPaneOpenChanged -= handler;
+            source.CompactPaneLengthChanged -= handler;
         }
     }
 }
