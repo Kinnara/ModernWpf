@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
@@ -36,23 +37,6 @@ namespace ModernWpf.Controls
         const string c_chevronVisibleOpen = "ChevronVisibleOpen";
         const string c_chevronVisibleClosed = "ChevronVisibleClosed";
 
-        internal void UpdateVisualStateNoTransition()
-        {
-            UpdateVisualState(false /*useTransition*/);
-        }
-
-        private protected override void OnNavigationViewRepeaterPositionChanged()
-        {
-            UpdateVisualStateNoTransition();
-            ReparentRepeater();
-        }
-
-        private protected override void OnNavigationViewItemBaseDepthChanged()
-        {
-            UpdateItemIndentation();
-            PropagateDepthToChildren(Depth + 1);
-        }
-
         static NavigationViewItem()
         {
             DefaultStyleKeyProperty.OverrideMetadata(
@@ -65,10 +49,34 @@ namespace ModernWpf.Controls
             SetValue(MenuItemsPropertyKey, new ObservableCollection<object>());
         }
 
+        internal void UpdateVisualStateNoTransition()
+        {
+            UpdateVisualState(false /*useTransition*/);
+        }
+
+        private protected override void OnNavigationViewItemBaseDepthChanged()
+        {
+            UpdateItemIndentation();
+            PropagateDepthToChildren(Depth + 1);
+        }
+
+        private protected override void OnNavigationViewItemBaseIsSelectedChanged()
+        {
+            UpdateVisualStateForPointer();
+        }
+
+        private protected override void OnNavigationViewItemBasePositionChanged()
+        {
+            UpdateVisualStateNoTransition();
+            ReparentRepeater();
+        }
+
         public override void OnApplyTemplate()
         {
-            // Stop UpdateVisualState before template is applied. Otherwise the visual may not the same as we expect
+            // Stop UpdateVisualState before template is applied. Otherwise the visuals may be unexpected
             m_appliedTemplate = false;
+
+            UnhookEventsAndClearFields();
 
             base.OnApplyTemplate();
 
@@ -83,31 +91,13 @@ namespace ModernWpf.Controls
 
                 if (FlyoutBase.GetAttachedFlyout(rootGrid) is { } flyoutBase)
                 {
-                    flyoutBase.Closing += OnFlyoutClosing;
-                }
-
-            }
-
-            UIElement presenter;
-            {
-                presenter = init();
-                UIElement init()
-                {
-                    if (GetTemplateChildT<NavigationViewItemPresenter>(c_navigationViewItemPresenterName, controlProtected) is { } presenter)
-                    {
-                        m_navigationViewItemPresenter = presenter;
-                        return presenter;
-                    }
-                    // We don't have a presenter, so we are our own presenter.
-                    return this;
+                    m_flyoutClosingRevoker = new FlyoutBaseClosingRevoker(flyoutBase, OnFlyoutClosing);
                 }
             }
 
-            presenter.MouseDown += OnPresenterPointerPressed;
-            presenter.MouseUp += OnPresenterPointerReleased;
-            presenter.MouseEnter += OnPresenterPointerEntered;
-            presenter.MouseLeave += OnPresenterPointerCanceled;
-            presenter.LostMouseCapture += OnPresenterPointerCaptureLost;
+            HookInputEvents(controlProtected);
+
+            IsEnabledChanged += OnIsEnabledChanged;
 
             m_toolTip = GetTemplateChildT<ToolTip>("ToolTip", controlProtected);
 
@@ -129,8 +119,8 @@ namespace ModernWpf.Controls
                     m_repeater = repeater;
 
                     // Primary element setup happens in NavigationView
-                    repeater.ElementPrepared += nvImpl.OnRepeaterElementPrepared;
-                    repeater.ElementClearing += nvImpl.OnRepeaterElementClearing;
+                    m_repeaterElementPreparedRevoker = new ItemsRepeaterElementPreparedRevoker(repeater, nvImpl.OnRepeaterElementPrepared);
+                    m_repeaterElementClearingRevoker = new ItemsRepeaterElementClearingRevoker(repeater, nvImpl.OnRepeaterElementClearing);
 
                     repeater.ItemTemplate = nvImpl.GetNavigationViewItemsFactory();
                     repeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = true;
@@ -147,6 +137,7 @@ namespace ModernWpf.Controls
             m_flyoutContentGrid = GetTemplateChildT<Grid>(c_flyoutContentGrid, controlProtected);
 
             m_appliedTemplate = true;
+
             UpdateItemIndentation();
             UpdateVisualStateNoTransition();
             ReparentRepeater();
@@ -296,23 +287,6 @@ namespace ModernWpf.Controls
             UpdateVisualStateForChevron();
         }
 
-        bool ShowSelectionIndicatorIfRequired()
-        {
-            if (!IsSelected)
-            {
-                if (!IsRepeaterVisible() && IsChildSelected)
-                {
-                    ShowSelectionIndicator(true);
-                    return true;
-                }
-                else
-                {
-                    ShowSelectionIndicator(false);
-                }
-            }
-            return false;
-        }
-
         void ShowSelectionIndicator(bool visible)
         {
             if (GetSelectionIndicator() is { } selectionIndicator)
@@ -460,15 +434,14 @@ namespace ModernWpf.Controls
             // update the states for the item itself.
             if (m_navigationViewItemPresenter is { } presenter)
             {
-                VisualStateManager.GoToState(m_navigationViewItemPresenter, enabledStateValue, true);
-                VisualStateManager.GoToState(m_navigationViewItemPresenter, selectedStateValue, true);
+                VisualStateManager.GoToState(presenter, enabledStateValue, true);
+                VisualStateManager.GoToState(presenter, selectedStateValue, true);
             }
             else
             {
                 VisualStateManager.GoToState(this, enabledStateValue, true);
                 VisualStateManager.GoToState(this, selectedStateValue, true);
             }
-
         }
 
         void UpdateVisualState(bool useTransitions)
@@ -488,7 +461,7 @@ namespace ModernWpf.Controls
                 if (m_navigationViewItemPresenter is { } presenter)
                 {
                     // Backward Compatibility with RS4-, new implementation prefer IconOnLeft/IconOnly/ContentOnly
-                    VisualStateManager.GoToState(m_navigationViewItemPresenter, shouldShowIcon ? "IconVisible" : "IconCollapsed", useTransitions);
+                    VisualStateManager.GoToState(presenter, shouldShowIcon ? "IconVisible" : "IconCollapsed", useTransitions);
                 }
             }
 
@@ -507,7 +480,7 @@ namespace ModernWpf.Controls
             if (m_navigationViewItemPresenter is { } presenter)
             {
                 var chevronState = HasChildren() && !(m_isClosedCompact && ShouldRepeaterShowInFlyout()) ? (IsExpanded ? c_chevronVisibleOpen : c_chevronVisibleClosed) : c_chevronHidden;
-                VisualStateManager.GoToState(m_navigationViewItemPresenter, chevronState, true);
+                VisualStateManager.GoToState(presenter, chevronState, true);
             }
         }
 
@@ -542,7 +515,17 @@ namespace ModernWpf.Controls
             return Position == NavigationViewRepeaterPosition.TopPrimary;
         }
 
-        internal ItemsRepeater GetRepeater() { return m_repeater; }
+        UIElement GetPresenterOrItem()
+        {
+            if (m_navigationViewItemPresenter is { } presenter)
+            {
+                return presenter;
+            }
+            else
+            {
+                return this;
+            }
+        }
 
         NavigationViewItemPresenter GetPresenter()
         {
@@ -553,6 +536,8 @@ namespace ModernWpf.Controls
             }
             return presenter;
         }
+
+        internal ItemsRepeater GetRepeater() { return m_repeater; }
 
         internal void ShowHideChildren()
         {
@@ -626,7 +611,11 @@ namespace ModernWpf.Controls
 
         internal bool IsRepeaterVisible()
         {
-            return m_repeater.Visibility == Visibility.Visible;
+            if (m_repeater is { } repeater)
+            {
+                return repeater.Visibility == Visibility.Visible;
+            }
+            return false;
         }
 
         void UpdateItemIndentation()
@@ -724,50 +713,183 @@ namespace ModernWpf.Controls
 
         void OnPresenterPointerPressed(object sender, PointerRoutedEventArgs args)
         {
+            Debug.Assert(!m_isPressed);
+            Debug.Assert(!m_isMouseCaptured);
+
             // TODO: Update to look at presenter instead
             m_isPressed = args.LeftButton == MouseButtonState.Pressed || args.RightButton == MouseButtonState.Pressed;
+
+            var presenter = GetPresenterOrItem();
+
+            Debug.Assert(presenter != null);
+
+            if (presenter.CaptureMouse())
+            {
+                m_isMouseCaptured = true;
+            }
 
             UpdateVisualState(true);
         }
 
         void OnPresenterPointerReleased(object sender, PointerRoutedEventArgs args)
         {
-            m_isPressed = false;
+            if (m_isPressed)
+            {
+                m_isPressed = false;
+
+                if (m_isMouseCaptured)
+                {
+                    var presenter = GetPresenterOrItem();
+
+                    Debug.Assert(presenter != null);
+
+                    presenter.ReleaseMouseCapture();
+                }
+            }
+
             UpdateVisualState(true);
         }
 
         void OnPresenterPointerEntered(object sender, PointerRoutedEventArgs args)
         {
-            m_isPointerOver = true;
-            UpdateVisualState(true);
+            ProcessPointerOver(args);
         }
 
-        /*
+        void OnPresenterPointerMoved(object sender, PointerRoutedEventArgs args)
+        {
+            ProcessPointerOver(args);
+        }
+
         void OnPresenterPointerExited(object sender, PointerRoutedEventArgs args)
         {
             m_isPointerOver = false;
             UpdateVisualState(true);
         }
-        */
 
         void OnPresenterPointerCanceled(object sender, PointerRoutedEventArgs args)
         {
-            m_isPressed = false;
-            m_isPointerOver = false;
-            UpdateVisualState(true);
+            ProcessPointerCanceled(args);
         }
 
         void OnPresenterPointerCaptureLost(object sender, PointerRoutedEventArgs args)
         {
-            m_isPressed = false;
-            m_isPointerOver = false;
+            ProcessPointerCanceled(args);
+        }
+
+        void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs args)
+        {
+            if (!IsEnabled)
+            {
+                m_isPressed = false;
+                m_isPointerOver = false;
+
+                if (m_isMouseCaptured)
+                {
+                    var presenter = GetPresenterOrItem();
+
+                    Debug.Assert(presenter != null);
+
+                    presenter.ReleaseMouseCapture();
+                    m_isMouseCaptured = false;
+                }
+            }
+
             UpdateVisualState(true);
         }
 
         internal void RotateExpandCollapseChevron(bool isExpanded)
         {
-            m_navigationViewItemPresenter.RotateExpandCollapseChevron(isExpanded);
+            if (GetPresenter() is { } presenter)
+            {
+                presenter.RotateExpandCollapseChevron(isExpanded);
+            }
         }
+
+        void ProcessPointerCanceled(PointerRoutedEventArgs args)
+        {
+            m_isPressed = false;
+            m_isPointerOver = false;
+            m_isMouseCaptured = false;
+            UpdateVisualState(true);
+        }
+
+        void ProcessPointerOver(PointerRoutedEventArgs args)
+        {
+            if (!m_isPointerOver)
+            {
+                m_isPointerOver = true;
+                UpdateVisualState(true);
+            }
+        }
+
+        void HookInputEvents(IControlProtected controlProtected)
+        {
+            UIElement presenter;
+            {
+                presenter = init();
+                UIElement init()
+                {
+                    if (GetTemplateChildT<NavigationViewItemPresenter>(c_navigationViewItemPresenterName, controlProtected) is { } presenter)
+                    {
+                        m_navigationViewItemPresenter = presenter;
+                        return presenter;
+                    }
+                    // We don't have a presenter, so we are our own presenter.
+                    return this;
+                }
+            }
+
+            Debug.Assert(presenter != null);
+
+            // Handlers that set flags are skipped when args.Handled is already True.
+            presenter.MouseDown += OnPresenterPointerPressed;
+            presenter.MouseEnter += OnPresenterPointerEntered;
+            presenter.MouseMove += OnPresenterPointerMoved;
+
+            // Handlers that reset flags are not skipped when args.Handled is already True to avoid broken states.
+            presenter.AddHandler(MouseUpEvent, new MouseButtonEventHandler(OnPresenterPointerReleased), true /*handledEventsToo*/);
+            presenter.AddHandler(MouseLeaveEvent, new MouseEventHandler(OnPresenterPointerExited), true /*handledEventsToo*/);
+            presenter.AddHandler(LostMouseCaptureEvent, new MouseEventHandler(OnPresenterPointerCaptureLost), true /*handledEventsToo*/);
+        }
+
+        void UnhookInputEvents()
+        {
+            var presenter = m_navigationViewItemPresenter as UIElement ?? this;
+            presenter.MouseDown -= OnPresenterPointerPressed;
+            presenter.MouseEnter -= OnPresenterPointerEntered;
+            presenter.MouseMove -= OnPresenterPointerMoved;
+            presenter.RemoveHandler(MouseUpEvent, new MouseButtonEventHandler(OnPresenterPointerReleased));
+            presenter.RemoveHandler(MouseLeaveEvent, new MouseEventHandler(OnPresenterPointerExited));
+            presenter.RemoveHandler(LostMouseCaptureEvent, new MouseEventHandler(OnPresenterPointerCaptureLost));
+        }
+
+        void UnhookEventsAndClearFields()
+        {
+            UnhookInputEvents();
+
+            m_flyoutClosingRevoker?.Revoke();
+            m_splitViewIsPaneOpenChangedRevoker?.Revoke();
+            m_splitViewDisplayModeChangedRevoker?.Revoke();
+            m_splitViewCompactPaneLengthChangedRevoker?.Revoke();
+            m_repeaterElementPreparedRevoker?.Revoke();
+            m_repeaterElementClearingRevoker?.Revoke();
+            IsEnabledChanged -= OnIsEnabledChanged;
+
+            m_rootGrid = null;
+            m_navigationViewItemPresenter = null;
+            m_toolTip = null;
+            m_repeater = null;
+            m_flyoutContentGrid = null;
+        }
+
+        SplitViewIsPaneOpenChangedRevoker m_splitViewIsPaneOpenChangedRevoker;
+        SplitViewDisplayModeChangedRevoker m_splitViewDisplayModeChangedRevoker;
+        SplitViewCompactPaneLengthChangedRevoker m_splitViewCompactPaneLengthChangedRevoker;
+
+        ItemsRepeaterElementPreparedRevoker m_repeaterElementPreparedRevoker;
+        ItemsRepeaterElementClearingRevoker m_repeaterElementClearingRevoker;
+
+        FlyoutBaseClosingRevoker m_flyoutClosingRevoker;
 
         ToolTip m_toolTip;
         NavigationViewItemHelper<NavigationViewItem> m_helper = new NavigationViewItemHelper<NavigationViewItem>();
@@ -783,6 +905,7 @@ namespace ModernWpf.Controls
         bool m_hasKeyboardFocus = false;
 
         // Visual state tracking
+        bool m_isMouseCaptured = false;
         bool m_isPressed = false;
         bool m_isPointerOver = false;
 

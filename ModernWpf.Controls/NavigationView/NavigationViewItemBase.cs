@@ -54,6 +54,7 @@ namespace ModernWpf.Controls
 
         private void OnIsSelectedPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
+            OnPropertyChangedPrivate(args);
             IsSelectedChanged?.Invoke(this, args.Property);
         }
 
@@ -80,12 +81,12 @@ namespace ModernWpf.Controls
                 if (m_position != value)
                 {
                     m_position = value;
-                    OnNavigationViewRepeaterPositionChanged();
+                    OnNavigationViewItemBasePositionChanged();
                 }
             }
         }
 
-        private protected virtual void OnNavigationViewRepeaterPositionChanged() { }
+        private protected virtual void OnNavigationViewItemBasePositionChanged() { }
 
         internal NavigationView GetNavigationView()
         {
@@ -101,12 +102,17 @@ namespace ModernWpf.Controls
             get => m_depth;
             set
             {
-                m_depth = value;
-                OnNavigationViewItemBaseDepthChanged();
+                if (m_depth != value)
+                {
+                    m_depth = value;
+                    OnNavigationViewItemBaseDepthChanged();
+                }
             }
         }
 
         private protected virtual void OnNavigationViewItemBaseDepthChanged() { }
+
+        private protected virtual void OnNavigationViewItemBaseIsSelectedChanged() { }
 
         internal SplitView GetSplitView()
         {
@@ -124,12 +130,20 @@ namespace ModernWpf.Controls
             m_navigationView = new WeakReference<NavigationView>(navigationView);
         }
 
+        void OnPropertyChangedPrivate(DependencyPropertyChangedEventArgs args)
+        {
+            if (args.Property == IsSelectedProperty)
+            {
+                OnNavigationViewItemBaseIsSelectedChanged();
+            }
+        }
+
         DependencyObject IControlProtected.GetTemplateChild(string childName)
         {
             return GetTemplateChild(childName);
         }
 
-        // TODO: Constant is a temporary mesure. Potentially expose using TemplateSettings.
+        // TODO: Constant is a temporary measure. Potentially expose using TemplateSettings.
         internal const int c_itemIndentation = 25;
 
         internal bool IsTopLevelItem

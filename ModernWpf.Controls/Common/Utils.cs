@@ -25,7 +25,7 @@ namespace ModernWpf.Controls
         }
         */
 
-        public static void GotToStateIfGroupExists(Control control, string groupName, string stateName, bool useTransitions)
+        public static void GoToStateIfGroupExists(Control control, string groupName, string stateName, bool useTransitions)
         {
             //var visualStateGroup = GetVisualStateGroup(control, groupName);
             //if (visualStateGroup != null)

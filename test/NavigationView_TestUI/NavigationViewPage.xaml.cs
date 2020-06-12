@@ -203,6 +203,22 @@ namespace MUXControlsTestApp
             }
         }
 
+        private void SelectedItemIsEnabledCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (NavView.SelectedItem != null)
+            {
+                (NavView.SelectedItem as Control).IsEnabled = true;
+            }
+        }
+
+        private void SelectedItemIsEnabledCheckbox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (NavView.SelectedItem != null)
+            {
+                (NavView.SelectedItem as Control).IsEnabled = false;
+            }
+        }
+
         private void SettingsItemVisibilityCheckbox_Checked(object sender, RoutedEventArgs e)
         {
             NavView.IsSettingsVisible = true;
