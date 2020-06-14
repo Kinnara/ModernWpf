@@ -90,12 +90,7 @@ namespace ModernWpf.Automation.Peers
 
             if (IsOnTopNavigation())
             {
-                if (GetParentNavigationView() is { } navigationView)
-                {
-                    var topDataProvider = navigationView.GetTopDataProvider();
-                    positionInSet = GetPositionOrSetCountInTopNavHelper(IsOnTopNavigationOverflow()
-                        ? topDataProvider.GetOverflowItems() : topDataProvider.GetPrimaryItems(), AutomationOutput.Position);
-                }
+                positionInSet = GetPositionOrSetCountInTopNavHelper(AutomationOutput.Position);
             }
             else
             {
@@ -116,13 +111,7 @@ namespace ModernWpf.Automation.Peers
 
             if (IsOnTopNavigation())
             {
-                if (GetParentNavigationView() is { } navview)
-                {
-                    var topNavDataProvider = navview.GetTopDataProvider();
-                    sizeOfSet = GetPositionOrSetCountInTopNavHelper(IsOnTopNavigationOverflow()
-                        ? topNavDataProvider.GetOverflowItems() : topNavDataProvider.GetPrimaryItems(), AutomationOutput.Size);
-
-                }
+                sizeOfSet = GetPositionOrSetCountInTopNavHelper(AutomationOutput.Size);
             }
             else
             {
@@ -273,6 +262,18 @@ namespace ModernWpf.Automation.Peers
             return NavigationViewRepeaterPosition.LeftNav;
         }
 
+        ItemsRepeater GetParentRepeater()
+        {
+            if (GetParentNavigationView() is { } navview)
+            {
+                if (Owner is NavigationViewItemBase navigationViewItem)
+                {
+                    return navview.GetParentItemsRepeaterForContainer(navigationViewItem);
+                }
+            }
+            return null;
+        }
+
         // Get either the position or the size of the set for this particular item in the case of left nav. 
         // We go through all the items and then we determine if the listviewitem from the left listview can be a navigation view item header
         // or a navigation view item. If it's the former, we just reset the count. If it's the latter, we increment the counter.
@@ -281,54 +282,51 @@ namespace ModernWpf.Automation.Peers
         {
             int returnValue = 0;
 
-            if (GetParentNavigationView() is { } navview)
+            if (GetParentRepeater() is { } repeater)
             {
-                if (navview.LeftNavRepeater() is { } repeater)
+                if (GetParent() is AutomationPeer parent)
                 {
-                    if (GetParent() is AutomationPeer parent)
+                    if (parent.GetChildren() is { } children)
                     {
-                        if (parent.GetChildren() is { } children)
+                        int index = 0;
+                        bool itemFound = false;
+
+                        foreach (var child in children)
                         {
-                            int index = 0;
-                            bool itemFound = false;
-
-                            foreach (var child in children)
+                            if (repeater.TryGetElement(index) is { } dependencyObject)
                             {
-                                if (repeater.TryGetElement(index) is { } dependencyObject)
+                                if (dependencyObject is NavigationViewItemHeader)
                                 {
-                                    if (dependencyObject is NavigationViewItemHeader)
+                                    if (automationOutput == AutomationOutput.Size && itemFound)
                                     {
-                                        if (automationOutput == AutomationOutput.Size && itemFound)
-                                        {
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            returnValue = 0;
-                                        }
+                                        break;
                                     }
-                                    else if (dependencyObject is NavigationViewItem navviewItem)
+                                    else
                                     {
-                                        if (navviewItem.Visibility == Visibility.Visible)
-                                        {
-                                            returnValue++;
+                                        returnValue = 0;
+                                    }
+                                }
+                                else if (dependencyObject is NavigationViewItem navviewItem)
+                                {
+                                    if (navviewItem.Visibility == Visibility.Visible)
+                                    {
+                                        returnValue++;
 
-                                            if (FrameworkElementAutomationPeer.FromElement(navviewItem) == (this))
+                                        if (FrameworkElementAutomationPeer.FromElement(navviewItem) == (this))
+                                        {
+                                            if (automationOutput == AutomationOutput.Position)
                                             {
-                                                if (automationOutput == AutomationOutput.Position)
-                                                {
-                                                    break;
-                                                }
-                                                else
-                                                {
-                                                    itemFound = true;
-                                                }
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                itemFound = true;
                                             }
                                         }
                                     }
                                 }
-                                index++;
                             }
+                            index++;
                         }
                     }
                 }
@@ -341,49 +339,52 @@ namespace ModernWpf.Automation.Peers
         // Basically, we do the same here as GetPositionOrSetCountInLeftNavHelper without dealing with the listview directly, because 
         // TopDataProvider provcides two methods: GetOverflowItems() and GetPrimaryItems(), so we can break the loop (in case of position) by 
         // comparing the value of the FrameworkElementAutomationPeer we can get from the item we're iterating through to this object.
-        int GetPositionOrSetCountInTopNavHelper(IList navigationViewElements, AutomationOutput automationOutput)
+        int GetPositionOrSetCountInTopNavHelper(AutomationOutput automationOutput)
         {
             int returnValue = 0;
+            bool itemFound = false;
 
-            if (GetParentNavigationView() is { } navview)
+            if (GetParentRepeater() is { } parentRepeater)
             {
-                bool itemFound = false;
-
-                foreach (var child in navigationViewElements)
+                if (parentRepeater.ItemsSourceView is { } itemsSourceView)
                 {
-                    if (navview.ContainerFromMenuItem(child) is { } childAsNavViewItem)
-                    {
-                        if (child is NavigationViewItemHeader)
-                        {
-                            if (automationOutput == AutomationOutput.Size && itemFound)
-                            {
-                                break;
-                            }
-                            else
-                            {
-                                returnValue = 0;
-                            }
-                        }
-                        else if (childAsNavViewItem is NavigationViewItem navviewitem)
-                        {
-                            if (navviewitem.Visibility == Visibility.Visible)
-                            {
-                                returnValue++;
+                    var numberOfElements = itemsSourceView.Count;
 
-                                if (FrameworkElementAutomationPeer.FromElement(navviewitem) == (this))
+                    for (int i = 0; i < numberOfElements; i++)
+                    {
+                        if (parentRepeater.TryGetElement(i) is { } child)
+                        {
+                            if (child is NavigationViewItemHeader)
+                            {
+                                if (automationOutput == AutomationOutput.Size && itemFound)
                                 {
-                                    if (automationOutput == AutomationOutput.Position)
+                                    break;
+                                }
+                                else
+                                {
+                                    returnValue = 0;
+                                }
+                            }
+                            else if (child is NavigationViewItem navviewitem)
+                            {
+                                if (navviewitem.Visibility == Visibility.Visible)
+                                {
+                                    returnValue++;
+
+                                    if (FrameworkElementAutomationPeer.FromElement(navviewitem) == (this))
                                     {
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        itemFound = true;
+                                        if (automationOutput == AutomationOutput.Position)
+                                        {
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            itemFound = true;
+                                        }
                                     }
                                 }
                             }
                         }
-
                     }
                 }
             }

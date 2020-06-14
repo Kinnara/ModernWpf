@@ -851,7 +851,7 @@ namespace ModernWpf.Controls
             return false;
         }
 
-        ItemsRepeater GetParentItemsRepeaterForContainer(NavigationViewItemBase nvib)
+        internal ItemsRepeater GetParentItemsRepeaterForContainer(NavigationViewItemBase nvib)
         {
             if (VisualTreeHelper.GetParent(nvib) is { } parent)
             {
