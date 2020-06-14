@@ -98,9 +98,30 @@ namespace ModernWpf.Controls
             }
         }
 
+        // We need to clear the datacontext to prevent crashes from happening,
+        //  however we only do that if we were the ones setting it.
+        // That is when one of the following is the case (numbering taken from line ~642):
+        // 1.2    No ItemTemplate, data is not a UIElement
+        // 2.1    ItemTemplate, data is not FrameworkElement
+        // 2.2.2  Itemtemplate, data is FrameworkElement, ElementFactory returned Element different to data
+        //
+        // In all of those three cases, we the ItemTemplateShim is NOT null.
+        // Luckily when we create the items, we store whether we were the once setting the DataContext.
         public void ClearElementToElementFactory(UIElement element)
         {
             m_owner.OnElementClearing(element);
+
+            var virtInfo = ItemsRepeater.GetVirtualizationInfo(element);
+            virtInfo.MoveOwnershipToElementFactory();
+
+            // During creation of this object, we were the one setting the DataContext, so clear it now.
+            if (virtInfo.MustClearDataContext)
+            {
+                if (element is FrameworkElement elementAsFE)
+                {
+                    elementAsFE.DataContext = null;
+                }
+            }
 
             if (m_owner.ItemTemplateShim != null)
             {
@@ -133,8 +154,6 @@ namespace ModernWpf.Controls
                 children.RemoveAt(childIndex);
             }
 
-            var virtInfo = ItemsRepeater.GetVirtualizationInfo(element);
-            virtInfo.MoveOwnershipToElementFactory();
             if (m_lastFocusedElement == element)
             {
                 // Focused element is going away. Remove the tracked last focused element
@@ -575,6 +594,8 @@ namespace ModernWpf.Controls
                 // View obtained from ElementFactory already has a VirtualizationInfo attached to it
                 // which means that the element has been recycled and not created from scratch.
             }
+            // Clear flag
+            virtInfo.MustClearDataContext = false;
 
             if (data != element)
             {
@@ -599,6 +620,7 @@ namespace ModernWpf.Controls
                     var elementDataContext = initElementDataContext();
 
                     elementAsFE.DataContext = elementDataContext;
+                    virtInfo.MustClearDataContext = true;
                 }
                 else
                 {

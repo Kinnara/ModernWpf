@@ -50,6 +50,8 @@ namespace ModernWpf.Controls
 
         public bool IsInUniqueIdResetPool => Owner == ElementOwner.UniqueIdResetPool;
 
+        public bool MustClearDataContext { get; set; }
+
         public void MoveOwnershipToLayoutFromElementFactory(int index, string uniqueId)
         {
             Debug.Assert(Owner == ElementOwner.ElementFactory);
