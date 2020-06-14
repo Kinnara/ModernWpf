@@ -65,7 +65,33 @@
 
     <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}" />
 
-    <Style x:Key="DefaultListViewStyle" TargetType="ListView">
+    <ControlTemplate x:Key="GridViewTemplate" TargetType="ListView">
+        <Border
+            x:Name="Bd"
+            BorderThickness="{TemplateBinding BorderThickness}"
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            SnapsToDevicePixels="true">
+            <local:ScrollViewerEx
+                Style="{DynamicResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
+                Focusable="false"
+                Padding="{TemplateBinding Padding}"
+                primitives:ScrollViewerHelper.AutoHideScrollBars="{TemplateBinding primitives:ScrollViewerHelper.AutoHideScrollBars}">
+                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+            </local:ScrollViewerEx>
+        </Border>
+        <ControlTemplate.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsGrouping" Value="true" />
+                    <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false" />
+                </MultiTrigger.Conditions>
+                <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
+            </MultiTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style x:Key="BaseListViewStyle" TargetType="ListView">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
@@ -103,6 +129,18 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="DefaultListViewStyle" TargetType="ListView" BasedOn="{StaticResource BaseListViewStyle}">
+        <Style.Resources>
+            <primitives:IsGridViewConverter x:Key="IsGridViewConverter" />
+        </Style.Resources>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding View, RelativeSource={RelativeSource Self}, Converter={StaticResource IsGridViewConverter}}" Value="True">
+                <Setter Property="Template" Value="{StaticResource GridViewTemplate}" />
+                <Setter Property="ItemContainerStyle" Value="{DynamicResource {x:Static GridView.GridViewItemContainerStyleKey}}" />
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="ListView" BasedOn="{StaticResource DefaultListViewStyle}" />
@@ -353,36 +391,9 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Static GridView.GridViewStyleKey}" TargetType="ListView" BasedOn="{StaticResource DefaultListViewStyle}">
+    <Style x:Key="{x:Static GridView.GridViewStyleKey}" TargetType="ListView" BasedOn="{StaticResource BaseListViewStyle}">
         <Setter Property="ItemContainerStyle" Value="{DynamicResource {x:Static GridView.GridViewItemContainerStyleKey}}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ListView">
-                    <Border
-                        x:Name="Bd"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        SnapsToDevicePixels="true">
-                        <local:ScrollViewerEx
-                            Style="{DynamicResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
-                            Focusable="false"
-                            Padding="{TemplateBinding Padding}">
-                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </local:ScrollViewerEx>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsGrouping" Value="true" />
-                                <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false" />
-                            </MultiTrigger.Conditions>
-                            <Setter Property="ScrollViewer.CanContentScroll" Value="false" />
-                        </MultiTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Template" Value="{StaticResource GridViewTemplate}" />
     </Style>
 
 </ResourceDictionary>

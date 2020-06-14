@@ -134,10 +134,9 @@
         </TabItem>
 
         <TabItem Header="GridView">
-            <sc:ControlExample HeaderText="A ListView with a GridView as the view mode">
+            <sc:ControlExample HeaderText="A ListView that uses a GridView view mode">
                 <ListView
                     x:Name="listView3"
-                    Style="{StaticResource {x:Static GridView.GridViewStyleKey}}"
                     ItemsSource="{Binding}"
                     VirtualizingPanel.VirtualizationMode="Recycling">
                     <ListView.View>
