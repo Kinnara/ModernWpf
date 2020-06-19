@@ -236,6 +236,14 @@
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="PaneAndTopLevelItemStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="PaneAndTopLevelItemStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="NotClosedCompactAndTopLevelItem" />
+                                <VisualState x:Name="ClosedCompactAndTopLevelItem" />
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
                         <Border
@@ -345,6 +353,10 @@
                         <Trigger SourceName="DisabledStatesListener" Property="CurrentStateName" Value="Disabled">
                             <Setter TargetName="RevealBorder" Property="BorderBrush" Value="{DynamicResource NavigationViewItemBorderBrushCheckedDisabled}" />
                             <Setter TargetName="LayoutRoot" Property="Opacity" Value="{DynamicResource ListViewItemDisabledThemeOpacity}" />
+                        </Trigger>
+
+                        <Trigger SourceName="PaneAndTopLevelItemStatesListener" Property="CurrentStateName" Value="ClosedCompactAndTopLevelItem">
+                            <Setter TargetName="ContentPresenter" Property="Margin" Value="{DynamicResource NavigationViewCompactItemContentPresenterMargin}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -706,18 +718,12 @@
                                 <VisualState x:Name="Disabled"/>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="NavigationViewIconPositionStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="NavigationViewIconPositionStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="IconOnLeft" />
                                 <VisualState x:Name="IconOnly" />
-                                <VisualState x:Name="ContentOnly">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="IconBox" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Margin">
-                                            <DiscreteThicknessKeyFrame KeyTime="0" Value="16,0" />
-                                        </ThicknessAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="ContentOnly" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ChevronStates">
                                 <VisualState x:Name="ChevronHidden"/>
@@ -787,6 +793,7 @@
                                     Visibility="Collapsed"
                                     HorizontalAlignment="Right"
                                     Width="40"
+                                    Margin="{DynamicResource TopNavigationViewItemOnOverflowExpandChevronMargin}"
                                     Background="Transparent">
                                     <Border Padding="{DynamicResource TopNavigationViewItemOnOverflowExpandChevronPadding}">
                                         <ui:FontIconFallback Foreground="{DynamicResource NavigationViewItemForeground}"
@@ -834,6 +841,10 @@
                         <Trigger SourceName="DisabledStatesListener" Property="CurrentStateName" Value="Disabled">
                             <Setter TargetName="Icon" Property="TextElement.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
+                        </Trigger>
+                        <Trigger SourceName="NavigationViewIconPositionStatesListener" Property="CurrentStateName" Value="ContentOnly">
+                            <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ContentPresenter" Property="Margin" Value="{DynamicResource TopNavigationViewItemOnOverflowNoIconContentPresenterMargin}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

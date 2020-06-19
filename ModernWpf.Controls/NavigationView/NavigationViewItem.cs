@@ -216,8 +216,15 @@ namespace ModernWpf.Controls
             if (GetSplitView() is { } splitView)
             {
                 // Check if the pane is closed and if the splitview is in either compact mode.
-                m_isClosedCompact = !splitView.IsPaneOpen && (splitView.DisplayMode == SplitViewDisplayMode.CompactOverlay || splitView.DisplayMode == SplitViewDisplayMode.CompactInline);
+                m_isClosedCompact = !splitView.IsPaneOpen
+                    && (splitView.DisplayMode == SplitViewDisplayMode.CompactOverlay || splitView.DisplayMode == SplitViewDisplayMode.CompactInline);
+
                 UpdateVisualState(true /*useTransitions*/);
+
+                if (GetPresenter() is { } presenter)
+                {
+                    presenter.UpdateClosedCompactVisualState(IsTopLevelItem, m_isClosedCompact);
+                }
             }
         }
 
