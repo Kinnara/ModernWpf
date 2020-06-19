@@ -4,6 +4,7 @@
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace ModernWpf.Controls
 {
@@ -16,7 +17,17 @@ namespace ModernWpf.Controls
 
         public static DependencyObject GetParent(DependencyObject element)
         {
-            return VisualTreeHelper.GetParent(element);
+            if (element is Visual || element is Visual3D)
+            {
+                return VisualTreeHelper.GetParent(element);
+            }
+
+            if (element is FrameworkContentElement fce)
+            {
+                return fce.Parent;
+            }
+
+            return null;
         }
     }
 }
