@@ -8,6 +8,7 @@
     <Style TargetType="local:ContentDialog">
         <Setter Property="Foreground" Value="{DynamicResource ContentDialogForeground}" />
         <Setter Property="Background" Value="{DynamicResource ContentDialogBackground}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ContentDialogBorderWidth}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ContentDialogBorderBrush}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
@@ -280,7 +281,7 @@
                                     Margin="{DynamicResource ContentDialogBorderWidth}" />
                                 <Border
                                     Background="{TemplateBinding Background}"
-                                    BorderThickness="{DynamicResource ContentDialogBorderWidth}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     CornerRadius="{TemplateBinding CornerRadius}">
                                     <Border

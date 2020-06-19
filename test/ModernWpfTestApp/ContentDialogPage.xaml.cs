@@ -5,6 +5,7 @@ using ModernWpf.Controls;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace MUXControlsTestApp
@@ -33,6 +34,19 @@ namespace MUXControlsTestApp
             dialog.Closed += Dialog_Closed;
             var result = await dialog.ShowAsync();
             Debug.WriteLine(result);
+        }
+
+        private void ShowBorderThickness_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new ContentDialog {
+                Title = "Title",
+                Content = "I am testing border thickness",
+                IsPrimaryButtonEnabled = true,
+                BorderThickness = new Thickness(10, 20, 10, 20),
+                CloseButtonText = "CloseButton",
+                BorderBrush = new SolidColorBrush(Color.FromArgb(255, 255, 0, 0))
+            };
+            _ = dialog.ShowAsync();
         }
 
         private void Dialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
