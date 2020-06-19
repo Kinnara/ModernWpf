@@ -352,6 +352,7 @@
                         <TextBox
                             x:Name="InputBox"
                             Grid.Row="1"
+                            InputScope="Number"
                             ui:ControlHelper.PlaceholderText="{TemplateBinding PlaceholderText}"
                             SelectionBrush="{TemplateBinding SelectionBrush}"
                             ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}" />
