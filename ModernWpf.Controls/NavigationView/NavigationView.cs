@@ -3542,12 +3542,12 @@ namespace ModernWpf.Controls
 
         double GetPaneToggleButtonWidth()
         {
-            return (double)(SharedHelpers.FindInApplicationResources("PaneToggleButtonWidth", c_paneToggleButtonWidth));
+            return (double)(SharedHelpers.FindResource("PaneToggleButtonWidth", this, (double)c_paneToggleButtonWidth));
         }
 
         double GetPaneToggleButtonHeight()
         {
-            return (double)(SharedHelpers.FindInApplicationResources("PaneToggleButtonHeight", c_paneToggleButtonHeight));
+            return (double)(SharedHelpers.FindResource("PaneToggleButtonHeight", this, (double)c_paneToggleButtonHeight));
         }
 
         void UpdateTopNavigationWidthCache()

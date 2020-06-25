@@ -70,6 +70,11 @@ namespace ModernWpf.Controls
             return resources.Contains(boxedResource) ? resources[boxedResource] : defaultValue;
         }
 
+        public static object FindResource(string resource, FrameworkElement element, object defaultValue)
+        {
+            return element.TryFindResource(resource) ?? defaultValue;
+        }
+
         public static object FindInApplicationResources(string resource, object defaultValue)
         {
             return SharedHelpers.FindResource(resource, Application.Current.Resources, defaultValue);
