@@ -161,7 +161,7 @@
                                     Width="1"
                                     BorderBrush="{DynamicResource TabViewItemSeparator}"
                                     BorderThickness="1"
-                                    Margin="0,6,0,6" />
+                                    Margin="{DynamicResource TabViewItemSeparatorMargin}" />
 
                                 <Border
                                     x:Name="TabContainer"
