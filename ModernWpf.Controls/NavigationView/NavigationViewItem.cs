@@ -491,7 +491,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        bool HasChildren()
+        internal bool HasChildren()
         {
             return MenuItems.Count > 0 || MenuItemsSource != null || HasUnrealizedChildren;
         }

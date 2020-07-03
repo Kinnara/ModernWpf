@@ -49,7 +49,8 @@ namespace ModernWpf.Automation.Peers
         {
             if (pattern == PatternInterface.SelectionItem ||
                 pattern == PatternInterface.Invoke ||
-                pattern == PatternInterface.ExpandCollapse)
+                // Only provide expand collapse pattern if we have children!
+                (pattern == PatternInterface.ExpandCollapse && HasChildren()))
             {
                 return this;
             }
@@ -441,6 +442,15 @@ namespace ModernWpf.Automation.Peers
             {
                 nvi.IsSelected = isSelected;
             }
+        }
+
+        bool HasChildren()
+        {
+            if (Owner is NavigationViewItem navigationViewItem)
+            {
+                return navigationViewItem.HasChildren();
+            }
+            return false;
         }
 
         enum AutomationOutput
