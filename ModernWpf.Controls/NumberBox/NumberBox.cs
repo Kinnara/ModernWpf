@@ -512,7 +512,11 @@ namespace ModernWpf.Controls
                     }
                 }
 
-                SetCurrentValue(ValueProperty, newVal); ;
+                SetCurrentValue(ValueProperty, newVal);
+
+                // We don't want the caret to move to the front of the text for example when using the up/down arrows
+                // to change the numberbox value.
+                MoveCaretToTextEnd();
             }
         }
 
@@ -536,11 +540,7 @@ namespace ModernWpf.Controls
                 try
                 {
                     m_textUpdating = true;
-
                     SetCurrentValue(TextProperty, newText);
-
-                    // This places the caret at the end of the text.
-                    m_textBox.Select(newText.Length, 0);
                 }
                 finally
                 {
@@ -644,6 +644,15 @@ namespace ModernWpf.Controls
             if (m_headerPresenter != null)
             {
                 m_headerPresenter.Visibility = shouldShowHeader ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        private void MoveCaretToTextEnd()
+        {
+            if (m_textBox is { } textBox)
+            {
+                // This places the caret at the end of the text.
+                textBox.Select(textBox.Text.Length, 0);
             }
         }
 
