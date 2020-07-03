@@ -146,6 +146,9 @@
                     </controls:NumberBox>
                     <controls:NumberBox x:Name="HeaderTemplateTestingNumberBox"/>
                 </StackPanel>
+
+                <!-- FontSize propagation -->
+                <controls:NumberBox Header="Header text" FontSize="50"/>
             </StackPanelEx>
         </Grid>
 

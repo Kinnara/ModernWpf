@@ -344,6 +344,8 @@
                             FontWeight="Normal"
                             Foreground="{DynamicResource TextControlHeaderForeground}"
                             Margin="{DynamicResource TextBoxTopHeaderMargin}"
+                            FontSize="{TemplateBinding FontSize}"
+                            FontFamily="{TemplateBinding FontFamily}"
                             TextWrapping="Wrap"
                             VerticalAlignment="Top"
                             Visibility="Collapsed"
@@ -355,6 +357,9 @@
                             InputScope="Number"
                             ui:ControlHelper.PlaceholderText="{TemplateBinding PlaceholderText}"
                             SelectionBrush="{TemplateBinding SelectionBrush}"
+                            FontSize="{TemplateBinding FontSize}"
+                            FontWeight="{TemplateBinding FontWeight}"
+                            FontFamily="{TemplateBinding FontFamily}"
                             ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}" />
 
                         <Popup
