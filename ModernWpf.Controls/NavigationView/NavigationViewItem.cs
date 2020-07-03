@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation.Peers;
@@ -169,8 +170,15 @@ namespace ModernWpf.Controls
                     }
                     itemsSource = init();
                 }
+                m_itemsSourceViewCollectionChangedRevoker?.Revoke();
                 repeater.ItemsSource = itemsSource;
+                m_itemsSourceViewCollectionChangedRevoker = new ItemsSourceView.CollectionChanged_revoker(repeater.ItemsSourceView, OnItemsSourceViewChanged);
             }
+        }
+
+        private void OnItemsSourceViewChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            UpdateVisualStateForChevron();
         }
 
         internal UIElement GetSelectionIndicator()
@@ -493,7 +501,7 @@ namespace ModernWpf.Controls
 
         internal bool HasChildren()
         {
-            return MenuItems.Count > 0 || MenuItemsSource != null || HasUnrealizedChildren;
+            return MenuItems.Count > 0 || (MenuItemsSource != null && m_repeater.ItemsSourceView.Count > 0) || HasUnrealizedChildren;
         }
 
         bool ShouldShowIcon()
@@ -881,6 +889,7 @@ namespace ModernWpf.Controls
             m_repeaterElementPreparedRevoker?.Revoke();
             m_repeaterElementClearingRevoker?.Revoke();
             IsEnabledChanged -= OnIsEnabledChanged;
+            m_itemsSourceViewCollectionChangedRevoker?.Revoke();
 
             m_rootGrid = null;
             m_navigationViewItemPresenter = null;
@@ -895,6 +904,7 @@ namespace ModernWpf.Controls
 
         ItemsRepeaterElementPreparedRevoker m_repeaterElementPreparedRevoker;
         ItemsRepeaterElementClearingRevoker m_repeaterElementClearingRevoker;
+        ItemsSourceView.CollectionChanged_revoker m_itemsSourceViewCollectionChangedRevoker;
 
         FlyoutBaseClosingRevoker m_flyoutClosingRevoker;
 

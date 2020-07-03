@@ -12,6 +12,7 @@ namespace ModernWpf
         public EventRevoker(TSource source, TDelegate handler)
         {
             _source = new WeakReference<TSource>(source);
+            _handler = new WeakReference<TDelegate>(handler);
             AddHandler(source, handler);
         }
 
