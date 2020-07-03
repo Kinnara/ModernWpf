@@ -9,9 +9,7 @@
 
     <Page.Resources>
         <controls:RecyclePool x:Key="RecyclePool" />
-        <controls:RecyclingElementFactory
-            x:Key="elementFactory"
-            RecyclePool="{StaticResource RecyclePool}">
+        <controls:RecyclingElementFactory x:Key="elementFactory" RecyclePool="{StaticResource RecyclePool}">
             <controls:RecyclingElementFactory.Templates>
                 <DataTemplate x:Key="Item">
                     <Button
@@ -57,6 +55,7 @@
                 <Button x:Name="insertButton">Insert</Button>
                 <Button x:Name="removeButton">Remove</Button>
                 <Button x:Name="replaceButton">Replace</Button>
+                <Button x:Name="moveButton">Move</Button>
                 <Button x:Name="resetButton">Reset</Button>
                 <Button x:Name="invalidateMeasureButton">InvalidateMeasure</Button>
                 <Button x:Name="invalidateArrangeButton">InvalidateArrange</Button>
@@ -70,10 +69,10 @@
                 <controls:ItemsRepeater x:Name="repeater">
                     <controls:ItemsRepeater.Layout>
                         <controls:UniformGridLayout
-                            MinItemWidth="150"
+                            MinColumnSpacing="10"
                             MinItemHeight="150"
-                            MinRowSpacing="10"
-                            MinColumnSpacing="10" />
+                            MinItemWidth="150"
+                            MinRowSpacing="10" />
                     </controls:ItemsRepeater.Layout>
                     <!--<controls:ItemsRepeater.Animator>
                         <utils:DefaultElementAnimator />
@@ -83,9 +82,9 @@
         </controls:ItemsRepeaterScrollHost>
 
         <controls:ItemsRepeater
-            ItemsSource="{Binding ResettingListItems, Mode=OneWay}"
+            x:Name="ResettingCollectionRepeater"
             Grid.Row="2"
-            x:Name="ResettingCollectionRepeater">
+            ItemsSource="{Binding ResettingListItems, Mode=OneWay}">
             <controls:ItemsRepeater.ItemTemplate>
                 <DataTemplate>
                     <Grid

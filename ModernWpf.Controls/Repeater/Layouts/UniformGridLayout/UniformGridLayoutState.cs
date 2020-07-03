@@ -163,6 +163,9 @@ namespace ModernWpf.Controls
         {
             if (m_cachedFirstElement != null)
             {
+                // The first element of UniformGridLayout is special since we use its size to 
+                // determine the size of all the other elements. So if the first item has changed
+                // we will need to clear it and re-evalauate all the items with the new item size.
                 bool shouldClear = false;
                 switch (args.Action)
                 {
@@ -183,7 +186,8 @@ namespace ModernWpf.Controls
                         break;
 
                     case NotifyCollectionChangedAction.Move:
-                        throw new NotImplementedException();
+                        shouldClear = args.NewStartingIndex == 0 || args.OldStartingIndex == 0;
+                        break;
                 }
 
                 if (shouldClear)

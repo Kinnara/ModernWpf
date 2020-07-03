@@ -24,6 +24,7 @@ namespace MUXControlsTestApp.Samples
             insertButton.Click += delegate { _dataSource.Insert(int.Parse(newStartIndex.Text), int.Parse(newCount.Text), resetMode.IsChecked ?? false); };
             removeButton.Click += delegate { _dataSource.Remove(int.Parse(oldStartIndex.Text), int.Parse(oldCount.Text), resetMode.IsChecked ?? false); };
             replaceButton.Click += delegate { _dataSource.Replace(int.Parse(oldStartIndex.Text), int.Parse(oldCount.Text), int.Parse(newCount.Text), resetMode.IsChecked ?? false); };
+            moveButton.Click += delegate { _dataSource.Move(int.Parse(oldStartIndex.Text), int.Parse(newStartIndex.Text), int.Parse(oldCount.Text), resetMode.IsChecked ?? false); };
             resetButton.Click += delegate { _dataSource.Reset(); };
             invalidateMeasureButton.Click += delegate { repeater.InvalidateMeasure(); };
             invalidateArrangeButton.Click += delegate { repeater.InvalidateArrange(); };
@@ -155,6 +156,27 @@ namespace MUXControlsTestApp.Samples
                         oldItemsCount: oldCount,
                         newStartingIndex: index,
                         newItemsCount: newCount));
+                }
+            }
+
+            public void Move(int oldIndex, int newIndex, int count, bool reset)
+            {
+                var items = Inner.GetRange(oldIndex, count);
+                Inner.RemoveRange(oldIndex, count);
+                Inner.InsertRange(newIndex, items);
+
+                if (reset)
+                {
+                    OnItemsSourceChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                }
+                else
+                {
+                    OnItemsSourceChanged(CollectionChangeEventArgsConverters.CreateNotifyArgs(
+                        NotifyCollectionChangedAction.Move,
+                        oldStartingIndex: oldIndex,
+                        oldItemsCount: count,
+                        newStartingIndex: newIndex,
+                        newItemsCount: count));
                 }
             }
 

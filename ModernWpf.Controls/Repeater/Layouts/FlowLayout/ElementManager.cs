@@ -314,7 +314,10 @@ namespace ModernWpf.Controls
                         break;
 
                     case NotifyCollectionChangedAction.Move:
-                        throw new NotImplementedException();
+                        int size = args.OldItems != null ? args.OldItems.Count : 1;
+                        OnItemsRemoved(args.OldStartingIndex, size);
+                        OnItemsAdded(args.NewStartingIndex, size);
+                        break;
                 }
             }
         }
