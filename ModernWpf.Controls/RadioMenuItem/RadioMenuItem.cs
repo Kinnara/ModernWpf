@@ -79,7 +79,7 @@ namespace ModernWpf.Controls
             if (IsChecked)
             {
                 // Since this item is checked, uncheck all siblings
-                if (Parent is ItemsControl parent)
+                if (ItemsControlFromItemContainer(this) is { } parent)
                 {
                     int childrenCount = parent.Items.Count;
                     for (int i = 0; i < childrenCount; i++)
