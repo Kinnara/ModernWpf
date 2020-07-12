@@ -11,7 +11,6 @@
                 <ControlTemplate TargetType="ToggleButton">
                     <ControlTemplate.Resources>
                         <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
-                        <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
                     <Border Padding="{TemplateBinding Padding}">
                         <Grid
@@ -29,7 +28,12 @@
                                 FontSize="12"
                                 Data="{StaticResource ChevronDown}"
                                 SnapsToDevicePixels="false"
-                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                RenderTransformOrigin="0.5,0.5">
+                                <local:FontIconFallback.RenderTransform>
+                                    <RotateTransform Angle="0"/>
+                                </local:FontIconFallback.RenderTransform>
+                            </local:FontIconFallback>
                             <ContentPresenter
                                 Grid.Column="1"
                                 Margin="8,0,0,0"
@@ -41,7 +45,26 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="arrow" Property="Data" Value="{StaticResource ChevronUp}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="arrow"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                         To="180"
+                                                         Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="arrow"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                         To="0"
+                                                         Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseMediumBrush}" />
@@ -64,7 +87,6 @@
                 <ControlTemplate TargetType="ToggleButton">
                     <ControlTemplate.Resources>
                         <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
-                        <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
                     <Border Padding="{TemplateBinding Padding}">
                         <Grid
@@ -92,7 +114,12 @@
                                     FontSize="12"
                                     Data="{StaticResource ChevronDown}"
                                     SnapsToDevicePixels="false"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                    RenderTransformOrigin="0.5,0.5">
+                                    <local:FontIconFallback.RenderTransform>
+                                        <RotateTransform Angle="0"/>
+                                    </local:FontIconFallback.RenderTransform>
+                                </local:FontIconFallback>
                             </Grid>
                             <ContentPresenter
                                 Grid.Column="1"
@@ -105,7 +132,26 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="arrow" Property="Data" Value="{StaticResource ChevronUp}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="arrow"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                         To="180"
+                                                         Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="arrow"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                         To="0"
+                                                         Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseMediumBrush}" />
@@ -128,7 +174,6 @@
                 <ControlTemplate TargetType="ToggleButton">
                     <ControlTemplate.Resources>
                         <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
-                        <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
                     <Border Padding="{TemplateBinding Padding}">
                         <Grid
@@ -156,7 +201,12 @@
                                     FontSize="12"
                                     Data="{StaticResource ChevronDown}"
                                     SnapsToDevicePixels="false"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                    RenderTransformOrigin="0.5,0.5">
+                                    <local:FontIconFallback.RenderTransform>
+                                        <RotateTransform Angle="0"/>
+                                    </local:FontIconFallback.RenderTransform>
+                                </local:FontIconFallback>
                             </Grid>
                             <ContentPresenter
                                 Grid.Row="1"
@@ -169,7 +219,26 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="arrow" Property="Data" Value="{StaticResource ChevronUp}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="arrow"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                         To="180"
+                                                         Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="arrow"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                         To="0"
+                                                         Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseMediumBrush}" />
@@ -192,7 +261,6 @@
                 <ControlTemplate TargetType="ToggleButton">
                     <ControlTemplate.Resources>
                         <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
-                        <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
                     <Border Padding="{TemplateBinding Padding}">
                         <Grid
@@ -220,7 +288,12 @@
                                     FontSize="12"
                                     Data="{StaticResource ChevronDown}"
                                     SnapsToDevicePixels="false"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                    RenderTransformOrigin="0.5,0.5">
+                                    <local:FontIconFallback.RenderTransform>
+                                        <RotateTransform Angle="0"/>
+                                    </local:FontIconFallback.RenderTransform>
+                                </local:FontIconFallback>
                             </Grid>
                             <ContentPresenter
                                 Grid.Row="1"
@@ -233,7 +306,26 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="arrow" Property="Data" Value="{StaticResource ChevronUp}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="arrow"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                         To="180"
+                                                         Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="arrow"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                         To="0"
+                                                         Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseMediumBrush}" />
