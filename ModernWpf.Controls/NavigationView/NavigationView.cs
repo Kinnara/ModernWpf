@@ -4291,7 +4291,10 @@ namespace ModernWpf.Controls
 
         void ClosePaneIfNeccessaryAfterItemIsClicked(NavigationViewItem selectedContainer)
         {
-            if (IsPaneOpen && DisplayMode != NavigationViewDisplayMode.Expanded && !DoesNavigationViewItemHaveChildren(selectedContainer))
+            if (IsPaneOpen &&
+                DisplayMode != NavigationViewDisplayMode.Expanded &&
+                !DoesNavigationViewItemHaveChildren(selectedContainer) &&
+                !m_shouldIgnoreNextSelectionChange)
             {
                 ClosePane();
             }
