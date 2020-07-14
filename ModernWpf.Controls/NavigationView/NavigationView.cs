@@ -813,6 +813,12 @@ namespace ModernWpf.Controls
             if (updateSelection)
             {
                 var ip = GetIndexPathForContainer(nvi);
+
+                // Determine if we will update collapse/expand which will happen iff the item has children
+                if (DoesNavigationViewItemHaveChildren(nvi))
+                {
+                    m_shouldIgnoreUIASelectionRaiseAsExpandCollapseWillRaise = true;
+                }
                 UpdateSelectionModelSelection(ip);
             }
 
@@ -2132,6 +2138,31 @@ namespace ModernWpf.Controls
                 }
                 UnselectPrevItem(prevItem, nextItem);
                 ChangeSelectStatusForItem(nextItem, true /*selected*/);
+
+                try
+                {
+                    // Selection changed and we need to notify UIA
+                    // HOWEVER expand collapse can also trigger if an item can expand/collapse
+                    // There are multiple cases when selection changes:
+                    // - Through click on item with no children -> No expand/collapse change
+                    // - Through click on item with children -> Expand/collapse change
+                    // - Through API with item without children -> No expand/collapse change
+                    // - Through API with item with children -> No expand/collapse change
+                    if (!m_shouldIgnoreUIASelectionRaiseAsExpandCollapseWillRaise)
+                    {
+                        if (FrameworkElementAutomationPeer.FromElement(this) is AutomationPeer peer)
+                        {
+                            var navViewItemPeer = (NavigationViewAutomationPeer)peer;
+                            navViewItemPeer.RaiseSelectionChangedEvent(
+                                prevItem, nextItem
+                            );
+                        }
+                    }
+                }
+                finally
+                {
+                    m_shouldIgnoreUIASelectionRaiseAsExpandCollapseWillRaise = false;
+                }
 
                 RaiseSelectionChangedEvent(nextItem, isSettingsItem, recommendedDirection);
                 AnimateSelectionChanged(nextItem);
@@ -5313,6 +5344,8 @@ namespace ModernWpf.Controls
         bool m_isOpenPaneForInteraction = false;
 
         bool m_moveTopNavOverflowItemOnFlyoutClose = false;
+
+        bool m_shouldIgnoreUIASelectionRaiseAsExpandCollapseWillRaise = false;
 
         FocusHelper m_leftNavRepeaterFocusHelper;
         FocusHelper m_topNavRepeaterFocusHelper;

@@ -181,7 +181,7 @@ namespace ModernWpf.Automation.Peers
             }
         }
 
-        void RaiseExpandCollapseAutomationEvent(ExpandCollapseState newState)
+        internal void RaiseExpandCollapseAutomationEvent(ExpandCollapseState newState)
         {
             if (AutomationPeer.ListenerExists(AutomationEvents.PropertyChanged))
             {

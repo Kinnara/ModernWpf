@@ -42,5 +42,22 @@ namespace ModernWpf.Automation.Peers
             }
             return new IRawElementProviderSimple[0];
         }
+
+        internal void RaiseSelectionChangedEvent(object oldSelection, object newSelecttion)
+        {
+            if (AutomationPeer.ListenerExists(AutomationEvents.SelectionPatternOnInvalidated))
+            {
+                if (Owner is NavigationView nv)
+                {
+                    if (nv.GetSelectedContainer() is { } nvi)
+                    {
+                        if (FrameworkElementAutomationPeer.CreatePeerForElement(nvi) is { } peer)
+                        {
+                            peer.RaiseAutomationEvent(AutomationEvents.SelectionItemPatternOnElementSelected);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

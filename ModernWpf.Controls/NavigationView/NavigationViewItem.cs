@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -278,6 +279,19 @@ namespace ModernWpf.Controls
             }
 
             m_suggestedToolTipContent = newToolTipContent;
+        }
+
+        void OnIsExpandedPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            if (FrameworkElementAutomationPeer.FromElement(this) is AutomationPeer peer)
+            {
+                var navViewItemPeer = (NavigationViewItemAutomationPeer)peer;
+                navViewItemPeer.RaiseExpandCollapseAutomationEvent(
+                    IsExpanded ?
+                        ExpandCollapseState.Expanded :
+                        ExpandCollapseState.Collapsed
+                );
+            }
         }
 
         void OnIconPropertyChanged(DependencyPropertyChangedEventArgs args)

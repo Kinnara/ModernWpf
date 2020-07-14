@@ -88,12 +88,9 @@ namespace ModernWpf.Controls
 
         private static void OnIsExpandedPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            ((NavigationViewItem)sender).OnIsExpandedPropertyChanged(args);
-        }
-
-        private void OnIsExpandedPropertyChanged(DependencyPropertyChangedEventArgs args)
-        {
-            IsExpandedChanged?.Invoke(this, args.Property);
+            var owner = (NavigationViewItem)sender;
+            owner.OnIsExpandedPropertyChanged(args);
+            owner.IsExpandedChanged?.Invoke(owner, args.Property);
         }
 
         #endregion
