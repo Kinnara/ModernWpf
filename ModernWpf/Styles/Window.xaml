@@ -27,7 +27,7 @@
     <WindowChrome
         x:Key="DefaultWindowChrome"
         x:Shared="False"
-        CaptionHeight="{DynamicResource TitleBarHeight}"
+        CaptionHeight="{DynamicResource {x:Static local:TitleBar.HeightKey}}"
         CornerRadius="0"
         GlassFrameThickness="0,1,0,0"
         UseAeroCaptionButtons="False" />

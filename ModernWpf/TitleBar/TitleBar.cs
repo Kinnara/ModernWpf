@@ -15,6 +15,8 @@ namespace ModernWpf.Controls
         private const string ButtonStylePropertyName = "ButtonStyle";
         private const string BackButtonStylePropertyName = "BackButtonStyle";
 
+        public static ComponentResourceKey HeightKey { get; } = new ComponentResourceKey(typeof(TitleBar), nameof(HeightKey));
+
         #region Background
 
         public static readonly DependencyProperty BackgroundProperty =
