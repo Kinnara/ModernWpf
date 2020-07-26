@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System.Collections;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -48,7 +47,6 @@ namespace ModernWpf.Automation.Peers
         public override object GetPattern(PatternInterface pattern)
         {
             if (pattern == PatternInterface.SelectionItem ||
-                pattern == PatternInterface.Invoke ||
                 // Only provide expand collapse pattern if we have children!
                 (pattern == PatternInterface.ExpandCollapse && HasChildren()))
             {

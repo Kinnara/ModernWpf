@@ -105,7 +105,7 @@ namespace ModernWpf.Controls.Primitives
                     InputHelper.AddTappedHandler(expandCollapseChevron, navigationViewItem.OnExpandCollapseChevronTapped);
                 }
                 navigationViewItem.UpdateVisualStateNoTransition();
-
+                navigationViewItem.UpdateIsClosedCompact();
 
                 // We probably switched displaymode, so restore width now, otherwise the next time we will restore is when the CompactPaneLength changes
                 if (navigationViewItem.GetNavigationView() is { } navigationView)

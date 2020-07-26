@@ -220,7 +220,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        void UpdateIsClosedCompact()
+        internal void UpdateIsClosedCompact()
         {
             if (GetSplitView() is { } splitView)
             {
