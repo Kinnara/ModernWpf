@@ -1132,6 +1132,7 @@
                                         x:Name="TopNavOverflowButton"
                                         Grid.Column="4"
                                         Content="More"
+                                        Margin="{DynamicResource TopNavigationViewOverflowButtonMargin}"
                                         Style="{StaticResource NavigationViewOverflowButtonStyleWhenPaneOnTop}"
                                         Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OverflowButtonVisibility}">
 
@@ -1175,7 +1176,7 @@
                                         <ContentControl
                                             x:Name="TopPaneAutoSuggestBoxPresenter"
                                             Style="{StaticResource DefaultContentControlStyle}"
-                                            Margin="12,0,12,0"
+                                            Margin="{DynamicResource TopNavigationViewAutoSuggestBoxMargin}"
                                             MinWidth="48"
                                             IsTabStop="False"
                                             HorizontalContentAlignment="Stretch"
@@ -1409,6 +1410,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="Margin" Value="{DynamicResource NavigationViewItemMargin}" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -1443,6 +1445,9 @@
                                 -->
                                 <VisualState x:Name="OnTopNavigationPrimary">
                                     <Storyboard>
+                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="NavigationViewItemPresenter" Storyboard.TargetProperty="Margin">
+                                            <DiscreteThicknessKeyFrame KeyTime="0" Value="{DynamicResource TopNavigationViewItemMargin}" />
+                                        </ThicknessAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NavigationViewItemPresenter" Storyboard.TargetProperty="Style">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPane}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -1454,6 +1459,9 @@
                                 <!--
                                 <VisualState x:Name="OnTopNavigationPrimaryReveal">
                                     <Storyboard>
+                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="NavigationViewItemPresenter" Storyboard.TargetProperty="Margin">
+                                            <DiscreteThicknessKeyFrame KeyTime="0" Value="{DynamicResource TopNavigationViewItemMargin}" />
+                                        </ThicknessAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NavigationViewItemPresenter" Storyboard.TargetProperty="Style">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPaneWithRevealFocus}" />
                                         </ObjectAnimationUsingKeyFrames>
