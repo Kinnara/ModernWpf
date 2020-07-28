@@ -1,10 +1,9 @@
-﻿using ModernWpf.Media.ColorPalette;
-using System;
+﻿using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
+using ModernWpf.Media.ColorPalette;
 using Windows.UI.ViewManagement;
 
 namespace ModernWpf
@@ -35,7 +34,7 @@ namespace ModernWpf
             }
         }
 
-        public static bool SystemColorsSupported { get; } = Environment.OSVersion.Version.Major >= 10;
+        public static bool SystemColorsSupported { get; } = OSVersionHelper.IsWindows10;
 
         public static ColorsHelper Current { get; } = new ColorsHelper();
 
