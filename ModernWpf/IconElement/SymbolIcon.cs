@@ -106,12 +106,13 @@ namespace ModernWpf.Controls
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Center,
                 TextAlignment = TextAlignment.Center,
-                FontFamily = SymbolFontFamily,
                 FontSize = FontSize,
                 FontStyle = FontStyles.Normal,
                 FontWeight = FontWeights.Normal,
                 Text = ConvertToString(Symbol)
             };
+
+            _textBlock.SetResourceReference(TextBlock.FontFamilyProperty, "SymbolThemeFontFamily");
 
             if (ShouldInheritForegroundFromVisualParent)
             {
@@ -150,7 +151,5 @@ namespace ModernWpf.Controls
         }
 
         private TextBlock _textBlock;
-
-        private static readonly FontFamily SymbolFontFamily = new FontFamily("Segoe MDL2 Assets");
     }
 }
