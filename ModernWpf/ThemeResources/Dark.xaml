@@ -464,10 +464,18 @@
     <m:StaticResource x:Key="ComboBoxBackgroundBorderBrushFocused" ResourceKey="SystemControlHighlightTransparentBrush" />
     <m:StaticResource x:Key="ComboBoxBackgroundBorderBrushUnfocused" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
     <m:StaticResource x:Key="ComboBoxForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="ComboBoxForegroundPointerOver" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="ComboBoxForegroundPressed" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <m:StaticResource x:Key="ComboBoxForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
     <m:StaticResource x:Key="ComboBoxForegroundFocused" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="ComboBoxForegroundFocusedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="SystemControlPageTextBaseHighBrush" />
+    <m:StaticResource x:Key="ComboBoxHeaderForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="ComboBoxHeaderForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="SystemControlPageTextBaseMediumBrush" />
+    <m:StaticResource x:Key="ComboBoxPlaceHolderForegroundPointerOver" ResourceKey="SystemControlPageTextBaseMediumBrush" />
+    <m:StaticResource x:Key="ComboBoxPlaceHolderForegroundPressed" ResourceKey="SystemControlPageTextBaseMediumBrush" />
+    <m:StaticResource x:Key="ComboBoxPlaceHolderForegroundDisabled" ResourceKey="SystemControlDisabledChromeDisabledLowBrush" />
+    <m:StaticResource x:Key="ComboBoxPlaceHolderForegroundFocused" ResourceKey="SystemControlPageTextBaseMediumBrush" />
     <m:StaticResource x:Key="ComboBoxPlaceHolderForegroundFocusedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="ComboBoxBorderBrush" ResourceKey="SystemControlForegroundBaseMediumBrush" />
     <m:StaticResource x:Key="ComboBoxBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumHighBrush" />

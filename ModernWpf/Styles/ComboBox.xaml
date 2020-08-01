@@ -253,6 +253,7 @@
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
                             FlowDirection="{TemplateBinding FlowDirection}"
+                            Foreground="{DynamicResource ComboBoxHeaderForeground}"
                             FontWeight="{DynamicResource ComboBoxHeaderThemeFontWeight}"
                             Margin="{DynamicResource ComboBoxTopHeaderMargin}"
                             TextWrapping="Wrap"
@@ -419,19 +420,23 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Background" Property="Background" Value="{DynamicResource ComboBoxBackgroundPointerOver}" />
                             <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundPointerOver}" />
+                            <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxPlaceHolderForegroundPointerOver}" />
                         </Trigger>
                         <!-- Pressed -->
                         <Trigger SourceName="ToggleButton" Property="IsPressed" Value="True">
                             <Setter TargetName="Background" Property="Background" Value="{DynamicResource ComboBoxBackgroundPressed}" />
                             <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundPressed}" />
+                            <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxPlaceHolderForegroundPressed}" />
                         </Trigger>
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Background" Property="Background" Value="{DynamicResource ComboBoxBackgroundDisabled}" />
                             <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushDisabled}" />
-                            <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource ComboBoxForegroundDisabled}" />
+                            <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource ComboBoxHeaderForegroundDisabled}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundDisabled}" />
-                            <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxForegroundDisabled}" />
+                            <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxPlaceHolderForegroundDisabled}" />
                             <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxDropDownGlyphForegroundDisabled}" />
                         </Trigger>
 
@@ -440,7 +445,7 @@
                             <Setter TargetName="HighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="HighlightBackground" Property="BorderBrush" Value="{DynamicResource ComboBoxBackgroundBorderBrushFocused}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundFocused}" />
-                            <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxForegroundFocused}" />
+                            <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxPlaceHolderForegroundFocused}" />
                             <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxDropDownGlyphForegroundFocused}" />
                         </Trigger>
                         <!-- FocusedPressed -->
