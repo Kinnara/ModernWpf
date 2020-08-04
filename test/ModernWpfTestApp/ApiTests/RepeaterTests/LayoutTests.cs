@@ -38,6 +38,8 @@ using VirtualizingLayoutContext = ModernWpf.Controls.VirtualizingLayoutContext;
 using ElementRealizationOptions = ModernWpf.Controls.ElementRealizationOptions;
 using LayoutContext = ModernWpf.Controls.LayoutContext;
 using LayoutPanel = ModernWpf.Controls.LayoutPanel;
+using System.Windows.Media;
+using ModernWpf.Controls;
 
 namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
 {
@@ -252,6 +254,53 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                     Verify.IsNotNull(child);
                 }
             });
+        }
+
+        [TestMethod]
+        public void VerifyUniformGridLayoutDoesntCrashWhenTryingToScrollToEnd()
+        {
+
+            ItemsRepeater repeater = null;
+            ScrollViewer scrollViewer = null;
+            RunOnUIThread.Execute(() =>
+            {
+                repeater = new ItemsRepeater
+                {
+                    ItemsSource = Enumerable.Range(0, 1000).Select(i => new Border
+                    {
+                        Background = new SolidColorBrush(Colors.Blue),
+                        Child = new TextBlock { Text = "#" + i }
+                    }).ToArray(),
+                    Layout = new UniformGridLayout
+                    {
+                        MinItemWidth = 100,
+                        MinItemHeight = 40,
+                        MinRowSpacing = 10,
+                        MinColumnSpacing = 10
+                    }
+                };
+                scrollViewer = new ScrollViewer { Content = repeater };
+                Content = scrollViewer;
+            });
+
+            IdleSynchronizer.Wait();
+
+            RunOnUIThread.Execute(() =>
+            {
+                scrollViewer.ChangeView(0, repeater.ActualHeight, null);
+            });
+
+            IdleSynchronizer.Wait();
+
+            RunOnUIThread.Execute(() =>
+            {
+                scrollViewer.ChangeView(0, 0, null);
+            });
+
+            IdleSynchronizer.Wait();
+
+            // The test guards against an app crash, so this is enough to verify
+            Verify.IsTrue(true);
         }
 
         private ItemsRepeaterScrollHost CreateAndInitializeRepeater(

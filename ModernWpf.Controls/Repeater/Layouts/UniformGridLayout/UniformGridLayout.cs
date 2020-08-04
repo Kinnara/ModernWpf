@@ -179,10 +179,6 @@ namespace ModernWpf.Controls
                 false /* disableVirtualization */,
                 LayoutId);
 
-            // If after Measure the first item is in the realization rect, then we revoke grid state's ownership,
-            // and only use the layout when to clear it when it's done.
-            gridState.EnsureFirstElementOwnership(context);
-
             return desiredSize;
         }
 
@@ -207,9 +203,6 @@ namespace ModernWpf.Controls
             GetFlowAlgorithm(context).OnItemsSourceChanged(source, args, context);
             // Always invalidate layout to keep the view accurate.
             InvalidateLayout();
-
-            var gridState = GetAsGridState(context.LayoutState);
-            gridState.ClearElementOnDataSourceChange(context, args);
         }
 
         #region IFlowLayoutAlgorithmDelegates

@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System;
-using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -21,11 +20,6 @@ namespace ModernWpf.Controls
         internal void UninitializeForContext(VirtualizingLayoutContext context)
         {
             FlowAlgorithm.UninitializeForContext(context);
-
-            if (m_cachedFirstElement != null)
-            {
-                context.RecycleElement(m_cachedFirstElement);
-            }
         }
 
         internal FlowLayoutAlgorithm FlowAlgorithm { get; } = new FlowLayoutAlgorithm();
@@ -50,36 +44,27 @@ namespace ModernWpf.Controls
 
             if (context.ItemCount > 0)
             {
-                // If the first element is realized we don't need to cache it or to get it from the context
+                // If the first element is realized we don't need to get it from the context
                 var realizedElement = FlowAlgorithm.GetElementIfRealized(0);
                 if (realizedElement != null)
                 {
                     realizedElement.Measure(availableSize);
-                    SetSize(realizedElement, layoutItemWidth, LayoutItemHeight, availableSize, stretch, orientation, minRowSpacing, minColumnSpacing, maxItemsPerLine);
-                    m_cachedFirstElement = null;
+                    SetSize(realizedElement.DesiredSize, layoutItemWidth, LayoutItemHeight, availableSize, stretch, orientation, minRowSpacing, minColumnSpacing, maxItemsPerLine);
                 }
                 else
                 {
-                    if (m_cachedFirstElement == null)
+                    // Not realized by flowlayout, so do this now!
+                    if (context.GetOrCreateElementAt(0, ElementRealizationOptions.ForceCreate) is { } firstElement)
                     {
-                        // we only cache if we aren't realizing it
-                        m_cachedFirstElement = context.GetOrCreateElementAt(0, ElementRealizationOptions.ForceCreate | ElementRealizationOptions.SuppressAutoRecycle); // expensive
-                    }
-
-                    m_cachedFirstElement.Measure(availableSize);
-                    SetSize(m_cachedFirstElement, layoutItemWidth, LayoutItemHeight, availableSize, stretch, orientation, minRowSpacing, minColumnSpacing, maxItemsPerLine);
-
-                    // See if we can move ownership to the flow algorithm. If we can, we do not need a local cache.
-                    bool added = FlowAlgorithm.TryAddElement0(m_cachedFirstElement);
-                    if (added)
-                    {
-                        m_cachedFirstElement = null;
+                        firstElement.Measure(availableSize);
+                        SetSize(firstElement.DesiredSize, layoutItemWidth, LayoutItemHeight, availableSize, stretch, orientation, minRowSpacing, minColumnSpacing, maxItemsPerLine);
+                        context.RecycleElement(firstElement);
                     }
                 }
             }
         }
 
-        private void SetSize(UIElement UIElement,
+        private void SetSize(Size desiredItemSize,
             double layoutItemWidth,
             double LayoutItemHeight,
             Size availableSize,
@@ -94,8 +79,8 @@ namespace ModernWpf.Controls
                 maxItemsPerLine = 1;
             }
 
-            EffectiveItemWidth = double.IsNaN(layoutItemWidth) ? UIElement.DesiredSize.Width : layoutItemWidth;
-            EffectiveItemHeight = double.IsNaN(LayoutItemHeight) ? UIElement.DesiredSize.Height : LayoutItemHeight;
+            EffectiveItemWidth = double.IsNaN(layoutItemWidth) ? desiredItemSize.Width : layoutItemWidth;
+            EffectiveItemHeight = double.IsNaN(LayoutItemHeight) ? desiredItemSize.Height : LayoutItemHeight;
 
             var availableSizeMinor = orientation == Orientation.Horizontal ? availableSize.Width : availableSize.Height;
             var minorItemSpacing = orientation == Orientation.Vertical ? minRowSpacing : minColumnSpacing;
@@ -146,63 +131,5 @@ namespace ModernWpf.Controls
                 }
             }
         }
-
-        // If it's realized then we shouldn't be caching it
-        internal void EnsureFirstElementOwnership(VirtualizingLayoutContext context)
-        {
-            if (m_cachedFirstElement != null && FlowAlgorithm.GetElementIfRealized(0) != null)
-            {
-                // We created the element, but then flowlayout algorithm took ownership, so we can clear it and
-                // let flowlayout algorithm do its thing.
-                context.RecycleElement(m_cachedFirstElement);
-                m_cachedFirstElement = null;
-            }
-        }
-
-        internal void ClearElementOnDataSourceChange(VirtualizingLayoutContext context, NotifyCollectionChangedEventArgs args)
-        {
-            if (m_cachedFirstElement != null)
-            {
-                // The first element of UniformGridLayout is special since we use its size to 
-                // determine the size of all the other elements. So if the first item has changed
-                // we will need to clear it and re-evalauate all the items with the new item size.
-                bool shouldClear = false;
-                switch (args.Action)
-                {
-                    case NotifyCollectionChangedAction.Add:
-                        shouldClear = args.NewStartingIndex == 0;
-                        break;
-
-                    case NotifyCollectionChangedAction.Replace:
-                        shouldClear = args.NewStartingIndex == 0 || args.OldStartingIndex == 0;
-                        break;
-
-                    case NotifyCollectionChangedAction.Remove:
-                        shouldClear = args.OldStartingIndex == 0;
-                        break;
-
-                    case NotifyCollectionChangedAction.Reset:
-                        shouldClear = true;
-                        break;
-
-                    case NotifyCollectionChangedAction.Move:
-                        shouldClear = args.NewStartingIndex == 0 || args.OldStartingIndex == 0;
-                        break;
-                }
-
-                if (shouldClear)
-                {
-                    context.RecycleElement(m_cachedFirstElement);
-                    m_cachedFirstElement = null;
-                }
-            }
-        }
-
-        // We need to measure the element at index 0 to know what size to measure all other items.
-        // If FlowlayoutAlgorithm has already realized element 0 then we can use that.
-        // If it does not, then we need to do context.GetElement(0) at which point we have requested an element and are on point to clear it.
-        // If we are responsible for clearing element 0 we keep m_cachedFirstElement valid.
-        // If we are not (because FlowLayoutAlgorithm is holding it for us) then we just null out this field and use the one from FlowLayoutAlgorithm.
-        private UIElement m_cachedFirstElement = null;
     }
 }
