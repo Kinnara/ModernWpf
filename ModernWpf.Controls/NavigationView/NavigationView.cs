@@ -2049,7 +2049,18 @@ namespace ModernWpf.Controls
             {
                 if (NavigationViewItemOrSettingsContentFromData(item) is { } container)
                 {
-                    return container.GetSelectionIndicator();
+                    if (container.GetSelectionIndicator() is { } indicator)
+                    {
+                        return indicator;
+                    }
+                    else
+                    {
+                        // Indicator was not found, so maybe the layout hasn't updated yet.
+                        // So let's do that now.
+                        container.UpdateLayout();
+                        Dispatcher.Wait(DispatcherPriority.Render);
+                        return container.GetSelectionIndicator();
+                    }
                 }
             }
             return null;
