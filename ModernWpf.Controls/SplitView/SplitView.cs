@@ -332,7 +332,7 @@ namespace ModernWpf.Controls
                         if (waitForDataBinding)
                         {
                             // Wait for data binding to update the storyboard
-                            Dispatcher.Invoke(() => { }, DispatcherPriority.DataBind);
+                            DispatcherHelper.DoEvents(DispatcherPriority.DataBind);
                         }
 
                         storyboard.Begin(_templateRoot, true);

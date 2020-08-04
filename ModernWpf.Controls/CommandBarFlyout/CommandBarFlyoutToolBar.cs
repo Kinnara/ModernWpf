@@ -284,7 +284,7 @@ namespace ModernWpf.Controls.Primitives
                     {
                         m_openAnimationPending = false;
                         SetOpacity(0);
-                        Dispatcher.Wait(DispatcherPriority.DataBind);
+                        DispatcherHelper.DoEvents(DispatcherPriority.DataBind);
                         SetOpacity(1);
                         m_openingStoryboard.Begin(m_layoutRoot, true);
                     }

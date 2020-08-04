@@ -10,19 +10,12 @@ namespace MUXControlsTestApp.Utilities
 {
     internal static class Extensions
     {
-        private static readonly Action NoOpCallback = delegate { };
-
-        public static void WaitForIdleDispatcher(this DependencyObject element)
-        {
-            element.Dispatcher.Invoke(NoOpCallback, DispatcherPriority.ApplicationIdle);
-        }
-
         public static void UpdateLayout(this UIElement element, bool waitForIdleDispatcher)
         {
             element.UpdateLayout();
             if (waitForIdleDispatcher)
             {
-                element.WaitForIdleDispatcher();
+                DispatcherHelper.DoEvents(DispatcherPriority.ApplicationIdle);
             }
         }
 
