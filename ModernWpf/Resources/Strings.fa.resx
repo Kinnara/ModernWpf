@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppBarMoreButtonClosedToolTip" xml:space="preserve">
+    <value>بیشتر</value>
+    <comment>319-5102</comment>
+  </data>
+  <data name="AppBarMoreButtonName" xml:space="preserve">
+    <value>بیشتر</value>
+    <comment>332-5305</comment>
+  </data>
+  <data name="BadgeIcon" xml:space="preserve">
+    <value>{0}، نماد</value>
+    <comment>This text is used with the badging glyph. %1 is the contact name.</comment>
+  </data>
+  <data name="BadgeIconTextOverride" xml:space="preserve">
+    <value>{0}, {1}</value>
+    <comment>This format string is used for the automation name. It is 'Person Name, badgetext', where badgetext is a user specified string like skype.</comment>
+  </data>
+  <data name="BadgeItemPlural1" xml:space="preserve">
+    <value>{0}, {1:d} مورد</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is 21,31,41,etc. %1 is the contact name and %2 is the number of items.</comment>
+  </data>
+  <data name="BadgeItemPlural2" xml:space="preserve">
+    <value>{0}, {1:d} مورد</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is 3-4. %1 is the contact name and %2 is the number of items.</comment>
+  </data>
+  <data name="BadgeItemPlural3" xml:space="preserve">
+    <value>{0}, {1:d} مورد</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is  22-24, 32-34, 42-44, etc. %1 is the contact name and %2 is the number of items.</comment>
+  </data>
+  <data name="BadgeItemPlural4" xml:space="preserve">
+    <value>{0}, {1:d}مورد</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is  0, 20, 25-30, 35-40, etc. (fallback plural). %1 is the contact name and %2 is the number of items.</comment>
+  </data>
+  <data name="BadgeItemPlural5" xml:space="preserve">
+    <value>{0}, {1:d} مورد</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is  5-10. %1 is the contact name and %2 is the number of items.</comment>
+  </data>
+  <data name="BadgeItemPlural6" xml:space="preserve">
+    <value>{0}, {1:d} مورد</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is  11-19. %1 is the contact name and %2 is the number of items.</comment>
+  </data>
+  <data name="BadgeItemPlural7" xml:space="preserve">
+    <value>{0}, {1:d} مورد</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is  2. %1 is the contact name and %2 is the number of items.</comment>
+  </data>
+  <data name="BadgeItemSingular" xml:space="preserve">
+    <value>{0}, {1:d} مورد</value>
+    <comment>This text is used to show the number of items in the person picture badging area, when that number is  1. %1 is the contact name and %2 is the number of items.</comment>
+  </data>
+  <data name="BadgeItemTextOverride" xml:space="preserve">
+    <value>{0}, {1:d} {2}</value>
+    <comment>This format string is used for the automation name. It is 'Person Name, badgenumber badgetext', where badge text is a user specified string overriding 'item(s)'.</comment>
+  </data>
+  <data name="BasicRatingString" xml:space="preserve">
+    <value>رتبه‌بندی، {0} از {1}</value>
+    <comment>English example: Rating, 1.0 of 5.</comment>
+  </data>
+  <data name="CommunityRatingString" xml:space="preserve">
+    <value>رتبه‌بندی انجمن، {0} از {1}</value>
+    <comment>English example: Community Rating, 3.3 of 6.</comment>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>گروه</value>
+    <comment>This text is used as the generic narrator text when the group glyph is showing.</comment>
+  </data>
+  <data name="IgnoreMenuItemLabel" xml:space="preserve">
+    <value>رد کردن</value>
+    <comment>5580</comment>
+  </data>
+  <data name="NumberBoxDownSpinButtonName" xml:space="preserve">
+    <value>کاهش</value>
+    <comment>Automation name for the down button</comment>
+  </data>
+  <data name="NumberBoxUpSpinButtonName" xml:space="preserve">
+    <value>افزایش</value>
+    <comment>Automation name for the up button</comment>
+  </data>
+  <data name="PersonName" xml:space="preserve">
+    <value>فرد</value>
+    <comment>This text is used as the generic narrator text when there is no display name or initials.</comment>
+  </data>
+  <data name="ProofingMenuItemLabel" xml:space="preserve">
+    <value>اثبات</value>
+    <comment>The label for the text context menu item that provides the proofing menu.</comment>
+  </data>
+  <data name="RatingControlName" xml:space="preserve">
+    <value />
+    <comment>UNUSED</comment>
+  </data>
+  <data name="RatingLocalizedControlType" xml:space="preserve">
+    <value>کنترل رتبه‌دهی</value>
+    <comment>A simple description of the control for UIA</comment>
+  </data>
+  <data name="RatingsControlName" xml:space="preserve">
+    <value />
+    <comment>UNUSED</comment>
+  </data>
+  <data name="RatingUnset" xml:space="preserve">
+    <value>رتبه‌بندی تنظیم نشد</value>
+    <comment>This text is used to show the number of stars none are selected.</comment>
+  </data>
+  <data name="SplitButtonSecondaryButtonName" xml:space="preserve">
+    <value>گزینه‌های بیشتر</value>
+    <comment>Automation name for the secondary button.</comment>
+  </data>
+  <data name="TextCommandLabelCopy" xml:space="preserve">
+    <value>کپی</value>
+    <comment>5035</comment>
+  </data>
+  <data name="TextCommandLabelCut" xml:space="preserve">
+    <value>برش</value>
+    <comment>5034</comment>
+  </data>
+  <data name="TextCommandLabelPaste" xml:space="preserve">
+    <value>چسباندن</value>
+    <comment>5036</comment>
+  </data>
+  <data name="TextCommandLabelRedo" xml:space="preserve">
+    <value>مجددا</value>
+    <comment>5038</comment>
+  </data>
+  <data name="TextCommandLabelSelectAll" xml:space="preserve">
+    <value>انتخاب همه</value>
+    <comment>5039</comment>
+  </data>
+  <data name="TextCommandLabelUndo" xml:space="preserve">
+    <value>لغوعمل</value>
+    <comment>5037</comment>
+  </data>
+  <data name="ToggleSwitchOff" xml:space="preserve">
+    <value>خاموش</value>
+    <comment>Default text for "Off" for ToggleSwitch.</comment>
+  </data>
+  <data name="ToggleSwitchOn" xml:space="preserve">
+    <value>روشن</value>
+    <comment>Default text for "On" for ToggleSwitch.</comment>
+  </data>
+  <data name="AppBarMoreButtonOpenToolTip" xml:space="preserve">
+    <value>کمتر</value>
+    <comment>320-5109</comment>
+  </data>
+  <data name="ProgressBarErrorStatus" xml:space="preserve">
+    <value>خطا</value>
+    <comment>This is used to announce Error state.</comment>
+  </data>
+  <data name="ProgressBarIndeterminateStatus" xml:space="preserve">
+    <value>مشغول</value>
+    <comment>This is used to announce Indeterminate state.</comment>
+  </data>
+  <data name="ProgressBarPausedStatus" xml:space="preserve">
+    <value>متوقف شده</value>
+    <comment>This is used to announce Paused state.</comment>
+  </data>
+  <data name="ProgressRingIndeterminateStatus" xml:space="preserve">
+    <value>مشغول</value>
+    <comment>This is used to announce Indeterminate state.</comment>
+  </data>
+  <data name="NavigationBackButtonName" xml:space="preserve">
+    <value>بازگشت</value>
+    <comment>Automation name for the nav view provided back button</comment>
+  </data>
+  <data name="NavigationBackButtonToolTip" xml:space="preserve">
+    <value>بازگشت</value>
+    <comment>ToolTip caption for the back button</comment>
+  </data>
+  <data name="NavigationButtonClosedName" xml:space="preserve">
+    <value>‏‫‏‏باز کردن پیمایش</value>
+    <comment>Automation name for the hamburger button when it is in a closed state</comment>
+  </data>
+  <data name="NavigationButtonOpenName" xml:space="preserve">
+    <value>بستن پیمایش</value>
+    <comment>Automation name and tooltip caption for the hamburger button when it is in an open state, and tooltip caption for the close button</comment>
+  </data>
+  <data name="NavigationCloseButtonName" xml:space="preserve">
+    <value>بستن</value>
+    <comment>Automation name for the nav view provided close button</comment>
+  </data>
+  <data name="NavigationOverflowButtonName" xml:space="preserve">
+    <value>دکمه بیشتر</value>
+    <comment>Automation name for the nav view more button when panel is on top</comment>
+  </data>
+  <data name="NavigationOverflowButtonText" xml:space="preserve">
+    <value>بیشتر</value>
+    <comment>Text for the nav view more button when panel is on top</comment>
+  </data>
+  <data name="NavigationViewItemDefaultControlName" xml:space="preserve">
+    <value>NavigationViewItem</value>
+    <comment>Default automation id if no name or id is provided</comment>
+  </data>
+  <data name="NavigationViewSearchButtonName" xml:space="preserve">
+    <value>برای جستجو کلیک کنید</value>
+    <comment>Name for the compact view search button</comment>
+  </data>
+  <data name="SettingsButtonName" xml:space="preserve">
+    <value>تنظیمات</value>
+    <comment>Automation name for the settings button</comment>
+  </data>
+</root>
