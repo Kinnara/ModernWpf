@@ -12,6 +12,9 @@ using System.Windows.Navigation;
 
 using NavigationViewPaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode;
 //using MaterialHelperTestApi = Microsoft.UI.Private.Media.MaterialHelperTestApi;
+using NavigationView = ModernWpf.Controls.NavigationView;
+using NavigationViewItemInvokedEventArgs = ModernWpf.Controls.NavigationViewItemInvokedEventArgs;
+using NavigationViewSelectionChangedEventArgs = ModernWpf.Controls.NavigationViewSelectionChangedEventArgs;
 
 namespace MUXControlsTestApp
 {
@@ -58,7 +61,7 @@ namespace MUXControlsTestApp
 
         private void NavView_SelectionChanged(ModernWpf.Controls.NavigationView sender, ModernWpf.Controls.NavigationViewSelectionChangedEventArgs args)
         {
-            var children = (StackPanel)args.SelectedItemContainer.Content;
+            var children = (Customer)args.SelectedItemContainer.Content;
             var customer = (Customer)args.SelectedItem;
             if(children != null && customer != null)
             {
@@ -67,6 +70,38 @@ namespace MUXControlsTestApp
             else
             {
                 SelectionEventResult.Text = "Failed";
+            }
+
+            // Reset argument type indicatiors
+            SelectionChangedItemType.Text = "null";
+            SelectionChangedItemContainerType.Text = "null";
+
+            // Update argument type indicators
+            if (args.SelectedItem != null)
+            {
+                SelectionChangedItemType.Text = args.SelectedItem.GetType().ToString();
+            }
+
+            if (args.SelectedItemContainer != null)
+            {
+                SelectionChangedItemContainerType.Text = args.SelectedItemContainer.GetType().ToString();
+            }
+        }
+
+        private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+        {
+            // Reset argument type indicatiors
+            ItemInvokedItemType.Text = "null";
+            ItemInvokedItemContainerType.Text = "null";
+
+            if (args.InvokedItem != null)
+            {
+                ItemInvokedItemType.Text = args.InvokedItem.GetType().ToString();
+            }
+
+            if (args.InvokedItemContainer != null)
+            {
+                ItemInvokedItemContainerType.Text = args.InvokedItemContainer.GetType().ToString();
             }
         }
     }

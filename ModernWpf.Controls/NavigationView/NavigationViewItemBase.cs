@@ -152,10 +152,20 @@ namespace ModernWpf.Controls
             set => m_isTopLevelItem = value;
         }
 
+        internal bool CreatedByNavigationViewItemsFactory
+        {
+            get => m_createdByNavigationViewItemsFactory;
+            set => m_createdByNavigationViewItemsFactory = value;
+        }
+
         private protected WeakReference<NavigationView> m_navigationView;
 
         NavigationViewRepeaterPosition m_position = NavigationViewRepeaterPosition.LeftNav;
         int m_depth = 0;
         bool m_isTopLevelItem = false;
+
+        // Flag to keep track of whether this item was created by the custom internal NavigationViewItemsFactory.
+        // This is required in order to achieve proper recycling
+        bool m_createdByNavigationViewItemsFactory = false;
     }
 }
