@@ -2058,7 +2058,6 @@ namespace ModernWpf.Controls
                         // Indicator was not found, so maybe the layout hasn't updated yet.
                         // So let's do that now.
                         container.UpdateLayout();
-                        DispatcherHelper.DoEvents(DispatcherPriority.Render);
                         return container.GetSelectionIndicator();
                     }
                 }
