@@ -244,7 +244,6 @@ namespace ModernWpf.Controls
             UpdateItemsSource();
         }
 
-        // void OnGettingFocus(object sender, GettingFocusEventArgs args);
         // When focus comes from outside the RadioButtons control we will put focus on the selected radio button.
         protected override void OnPreviewGotKeyboardFocus(KeyboardFocusChangedEventArgs args)
         {

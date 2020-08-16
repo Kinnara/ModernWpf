@@ -11,7 +11,6 @@ using System.Windows.Media;
 
 namespace MUXControlsTestApp
 {
-    [TopLevelTestPage(Name = "RadioButtons", Icon = "RadioButton.png")]
     public sealed partial class RadioButtonsPage : TestPage
     {
         ObservableCollection<string> m_stringItemCollection;
