@@ -54,7 +54,7 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsMouseOver" Value="False" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
+                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentMediumLowBrush}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                         </MultiTrigger>
                         <!-- SelectedUnfocused -->
@@ -64,7 +64,7 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsMouseOver" Value="False" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
+                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentMediumLowBrush}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                         </MultiTrigger>
                         <!-- SelectedPointerOver -->
@@ -73,7 +73,7 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
+                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
