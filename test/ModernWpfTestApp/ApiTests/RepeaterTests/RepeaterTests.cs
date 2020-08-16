@@ -221,7 +221,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                   @"<controls:ItemsRepeaterScrollHost Width='400' Height='600'
                      xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
                      xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
-                     xmlns:controls='using:ModernWpf.Controls'>
+                     xmlns:controls='http://schemas.modernwpf.com/2019'>
                     <controls:ItemsRepeaterScrollHost.Resources>
                         <DataTemplate x:Key='ItemTemplate' >
                             <TextBlock Text='{Binding}' Height='50'/>
@@ -615,5 +615,59 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 }
             });
         }
+
+    
+        [TestMethod]
+        public void VerifyRepeaterDoesNotLeakItemContainers()
+        {
+            ObservableCollection<int> items = new ObservableCollection<int>();
+            for(int i=0;i<10;i++)
+            {
+                items.Add(i);
+            }
+
+            ItemsRepeater repeater = null;
+
+            RunOnUIThread.Execute(() =>
+            {
+                var template = (DataTemplate)XamlReader.Parse("<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' "
+                    + "xmlns:local='clr-namespace:MUXControlsTestApp.Samples;assembly=MUXControlsTestApp'>"
+                    + "<local:DisposableUserControl Number='{Binding}'/>" 
+                    + "</DataTemplate>");
+                Verify.IsNotNull(template);
+                Verify.AreEqual(0, MUXControlsTestApp.Samples.DisposableUserControl.OpenItems, "Verify we start with 0 DisposableUserControl");
+
+                repeater = new ItemsRepeater() {
+                    ItemsSource = items,
+                    ItemTemplate = template,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    HorizontalAlignment = HorizontalAlignment.Left
+                };
+
+                Content = repeater;
+                
+            });
+
+            IdleSynchronizer.Wait();
+
+            RunOnUIThread.Execute(() =>
+            {
+
+                Verify.IsGreaterThanOrEqual(MUXControlsTestApp.Samples.DisposableUserControl.OpenItems, 10, "Verify we created at least 10 DisposableUserControl");
+
+                // Clear out the repeater and make sure everything gets cleaned up.
+                Content = null;
+                repeater = null;
+            });
+
+            IdleSynchronizer.Wait();
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            Verify.AreEqual(0, MUXControlsTestApp.Samples.DisposableUserControl.OpenItems, "Verify we cleaned up all the DisposableUserControl that were created");
+        }
+
     }
 }

@@ -23,7 +23,7 @@ namespace System.Windows
         public PropertyPath Path { get; set; }
 
         [DefaultValue(BindingMode.OneTime)]
-        public BindingMode Mode { get; set; } = BindingMode.OneWay;
+        public BindingMode Mode { get; set; } = BindingMode.OneTime;
 
         [DefaultValue(null)]
         public IValueConverter Converter { get; set; }

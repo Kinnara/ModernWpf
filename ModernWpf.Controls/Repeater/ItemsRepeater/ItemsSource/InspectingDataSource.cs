@@ -113,7 +113,7 @@ namespace ModernWpf.Controls
         {
             if (m_vector is INotifyCollectionChanged incc)
             {
-                incc.CollectionChanged -= OnCollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(incc, OnCollectionChanged);
             }
         }
 
@@ -122,7 +122,7 @@ namespace ModernWpf.Controls
             Debug.Assert(m_vector != null);
             if (m_vector is INotifyCollectionChanged incc)
             {
-                incc.CollectionChanged += OnCollectionChanged;
+                CollectionChangedEventManager.AddHandler(incc, OnCollectionChanged);
             }
         }
 

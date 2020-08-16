@@ -3,6 +3,7 @@
 
 using ModernWpf.Controls;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,9 +13,17 @@ namespace MUXControlsTestApp.Samples
     public partial class ItemTemplateDemo
     {
         public List<int> Data { get; set; }
+        public List<MyData> Numbers { get; } = new List<MyData>();
+
         public ItemTemplateDemo()
         {
             Data = Enumerable.Range(0, 1000).ToList();
+
+            for(int i=0;i<10;i++)
+            {
+                Numbers.Add(new MyData(i));
+            }
+
             DataContext = this;
             InitializeComponent();
         }
@@ -22,6 +31,16 @@ namespace MUXControlsTestApp.Samples
         private void OnSelectTemplateKey(RecyclingElementFactory sender, SelectTemplateEventArgs args)
         {
             args.TemplateKey = (((int)args.DataContext) % 2 == 0) ? "even" : "odd";
+        }
+    }
+
+    public class MyData
+    {
+        public int number;
+
+        public MyData(int number)
+        {
+            this.number = number;
         }
     }
 
