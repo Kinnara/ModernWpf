@@ -238,7 +238,7 @@ namespace ModernWpf.Controls
                 var button = element as AppBarButton;
                 var toggleButton = element as AppBarToggleButton;
 
-                if (button != null)
+                if (button != null && button.Flyout == null)
                 {
                     m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                         button, ButtonBase.ClickEvent, closeFlyoutFunc);
