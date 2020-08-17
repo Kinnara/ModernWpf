@@ -31,6 +31,12 @@
                 <ComboBoxItem Content="Inline"/>
             </ComboBoxEx>
 
+            <ComboBoxEx x:Name="TextAlignmentComboBox" AutomationProperties.Name="TextAlignmentComboBox" Header="TextAlignment" SelectedIndex="0" SelectionChanged="TextAlignment_Changed">
+                <ComboBoxItem Content="Left" />
+                <ComboBoxItem Content="Center" />
+                <ComboBoxItem Content="Right" />
+            </ComboBoxEx>
+
             <CheckBox x:Name="EnabledCheckBox" AutomationProperties.Name="EnabledCheckBox" IsChecked="True" Content="Enabled"/>
 
             <CheckBox x:Name="ExpressionCheckBox" AutomationProperties.Name="ExpressionCheckBox" IsChecked="False" Content="Accepts Expression"/>

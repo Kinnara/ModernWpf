@@ -208,6 +208,23 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region TextAlignment
+
+        public static readonly DependencyProperty TextAlignmentProperty =
+            DependencyProperty.Register(
+                nameof(TextAlignment),
+                typeof(TextAlignment),
+                typeof(NumberBox),
+                new PropertyMetadata(TextAlignment.Left));
+
+        public TextAlignment TextAlignment
+        {
+            get => (TextAlignment)GetValue(TextAlignmentProperty);
+            set => SetValue(TextAlignmentProperty, value);
+        }
+
+        #endregion
+
         #region Description
 
         public static readonly DependencyProperty DescriptionProperty =

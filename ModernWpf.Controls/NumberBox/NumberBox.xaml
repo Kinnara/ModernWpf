@@ -366,6 +366,7 @@
                             FontSize="{TemplateBinding FontSize}"
                             FontWeight="{TemplateBinding FontWeight}"
                             FontFamily="{TemplateBinding FontFamily}"
+                            TextAlignment="{TemplateBinding TextAlignment}"
                             ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}" />
 
                         <Popup
