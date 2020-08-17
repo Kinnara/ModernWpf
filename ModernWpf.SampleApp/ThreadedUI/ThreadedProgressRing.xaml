@@ -9,7 +9,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource SystemAccentColor}" />
+        <SolidColorBrush x:Key="ProgressRingForegroundThemeBrush" Color="{StaticResource SystemAccentColor}" />
     </UserControl.Resources>
 
     <ui:ProgressRing
