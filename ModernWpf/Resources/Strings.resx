@@ -294,7 +294,7 @@
     <comment>Automation name for the nav view provided close button</comment>
   </data>
   <data name="NavigationOverflowButtonName" xml:space="preserve">
-    <value>More Button</value>
+    <value>More</value>
     <comment>Automation name for the nav view more button when panel is on top</comment>
   </data>
   <data name="NavigationOverflowButtonText" xml:space="preserve">
@@ -312,5 +312,9 @@
   <data name="SettingsButtonName" xml:space="preserve">
     <value>Settings</value>
     <comment>Automation name for the settings button</comment>
+  </data>
+  <data name="NavigationOverflowButtonToolTip" xml:space="preserve">
+    <value>More</value>
+    <comment>ToolTip caption for the nav view more button when panel is on top</comment>
   </data>
 </root>

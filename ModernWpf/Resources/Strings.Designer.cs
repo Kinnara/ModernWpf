@@ -268,7 +268,7 @@ namespace ModernWpf {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to More Button.
+        ///   Looks up a localized string similar to More.
         /// </summary>
         internal static string NavigationOverflowButtonName {
             get {
@@ -282,6 +282,15 @@ namespace ModernWpf {
         internal static string NavigationOverflowButtonText {
             get {
                 return ResourceManager.GetString("NavigationOverflowButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to More.
+        /// </summary>
+        internal static string NavigationOverflowButtonToolTip {
+            get {
+                return ResourceManager.GetString("NavigationOverflowButtonToolTip", resourceCulture);
             }
         }
         

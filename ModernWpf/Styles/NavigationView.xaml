@@ -18,6 +18,8 @@
     <sys:Double x:Key="NavigationViewCompactPaneLength">40</sys:Double>
     <sys:Double x:Key="NavigationViewTopPaneHeight">40</sys:Double>
     <sys:Double x:Key="TopNavigationViewPaneCustomContentMinWidth">40</sys:Double>
+    <sys:Double x:Key="TopNavigationViewOverflowButtonWidth">48</sys:Double>
+    <sys:Double x:Key="TopNavigationViewOverflowButtonHeight">40</sys:Double>
 
     <sys:Double x:Key="NavigationViewItemOnLeftMinHeight">40</sys:Double>
     <sys:Double x:Key="NavigationViewPaneHeaderRowMinHeight">4</sys:Double>
@@ -41,13 +43,18 @@
     <Thickness x:Key="NavigationViewItemContentPresenterMargin">0,0,20,0</Thickness>
     <Thickness x:Key="NavigationViewCompactItemContentPresenterMargin">0,0,16,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemContentPresenterMargin">8,0,16,0</Thickness>
+    <Thickness x:Key="TopNavigationViewItemContentOnlyContentPresenterMargin">12,0</Thickness>
     <Thickness x:Key="NavigationViewItemExpandChevronMargin">-20,0,6,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemExpandChevronMargin">-16,0,0,0</Thickness>
+    <Thickness x:Key="TopNavigationViewItemIconOnlyExpandChevronMargin">0,0,0,0</Thickness>
+    <Thickness x:Key="TopNavigationViewItemContentOnlyExpandChevronMargin">-12,0,0,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemOnOverflowContentPresenterMargin">12,0,20,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemOnOverflowNoIconContentPresenterMargin">16,0,20,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemOnOverflowExpandChevronMargin">-4,0,6,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemOnOverflowExpandChevronPadding">12,0,12,0</Thickness>
 
+    <!-- The resource below must be defined at the app level in order to affect the expand/collapse chevron font size
+         used in the Top NavigationView's Overflow menu. -->
     <sys:String x:Key="NavigationViewItemExpandedGlyph">&#xE70D;</sys:String>
     <StreamGeometry x:Key="NavigationViewItemExpandedPath">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
 

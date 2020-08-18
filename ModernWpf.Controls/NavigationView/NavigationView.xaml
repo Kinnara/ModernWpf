@@ -13,6 +13,8 @@
     <ui:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
     <ui:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
 
+    <StreamGeometry x:Key="More">M 2.5 8.75 C 2.675781 8.75 2.838542 8.782553 2.988281 8.847656 C 3.138021 8.912761 3.269857 9 3.383789 9.116211 C 3.497721 9.230144 3.58724 9.361979 3.652344 9.511719 C 3.717448 9.661459 3.75 9.824219 3.75 10 C 3.75 10.175781 3.717448 10.338542 3.652344 10.488281 C 3.58724 10.638021 3.497721 10.769857 3.383789 10.883789 C 3.269857 11 3.138021 11.08724 2.988281 11.152344 C 2.838542 11.217448 2.675781 11.25 2.5 11.25 C 2.324219 11.25 2.161458 11.217448 2.011719 11.152344 C 1.861979 11.08724 1.730143 11 1.616211 10.883789 C 1.502279 10.769857 1.41276 10.638021 1.347656 10.488281 C 1.282552 10.338542 1.25 10.175781 1.25 10 C 1.25 9.824219 1.282552 9.661459 1.347656 9.511719 C 1.41276 9.361979 1.502279 9.230144 1.616211 9.116211 C 1.730143 9 1.861979 8.912761 2.011719 8.847656 C 2.161458 8.782553 2.324219 8.75 2.5 8.75 Z M 10 8.75 C 10.175781 8.75 10.338541 8.782553 10.488281 8.847656 C 10.638021 8.912761 10.769856 9 10.883789 9.116211 C 11 9.230144 11.087239 9.361979 11.152344 9.511719 C 11.217447 9.661459 11.25 9.824219 11.25 10 C 11.25 10.175781 11.217447 10.338542 11.152344 10.488281 C 11.087239 10.638021 11 10.769857 10.883789 10.883789 C 10.769856 11 10.638021 11.08724 10.488281 11.152344 C 10.338541 11.217448 10.175781 11.25 10 11.25 C 9.824219 11.25 9.661458 11.217448 9.511719 11.152344 C 9.361979 11.08724 9.230143 11 9.116211 10.883789 C 9 10.769857 8.91276 10.638021 8.847656 10.488281 C 8.782552 10.338542 8.75 10.175781 8.75 10 C 8.75 9.824219 8.782552 9.661459 8.847656 9.511719 C 8.91276 9.361979 9 9.230144 9.116211 9.116211 C 9.230143 9 9.361979 8.912761 9.511719 8.847656 C 9.661458 8.782553 9.824219 8.75 10 8.75 Z M 17.5 8.75 C 17.675781 8.75 17.838541 8.782553 17.988281 8.847656 C 18.13802 8.912761 18.269855 9 18.383789 9.116211 C 18.497721 9.230144 18.587238 9.361979 18.652344 9.511719 C 18.717447 9.661459 18.75 9.824219 18.75 10 C 18.75 10.175781 18.717447 10.338542 18.652344 10.488281 C 18.587238 10.638021 18.497721 10.769857 18.383789 10.883789 C 18.269855 11 18.13802 11.08724 17.988281 11.152344 C 17.838541 11.217448 17.675781 11.25 17.5 11.25 C 17.324219 11.25 17.161457 11.217448 17.011719 11.152344 C 16.861979 11.08724 16.730143 11 16.616211 10.883789 C 16.502277 10.769857 16.41276 10.638021 16.347656 10.488281 C 16.282551 10.338542 16.25 10.175781 16.25 10 C 16.25 9.824219 16.282551 9.661459 16.347656 9.511719 C 16.41276 9.361979 16.502277 9.230144 16.616211 9.116211 C 16.730143 9 16.861979 8.912761 17.011719 8.847656 C 17.161457 8.782553 17.324219 8.75 17.5 8.75 Z</StreamGeometry>
+
     <Style x:Key="DefaultContentControlStyle" TargetType="ContentControl">
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Top" />
@@ -30,60 +32,56 @@
     <Style x:Key="NavigationViewOverflowButtonStyleWhenPaneOnTop" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
-        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="BorderBrush" Value="{DynamicResource NavigationViewItemBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource NavigationViewItemBorderThickness}" />
         <Setter Property="Height" Value="{DynamicResource PaneToggleButtonHeight}" />
+        <Setter Property="Width" Value="{DynamicResource TopNavigationViewOverflowButtonWidth}" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
-        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="ui:FocusVisualHelper.UseSystemFocusVisuals" Value="True" />
         <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <ControlTemplate.Resources>
-                        <StreamGeometry x:Key="ChevronDownSmall">M 17.568359 3.408203 L 19.931641 5.761719 L 10 15.693359 L 0.068359 5.761719 L 2.431641 3.408203 L 10 10.976563 L 17.568359 3.408203 Z</StreamGeometry>
-                    </ControlTemplate.Resources>
                     <Grid 
                         x:Name="RootGrid" 
                         Height="{TemplateBinding Height}"
+                        Width="{TemplateBinding Width}"
                         Background="{TemplateBinding Background}">
-                        <StackPanel Margin="{TemplateBinding Padding}" Orientation="Horizontal">
-                            <ContentPresenter 
-                                x:Name="ContentPresenter"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                TextElement.Foreground="{TemplateBinding Foreground}"
-                                VerticalAlignment="Center" />
-                            <ui:FontIconFallback
-                                x:Name="Icon"
-                                Margin="8,0,0,-4"
-                                VerticalAlignment="Center"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                FontSize="8"
-                                Data="{StaticResource ChevronDownSmall}"
-                                Foreground="{TemplateBinding Foreground}"
-                                IsHitTestVisible="False" />
-                        </StackPanel>
+                        <Rectangle 
+                            x:Name="PointerRectangle" 
+                            Fill="Transparent"
+                            Visibility="Collapsed"/>
+                        <Border		
+                            x:Name="RevealBorder"		
+                            BorderBrush="{TemplateBinding BorderBrush}"		
+                            BorderThickness="{TemplateBinding BorderThickness}" />
+                        <ui:FontIconFallback
+                            x:Name="Icon"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            FontSize="20"
+                            Data="{StaticResource More}"
+                            Foreground="{TemplateBinding Foreground}"
+                            IsHitTestVisible="False" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <!-- PointerOver -->
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
                             <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
                         </Trigger>
                         <!-- Pressed -->
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
                             <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
                         </Trigger>
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
                             <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -95,8 +93,10 @@
     <Style x:Key="NavigationViewOverflowButtonNoLabelStyleWhenPaneOnTop" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
-        <Setter Property="Height" Value="{DynamicResource PaneToggleButtonHeight}" />
-        <Setter Property="Width" Value="{DynamicResource PaneToggleButtonWidth}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource NavigationViewItemBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource NavigationViewItemBorderThickness}" />
+        <Setter Property="Height" Value="{DynamicResource TopNavigationViewOverflowButtonHeight}" />
+        <Setter Property="Width" Value="{DynamicResource TopNavigationViewOverflowButtonWidth}" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
@@ -116,13 +116,17 @@
                         <Rectangle 
                             x:Name="PointerRectangle" 
                             Fill="Transparent" />
+                        <Border		
+                            x:Name="RevealBorder"		
+                            BorderBrush="{TemplateBinding BorderBrush}"		
+                            BorderThickness="{TemplateBinding BorderThickness}" />
                         <ui:FontIconFallback
                             x:Name="Icon"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                            FontSize="16"
-                            Data="{StaticResource ChevronDown}"
+                            FontSize="20"
+                            Data="{StaticResource More}"
                             Foreground="{TemplateBinding Foreground}"
                             IsHitTestVisible="False" />
                     </Grid>
@@ -178,7 +182,6 @@
                                     From="180.0" To="0.0" Duration="0:0:0.1"/>
                             </Storyboard>
                         </Grid.Resources>
-
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PointerStates">
@@ -286,7 +289,8 @@
                                 </Viewbox>
 
                                 <!-- Padding="{TemplateBinding Padding}" -->
-                                <ContentPresenter x:Name="ContentPresenter"
+                                <ContentPresenter
+                                    x:Name="ContentPresenter"
                                     Grid.Column="1"
                                     Margin="{DynamicResource NavigationViewItemContentPresenterMargin}"
                                     ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -295,7 +299,8 @@
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"/>
 
-                                <Grid x:Name="ExpandCollapseChevron"
+                                <Grid
+                                    x:Name="ExpandCollapseChevron"
                                     Grid.Column="2"
                                     Visibility="Collapsed"
                                     HorizontalAlignment="Right"
@@ -303,13 +308,13 @@
                                     Margin="{DynamicResource NavigationViewItemExpandChevronMargin}"
                                     Background="Transparent">
                                     <ui:FontIconFallback
-                                            Width="12" Height="12"
-                                            RenderTransformOrigin="0.5, 0.5"
-                                            Foreground="{DynamicResource NavigationViewItemForeground}"
-                                            FontSize="12.0"
-                                            Data="{DynamicResource NavigationViewItemExpandedPath}"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            VerticalAlignment="Center">
+                                        RenderTransformOrigin="0.5, 0.5"
+                                        Foreground="{DynamicResource NavigationViewItemForeground}"
+                                        FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
+                                        Data="{DynamicResource NavigationViewItemExpandedPath}"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
                                         <ui:FontIconFallback.RenderTransform>
                                             <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" Angle="0"/>
                                         </ui:FontIconFallback.RenderTransform>
@@ -513,36 +518,12 @@
                                 <VisualState x:Name="Disabled"/>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="NavigationViewIconPositionStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="NavigationViewIconPositionStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="IconOnLeft" />
-                                <VisualState x:Name="IconOnly">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PointerRectangle" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Width">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="48" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="SelectionIndicatorGrid" Storyboard.TargetProperty="Margin">
-                                            <DiscreteThicknessKeyFrame KeyTime="0" Value="4,0,4,4" />
-                                        </ThicknessAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="ContentOnly">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="IconBox" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Margin">
-                                            <DiscreteThicknessKeyFrame KeyTime="0" Value="12,0" />
-                                        </ThicknessAnimationUsingKeyFrames>
-                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="SelectionIndicatorGrid" Storyboard.TargetProperty="Margin">
-                                            <DiscreteThicknessKeyFrame KeyTime="0" Value="12,0,12,4" />
-                                        </ThicknessAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="IconOnly" />
+                                <VisualState x:Name="ContentOnly" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ChevronStates">
                                 <VisualState x:Name="ChevronHidden"/>
@@ -599,20 +580,22 @@
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                                 VerticalAlignment="Center"/>
-                            <Grid x:Name="ExpandCollapseChevron"
-                                    Grid.Column="2"
-                                    Visibility="Collapsed"
-                                    HorizontalAlignment="Right"
-                                    Width="24"
-                                    Margin="{DynamicResource TopNavigationViewItemExpandChevronMargin}"
-                                    Background="Transparent">
-                                <ui:FontIconFallback Foreground="{DynamicResource NavigationViewItemForeground}"
-                                            RenderTransformOrigin="0.5, 0.5"
-                                            FontSize="8"
-                                            Data="{DynamicResource NavigationViewItemExpandedPath}"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            VerticalAlignment="Center"
-                                            HorizontalAlignment="Center">
+                            <Grid
+                                x:Name="ExpandCollapseChevron"
+                                Grid.Column="2"
+                                Visibility="Collapsed"
+                                HorizontalAlignment="Right"
+                                Width="40"
+                                Margin="{DynamicResource TopNavigationViewItemExpandChevronMargin}"
+                                Background="Transparent">
+                                <ui:FontIconFallback
+                                    Foreground="{DynamicResource NavigationViewItemForeground}"
+                                    RenderTransformOrigin="0.5, 0.5"
+                                    FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
+                                    Data="{DynamicResource NavigationViewItemExpandedPath}"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center">
                                     <ui:FontIconFallback.RenderTransform>
                                         <RotateTransform x:Name="ExpandCollapseChevronRotateTransform"/>
                                     </ui:FontIconFallback.RenderTransform>
@@ -667,6 +650,19 @@
                             <Setter TargetName="Icon" Property="TextElement.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
                             <Setter TargetName="RevealBorder" Property="BorderBrush" Value="{DynamicResource NavigationViewItemBorderBrushCheckedDisabled}" />
+                        </Trigger>
+                        <Trigger SourceName="NavigationViewIconPositionStatesListener" Property="CurrentStateName" Value="IconOnly">
+                            <Setter TargetName="PointerRectangle" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="LayoutRoot" Property="MinWidth" Value="48" />
+                            <Setter TargetName="ContentPresenter" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="SelectionIndicatorGrid" Property="Margin" Value="4,0,4,4" />
+                            <Setter TargetName="ExpandCollapseChevron" Property="Margin" Value="{DynamicResource TopNavigationViewItemIconOnlyExpandChevronMargin}" />
+                        </Trigger>
+                        <Trigger SourceName="NavigationViewIconPositionStatesListener" Property="CurrentStateName" Value="ContentOnly">
+                            <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ContentPresenter" Property="Margin" Value="{DynamicResource TopNavigationViewItemContentOnlyContentPresenterMargin}" />
+                            <Setter TargetName="SelectionIndicatorGrid" Property="Margin" Value="12,0,12,4" />
+                            <Setter TargetName="ExpandCollapseChevron" Property="Margin" Value="{DynamicResource TopNavigationViewItemContentOnlyExpandChevronMargin}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -788,7 +784,8 @@
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                                     VerticalAlignment="Center"/>
-                                <Grid x:Name="ExpandCollapseChevron"
+                                <Grid
+                                    x:Name="ExpandCollapseChevron"
                                     Grid.Column="2"
                                     Visibility="Collapsed"
                                     HorizontalAlignment="Right"
@@ -796,13 +793,15 @@
                                     Margin="{DynamicResource TopNavigationViewItemOnOverflowExpandChevronMargin}"
                                     Background="Transparent">
                                     <Border Padding="{DynamicResource TopNavigationViewItemOnOverflowExpandChevronPadding}">
-                                        <ui:FontIconFallback Foreground="{DynamicResource NavigationViewItemForeground}"
-                                                Width="12" Height="12"
-                                                RenderTransformOrigin="0.5, 0.5"
-                                                FontSize="12.0"
-                                                Data="{DynamicResource NavigationViewItemExpandedPath}"
-                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                                VerticalAlignment="Center">
+                                        <ui:FontIconFallback
+                                            Foreground="{DynamicResource NavigationViewItemForeground}"
+                                            Width="12" Height="12"
+                                            RenderTransformOrigin="0.5, 0.5"
+                                            FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
+                                            Data="{DynamicResource NavigationViewItemExpandedPath}"
+                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center">
                                             <ui:FontIconFallback.RenderTransform>
                                                 <RotateTransform x:Name="ExpandCollapseChevronRotateTransform"/>
                                             </ui:FontIconFallback.RenderTransform>

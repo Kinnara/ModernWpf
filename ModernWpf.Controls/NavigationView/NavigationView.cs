@@ -477,13 +477,21 @@ namespace ModernWpf.Controls
             if (GetTemplateChild(c_topNavOverflowButton) is Button topNavOverflowButton)
             {
                 m_topNavOverflowButton = topNavOverflowButton;
-                AutomationProperties.SetName(topNavOverflowButton, Strings.NavigationOverflowButtonText);
+                AutomationProperties.SetName(topNavOverflowButton, Strings.NavigationOverflowButtonName);
                 topNavOverflowButton.Content = Strings.NavigationOverflowButtonText;
                 // TODO: WPF - Header Animation
                 /*
                 auto visual = winrt::ElementCompositionPreview::GetElementVisual(topNavOverflowButton);
                 CreateAndAttachHeaderAnimation(visual);
                 */
+
+                var toolTip = ToolTipService.GetToolTip(topNavOverflowButton);
+                if (toolTip is null)
+                {
+                    var tooltip = new ToolTip();
+                    tooltip.Content = Strings.NavigationOverflowButtonToolTip;
+                    ToolTipService.SetToolTip(topNavOverflowButton, tooltip);
+                }
 
                 if (FlyoutService.GetFlyout(topNavOverflowButton) is { } flyoutBase)
                 {
