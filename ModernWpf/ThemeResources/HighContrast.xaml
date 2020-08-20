@@ -896,6 +896,13 @@
 
     <!-- Resources for NumberBox -->
     <m:StaticResource x:Key="NumberBoxPopupIndicatorForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+
+    <!-- The following NumberBoxPopup* theme resources resource must be defined at the app level in order to take effect. -->
+    <m:StaticResource x:Key="NumberBoxPopupBackground" ResourceKey="SystemControlBackgroundBaseHighBrush" />
+    <m:StaticResource x:Key="NumberBoxPopupBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
+    <Thickness x:Key="NumberBoxPopupBorderThickness">1</Thickness>
+
+    <m:StaticResource x:Key="NumberBoxPopupSpinButtonBackground" ResourceKey="SystemControlTransparentBrush" />
     <Thickness x:Key="NumberBoxPopupSpinButtonBorderThickness">2</Thickness>
 
     <!-- Resources for PersonPicture -->
