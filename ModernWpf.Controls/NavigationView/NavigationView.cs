@@ -45,8 +45,7 @@ namespace ModernWpf.Controls
         const string c_paneTitleFrameworkElement = "PaneTitleTextBlock";
         const string c_rootSplitViewName = "RootSplitView";
         const string c_menuItemsHost = "MenuItemsHost";
-        const string c_settingsName = "SettingsNavPaneItem";
-        const string c_settingsNameTopNav = "SettingsTopNavPaneItem";
+        const string c_footerMenuItemsHost = "FooterMenuItemsHost";
         const string c_selectionIndicatorName = "SelectionIndicator";
         const string c_paneContentGridName = "PaneContentGrid";
         const string c_rootGridName = "RootGrid";
@@ -65,6 +64,7 @@ namespace ModernWpf.Controls
 
         // DisplayMode Top specific items
         const string c_topNavMenuItemsHost = "TopNavMenuItemsHost";
+        const string c_topNavFooterMenuItemsHost = "TopFooterMenuItemsHost";
         const string c_topNavOverflowButton = "TopNavOverflowButton";
         const string c_topNavMenuItemsOverflowHost = "TopNavMenuItemsOverflowHost";
         const string c_topNavGrid = "TopNavGrid";
@@ -94,6 +94,9 @@ namespace ModernWpf.Controls
         const int c_backButtonRowDefinition = 1;
         const float c_paneElevationTranslationZ = 32;
 
+        const int c_mainMenuBlockIndex = 0;
+        const int c_footerMenuBlockIndex = 1;
+
         const int s_itemNotFound = -1;
 
         static readonly Size c_infSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
@@ -120,12 +123,7 @@ namespace ModernWpf.Controls
                 m_paneToggleButton.Click -= OnPaneToggleButtonClick;
             }
 
-            if (m_settingsItem != null)
-            {
-                InputHelper.RemoveTappedHandler(m_settingsItem, OnNavigationViewItemTapped);
-                m_settingsItem.KeyDown -= OnNavigationViewItemKeyDown;
-                m_settingsItem = null;
-            }
+            m_settingsItem = null;
 
             if (m_paneSearchButton != null)
             {
@@ -154,6 +152,7 @@ namespace ModernWpf.Controls
                 m_leftNavRepeater.ElementPrepared -= OnRepeaterElementPrepared;
                 m_leftNavRepeater.ElementClearing -= OnRepeaterElementClearing;
                 m_leftNavRepeater.IsVisibleChanged -= OnRepeaterIsVisibleChanged;
+                m_leftNavRepeaterGettingFocusHelper?.Dispose();
                 m_leftNavRepeater = null;
             }
 
@@ -162,7 +161,26 @@ namespace ModernWpf.Controls
                 m_topNavRepeater.ElementPrepared -= OnRepeaterElementPrepared;
                 m_topNavRepeater.ElementClearing -= OnRepeaterElementClearing;
                 m_topNavRepeater.IsVisibleChanged -= OnRepeaterIsVisibleChanged;
+                m_topNavRepeaterGettingFocusHelper?.Dispose();
                 m_topNavRepeater = null;
+            }
+
+            if (m_leftNavFooterMenuRepeater != null)
+            {
+                m_leftNavFooterMenuRepeater.ElementPrepared -= OnRepeaterElementPrepared;
+                m_leftNavFooterMenuRepeater.ElementClearing -= OnRepeaterElementClearing;
+                m_leftNavFooterMenuRepeater.IsVisibleChanged -= OnRepeaterIsVisibleChanged;
+                m_leftNavFooterMenuRepeaterGettingFocusHelper?.Dispose();
+                m_leftNavFooterMenuRepeater = null;
+            }
+
+            if (m_topNavFooterMenuRepeater != null)
+            {
+                m_topNavFooterMenuRepeater.ElementPrepared -= OnRepeaterElementPrepared;
+                m_topNavFooterMenuRepeater.ElementClearing -= OnRepeaterElementClearing;
+                m_topNavFooterMenuRepeater.IsVisibleChanged -= OnRepeaterIsVisibleChanged;
+                m_topNavFooterMenuRepeaterGettingFocusHelper?.Dispose();
+                m_topNavFooterMenuRepeater = null;
             }
 
             if (m_topNavRepeaterOverflowView != null)
@@ -188,8 +206,16 @@ namespace ModernWpf.Controls
             SetValue(TemplateSettingsPropertyKey, new NavigationViewTemplateSettings());
 
             SizeChanged += OnSizeChanged;
+
+            m_selectionModelSource = new List<object>(2);
+            m_selectionModelSource.Add(null);
+            m_selectionModelSource.Add(null);
+
             var items = new ObservableCollection<object>();
             SetValue(MenuItemsPropertyKey, items);
+
+            var footerItems = new ObservableCollection<object>();
+            SetValue(FooterMenuItemsPropertyKey, footerItems);
 
             var weakThis = new WeakReference<NavigationView>(this);
             m_topDataProvider.OnRawDataChanged(
@@ -205,6 +231,7 @@ namespace ModernWpf.Controls
             Loaded += OnLoaded;
 
             m_selectionModel.SingleSelect = true;
+            m_selectionModel.Source = m_selectionModelSource;
             m_selectionModel.SelectionChanged += OnSelectionModelSelectionChanged;
             m_selectionModel.ChildrenRequested += OnSelectionModelChildrenRequested;
 
@@ -218,7 +245,12 @@ namespace ModernWpf.Controls
 
         void OnSelectionModelChildrenRequested(SelectionModel selectionModel, SelectionModelChildrenRequestedEventArgs e)
         {
-            if (e.Source is NavigationViewItem nvi)
+            // this is main menu or footer
+            if (e.SourceIndex.GetSize() == 1)
+            {
+                e.Children = e.Source;
+            }
+            else if (e.Source is NavigationViewItem nvi)
             {
                 e.Children = GetChildren(nvi);
             }
@@ -226,6 +258,11 @@ namespace ModernWpf.Controls
             {
                 e.Children = children;
             }
+        }
+
+        void OnFooterItemsSourceCollectionChanged(object sender, object e)
+        {
+            UpdateFooterRepeaterItemsSource(false /*sourceCollectionReset*/, true /*sourceCollectionChanged*/);
         }
 
         void OnSelectionModelSelectionChanged(SelectionModel selectionModel, SelectionModelSelectionChangedEventArgs e)
@@ -246,10 +283,12 @@ namespace ModernWpf.Controls
 
             bool setSelectedItem = true;
             var selectedIndex = selectionModel.SelectedIndex;
+
             if (IsTopNavigationView())
             {
+                var inMainMenu = selectedIndex.GetAt(0) == c_mainMenuBlockIndex;
                 // If selectedIndex does not exist, means item is being deselected through API
-                var isInOverflow = (selectedIndex != null && selectedIndex.GetSize() > 0) ? !m_topDataProvider.IsItemInPrimaryList(selectedIndex.GetAt(0)) : false;
+                var isInOverflow = (selectedIndex != null && selectedIndex.GetSize() > 0) ? inMainMenu && !m_topDataProvider.IsItemInPrimaryList(selectedIndex.GetAt(1)) : false;
                 if (isInOverflow)
                 {
                     // We only want to close the overflow flyout and move the item on selection if it is a leaf node
@@ -336,7 +375,7 @@ namespace ModernWpf.Controls
             if (isInModeWithFlyout && selectedIndex != null && !DoesNavigationViewItemHaveChildren(selectedItem))
             {
                 // Item selected is a leaf node, find top level parent and close flyout
-                if (GetContainerForIndex(selectedIndex.GetAt(0)) is { } rootItem)
+                if (GetContainerForIndex(selectedIndex.GetAt(1), selectedIndex.GetAt(0) == c_footerMenuBlockIndex /* inFooter */) is { } rootItem)
                 {
                     if (rootItem is NavigationViewItem nvi)
                     {
@@ -429,6 +468,9 @@ namespace ModernWpf.Controls
 
                 leftNavRepeater.IsVisibleChanged += OnRepeaterIsVisibleChanged;
 
+                m_leftNavRepeaterGettingFocusHelper = new GettingFocusHelper(leftNavRepeater);
+                m_leftNavRepeaterGettingFocusHelper.GettingFocus += OnRepeaterGettingFocus;
+
                 leftNavRepeater.ItemTemplate = m_navigationViewItemsFactory;
                 leftNavRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = true;
             }
@@ -449,6 +491,9 @@ namespace ModernWpf.Controls
                 topNavRepeater.ElementClearing += OnRepeaterElementClearing;
 
                 topNavRepeater.IsVisibleChanged += OnRepeaterIsVisibleChanged;
+
+                m_topNavRepeaterGettingFocusHelper = new GettingFocusHelper(topNavRepeater);
+                m_topNavRepeaterGettingFocusHelper.GettingFocus += OnRepeaterGettingFocus;
 
                 topNavRepeater.ItemTemplate = m_navigationViewItemsFactory;
                 topNavRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = true;
@@ -504,6 +549,54 @@ namespace ModernWpf.Controls
                     flyoutBase.Closing += OnFlyoutClosing;
                     flyoutBase.Offset = 0;
                 }
+            }
+
+            // Change code to NOT do this if we're in top nav mode, to prevent it from being realized:
+            if (GetTemplateChildT<ItemsRepeater>(c_footerMenuItemsHost, controlProtected) is { } leftFooterMenuNavRepeater)
+            {
+                m_leftNavFooterMenuRepeater = leftFooterMenuNavRepeater;
+
+                // API is currently in preview, so setting this via code.
+                // Disabling virtualization for now because of https://github.com/microsoft/microsoft-ui-xaml/issues/2095
+                if (leftFooterMenuNavRepeater.Layout is StackLayout stackLayout)
+                {
+                    var stackLayoutImpl = stackLayout;
+                    stackLayoutImpl.DisableVirtualization = true;
+                }
+
+                leftFooterMenuNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
+                leftFooterMenuNavRepeater.ElementClearing += OnRepeaterElementClearing;
+
+                leftFooterMenuNavRepeater.IsVisibleChanged += OnRepeaterIsVisibleChanged;
+
+                m_leftNavFooterMenuRepeaterGettingFocusHelper = new GettingFocusHelper(leftFooterMenuNavRepeater);
+                m_leftNavFooterMenuRepeaterGettingFocusHelper.GettingFocus += OnRepeaterGettingFocus;
+
+                leftFooterMenuNavRepeater.ItemTemplate = m_navigationViewItemsFactory;
+            }
+
+            // Change code to NOT do this if we're in left nav mode, to prevent it from being realized:
+            if (GetTemplateChildT<ItemsRepeater>(c_topNavFooterMenuItemsHost, controlProtected) is { } topFooterMenuNavRepeater)
+            {
+                m_topNavFooterMenuRepeater = topFooterMenuNavRepeater;
+
+                // API is currently in preview, so setting this via code.
+                // Disabling virtualization for now because of https://github.com/microsoft/microsoft-ui-xaml/issues/2095
+                if (topFooterMenuNavRepeater.Layout is StackLayout stackLayout)
+                {
+                    var stackLayoutImpl = stackLayout;
+                    stackLayoutImpl.DisableVirtualization = true;
+                }
+
+                topFooterMenuNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
+                topFooterMenuNavRepeater.ElementClearing += OnRepeaterElementClearing;
+
+                topFooterMenuNavRepeater.IsVisibleChanged += OnRepeaterIsVisibleChanged;
+
+                m_topNavFooterMenuRepeaterGettingFocusHelper = new GettingFocusHelper(topFooterMenuNavRepeater);
+                m_topNavFooterMenuRepeaterGettingFocusHelper.GettingFocus += OnRepeaterGettingFocus;
+
+                topFooterMenuNavRepeater.ItemTemplate = m_navigationViewItemsFactory;
             }
 
             m_topNavContentOverlayAreaGrid = GetTemplateChild(c_topNavContentOverlayAreaGrid) as Border;
@@ -649,7 +742,7 @@ namespace ModernWpf.Controls
             // has changed.
             if (forceSelectionModelUpdate)
             {
-                m_selectionModel.Source = itemsSource;
+                m_selectionModelSource[0] = itemsSource;
             }
 
             if (IsTopNavigationView())
@@ -657,7 +750,6 @@ namespace ModernWpf.Controls
                 UpdateLeftRepeaterItemSource(null);
                 UpdateTopNavRepeatersItemSource(itemsSource);
                 InvalidateTopNavPrimaryLayout();
-                SyncSettingsSelectionState();
             }
             else
             {
@@ -698,6 +790,87 @@ namespace ModernWpf.Controls
             }
         }
 
+        void UpdateFooterRepeaterItemsSource(bool sourceCollectionReset, bool sourceCollectionChanged)
+        {
+            if (!m_appliedTemplate) return;
+
+            object itemsSource;
+            {
+                itemsSource = init();
+                object init()
+                {
+                    if (FooterMenuItemsSource is { } menuItemsSource)
+                    {
+                        return menuItemsSource;
+                    }
+                    UpdateSelectionForMenuItems();
+                    return FooterMenuItems;
+                }
+            }
+
+
+            UpdateItemsRepeaterItemsSource(m_leftNavFooterMenuRepeater, null);
+            UpdateItemsRepeaterItemsSource(m_topNavFooterMenuRepeater, null);
+
+            if (m_settingsItem is null || sourceCollectionChanged || sourceCollectionReset)
+            {
+                var dataSource = new List<object>();
+
+                if (m_settingsItem is null)
+                {
+                    m_settingsItem = new NavigationViewItem();
+                    var settingsItem = m_settingsItem;
+                    settingsItem.Name = "SettingsItem";
+                    m_navigationViewItemsFactory.SettingsItem(settingsItem);
+                }
+
+                if (sourceCollectionReset)
+                {
+                    if (m_footerItemsSource != null)
+                    {
+                        m_footerItemsSource.CollectionChanged -= OnFooterItemsSourceCollectionChanged;
+                    }
+                    m_footerItemsSource = null;
+                }
+
+                if (m_footerItemsSource is null)
+                {
+                    m_footerItemsSource = new InspectingDataSource(itemsSource);
+                    m_footerItemsSource.CollectionChanged += OnFooterItemsSourceCollectionChanged;
+                }
+
+                if (m_footerItemsSource != null)
+                {
+                    var settingsItem = m_settingsItem;
+                    var size = m_footerItemsSource.Count;
+
+                    for (int i = 0; i < size; i++)
+                    {
+                        var item = m_footerItemsSource.GetAt(i);
+                        dataSource.Add(item);
+                    }
+
+                    if (IsSettingsVisible)
+                    {
+                        CreateAndHookEventsToSettings();
+                        // add settings item to the end of footer
+                        dataSource.Add(settingsItem);
+                    }
+                }
+
+                m_selectionModelSource[1] = dataSource;
+            }
+
+            if (IsTopNavigationView())
+            {
+                UpdateItemsRepeaterItemsSource(m_topNavFooterMenuRepeater, m_selectionModelSource[1]);
+            }
+            else
+            {
+                UpdateItemsRepeaterItemsSource(m_leftNavFooterMenuRepeater, m_selectionModelSource[1]);
+            }
+        }
+
         void OnFlyoutClosing(object sender, FlyoutBaseClosingEventArgs args)
         {
             // If the user selected an parent item in the overflow flyout then the item has not been moved to top primary yet.
@@ -709,7 +882,7 @@ namespace ModernWpf.Controls
                 var selectedIndex = m_selectionModel.SelectedIndex;
                 if (selectedIndex.GetSize() > 0)
                 {
-                    if (GetContainerForIndex(selectedIndex.GetAt(0)) is { } firstContainer)
+                    if (GetContainerForIndex(selectedIndex.GetAt(1), false /*infooter*/) is { } firstContainer)
                     {
                         if (firstContainer is NavigationViewItem firstNVI)
                         {
@@ -718,7 +891,7 @@ namespace ModernWpf.Controls
                         }
                     }
 
-                    SelectandMoveOverflowItem(SelectedItem, selectedIndex, false);
+                    SelectandMoveOverflowItem(SelectedItem, selectedIndex, false /*closeFlyout*/);
                 }
             }
         }
@@ -815,7 +988,7 @@ namespace ModernWpf.Controls
                 recommendedDirection = init();
             }
 
-            RaiseItemInvoked(nextItem, false /*isSettings*/, nvi, recommendedDirection);
+            RaiseItemInvoked(nextItem, IsSettingsItem(nvi) /*isSettings*/, nvi, recommendedDirection);
         }
 
         internal void OnNavigationViewItemInvoked(NavigationViewItem nvi)
@@ -857,7 +1030,9 @@ namespace ModernWpf.Controls
             {
                 return (element == m_topNavRepeater ||
                     element == m_leftNavRepeater ||
-                    element == m_topNavRepeaterOverflowView);
+                    element == m_topNavRepeaterOverflowView ||
+                    element == m_leftNavFooterMenuRepeater ||
+                    element == m_topNavFooterMenuRepeater);
             }
             return false;
         }
@@ -869,6 +1044,18 @@ namespace ModernWpf.Controls
                 return grid.Name == c_flyoutRootGrid;
             }
             return false;
+        }
+
+        ItemsRepeater GetParentRootItemsRepeaterForContainer(NavigationViewItemBase nvib)
+        {
+            var parentIR = GetParentItemsRepeaterForContainer(nvib);
+            var currentNvib = nvib;
+            while (!IsRootItemsRepeater(parentIR))
+            {
+                currentNvib = GetParentNavigationViewItemForContainer(currentNvib);
+                parentIR = GetParentItemsRepeaterForContainer(currentNvib);
+            }
+            return parentIR;
         }
 
         internal ItemsRepeater GetParentItemsRepeaterForContainer(NavigationViewItemBase nvib)
@@ -905,6 +1092,7 @@ namespace ModernWpf.Controls
         IndexPath GetIndexPathForContainer(NavigationViewItemBase nvib)
         {
             var path = new List<int>();
+            bool isInFooterMenu = false;
 
             DependencyObject child = nvib;
             var parent = VisualTreeHelper.GetParent(child);
@@ -959,6 +1147,10 @@ namespace ModernWpf.Controls
                 path.Insert(0, parentIR.GetElementIndex(child as UIElement));
             }
 
+            isInFooterMenu = parent == m_leftNavFooterMenuRepeater || parent == m_topNavFooterMenuRepeater;
+
+            path.Insert(0, isInFooterMenu ? c_footerMenuBlockIndex : c_mainMenuBlockIndex);
+
             return IndexPath.CreateFromIndices(path);
         }
 
@@ -981,7 +1173,15 @@ namespace ModernWpf.Controls
                             {
                                 return NavigationViewRepeaterPosition.TopPrimary;
                             }
+                            if (ir == m_topNavFooterMenuRepeater)
+                            {
+                                return NavigationViewRepeaterPosition.TopFooter;
+                            }
                             return NavigationViewRepeaterPosition.TopOverflow;
+                        }
+                        if (ir == m_leftNavFooterMenuRepeater)
+                        {
+                            return NavigationViewRepeaterPosition.LeftFooter;
                         }
                         return NavigationViewRepeaterPosition.LeftNav;
                     }
@@ -1079,70 +1279,35 @@ namespace ModernWpf.Controls
         internal NavigationViewItemsFactory GetNavigationViewItemsFactory() { return m_navigationViewItemsFactory; }
 
         // Hook up the Settings Item Invoked event listener
-        void CreateAndHookEventsToSettings(string settingsName)
+        void CreateAndHookEventsToSettings()
         {
-            IControlProtected controlProtected = this;
-            var settingsItem = GetTemplateChildT<NavigationViewItem>(settingsName, controlProtected);
-            if (settingsItem != null && settingsItem != m_settingsItem)
+            if (m_settingsItem is null)
             {
-                // If the old settings item is selected, move the selection to the new one.
-                var selectedItem = SelectedItem;
-                bool shouldSelectSetting = selectedItem != null && IsSettingsItem(selectedItem);
-
-                if (shouldSelectSetting)
-                {
-                    try
-                    {
-                        m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore = true;
-                        SetSelectedItemAndExpectItemInvokeWhenSelectionChangedIfNotInvokedFromAPI(null);
-                    }
-                    finally
-                    {
-                        m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore = false;
-                    }
-                }
-
-                InputHelper.RemoveTappedHandler(settingsItem, OnNavigationViewItemTapped);
-                settingsItem.ClearValue(InputHelper.IsTapEnabledProperty);
-                settingsItem.KeyDown -= OnNavigationViewItemKeyDown;
-
-                m_settingsItem = settingsItem;
-                InputHelper.SetIsTapEnabled(settingsItem, true);
-                InputHelper.AddTappedHandler(settingsItem, OnNavigationViewItemTapped);
-                settingsItem.KeyDown += OnNavigationViewItemKeyDown;
-
-                var nvibImpl = settingsItem;
-                nvibImpl.SetNavigationViewParent(this);
-
-                // Do localization for settings item label and Automation Name
-                var localizedSettingsName = Strings.SettingsButtonName;
-                AutomationProperties.SetName(settingsItem, localizedSettingsName);
-                settingsItem.Tag = localizedSettingsName;
-
-                UpdateSettingsItemToolTip();
-
-                // Add the name only in case of horizontal nav
-                if (!IsTopNavigationView())
-                {
-                    settingsItem.Content = localizedSettingsName;
-                }
-
-                // hook up SettingsItem
-                SetValue(SettingsItemPropertyKey, settingsItem);
-
-                if (shouldSelectSetting)
-                {
-                    try
-                    {
-                        m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore = true;
-                        SetSelectedItemAndExpectItemInvokeWhenSelectionChangedIfNotInvokedFromAPI(m_settingsItem);
-                    }
-                    finally
-                    {
-                        m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore = false;
-                    }
-                }
+                return;
             }
+
+            var settingsItem = m_settingsItem;
+            var settingsIcon = new SymbolIcon(Symbol.Setting);
+            settingsItem.Icon = settingsIcon;
+
+            // Do localization for settings item label and Automation Name
+            var localizedSettingsName = Strings.SettingsButtonName;
+            AutomationProperties.SetName(settingsItem, localizedSettingsName);
+            settingsItem.Tag = localizedSettingsName;
+            UpdateSettingsItemToolTip();
+
+            // Add the name only in case of horizontal nav
+            if (!IsTopNavigationView())
+            {
+                settingsItem.Content = localizedSettingsName;
+            }
+            else
+            {
+                settingsItem.Content = null;
+            }
+
+            // hook up SettingsItem
+            SetValue(SettingsItemPropertyKey, settingsItem);
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -1190,6 +1355,12 @@ namespace ModernWpf.Controls
                 {
                     AnimateSelectionChanged(lastSelectedItemInTopNav);
                 }, DispatcherPriority.Send);
+            }
+
+            if (m_OrientationChangedPendingAnimation)
+            {
+                m_OrientationChangedPendingAnimation = false;
+                AnimateSelectionChanged(SelectedItem);
             }
         }
 
@@ -2096,12 +2267,6 @@ namespace ModernWpf.Controls
         // If nextItem is selectionsuppressed, we should undo the selection. We didn't undo it OnSelectionChange because we want change by API has the same undo logic.
         void ChangeSelection(object prevItem, object nextItem)
         {
-            // Selection changed event was requested to be ignored by settings item restoration, so let's do that
-            if (m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore)
-            {
-                return;
-            }
-
             bool isSettingsItem = IsSettingsItem(nextItem);
 
             if (IsSelectionSuppressed(nextItem))
@@ -2112,13 +2277,6 @@ namespace ModernWpf.Controls
             }
             else
             {
-                // TODO: The raising of this event can probably can be moved where the settings invocation is first handled.
-                // Need to raise ItemInvoked for when the settings item gets invoked
-                if (isSettingsItem)
-                {
-                    RaiseItemInvoked(nextItem, isSettingsItem);
-                }
-
                 // Other transition other than default only apply to topnav
                 // when clicking overflow on topnav, transition is from bottom
                 // otherwise if prevItem is on left side of nextActualItem, transition is from left
@@ -2134,7 +2292,7 @@ namespace ModernWpf.Controls
                             {
                                 return NavigationRecommendedTransitionDirection.FromOverflow;
                             }
-                            else if (!isSettingsItem && prevItem != null && nextItem != null)
+                            else if (prevItem != null && nextItem != null)
                             {
                                 return GetRecommendedTransitionDirection(NavigationViewItemBaseOrSettingsContentFromData(prevItem),
                                     NavigationViewItemBaseOrSettingsContentFromData(nextItem));
@@ -2221,8 +2379,11 @@ namespace ModernWpf.Controls
         void UpdateIsChildSelectedForIndexPath(IndexPath ip, bool isChildSelected)
         {
             // Update the isChildSelected property for every container on the IndexPath (with the exception of the actual container pointed to by the indexpath)
-            var container = GetContainerForIndex(ip.GetAt(0));
-            var index = 1;
+            var container = GetContainerForIndex(ip.GetAt(1), ip.GetAt(0) == c_footerMenuBlockIndex /*inFooter*/);
+            // first index is fo mainmenu or footer
+            // second is index of item in mainmenu or footer
+            // next in menuitem children 
+            var index = 2;
             while (container != null)
             {
                 if (container is NavigationViewItem nvi)
@@ -2397,14 +2558,7 @@ namespace ModernWpf.Controls
         {
             if (sender is NavigationViewItem nvi)
             {
-                if (IsSettingsItem(nvi))
-                {
-                    OnSettingsInvoked();
-                }
-                else
-                {
-                    OnNavigationViewItemInvoked(nvi);
-                }
+                OnNavigationViewItemInvoked(nvi);
                 nvi.Focus();
                 args.Handled = true;
             }
@@ -2430,42 +2584,30 @@ namespace ModernWpf.Controls
         void HandleKeyEventForNavigationViewItem(NavigationViewItem nvi, KeyEventArgs args)
         {
             var key = args.Key;
-            if (IsSettingsItem(nvi))
+            switch (key)
             {
-                if (key == Key.Space ||
-                    key == Key.Enter)
-                {
+                case Key.Enter:
+                case Key.Space:
                     args.Handled = true;
-                    OnSettingsInvoked();
-                }
-            }
-            else
-            {
-                switch (key)
-                {
-                    case Key.Enter:
-                    case Key.Space:
-                        args.Handled = true;
-                        OnNavigationViewItemInvoked(nvi);
-                        break;
-                    case Key.Home:
-                        args.Handled = true;
-                        KeyboardFocusFirstItemFromItem(nvi);
-                        break;
-                    case Key.End:
-                        args.Handled = true;
-                        KeyboardFocusLastItemFromItem(nvi);
-                        break;
-                    case Key.Down:
-                        FocusNextDownItem(nvi, args);
-                        break;
-                    case Key.Up:
-                        FocusNextUpItem(nvi, args);
-                        break;
-                    case Key.Right:
-                        FocusNextRightItem(nvi, args);
-                        break;
-                }
+                    OnNavigationViewItemInvoked(nvi);
+                    break;
+                case Key.Home:
+                    args.Handled = true;
+                    KeyboardFocusFirstItemFromItem(nvi);
+                    break;
+                case Key.End:
+                    args.Handled = true;
+                    KeyboardFocusLastItemFromItem(nvi);
+                    break;
+                case Key.Down:
+                    FocusNextDownItem(nvi, args);
+                    break;
+                case Key.Up:
+                    FocusNextUpItem(nvi, args);
+                    break;
+                case Key.Right:
+                    FocusNextRightItem(nvi, args);
+                    break;
             }
         }
 
@@ -2570,18 +2712,8 @@ namespace ModernWpf.Controls
             {
                 UIElement init()
                 {
-                    if (IsTopNavigationView())
-                    {
-                        if (IsContainerInOverflow(nvib))
-                        {
-                            return m_topNavRepeaterOverflowView.TryGetElement(0);
-                        }
-                        else
-                        {
-                            return m_topNavRepeater.TryGetElement(0);
-                        }
-                    }
-                    return m_leftNavRepeater.TryGetElement(0);
+                    var parentIR = GetParentRootItemsRepeaterForContainer(nvib);
+                    return parentIR.TryGetElement(0);
                 }
                 firstElement = init();
             }
@@ -2594,41 +2726,89 @@ namespace ModernWpf.Controls
 
         void KeyboardFocusLastItemFromItem(NavigationViewItemBase nvib)
         {
-            ItemsRepeater ir;
-            {
-                ItemsRepeater init()
-                {
-                    if (IsTopNavigationView())
-                    {
-                        if (IsContainerInOverflow(nvib))
-                        {
-                            return m_topNavRepeaterOverflowView;
-                        }
-                        else
-                        {
-                            return m_topNavRepeater;
-                        }
-                    }
-                    else
-                    {
-                        return m_leftNavRepeater;
-                    }
+            var parentIR = GetParentRootItemsRepeaterForContainer(nvib);
 
-                }
-                ir = init();
-            }
-
-            if (ir.ItemsSourceView is { } itemsSourceView)
+            if (parentIR.ItemsSourceView is { } itemsSourceView)
             {
                 var lastIndex = itemsSourceView.Count - 1;
-                if (ir.TryGetElement(lastIndex) is { } lastElement)
+                if (parentIR.TryGetElement(lastIndex) is { } lastElement)
                 {
                     if (lastElement is Control controlLast)
                     {
-                        controlLast.Focus();
+                        controlLast.Focus(/*FocusState.Programmatic*/);
                     }
                 }
             }
+        }
+
+        void OnRepeaterGettingFocus(object sender, GettingFocusEventArgs args)
+        {
+            // if focus change was invoked by tab key
+            // and there is selected item in ItemsRepeater that gatting focus
+            // we should put focus on selected item
+            if (m_TabKeyPrecedesFocusChange && args.InputDevice == FocusInputDeviceKind.Keyboard && m_selectionModel.SelectedIndex != null)
+            {
+                if (args.OldFocusedElement is { } oldFocusedElement)
+                {
+                    if (sender is ItemsRepeater newRootItemsRepeater)
+                    {
+                        bool isFocusOutsideCurrentRootRepeater;
+                        {
+                            isFocusOutsideCurrentRootRepeater = init();
+                            bool init()
+                            {
+                                bool isFocusOutsideCurrentRootRepeater = true;
+                                var treeWalkerCursor = oldFocusedElement;
+
+                                // check if last focused element was in same root repeater
+                                while (treeWalkerCursor != null)
+                                {
+                                    if (treeWalkerCursor is NavigationViewItemBase oldFocusedNavigationItemBase)
+                                    {
+                                        var oldParentRootRepeater = GetParentRootItemsRepeaterForContainer(oldFocusedNavigationItemBase);
+                                        isFocusOutsideCurrentRootRepeater = oldParentRootRepeater != newRootItemsRepeater;
+                                        break;
+                                    }
+
+                                    treeWalkerCursor = VisualTreeHelper.GetParent(treeWalkerCursor);
+                                }
+
+                                return isFocusOutsideCurrentRootRepeater;
+                            }
+                        }
+
+                        object rootRepeaterForSelectedItem;
+                        {
+                            rootRepeaterForSelectedItem = init();
+                            object init()
+                            {
+                                if (IsTopNavigationView())
+                                {
+                                    return m_selectionModel.SelectedIndex.GetAt(0) == c_mainMenuBlockIndex ? m_topNavRepeater : m_topNavFooterMenuRepeater;
+                                }
+                                return m_selectionModel.SelectedIndex.GetAt(0) == c_mainMenuBlockIndex ? m_leftNavRepeater : m_leftNavFooterMenuRepeater;
+                            }
+                        }
+
+                        // If focus is coming from outside the root repeater,
+                        // and selected item is within current repeater
+                        // we should put focus on selected item
+                        if (args is IGettingFocusEventArgs2 argsAsIGettingFocusEventArgs2)
+                        {
+                            if (newRootItemsRepeater == rootRepeaterForSelectedItem && isFocusOutsideCurrentRootRepeater)
+                            {
+                                var selectedContainer = GetContainerForIndexPath(m_selectionModel.SelectedIndex, true /* lastVisible */);
+                                if (argsAsIGettingFocusEventArgs2.TrySetNewFocusedElement(selectedContainer))
+                                {
+                                    args.Handled = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            m_TabKeyPrecedesFocusChange = false;
         }
 
         void OnNavigationViewItemOnGotFocus(object sender, RoutedEventArgs e)
@@ -2638,7 +2818,10 @@ namespace ModernWpf.Controls
                 // Achieve selection follows focus behavior
                 if (IsNavigationViewListSingleSelectionFollowsFocus())
                 {
-                    if (nvi.SelectsOnInvoked)
+                    // if nvi is already selected we don't need to invoke it again
+                    // otherwise ItemInvoked fires twice when item was tapped
+                    // or fired when window gets focus
+                    if (nvi.SelectsOnInvoked && !nvi.IsSelected)
                     {
                         if (IsTopNavigationView())
                         {
@@ -2661,16 +2844,17 @@ namespace ModernWpf.Controls
 
         internal void OnSettingsInvoked()
         {
-            var prevItem = SelectedItem;
             var settingsItem = m_settingsItem;
-            if (IsSettingsItem(prevItem))
+            if (settingsItem != null)
             {
-                RaiseItemInvoked(settingsItem, true /*isSettings*/);
+                OnNavigationViewItemInvoked(settingsItem);
             }
-            else if (settingsItem != null)
-            {
-                SetSelectedItemAndExpectItemInvokeWhenSelectionChangedIfNotInvokedFromAPI(settingsItem);
-            }
+        }
+
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            m_TabKeyPrecedesFocusChange = false;
+            base.OnPreviewKeyDown(e);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -2679,6 +2863,7 @@ namespace ModernWpf.Controls
             var key = eventArgs.Key;
 
             bool handled = false;
+            m_TabKeyPrecedesFocusChange = false;
 
             switch (key)
             {
@@ -2704,6 +2889,11 @@ namespace ModernWpf.Controls
                     handled = BumperNavigation(1);
                     break;
                 */
+                case Key.Tab:
+                    // arrow keys navigation through ItemsRepeater don't get here
+                    // so handle tab key to distinguish between tab focus and arrow focus navigation
+                    m_TabKeyPrecedesFocusChange = true;
+                    break;
                 case Key.Left:
                     bool isAltPressed = Keyboard.Modifiers.HasFlag(ModifierKeys.Alt);
 
@@ -2787,6 +2977,27 @@ namespace ModernWpf.Controls
             return false;
         }
         */
+
+        bool SelectSelectableItemWithOffset(int startIndex, int offset, ItemsRepeater repeater, int repeaterCollectionSize)
+        {
+            startIndex += offset;
+            while (startIndex > -1 && startIndex < repeaterCollectionSize)
+            {
+                var newItem = repeater.TryGetElement(startIndex);
+                if (newItem is NavigationViewItem newNavViewItem)
+                {
+                    // This is done to skip Separators or other items that are not NavigationViewItems
+                    if (newNavViewItem.SelectsOnInvoked)
+                    {
+                        newNavViewItem.IsSelected = true;
+                        return true;
+                    }
+                }
+
+                startIndex += offset;
+            }
+            return false;
+        }
 
         internal object MenuItemFromContainer(DependencyObject container)
         {
@@ -2917,22 +3128,26 @@ namespace ModernWpf.Controls
         NavigationRecommendedTransitionDirection GetRecommendedTransitionDirection(DependencyObject prev, DependencyObject next)
         {
             var recommendedTransitionDirection = NavigationRecommendedTransitionDirection.Default;
-            if (m_topNavRepeater is { } ir)
+            var ir = m_topNavRepeater;
+
+            if (prev != null && next != null && ir != null)
             {
-                var prevIndex = prev != null ? ir.GetElementIndex(prev as UIElement) : s_itemNotFound;
-                var nextIndex = next != null ? ir.GetElementIndex(next as UIElement) : s_itemNotFound;
-                if (prevIndex == s_itemNotFound || nextIndex == s_itemNotFound)
+                var prevIndexPath = GetIndexPathForContainer(prev as NavigationViewItemBase);
+                var nextIndexPath = GetIndexPathForContainer(next as NavigationViewItemBase);
+
+                var compare = prevIndexPath.CompareTo(nextIndexPath);
+
+                switch (compare)
                 {
-                    // One item is settings, so have problem to get the index
-                    recommendedTransitionDirection = NavigationRecommendedTransitionDirection.Default;
-                }
-                else if (prevIndex < nextIndex)
-                {
-                    recommendedTransitionDirection = NavigationRecommendedTransitionDirection.FromRight;
-                }
-                else if (prevIndex > nextIndex)
-                {
-                    recommendedTransitionDirection = NavigationRecommendedTransitionDirection.FromLeft;
+                    case -1:
+                        recommendedTransitionDirection = NavigationRecommendedTransitionDirection.FromRight;
+                        break;
+                    case 1:
+                        recommendedTransitionDirection = NavigationRecommendedTransitionDirection.FromLeft;
+                        break;
+                    default:
+                        recommendedTransitionDirection = NavigationRecommendedTransitionDirection.Default;
+                        break;
                 }
             }
             return recommendedTransitionDirection;
@@ -2960,16 +3175,6 @@ namespace ModernWpf.Controls
             var oldItem = args.OldValue;
 
             ChangeSelection(oldItem, newItem);
-
-            // When we do not raise a "SelectItemChanged" event, the selection does not get animated.
-            // To prevent faulty visual states, we will animate that here
-            // Since we only do this for the settings item, check if the old item is our settings item
-            if (oldItem != newItem && m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore)
-            {
-                ChangeSelectStatusForItem(oldItem, false /*selected*/);
-                ChangeSelectStatusForItem(newItem, true /*selected*/);
-                AnimateSelectionChanged(newItem);
-            }
 
             if (m_appliedTemplate && IsTopNavigationView())
             {
@@ -3127,7 +3332,9 @@ namespace ModernWpf.Controls
             if (SharedHelpers.IsRS1OrHigher() && !ShouldPreserveNavigationViewRS4Behavior() && m_appliedTemplate)
             {
                 PropagateShowFocusVisualToAllNavigationViewItemsInRepeater(m_leftNavRepeater, ShouldShowFocusVisual());
+                PropagateShowFocusVisualToAllNavigationViewItemsInRepeater(m_leftNavFooterMenuRepeater, ShouldShowFocusVisual());
                 PropagateShowFocusVisualToAllNavigationViewItemsInRepeater(m_topNavRepeater, ShouldShowFocusVisual());
+                PropagateShowFocusVisualToAllNavigationViewItemsInRepeater(m_topNavFooterMenuRepeater, ShouldShowFocusVisual());
             }
         }
 
@@ -3280,9 +3487,9 @@ namespace ModernWpf.Controls
             {
                 object init()
                 {
-                    if (ip.GetSize() > 1)
+                    if (ip.GetSize() > 2)
                     {
-                        return GetItemFromIndex(m_topNavRepeaterOverflowView, m_topDataProvider.ConvertOriginalIndexToIndex(ip.GetAt(0)));
+                        return GetItemFromIndex(m_topNavRepeaterOverflowView, m_topDataProvider.ConvertOriginalIndexToIndex(ip.GetAt(1)));
                     }
                     return item;
                 }
@@ -3334,7 +3541,7 @@ namespace ModernWpf.Controls
                 {
                     foreach (var it in itemsToBeRemoved)
                     {
-                        if (it == ip.GetAt(0))
+                        if (it == ip.GetAt(1))
                         {
                             if (m_activeIndicator is { } indicator)
                             {
@@ -3701,6 +3908,14 @@ namespace ModernWpf.Controls
             {
                 UpdateRepeaterItemsSource(true /*forceSelectionModelUpdate*/);
             }
+            else if (property == FooterMenuItemsSourceProperty)
+            {
+                UpdateFooterRepeaterItemsSource(true /*sourceCollectionReset*/, true /*sourceCollectionChanged*/);
+            }
+            else if (property == FooterMenuItemsProperty)
+            {
+                UpdateFooterRepeaterItemsSource(true /*sourceCollectionReset*/, true /*sourceCollectionChanged*/);
+            }
             else if (property == PaneDisplayModeProperty)
             {
                 // m_wasForceClosed is set to true because ToggleButton is clicked and Pane is closed.
@@ -3758,7 +3973,7 @@ namespace ModernWpf.Controls
             }
             else if (property == IsSettingsVisibleProperty)
             {
-                UpdateVisualState();
+                UpdateFooterRepeaterItemsSource(false /*sourceCollectionReset*/, true /*sourceCollectionChanged*/);
             }
             else if (property == CompactPaneLengthProperty)
             {
@@ -3911,7 +4126,7 @@ namespace ModernWpf.Controls
                 SwapPaneHeaderContent(m_leftNavPaneCustomContentBorder, m_paneCustomContentOnTopPane, "PaneCustomContent");
                 SwapPaneHeaderContent(m_leftNavFooterContentBorder, m_paneFooterOnTopPane, "PaneFooter");
 
-                CreateAndHookEventsToSettings(c_settingsName);
+                CreateAndHookEventsToSettings();
 
                 /*
                 if (this is IUIElement8 thisAsUIElement8)
@@ -3933,7 +4148,7 @@ namespace ModernWpf.Controls
                 SwapPaneHeaderContent(m_paneCustomContentOnTopPane, m_leftNavPaneCustomContentBorder, "PaneCustomContent");
                 SwapPaneHeaderContent(m_paneFooterOnTopPane, m_leftNavFooterContentBorder, "PaneFooter");
 
-                CreateAndHookEventsToSettings(c_settingsNameTopNav);
+                CreateAndHookEventsToSettings();
 
                 /*
                 if (this is IUIElement8 thisAsUIElement8)
@@ -3948,6 +4163,11 @@ namespace ModernWpf.Controls
 
             UpdateContentBindingsForPaneDisplayMode();
             UpdateRepeaterItemsSource(false /*forceSelectionModelUpdate*/);
+            UpdateFooterRepeaterItemsSource(false /*sourceCollectionReset*/, false /*sourceCollectionChanged*/);
+            if (SelectedItem is { } selectedItem)
+            {
+                m_OrientationChangedPendingAnimation = true;
+            }
         }
 
         void UpdatePaneDisplayMode(NavigationViewPaneDisplayMode oldDisplayMode, NavigationViewPaneDisplayMode newDisplayMode)
@@ -4301,37 +4521,51 @@ namespace ModernWpf.Controls
             //         </NavigationView.MenuItems>
             if (SelectedItem == null)
             {
+                bool foundFirstSelected = false;
+
+                // firstly check Menu items
                 if (MenuItems is IList menuItems)
                 {
-                    bool foundFirstSelected = false;
-                    foreach (var menuItem in menuItems)
+                    foundFirstSelected = UpdateSelectedItemFromMenuItems(menuItems);
+                }
+
+                // then do same for footer items and tell wenever selected item alreadyfound in MenuItems
+                if (FooterMenuItems is IList footerItems)
+                {
+                    UpdateSelectedItemFromMenuItems(footerItems, foundFirstSelected);
+                }
+            }
+        }
+
+        bool UpdateSelectedItemFromMenuItems(IList menuItems, bool foundFirstSelected = false)
+        {
+            for (int i = 0; i < menuItems.Count; i++)
+            {
+                if (menuItems[i] is NavigationViewItem item)
+                {
+                    if (item.IsSelected)
                     {
-                        if (menuItem is NavigationViewItem nvi)
+                        if (!foundFirstSelected)
                         {
-                            if (nvi.IsSelected)
+                            try
                             {
-                                if (!foundFirstSelected)
-                                {
-                                    try
-                                    {
-                                        m_shouldIgnoreNextSelectionChange = true;
-                                        SelectedItem = nvi;
-                                        foundFirstSelected = true;
-                                    }
-                                    finally
-                                    {
-                                        m_shouldIgnoreNextSelectionChange = false;
-                                    }
-                                }
-                                else
-                                {
-                                    nvi.IsSelected = false;
-                                }
+                                m_shouldIgnoreNextSelectionChange = true;
+                                SelectedItem = item;
+                                foundFirstSelected = true;
                             }
+                            finally
+                            {
+                                m_shouldIgnoreNextSelectionChange = false;
+                            }
+                        }
+                        else
+                        {
+                            item.IsSelected = false;
                         }
                     }
                 }
             }
+            return foundFirstSelected;
         }
 
         void OnTitleBarMetricsChanged(object sender, object args)
@@ -4476,16 +4710,6 @@ namespace ModernWpf.Controls
             }
         }
 
-        void SyncSettingsSelectionState()
-        {
-            var item = SelectedItem;
-            var settingsItem = m_settingsItem;
-            if (settingsItem != null && item == settingsItem)
-            {
-                OnSettingsInvoked();
-            }
-        }
-
         void RaiseDisplayModeChanged(NavigationViewDisplayMode displayMode)
         {
             SetValue(DisplayModePropertyKey, displayMode);
@@ -4608,12 +4832,23 @@ namespace ModernWpf.Controls
                 }
             }
 
-            // First conduct a basic top level search, which should succeed for a lot of scenarios.
-            var ir = IsTopNavigationView() ? m_topNavRepeater : m_leftNavRepeater;
-            var itemIndex = GetIndexFromItem(ir, data);
-            if (ir != null && itemIndex >= 0)
+            // First conduct a basic top level search in main menu, which should succeed for a lot of scenarios.
+            var mainRepeater = IsTopNavigationView() ? m_topNavRepeater : m_leftNavRepeater;
+            var itemIndex = GetIndexFromItem(mainRepeater, data);
+            if (itemIndex >= 0)
             {
-                if (ir.TryGetElement(itemIndex) is { } container)
+                if (mainRepeater.TryGetElement(itemIndex) is { } container)
+                {
+                    return container as T;
+                }
+            }
+
+            // then look in footer menu
+            var footerRepeater = IsTopNavigationView() ? m_topNavFooterMenuRepeater : m_leftNavFooterMenuRepeater;
+            itemIndex = GetIndexFromItem(footerRepeater, data);
+            if (itemIndex >= 0)
+            {
+                if (footerRepeater.TryGetElement(itemIndex) is { } container)
                 {
                     return container as T;
                 }
@@ -4622,9 +4857,15 @@ namespace ModernWpf.Controls
             // If unsuccessful, unfortunately we are going to have to search through the whole tree
             // TODO: Either fix or remove implementation for TopNav.
             // It may not be required due to top nav rarely having realized children in its default state.
-            var repeater = IsTopNavigationView() ? m_topNavRepeater : m_leftNavRepeater;
             {
-                if (SearchEntireTreeForContainer(repeater, data) is { } container)
+                if (SearchEntireTreeForContainer(mainRepeater, data) is { } container)
+                {
+                    return container as T;
+                }
+            }
+
+            {
+                if (SearchEntireTreeForContainer(footerRepeater, data) is { } container)
                 {
                     return container as T;
                 }
@@ -4661,7 +4902,7 @@ namespace ModernWpf.Controls
             return null;
         }
 
-        IndexPath SearchEntireTreeForIndexPath(ItemsRepeater rootRepeater, object data)
+        IndexPath SearchEntireTreeForIndexPath(ItemsRepeater rootRepeater, object data, bool isFooterRepeater)
         {
             for (int i = 0; i < GetContainerCountInRepeater(rootRepeater); i++)
             {
@@ -4669,7 +4910,7 @@ namespace ModernWpf.Controls
                 {
                     if (container is NavigationViewItem nvi)
                     {
-                        var ip = new IndexPath(new List<int> { i });
+                        var ip = new IndexPath(new List<int> { isFooterRepeater ? c_footerMenuBlockIndex : c_mainMenuBlockIndex, i });
                         if (SearchEntireTreeForIndexPath(nvi, data, ip) is { } indexPath)
                         {
                             return indexPath;
@@ -4854,7 +5095,7 @@ namespace ModernWpf.Controls
             {
                 // First search through primary list
                 {
-                    if (SearchEntireTreeForIndexPath(m_topNavRepeater, data) is { } ip)
+                    if (SearchEntireTreeForIndexPath(m_topNavRepeater, data, false /*isFooterRepeater*/) is { } ip)
                     {
                         return ip;
                     }
@@ -4862,7 +5103,15 @@ namespace ModernWpf.Controls
 
                 // If item was not located in primary list, search through overflow
                 {
-                    if (SearchEntireTreeForIndexPath(m_topNavRepeaterOverflowView, data) is { } ip)
+                    if (SearchEntireTreeForIndexPath(m_topNavRepeaterOverflowView, data, false /*isFooterRepeater*/) is { } ip)
+                    {
+                        return ip;
+                    }
+                }
+
+                // If item was not located in primary list and overflow, search through footer
+                {
+                    if (SearchEntireTreeForIndexPath(m_topNavFooterMenuRepeater, data, true /*isFooterRepeater*/) is { } ip)
                     {
                         return ip;
                     }
@@ -4870,24 +5119,35 @@ namespace ModernWpf.Controls
             }
             else
             {
-                if (SearchEntireTreeForIndexPath(m_leftNavRepeater, data) is { } ip)
                 {
-                    return ip;
+                    if (SearchEntireTreeForIndexPath(m_leftNavRepeater, data, false /*isFooterRepeater*/) is { } ip)
+                    {
+                        return ip;
+                    }
+                }
+
+                // If item was not located in primary list, search through footer
+                {
+                    if (SearchEntireTreeForIndexPath(m_leftNavFooterMenuRepeater, data, true /*isFooterRepeater*/) is { } ip)
+                    {
+                        return ip;
+                    }
                 }
             }
 
             return new IndexPath(new List<int>(0));
         }
 
-        UIElement GetContainerForIndex(int index)
+        UIElement GetContainerForIndex(int index, bool inFooter)
         {
             if (IsTopNavigationView())
             {
                 // Get the repeater that is presenting the first item
-                var ir = m_topDataProvider.IsItemInPrimaryList(index) ? m_topNavRepeater : m_topNavRepeaterOverflowView;
+                var ir = inFooter ? m_topNavFooterMenuRepeater
+                    : (m_topDataProvider.IsItemInPrimaryList(index) ? m_topNavRepeater : m_topNavRepeaterOverflowView);
 
-                // Get the index of the first item in the repeater
-                var irIndex = m_topDataProvider.ConvertOriginalIndexToIndex(index);
+                // Get the index of the item in the repeater
+                var irIndex = inFooter ? index : m_topDataProvider.ConvertOriginalIndexToIndex(index);
 
                 // Get the container of the first item
                 if (ir.TryGetElement(irIndex) is { } container)
@@ -4897,41 +5157,58 @@ namespace ModernWpf.Controls
             }
             else
             {
-                if (m_leftNavRepeater.TryGetElement(index) is { } container)
+                if ((inFooter ? m_leftNavFooterMenuRepeater.TryGetElement(index)
+                    : m_leftNavRepeater.TryGetElement(index)) is { } container)
                 {
-                    return container;
+                    return container as NavigationViewItemBase;
                 }
             }
             return null;
         }
 
-        NavigationViewItemBase GetContainerForIndexPath(IndexPath ip)
+        NavigationViewItemBase GetContainerForIndexPath(IndexPath ip, bool lastVisible = false)
         {
             if (ip != null && ip.GetSize() > 0)
             {
-                if (GetContainerForIndex(ip.GetAt(0)) is { } container)
+                if (GetContainerForIndex(ip.GetAt(1), ip.GetAt(0) == c_footerMenuBlockIndex /*inFooter*/) is { } container)
                 {
+                    if (lastVisible)
+                    {
+                        if (container is NavigationViewItem nvi)
+                        {
+                            if (!nvi.IsExpanded)
+                            {
+                                return nvi;
+                            }
+                        }
+                    }
+
                     // TODO: Fix below for top flyout scenario once the flyout is introduced in the XAML.
                     // We want to be able to retrieve containers for items that are in the flyout.
                     // This will return null if requesting children containers of
                     // items in the primary list, or unrealized items in the overflow popup.
                     // However this should not happen.
-                    return GetContainerForIndexPath(container, ip);
+                    return GetContainerForIndexPath(container, ip, lastVisible);
                 }
             }
             return null;
         }
 
-        NavigationViewItemBase GetContainerForIndexPath(UIElement firstContainer, IndexPath ip)
+        NavigationViewItemBase GetContainerForIndexPath(UIElement firstContainer, IndexPath ip, bool lastVisible)
         {
             var container = firstContainer;
-            if (ip.GetSize() > 1)
+            if (ip.GetSize() > 2)
             {
-                for (int i = 1; i < ip.GetSize(); i++)
+                for (int i = 2; i < ip.GetSize(); i++)
                 {
                     bool succeededGettingNextContainer = false;
                     if (container is NavigationViewItem nvi)
                     {
+                        if (lastVisible && nvi.IsExpanded == false)
+                        {
+                            return nvi;
+                        }
+
                         if (nvi.GetRepeater() is { } nviRepeater)
                         {
                             if (nviRepeater.TryGetElement(ip.GetAt(i)) is { } nextContainer)
@@ -4969,19 +5246,6 @@ namespace ModernWpf.Controls
         internal ItemsRepeater LeftNavRepeater()
         {
             return m_leftNavRepeater;
-        }
-
-        bool IsContainerInOverflow(NavigationViewItemBase nvib)
-        {
-            if (IsTopNavigationView())
-            {
-                var parentIR = GetParentItemsRepeaterForContainer(nvib);
-                if (parentIR == m_topNavRepeaterOverflowView)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         internal NavigationViewItem GetSelectedContainer()
@@ -5030,11 +5294,11 @@ namespace ModernWpf.Controls
 
         NavigationViewItem FindLowestLevelContainerToDisplaySelectionIndicator()
         {
-            var indexIntoIndex = 0;
+            var indexIntoIndex = 1;
             var selectedIndex = m_selectionModel.SelectedIndex;
-            if (selectedIndex != null && selectedIndex.GetSize() > 0)
+            if (selectedIndex != null && selectedIndex.GetSize() > 1)
             {
-                if (GetContainerForIndex(selectedIndex.GetAt(indexIntoIndex)) is { } container)
+                if (GetContainerForIndex(selectedIndex.GetAt(indexIntoIndex), selectedIndex.GetAt(0) == c_footerMenuBlockIndex /* inFooter */) is { } container)
                 {
                     if (container is NavigationViewItem nvi)
                     {
@@ -5116,9 +5380,9 @@ namespace ModernWpf.Controls
 
         object GetChildrenForItemInIndexPath(IndexPath ip, bool forceRealize = false)
         {
-            if (ip != null && ip.GetSize() > 0)
+            if (ip != null && ip.GetSize() > 1)
             {
-                if (GetContainerForIndex(ip.GetAt(0)) is { } container)
+                if (GetContainerForIndex(ip.GetAt(1), ip.GetAt(0) == c_footerMenuBlockIndex /*inFooter*/) is { } container)
                 {
                     return GetChildrenForItemInIndexPath(container, ip, forceRealize);
                 }
@@ -5130,9 +5394,9 @@ namespace ModernWpf.Controls
         {
             var container = firstContainer;
             bool shouldRecycleContainer = false;
-            if (ip.GetSize() > 1)
+            if (ip.GetSize() > 2)
             {
-                for (int i = 1; i < ip.GetSize(); i++)
+                for (int i = 2; i < ip.GetSize(); i++)
                 {
                     bool succeededGettingNextContainer = false;
                     if (container is NavigationViewItem nvi)
@@ -5294,6 +5558,8 @@ namespace ModernWpf.Controls
         Button m_closeButton;
         ItemsRepeater m_leftNavRepeater;
         ItemsRepeater m_topNavRepeater;
+        ItemsRepeater m_leftNavFooterMenuRepeater;
+        ItemsRepeater m_topNavFooterMenuRepeater;
         Button m_topNavOverflowButton;
         ItemsRepeater m_topNavRepeaterOverflowView;
         Grid m_topNavGrid;
@@ -5341,6 +5607,9 @@ namespace ModernWpf.Controls
         TopNavigationViewDataProvider m_topDataProvider = new TopNavigationViewDataProvider();
 
         SelectionModel m_selectionModel = new SelectionModel();
+        List<object> m_selectionModelSource;
+
+        ItemsSourceView m_footerItemsSource = null;
 
         bool m_appliedTemplate = false;
 
@@ -5371,8 +5640,14 @@ namespace ModernWpf.Controls
 
         bool m_shouldIgnoreUIASelectionRaiseAsExpandCollapseWillRaise = false;
 
-        FocusHelper m_leftNavRepeaterFocusHelper;
-        FocusHelper m_topNavRepeaterFocusHelper;
+        bool m_OrientationChangedPendingAnimation = false;
+
+        bool m_TabKeyPrecedesFocusChange = false;
+
+        GettingFocusHelper m_leftNavRepeaterGettingFocusHelper;
+        GettingFocusHelper m_topNavRepeaterGettingFocusHelper;
+        GettingFocusHelper m_leftNavFooterMenuRepeaterGettingFocusHelper;
+        GettingFocusHelper m_topNavFooterMenuRepeaterGettingFocusHelper;
 
         readonly BitmapCache m_bitmapCache;
 

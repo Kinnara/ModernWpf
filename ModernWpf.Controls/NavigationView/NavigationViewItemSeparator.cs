@@ -27,7 +27,7 @@ namespace ModernWpf.Controls
             if (m_appliedTemplate)
             {
                 const string groupName = "NavigationSeparatorLineStates";
-                var stateName = (Position != NavigationViewRepeaterPosition.TopPrimary)
+                var stateName = (Position != NavigationViewRepeaterPosition.TopPrimary && Position != NavigationViewRepeaterPosition.TopFooter)
                     ? m_isClosedCompact
                         ? "HorizontalLineCompact"
                         : "HorizontalLine"

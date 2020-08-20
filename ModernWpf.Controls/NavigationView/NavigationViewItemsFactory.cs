@@ -29,6 +29,12 @@ namespace ModernWpf.Controls
             navigationViewItemPool = new List<NavigationViewItem>();
         }
 
+        internal void SettingsItem(NavigationViewItemBase settingsItem)
+        {
+            m_settingsItem = settingsItem;
+        }
+
+
         // Retrieve the element that will be displayed for a specific data item.
         // If the resolved element is not derived from NavigationViewItemBase, wrap in a NavigationViewItem before returning.
         protected override UIElement GetElementCore(ElementFactoryGetArgs args)
@@ -37,6 +43,12 @@ namespace ModernWpf.Controls
             {
                 object init()
                 {
+                    // Do not template SettingsItem
+                    if (m_settingsItem != null && m_settingsItem == args.Data)
+                    {
+                        return args.Data;
+                    }
+
                     if (m_itemTemplateWrapper != null)
                     {
                         return m_itemTemplateWrapper.GetElement(args);
@@ -119,7 +131,10 @@ namespace ModernWpf.Controls
                     }
                 }
 
-                if (m_itemTemplateWrapper != null)
+                // Do not recycle SettingsItem
+                bool isSettingsItem = m_settingsItem != null && m_settingsItem == args.Element;
+
+                if (m_itemTemplateWrapper != null && !isSettingsItem)
                 {
                     m_itemTemplateWrapper.RecycleElement(args);
                 }
@@ -146,6 +161,7 @@ namespace ModernWpf.Controls
         }
 
         IElementFactoryShim m_itemTemplateWrapper;
+        NavigationViewItemBase m_settingsItem;
         List<NavigationViewItem> navigationViewItemPool = new List<NavigationViewItem>();
     }
 }

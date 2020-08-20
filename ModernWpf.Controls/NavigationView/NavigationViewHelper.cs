@@ -17,7 +17,9 @@ namespace ModernWpf.Controls
     {
         LeftNav,
         TopPrimary,
-        TopOverflow
+        TopOverflow,
+        LeftFooter,
+        TopFooter
     }
 
     enum NavigationViewPropagateTarget

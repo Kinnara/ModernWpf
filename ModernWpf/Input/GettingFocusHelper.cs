@@ -4,9 +4,9 @@ using System.Windows.Input;
 
 namespace ModernWpf.Input
 {
-    internal class FocusHelper : IDisposable
+    internal class GettingFocusHelper : IDisposable
     {
-        public FocusHelper(UIElement owner)
+        public GettingFocusHelper(UIElement owner)
         {
             _owner = owner;
             _owner.PreviewGotKeyboardFocus += OnPreviewGotKeyboardFocus;

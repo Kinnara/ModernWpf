@@ -78,6 +78,54 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region FooterMenuItems
+
+        private static readonly DependencyPropertyKey FooterMenuItemsPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(FooterMenuItems),
+                typeof(IList),
+                typeof(NavigationView),
+                new PropertyMetadata(OnFooterMenuItemsPropertyChanged));
+
+        private static readonly DependencyProperty FooterMenuItemsProperty =
+            FooterMenuItemsPropertyKey.DependencyProperty;
+
+        public IList FooterMenuItems
+        {
+            get => (IList)GetValue(FooterMenuItemsProperty);
+        }
+
+        private static void OnFooterMenuItemsPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            var owner = (NavigationView)sender;
+            owner.PropertyChanged(args);
+        }
+
+        #endregion
+
+        #region FooterMenuItemsSource
+
+        public static readonly DependencyProperty FooterMenuItemsSourceProperty =
+            DependencyProperty.Register(
+                nameof(FooterMenuItemsSource),
+                typeof(object),
+                typeof(NavigationView),
+                new PropertyMetadata(OnFooterMenuItemsSourcePropertyChanged));
+
+        public object FooterMenuItemsSource
+        {
+            get => GetValue(FooterMenuItemsSourceProperty);
+            set => SetValue(FooterMenuItemsSourceProperty, value);
+        }
+
+        private static void OnFooterMenuItemsSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            var owner = (NavigationView)sender;
+            owner.PropertyChanged(args);
+        }
+
+        #endregion
+
         #region PaneFooter
 
         public static readonly DependencyProperty PaneFooterProperty =

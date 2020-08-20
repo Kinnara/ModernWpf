@@ -82,12 +82,7 @@ namespace ModernWpf.Automation.Peers
         {
             int positionInSet = 0;
 
-            if (IsSettingsItem())
-            {
-                return 1;
-            }
-
-            if (IsOnTopNavigation())
+            if (IsOnTopNavigation() && !IsOnFooterNavigation())
             {
                 positionInSet = GetPositionOrSetCountInTopNavHelper(AutomationOutput.Position);
             }
@@ -103,14 +98,12 @@ namespace ModernWpf.Automation.Peers
         {
             int sizeOfSet = 0;
 
-            if (IsSettingsItem())
+            if (IsOnTopNavigation() && !IsOnFooterNavigation())
             {
-                return 1;
-            }
-
-            if (IsOnTopNavigation())
-            {
-                sizeOfSet = GetPositionOrSetCountInTopNavHelper(AutomationOutput.Size);
+                if (GetParentNavigationView() is { } navview)
+                {
+                    sizeOfSet = GetPositionOrSetCountInTopNavHelper(AutomationOutput.Size);
+                }
             }
             else
             {
@@ -244,12 +237,19 @@ namespace ModernWpf.Automation.Peers
 
         bool IsOnTopNavigation()
         {
-            return GetNavigationViewRepeaterPosition() != NavigationViewRepeaterPosition.LeftNav;
+            var position = GetNavigationViewRepeaterPosition();
+            return position != NavigationViewRepeaterPosition.LeftNav && position != NavigationViewRepeaterPosition.LeftFooter;
         }
 
         internal bool IsOnTopNavigationOverflow()
         {
             return GetNavigationViewRepeaterPosition() == NavigationViewRepeaterPosition.TopOverflow;
+        }
+
+        bool IsOnFooterNavigation()
+        {
+            var position = GetNavigationViewRepeaterPosition();
+            return position == NavigationViewRepeaterPosition.LeftFooter || position == NavigationViewRepeaterPosition.TopFooter;
         }
 
         NavigationViewRepeaterPosition GetNavigationViewRepeaterPosition()
@@ -261,7 +261,7 @@ namespace ModernWpf.Automation.Peers
             return NavigationViewRepeaterPosition.LeftNav;
         }
 
-        ItemsRepeater GetParentRepeater()
+        ItemsRepeater GetParentItemsRepeater()
         {
             if (GetParentNavigationView() is { } navview)
             {
@@ -281,9 +281,9 @@ namespace ModernWpf.Automation.Peers
         {
             int returnValue = 0;
 
-            if (GetParentRepeater() is { } repeater)
+            if (GetParentItemsRepeater() is { } repeater)
             {
-                if (GetParent() is AutomationPeer parent)
+                if (FrameworkElementAutomationPeer.CreatePeerForElement(repeater) is AutomationPeer parent)
                 {
                     if (parent.GetChildren() is { } children)
                     {
@@ -343,7 +343,7 @@ namespace ModernWpf.Automation.Peers
             int returnValue = 0;
             bool itemFound = false;
 
-            if (GetParentRepeater() is { } parentRepeater)
+            if (GetParentItemsRepeater() is { } parentRepeater)
             {
                 if (parentRepeater.ItemsSourceView is { } itemsSourceView)
                 {

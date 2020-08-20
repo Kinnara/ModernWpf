@@ -343,6 +343,7 @@ namespace ModernWpf.Controls
             switch (position)
             {
                 case NavigationViewRepeaterPosition.LeftNav:
+                case NavigationViewRepeaterPosition.LeftFooter:
                     if (SharedHelpers.IsRS4OrHigher() && false /*Application.Current.FocusVisualKind == FocusVisualKind.Reveal*/)
                     {
                         // OnLeftNavigationReveal is introduced in RS6. 
@@ -354,6 +355,7 @@ namespace ModernWpf.Controls
                     }
                     break;
                 case NavigationViewRepeaterPosition.TopPrimary:
+                case NavigationViewRepeaterPosition.TopFooter:
                     if (SharedHelpers.IsRS4OrHigher() && false /*Application.Current.FocusVisualKind == FocusVisualKind.Reveal*/)
                     {
                         stateName = c_OnTopNavigationPrimaryReveal;
@@ -536,7 +538,8 @@ namespace ModernWpf.Controls
 
         bool IsOnLeftNav()
         {
-            return Position == NavigationViewRepeaterPosition.LeftNav;
+            var position = Position;
+            return position == NavigationViewRepeaterPosition.LeftNav || position == NavigationViewRepeaterPosition.LeftFooter;
         }
 
         bool IsOnTopPrimary()
