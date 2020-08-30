@@ -16,12 +16,12 @@ namespace FluentRibbonSample
             if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark)
             {
                 ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
-                Fluent.ThemeManager.ChangeThemeBaseColor(Application.Current, "Light");
+                ControlzEx.Theming.ThemeManager.Current.ChangeThemeBaseColor(Application.Current, "Light");
             }
             else
             {
                 ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
-                Fluent.ThemeManager.ChangeThemeBaseColor(Application.Current, "Dark");
+                ControlzEx.Theming.ThemeManager.Current.ChangeThemeBaseColor(Application.Current, "Dark");
             }
         }
 
