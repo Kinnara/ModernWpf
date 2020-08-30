@@ -192,6 +192,20 @@ namespace ModernWpf.SampleApp.ControlPages
             var contacts = (ObservableCollection<Contact>)DataContext;
             contacts[0] = new Contact("First", "Last", "Line 1\nLine 2");
         }
+
+        private void ModifyFirstItemButton_Click(object sender, RoutedEventArgs e)
+        {
+            var contacts = (ObservableCollection<Contact>)DataContext;
+            var firstContact = contacts[0];
+            if (firstContact.Company.Contains("\n"))
+            {
+                firstContact.ChangeCompany("Line 1");
+            }
+            else
+            {
+                firstContact.ChangeCompany("Line 1\nLine 2");
+            }
+        }
     }
 
     public class NestedCategory

@@ -125,7 +125,6 @@ namespace ModernWpf.Controls
                     m_repeaterElementClearingRevoker = new ItemsRepeaterElementClearingRevoker(repeater, nvImpl.OnRepeaterElementClearing);
 
                     repeater.ItemTemplate = nvImpl.GetNavigationViewItemsFactory();
-                    repeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = true;
                 }
 
                 UpdateRepeaterItemsSource();

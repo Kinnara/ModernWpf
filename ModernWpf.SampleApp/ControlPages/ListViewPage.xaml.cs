@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace ModernWpf.SampleApp.ControlPages
         }
     }
 
-    public class Contact
+    public class Contact : INotifyPropertyChanged
     {
         #region Properties
         public string FirstName { get; private set; }
@@ -39,6 +40,8 @@ namespace ModernWpf.SampleApp.ControlPages
             LastName = lastName;
             Company = company;
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         #region Public Methods
         public static Task<ObservableCollection<Contact>> GetContactsAsync()
@@ -76,6 +79,12 @@ namespace ModernWpf.SampleApp.ControlPages
         public override string ToString()
         {
             return Name;
+        }
+
+        public void ChangeCompany(string company)
+        {
+            Company = company;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Company)));
         }
         #endregion
     }

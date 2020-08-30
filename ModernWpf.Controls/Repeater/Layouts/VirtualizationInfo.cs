@@ -147,6 +147,8 @@ namespace ModernWpf.Controls
 
         public bool AutoRecycleCandidate { get; set; } = false;
 
+        public Size DesiredSize { get; set; } = Size.Empty;
+
         private uint m_pinCounter = 0u;
     }
 }

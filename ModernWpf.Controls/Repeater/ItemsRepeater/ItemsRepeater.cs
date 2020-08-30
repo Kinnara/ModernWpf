@@ -111,7 +111,6 @@ namespace ModernWpf.Controls
 
                 m_viewportManager.SetLayoutExtent(extent);
                 m_lastAvailableSize = availableSize;
-                OnLayoutEvent(LayoutEvent.Measure);
                 return desiredSize;
             }
             finally
@@ -175,13 +174,12 @@ namespace ModernWpf.Controls
                         }
 
                         virtInfo.ArrangeBounds = newBounds;
+                        virtInfo.DesiredSize = element.DesiredSize;
                     }
                 }
 
                 m_viewportManager.OnOwnerArranged();
                 AnimationManager.OnOwnerArranged();
-
-                OnLayoutEvent(LayoutEvent.Arrange);
 
                 return arrangeSize;
             }

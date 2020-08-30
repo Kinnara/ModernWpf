@@ -191,7 +191,7 @@
                 <TextBlock
                     Grid.Column="1"
                     Grid.Row="1"
-                    Text="{Binding Company, Mode=OneTime}"
+                    Text="{Binding Company}"
                     Style="{StaticResource BodyTextBlockStyle}"
                     Margin="12,0,0,6" />
             </Grid>
@@ -361,6 +361,10 @@
                             x:Name="changeFirstItemButton"
                             Content="Change first item"
                             Click="ChangeFirstItemButton_Click" />
+                        <Button
+                            x:Name="modifyFirstItemButton"
+                            Content="Modify first item"
+                            Click="ModifyFirstItemButton_Click" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

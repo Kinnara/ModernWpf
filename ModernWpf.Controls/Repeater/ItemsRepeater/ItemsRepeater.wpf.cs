@@ -1,55 +1,28 @@
-﻿using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace ModernWpf.Controls
 {
     partial class ItemsRepeater
     {
-        internal bool AlwaysInvalidateMeasureOnChildDesiredSizeChanged { get; set; }
-
+        // WPF-specific workaround to avoid freezing and improve performance
         protected override void OnChildDesiredSizeChanged(UIElement child)
         {
-            if (AlwaysInvalidateMeasureOnChildDesiredSizeChanged)
+            var virtInfo = TryGetVirtualizationInfo(child);
+            if (virtInfo != null && virtInfo.IsRealized)
             {
-                base.OnChildDesiredSizeChanged(child);
-                return;
-            }
-
-            bool ignore = true;
-
-            var last = m_layoutEvents.Last;
-            if (last != null)
-            {
-                if (last.Value == LayoutEvent.Measure)
+                var oldDesiredSize = virtInfo.DesiredSize;
+                if (!oldDesiredSize.IsEmpty)
                 {
-                    if (last.Previous?.Value != LayoutEvent.Measure)
+                    var newDesiredSize = child.DesiredSize;
+                    var renderSize = child.RenderSize;
+
+                    if (newDesiredSize.Height != oldDesiredSize.Height && renderSize.Height == oldDesiredSize.Height ||
+                        newDesiredSize.Width != oldDesiredSize.Width && renderSize.Width == oldDesiredSize.Width)
                     {
-                        ignore = false;
+                        base.OnChildDesiredSizeChanged(child);
                     }
                 }
-                else if (last.Value == LayoutEvent.Arrange)
-                {
-                    var previous = last.Previous;
-                    if (previous == null || previous.Value == LayoutEvent.Measure)
-                    {
-                        var virtInfo = GetVirtualizationInfo(child);
-                        if (virtInfo.IsPinned)
-                        {
-                            ignore = false;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                ignore = false;
-            }
-
-            if (!ignore)
-            {
-                OnLayoutEvent(LayoutEvent.ChildDesiredSizeChanged);
-                base.OnChildDesiredSizeChanged(child);
             }
         }
 
@@ -57,29 +30,5 @@ namespace ModernWpf.Controls
         {
             return new RepeaterUIElementCollection(this, logicalParent);
         }
-
-        private void OnLayoutEvent(LayoutEvent e)
-        {
-            if (AlwaysInvalidateMeasureOnChildDesiredSizeChanged)
-            {
-                return;
-            }
-
-            if (m_layoutEvents.Count >= 2)
-            {
-                m_layoutEvents.RemoveFirst();
-            }
-
-            m_layoutEvents.AddLast(e);
-        }
-
-        private enum LayoutEvent
-        {
-            Measure,
-            Arrange,
-            ChildDesiredSizeChanged
-        }
-
-        private readonly LinkedList<LayoutEvent> m_layoutEvents = new LinkedList<LayoutEvent>();
     }
 }

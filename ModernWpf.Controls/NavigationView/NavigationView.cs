@@ -472,7 +472,6 @@ namespace ModernWpf.Controls
                 m_leftNavRepeaterGettingFocusHelper.GettingFocus += OnRepeaterGettingFocus;
 
                 leftNavRepeater.ItemTemplate = m_navigationViewItemsFactory;
-                leftNavRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = true;
             }
 
             // Change code to NOT do this if we're in left nav mode, to prevent it from being realized:
@@ -496,7 +495,6 @@ namespace ModernWpf.Controls
                 m_topNavRepeaterGettingFocusHelper.GettingFocus += OnRepeaterGettingFocus;
 
                 topNavRepeater.ItemTemplate = m_navigationViewItemsFactory;
-                topNavRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = true;
             }
 
             // Change code to NOT do this if we're in left nav mode, to prevent it from being realized:
@@ -516,7 +514,6 @@ namespace ModernWpf.Controls
                 topNavListOverflowRepeater.ElementClearing += OnRepeaterElementClearing;
 
                 topNavListOverflowRepeater.ItemTemplate = m_navigationViewItemsFactory;
-                topNavListOverflowRepeater.AlwaysInvalidateMeasureOnChildDesiredSizeChanged = true;
             }
 
             if (GetTemplateChild(c_topNavOverflowButton) is Button topNavOverflowButton)
