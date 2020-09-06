@@ -286,9 +286,10 @@ namespace ModernWpf.Controls
 
             if (IsTopNavigationView())
             {
-                var inMainMenu = selectedIndex.GetAt(0) == c_mainMenuBlockIndex;
                 // If selectedIndex does not exist, means item is being deselected through API
-                var isInOverflow = (selectedIndex != null && selectedIndex.GetSize() > 0) ? inMainMenu && !m_topDataProvider.IsItemInPrimaryList(selectedIndex.GetAt(1)) : false;
+                var isInOverflow = (selectedIndex != null && selectedIndex.GetSize() > 1)
+                    ? selectedIndex.GetAt(0) == c_mainMenuBlockIndex && !m_topDataProvider.IsItemInPrimaryList(selectedIndex.GetAt(1))
+                    : false;
                 if (isInOverflow)
                 {
                     // We only want to close the overflow flyout and move the item on selection if it is a leaf node
