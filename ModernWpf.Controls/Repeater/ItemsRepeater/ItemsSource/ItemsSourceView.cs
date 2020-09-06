@@ -89,9 +89,9 @@ namespace ModernWpf.Controls
 
         private int m_cachedSize = -1;
 
-        internal class CollectionChanged_revoker : EventRevoker<ItemsSourceView, NotifyCollectionChangedEventHandler>
+        internal class CollectionChangedRevoker : EventRevoker<ItemsSourceView, NotifyCollectionChangedEventHandler>
         {
-            public CollectionChanged_revoker(ItemsSourceView source, NotifyCollectionChangedEventHandler handler) : base(source, handler)
+            public CollectionChangedRevoker(ItemsSourceView source, NotifyCollectionChangedEventHandler handler) : base(source, handler)
             {
             }
 

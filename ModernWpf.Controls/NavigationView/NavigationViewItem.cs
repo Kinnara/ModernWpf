@@ -172,7 +172,7 @@ namespace ModernWpf.Controls
                 }
                 m_itemsSourceViewCollectionChangedRevoker?.Revoke();
                 repeater.ItemsSource = itemsSource;
-                m_itemsSourceViewCollectionChangedRevoker = new ItemsSourceView.CollectionChanged_revoker(repeater.ItemsSourceView, OnItemsSourceViewChanged);
+                m_itemsSourceViewCollectionChangedRevoker = new ItemsSourceView.CollectionChangedRevoker(repeater.ItemsSourceView, OnItemsSourceViewChanged);
             }
         }
 
@@ -920,7 +920,7 @@ namespace ModernWpf.Controls
 
         ItemsRepeaterElementPreparedRevoker m_repeaterElementPreparedRevoker;
         ItemsRepeaterElementClearingRevoker m_repeaterElementClearingRevoker;
-        ItemsSourceView.CollectionChanged_revoker m_itemsSourceViewCollectionChangedRevoker;
+        ItemsSourceView.CollectionChangedRevoker m_itemsSourceViewCollectionChangedRevoker;
 
         FlyoutBaseClosingRevoker m_flyoutClosingRevoker;
 

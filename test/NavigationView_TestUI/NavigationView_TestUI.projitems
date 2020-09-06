@@ -85,6 +85,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)TopMode\NavigationViewTopNavOverflowButtonPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)TopMode\NavigationViewTopNavPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -152,6 +156,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)TopMode\NavigationViewTopNavOnlyPage.xaml.cs">
       <DependentUpon>NavigationViewTopNavOnlyPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)TopMode\NavigationViewTopNavOverflowButtonPage.xaml.cs">
+      <DependentUpon>NavigationViewTopNavOverflowButtonPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)TopMode\NavigationViewTopNavPage.xaml.cs">
       <DependentUpon>NavigationViewTopNavPage.xaml</DependentUpon>
     </Compile>
@@ -163,7 +170,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Common\" />
     <Folder Include="$(MSBuildThisFileDirectory)CustomResources\" />
     <Folder Include="$(MSBuildThisFileDirectory)Hierarchical\" />
-    <Folder Include="$(MSBuildThisFileDirectory)TopMode\" />
     <Folder Include="$(MSBuildThisFileDirectory)Regression\" />
   </ItemGroup>
 </Project>

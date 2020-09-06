@@ -183,12 +183,18 @@ namespace ModernWpf.Controls
                 m_topNavFooterMenuRepeater = null;
             }
 
+            m_footerItemsCollectionChangedRevoker?.Revoke();
+            m_footerItemsCollectionChangedRevoker = null;
+
             if (m_topNavRepeaterOverflowView != null)
             {
                 m_topNavRepeaterOverflowView.ElementPrepared -= OnRepeaterElementPrepared;
                 m_topNavRepeaterOverflowView.ElementClearing -= OnRepeaterElementClearing;
                 m_topNavRepeaterOverflowView = null;
             }
+
+            m_topNavOverflowItemsCollectionChangedRevoker?.Revoke();
+            m_topNavOverflowItemsCollectionChangedRevoker = null;
 
             if (isFromDestructor)
             {
@@ -263,6 +269,14 @@ namespace ModernWpf.Controls
         void OnFooterItemsSourceCollectionChanged(object sender, object e)
         {
             UpdateFooterRepeaterItemsSource(false /*sourceCollectionReset*/, true /*sourceCollectionChanged*/);
+        }
+
+        void OnOverflowItemsSourceCollectionChanged(object sender, object e)
+        {
+            if (m_topNavRepeaterOverflowView.ItemsSourceView.Count == 0)
+            {
+                SetOverflowButtonVisibility(Visibility.Collapsed);
+            }
         }
 
         void OnSelectionModelSelectionChanged(SelectionModel selectionModel, SelectionModelSelectionChangedEventArgs e)
@@ -767,15 +781,48 @@ namespace ModernWpf.Controls
             m_topDataProvider.SetDataSource(items);
 
             // rebinding
+            UpdateTopNavPrimaryRepeaterItemsSource(items);
+            UpdateTopNavOverflowRepeaterItemsSource(items);
+        }
+
+        void UpdateTopNavPrimaryRepeaterItemsSource(object items)
+        {
             if (items != null)
             {
                 UpdateItemsRepeaterItemsSource(m_topNavRepeater, m_topDataProvider.GetPrimaryItems());
-                UpdateItemsRepeaterItemsSource(m_topNavRepeaterOverflowView, m_topDataProvider.GetOverflowItems());
             }
             else
             {
                 UpdateItemsRepeaterItemsSource(m_topNavRepeater, null);
-                UpdateItemsRepeaterItemsSource(m_topNavRepeaterOverflowView, null);
+            }
+        }
+
+        void UpdateTopNavOverflowRepeaterItemsSource(object items)
+        {
+            m_topNavOverflowItemsCollectionChangedRevoker?.Revoke();
+            m_topNavOverflowItemsCollectionChangedRevoker = null;
+
+            if (m_topNavRepeaterOverflowView is { } overflowRepeater)
+            {
+                if (items != null)
+                {
+                     var itemsSource = m_topDataProvider.GetOverflowItems();
+                    overflowRepeater.ItemsSource = itemsSource;
+
+                    // We listen to changes to the overflow menu item collection so we can set the visibility of the overflow button
+                    // to collapsed when it no longer has any items.
+                    //
+                    // Normally, MeasureOverride() kicks off updating the button's visibility, however, it is not run when the overflow menu
+                    // only contains a *single* item and we
+                    // - either remove that menu item or
+                    // - remove menu items displayed in the NavigationView pane until there is enough room for the single overflow menu item
+                    //   to be displayed in the pane
+                    m_topNavOverflowItemsCollectionChangedRevoker = new ItemsSourceView.CollectionChangedRevoker(overflowRepeater.ItemsSourceView, OnOverflowItemsSourceCollectionChanged);
+                }
+                else
+                {
+                    overflowRepeater.ItemsSource = null;
+                }
             }
         }
 
@@ -834,7 +881,7 @@ namespace ModernWpf.Controls
                 if (m_footerItemsSource is null)
                 {
                     m_footerItemsSource = new InspectingDataSource(itemsSource);
-                    m_footerItemsSource.CollectionChanged += OnFooterItemsSourceCollectionChanged;
+                    m_footerItemsCollectionChangedRevoker = new ItemsSourceView.CollectionChangedRevoker(m_footerItemsSource, OnFooterItemsSourceCollectionChanged);
                 }
 
                 if (m_footerItemsSource != null)
@@ -5596,6 +5643,10 @@ namespace ModernWpf.Controls
 
         // Event Tokens
         bool m_layoutUpdatedToken;
+
+        ItemsSourceView.CollectionChangedRevoker m_footerItemsCollectionChangedRevoker;
+
+        ItemsSourceView.CollectionChangedRevoker m_topNavOverflowItemsCollectionChangedRevoker;
 
         bool m_wasForceClosed = false;
         bool m_isClosedCompact = false;
