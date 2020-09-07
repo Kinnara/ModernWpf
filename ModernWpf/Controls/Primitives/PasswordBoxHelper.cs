@@ -71,7 +71,7 @@ namespace ModernWpf.Controls.Primitives
         private static void OnPasswordRevealModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var helper = GetHelperInstance((PasswordBox)d);
-            helper?.UpdateVisualState();
+            helper?.UpdateVisualState(true);
         }
 
         #endregion
@@ -204,7 +204,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 TextBox.CommandBindings.Remove(TextBoxCutBinding);
                 TextBox.CommandBindings.Remove(TextBoxCopyBinding);
-                TextBox.TextChanged -= OnTextChanged;
+                TextBox.TextChanged -= OnTextBoxTextChanged;
                 TextBox = null;
             }
         }
@@ -219,38 +219,43 @@ namespace ModernWpf.Controls.Primitives
         {
             _passwordBox.ApplyTemplate();
 
-            var template = _passwordBox.Template;
-            if (template != null)
+            TextBox = _passwordBox.GetTemplateChild<TextBox>(nameof(TextBox));
+
+            if (TextBox != null)
             {
-                TextBox = GetTemplateChild(nameof(TextBox)) as TextBox;
-
-                if (TextBox != null)
-                {
-                    TextBox.IsUndoEnabled = false;
-                    SpellCheck.SetIsEnabled(TextBox, false);
-                    TextBox.CommandBindings.Add(TextBoxCutBinding);
-                    TextBox.CommandBindings.Add(TextBoxCopyBinding);
-                    TextBox.TextChanged += OnTextChanged;
-                }
-
+                TextBox.IsUndoEnabled = false;
+                SpellCheck.SetIsEnabled(TextBox, false);
+                TextBox.CommandBindings.Add(TextBoxCutBinding);
+                TextBox.CommandBindings.Add(TextBoxCopyBinding);
+                TextBox.TextChanged += OnTextBoxTextChanged;
                 UpdateTextBox();
-                UpdateVisualState();
             }
+
+            UpdateVisualState(false);
         }
 
         private void OnGotFocus(object sender, RoutedEventArgs e)
         {
+            if (PasswordRevealMode == PasswordRevealMode.Visible && TextBox != null)
+            {
+                if (e.OriginalSource == _passwordBox)
+                {
+                    TextBox.Focus();
+                    e.Handled = true;
+                }
+            }
+
             if (!string.IsNullOrEmpty(_passwordBox.Password))
             {
                 _hideRevealButton = true;
             }
 
-            UpdateVisualState();
+            UpdateVisualState(true);
         }
 
         private void OnLostFocus(object sender, RoutedEventArgs e)
         {
-            UpdateVisualState();
+            UpdateVisualState(true);
         }
 
         private void OnPasswordChanged(object sender, RoutedEventArgs e)
@@ -264,10 +269,10 @@ namespace ModernWpf.Controls.Primitives
 
             SetPlaceholderTextVisibility(_passwordBox, hasPassword ? Visibility.Collapsed : Visibility.Visible);
             UpdateTextBox();
-            UpdateVisualState();
+            UpdateVisualState(true);
         }
 
-        private void OnTextChanged(object sender, TextChangedEventArgs e)
+        private void OnTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
             if (PasswordRevealMode == PasswordRevealMode.Visible)
             {
@@ -277,13 +282,13 @@ namespace ModernWpf.Controls.Primitives
 
         private void UpdateTextBox()
         {
-            if (TextBox != null && PasswordRevealMode != PasswordRevealMode.Visible)
+            if (TextBox != null)
             {
                 TextBox.Text = _passwordBox.Password;
             }
         }
 
-        private void UpdateVisualState()
+        private void UpdateVisualState(bool useTransitions)
         {
             bool buttonVisible = false;
             if (_passwordBox.IsFocused)
@@ -300,12 +305,7 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
-            VisualStateManager.GoToState(_passwordBox, buttonVisible ? ButtonVisibleState : ButtonCollapsedState, true);
-        }
-
-        private DependencyObject GetTemplateChild(string childName)
-        {
-            return _passwordBox.Template?.FindName(childName, _passwordBox) as DependencyObject;
+            VisualStateManager.GoToState(_passwordBox, buttonVisible ? ButtonVisibleState : ButtonCollapsedState, useTransitions);
         }
     }
 }
