@@ -90,7 +90,8 @@
                                             FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
                                             Data="{TemplateBinding primitives:TreeViewItemHelper.CollapsedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            VerticalAlignment="Center" />
+                                            VerticalAlignment="Center"
+                                            IsHitTestVisible="False"/>
                                         <local:FontIconFallback
                                             x:Name="ExpandedGlyph"
                                             Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
@@ -100,7 +101,8 @@
                                             FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
                                             Data="{TemplateBinding primitives:TreeViewItemHelper.ExpandedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            VerticalAlignment="Center" />
+                                            VerticalAlignment="Center"
+                                            IsHitTestVisible="False"/>
                                     </Grid>
                                 </ToggleButton>
 
