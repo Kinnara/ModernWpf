@@ -64,7 +64,6 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
             return navView;
         }
 
-
         private NavigationView SetupNavigationViewScrolling(NavigationViewPaneDisplayMode paneDisplayMode = NavigationViewPaneDisplayMode.Auto)
         {
             NavigationView navView = null;
@@ -278,6 +277,166 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
                     // since we set the width below the threshold width
                     Verify.AreEqual((NavigationViewPaneDisplayMode)paneDisplayMode == NavigationViewPaneDisplayMode.Left, navView.IsPaneOpen);
                 });
+            }
+        }
+
+        [TestMethod]
+        public void VerifyPaneDisplayModeAndIsPaneOpenInterplayOnNavViewLaunch()
+        {
+            Log.Comment("--- PaneDisplayMode: LeftMinimal ---");
+            VerifyForPaneDisplayModeLeftMinimal();
+
+            Log.Comment("--- PaneDisplayMode: LeftCompact ---");
+            VerifyForPaneDisplayModeLeftCompact();
+
+            Log.Comment("--- PaneDisplayMode: Left ---");
+            VerifyForPaneDisplayModeLeft();
+
+            Log.Comment("--- PaneDisplayMode: Auto ---");
+            VerifyForPaneDisplayModeAuto();
+
+            void VerifyForPaneDisplayModeLeftMinimal()
+            {
+                Log.Comment("Verify pane is closed when IsPaneOpen=true");
+                var navView = SetupNavView(NavigationViewPaneDisplayMode.LeftMinimal, true);
+
+                RunOnUIThread.Execute(() =>
+                {
+                    Verify.IsFalse(navView.IsPaneOpen, "NavigationView pane should have been closed");
+                });
+
+                Log.Comment("Verify pane is closed when IsPaneOpen=false");
+                navView = SetupNavView(NavigationViewPaneDisplayMode.LeftMinimal, false);
+
+                RunOnUIThread.Execute(() =>
+                {
+                    Verify.IsFalse(navView.IsPaneOpen, "NavigationView pane should have been closed");
+                });
+            }
+
+            void VerifyForPaneDisplayModeLeftCompact()
+            {
+                Log.Comment("Verify pane is closed when IsPaneOpen=true");
+                var navView = SetupNavView(NavigationViewPaneDisplayMode.LeftCompact, true);
+
+                RunOnUIThread.Execute(() =>
+                {
+                    Verify.IsFalse(navView.IsPaneOpen, "NavigationView pane should have been closed");
+                });
+
+                Log.Comment("Verify pane is closed when IsPaneOpen=false");
+                navView = SetupNavView(NavigationViewPaneDisplayMode.LeftCompact, false);
+
+                RunOnUIThread.Execute(() =>
+                {
+                    Verify.IsFalse(navView.IsPaneOpen, "NavigationView pane should have been closed");
+                });
+            }
+
+            void VerifyForPaneDisplayModeLeft()
+            {
+                Log.Comment("Verify pane is open when IsPaneOpen=true");
+                var navView = SetupNavView(NavigationViewPaneDisplayMode.Left, true);
+
+                RunOnUIThread.Execute(() =>
+                {
+                    Verify.IsTrue(navView.IsPaneOpen, "NavigationView pane should have been open");
+                });
+
+                Log.Comment("Verify pane is closed when IsPaneOpen=false");
+                navView = SetupNavView(NavigationViewPaneDisplayMode.Left, false);
+
+                RunOnUIThread.Execute(() =>
+                {
+                    Verify.IsFalse(navView.IsPaneOpen, "NavigationView pane should have been closed");
+                });
+            }
+
+            void VerifyForPaneDisplayModeAuto()
+            {
+                Log.Comment("Verify pane is closed when launched in minimal state and IsPaneOpen=true");
+                var navView = SetupNavView(NavigationViewPaneDisplayMode.Auto, true, NavigationViewDisplayMode.Minimal);
+
+                RunOnUIThread.Execute(() =>
+                {
+                    Verify.IsFalse(navView.IsPaneOpen, "NavigationView pane should have been closed");
+                });
+                
+                Log.Comment("Verify pane is closed when launched in compact state and IsPaneOpen=true");
+                navView = SetupNavView(NavigationViewPaneDisplayMode.Auto, true, NavigationViewDisplayMode.Compact);
+
+                RunOnUIThread.Execute(() =>
+                {
+                    Verify.IsFalse(navView.IsPaneOpen, "NavigationView pane should have been closed");
+                });
+
+                Log.Comment("Verify pane is open when launched in expanded state and IsPaneOpen=true");
+                navView = SetupNavView(NavigationViewPaneDisplayMode.Auto, true, NavigationViewDisplayMode.Expanded);
+
+                RunOnUIThread.Execute(() =>
+                {
+                    Verify.IsTrue(navView.IsPaneOpen, "NavigationView pane should have been open");
+                });
+
+                Log.Comment("Verify pane is closed when launched in minimal state and IsPaneOpen=false");
+                navView = SetupNavView(NavigationViewPaneDisplayMode.Auto, false, NavigationViewDisplayMode.Minimal);
+
+                RunOnUIThread.Execute(() =>
+                {
+                    Verify.IsFalse(navView.IsPaneOpen, "NavigationView pane should have been closed");
+                });
+
+                Log.Comment("Verify pane is closed when launched in compact state and IsPaneOpen=false");
+                navView = SetupNavView(NavigationViewPaneDisplayMode.Auto, false, NavigationViewDisplayMode.Compact);
+
+                RunOnUIThread.Execute(() =>
+                {
+                    Verify.IsFalse(navView.IsPaneOpen, "NavigationView pane should have been closed");
+                });
+
+                Log.Comment("Verify pane is closed when launched in expanded state and IsPaneOpen=false");
+                navView = SetupNavView(NavigationViewPaneDisplayMode.Auto, false, NavigationViewDisplayMode.Expanded);
+
+                RunOnUIThread.Execute(() =>
+                {
+                    Verify.IsFalse(navView.IsPaneOpen, "NavigationView pane should have been closed");
+                });
+            }
+
+            NavigationView SetupNavView(NavigationViewPaneDisplayMode paneDisplayMode, bool isPaneOpen, NavigationViewDisplayMode displayMode = NavigationViewDisplayMode.Expanded)
+            {
+                NavigationView navView = null;
+                RunOnUIThread.Execute(() =>
+                {
+                    navView = new NavigationView();
+                    navView.MenuItems.Add(new NavigationViewItem() { Content = "MenuItem" });
+
+                    navView.PaneDisplayMode = paneDisplayMode;
+                    navView.IsPaneOpen = isPaneOpen;
+                    navView.ExpandedModeThresholdWidth = 600.0;
+                    navView.CompactModeThresholdWidth = 400.0;
+
+                    if (paneDisplayMode == NavigationViewPaneDisplayMode.Auto)
+                    {
+                        switch (displayMode)
+                        {
+                            case NavigationViewDisplayMode.Minimal:
+                                navView.Width = navView.CompactModeThresholdWidth - 10.0;
+                                break;
+                            case NavigationViewDisplayMode.Compact:
+                                navView.Width = navView.ExpandedModeThresholdWidth - 10.0;
+                                break;
+                            case NavigationViewDisplayMode.Expanded:
+                                navView.Width = navView.ExpandedModeThresholdWidth + 10.0;
+                                break;
+                        }
+                    }
+
+                    Content = navView;
+                });
+
+                IdleSynchronizer.Wait();
+                return navView;
             }
         }
 
@@ -648,16 +807,16 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         [TestMethod]
         public void VerifyVerifyHeaderContentMarginOnTopNav()
         {
-            VerifyVerifyHeaderContentMargin(NavigationViewPaneDisplayMode.Top, "VerifyVerifyHeaderContentMarginOnTopNav");
+            VerifyHeaderContentMargin(NavigationViewPaneDisplayMode.Top, "VerifyVerifyHeaderContentMarginOnTopNav");
         }
 
         [TestMethod]
-        public void VerifyVerifyHeaderContentMarginOnMinimalNav()
+        public void VerifyHeaderContentMarginOnMinimalNav()
         {
-            VerifyVerifyHeaderContentMargin(NavigationViewPaneDisplayMode.LeftMinimal, "VerifyVerifyHeaderContentMarginOnMinimalNav");
+            VerifyHeaderContentMargin(NavigationViewPaneDisplayMode.LeftMinimal, "VerifyVerifyHeaderContentMarginOnMinimalNav");
         }
 
-        private void VerifyVerifyHeaderContentMargin(NavigationViewPaneDisplayMode paneDisplayMode, string masterFilePrefix)
+        private void VerifyHeaderContentMargin(NavigationViewPaneDisplayMode paneDisplayMode, string masterFilePrefix)
         {
             UIElement headerContent = null;
 
