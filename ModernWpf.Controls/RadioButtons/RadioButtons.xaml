@@ -18,9 +18,7 @@
                             ContentTemplate="{TemplateBinding HeaderTemplate}"
                             Margin="{DynamicResource RadioButtonsHeaderMargin}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        <local:ItemsRepeater
-                            x:Name="InnerRepeater"
-                            ItemTemplate="{TemplateBinding ItemTemplate}">
+                        <local:ItemsRepeater x:Name="InnerRepeater">
                             <local:ItemsRepeater.Layout>
                                 <primitives:ColumnMajorUniformToLargestGridLayout
                                     ColumnSpacing="{DynamicResource RadioButtonsColumnSpacing}"

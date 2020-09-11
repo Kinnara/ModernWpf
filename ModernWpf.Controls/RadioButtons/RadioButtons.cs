@@ -27,8 +27,6 @@ namespace ModernWpf.Controls
 
         public RadioButtons()
         {
-            SetCurrentValue(ItemTemplateProperty, new RadioButtonsElementFactory());
-
             var items = new ObservableCollection<object>();
             SetValue(ItemsProperty, items);
 
@@ -36,6 +34,8 @@ namespace ModernWpf.Controls
             // left and right should be spacial but contained to the RadioButtons control. We have to attach to PreviewKeyDown
             // because RadioButton has a key down handler for up and down that gets called before we can intercept. Issue #1634.
             PreviewKeyDown += OnChildPreviewKeyDown;
+
+            m_radioButtonsElementFactory = new RadioButtonsElementFactory();
         }
 
         #region ItemsSource
@@ -87,12 +87,18 @@ namespace ModernWpf.Controls
             DependencyProperty.Register(
                 nameof(ItemTemplate),
                 typeof(object),
-                typeof(RadioButtons));
+                typeof(RadioButtons),
+                new FrameworkPropertyMetadata(OnItemTemplateChanged));
 
         public object ItemTemplate
         {
             get => GetValue(ItemTemplateProperty);
             set => SetValue(ItemTemplateProperty, value);
+        }
+
+        private static void OnItemTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((RadioButtons)d).UpdateItemTemplate();
         }
 
         #endregion
@@ -228,6 +234,8 @@ namespace ModernWpf.Controls
 
             if (m_repeater != null)
             {
+                m_repeater.ItemTemplate = m_radioButtonsElementFactory;
+
                 m_repeater.ElementPrepared += OnRepeaterElementPrepared;
                 m_repeater.ElementClearing += OnRepeaterElementClearing;
                 m_repeater.ElementIndexChanged += OnRepeaterElementIndexChanged;
@@ -702,6 +710,11 @@ namespace ModernWpf.Controls
             }
         }
 
+        private void UpdateItemTemplate()
+        {
+            m_radioButtonsElementFactory.UserElementFactory(ItemTemplate);
+        }
+
         // Test Hooks helpers, only function when m_testHooksEnabled == true
         internal void SetTestHooksEnabled(bool enabled)
         {
@@ -797,6 +810,8 @@ namespace ModernWpf.Controls
         bool m_currentlySettingFocus = false;
 
         ItemsRepeater m_repeater;
+
+        RadioButtonsElementFactory m_radioButtonsElementFactory;
 
         //Test hooks helpers, only function while m_testHooksEnabled == true
         bool m_testHooksEnabled = false;

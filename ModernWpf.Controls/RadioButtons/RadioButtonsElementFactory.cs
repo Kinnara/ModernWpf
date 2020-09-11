@@ -12,22 +12,54 @@ namespace ModernWpf.Controls
         {
         }
 
+        internal void UserElementFactory(object newValue)
+        {
+            m_itemTemplateWrapper = newValue as IElementFactoryShim;
+            if (m_itemTemplateWrapper is null)
+            {
+                // ItemTemplate set does not implement IElementFactoryShim. We also want to support DataTemplate.
+                if (newValue is DataTemplate dataTemplate)
+                {
+                    m_itemTemplateWrapper = new ItemTemplateWrapper(dataTemplate);
+                }
+            }
+        }
+
         protected override UIElement GetElementCore(ElementFactoryGetArgs args)
         {
-            if (args.Data is RadioButton radioButton)
+            object newContent;
+            if (m_itemTemplateWrapper != null)
             {
-                return radioButton;
+                newContent = m_itemTemplateWrapper.GetElement(args);
             }
             else
             {
-                var newRadioButton = new RadioButton();
-                newRadioButton.Content = args.Data;
-                return newRadioButton;
+                newContent = args.Data;
             }
+
+            // Element is already a RadioButton, so we just return it.
+            if (newContent is RadioButton radioButton)
+            {
+                return radioButton;
+            }
+
+            // Element is not a RadioButton. We'll wrap it in a RadioButton now.
+            var newRadioButton = new RadioButton();
+            newRadioButton.Content = args.Data;
+
+            // If a user provided item template exists, we pass the template down to the ContentPresenter of the RadioButton.
+            if (m_itemTemplateWrapper is ItemTemplateWrapper itemTemplateWrapper)
+            {
+                newRadioButton.ContentTemplate = itemTemplateWrapper.Template;
+            }
+
+            return newRadioButton;
         }
 
         protected override void RecycleElementCore(ElementFactoryRecycleArgs args)
         {
         }
+
+        IElementFactoryShim m_itemTemplateWrapper;
     }
 }
