@@ -516,7 +516,9 @@ namespace ModernWpf.Controls
 
         internal bool HasChildren()
         {
-            return MenuItems.Count > 0 || (MenuItemsSource != null && m_repeater.ItemsSourceView.Count > 0) || HasUnrealizedChildren;
+            return MenuItems.Count > 0
+                || (MenuItemsSource != null && m_repeater != null && m_repeater.ItemsSourceView.Count > 0)
+                || HasUnrealizedChildren;
         }
 
         bool ShouldShowIcon()
