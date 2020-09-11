@@ -729,5 +729,29 @@ namespace MUXControlsTestApp
 
             SettingsSelectedState.Text = (settings as NavigationViewItem).IsSelected.ToString();
         }
+
+        private void GetTopLevelNavViewItemContentPresenterMarginButton_Click(object sender, RoutedEventArgs e)
+        {         
+            if (FindVisualChildByName(HomeItem, "ContentPresenter") is ContentPresenter presenter)
+            {
+                NavViewItemContentPresenterMarginTextBlock.Text = presenter.Margin.ToString();
+            }
+        }
+
+        private void GetChildNavViewItemContentPresenterMarginButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (FindVisualChildByName(ChildItem, "ContentPresenter") is ContentPresenter presenter)
+            {
+                NavViewItemContentPresenterMarginTextBlock.Text = presenter.Margin.ToString();
+            }
+        }
+
+        private void BringSettingsIntoViewButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (NavView.SettingsItem is NavigationViewItem settingsItem)
+            {
+                settingsItem.BringIntoView();
+            }
+        }
     }
 }
