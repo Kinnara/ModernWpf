@@ -724,7 +724,6 @@ namespace ModernWpf.Controls
             UpdatePaneTabFocusNavigation();
             UpdateBackAndCloseButtonsVisibility();
             UpdateSingleSelectionFollowsFocusTemplateSetting();
-            UpdateNavigationViewUseSystemVisual();
             UpdatePaneVisibility();
             UpdateVisualState();
             UpdatePaneTitleMargins();
@@ -1265,11 +1264,6 @@ namespace ModernWpf.Controls
                         childDepth = init();
                     }
                     nvi.PropagateDepthToChildren(childDepth);
-
-                    if (ir != m_topNavRepeaterOverflowView)
-                    {
-                        nvibImpl.UseSystemFocusVisuals = ShouldShowFocusVisual();
-                    }
 
                     // Register for item events
                     InputHelper.AddTappedHandler(nvi, OnNavigationViewItemTapped);
@@ -3372,45 +3366,6 @@ namespace ModernWpf.Controls
             VisualStateManager.GoToState(this, isToggleButtonVisible ? "TogglePaneButtonVisible" : "TogglePaneButtonCollapsed", false /*useTransitions*/);
         }
 
-        void UpdateNavigationViewUseSystemVisual()
-        {
-            if (SharedHelpers.IsRS1OrHigher() && !ShouldPreserveNavigationViewRS4Behavior() && m_appliedTemplate)
-            {
-                PropagateShowFocusVisualToAllNavigationViewItemsInRepeater(m_leftNavRepeater, ShouldShowFocusVisual());
-                PropagateShowFocusVisualToAllNavigationViewItemsInRepeater(m_leftNavFooterMenuRepeater, ShouldShowFocusVisual());
-                PropagateShowFocusVisualToAllNavigationViewItemsInRepeater(m_topNavRepeater, ShouldShowFocusVisual());
-                PropagateShowFocusVisualToAllNavigationViewItemsInRepeater(m_topNavFooterMenuRepeater, ShouldShowFocusVisual());
-            }
-        }
-
-        bool ShouldShowFocusVisual()
-        {
-            return SelectionFollowsFocus == NavigationViewSelectionFollowsFocus.Disabled;
-        }
-
-        void PropagateShowFocusVisualToAllNavigationViewItemsInRepeater(ItemsRepeater ir, bool showFocusVisual)
-        {
-            if (ir != null)
-            {
-                if (ir.ItemsSourceView is { } itemsSourceView)
-                {
-                    var numberOfItems = itemsSourceView.Count;
-                    for (int i = 0; i < numberOfItems; i++)
-                    {
-                        if (ir.TryGetElement(i) is { } nvib)
-                        {
-                            if (nvib is NavigationViewItem nvi)
-                            {
-                                var nviImpl = nvi;
-                                nviImpl.UseSystemFocusVisuals = showFocusVisual;
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-
         void InvalidateTopNavPrimaryLayout()
         {
             if (m_appliedTemplate && IsTopNavigationView())
@@ -4007,7 +3962,6 @@ namespace ModernWpf.Controls
             else if (property == SelectionFollowsFocusProperty)
             {
                 UpdateSingleSelectionFollowsFocusTemplateSetting();
-                UpdateNavigationViewUseSystemVisual();
             }
             else if (property == IsPaneToggleButtonVisibleProperty)
             {
