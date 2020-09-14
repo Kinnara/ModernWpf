@@ -39,7 +39,6 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="MinWidth" Value="{DynamicResource ListViewItemMinWidth}" />
         <Setter Property="MinHeight" Value="{DynamicResource TreeViewItemMinHeight}" />
-        <Setter Property="AllowDrop" Value="False" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:TreeViewItemHelper.IsEnabled" Value="True" />

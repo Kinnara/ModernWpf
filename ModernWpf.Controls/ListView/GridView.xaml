@@ -16,7 +16,6 @@
         <Setter Property="Margin" Value="0,0,4,4" />
         <Setter Property="MinWidth" Value="{DynamicResource GridViewItemMinWidth}" />
         <Setter Property="MinHeight" Value="{DynamicResource GridViewItemMinHeight}" />
-        <Setter Property="AllowDrop" Value="False" />
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin" Value="-2" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
