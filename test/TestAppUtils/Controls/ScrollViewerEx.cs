@@ -46,7 +46,7 @@
                     changed = true;
                 }
 
-                ScrollToHorizontalOffset(verticalOffset.Value);
+                ScrollToVerticalOffset(verticalOffset.Value);
             }
 
             return changed;
