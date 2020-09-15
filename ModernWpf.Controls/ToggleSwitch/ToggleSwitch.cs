@@ -224,29 +224,6 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region IsPressed
-
-        private static readonly DependencyPropertyKey IsPressedPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(IsPressed),
-                typeof(bool),
-                typeof(ToggleSwitch),
-                null);
-
-        [Obsolete]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static readonly DependencyProperty IsPressedProperty = IsPressedPropertyKey.DependencyProperty;
-
-        [Obsolete]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public bool IsPressed
-        {
-            get => (bool)GetValue(IsPressedProperty);
-            private set => SetValue(IsPressedPropertyKey, value);
-        }
-
-        #endregion
-
         #region UseSystemFocusVisuals
 
         public static readonly DependencyProperty UseSystemFocusVisualsProperty =
@@ -403,7 +380,6 @@ namespace ModernWpf.Controls
         private void OnSwitchThumbDragStarted(object sender, DragStartedEventArgs e)
         {
             e.Handled = true;
-            IsPressed = true;
             _startTranslation = KnobTranslateTransform.X;
             UpdateVisualStates(true);
             KnobTranslateTransform.X = _startTranslation;
@@ -423,7 +399,6 @@ namespace ModernWpf.Controls
         private void OnSwitchThumbDragCompleted(object sender, DragCompletedEventArgs e)
         {
             e.Handled = true;
-            IsPressed = false;
             bool click = false;
             if (_wasDragged)
             {
@@ -466,10 +441,6 @@ namespace ModernWpf.Controls
             if (!IsEnabled)
             {
                 stateName = VisualStates.StateDisabled;
-            }
-            else if (IsPressed)
-            {
-                stateName = VisualStates.StatePressed;
             }
             else if (IsMouseOver)
             {

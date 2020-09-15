@@ -328,29 +328,6 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        #region IsSystemFocusVisualVisible
-
-        [Obsolete]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static bool GetIsSystemFocusVisualVisible(FrameworkElement element)
-        {
-            return (bool)element.GetValue(IsSystemFocusVisualVisibleProperty);
-        }
-
-        private static readonly DependencyPropertyKey IsSystemFocusVisualVisiblePropertyKey =
-            DependencyProperty.RegisterAttachedReadOnly(
-                "IsSystemFocusVisualVisible",
-                typeof(bool),
-                typeof(FocusVisualHelper),
-                null);
-
-        [Obsolete]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static readonly DependencyProperty IsSystemFocusVisualVisibleProperty =
-            IsSystemFocusVisualVisiblePropertyKey.DependencyProperty;
-
-        #endregion
-
         #region ShowFocusVisual
 
         public static bool GetShowFocusVisual(FrameworkElement element)
@@ -375,8 +352,6 @@ namespace ModernWpf.Controls.Primitives
 
         private static void OnShowFocusVisualChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            d.SetValue(IsSystemFocusVisualVisiblePropertyKey, e.NewValue);
-
             if (d is Control control && GetTemplateFocusTarget(control) is { } target)
             {
                 if ((bool)e.NewValue)
@@ -523,7 +498,6 @@ namespace ModernWpf.Controls.Primitives
                 if (focusedElement != null)
                 {
                     focusedElement.ClearValue(ShowFocusVisualPropertyKey);
-                    focusedElement.ClearValue(IsSystemFocusVisualVisiblePropertyKey);
                     focusVisual.ClearValue(FocusVisualPrimaryBrushProperty);
                     focusVisual.ClearValue(FocusVisualPrimaryThicknessProperty);
                     focusVisual.ClearValue(FocusVisualSecondaryBrushProperty);

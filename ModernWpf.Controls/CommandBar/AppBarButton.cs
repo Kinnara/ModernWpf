@@ -278,22 +278,6 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region HasInputGestureText
-
-        [Obsolete]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static readonly DependencyProperty HasInputGestureTextProperty =
-            AppBarElementProperties.HasInputGestureTextProperty.AddOwner(typeof(AppBarButton));
-
-        [Obsolete]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public bool HasInputGestureText
-        {
-            get => (bool)GetValue(HasInputGestureTextProperty);
-        }
-
-        #endregion
-
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();

@@ -67,13 +67,6 @@
     <Thickness x:Key="TextControlThemePadding">10,5,6,6</Thickness>
     <Thickness x:Key="ToggleSwitchTopHeaderMargin">0,0,0,0</Thickness>
 
-    <!--#region Obsolete-->
-    <sys:Double x:Key="TitleBarHeight">32</sys:Double>
-    <Style x:Key="EmptyFocusVisual">
-        <Setter Property="primitives:FocusVisualHelper.IsSystemFocusVisual" Value="True" />
-    </Style>
-    <!--#endregion-->
-
     <ControlTemplate x:Key="TextControlValidationErrorTemplate">
         <Grid SnapsToDevicePixels="True">
             <AdornedElementPlaceholder />

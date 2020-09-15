@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -55,53 +51,6 @@ namespace ModernWpf.Controls.Primitives
         private void OnCurrentStateChanged(object sender, VisualStateChangedEventArgs e)
         {
             UpdateCurrentStateName(e.NewState);
-        }
-
-        #endregion
-
-        #region GroupName
-
-        [Obsolete]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static readonly DependencyProperty GroupNameProperty =
-            DependencyProperty.Register(
-                nameof(GroupName),
-                typeof(string),
-                typeof(VisualStateGroupListener),
-                new PropertyMetadata(OnGroupNameChanged));
-
-        [Obsolete]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public string GroupName
-        {
-            get => (string)GetValue(GroupNameProperty);
-            set => SetValue(GroupNameProperty, value);
-        }
-
-        private static void OnGroupNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((VisualStateGroupListener)d).OnGroupNameChanged(e);
-        }
-
-        private void OnGroupNameChanged(DependencyPropertyChangedEventArgs e)
-        {
-            string groupName = (string)e.NewValue;
-            if (!string.IsNullOrEmpty(groupName))
-            {
-                if (TemplatedParent is Control parentControl)
-                {
-                    var templateRoot = parentControl.GetTemplateRoot();
-                    if (templateRoot != null)
-                    {
-                        if (templateRoot.FindName(groupName) is VisualStateGroup group)
-                        {
-                            Group = group;
-                        }
-                    }
-                }
-
-                VerifyGroup();
-            }
         }
 
         #endregion
@@ -171,14 +120,5 @@ namespace ModernWpf.Controls.Primitives
         }
 
         #endregion
-
-        [Conditional("DEBUG")]
-        private void VerifyGroup()
-        {
-            if (!DesignerProperties.GetIsInDesignMode(this))
-            {
-                Debug.Assert(Group != null);
-            }
-        }
     }
 }

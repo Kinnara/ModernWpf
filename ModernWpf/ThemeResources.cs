@@ -446,8 +446,6 @@ namespace ModernWpf
         private static bool ContainsDefaultThemeResources(ResourceDictionary dictionary, ResourceDictionary defaultResources)
         {
             if (dictionary == defaultResources ||
-                dictionary is DefaultThemeResources ||
-                dictionary is ApplicationThemeResources ||
                 SourceEquals(dictionary.Source, defaultResources.Source))
             {
                 return true;

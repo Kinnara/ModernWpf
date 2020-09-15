@@ -1406,14 +1406,6 @@
         </Setter>
     </Style>
 
-    <!-- Obsolete -->
-    <Style x:Key="CustomFocusVisual" BasedOn="{StaticResource HighVisibilityFocusVisual}">
-        <Setter Property="Control.IsHitTestVisible" Value="False" />
-        <Setter Property="Control.IsEnabled" Value="False" />
-        <Setter Property="Control.Visibility" Value="Collapsed" />
-        <Setter Property="primitives:FocusVisualHelper.IsSystemFocusVisual" Value="False" />
-    </Style>
-
     <Style x:Key="{x:Static SystemParameters.FocusVisualStyleKey}" BasedOn="{StaticResource HighVisibilityFocusVisual}" />
 
 </ResourceDictionary>
