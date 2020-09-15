@@ -4,9 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
-    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-    xmlns:local="clr-namespace:MahAppsSample"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -33,7 +30,6 @@
                 <ui:XamlControlsResources />
                 <ResourceDictionary Source="/ModernWpf.MahApps;component/Styles/Controls.xaml" />
 
-                <sc:UISettingsResources />
             </ResourceDictionary.MergedDictionaries>
 
             <Style TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">

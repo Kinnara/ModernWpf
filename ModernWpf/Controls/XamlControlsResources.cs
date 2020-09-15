@@ -13,6 +13,7 @@ namespace ModernWpf.Controls
         public XamlControlsResources()
         {
             MergedDictionaries.Add(ControlsResources);
+            MergedDictionaries.Add(UISettingsResources);
 
             if (DesignMode.DesignModeEnabled)
             {
@@ -65,8 +66,17 @@ namespace ModernWpf.Controls
             }
         }
 
+        internal static ResourceDictionary UISettingsResources
+        {
+            get
+            {
+                return _uiSettingsResources ??= new UISettingsResources();
+            }
+        }
+
         private static ResourceDictionary _controlsResources;
         private static ResourceDictionary _compactResources;
+        private static ResourceDictionary _uiSettingsResources;
 
         private bool _useCompactResources;
     }

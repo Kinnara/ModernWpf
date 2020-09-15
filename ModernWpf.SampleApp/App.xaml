@@ -43,7 +43,6 @@
                 </ui:ThemeResources>
                 
                 <ui:XamlControlsResources />
-                <sc:UISettingsResources />
 
                 <!-- Font Overrides -->
                 <!--<sc:FontOverrides FontFamily="Comic Sans MS" />-->

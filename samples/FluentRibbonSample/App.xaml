@@ -3,8 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:local="clr-namespace:FluentRibbonSample"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -12,7 +10,6 @@
                 <ui:ThemeResources RequestedTheme="Light" />
                 <ui:XamlControlsResources />
                 <ResourceDictionary Source="pack://application:,,,/Fluent;Component/Themes/Generic.xaml" />
-                <sc:UISettingsResources />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

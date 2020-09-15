@@ -1,14 +1,12 @@
-﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Threading;
 using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
 
-namespace SamplesCommon
+namespace ModernWpf
 {
-    public class UISettingsResources : ResourceDictionary
+    internal class UISettingsResources : ResourceDictionary
     {
         private const string UniversalApiContractName = "Windows.Foundation.UniversalApiContract";
         private const string AutoHideScrollBarsKey = "AutoHideScrollBars";
@@ -17,23 +15,20 @@ namespace SamplesCommon
 
         public UISettingsResources()
         {
-            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()))
+            if (DesignMode.DesignModeEnabled)
             {
-                if (Environment.OSVersion.Version.Major >= 10)
-                {
-                    Initialize();
-                }
+                return;
+            }
+
+            if (OSVersionHelper.IsWindows10)
+            {
+                Initialize();
             }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void Initialize()
         {
-            if (_uiSettings != null)
-            {
-                return;
-            }
-
             var uiSettings = new UISettings();
 
             if (ApiInformation.IsApiContractPresent(UniversalApiContractName, 4))
@@ -75,11 +70,6 @@ namespace SamplesCommon
             ApplyAutoHideScrollBars(settings.AutoHideScrollBars);
         }
 
-        private void ApplyAutoHideScrollBars(bool value)
-        {
-            this[AutoHideScrollBarsKey] = value;
-        }
-
         private void ApplyAdvancedEffectsEnabled(bool value)
         {
             var key = SystemParameters.DropShadowKey;
@@ -91,6 +81,11 @@ namespace SamplesCommon
             {
                 this[key] = false;
             }
+        }
+
+        private void ApplyAutoHideScrollBars(bool value)
+        {
+            this[AutoHideScrollBarsKey] = value;
         }
     }
 }
