@@ -13,29 +13,29 @@
     <tags>$tags$</tags>
     <dependencies>
       <group targetFramework="net45">
-        <dependency id="System.Runtime.WindowsRuntime" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="System.Runtime.WindowsRuntime" version="4.6.0" exclude="Build,Analyzers" />
         <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
       </group>
       <group targetFramework="net462">
-        <dependency id="System.Runtime.WindowsRuntime" version="4.7.0" exclude="Build,Analyzers" />
         <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Windows.SDK.Contracts" version="10.0.18362.2005" exclude="Build,Analyzers" />
       </group>
       <group targetFramework="netcoreapp3.0">
-        <dependency id="System.Runtime.WindowsRuntime" version="4.7.0" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Windows.SDK.Contracts" version="10.0.18362.2005" exclude="Build,Analyzers" />
       </group>
-      <group targetFramework="net5.0">
-        <dependency id="Microsoft.Windows.CsWinRT" version="0.1.0-prerelease.200629.3" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Windows.SDK.NET" version="10.0.18362.3-preview" exclude="Build,Analyzers" />
-      </group>
+      <group targetFramework="net5.0-windows10.0.18362" />
     </dependencies>
     <frameworkReferences>
       <group targetFramework="netcoreapp3.0">
         <frameworkReference name="Microsoft.WindowsDesktop.App.WPF" />
       </group>
-      <group targetFramework="net5.0">
+      <group targetFramework="net5.0-windows10.0.18362">
         <frameworkReference name="Microsoft.WindowsDesktop.App.WPF" />
       </group>
     </frameworkReferences>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="netstandard" targetFramework="net472" />
+    </frameworkAssemblies>
   </metadata>
   <files>
     <file src="bin\$configuration$\**\ModernWpf*.dll" target="lib" />

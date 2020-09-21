@@ -244,7 +244,7 @@ namespace ModernWpf.Controls
             m_navigationViewItemsFactory = new NavigationViewItemsFactory();
 
             m_bitmapCache = new BitmapCache();
-#if NETCOREAPP || NET462
+#if NET462_OR_NEWER
             m_bitmapCache.RenderAtScale = VisualTreeHelper.GetDpi(this).PixelsPerDip;
 #endif
         }
@@ -5536,7 +5536,7 @@ namespace ModernWpf.Controls
             return GetTemplateChild(childName);
         }
 
-#if NETCOREAPP || NET462
+#if NET462_OR_NEWER
         protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
         {
             base.OnDpiChanged(oldDpi, newDpi);

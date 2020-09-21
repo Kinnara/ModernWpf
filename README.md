@@ -10,7 +10,7 @@ Modern styles and controls for your WPF applications.
 
 * [Additional controls](https://github.com/Kinnara/ModernWpf/wiki/Controls#additional-controls) to help you build modern applications. Some are ported from the [Windows UI Library](https://github.com/microsoft/microsoft-ui-xaml).
 
-* Targets .NET Framework 4.5 and .NET Core 3. Runs on Windows Vista SP2 and above.
+* Targets .NET Framework 4.5+, .NET Core 3+, and .NET 5. Runs on Windows Vista SP2 and above.
 
 ![Overview of controls (light theme)](docs/images/Controls.Light.png "Overview of controls (light theme)")
 

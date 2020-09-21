@@ -58,7 +58,7 @@ namespace ModernWpf.Media.Animation
 
         private BitmapCache GetBitmapCache()
         {
-#if NETCOREAPP || NET462
+#if NET462_OR_NEWER
             return new BitmapCache(VisualTreeHelper.GetDpi(_element).PixelsPerDip);
 #else
             return _defaultBitmapCache;

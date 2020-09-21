@@ -26,7 +26,7 @@ namespace ModernWpf.Controls.Primitives
 
         public ThemeShadowChrome()
         {
-#if NETCOREAPP || NET462
+#if NET462_OR_NEWER
             _bitmapCache = new BitmapCache(VisualTreeHelper.GetDpi(this).PixelsPerDip);
 #else
             _bitmapCache = new BitmapCache();
@@ -281,7 +281,7 @@ namespace ModernWpf.Controls.Primitives
             return base.ArrangeOverride(arrangeSize);
         }
 
-#if NETCOREAPP || NET462
+#if NET462_OR_NEWER
         protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
         {
             base.OnDpiChanged(oldDpi, newDpi);

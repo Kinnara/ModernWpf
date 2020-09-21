@@ -1,39 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;net462;netcoreapp3.0;net5.0</TargetFrameworks>
+    <TargetFrameworks>net45;net462;netcoreapp3.0;net5.0-windows10.0.18362.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <NeutralLanguage>en-US</NeutralLanguage>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>8.0</LangVersion>
+    <UseWinRT>true</UseWinRT>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+  <ItemGroup Condition="!$(DefineConstants.Contains('NET47_OR_NEWER'))">
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' != 'net5.0'">
-    <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.7.0" />
-    <Reference Include="Windows">
-      <HintPath>WinMD\Windows.WinMD</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Windows.Foundation.FoundationContract">
-      <HintPath>WinMD\Windows.Foundation.FoundationContract.winmd</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Windows.Foundation.UniversalApiContract">
-      <HintPath>WinMD\Windows.Foundation.UniversalApiContract.winmd</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-      <Private>false</Private>
-    </Reference>
-  </ItemGroup>
-	  
-  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="0.1.0-prerelease.200629.3" />
-    <PackageReference Include="Microsoft.Windows.SDK.NET" Version="10.0.18362.3-preview" />
   </ItemGroup>
 
   <ItemGroup>

@@ -305,7 +305,7 @@ namespace ModernWpf.Controls
 
                 if (_bitmapCache == null)
                 {
-#if NETCOREAPP || NET462
+#if NET462_OR_NEWER
                     _bitmapCache = new BitmapCache(VisualTreeHelper.GetDpi(this).PixelsPerDip);
 #else
                     _bitmapCache = new BitmapCache(2);
@@ -344,7 +344,7 @@ namespace ModernWpf.Controls
             }
         }
 
-#if NETCOREAPP || NET462
+#if NET462_OR_NEWER
         protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
         {
             base.OnDpiChanged(oldDpi, newDpi);

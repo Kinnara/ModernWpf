@@ -70,7 +70,7 @@ namespace ModernWpf.Controls.Primitives
             _hwnd = new WindowInteropHelper(window).Handle;
 
             _window.StateChanged += WindowStateChanged;
-#if NETCOREAPP || NET462
+#if NET462_OR_NEWER
             _window.DpiChanged += WindowDpiChanged;
 #endif
             _window.Closed += WindowClosed;
@@ -96,7 +96,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 _window.SourceInitialized -= WindowSourceInitialized;
                 _window.StateChanged -= WindowStateChanged;
-#if NETCOREAPP || NET462
+#if NET462_OR_NEWER
                 _window.DpiChanged -= WindowDpiChanged;
 #endif
                 _window.Closed -= WindowClosed;
@@ -129,7 +129,7 @@ namespace ModernWpf.Controls.Primitives
             UpdateWindowPadding();
         }
 
-#if NETCOREAPP || NET462
+#if NET462_OR_NEWER
         private void WindowDpiChanged(object sender, DpiChangedEventArgs e)
         {
             InvalidateMaximizedWindowBorder();
@@ -217,7 +217,7 @@ namespace ModernWpf.Controls.Primitives
             }
 
             double dpiScaleX, dpiScaleY;
-#if NETCOREAPP || NET462
+#if NET462_OR_NEWER
             DpiScale dpi = VisualTreeHelper.GetDpi(_window);
             dpiScaleX = dpi.DpiScaleX;
             dpiScaleY = dpi.DpiScaleY;

@@ -77,7 +77,7 @@ namespace ModernWpf.Automation.Peers
             }
         }
 
-#if NETCOREAPP || NET48
+#if NET48_OR_NEWER
         protected override int GetPositionInSetCore()
         {
             int positionInSet = 0;
