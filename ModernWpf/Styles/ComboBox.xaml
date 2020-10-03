@@ -269,7 +269,8 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                            MinWidth="{DynamicResource ComboBoxThemeMinWidth}" />
+                            MinWidth="{DynamicResource ComboBoxThemeMinWidth}"
+                            primitives:ValidationHelper.IsTemplateValidationAdornerSite="True" />
                         <Border
                             x:Name="HighlightBackground"
                             Grid.Row="1"
@@ -330,8 +331,7 @@
                             primitives:ControlHelper.PlaceholderForeground="{TemplateBinding primitives:ControlHelper.PlaceholderForeground}"
                             Visibility="Collapsed"
                             AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}"
-                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                            primitives:ValidationHelper.IsTemplateValidationAdornerSite="True" />
+                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
                         <ToggleButton
                             x:Name="DropDownOverlay"
                             IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
