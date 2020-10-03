@@ -12,7 +12,7 @@ using ModernWpf.Automation.Peers;
 
 namespace ModernWpf.Controls
 {
-    public class NumberBoxValueChangedEventArgs
+    public class NumberBoxValueChangedEventArgs : EventArgs
     {
         public NumberBoxValueChangedEventArgs(double oldValue, double newValue)
         {

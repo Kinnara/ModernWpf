@@ -1,8 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace ModernWpf.Controls
 {
-    public sealed class ContentDialogClosingEventArgs
+    public sealed class ContentDialogClosingEventArgs : EventArgs
     {
         private ContentDialogClosingDeferral _deferral;
         private int _deferralCount;

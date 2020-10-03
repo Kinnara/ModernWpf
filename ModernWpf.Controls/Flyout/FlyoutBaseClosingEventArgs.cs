@@ -2,7 +2,7 @@
 
 namespace ModernWpf.Controls
 {
-    internal sealed class FlyoutBaseClosingEventArgs
+    internal sealed class FlyoutBaseClosingEventArgs : EventArgs
     {
         internal FlyoutBaseClosingEventArgs()
         {

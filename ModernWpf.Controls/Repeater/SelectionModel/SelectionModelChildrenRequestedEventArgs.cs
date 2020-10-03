@@ -5,7 +5,7 @@ using System;
 
 namespace ModernWpf.Controls
 {
-    public sealed class SelectionModelChildrenRequestedEventArgs
+    public sealed class SelectionModelChildrenRequestedEventArgs : EventArgs
     {
         internal SelectionModelChildrenRequestedEventArgs(object source, IndexPath sourceIndexPath, bool throwOnAccess)
         {

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ModernWpf.Controls
 {
-    public class ContentDialogClosedEventArgs
+    public class ContentDialogClosedEventArgs : EventArgs
     {
         internal ContentDialogClosedEventArgs(ContentDialogResult result)
         {

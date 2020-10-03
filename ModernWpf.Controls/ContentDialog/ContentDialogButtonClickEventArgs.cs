@@ -1,8 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace ModernWpf.Controls
 {
-    public class ContentDialogButtonClickEventArgs
+    public class ContentDialogButtonClickEventArgs : EventArgs
     {
         private ContentDialogButtonClickDeferral _deferral;
         private int _deferralCount;
