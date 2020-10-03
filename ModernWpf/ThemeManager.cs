@@ -204,7 +204,7 @@ namespace ModernWpf
         {
             if (UsingSystemAccentColor)
             {
-                ActualAccentColor = ColorsHelper.GetSystemAccentColor();
+                ActualAccentColor = ColorsHelper.Current.SystemAccentColor;
             }
             else
             {
@@ -786,7 +786,7 @@ namespace ModernWpf
                 appResources.MergedDictionaries.RemoveAll<IntellisenseResourcesBase>();
 
                 ColorsHelper.Current.SystemThemeChanged += OnSystemThemeChanged;
-                ColorsHelper.Current.AccentColorChanged += OnSystemAccentColorChanged;
+                ColorsHelper.Current.SystemAccentColorChanged += OnSystemAccentColorChanged;
                 appResources.MergedDictionaries.Insert(0, ColorsHelper.Current.Colors);
 
                 UpdateActualAccentColor();
@@ -803,24 +803,18 @@ namespace ModernWpf
 
         private void OnSystemThemeChanged(object sender, EventArgs e)
         {
-            Dispatcher.BeginInvoke(() =>
+            if (UsingSystemTheme)
             {
-                if (UsingSystemTheme)
-                {
-                    UpdateActualApplicationTheme();
-                }
-            });
+                UpdateActualApplicationTheme();
+            }
         }
 
         private void OnSystemAccentColorChanged(object sender, EventArgs e)
         {
-            Dispatcher.BeginInvoke(() =>
+            if (UsingSystemAccentColor)
             {
-                if (UsingSystemAccentColor)
-                {
-                    UpdateActualAccentColor();
-                }
-            });
+                UpdateActualAccentColor();
+            }
         }
 
         private void OnSystemParametersChanged(object sender, PropertyChangedEventArgs e)

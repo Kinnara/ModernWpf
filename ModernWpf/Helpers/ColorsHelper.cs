@@ -3,12 +3,14 @@ using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
+using Microsoft.Win32;
 using ModernWpf.Media.ColorPalette;
 using Windows.UI.ViewManagement;
 
 namespace ModernWpf
 {
-    internal class ColorsHelper
+    internal class ColorsHelper : DispatcherObject
     {
         private const string AccentKey = "SystemAccentColor";
         private const string AccentDark1Key = "SystemAccentColorDark1";
@@ -21,7 +23,7 @@ namespace ModernWpf
         internal static readonly Color DefaultAccentColor = Color.FromRgb(0x00, 0x78, 0xD7);
 
         private readonly ResourceDictionary _colors = new ResourceDictionary();
-        private object _uiSettings;
+        private UISettings _uiSettings;
 
         private Color _systemBackground;
         private Color _systemAccent;
@@ -34,7 +36,7 @@ namespace ModernWpf
             }
         }
 
-        public static bool SystemColorsSupported { get; } = OSVersionHelper.IsWindows10;
+        public static bool SystemColorsSupported { get; } = OSVersionHelper.IsWindows10OrGreater;
 
         public static ColorsHelper Current { get; } = new ColorsHelper();
 
@@ -42,9 +44,11 @@ namespace ModernWpf
 
         public ApplicationTheme? SystemTheme { get; private set; }
 
+        public Color SystemAccentColor => _systemAccent;
+
         public event EventHandler SystemThemeChanged;
 
-        public event EventHandler AccentColorChanged;
+        public event EventHandler SystemAccentColorChanged;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void FetchSystemAccentColors()
@@ -108,48 +112,53 @@ namespace ModernWpf
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        internal static Color GetSystemAccentColor()
+        private void ListenToSystemColorChanges()
         {
-            var uiSettings = new UISettings();
-            return uiSettings.GetColorValue(UIColorType.Accent).ToColor();
+            _uiSettings = new UISettings();
+            _uiSettings.ColorValuesChanged += OnColorValuesChanged;
+
+            if (PackagedAppHelper.IsPackagedApp)
+            {
+                SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
+            }
+
+            _systemBackground = _uiSettings.GetColorValue(UIColorType.Background).ToColor();
+            _systemAccent = _uiSettings.GetColorValue(UIColorType.Accent).ToColor();
+            UpdateSystemAppTheme();
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void ListenToSystemColorChanges()
+        private void OnColorValuesChanged(UISettings sender, object args)
         {
-            var uiSettings = new UISettings();
+            Dispatcher.BeginInvoke(UpdateColorValues);
+        }
 
-            _systemBackground = uiSettings.GetColorValue(UIColorType.Background).ToColor();
-            _systemAccent = uiSettings.GetColorValue(UIColorType.Accent).ToColor();
-
-            uiSettings.ColorValuesChanged += (sender, args) =>
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+        {
+            if (e.Category == UserPreferenceCategory.General)
             {
-#if DEBUG
-                //for (int i = 0; i <= 8; i++)
-                //{
-                //    var colorType = (UIColorType)i;
-                //    Debug.WriteLine(colorType + " = " + sender.GetColorValue(colorType));
-                //}
-#endif
-                var background = sender.GetColorValue(UIColorType.Background).ToColor();
-                if (_systemBackground != background)
-                {
-                    _systemBackground = background;
-                    UpdateSystemAppTheme();
-                    SystemThemeChanged?.Invoke(null, EventArgs.Empty);
-                }
+                UpdateColorValues();
+            }
+        }
 
-                var accent = sender.GetColorValue(UIColorType.Accent).ToColor();
-                if (_systemAccent != accent)
-                {
-                    _systemAccent = accent;
-                    AccentColorChanged?.Invoke(null, EventArgs.Empty);
-                }
-            };
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void UpdateColorValues()
+        {
+            var background = _uiSettings.GetColorValue(UIColorType.Background).ToColor();
+            if (_systemBackground != background)
+            {
+                _systemBackground = background;
+                UpdateSystemAppTheme();
+                SystemThemeChanged?.Invoke(null, EventArgs.Empty);
+            }
 
-            _uiSettings = uiSettings;
-
-            UpdateSystemAppTheme();
+            var accent = _uiSettings.GetColorValue(UIColorType.Accent).ToColor();
+            if (_systemAccent != accent)
+            {
+                _systemAccent = accent;
+                SystemAccentColorChanged?.Invoke(null, EventArgs.Empty);
+            }
         }
 
         private void UpdateSystemAppTheme()

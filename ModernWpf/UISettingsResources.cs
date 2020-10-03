@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Threading;
+using Microsoft.Win32;
 using Windows.Foundation.Metadata;
 using Windows.UI.ViewManagement;
 
@@ -11,7 +12,8 @@ namespace ModernWpf
         private const string UniversalApiContractName = "Windows.Foundation.UniversalApiContract";
         private const string AutoHideScrollBarsKey = "AutoHideScrollBars";
 
-        private object _uiSettings;
+        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        private UISettings _uiSettings;
 
         public UISettingsResources()
         {
@@ -20,7 +22,7 @@ namespace ModernWpf
                 return;
             }
 
-            if (OSVersionHelper.IsWindows10)
+            if (OSVersionHelper.IsWindows10OrGreater)
             {
                 Initialize();
             }
@@ -29,51 +31,56 @@ namespace ModernWpf
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void Initialize()
         {
-            var uiSettings = new UISettings();
+            _uiSettings = new UISettings();
 
             if (ApiInformation.IsApiContractPresent(UniversalApiContractName, 4))
             {
-                InitializeForContract4(uiSettings);
+                InitializeForContract4();
             }
 
             if (ApiInformation.IsApiContractPresent(UniversalApiContractName, 8))
             {
-                InitializeForContract8(uiSettings);
+                InitializeForContract8();
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void InitializeForContract4()
+        {
+            _uiSettings.AdvancedEffectsEnabledChanged += (sender, args) =>
+            {
+                _dispatcher.BeginInvoke(ApplyAdvancedEffectsEnabled);
+            };
+
+            if (PackagedAppHelper.IsPackagedApp)
+            {
+                SystemEvents.UserPreferenceChanged += (sender, args) =>
+                {
+                    if (args.Category == UserPreferenceCategory.General)
+                    {
+                        ApplyAdvancedEffectsEnabled();
+                    }
+                };
             }
 
-            _uiSettings = uiSettings;
+            ApplyAdvancedEffectsEnabled();
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void InitializeForContract4(UISettings settings)
+        private void InitializeForContract8()
         {
-            settings.AdvancedEffectsEnabledChanged += (sender, args) =>
+            _uiSettings.AutoHideScrollBarsChanged += (sender, args) =>
             {
-                Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    ApplyAdvancedEffectsEnabled(sender.AdvancedEffectsEnabled);
-                });
+                _dispatcher.BeginInvoke(ApplyAutoHideScrollBars);
             };
-            ApplyAdvancedEffectsEnabled(settings.AdvancedEffectsEnabled);
+            ApplyAutoHideScrollBars();
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void InitializeForContract8(UISettings settings)
-        {
-            settings.AutoHideScrollBarsChanged += (sender, args) =>
-            {
-                Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    ApplyAutoHideScrollBars(sender.AutoHideScrollBars);
-                });
-            };
-            ApplyAutoHideScrollBars(settings.AutoHideScrollBars);
-        }
-
-        private void ApplyAdvancedEffectsEnabled(bool value)
+        private void ApplyAdvancedEffectsEnabled()
         {
             var key = SystemParameters.DropShadowKey;
-            if (value)
+            if (_uiSettings.AdvancedEffectsEnabled)
             {
                 Remove(key);
             }
@@ -83,9 +90,10 @@ namespace ModernWpf
             }
         }
 
-        private void ApplyAutoHideScrollBars(bool value)
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void ApplyAutoHideScrollBars()
         {
-            this[AutoHideScrollBarsKey] = value;
+            this[AutoHideScrollBarsKey] = _uiSettings.AutoHideScrollBars;
         }
     }
 }
