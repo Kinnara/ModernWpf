@@ -58,6 +58,21 @@ namespace ModernWpf.Controls
 
             GotKeyboardFocus += OnNumberBoxGotFocus;
             LostKeyboardFocus += OnNumberBoxLostFocus;
+
+            SetDefaultInputScope();
+        }
+
+        void SetDefaultInputScope()
+        {
+            // Sets the default value of the InputScope property.
+            // Note that InputScope is a class that cannot be set to a default value within the IDL.
+            var inputScopeName = new InputScopeName(InputScopeNameValue.Number);
+            var inputScope = new InputScope();
+            inputScope.Names.Add(inputScopeName);
+
+            SetValue(InputScopeProperty, inputScope);
+
+            return;
         }
 
         private INumberBoxNumberFormatter GetRegionalSettingsAwareDecimalFormatter()

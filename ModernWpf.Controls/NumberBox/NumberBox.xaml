@@ -360,7 +360,7 @@
                         <TextBox
                             x:Name="InputBox"
                             Grid.Row="1"
-                            InputScope="Number"
+                            InputScope="{TemplateBinding InputScope}"
                             ui:ControlHelper.PlaceholderText="{TemplateBinding PlaceholderText}"
                             SelectionBrush="{TemplateBinding SelectionBrush}"
                             FontSize="{TemplateBinding FontSize}"

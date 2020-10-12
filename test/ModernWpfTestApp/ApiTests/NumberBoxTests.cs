@@ -11,6 +11,7 @@ using MUXControlsTestApp;
 using ModernWpf.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows;
+using System.Windows.Input;
 
 #if USING_TAEF
 using WEX.TestExecution;
@@ -106,6 +107,34 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 
                 Verify.AreEqual(new CornerRadius(0), textBox.GetCornerRadius());
             });
+        }
+
+        [TestMethod]
+        public void VerifyInputScopePropogates()
+        {
+            var numberBox = SetupNumberBox();
+
+            RunOnUIThread.Execute(() =>
+            {
+                Content.UpdateLayout();
+                var inputTextBox = TestUtilities.FindDescendents<TextBox>(numberBox).Where(e => e.Name == "InputBox").Single();
+
+                Verify.AreEqual(1, inputTextBox.InputScope.Names.Count);
+                Verify.AreEqual(InputScopeNameValue.Number, ((InputScopeName)inputTextBox.InputScope.Names[0]).NameValue, "The default InputScope should be 'Number'.");
+
+                var scopeName = new InputScopeName();
+                scopeName.NameValue = InputScopeNameValue.CurrencyAmountAndSymbol;
+                var scope = new InputScope();
+                scope.Names.Add(scopeName);
+
+                numberBox.InputScope = scope;
+                Content.UpdateLayout();
+
+                Verify.AreEqual(1, inputTextBox.InputScope.Names.Count);
+                Verify.AreEqual(InputScopeNameValue.CurrencyAmountAndSymbol, ((InputScopeName)inputTextBox.InputScope.Names[0]).NameValue, "The InputScope should be 'CurrencyAmountAndSymbol'.");
+            });
+
+            return;
         }
 
         [TestMethod]
