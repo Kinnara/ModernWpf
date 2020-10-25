@@ -10,6 +10,7 @@ using System.Windows.Markup;
 using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows;
+using System.Linq;
 
 #if USING_TAEF
 using WEX.TestExecution;
@@ -78,6 +79,46 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 
                 testCondition = radioButton2.Foreground is SolidColorBrush brush2 && brush2.Color == Colors.Blue;
                 Verify.IsTrue(testCondition, "The foreground color of the RadioButton should have been [blue].");
+            });
+        }
+
+        [TestMethod]
+        public void VerifyIsEnabledChangeUpdatesVisualState()
+        {
+            RadioButtons radioButtons = null; ;
+            VisualStateGroup commonStatesGroup = null;
+            RunOnUIThread.Execute(() =>
+            {
+                radioButtons = new RadioButtons();
+
+                // Check 1: Set IsEnabled to true.
+                radioButtons.IsEnabled = true;
+
+                Content = radioButtons;
+                Content.UpdateLayout();
+
+                var radioButtonsLayoutRoot = (FrameworkElement)VisualTreeHelper.GetChild(radioButtons, 0);
+                commonStatesGroup = VisualStateManager.GetVisualStateGroups(radioButtonsLayoutRoot).Cast<VisualStateGroup>().First(vsg => vsg.Name.Equals("CommonStates"));
+
+                Verify.AreEqual("Normal", commonStatesGroup.CurrentState.Name);
+
+                // Check 2: Set IsEnabled to false.
+                radioButtons.IsEnabled = false;
+            });
+            IdleSynchronizer.Wait();
+
+            RunOnUIThread.Execute(() =>
+            {
+                Verify.AreEqual("Disabled", commonStatesGroup.CurrentState.Name);
+
+                // Check 3: Set IsEnabled back to true.
+                radioButtons.IsEnabled = true;
+            });
+            IdleSynchronizer.Wait();
+
+            RunOnUIThread.Execute(() =>
+            {
+                Verify.AreEqual("Normal", commonStatesGroup.CurrentState.Name);
             });
         }
     }

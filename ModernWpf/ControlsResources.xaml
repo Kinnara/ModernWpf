@@ -63,7 +63,7 @@
     <sys:Double x:Key="TextControlThemeMinHeight">32</sys:Double>
     <Thickness x:Key="NumberBoxSpinButtonBorderThickness">0,1,1,1</Thickness>
     <Thickness x:Key="NumberBoxIconMargin">10,0,0,0</Thickness>
-    <Thickness x:Key="RadioButtonsHeaderMargin">0,0,0,4</Thickness>
+    <Thickness x:Key="RadioButtonsTopHeaderMargin">0,0,0,4</Thickness>
     <Thickness x:Key="TextControlThemePadding">10,5,6,6</Thickness>
     <Thickness x:Key="ToggleSwitchTopHeaderMargin">0,0,0,0</Thickness>
 

@@ -36,6 +36,8 @@ namespace ModernWpf.Controls
             PreviewKeyDown += OnChildPreviewKeyDown;
 
             m_radioButtonsElementFactory = new RadioButtonsElementFactory();
+
+            IsEnabledChanged += OnIsEnabledChanged;
         }
 
         #region ItemsSource
@@ -250,6 +252,7 @@ namespace ModernWpf.Controls
             }
 
             UpdateItemsSource();
+            UpdateVisualStateForIsEnabledChange();
         }
 
         // When focus comes from outside the RadioButtons control we will put focus on the selected radio button.
@@ -641,6 +644,11 @@ namespace ModernWpf.Controls
             return false;
         }
 
+        private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateVisualStateForIsEnabledChange();
+        }
+
         public UIElement ContainerFromIndex(int index)
         {
             var repeater = m_repeater;
@@ -713,6 +721,11 @@ namespace ModernWpf.Controls
         private void UpdateItemTemplate()
         {
             m_radioButtonsElementFactory.UserElementFactory(ItemTemplate);
+        }
+
+        private void UpdateVisualStateForIsEnabledChange()
+        {
+            VisualStateManager.GoToState(this, IsEnabled ? "Normal" : "Disabled", false);
         }
 
         // Test Hooks helpers, only function when m_testHooksEnabled == true

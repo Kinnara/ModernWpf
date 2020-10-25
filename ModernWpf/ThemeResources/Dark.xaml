@@ -1015,6 +1015,10 @@
     <m:StaticResource x:Key="RadioButtonCheckGlyphStrokePressed" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="RadioButtonCheckGlyphStrokeDisabled" ResourceKey="SystemControlTransparentBrush" />
 
+    <!-- Resources for RadioButtons -->
+    <m:StaticResource x:Key="RadioButtonsHeaderForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="RadioButtonsHeaderForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+
     <!-- Resources for RatingControl -->
     <m:StaticResource x:Key="RatingControlUnselectedForeground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <m:StaticResource x:Key="RatingControlSelectedForeground" ResourceKey="SystemControlForegroundAccentBrush" />
