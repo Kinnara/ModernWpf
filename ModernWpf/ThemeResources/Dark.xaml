@@ -461,6 +461,7 @@
     <m:StaticResource x:Key="ComboBoxBackgroundPressed" ResourceKey="SystemControlBackgroundListMediumBrush" />
     <m:StaticResource x:Key="ComboBoxBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <m:StaticResource x:Key="ComboBoxBackgroundUnfocused" ResourceKey="SystemControlHighlightListAccentLowBrush" />
+    <m:StaticResource x:Key="ComboBoxBackgroundFocused" ResourceKey="ComboBoxBackgroundUnfocused" />
     <m:StaticResource x:Key="ComboBoxBackgroundBorderBrushFocused" ResourceKey="SystemControlHighlightTransparentBrush" />
     <m:StaticResource x:Key="ComboBoxBackgroundBorderBrushUnfocused" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
     <m:StaticResource x:Key="ComboBoxForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />

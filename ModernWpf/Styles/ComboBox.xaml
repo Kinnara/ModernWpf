@@ -443,6 +443,7 @@
                         <!-- Focused -->
                         <Trigger Property="primitives:FocusVisualHelper.ShowFocusVisual" Value="True">
                             <Setter TargetName="HighlightBackground" Property="Opacity" Value="1" />
+                            <Setter TargetName="HighlightBackground" Property="Background" Value="{DynamicResource ComboBoxBackgroundFocused}" />
                             <Setter TargetName="HighlightBackground" Property="BorderBrush" Value="{DynamicResource ComboBoxBackgroundBorderBrushFocused}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundFocused}" />
                             <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxPlaceHolderForegroundFocused}" />

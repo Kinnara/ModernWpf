@@ -9,28 +9,35 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel
-        Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
-        Margin="12">
-        <TextBlock
-            Text="Sample ComboBoxes"
-            Style="{DynamicResource StandardGroupHeader}" />
-        <TextBlock Text="ComboBox:" />
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12">
+        <TextBlock Text="Sample ComboBoxes" Style="{ThemeResource StandardGroupHeader}"/>
+        <TextBlock Text="ComboBox:"/>
         <ComboBox SelectedIndex="0">
-            <ComboBoxItem Content="Item 1" />
-            <ComboBoxItem Content="Item 2" />
-            <ComboBoxItem Content="Item 3" />
+            <ComboBoxItem Content="Item 1"/>
+            <ComboBoxItem Content="Item 2"/>
+            <ComboBoxItem Content="Item 3"/>
         </ComboBox>
 
-        <TextBlock
-            Text="ComboBox IsEditable=true:"
-            Margin="0,20,0,0" />
-        <ComboBox
-            SelectedIndex="0"
-            IsEditable="True">
-            <ComboBoxItem Content="Item 1" />
-            <ComboBoxItem Content="Item 2" />
-            <ComboBoxItem Content="Item 3" />
+        <TextBlock Text="ComboBox IsEditable=true:" Margin="0,20,0,0"/>
+        <ComboBox SelectedIndex="0" IsEditable="True">
+            <ComboBoxItem Content="Item 1"/>
+            <ComboBoxItem Content="Item 2"/>
+            <ComboBoxItem Content="Item 3"/>
         </ComboBox>
+
+        <ComboBoxEx SelectedIndex="0" Header="Focus resource lookup test">
+            <ComboBox.Resources>
+                <ResourceDictionary>
+                    <SolidColorBrush x:Key="ComboBoxBackgroundFocused" Color="Green"/>
+                    <SolidColorBrush x:Key="ComboBoxBackgroundUnfocused" Color="Red"/>
+                    <SolidColorBrush x:Key="ComboBoxBackgroundBorderBrushFocused" Color="Blue"/>
+                    <SolidColorBrush x:Key="ComboBoxBackgroundBorderBrushUnfocused" Color="Yellow"/>
+                </ResourceDictionary>
+            </ComboBox.Resources>
+            <ComboBoxItem Content="Item 1"/>
+            <ComboBoxItem Content="Item 2"/>
+            <ComboBoxItem Content="Item 3"/>
+        </ComboBoxEx>
+
     </StackPanel>
 </local:TestPage>
