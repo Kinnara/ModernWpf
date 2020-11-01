@@ -240,7 +240,7 @@ namespace MUXControlsTestApp.Samples
 
                 if (i < indexPath.Length - 1)
                 {
-                    repeater = container.FindElementOfTypeInSubtree<ItemsRepeater>();
+                    repeater = container.FindVisualChildByType<ItemsRepeater>();
                 }
                 else
                 {
