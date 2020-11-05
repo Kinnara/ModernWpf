@@ -4,32 +4,57 @@ using System.Windows.Media.Imaging;
 
 namespace ModernWpf.Controls
 {
-	public class BitmapIconSource : IconSource
-	{
-		public BitmapIconSource()
-		{
-		}
+    /// <summary>
+    /// Represents an icon source that uses a bitmap as its content.
+    /// </summary>
+    public class BitmapIconSource : IconSource
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BitmapIconSource"/> class.
+        /// </summary>
+        public BitmapIconSource()
+        {
+        }
 
-		public static readonly DependencyProperty UriSourceProperty =
-			BitmapImage.UriSourceProperty.AddOwner(typeof(BitmapIconSource));
+        /// <summary>
+        /// Identifies the <see cref="UriSource"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty UriSourceProperty =
+            BitmapImage.UriSourceProperty.AddOwner(typeof(BitmapIconSource));
 
-		public Uri UriSource
-		{
-			get => (Uri)GetValue(UriSourceProperty);
-			set => SetValue(UriSourceProperty, value);
-		}
+        /// <summary>
+        /// Gets or sets the Uniform Resource Identifier (URI) of the bitmap to use as the icon content.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Uri"/> of the bitmap to use as the icon content. The default is <see langword="null"/>.
+        /// </returns>
+        public Uri UriSource
+        {
+            get => (Uri)GetValue(UriSourceProperty);
+            set => SetValue(UriSourceProperty, value);
+        }
 
-		public static readonly DependencyProperty ShowAsMonochromeProperty =
-			DependencyProperty.Register(
-				nameof(ShowAsMonochrome),
-				typeof(bool),
-				typeof(BitmapIconSource),
-				new PropertyMetadata(true));
+        /// <summary>
+        /// Identifies the <see cref="ShowAsMonochrome"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty ShowAsMonochromeProperty =
+            DependencyProperty.Register(
+                nameof(ShowAsMonochrome),
+                typeof(bool),
+                typeof(BitmapIconSource),
+                new PropertyMetadata(true));
 
-		public bool ShowAsMonochrome
-		{
-			get => (bool)GetValue(ShowAsMonochromeProperty);
-			set => SetValue(ShowAsMonochromeProperty, value);
-		}
-	}
+        /// <summary>
+        /// Gets or sets a value that indicates whether the bitmap is shown in a single color.
+        /// </summary>
+        /// <returns>
+        /// <see langword="true"/> to show the bitmap in a single color;
+        /// <see langword="false"/> to show the bitmap in full color. The default is <see langword="true"/>.
+        /// </returns>
+        public bool ShowAsMonochrome
+        {
+            get => (bool)GetValue(ShowAsMonochromeProperty);
+            set => SetValue(ShowAsMonochromeProperty, value);
+        }
+    }
 }
