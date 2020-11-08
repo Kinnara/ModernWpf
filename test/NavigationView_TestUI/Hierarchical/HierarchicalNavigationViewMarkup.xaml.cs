@@ -6,12 +6,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using ModernWpf.Controls;
 
 using NavigationViewItemInvokedEventArgs = ModernWpf.Controls.NavigationViewItemInvokedEventArgs;
 using NavigationViewItem = ModernWpf.Controls.NavigationViewItem;
 using NavigationViewItemExpandingEventArgs = ModernWpf.Controls.NavigationViewItemExpandingEventArgs;
 using NavigationViewItemCollapsedEventArgs = ModernWpf.Controls.NavigationViewItemCollapsedEventArgs;
 using NavigationViewPaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode;
+using MUXControlsTestApp.Utilities;
 
 namespace MUXControlsTestApp
 {
@@ -121,6 +123,16 @@ namespace MUXControlsTestApp
             var tag = Convert.ToString(((sender as ComboBox).SelectedItem as ComboBoxItem).Tag);
             var mode = (NavigationViewPaneDisplayMode)Enum.Parse(typeof(NavigationViewPaneDisplayMode), tag);
             navview.PaneDisplayMode = mode;
+        }
+
+        private void GetMenuItem1ChildrenFlyoutCornerRadiusButton_Click(object sender, RoutedEventArgs e)
+        {
+            var parent = MI2.FindVisualParentByType<FlyoutPresenter>();
+            if (parent is FlyoutPresenter flyoutPresenter)
+            {
+                var border = flyoutPresenter.FindVisualChildByType<Border>();
+                MenuItem1ChildrenFlyoutCornerRadiusTextBlock.Text = border?.CornerRadius.ToString() ?? "Internal Border not found";
+            }
         }
     }
 }

@@ -516,5 +516,16 @@ namespace MUXControlsTestApp
         {
             NavView.SelectedItem = null;
         }
+
+        private void GetOverflowMenuCornerRadiusButton_Click(object sender, RoutedEventArgs e)
+        {
+            var lastMenuItem = NavView.MenuItems[NavView.MenuItems.Count - 1] as NavigationViewItem;
+            var parent = lastMenuItem.FindVisualParentByType<FlyoutPresenter>();
+            if (parent is FlyoutPresenter flyoutPresenter)
+            {
+                var border = flyoutPresenter.FindVisualChildByType<Border>();
+                OverflowMenuCornerRadiusTextBlock.Text = border?.CornerRadius.ToString() ?? "Internal Border not found";
+            }
+        }
     }
 }
