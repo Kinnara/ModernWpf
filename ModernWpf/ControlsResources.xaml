@@ -66,6 +66,9 @@
     <Thickness x:Key="RadioButtonsTopHeaderMargin">0,0,0,4</Thickness>
     <Thickness x:Key="TextControlThemePadding">10,5,6,6</Thickness>
     <Thickness x:Key="ToggleSwitchTopHeaderMargin">0,0,0,0</Thickness>
+    <sys:Double x:Key="ToggleSwitchPreContentMargin">6</sys:Double>
+    <sys:Double x:Key="ToggleSwitchPostContentMargin">6</sys:Double>
+    <sys:Double x:Key="ToggleSwitchThemeMinWidth">154</sys:Double>
 
     <ControlTemplate x:Key="TextControlValidationErrorTemplate">
         <Grid SnapsToDevicePixels="True">
