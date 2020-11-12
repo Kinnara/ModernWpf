@@ -130,7 +130,11 @@ namespace ModernWpf.Input
                 }
                 else
                 {
-                    RaiseTapped(element, e.Timestamp);
+                    var elementBounds = new Rect(new Point(), element.RenderSize);
+                    if (elementBounds.Contains(e.GetPosition(element)))
+                    {
+                        RaiseTapped(element, e.Timestamp);
+                    }
                 }
             }
         }
