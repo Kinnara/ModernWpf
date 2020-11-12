@@ -12,7 +12,7 @@ namespace ModernWpf.Automation.Peers
 
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
-            if (GetTeachingTip() != null/*.IsLightDismissEnabled*/)
+            if (GetTeachingTip().IsLightDismissEnabled)
             {
                 return AutomationControlType.Window;
             }
@@ -29,35 +29,33 @@ namespace ModernWpf.Automation.Peers
 
         private WindowInteractionState InteractionState()
         {
-            //var teachingTip = GetTeachingTip();
-            //if (teachingTip.m_isIdle && teachingTip.IsOpen)
-            //{
-            //    return WindowInteractionState.ReadyForUserInteraction;
-            //}
-            //else if (teachingTip.m_isIdle && !teachingTip.IsOpen)
-            //{
-            //    return WindowInteractionState.BlockedByModalWindow;
-            //}
-            //else if (!teachingTip.m_isIdle && !teachingTip.IsOpen)
-            //{
-            //    return WindowInteractionState.Closing;
-            //}
-            //else
-            //{
-            //    return WindowInteractionState.Running;
-            //}
-
-            return WindowInteractionState.Running;
+            var teachingTip = GetTeachingTip();
+            if (/*teachingTip.m_isIdle &&*/ teachingTip.IsOpen)
+            {
+                return WindowInteractionState.ReadyForUserInteraction;
+            }
+            else if (/*teachingTip.m_isIdle &&*/ !teachingTip.IsOpen)
+            {
+                return WindowInteractionState.BlockedByModalWindow;
+            }
+            else if (/*!teachingTip.m_isIdle &&*/ !teachingTip.IsOpen)
+            {
+                return WindowInteractionState.Closing;
+            }
+            else
+            {
+                return WindowInteractionState.Running;
+            }
         }
 
         private bool IsModal()
         {
-            return GetTeachingTip() != null/*.IsLightDismissEnabled*/;
+            return GetTeachingTip().IsLightDismissEnabled;
         }
 
         private bool IsTopMost()
         {
-            return GetTeachingTip() != null/*.IsOpen*/;
+            return GetTeachingTip().IsOpen;
         }
 
         private bool Maximizable()
@@ -77,7 +75,7 @@ namespace ModernWpf.Automation.Peers
 
         private void Close()
         {
-            GetTeachingTip()/*.IsOpen = false*/;
+            GetTeachingTip().IsOpen = false;
         }
 
         private void SetVisualState(WindowVisualState state)
