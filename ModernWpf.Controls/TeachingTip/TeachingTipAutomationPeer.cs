@@ -30,15 +30,15 @@ namespace ModernWpf.Automation.Peers
         private WindowInteractionState InteractionState()
         {
             var teachingTip = GetTeachingTip();
-            if (/*teachingTip.m_isIdle &&*/ teachingTip.IsOpen)
+            if (teachingTip.m_isIdle && teachingTip.IsOpen)
             {
                 return WindowInteractionState.ReadyForUserInteraction;
             }
-            else if (/*teachingTip.m_isIdle &&*/ !teachingTip.IsOpen)
+            else if (teachingTip.m_isIdle && !teachingTip.IsOpen)
             {
                 return WindowInteractionState.BlockedByModalWindow;
             }
-            else if (/*!teachingTip.m_isIdle &&*/ !teachingTip.IsOpen)
+            else if (!teachingTip.m_isIdle && !teachingTip.IsOpen)
             {
                 return WindowInteractionState.Closing;
             }
@@ -120,7 +120,7 @@ namespace ModernWpf.Automation.Peers
             //}
         }
 
-        TeachingTip GetTeachingTip()
+        private TeachingTip GetTeachingTip()
         {
             var owner = Owner;
             return (TeachingTip)owner;
