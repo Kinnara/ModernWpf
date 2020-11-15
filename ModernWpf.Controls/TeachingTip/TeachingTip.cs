@@ -16,6 +16,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Media.Animation;
+using ModernWpf.Private.Controls;
 
 namespace ModernWpf.Controls
 {
@@ -209,14 +210,14 @@ namespace ModernWpf.Controls
                 SetPopupAutomationProperties();
                 if (ToggleVisibilityForEmptyContent(m_titleTextBox, Title))
                 {
-                    //TeachingTipTestHooks.NotifyTitleVisibilityChanged(this);
+                    TeachingTipTestHooks.NotifyTitleVisibilityChanged(this);
                 }
             }
             else if (property == SubtitleProperty)
             {
                 if (ToggleVisibilityForEmptyContent(m_subtitleTextBox, Subtitle))
                 {
-                    //TeachingTipTestHooks.NotifySubtitleVisibilityChanged(this);
+                    TeachingTipTestHooks.NotifySubtitleVisibilityChanged(this);
                 }
             }
 
@@ -312,7 +313,7 @@ namespace ModernWpf.Controls
             if (placement != m_currentEffectiveTipPlacementMode)
             {
                 m_currentEffectiveTipPlacementMode = placement;
-                //TeachingTipTestHooks.NotifyEffectivePlacementChanged(this);
+                TeachingTipTestHooks.NotifyEffectivePlacementChanged(this);
             }
 
             var nullableTailOcclusionGrid = m_tailOcclusionGrid;
@@ -478,7 +479,7 @@ namespace ModernWpf.Controls
                 IsOpen = false;
             }
 
-            //TeachingTipTestHooks.NotifyOffsetChanged(this);
+            TeachingTipTestHooks.NotifyOffsetChanged(this);
         }
 
         private bool PositionTargetedPopup()
@@ -815,7 +816,7 @@ namespace ModernWpf.Controls
             if (m_currentHeroContentEffectivePlacementMode != TeachingTipHeroContentPlacementMode.Top)
             {
                 m_currentHeroContentEffectivePlacementMode = TeachingTipHeroContentPlacementMode.Top;
-                //TeachingTipTestHooks.NotifyEffectiveHeroContentPlacementChanged(this);
+                TeachingTipTestHooks.NotifyEffectiveHeroContentPlacementChanged(this);
             }
         }
 
@@ -833,7 +834,7 @@ namespace ModernWpf.Controls
             if (m_currentHeroContentEffectivePlacementMode != TeachingTipHeroContentPlacementMode.Bottom)
             {
                 m_currentHeroContentEffectivePlacementMode = TeachingTipHeroContentPlacementMode.Bottom;
-                //TeachingTipTestHooks.NotifyEffectiveHeroContentPlacementChanged(this);
+                TeachingTipTestHooks.NotifyEffectiveHeroContentPlacementChanged(this);
             }
         }
 
@@ -849,7 +850,7 @@ namespace ModernWpf.Controls
                     {
                         IsOpenChangedToClose();
                     }
-                    //TeachingTipTestHooks.NotifyOpenedStatusChanged(*strongThis);
+                    TeachingTipTestHooks.NotifyOpenedStatusChanged(this);
                 });
         }
 
@@ -898,7 +899,7 @@ namespace ModernWpf.Controls
             }
 
             // We are about to begin the process of trying to open the teaching tip, so notify that we are no longer idle.
-            //SetIsIdle(false);
+            SetIsIdle(false);
 
             //If the developer defines their TeachingTip in a resource dictionary it is possible that it's template will have never been applied
             if (!m_isTemplateApplied)
@@ -944,7 +945,7 @@ namespace ModernWpf.Controls
                         // We have become Open but our popup was already open. This can happen when a close is canceled by the closing event, so make sure the idle status is correct.
                         if (!m_isExpandAnimationPlaying && !m_isContractAnimationPlaying)
                         {
-                            //SetIsIdle(true);
+                            SetIsIdle(true);
                         }
                     }
                 }
@@ -965,7 +966,7 @@ namespace ModernWpf.Controls
                 if (popup.IsOpen)
                 {
                     // We are about to begin the process of trying to close the teaching tip, so notify that we are no longer idle.
-                    //SetIsIdle(false);
+                    SetIsIdle(false);
                     RaiseClosingEvent(true);
                 }
                 else
@@ -973,13 +974,13 @@ namespace ModernWpf.Controls
                     // We have become not Open but our popup was already not open. Lets make sure the idle status is correct.
                     if (!m_isExpandAnimationPlaying && !m_isContractAnimationPlaying)
                     {
-                        //SetIsIdle(true);
+                        SetIsIdle(true);
                     }
                 }
             }
 
             m_currentEffectiveTipPlacementMode = TeachingTipPlacementMode.Auto;
-            //TeachingTipTestHooks.NotifyEffectivePlacementChanged(this);
+            TeachingTipTestHooks.NotifyEffectivePlacementChanged(this);
         }
 
         void CreateNewPopup()
@@ -1097,7 +1098,7 @@ namespace ModernWpf.Controls
             // algorithm. If we did not do this and the popup was opened the algorithm would maintain the current effective placement mode, which we don't want
             // since the hero content placement contributes to the choice of tip placement mode.
             m_currentEffectiveTipPlacementMode = TeachingTipPlacementMode.Auto;
-            //TeachingTipTestHooks.NotifyEffectivePlacementChanged(this);
+            TeachingTipTestHooks.NotifyEffectivePlacementChanged(this);
             if (IsOpen)
             {
                 PositionPopup();
@@ -1109,7 +1110,7 @@ namespace ModernWpf.Controls
             UpdateSizeBasedTemplateSettings();
             // Reset the currentEffectivePlacementMode so that the tail will be updated for the new size as well.
             m_currentEffectiveTipPlacementMode = TeachingTipPlacementMode.Auto;
-            //TeachingTipTestHooks.NotifyEffectivePlacementChanged(this);
+            TeachingTipTestHooks.NotifyEffectivePlacementChanged(this);
             if (IsOpen)
             {
                 PositionPopup();
@@ -1241,7 +1242,7 @@ namespace ModernWpf.Controls
             else
             {
                 // We won't be playing an animation so we're immediately idle.
-                //SetIsIdle(true);
+                SetIsIdle(true);
             }
 
             #region WPF specific
@@ -1403,7 +1404,7 @@ namespace ModernWpf.Controls
                 // that the idle state is correct.
                 if (!m_isContractAnimationPlaying && !m_isExpandAnimationPlaying)
                 {
-                    //SetIsIdle(true);
+                    SetIsIdle(true);
                 }
             }
         }
@@ -1753,14 +1754,14 @@ namespace ModernWpf.Controls
 
                 if (!m_isContractAnimationPlaying)
                 {
-                    //SetIsIdle(true);
+                    SetIsIdle(true);
                 }
             };
 
             // Under normal circumstances we would have launched an animation just now, if we did not then we should make sure that the idle state is correct
             if (!m_isExpandAnimationPlaying && !m_isContractAnimationPlaying)
             {
-                //SetIsIdle(true);
+                SetIsIdle(true);
             }
         }
 
@@ -1817,7 +1818,7 @@ namespace ModernWpf.Controls
 
                 if (!m_isExpandAnimationPlaying)
                 {
-                    //SetIsIdle(true);
+                    SetIsIdle(true);
                 }
             };
         }
@@ -2375,186 +2376,195 @@ namespace ModernWpf.Controls
 
         #region Test Hooks
 
-        //        void SetExpandEasingFunction(const CompositionEasingFunction&easingFunction)
+        internal void SetExpandEasingFunction(EasingFunctionBase easingFunction)
+        {
+            m_expandEasingFunction = easingFunction;
+            CreateExpandAnimation();
+        }
+
+        internal void SetContractEasingFunction(EasingFunctionBase easingFunction)
+        {
+            m_contractEasingFunction = easingFunction;
+            CreateContractAnimation();
+        }
+
+        internal void SetTipShouldHaveShadow(bool tipShouldHaveShadow)
+        {
+            if (m_tipShouldHaveShadow != tipShouldHaveShadow)
+            {
+                m_tipShouldHaveShadow = tipShouldHaveShadow;
+                EstablishShadows();
+            }
+        }
+
+        //void SetContentElevation(float elevation)
         //{
-        //            m_expandEasingFunction = easingFunction);
-        //            CreateExpandAnimation();
+        //    m_contentElevation = elevation;
+        //    if (SharedHelpers.IsRS5OrHigher())
+        //    {
+        //        if (var && contentRootGrid = m_contentRootGrid)
+        //        {
+        //            var const contentRootGridTranslation = contentRootGrid.Translation();
+        //            m_contentRootGrid.Translation({ contentRootGridTranslation.x, contentRootGridTranslation.y, m_contentElevation });
         //        }
+        //        if (m_expandElevationAnimation)
+        //        {
+        //            m_expandElevationAnimation.SetScalarParameter("contentElevation", m_contentElevation);
+        //        }
+        //    }
+        //}
 
-        //        void SetContractEasingFunction(const CompositionEasingFunction&easingFunction)
+        //void SetTailElevation(float elevation)
         //{
-        //            m_contractEasingFunction = easingFunction);
-        //            CreateContractAnimation();
-        //        }
-
-        //        void SetTipShouldHaveShadow(bool tipShouldHaveShadow)
+        //    m_tailElevation = elevation;
+        //    if (SharedHelpers.IsRS5OrHigher() && m_tailPolygon)
         //    {
-        //            if (m_tipShouldHaveShadow != tipShouldHaveShadow)
-        //            {
-        //                m_tipShouldHaveShadow = tipShouldHaveShadow;
-        //                EstablishShadows();
-        //            }
+        //        if (var && tailPolygon = m_tailPolygon)
+        //        {
+        //            var const tailPolygonTranslation = tailPolygon.Translation();
+        //            tailPolygon.Translation({ tailPolygonTranslation.x, tailPolygonTranslation.y, m_tailElevation });
         //        }
+        //    }
+        //}
 
-        //        void SetContentElevation(float elevation)
-        //    {
-        //            m_contentElevation = elevation;
-        //            if (SharedHelpers.IsRS5OrHigher())
-        //            {
-        //                if (var && contentRootGrid = m_contentRootGrid)
-        //                {
-        //                    var const contentRootGridTranslation = contentRootGrid.Translation();
-        //                    m_contentRootGrid.Translation({ contentRootGridTranslation.x, contentRootGridTranslation.y, m_contentElevation });
-        //                }
-        //                if (m_expandElevationAnimation)
-        //                {
-        //                    m_expandElevationAnimation.SetScalarParameter("contentElevation", m_contentElevation);
-        //                }
-        //            }
-        //        }
+        internal void SetUseTestWindowBounds(bool useTestWindowBounds)
+        {
+            m_useTestWindowBounds = useTestWindowBounds;
+        }
 
-        //        void SetTailElevation(float elevation)
-        //    {
-        //            m_tailElevation = elevation;
-        //            if (SharedHelpers.IsRS5OrHigher() && m_tailPolygon)
-        //            {
-        //                if (var && tailPolygon = m_tailPolygon)
-        //                {
-        //                    var const tailPolygonTranslation = tailPolygon.Translation();
-        //                    tailPolygon.Translation({ tailPolygonTranslation.x, tailPolygonTranslation.y, m_tailElevation });
-        //                }
-        //            }
-        //        }
+        internal void SetTestWindowBounds(Rect testWindowBounds)
+        {
+            m_testWindowBoundsInCoreWindowSpace = testWindowBounds;
+        }
 
-        //        void SetUseTestWindowBounds(bool useTestWindowBounds)
-        //    {
-        //            m_useTestWindowBounds = useTestWindowBounds;
-        //        }
+        internal void SetUseTestScreenBounds(bool useTestScreenBounds)
+        {
+            m_useTestScreenBounds = useTestScreenBounds;
+        }
 
-        //        void SetTestWindowBounds(const Rect&testWindowBounds)
-        //{
-        //            m_testWindowBoundsInCoreWindowSpace = testWindowBounds;
-        //        }
+        internal void SetTestScreenBounds(Rect testScreenBounds)
+        {
+            m_testScreenBoundsInCoreWindowSpace = testScreenBounds;
+        }
 
-        //        void SetUseTestScreenBounds(bool useTestScreenBounds)
-        //    {
-        //            m_useTestScreenBounds = useTestScreenBounds;
-        //        }
+        internal void SetTipFollowsTarget(bool tipFollowsTarget)
+        {
+            if (m_tipFollowsTarget != tipFollowsTarget)
+            {
+                m_tipFollowsTarget = tipFollowsTarget;
+                if (tipFollowsTarget)
+                {
+                    var target = m_target;
+                    if (target != null)
+                    {
+                        SetViewportChangedEvent(target);
+                    }
+                }
+                else
+                {
+                    RevokeViewportChangedEvent();
+                }
+            }
+        }
 
-        //        void SetTestScreenBounds(const Rect&testScreenBounds)
-        //{
-        //            m_testScreenBoundsInCoreWindowSpace = testScreenBounds;
-        //        }
+        internal void SetReturnTopForOutOfWindowPlacement(bool returnTopForOutOfWindowPlacement)
+        {
+            m_returnTopForOutOfWindowPlacement = returnTopForOutOfWindowPlacement;
+        }
 
-        //        void SetTipFollowsTarget(bool tipFollowsTarget)
-        //    {
-        //            if (m_tipFollowsTarget != tipFollowsTarget)
-        //            {
-        //                m_tipFollowsTarget = tipFollowsTarget;
-        //                if (tipFollowsTarget)
-        //                {
-        //                    if (var && target = m_target)
-        //                    {
-        //                        SetViewportChangedEvent(gsl.make_strict_not_null(target));
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    RevokeViewportChangedEvent();
-        //                }
-        //            }
-        //        }
+        internal void SetExpandAnimationDuration(TimeSpan expandAnimationDuration)
+        {
+            m_expandAnimationDuration = expandAnimationDuration;
+            var expandAnimation = m_expandAnimation;
+            if (expandAnimation != null)
+            {
+                expandAnimation.Duration = m_expandAnimationDuration;
+            }
+            var expandElevationAnimation = m_expandElevationAnimation;
+            if (expandElevationAnimation != null)
+            {
+                expandElevationAnimation.Duration = m_expandAnimationDuration;
+            }
+        }
 
-        //        void SetReturnTopForOutOfWindowPlacement(bool returnTopForOutOfWindowPlacement)
-        //    {
-        //            m_returnTopForOutOfWindowPlacement = returnTopForOutOfWindowPlacement;
-        //        }
+        internal void SetContractAnimationDuration(TimeSpan contractAnimationDuration)
+        {
+            m_contractAnimationDuration = contractAnimationDuration;
+            var contractAnimation = m_contractAnimation;
+            if (contractAnimation != null)
+            {
+                contractAnimation.Duration = m_contractAnimationDuration;
+            }
+            var contractElevationAnimation = m_contractElevationAnimation;
+            if (contractElevationAnimation != null)
+            {
+                contractElevationAnimation.Duration = m_contractAnimationDuration;
+            }
+        }
 
-        //        void SetExpandAnimationDuration(const TimeSpan&expandAnimationDuration)
-        //{
-        //            m_expandAnimationDuration = expandAnimationDuration;
-        //            if (var && expandAnimation = m_expandAnimation)
-        //            {
-        //                expandAnimation.Duration(m_expandAnimationDuration);
-        //            }
-        //            if (var && expandElevationAnimation = m_expandElevationAnimation)
-        //            {
-        //                expandElevationAnimation.Duration(m_expandAnimationDuration);
-        //            }
-        //        }
+        internal bool GetIsIdle()
+        {
+            return m_isIdle;
+        }
 
-        //        void SetContractAnimationDuration(const TimeSpan&contractAnimationDuration)
-        //{
-        //            m_contractAnimationDuration = contractAnimationDuration;
-        //            if (var && contractAnimation = m_contractAnimation)
-        //            {
-        //                contractAnimation.Duration(m_contractAnimationDuration);
-        //            }
-        //            if (var && contractElevationAnimation = m_contractElevationAnimation)
-        //            {
-        //                contractElevationAnimation.Duration(m_contractAnimationDuration);
-        //            }
-        //        }
+        internal void SetIsIdle(bool isIdle)
+        {
+            if (m_isIdle != isIdle)
+            {
+                m_isIdle = isIdle;
+                TeachingTipTestHooks.NotifyIdleStatusChanged(this);
+            }
+        }
 
-        //        bool GetIsIdle()
-        //    {
-        //            return m_isIdle;
-        //        }
+        internal TeachingTipPlacementMode GetEffectivePlacement()
+        {
+            return m_currentEffectiveTipPlacementMode;
+        }
 
-        //        void SetIsIdle(bool isIdle)
-        //    {
-        //            if (m_isIdle != isIdle)
-        //            {
-        //                m_isIdle = isIdle;
-        //                TeachingTipTestHooks.NotifyIdleStatusChanged(this);
-        //            }
-        //        }
+        internal TeachingTipHeroContentPlacementMode GetEffectiveHeroContentPlacement()
+        {
+            return m_currentHeroContentEffectivePlacementMode;
+        }
 
-        //        TeachingTipPlacementMode GetEffectivePlacement()
-        //    {
-        //            return m_currentEffectiveTipPlacementMode;
-        //        }
+        internal double GetHorizontalOffset()
+        {
+            var popup = m_popup;
+            if (popup != null)
+            {
+                return popup.HorizontalOffset;
+            }
+            return 0.0;
+        }
 
-        //        TeachingTipHeroContentPlacementMode GetEffectiveHeroContentPlacement()
-        //    {
-        //            return m_currentHeroContentEffectivePlacementMode;
-        //        }
+        internal double GetVerticalOffset()
+        {
+            var popup = m_popup;
+            if (popup != null)
+            {
+                return popup.VerticalOffset;
+            }
+            return 0.0;
+        }
 
-        //        double GetHorizontalOffset()
-        //    {
-        //            if (var && popup = m_popup)
-        //            {
-        //                return popup.HorizontalOffset();
-        //            }
-        //            return 0.0;
-        //        }
+        internal Visibility GetTitleVisibility()
+        {
+            var titleTextBox = m_titleTextBox;
+            if (titleTextBox != null)
+            {
+                return titleTextBox.Visibility;
+            }
+            return Visibility.Collapsed;
+        }
 
-        //        double GetVerticalOffset()
-        //    {
-        //            if (var && popup = m_popup)
-        //            {
-        //                return popup.VerticalOffset();
-        //            }
-        //            return 0.0;
-        //        }
-
-        //        Visibility GetTitleVisibility()
-        //    {
-        //            if (var && titleTextBox = m_titleTextBox)
-        //            {
-        //                return titleTextBox.Visibility();
-        //            }
-        //            return Visibility.Collapsed;
-        //        }
-
-        //        Visibility GetSubtitleVisibility()
-        //    {
-        //            if (var && subtitleTextBox = m_subtitleTextBox)
-        //            {
-        //                return subtitleTextBox.Visibility();
-        //            }
-        //            return Visibility.Collapsed;
-        //        }
+        internal Visibility GetSubtitleVisibility()
+        {
+            var subtitleTextBox = m_subtitleTextBox;
+            if (subtitleTextBox != null)
+            {
+                return subtitleTextBox.Visibility;
+            }
+            return Visibility.Collapsed;
+        }
 
         #endregion
 
@@ -2590,7 +2600,7 @@ namespace ModernWpf.Controls
 
         private Border m_container;
 
-        private Popup m_popup;
+        internal Popup m_popup;
         private Popup m_lightDismissIndicatorPopup;
         private ContentControl m_popupContentControl;
 
