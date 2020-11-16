@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
@@ -285,5 +287,23 @@ namespace ModernWpf.SampleApp.ControlPages
 
         public double Diameter { get; set; }
         public double MaxDiameter { get; set; }
+    }
+
+    public class SpacingConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is double d && double.IsNaN(d))
+            {
+                return 0d;
+            }
+
+            return value;
+        }
     }
 }

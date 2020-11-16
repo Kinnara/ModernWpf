@@ -341,6 +341,7 @@
                 Style="{StaticResource ControlExampleFullStyle}">
                 <sc:ControlExample.Resources>
                     <ui:StackLayout x:Key="stackLayout" />
+                    <l:SpacingConverter x:Key="SpacingConverter" />
                 </sc:ControlExample.Resources>
 
                 <ui:ItemsRepeaterScrollHost>
@@ -356,7 +357,7 @@
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
                         <ui:NumberBox
                             Header="Spacing"
-                            Value="{Binding Source={StaticResource stackLayout}, Path=Spacing}" />
+                            Value="{Binding Source={StaticResource stackLayout}, Path=Spacing, Converter={StaticResource SpacingConverter}}" />
                         <Button
                             x:Name="changeFirstItemButton"
                             Content="Change first item"
