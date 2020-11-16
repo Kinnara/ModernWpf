@@ -130,7 +130,9 @@
                         Header="Force GC"
                         Click="ForceGC" />
                     <MenuItem
+                        x:Name="NewWindowMenuItem"
                         Header="New window"
+                        Visibility="Collapsed"
                         Click="NewWindow" />
                 </MenuItem>
             </Menu>

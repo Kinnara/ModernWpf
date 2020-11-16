@@ -45,6 +45,7 @@ namespace ModernWpf.SampleApp
             if (App.IsMultiThreaded)
             {
                 PresetsMenu.Visibility = Visibility.Collapsed;
+                NewWindowMenuItem.Visibility = Visibility.Visible;
             }
 
             Loaded += delegate
