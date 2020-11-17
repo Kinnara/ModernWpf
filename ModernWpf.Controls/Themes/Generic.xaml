@@ -26,6 +26,7 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/SplitView/SplitView.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/RadioButtons/RadioButtons.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/RadioMenuItem/RadioMenuItem.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/TeachingTip/TeachingTip.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ToggleSwitch/ToggleSwitch.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
