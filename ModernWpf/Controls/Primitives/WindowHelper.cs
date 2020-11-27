@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -70,6 +71,25 @@ namespace ModernWpf.Controls.Primitives
                 {
                     window.ClearValue(FrameworkElement.StyleProperty);
                 }
+
+                FixSizeToContent(window);
+            }
+        }
+
+        /// <summary>
+        ///   Work around extra space when using Window.SizeToContent. Fixes
+        ///   #142.
+        /// </summary>
+        static void FixSizeToContent(Window window)
+        {
+            window.Activated += (s, e) => OnActivated();
+
+            void OnActivated()
+            {
+                window.Activated -= (s, e) => OnActivated();
+
+                void action() => window.InvalidateMeasure();
+                window.Dispatcher.BeginInvoke((Action)action);
             }
         }
 
