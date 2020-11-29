@@ -747,9 +747,8 @@
                             x:Name="OuterContentRoot"
                             VerticalAlignment="Top"
                             Margin="{TemplateBinding Padding}"
-                            Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.CurrentWidth}"
+                            MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.CurrentWidth}"
                             Height="{TemplateBinding Height}"
-                            Background="{TemplateBinding Background}"
                             CornerRadius="{Binding ElementName=LayoutRoot, Path=CornerRadius}">
                             <Border.Clip>
                                 <RectangleGeometry
@@ -760,7 +759,8 @@
                                     </RectangleGeometry.Transform>
                                 </RectangleGeometry>
                             </Border.Clip>
-                            <Grid x:Name="ContentRoot">
+                            <Grid x:Name="ContentRoot"
+                                  Background="{TemplateBinding Background}">
                                 <Grid.Clip>
                                     <RectangleGeometry
                                         x:Name="ContentRootClip"
