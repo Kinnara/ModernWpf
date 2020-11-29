@@ -6,10 +6,10 @@ namespace ModernWpf
         where TSource : class
         where TDelegate : Delegate
     {
-        private readonly WeakReference<TSource> _source;
-        private readonly WeakReference<TDelegate> _handler;
+        private WeakReference<TSource> _source;
+        private WeakReference<TDelegate> _handler;
 
-        public EventRevoker(TSource source, TDelegate handler)
+        protected EventRevoker(TSource source, TDelegate handler)
         {
             _source = new WeakReference<TSource>(source);
             _handler = new WeakReference<TDelegate>(handler);
@@ -21,11 +21,15 @@ namespace ModernWpf
 
         public void Revoke()
         {
-            if (_source.TryGetTarget(out var source) &&
+            if (_source != null && _handler != null &&
+                _source.TryGetTarget(out var source) &&
                 _handler.TryGetTarget(out var handler))
             {
                 RemoveHandler(source, handler);
             }
+
+            _source = null;
+            _handler = null;
         }
     }
 }

@@ -78,6 +78,12 @@ namespace ModernWpf.Controls
         const string c_leftNavPaneHeaderContentBorder = "PaneHeaderContentBorder";
         const string c_leftNavPaneCustomContentBorder = "PaneCustomContentBorder";
 
+        const string c_itemsContainer = "ItemsContainerGrid";
+        const string c_itemsContainerRow = "ItemsContainerRow";
+        const string c_visualItemsSeparator = "VisualItemsSeparator";
+        const string c_menuItemsScrollViewer = "MenuItemsScrollViewer";
+        const string c_footerItemsScrollViewer = "FooterItemsScrollViewer";
+
         const string c_paneHeaderOnTopPane = "PaneHeaderOnTopPane";
         const string c_paneTitleOnTopPane = "PaneTitleOnTopPane";
         const string c_paneCustomContentOnTopPane = "PaneCustomContentOnTopPane";
@@ -101,10 +107,12 @@ namespace ModernWpf.Controls
 
         static readonly Size c_infSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
 
+        /*
         ~NavigationView()
         {
             UnhookEventsAndClearFields(true);
         }
+        */
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -133,6 +141,8 @@ namespace ModernWpf.Controls
 
             m_paneHeaderOnTopPane = null;
             m_paneTitleOnTopPane = null;
+
+            m_itemsContainerSizeChangedRevoker?.Revoke();
 
             if (m_paneTitleHolderFrameworkElement != null)
             {
@@ -184,7 +194,7 @@ namespace ModernWpf.Controls
             }
 
             m_footerItemsCollectionChangedRevoker?.Revoke();
-            m_footerItemsCollectionChangedRevoker = null;
+            m_menuItemsCollectionChangedRevoker?.Revoke();
 
             if (m_topNavRepeaterOverflowView != null)
             {
@@ -194,7 +204,6 @@ namespace ModernWpf.Controls
             }
 
             m_topNavOverflowItemsCollectionChangedRevoker?.Revoke();
-            m_topNavOverflowItemsCollectionChangedRevoker = null;
 
             if (isFromDestructor)
             {
@@ -269,6 +278,9 @@ namespace ModernWpf.Controls
         void OnFooterItemsSourceCollectionChanged(object sender, object e)
         {
             UpdateFooterRepeaterItemsSource(false /*sourceCollectionReset*/, true /*sourceCollectionChanged*/);
+
+            // Pane footer items changed. This means we might need to reevaluate the pane layout.
+            UpdatePaneLayout();
         }
 
         void OnOverflowItemsSourceCollectionChanged(object sender, object e)
@@ -693,6 +705,17 @@ namespace ModernWpf.Controls
                 closeButtonToolTip.Content = navigationCloseButtonToolTip;
             }
 
+            m_itemsContainerRow = GetTemplateChildT<RowDefinition>(c_itemsContainerRow, controlProtected);
+            m_menuItemsScrollViewer = GetTemplateChildT<FrameworkElement>(c_menuItemsScrollViewer, controlProtected);
+            m_footerItemsScrollViewer = GetTemplateChildT<FrameworkElement>(c_footerItemsScrollViewer, controlProtected);
+            m_visualItemsSeparator = GetTemplateChildT<FrameworkElement>(c_visualItemsSeparator, controlProtected);
+
+            m_itemsContainerSizeChangedRevoker?.Revoke();
+            if (GetTemplateChildT<FrameworkElement>(c_itemsContainer, controlProtected) is { } itemsContainerRow)
+            {
+                m_itemsContainerSizeChangedRevoker = new FrameworkElementSizeChangedRevoker(itemsContainerRow, OnItemsContainerSizeChanged);
+            }
+
             if (SharedHelpers.IsRS2OrHigher())
             {
                 // Get hold of the outermost grid and enable XYKeyboardNavigationMode
@@ -727,6 +750,7 @@ namespace ModernWpf.Controls
             UpdatePaneVisibility();
             UpdateVisualState();
             UpdatePaneTitleMargins();
+            UpdatePaneLayout();
         }
 
         void UpdateRepeaterItemsSource(bool forceSelectionModelUpdate)
@@ -756,6 +780,10 @@ namespace ModernWpf.Controls
                 m_selectionModelSource[0] = itemsSource;
             }
 
+            m_menuItemsCollectionChangedRevoker?.Revoke();
+            m_menuItemsSource = new InspectingDataSource(itemsSource);
+            m_menuItemsCollectionChangedRevoker = new ItemsSourceView.CollectionChangedRevoker(m_menuItemsSource, OnMenuItemsSourceCollectionChanged);
+
             if (IsTopNavigationView())
             {
                 UpdateLeftRepeaterItemSource(null);
@@ -772,6 +800,8 @@ namespace ModernWpf.Controls
         void UpdateLeftRepeaterItemSource(object items)
         {
             UpdateItemsRepeaterItemsSource(m_leftNavRepeater, items);
+            // Left pane repeater has a new items source, update pane layout.
+            UpdatePaneLayout();
         }
 
         void UpdateTopNavRepeatersItemSource(object items)
@@ -799,13 +829,12 @@ namespace ModernWpf.Controls
         void UpdateTopNavOverflowRepeaterItemsSource(object items)
         {
             m_topNavOverflowItemsCollectionChangedRevoker?.Revoke();
-            m_topNavOverflowItemsCollectionChangedRevoker = null;
 
             if (m_topNavRepeaterOverflowView is { } overflowRepeater)
             {
                 if (items != null)
                 {
-                     var itemsSource = m_topDataProvider.GetOverflowItems();
+                    var itemsSource = m_topDataProvider.GetOverflowItems();
                     overflowRepeater.ItemsSource = itemsSource;
 
                     // We listen to changes to the overflow menu item collection so we can set the visibility of the overflow button
@@ -911,7 +940,23 @@ namespace ModernWpf.Controls
             }
             else
             {
-                UpdateItemsRepeaterItemsSource(m_leftNavFooterMenuRepeater, m_selectionModelSource[1]);
+                if (m_leftNavFooterMenuRepeater is { } repeater)
+                {
+                    UpdateItemsRepeaterItemsSource(m_leftNavFooterMenuRepeater, m_selectionModelSource[1]);
+
+                    // Footer items changed and we need to recalculate the layout.
+                    // However repeater "lags" behind, so we need to force it to reevaluate itself now.
+                    repeater.InvalidateMeasure();
+                    repeater.UpdateLayout();
+
+                    // Footer items changed, so let's update the pane layout.
+                    UpdatePaneLayout();
+                }
+
+                if (m_settingsItem is { } settings)
+                {
+                    settings.BringIntoView();
+                }
             }
         }
 
@@ -1409,6 +1454,12 @@ namespace ModernWpf.Controls
             UpdateAdaptiveLayout(width);
             UpdateTitleBarPadding();
             UpdateBackAndCloseButtonsVisibility();
+            UpdatePaneLayout();
+        }
+
+        void OnItemsContainerSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdatePaneLayout();
         }
 
         // forceSetDisplayMode: On first call to SetDisplayMode, force setting to initial values
@@ -1487,6 +1538,119 @@ namespace ModernWpf.Controls
             {
                 m_initialListSizeStateSet = false;
                 ClosePane();
+            }
+        }
+
+        void UpdatePaneLayout()
+        {
+            if (!IsTopNavigationView())
+            {
+                double totalAvailableHeight;
+                {
+                    totalAvailableHeight = init();
+                    double init()
+                    {
+                        if (m_itemsContainerRow is { } paneContentRow)
+                        {
+                            // 20px is the padding between the two item lists
+                            if (m_leftNavFooterContentBorder is { } paneFooter)
+                            {
+                                return paneContentRow.ActualHeight - 29 - paneFooter.ActualHeight;
+                            }
+                            else
+                            {
+                                return paneContentRow.ActualHeight - 29;
+                            }
+                        }
+                        return 0.0;
+                    }
+                }
+
+                // Only continue if we have a positive amount of space to manage.
+                if (totalAvailableHeight > 0)
+                {
+                    // We need this value more than twice, so cache it.
+                    var totalAvailableHeightHalf = totalAvailableHeight / 2;
+
+                    double heightForMenuItems;
+                    {
+                        heightForMenuItems = init();
+                        double init()
+                        {
+                            if (m_footerItemsScrollViewer is { } footerItemsScrollViewer)
+                            {
+                                if (m_leftNavFooterMenuRepeater is { } footerItemsRepeater)
+                                {
+                                    // We know the actual height of footer items, so use that to determine how to split pane.
+                                    if (m_leftNavRepeater is { } menuItems)
+                                    {
+                                        var footersActualHeight = footerItemsRepeater.ActualHeight;
+                                        var menuItemsActualHeight = menuItems.ActualHeight;
+                                        if (totalAvailableHeight > menuItemsActualHeight + footersActualHeight)
+                                        {
+                                            // We have enough space for two so let everyone get as much as they need.
+                                            footerItemsScrollViewer.MaxHeight = footersActualHeight;
+                                            if (m_visualItemsSeparator is { } separator)
+                                            {
+                                                separator.Visibility = Visibility.Collapsed;
+                                            }
+                                            return totalAvailableHeight - footersActualHeight;
+                                        }
+                                        else if (menuItemsActualHeight <= totalAvailableHeightHalf)
+                                        {
+                                            // Footer items exceed over the half, so let's limit them.
+                                            footerItemsScrollViewer.MaxHeight = totalAvailableHeight - menuItemsActualHeight;
+                                            if (m_visualItemsSeparator is { } separator)
+                                            {
+                                                separator.Visibility = Visibility.Visible;
+                                            }
+                                            return menuItemsActualHeight;
+                                        }
+                                        else if (footersActualHeight <= totalAvailableHeightHalf)
+                                        {
+                                            // Menu items exceed over the half, so let's limit them.
+                                            footerItemsScrollViewer.MaxHeight = footersActualHeight;
+                                            if (m_visualItemsSeparator is { } separator)
+                                            {
+                                                separator.Visibility = Visibility.Visible;
+                                            }
+                                            return totalAvailableHeight - footersActualHeight;
+                                        }
+                                        else
+                                        {
+                                            // Both are more than half the height, so split evenly.
+                                            footerItemsScrollViewer.MaxHeight = totalAvailableHeightHalf;
+                                            if (m_visualItemsSeparator is { } separator)
+                                            {
+                                                separator.Visibility = Visibility.Visible;
+                                            }
+                                            return totalAvailableHeightHalf;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Couldn't determine the menuItems.
+                                        // Let's just take all the height and let the other repeater deal with it.
+                                        return totalAvailableHeight - footerItemsRepeater.ActualHeight;
+                                    }
+                                }
+                                // We have no idea how much space to occupy as we are not able to get the size of the footer repeater.
+                                // Stick with 50% as backup.
+                                footerItemsScrollViewer.MaxHeight = totalAvailableHeightHalf;
+                            }
+                            // We couldn't find a good strategy, so limit to 50% percent for the menu items.
+                            return totalAvailableHeightHalf;
+                        }
+                    }
+                    // Footer items should have precedence as that usually contains very
+                    // important items such as settings or the profile.
+
+                    if (m_menuItemsScrollViewer is { } menuItemsScrollViewer)
+                    {
+                        // Update max height for menu items.
+                        menuItemsScrollViewer.MaxHeight = heightForMenuItems;
+                    }
+                }
             }
         }
 
@@ -3207,6 +3371,18 @@ namespace ModernWpf.Controls
             GetTemplateSettings().SingleSelectionFollowsFocus = IsNavigationViewListSingleSelectionFollowsFocus();
         }
 
+        void OnMenuItemsSourceCollectionChanged(object sender, object args)
+        {
+            if (!IsTopNavigationView())
+            {
+                if (m_leftNavRepeater is { } repeater)
+                {
+                    repeater.UpdateLayout();
+                }
+                UpdatePaneLayout();
+            }
+        }
+
         void OnSelectedItemPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
 
@@ -3899,6 +4075,12 @@ namespace ModernWpf.Controls
                         TraceLoggingDescription("Developer explicitly disables the BackUI on NavigationView"));
                 }
                 */
+                // Enabling back button shifts grid instead of resizing, so let's update the layout.
+                if (m_backButton is { } backButton)
+                {
+                    backButton.UpdateLayout();
+                }
+                UpdatePaneLayout();
             }
             else if (property == MenuItemsSourceProperty)
             {
@@ -5553,10 +5735,14 @@ namespace ModernWpf.Controls
         Button m_paneToggleButton;
         SplitView m_rootSplitView;
         NavigationViewItem m_settingsItem;
+        RowDefinition m_itemsContainerRow;
+        FrameworkElement m_menuItemsScrollViewer;
+        FrameworkElement m_footerItemsScrollViewer;
         UIElement m_paneContentGrid;
         ColumnDefinition m_paneToggleButtonIconGridColumn;
         FrameworkElement m_paneTitleHolderFrameworkElement;
         FrameworkElement m_paneTitleFrameworkElement;
+        FrameworkElement m_visualItemsSeparator;
         Button m_paneSearchButton;
         Button m_backButton;
         Button m_closeButton;
@@ -5602,7 +5788,9 @@ namespace ModernWpf.Controls
 
         // Event Tokens
         bool m_layoutUpdatedToken;
+        FrameworkElementSizeChangedRevoker m_itemsContainerSizeChangedRevoker;
 
+        ItemsSourceView.CollectionChangedRevoker m_menuItemsCollectionChangedRevoker;
         ItemsSourceView.CollectionChangedRevoker m_footerItemsCollectionChangedRevoker;
 
         ItemsSourceView.CollectionChangedRevoker m_topNavOverflowItemsCollectionChangedRevoker;
@@ -5617,6 +5805,7 @@ namespace ModernWpf.Controls
         SelectionModel m_selectionModel = new SelectionModel();
         List<object> m_selectionModelSource;
 
+        ItemsSourceView m_menuItemsSource = null;
         ItemsSourceView m_footerItemsSource = null;
 
         bool m_appliedTemplate = false;
