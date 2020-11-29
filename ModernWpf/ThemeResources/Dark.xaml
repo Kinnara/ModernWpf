@@ -146,6 +146,10 @@
     <SolidColorBrush x:Key="SystemControlErrorTextForegroundBrush" Color="{m:StaticColor SystemErrorTextColor}" />
     <SolidColorBrush x:Key="SystemControlTransientBorderBrush" Color="#000000" Opacity="0.36" />
     <SolidColorBrush x:Key="SystemControlTransientBackgroundBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
+    <SolidColorBrush x:Key="SystemControlTransientAcrylicElementBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
+    <SolidColorBrush x:Key="SystemControlTransientBackgroundInverseBrush" Color="#F2F2F2" />
+    <SolidColorBrush x:Key="SystemControlBaseAcrylicBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
+    <SolidColorBrush x:Key="SystemControlDefaultBrighteningBrush" Color="#FFFFFF" Opacity="0.0419"/>
     <m:StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
 
     <!-- Acrylic Brushes -->
@@ -823,9 +827,9 @@
     <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
 
     <!-- Resources for NavigationView -->
-    <m:StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemControlAcrylicElementBrush" />
+    <m:StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemControlTransientAcrylicElementBrush" />
     <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{m:StaticColor SystemChromeMediumColor}" />
-    <m:StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemControlChromeMediumLowAcrylicElementMediumBrush" />
+    <m:StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemControlTransientAcrylicElementBrush" />
 
     <m:StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SystemControlTransparentRevealBackgroundBrush" />
     <m:StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowRevealBackgroundBrush" />
