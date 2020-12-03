@@ -218,7 +218,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 if (GetTemplateChildT<ColumnDefinition>(c_iconBoxColumnDefinitionName, this) is { } iconGridColumn)
                 {
-                    iconGridColumn.Width = new GridLength(compactPaneLength);
+                    ColumnDefinitionHelper.SetPixelWidth(iconGridColumn, compactPaneLength);
                 }
             }
         }
