@@ -1126,7 +1126,7 @@
                                                 Placement="BottomEdgeAlignedRight">
                                                 <local:Flyout.FlyoutPresenterStyle>
                                                     <Style TargetType="local:FlyoutPresenter">
-                                                        <Setter Property="Padding" Value="0,8" />
+                                                        <Setter Property="Padding" Value="{DynamicResource TopNavigationViewOverflowMenuPadding}" />
                                                         <!-- Set negative top margin to make the flyout align exactly with the button -->
                                                         <!--<Setter Property="Margin" Value="0,-4,0,0" />-->
                                                     </Style>
@@ -1473,7 +1473,7 @@
                                           Placement="RightEdgeAlignedTop">
                                 <local:Flyout.FlyoutPresenterStyle>
                                     <Style TargetType="local:FlyoutPresenter">
-                                        <Setter Property="Padding" Value="0,8" />
+                                        <Setter Property="Padding" Value="{DynamicResource TopNavigationViewOverflowMenuPadding}" />
                                         <!-- Set negative top margin to make the flyout align exactly with the button -->
                                         <!--<Setter Property="Margin" Value="0,-4,0,0" />-->
                                     </Style>

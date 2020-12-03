@@ -53,8 +53,13 @@
     <Thickness x:Key="TopNavigationViewItemOnOverflowExpandChevronMargin">-4,0,6,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemOnOverflowExpandChevronPadding">12,0,12,0</Thickness>
 
+    <!-- The two resources below must be defined at the app level in order to take effect. -->
+    <Thickness x:Key="TopNavigationViewOverflowMenuPadding">0,8</Thickness>
+    <Thickness x:Key="NavigationViewItemChildrenMenuFlyoutPadding">0,8</Thickness>
+
     <!-- The resource below must be defined at the app level in order to affect the expand/collapse chevron font size
          used in the Top NavigationView's Overflow menu. -->
+    <sys:Double x:Key="NavigationViewItemExpandedGlyphFontSize">12.0</sys:Double>
     <sys:String x:Key="NavigationViewItemExpandedGlyph">&#xE70D;</sys:String>
     <StreamGeometry x:Key="NavigationViewItemExpandedPath">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
 
