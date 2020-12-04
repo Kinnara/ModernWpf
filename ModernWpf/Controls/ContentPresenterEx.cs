@@ -112,23 +112,7 @@ namespace ModernWpf.Controls
         /// DependencyProperty for <see cref="LineHeight" /> property.
         /// </summary>
         public static readonly DependencyProperty LineHeightProperty =
-                Block.LineHeightProperty.AddOwner(
-                        typeof(ContentPresenterEx),
-                        new FrameworkPropertyMetadata(
-                                new PropertyChangedCallback(OnLineHeightChanged)));
-
-        private static void OnLineHeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var ctrl = (ContentPresenterEx)d;
-            if (ctrl.TextBlock != null)
-            {
-                ctrl.TextBlock.LineHeight = (double)e.NewValue;
-            }
-            else if (ctrl.AccessText != null)
-            {
-                ctrl.AccessText.LineHeight = (double)e.NewValue;
-            }
-        }
+                Block.LineHeightProperty.AddOwner(typeof(ContentPresenterEx));
 
         /// <summary>
         /// The LineHeight property specifies the height of each generated line box.
@@ -144,10 +128,7 @@ namespace ModernWpf.Controls
         /// DependencyProperty for <see cref="LineStackingStrategy" /> property.
         /// </summary>
         public static readonly DependencyProperty LineStackingStrategyProperty =
-                Block.LineStackingStrategyProperty.AddOwner(
-                        typeof(ContentPresenterEx),
-                        new FrameworkPropertyMetadata(
-                                new PropertyChangedCallback(OnLineStackingStrategyChanged)));
+                Block.LineStackingStrategyProperty.AddOwner(typeof(ContentPresenterEx));
 
         /// <summary>
         /// The LineStackingStrategy property specifies how lines are placed
@@ -156,19 +137,6 @@ namespace ModernWpf.Controls
         {
             get { return (LineStackingStrategy)GetValue(LineStackingStrategyProperty); }
             set { SetValue(LineStackingStrategyProperty, value); }
-        }
-
-        private static void OnLineStackingStrategyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var ctrl = (ContentPresenterEx)d;
-            if (ctrl.TextBlock != null)
-            {
-                ctrl.TextBlock.LineStackingStrategy = (LineStackingStrategy)e.NewValue;
-            }
-            else if (ctrl.AccessText != null)
-            {
-                ctrl.AccessText.LineStackingStrategy = (LineStackingStrategy)e.NewValue;
-            }
         }
 
         /// <summary>
@@ -218,8 +186,6 @@ namespace ModernWpf.Controls
             {
                 if (_textBlock != null)
                 {
-                    _textBlock.ClearValue(TextBlock.LineHeightProperty);
-                    _textBlock.ClearValue(TextBlock.LineStackingStrategyProperty);
                     _textBlock.ClearValue(TextBlock.TextWrappingProperty);
                 }
 
@@ -227,8 +193,6 @@ namespace ModernWpf.Controls
 
                 if (_textBlock != null)
                 {
-                    _textBlock.LineHeight = LineHeight;
-                    _textBlock.LineStackingStrategy = LineStackingStrategy;
                     _textBlock.TextWrapping = TextWrapping;
                 }
             }
@@ -242,8 +206,6 @@ namespace ModernWpf.Controls
             {
                 if (_accessText != null)
                 {
-                    _accessText.ClearValue(AccessText.LineHeightProperty);
-                    _accessText.ClearValue(AccessText.LineStackingStrategyProperty);
                     _accessText.ClearValue(AccessText.TextWrappingProperty);
                 }
 
@@ -251,8 +213,6 @@ namespace ModernWpf.Controls
 
                 if (_accessText != null)
                 {
-                    _accessText.LineHeight = LineHeight;
-                    _accessText.LineStackingStrategy = LineStackingStrategy;
                     _accessText.TextWrapping = TextWrapping;
                 }
             }
