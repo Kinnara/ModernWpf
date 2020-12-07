@@ -89,8 +89,8 @@ namespace ModernWpf.Controls
         {
             base.OnApplyTemplate();
 
-            var spinDownName = Strings.NumberBoxDownSpinButtonName;
-            var spinUpName = Strings.NumberBoxUpSpinButtonName;
+            var spinDownName = ResourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_NumberBoxDownSpinButtonName);
+            var spinUpName = ResourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_NumberBoxUpSpinButtonName);
 
             if (GetTemplateChild(c_numberBoxDownButtonName) is RepeatButton spinDown)
             {

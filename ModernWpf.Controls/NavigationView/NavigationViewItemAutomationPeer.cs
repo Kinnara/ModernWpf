@@ -38,7 +38,7 @@ namespace ModernWpf.Automation.Peers
                 // NB: It'll be up to the app to determine the automation label for
                 // when they're using a PlaceholderValue vs. Value.
 
-                returnHString = Strings.NavigationViewItemDefaultControlName;
+                returnHString = ResourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_NavigationViewItemDefaultControlName);
             }
 
             return returnHString;

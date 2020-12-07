@@ -182,7 +182,7 @@ namespace ModernWpf.Controls
 
             if (m_secondaryButton != null)
             {
-                var secondaryName = Strings.SplitButtonSecondaryButtonName;
+                var secondaryName = ResourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_SplitButtonSecondaryButtonName);
                 AutomationProperties.SetName(m_secondaryButton, secondaryName);
 
                 m_secondaryButton.Click += OnClickSecondary;

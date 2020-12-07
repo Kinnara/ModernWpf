@@ -21,7 +21,7 @@ namespace ModernWpf.Automation.Peers
 
         protected override string GetLocalizedControlTypeCore()
         {
-            return Strings.RatingLocalizedControlType;
+            return ResourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_RatingLocalizedControlType);
         }
 
         // Properties.
@@ -41,16 +41,16 @@ namespace ModernWpf.Automation.Peers
                     double placeholderValue = GetRatingControl().PlaceholderValue;
                     if (placeholderValue == -1)
                     {
-                        valueString = Strings.RatingUnset;
+                        valueString = ResourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_RatingUnset);
                     }
                     else
                     {
-                        valueString = GenerateValue_ValueString(Strings.CommunityRatingString, placeholderValue);
+                        valueString = GenerateValue_ValueString(ResourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_CommunityRatingString), placeholderValue);
                     }
                 }
                 else
                 {
-                    valueString = GenerateValue_ValueString(Strings.BasicRatingString, ratingValue);
+                    valueString = GenerateValue_ValueString(ResourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_BasicRatingString), ratingValue);
                 }
 
                 return valueString;

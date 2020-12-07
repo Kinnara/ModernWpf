@@ -7,20 +7,20 @@ namespace WinUIResourcesConverter
 {
     internal class RESXConverter
     {
-        internal static bool TryConvertReswToResx(ResourcesFile resourcesFile, string sourceDirectory, string destinationDirectory)
+        internal static bool TryConvertReswToResx(ResourcesFile resourcesFile, string sourceDirectory, string destinationDirectory, CodeGen codeGen)
         {
             var reswFile = @$"{sourceDirectory}\{resourcesFile.LanguageName}\{ResourcesFile.DefaultResourcesFileName}.resw";
             var resxFile = GetValidResxFileName(destinationDirectory, resourcesFile.LanguageName);
 
             if (File.Exists(reswFile))
             {
-                return TryConvertReswToResxImpl(reswFile, resxFile);
+                return TryConvertReswToResxImpl(reswFile, resxFile, codeGen);
             }
 
             return false;
         }
 
-        internal static bool TryConvertReswToResxImpl(string reswFile, string resxFile)
+        internal static bool TryConvertReswToResxImpl(string reswFile, string resxFile, CodeGen codeGen)
         {
             ResXResourceReader resourceReader = new(reswFile) { UseResXDataNodes = true };
             ResXResourceWriter resourceWriter = new(resxFile);
@@ -38,6 +38,8 @@ namespace WinUIResourcesConverter
                     };
 
                     resourceWriter.AddResource(writeValue);
+
+                    codeGen?.AppendResourceMap(readValue.Name);
                 }
 
                 resourceReader.Close();
@@ -72,9 +74,14 @@ namespace WinUIResourcesConverter
 
         internal static string GetValidResxFileName(string destinationDirectory, string languageName)
         {
-            return string.Equals(languageName, "en-us", System.StringComparison.OrdinalIgnoreCase) ?
+            return IsDefaultLanguage(languageName) ?
                 @$"{destinationDirectory}\{ResourcesFile.DefaultResourcesFileName}.resx" :
                 @$"{destinationDirectory}\{ResourcesFile.DefaultResourcesFileName}.{languageName}.resx";
+        }
+
+        internal static bool IsDefaultLanguage(string languageName)
+        {
+            return string.Equals(languageName, "en-us", System.StringComparison.OrdinalIgnoreCase);
         }
     }
 }

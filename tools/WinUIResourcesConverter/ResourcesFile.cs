@@ -7,12 +7,15 @@ namespace WinUIResourcesConverter
     {
         internal const string DefaultResourcesFileName = "Resources";
 
-        public ResourcesFile(string langName)
+        public ResourcesFile(string languageName)
         {
-            LanguageName = langName;
+            LanguageName = languageName;
+            IsDefaultResource = RESXConverter.IsDefaultLanguage(languageName);
         }
 
         public string LanguageName { get; }
+
+        public bool IsDefaultResource { get; }
 
         private bool hasConverted;
 

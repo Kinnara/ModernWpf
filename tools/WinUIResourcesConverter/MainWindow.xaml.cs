@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Ookii.Dialogs.Wpf;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -84,6 +85,11 @@ namespace WinUIResourcesConverter
                     Directory.CreateDirectory(destinationDirectory);
                 }
 
+                string controlName = new DirectoryInfo(destinationDirectory).Parent.Name;
+
+                CodeGen codeGen = new(controlName);
+                codeGen.AppendFirstPart();
+
                 ResourcesFile[] resFiles = null;
 
                 Dispatcher.Invoke(() =>
@@ -95,7 +101,7 @@ namespace WinUIResourcesConverter
 
                 foreach (var resFile in resFiles)
                 {
-                    resFile.HasConverted = RESXConverter.TryConvertReswToResx(resFile, sourceDirectory, destinationDirectory);
+                    resFile.HasConverted = RESXConverter.TryConvertReswToResx(resFile, sourceDirectory, destinationDirectory, resFile.IsDefaultResource ? codeGen : null);
                     convertedResFiles++;
 
                     Dispatcher.Invoke(() =>
@@ -103,6 +109,41 @@ namespace WinUIResourcesConverter
                         ProgressBar1.Value = convertedResFiles;
                     });
                 }
+
+                Dispatcher.Invoke(() =>
+                {
+                    TbCodeGen.Text = codeGen.GeneratedCode;
+                });
+            }
+        }
+
+        private void SelectSourceDirectory(object sender, RoutedEventArgs e)
+        {
+            var folderBrowserDialog = new VistaFolderBrowserDialog()
+            {
+                ShowNewFolderButton = true,
+                Description = "Select the source directory",
+                UseDescriptionForTitle = true
+            };
+            var result = folderBrowserDialog.ShowDialog();
+            if (result.HasValue && result.Value == true)
+            {
+                TbSourceDirectory.Text = folderBrowserDialog.SelectedPath;
+            }
+        }
+
+        private void SelectDestinationDirectory(object sender, RoutedEventArgs e)
+        {
+            var folderBrowserDialog = new VistaFolderBrowserDialog()
+            {
+                ShowNewFolderButton = true,
+                Description = "Select the destination directory",
+                UseDescriptionForTitle = true
+            };
+            var result = folderBrowserDialog.ShowDialog();
+            if (result.HasValue && result.Value == true)
+            {
+                TbDestinationDirectory.Text = folderBrowserDialog.SelectedPath;
             }
         }
     }
