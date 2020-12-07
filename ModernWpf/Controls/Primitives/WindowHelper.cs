@@ -72,9 +72,32 @@ namespace ModernWpf.Controls.Primitives
                     window.ClearValue(FrameworkElement.StyleProperty);
                 }
 
-                FixSizeToContent(window);
+                SetFixSizeToContent(window, true);
             }
         }
+
+        #endregion
+
+
+        #region FixSizeToContent
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static readonly DependencyProperty FixSizeToContentProperty =
+            DependencyProperty.RegisterAttached(
+                "FixSizeToContent",
+                typeof(bool),
+                typeof(WindowHelper),
+                new PropertyMetadata(
+                    (d, e) => FixSizeToContent((Window)d)
+                ));
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static bool GetFixSizeToContent(Window window)
+            => (bool)window.GetValue(FixSizeToContentProperty);
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static void SetFixSizeToContent(Window window, bool value)
+            => window.SetValue(FixSizeToContentProperty, value);
 
         /// <summary>
         ///   Work around extra space when using Window.SizeToContent. Fixes
@@ -94,6 +117,7 @@ namespace ModernWpf.Controls.Primitives
         }
 
         #endregion
+
 
         #region FixMaximizedWindow
 
