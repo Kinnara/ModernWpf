@@ -133,7 +133,6 @@
                     <Grid SnapsToDevicePixels="True">
                         <Border
                             x:Name="BorderElement"
-                            Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
