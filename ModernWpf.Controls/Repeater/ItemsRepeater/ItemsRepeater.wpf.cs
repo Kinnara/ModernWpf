@@ -17,7 +17,8 @@ namespace ModernWpf.Controls
                     var newDesiredSize = child.DesiredSize;
                     var renderSize = child.RenderSize;
 
-                    if (newDesiredSize.Height != oldDesiredSize.Height && renderSize.Height == oldDesiredSize.Height ||
+                    if (oldDesiredSize == s_zeroSize || newDesiredSize == s_zeroSize ||
+                        newDesiredSize.Height != oldDesiredSize.Height && renderSize.Height == oldDesiredSize.Height ||
                         newDesiredSize.Width != oldDesiredSize.Width && renderSize.Width == oldDesiredSize.Width)
                     {
                         base.OnChildDesiredSizeChanged(child);
@@ -30,5 +31,7 @@ namespace ModernWpf.Controls
         {
             return new RepeaterUIElementCollection(this, logicalParent);
         }
+
+        private static readonly Size s_zeroSize = new Size();
     }
 }
