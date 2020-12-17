@@ -1163,12 +1163,15 @@ namespace ModernWpf.Controls
 
             protected override Size MeasureOverride(Size constraint)
             {
+                var desiredSize = AdornedElement.RenderSize;
+                constraint = desiredSize;
                 Child?.Measure(constraint);
-                return constraint;
+                return desiredSize;
             }
 
-            protected override Size ArrangeOverride(Size finalSize)
+            protected override Size ArrangeOverride(Size size)
             {
+                var finalSize = base.ArrangeOverride(size);
                 Child?.Arrange(new Rect(new Point(), finalSize));
                 return finalSize;
             }
