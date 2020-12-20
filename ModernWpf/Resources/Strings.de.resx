@@ -212,7 +212,7 @@
     <comment>A simple description of the control for UIA</comment>
   </data>
   <data name="RatingUnset" xml:space="preserve">
-    <value>Keine Bewertung</value>
+    <value>Bewertung nicht gesetzt</value>
     <comment>This text is used to show the number of stars none are selected.</comment>
   </data>
   <data name="SplitButtonSecondaryButtonName" xml:space="preserve">
