@@ -28,14 +28,20 @@
                         x:Name="LayoutRoot"
                         SnapsToDevicePixels="True">
                         <Grid.Resources>
+                            <primitives:BindingProxy
+                                x:Key="SystemControlErrorTextForegroundBrushProxy"
+                                Value="{DynamicResource SystemControlErrorTextForegroundBrush}" />
                             <Storyboard x:Key="UpdatingToDeterminateStoryboard">
-                                <!-- Using a nested Storyboard to work around https://stackoverflow.com/questions/5002501 -->
-                                <Storyboard>
-                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DeterminateProgressBarIndicator" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
-                                        <DiscreteDoubleKeyFrame KeyTime="0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IndicatorLengthDelta}" />
-                                        <SplineDoubleKeyFrame KeyTime="0:0:0.367" Value="0" KeySpline="0.1,0.9 0.2,1" />
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DeterminateProgressBarIndicator" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                                    <DiscreteDoubleKeyFrame KeyTime="0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IndicatorLengthDelta}" />
+                                    <SplineDoubleKeyFrame KeyTime="0:0:0.367" Value="0" KeySpline="0.1,0.9 0.2,1" />
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                            <Storyboard x:Key="UpdatingErrorToErrorStoryboard">
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DeterminateProgressBarIndicator" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
+                                    <DiscreteDoubleKeyFrame KeyTime="0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IndicatorLengthDelta}" />
+                                    <SplineDoubleKeyFrame KeyTime="0:0:0.367" Value="0" KeySpline="0.1,0.9 0.2,1" />
+                                </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                             <Storyboard x:Key="IndeterminateStoryboard" RepeatBehavior="Forever">
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateProgressBarIndicator" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
@@ -87,7 +93,7 @@
                                         Value="{DynamicResource SystemAccentColor}"
                                         KeyTime="0:0:2.75" />
                                     <LinearColorKeyFrame
-                                        Value="{DynamicResource SystemErrorTextColor}"
+                                        Value="{Binding Source={StaticResource SystemControlErrorTextForegroundBrushProxy}, Path=Value.Color}"
                                         KeyTime="0:0:3" />
                                 </ColorAnimationUsingKeyFrames>
                                 <ColorAnimationUsingKeyFrames
@@ -106,7 +112,7 @@
                                 <ColorAnimation
                                     Storyboard.TargetName="DeterminateProgressBarIndicator"
                                     Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
-                                    To="{DynamicResource SystemErrorTextColor}"
+                                    To="{Binding Source={StaticResource SystemControlErrorTextForegroundBrushProxy}, Path=Value.Color}"
                                     Duration="0:0:0.25" />
                                 <ColorAnimation
                                     Storyboard.TargetName="ProgressBarRoot"
@@ -167,6 +173,7 @@
 
                                 <VisualStateGroup.Transitions>
                                     <VisualTransition From="Updating" To="Determinate" Storyboard="{StaticResource UpdatingToDeterminateStoryboard}" />
+                                    <VisualTransition From="UpdatingError" To="Error" Storyboard="{StaticResource UpdatingErrorToErrorStoryboard}" />
                                     <VisualTransition From="Paused" To="Determinate">
                                         <Storyboard>
                                             <Storyboard>
@@ -190,6 +197,20 @@
                                 </VisualStateGroup.Transitions>
                                 <VisualState x:Name="Determinate" />
                                 <VisualState x:Name="Updating" />
+                                <VisualState x:Name="UpdatingError">
+                                    <Storyboard>
+                                        <ColorAnimation
+                                            Storyboard.TargetName="DeterminateProgressBarIndicator"
+                                            Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+                                            To="{Binding Source={StaticResource SystemControlErrorTextForegroundBrushProxy}, Path=Value.Color}"
+                                            Duration="0:0:0.0" />
+                                        <ColorAnimation
+                                            Storyboard.TargetName="ProgressBarRoot"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            To="{DynamicResource SystemControlErrorBackgroundColor}"
+                                            Duration="0:0:0.0" />
+                                    </Storyboard>
+                                </VisualState>
                                 <VisualState x:Name="Indeterminate" Storyboard="{StaticResource IndeterminateStoryboard}" />
                                 <VisualState x:Name="IndeterminateError" Storyboard="{StaticResource IndeterminateErrorStoryboard}" />
                                 <VisualState x:Name="Error" Storyboard="{StaticResource ErrorStoryboard}" />

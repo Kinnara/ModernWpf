@@ -270,31 +270,38 @@ namespace ModernWpf.Controls
 
         private void UpdateStates(bool useTransitions = true)
         {
-            if (ShowError && IsIndeterminate)
+            if (IsIndeterminate)
             {
-                VisualStateManager.GoToState(this, s_IndeterminateErrorStateName, useTransitions);
-            }
-            else if (ShowError)
-            {
-                VisualStateManager.GoToState(this, s_ErrorStateName, useTransitions);
-            }
-            else if (ShowPaused && IsIndeterminate)
-            {
-                VisualStateManager.GoToState(this, s_IndeterminatePausedStateName, useTransitions);
-            }
-            else if (ShowPaused)
-            {
-                VisualStateManager.GoToState(this, s_PausedStateName, useTransitions);
-            }
-            else if (IsIndeterminate)
-            {
+                if (ShowError)
+                {
+                    VisualStateManager.GoToState(this, s_IndeterminateErrorStateName, true);
+                }
+                else if (ShowPaused)
+                {
+                    VisualStateManager.GoToState(this, s_IndeterminatePausedStateName, true);
+                }
+                else
+                {
+                    VisualStateManager.GoToState(this, s_IndeterminateStateName, true);
+                }
                 UpdateWidthBasedTemplateSettings();
-                VisualStateManager.GoToState(this, s_IndeterminateStateName, useTransitions);
             }
-            else if (!IsIndeterminate)
+            else
             {
-                VisualStateManager.GoToState(this, s_DeterminateStateName, useTransitions);
+                if (ShowError)
+                {
+                    VisualStateManager.GoToState(this, s_ErrorStateName, true);
+                }
+                else if (ShowPaused)
+                {
+                    VisualStateManager.GoToState(this, s_PausedStateName, true);
+                }
+                else
+                {
+                    VisualStateManager.GoToState(this, s_DeterminateStateName, true);
+                }
             }
+
         }
 
         private void SetProgressBarIndicatorWidth()
@@ -315,7 +322,14 @@ namespace ModernWpf.Controls
 
                     // Adds "Updating" state in between to trigger RepositionThemeAnimation Visual Transition
                     // in ProgressBar.xaml when reverting back to previous state
-                    VisualStateManager.GoToState(this, s_UpdatingStateName, true);
+                    if (ShowError)
+                    {
+                        VisualStateManager.GoToState(this, s_UpdatingWithErrorStateName, true);
+                    }
+                    else
+                    {
+                        VisualStateManager.GoToState(this, s_UpdatingStateName, true);
+                    }
 
                     if (IsIndeterminate)
                     {
@@ -473,5 +487,6 @@ namespace ModernWpf.Controls
         const string s_IndeterminatePausedStateName = "IndeterminatePaused";
         const string s_DeterminateStateName = "Determinate";
         const string s_UpdatingStateName = "Updating";
+        const string s_UpdatingWithErrorStateName = "UpdatingError";
     }
 }
