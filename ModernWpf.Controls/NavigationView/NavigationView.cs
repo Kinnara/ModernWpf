@@ -1142,6 +1142,11 @@ namespace ModernWpf.Controls
             while (!IsRootItemsRepeater(parentIR))
             {
                 currentNvib = GetParentNavigationViewItemForContainer(currentNvib);
+                if (currentNvib is null)
+                {
+                    return null;
+                }
+
                 parentIR = GetParentItemsRepeaterForContainer(currentNvib);
             }
             return parentIR;
