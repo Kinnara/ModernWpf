@@ -425,7 +425,7 @@ namespace ModernWpf.Controls
             // to insert items.
             int lastRealizedDataIndex = m_firstRealizedDataIndex + GetRealizedElementCount() - 1;
             int newStartingIndex = index;
-            if (newStartingIndex > m_firstRealizedDataIndex &&
+            if (newStartingIndex >= m_firstRealizedDataIndex &&
                 newStartingIndex <= lastRealizedDataIndex)
             {
                 // Inserted within the realized range
