@@ -8,6 +8,8 @@
 
     <Style TargetType="local:AutoSuggestBox">
         <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
         <Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
@@ -48,6 +50,8 @@
                             FontFamily="{TemplateBinding FontFamily}"
                             FontWeight="{TemplateBinding FontWeight}"
                             FontStretch="{TemplateBinding FontStretch}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                             Canvas.ZIndex="0"
                             Margin="0"
                             FocusVisualStyle="{TemplateBinding FocusVisualStyle}"
