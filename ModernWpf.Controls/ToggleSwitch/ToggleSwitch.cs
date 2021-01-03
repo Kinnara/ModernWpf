@@ -1,12 +1,14 @@
-﻿using ModernWpf.Controls.Primitives;
-using System;
-using System.ComponentModel;
+﻿using System;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using ModernWpf.Automation.Peers;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -319,9 +321,21 @@ namespace ModernWpf.Controls
             UpdateVisualStates(false);
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ToggleSwitchAutomationPeer(this);
+        }
+
         protected virtual void OnToggled()
         {
             RaiseEvent(new RoutedEventArgs(ToggledEvent));
+
+            if (UIElementAutomationPeer.FromElement(this) is { } peer)
+            {
+                var newValue = IsOn ? ToggleState.On : ToggleState.Off;
+                var oldValue = (newValue == ToggleState.On) ? ToggleState.Off : ToggleState.On;
+                peer.RaisePropertyChangedEvent(TogglePatternIdentifiers.ToggleStateProperty, oldValue, newValue);
+            }
         }
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
@@ -465,7 +479,7 @@ namespace ModernWpf.Controls
             VisualStateManager.GoToState(this, IsOn ? OnContentState : OffContentState, useTransitions);
         }
 
-        private void Toggle()
+        internal void Toggle()
         {
             SetCurrentValue(IsOnProperty, !IsOn);
         }
