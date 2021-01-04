@@ -55,7 +55,8 @@
                                 CommandTarget="{TemplateBinding BackButtonCommandTarget}"
                                 IsActive="{TemplateBinding IsActive}"
                                 Visibility="Collapsed"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                AutomationProperties.Name="Back" />
                         </StackPanel>
 
                         <StackPanel
@@ -97,7 +98,8 @@
                                 ContentTemplate="{StaticResource IconTemplate}"
                                 IsActive="{TemplateBinding IsActive}"
                                 Style="{TemplateBinding ButtonStyle}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                AutomationProperties.Name="Minimize" />
 
                             <primitives:TitleBarButton
                                 x:Name="MaximizeRestoreButton"
@@ -106,7 +108,8 @@
                                 ContentTemplate="{StaticResource IconTemplate}"
                                 IsActive="{TemplateBinding IsActive}"
                                 Style="{TemplateBinding ButtonStyle}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                AutomationProperties.Name="Maximize" />
 
                             <primitives:TitleBarButton
                                 x:Name="CloseButton"
@@ -119,7 +122,8 @@
                                 HoverForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
                                 PressedBackground="#F1707A"
                                 PressedForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                AutomationProperties.Name="Close" />
                         </StackPanel>
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -153,6 +157,7 @@
                         <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="Maximized">
                             <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeRestore}" />
                             <Setter TargetName="MaximizeRestoreButton" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
+                            <Setter TargetName="MaximizeRestoreButton" Property="AutomationProperties.Name" Value="Restore" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true">
                             <Setter TargetName="PART_BackButton" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
