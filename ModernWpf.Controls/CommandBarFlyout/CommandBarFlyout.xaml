@@ -753,7 +753,7 @@
                             <Border.Clip>
                                 <RectangleGeometry
                                     x:Name="OuterContentRootClip"
-                                    Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ContentClipRect}">
+                                    Rect="{Binding Source={StaticResource TemplateSettingsProxy}, Path=FlyoutTemplateSettings.ContentClipRect}">
                                     <RectangleGeometry.Transform>
                                         <TranslateTransform x:Name="OuterContentRootClipTransform" />
                                     </RectangleGeometry.Transform>
