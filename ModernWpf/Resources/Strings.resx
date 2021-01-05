@@ -125,37 +125,13 @@
     <value>More app bar</value>
     <comment>332-5305</comment>
   </data>
+  <data name="AppBarMoreButtonOpenToolTip" xml:space="preserve">
+    <value>See less</value>
+    <comment>320-5109</comment>
+  </data>
   <data name="IgnoreMenuItemLabel" xml:space="preserve">
     <value>Ignore</value>
     <comment>5580</comment>
-  </data>
-  <data name="ProofingMenuItemLabel" xml:space="preserve">
-    <value>Proofing</value>
-    <comment>The label for the text context menu item that provides the proofing menu.</comment>
-  </data>
-  <data name="TextCommandLabelCopy" xml:space="preserve">
-    <value>Copy</value>
-    <comment>5035</comment>
-  </data>
-  <data name="TextCommandLabelCut" xml:space="preserve">
-    <value>Cut</value>
-    <comment>5034</comment>
-  </data>
-  <data name="TextCommandLabelPaste" xml:space="preserve">
-    <value>Paste</value>
-    <comment>5036</comment>
-  </data>
-  <data name="TextCommandLabelRedo" xml:space="preserve">
-    <value>Redo</value>
-    <comment>5038</comment>
-  </data>
-  <data name="TextCommandLabelSelectAll" xml:space="preserve">
-    <value>Select All</value>
-    <comment>5039</comment>
-  </data>
-  <data name="TextCommandLabelUndo" xml:space="preserve">
-    <value>Undo</value>
-    <comment>5037</comment>
   </data>
   <data name="ToggleSwitchOff" xml:space="preserve">
     <value>Off</value>
@@ -164,25 +140,5 @@
   <data name="ToggleSwitchOn" xml:space="preserve">
     <value>On</value>
     <comment>Default text for "On" for ToggleSwitch.</comment>
-  </data>
-  <data name="AppBarMoreButtonOpenToolTip" xml:space="preserve">
-    <value>See less</value>
-    <comment>320-5109</comment>
-  </data>
-  <data name="ProgressBarErrorStatus" xml:space="preserve">
-    <value>Error</value>
-    <comment>This is used to announce Error state.</comment>
-  </data>
-  <data name="ProgressBarIndeterminateStatus" xml:space="preserve">
-    <value>Busy</value>
-    <comment>This is used to announce Indeterminate state.</comment>
-  </data>
-  <data name="ProgressBarPausedStatus" xml:space="preserve">
-    <value>Paused</value>
-    <comment>This is used to announce Paused state.</comment>
-  </data>
-  <data name="ProgressRingIndeterminateStatus" xml:space="preserve">
-    <value>Busy</value>
-    <comment>This is used to announce Indeterminate state.</comment>
   </data>
 </root>

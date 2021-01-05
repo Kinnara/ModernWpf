@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -85,9 +86,33 @@ namespace WinUIResourcesConverter
                     Directory.CreateDirectory(destinationDirectory);
                 }
 
-                string controlName = new DirectoryInfo(destinationDirectory).Parent.Name;
+                DirectoryInfo destination = new(destinationDirectory);
 
-                CodeGen codeGen = new(controlName);
+                string controlName = destination.Parent.Name;
+
+                string GetRelativePath(DirectoryInfo directory)
+                {
+                    StringBuilder stringBuilder = new();
+
+                    bool IsProjectRoot(DirectoryInfo dir)
+                    {
+                        return string.Equals(dir.Name, nameof(ModernWpf), System.StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(dir.Name, nameof(ModernWpf) + "." + nameof(ModernWpf.Controls), System.StringComparison.OrdinalIgnoreCase);
+                    }
+
+                    while (!IsProjectRoot(directory))
+                    {
+                        stringBuilder.Insert(0, directory.Name + ".");
+                        directory = directory.Parent;
+                    }
+
+                    stringBuilder.Insert(0, directory.Name + ".");
+                    directory = directory.Parent;
+
+                    return stringBuilder.ToString();
+                }
+
+                CodeGen codeGen = new(controlName, GetRelativePath(destination.Parent.Parent));
                 codeGen.AppendFirstPart();
 
                 ResourcesFile[] resFiles = null;

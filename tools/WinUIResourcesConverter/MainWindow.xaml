@@ -68,7 +68,7 @@
                 <Expander IsExpanded="False" Header="Generated Code" Background="{DynamicResource NavigationViewExpandedPaneBackground}"
                           Padding="10" VerticalAlignment="Bottom" ExpandDirection="Up">
                     <TextBox x:Name="TbCodeGen" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"
-                             ui:ControlHelper.Description="Append these to the ModernWpf.Controls\Common\ResourceAccessor.cs in the proper places" />
+                             ui:ControlHelper.Description="Append these to the ModernWpf\Common\ResourceAccessor.cs in the proper places" />
                 </Expander>
             </Grid>
             <ui:SplitView.Pane>

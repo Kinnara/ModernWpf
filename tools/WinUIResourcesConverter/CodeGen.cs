@@ -4,19 +4,22 @@ namespace WinUIResourcesConverter
 {
     internal class CodeGen
     {
-        public CodeGen(string controlName)
+        public CodeGen(string controlName, string relativePath)
         {
             ControlName = controlName;
+            RelativePath = relativePath;
         }
 
         public StringBuilder StringBuilder { get; } = new();
 
         public string ControlName { get; }
 
+        public string RelativePath { get; }
+
         public void AppendFirstPart()
         {
             StringBuilder.AppendLine("...");
-            StringBuilder.AppendLine(@$"private const string {ControlName}ResourcesName = ""ModernWpf.Controls.{ControlName}.Strings.Resources"";");
+            StringBuilder.AppendLine(@$"private const string {ControlName}ResourcesName = ""{RelativePath}{ControlName}.Strings.Resources"";");
             StringBuilder.AppendLine("...");
             StringBuilder.AppendLine();
             StringBuilder.AppendLine($"// {ControlName} resources");

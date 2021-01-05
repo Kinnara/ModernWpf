@@ -6,6 +6,7 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using ModernWpf.Controls;
+using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Automation.Peers
 {
@@ -17,11 +18,12 @@ namespace ModernWpf.Automation.Peers
         public RatingControlAutomationPeer(RatingControl owner)
             : base(owner)
         {
+            ResourceHelper.Initialize();
         }
 
         protected override string GetLocalizedControlTypeCore()
         {
-            return ResourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_RatingLocalizedControlType);
+            return ResourceAccessor.GetLocalizedStringResource(SR_RatingLocalizedControlType);
         }
 
         // Properties.
@@ -41,16 +43,16 @@ namespace ModernWpf.Automation.Peers
                     double placeholderValue = GetRatingControl().PlaceholderValue;
                     if (placeholderValue == -1)
                     {
-                        valueString = ResourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_RatingUnset);
+                        valueString = ResourceAccessor.GetLocalizedStringResource(SR_RatingUnset);
                     }
                     else
                     {
-                        valueString = GenerateValue_ValueString(ResourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_CommunityRatingString), placeholderValue);
+                        valueString = GenerateValue_ValueString(ResourceAccessor.GetLocalizedStringResource(SR_CommunityRatingString), placeholderValue);
                     }
                 }
                 else
                 {
-                    valueString = GenerateValue_ValueString(ResourceAccessor.GetLocalizedStringResource(ResourceAccessor.SR_BasicRatingString), ratingValue);
+                    valueString = GenerateValue_ValueString(ResourceAccessor.GetLocalizedStringResource(SR_BasicRatingString), ratingValue);
                 }
 
                 return valueString;
