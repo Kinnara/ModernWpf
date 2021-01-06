@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup Condition="'$(PackageId)' != ''">
-    <Version>0.9.3-preview.201204.0</Version>
+    <Version>0.9.3</Version>
     <Authors>Yimeng Wu</Authors>
     <Product>ModernWPF UI Library</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
