@@ -155,6 +155,8 @@
                             Foreground="{TemplateBinding primitives:ControlHelper.PlaceholderForeground}"
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             Text="{TemplateBinding primitives:ControlHelper.PlaceholderText}"
                             TextAlignment="{TemplateBinding TextAlignment}"
                             TextWrapping="{TemplateBinding TextWrapping}"
