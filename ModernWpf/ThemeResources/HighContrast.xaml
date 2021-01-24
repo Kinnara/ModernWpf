@@ -145,10 +145,10 @@
     <SolidColorBrush x:Key="SystemControlTransparentBrush" Color="Transparent" />
     <SolidColorBrush x:Key="SystemControlErrorTextForegroundBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="SystemControlTransientBorderBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
-    <SolidColorBrush x:Key="SystemControlTransientBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
-    <SolidColorBrush x:Key="SystemControlTransientAcrylicElementBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
-    <SolidColorBrush x:Key="SystemControlTransientBackgroundInverseBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
-    <SolidColorBrush x:Key="SystemControlBaseAcrylicBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
+    <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
     <SolidColorBrush x:Key="SystemControlDefaultBrighteningBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
     <m:StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
 
@@ -827,9 +827,9 @@
     <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
 
     <!-- Resources for NavigationView -->
-    <m:StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemControlTransientAcrylicElementBrush" />
+    <m:StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
     <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{m:ThemeResource SystemColorWindowColor}" />
-    <m:StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemControlTransientAcrylicElementBrush" />
+    <m:StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
 
     <m:StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <m:StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowRevealBackgroundBrush" />

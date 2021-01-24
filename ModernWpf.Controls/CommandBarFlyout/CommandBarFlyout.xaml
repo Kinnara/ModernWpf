@@ -945,7 +945,7 @@
     </Style>
 
     <Style TargetType="primitives:CommandBarFlyoutCommandBar">
-        <Setter Property="Background" Value="{DynamicResource SystemControlTransientAcrylicElementBrush}" />
+        <Setter Property="Background" Value="{DynamicResource AcrylicInAppFillColorDefaultBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource SystemControlTransientBorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderThemeThickness}" />

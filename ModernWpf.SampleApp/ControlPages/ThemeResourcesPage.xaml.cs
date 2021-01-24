@@ -253,7 +253,7 @@ namespace ModernWpf.SampleApp.ControlPages
             "SystemControlTransparentBrush",
             "SystemControlErrorTextForegroundBrush",
             "SystemControlTransientBorderBrush",
-            "SystemControlTransientBackgroundBrush",
+            "AcrylicBackgroundFillColorDefaultBrush",
             "SystemControlDescriptionTextForegroundBrush"
         };
 

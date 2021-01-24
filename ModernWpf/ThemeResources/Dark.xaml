@@ -145,10 +145,10 @@
     <SolidColorBrush x:Key="SystemControlTransparentBrush" Color="Transparent" />
     <SolidColorBrush x:Key="SystemControlErrorTextForegroundBrush" Color="{m:StaticColor SystemErrorTextColor}" />
     <SolidColorBrush x:Key="SystemControlTransientBorderBrush" Color="#000000" Opacity="0.36" />
-    <SolidColorBrush x:Key="SystemControlTransientBackgroundBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
-    <SolidColorBrush x:Key="SystemControlTransientAcrylicElementBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
-    <SolidColorBrush x:Key="SystemControlTransientBackgroundInverseBrush" Color="#F2F2F2" />
-    <SolidColorBrush x:Key="SystemControlBaseAcrylicBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
+    <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="#F2F2F2" />
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
     <SolidColorBrush x:Key="SystemControlDefaultBrighteningBrush" Color="#FFFFFF" Opacity="0.0419"/>
     <m:StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
 
@@ -491,7 +491,7 @@
     <m:StaticResource x:Key="ComboBoxDropDownGlyphForegroundFocused" ResourceKey="SystemControlHighlightAltBaseMediumHighBrush" />
     <m:StaticResource x:Key="ComboBoxDropDownGlyphForegroundFocusedPressed" ResourceKey="SystemControlHighlightAltBaseMediumHighBrush" />
     <m:StaticResource x:Key="ComboBoxDropDownForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="ComboBoxDropDownBackground" ResourceKey="SystemControlTransientBackgroundBrush" />
+    <m:StaticResource x:Key="ComboBoxDropDownBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
     <m:StaticResource x:Key="ComboBoxDropDownBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
     <m:StaticResource x:Key="ComboBoxDropDownBackgroundPointerOver" ResourceKey="SystemControlBackgroundListLowBrush" />
     <m:StaticResource x:Key="ComboBoxDropDownBackgroundPointerPressed" ResourceKey="SystemControlBackgroundListMediumBrush" />
@@ -540,7 +540,7 @@
     <m:StaticResource x:Key="CommandBarForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <m:StaticResource x:Key="CommandBarHighContrastBorder" ResourceKey="SystemControlForegroundTransparentBrush" />
     <m:StaticResource x:Key="CommandBarEllipsisIconForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CommandBarOverflowPresenterBackground" ResourceKey="SystemControlTransientBackgroundBrush" />
+    <m:StaticResource x:Key="CommandBarOverflowPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
     <m:StaticResource x:Key="CommandBarOverflowPresenterBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
     <m:StaticResource x:Key="CommandBarLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
     <Thickness x:Key="CommandBarOverflowPresenterBorderThickness">1</Thickness>
@@ -751,7 +751,7 @@
     <Thickness x:Key="MenuFlyoutItemPlaceholderThemeThickness">28,0,0,0</Thickness>
     <Thickness x:Key="MenuFlyoutItemDoublePlaceholderThemeThickness">56,0,0,0</Thickness>
     <Thickness x:Key="MenuFlyoutSeparatorThemePadding">12,4,12,4</Thickness>
-    <m:StaticResource x:Key="MenuFlyoutPresenterBackground" ResourceKey="SystemControlTransientBackgroundBrush" />
+    <m:StaticResource x:Key="MenuFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
     <m:StaticResource x:Key="MenuFlyoutPresenterBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
     <!-- Resources for Windows.UI.Xaml.Controls.MenuFlyoutItem -->
     <m:StaticResource x:Key="MenuFlyoutItemBackground" ResourceKey="SystemControlTransparentBrush" />
@@ -827,9 +827,9 @@
     <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
 
     <!-- Resources for NavigationView -->
-    <m:StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemControlTransientAcrylicElementBrush" />
+    <m:StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
     <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{m:StaticColor SystemChromeMediumColor}" />
-    <m:StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SystemControlTransientAcrylicElementBrush" />
+    <m:StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
 
     <m:StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SystemControlTransparentRevealBackgroundBrush" />
     <m:StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowRevealBackgroundBrush" />
@@ -903,7 +903,7 @@
     <m:StaticResource x:Key="NumberBoxPopupIndicatorForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
 
     <!-- The following NumberBoxPopup* theme resources resource must be defined at the app level in order to take effect. -->
-    <m:StaticResource x:Key="NumberBoxPopupBackground" ResourceKey="SystemControlTransientBackgroundBrush" />
+    <m:StaticResource x:Key="NumberBoxPopupBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
     <m:StaticResource x:Key="NumberBoxPopupBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
     <Thickness x:Key="NumberBoxPopupBorderThickness">1</Thickness>
 
@@ -1220,7 +1220,7 @@
     <m:StaticResource x:Key="TimePickerButtonForegroundPressed" ResourceKey="SystemControlHighlightBaseHighBrush" />
     <m:StaticResource x:Key="TimePickerButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
     <m:StaticResource x:Key="TimePickerButtonForegroundFocused" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="TimePickerFlyoutPresenterBackground" ResourceKey="SystemControlTransientBackgroundBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
     <m:StaticResource x:Key="TimePickerFlyoutPresenterBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
     <m:StaticResource x:Key="TimePickerFlyoutPresenterSpacerFill" ResourceKey="SystemControlForegroundBaseLowBrush" />
     <m:StaticResource x:Key="TimePickerFlyoutPresenterHighlightFill" ResourceKey="SystemControlHighlightListAccentLowBrush" />
