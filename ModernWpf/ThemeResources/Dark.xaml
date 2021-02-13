@@ -1186,6 +1186,16 @@
     <m:StaticResource x:Key="TabViewScrollButtonBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="TabViewItemSeparator" ResourceKey="SystemControlForegroundBaseLowBrush" />
 
+    <!-- Resources for TeachingTip -->
+    <StaticResource x:Key="TeachingTipBorderBrush" ResourceKey="SystemControlTransientBorderBrush"/>
+    <SolidColorBrush x:Key="TeachingTipTopHighlightBrush" Color="#0DFFFFFF"/>
+    <StaticResource x:Key="TeachingTipTransientBackground" ResourceKey="SystemControlTransientBackgroundBrush"/>
+    <StaticResource x:Key="TeachingTipForegroundBrush" ResourceKey="SystemControlForegroundBaseHighBrush"/>
+    <StaticResource x:Key="TeachingTipBackgroundBrush" ResourceKey="SystemControlPageBackgroundChromeLowBrush"/>
+    <StaticResource x:Key="TeachingTipTitleForegroundBrush" ResourceKey="SystemControlForegroundBaseHighBrush"/>
+    <StaticResource x:Key="TeachingTipSubtitleForegroundBrush" ResourceKey="SystemControlForegroundBaseHighBrush"/>
+    <Thickness x:Key="TeachingTipAlternateCloseButtonBorderThickness">0</Thickness>
+
     <!-- Resources for Thumb -->
     <m:StaticResource x:Key="ThumbBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <m:StaticResource x:Key="ThumbBackgroundPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />

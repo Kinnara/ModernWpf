@@ -439,6 +439,51 @@ namespace ModernWpf {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string TeachingTipAlternateCloseButtonName {
+            get {
+                return ResourceManager.GetString("TeachingTipAlternateCloseButtonName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string TeachingTipAlternateCloseButtonTooltip {
+            get {
+                return ResourceManager.GetString("TeachingTipAlternateCloseButtonTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tip.
+        /// </summary>
+        internal static string TeachingTipCustomLandmarkName {
+            get {
+                return ResourceManager.GetString("TeachingTipCustomLandmarkName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press F6 to go to new notification from {0}, {1}..
+        /// </summary>
+        internal static string TeachingTipNotification {
+            get {
+                return ResourceManager.GetString("TeachingTipNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press F6 to go to new notification, {0}..
+        /// </summary>
+        internal static string TeachingTipNotificationWithoutAppName {
+            get {
+                return ResourceManager.GetString("TeachingTipNotificationWithoutAppName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy.
         /// </summary>
         internal static string TextCommandLabelCopy {
