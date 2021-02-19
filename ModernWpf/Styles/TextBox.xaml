@@ -158,6 +158,8 @@
                             Text="{TemplateBinding primitives:ControlHelper.PlaceholderText}"
                             TextAlignment="{TemplateBinding TextAlignment}"
                             TextWrapping="{TemplateBinding TextWrapping}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"                            
                             IsHitTestVisible="False" />
                         <Button
                             x:Name="DeleteButton"
