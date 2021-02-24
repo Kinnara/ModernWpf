@@ -24,14 +24,16 @@ jobs:
 
       - name: Clean .NET cache
         id: clean_dotnet_cache
-        shell: powershell
+        shell: pwsh
         run: |
           dotnet clean ./ModernWpf.sln --configuration Release 
           dotnet nuget locals all --clear
 
       - name: Install dependencies
         id: dotnet_restore
-        run: dotnet restore
+        shell: pwsh
+        run: |
+          dotnet restore
 
       - name: Initialize CodeQL
         id: init_codeql
@@ -41,7 +43,9 @@ jobs:
         
       - name: Build
         id: dotnet_build
-        run: dotnet build --configuration Release --no-restore
+        shell: pwsh
+        run: |
+          dotnet build --configuration Release --no-restore
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql
