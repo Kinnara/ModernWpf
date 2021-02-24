@@ -12,13 +12,6 @@ jobs:
     name: codeql-analysis
     runs-on: windows-latest
     steps:
-      - name: Clean .NET cache
-        id: clean_dotnet_cache
-        shell: powershell
-        run: |
-          dotnet clean ./ModernWpf.sln --configuration Release 
-          dotnet nuget locals all --clear
-
       - name: Setup .NET
         id: setup_dotnet
         uses: actions/setup-dotnet@v1
@@ -28,6 +21,13 @@ jobs:
       - name: Checkout repository
         id: checkout_repo
         uses: actions/checkout@v2
+
+      - name: Clean .NET cache
+        id: clean_dotnet_cache
+        shell: powershell
+        run: |
+          dotnet clean ./ModernWpf.sln --configuration Release 
+          dotnet nuget locals all --clear
 
       - name: Install dependencies
         id: dotnet_restore
