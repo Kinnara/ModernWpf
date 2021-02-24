@@ -3,6 +3,7 @@ name: CodeQL Analysis
 on:
   push:
   pull_request:
+  workflow_dispatch:
   schedule:
     - cron: '0 8 * * *'
 
@@ -10,19 +11,30 @@ jobs:
   analyze:
     name: codeql-analysis
     runs-on: windows-latest
-
     steps:
       - name: Checkout repository
         id: checkout_repo
         uses: actions/checkout@v2
 
+      - name: Setup .NET
+        id: setup_dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+
       - name: Initialize CodeQL
         id: init_codeql
         uses: github/codeql-action/init@v1
         with:
-          queries: security-and-quality
+          queries: security-extended
 
-      - name: Build project
+      - name: Install dependencies
+        id: dotnet_restore
+        run: dotnet restore
+        
+      - name: Build
+        id: dotnet_build
+        run: dotnet build --configuration Release --no-restore
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql
