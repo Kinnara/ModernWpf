@@ -16,9 +16,10 @@ namespace ModernWpf.Controls
 {
     public class SplitButton : ContentControl, ICommandSource
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(SplitButton));
+
         static SplitButton()
         {
-            ResourceHelper.Initialize();
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SplitButton), new FrameworkPropertyMetadata(typeof(SplitButton)));
         }
 

@@ -65,11 +65,6 @@
                 </ui:SimpleStackPanel>
                 <ui:ProgressRing x:Name="ProgressRing1" Width="100" Height="100" />
                 <ui:ProgressBar x:Name="ProgressBar1" VerticalAlignment="Top" />
-                <Expander IsExpanded="False" Header="Generated Code" Background="{DynamicResource NavigationViewExpandedPaneBackground}"
-                          Padding="10" VerticalAlignment="Bottom" ExpandDirection="Up">
-                    <TextBox x:Name="TbCodeGen" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"
-                             ui:ControlHelper.Description="Append these to the ModernWpf\Common\ResourceAccessor.cs in the proper places" />
-                </Expander>
             </Grid>
             <ui:SplitView.Pane>
                 <Grid>

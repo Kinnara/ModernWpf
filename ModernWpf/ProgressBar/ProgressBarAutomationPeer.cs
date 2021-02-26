@@ -13,6 +13,8 @@ namespace ModernWpf.Automation.Peers
     /// </summary>
     public class ProgressBarAutomationPeer : RangeBaseAutomationPeer, IRangeValueProvider
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(ProgressBar));
+
         /// <summary>
         /// Initializes a new instance of the ProgressBarAutomationPeer class.
         /// </summary>
