@@ -10,6 +10,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
+using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Controls
 {
@@ -17,6 +18,7 @@ namespace ModernWpf.Controls
     {
         static SplitButton()
         {
+            ResourceHelper.Initialize();
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SplitButton), new FrameworkPropertyMetadata(typeof(SplitButton)));
         }
 
@@ -182,7 +184,7 @@ namespace ModernWpf.Controls
 
             if (m_secondaryButton != null)
             {
-                var secondaryName = Strings.SplitButtonSecondaryButtonName;
+                var secondaryName = ResourceAccessor.GetLocalizedStringResource(SR_SplitButtonSecondaryButtonName);
                 AutomationProperties.SetName(m_secondaryButton, secondaryName);
 
                 m_secondaryButton.Click += OnClickSecondary;

@@ -125,125 +125,13 @@
     <value>More app bar</value>
     <comment>332-5305</comment>
   </data>
-  <data name="BadgeIcon" xml:space="preserve">
-    <value>{0}, icon</value>
-    <comment>This text is used with the badging glyph. {0} is the contact name.</comment>
-  </data>
-  <data name="BadgeIconTextOverride" xml:space="preserve">
-    <value>{0}, {1}</value>
-    <comment>This format string is used for the automation name. It is 'Person Name, badgetext', where badgetext is a user specified string like skype.</comment>
-  </data>
-  <data name="BadgeItemPlural1" xml:space="preserve">
-    <value>{0}, {1:d} items</value>
-    <comment>This text is used to show the number of items in the person picture badging area, when that number is 21,31,41,etc. {0} is the contact name and {1} is the number of items.</comment>
-  </data>
-  <data name="BadgeItemPlural2" xml:space="preserve">
-    <value>{0}, {1:d} items</value>
-    <comment>This text is used to show the number of items in the person picture badging area, when that number is 3-4. {0} is the contact name and {1} is the number of items.</comment>
-  </data>
-  <data name="BadgeItemPlural3" xml:space="preserve">
-    <value>{0}, {1:d} items</value>
-    <comment>This text is used to show the number of items in the person picture badging area, when that number is  22-24, 32-34, 42-44, etc. {0} is the contact name and {1} is the number of items.</comment>
-  </data>
-  <data name="BadgeItemPlural4" xml:space="preserve">
-    <value>{0}, {1:d} items</value>
-    <comment>This text is used to show the number of items in the person picture badging area, when that number is  0, 20, 25-30, 35-40, etc. (fallback plural). {0} is the contact name and {1} is the number of items.</comment>
-  </data>
-  <data name="BadgeItemPlural5" xml:space="preserve">
-    <value>{0}, {1:d} items</value>
-    <comment>This text is used to show the number of items in the person picture badging area, when that number is  5-10. {0} is the contact name and {1} is the number of items.</comment>
-  </data>
-  <data name="BadgeItemPlural6" xml:space="preserve">
-    <value>{0}, {1:d} items</value>
-    <comment>This text is used to show the number of items in the person picture badging area, when that number is  11-19. {0} is the contact name and {1} is the number of items.</comment>
-  </data>
-  <data name="BadgeItemPlural7" xml:space="preserve">
-    <value>{0}, {1:d} items</value>
-    <comment>This text is used to show the number of items in the person picture badging area, when that number is  2. {0} is the contact name and {1} is the number of items.</comment>
-  </data>
-  <data name="BadgeItemSingular" xml:space="preserve">
-    <value>{0}, {1:d} item</value>
-    <comment>This text is used to show the number of items in the person picture badging area, when that number is  1. {0} is the contact name and {1} is the number of items.</comment>
-  </data>
-  <data name="BadgeItemTextOverride" xml:space="preserve">
-    <value>{0}, {1:d} {2}</value>
-    <comment>This format string is used for the automation name. It is 'Person Name, badgenumber badgetext', where badge text is a user specified string overriding 'item(s)'.</comment>
-  </data>
-  <data name="BasicRatingString" xml:space="preserve">
-    <value>Rating, {0} of {1}</value>
-    <comment>English example: Rating, 1.0 of 5.</comment>
-  </data>
-  <data name="CommunityRatingString" xml:space="preserve">
-    <value>Community Rating, {0} of {1}</value>
-    <comment>English example: Community Rating, 3.3 of 6.</comment>
-  </data>
-  <data name="GroupName" xml:space="preserve">
-    <value>Group</value>
-    <comment>This text is used as the generic narrator text when the group glyph is showing.</comment>
+  <data name="AppBarMoreButtonOpenToolTip" xml:space="preserve">
+    <value>See less</value>
+    <comment>320-5109</comment>
   </data>
   <data name="IgnoreMenuItemLabel" xml:space="preserve">
     <value>Ignore</value>
     <comment>5580</comment>
-  </data>
-  <data name="NumberBoxDownSpinButtonName" xml:space="preserve">
-    <value>Decrease</value>
-    <comment>Automation name for the down button</comment>
-  </data>
-  <data name="NumberBoxUpSpinButtonName" xml:space="preserve">
-    <value>Increase</value>
-    <comment>Automation name for the up button</comment>
-  </data>
-  <data name="PersonName" xml:space="preserve">
-    <value>Person</value>
-    <comment>This text is used as the generic narrator text when there is no display name or initials.</comment>
-  </data>
-  <data name="ProofingMenuItemLabel" xml:space="preserve">
-    <value>Proofing</value>
-    <comment>The label for the text context menu item that provides the proofing menu.</comment>
-  </data>
-  <data name="RatingControlName" xml:space="preserve">
-    <value />
-    <comment>UNUSED</comment>
-  </data>
-  <data name="RatingLocalizedControlType" xml:space="preserve">
-    <value>Rating Slider</value>
-    <comment>A simple description of the control for UIA</comment>
-  </data>
-  <data name="RatingsControlName" xml:space="preserve">
-    <value />
-    <comment>UNUSED</comment>
-  </data>
-  <data name="RatingUnset" xml:space="preserve">
-    <value>Rating Unset</value>
-    <comment>This text is used to show the number of stars none are selected.</comment>
-  </data>
-  <data name="SplitButtonSecondaryButtonName" xml:space="preserve">
-    <value>More Options</value>
-    <comment>Automation name for the secondary button.</comment>
-  </data>
-  <data name="TextCommandLabelCopy" xml:space="preserve">
-    <value>Copy</value>
-    <comment>5035</comment>
-  </data>
-  <data name="TextCommandLabelCut" xml:space="preserve">
-    <value>Cut</value>
-    <comment>5034</comment>
-  </data>
-  <data name="TextCommandLabelPaste" xml:space="preserve">
-    <value>Paste</value>
-    <comment>5036</comment>
-  </data>
-  <data name="TextCommandLabelRedo" xml:space="preserve">
-    <value>Redo</value>
-    <comment>5038</comment>
-  </data>
-  <data name="TextCommandLabelSelectAll" xml:space="preserve">
-    <value>Select All</value>
-    <comment>5039</comment>
-  </data>
-  <data name="TextCommandLabelUndo" xml:space="preserve">
-    <value>Undo</value>
-    <comment>5037</comment>
   </data>
   <data name="ToggleSwitchOff" xml:space="preserve">
     <value>Off</value>
@@ -252,69 +140,5 @@
   <data name="ToggleSwitchOn" xml:space="preserve">
     <value>On</value>
     <comment>Default text for "On" for ToggleSwitch.</comment>
-  </data>
-  <data name="AppBarMoreButtonOpenToolTip" xml:space="preserve">
-    <value>See less</value>
-    <comment>320-5109</comment>
-  </data>
-  <data name="ProgressBarErrorStatus" xml:space="preserve">
-    <value>Error</value>
-    <comment>This is used to announce Error state.</comment>
-  </data>
-  <data name="ProgressBarIndeterminateStatus" xml:space="preserve">
-    <value>Busy</value>
-    <comment>This is used to announce Indeterminate state.</comment>
-  </data>
-  <data name="ProgressBarPausedStatus" xml:space="preserve">
-    <value>Paused</value>
-    <comment>This is used to announce Paused state.</comment>
-  </data>
-  <data name="ProgressRingIndeterminateStatus" xml:space="preserve">
-    <value>Busy</value>
-    <comment>This is used to announce Indeterminate state.</comment>
-  </data>
-  <data name="NavigationBackButtonName" xml:space="preserve">
-    <value>Back</value>
-    <comment>Automation name for the nav view provided back button</comment>
-  </data>
-  <data name="NavigationBackButtonToolTip" xml:space="preserve">
-    <value>Back</value>
-    <comment>ToolTip caption for the back button</comment>
-  </data>
-  <data name="NavigationButtonClosedName" xml:space="preserve">
-    <value>Open Navigation</value>
-    <comment>Automation name for the hamburger button when it is in a closed state</comment>
-  </data>
-  <data name="NavigationButtonOpenName" xml:space="preserve">
-    <value>Close Navigation</value>
-    <comment>Automation name and tooltip caption for the hamburger button when it is in an open state, and tooltip caption for the close button</comment>
-  </data>
-  <data name="NavigationCloseButtonName" xml:space="preserve">
-    <value>Close</value>
-    <comment>Automation name for the nav view provided close button</comment>
-  </data>
-  <data name="NavigationOverflowButtonName" xml:space="preserve">
-    <value>More</value>
-    <comment>Automation name for the nav view more button when panel is on top</comment>
-  </data>
-  <data name="NavigationOverflowButtonText" xml:space="preserve">
-    <value>More</value>
-    <comment>Text for the nav view more button when panel is on top</comment>
-  </data>
-  <data name="NavigationViewItemDefaultControlName" xml:space="preserve">
-    <value>NavigationViewItem</value>
-    <comment>Default automation id if no name or id is provided</comment>
-  </data>
-  <data name="NavigationViewSearchButtonName" xml:space="preserve">
-    <value>Click to search</value>
-    <comment>Name for the compact view search button</comment>
-  </data>
-  <data name="SettingsButtonName" xml:space="preserve">
-    <value>Settings</value>
-    <comment>Automation name for the settings button</comment>
-  </data>
-  <data name="NavigationOverflowButtonToolTip" xml:space="preserve">
-    <value>More</value>
-    <comment>ToolTip caption for the nav view more button when panel is on top</comment>
   </data>
 </root>

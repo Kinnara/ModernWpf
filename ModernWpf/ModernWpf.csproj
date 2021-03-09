@@ -5,7 +5,7 @@
     <UseWPF>true</UseWPF>
     <NeutralLanguage>en-US</NeutralLanguage>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>latest</LangVersion>
     <UseWinRT>true</UseWinRT>
   </PropertyGroup>
 
