@@ -15,10 +15,11 @@ namespace ModernWpf.Automation.Peers
         IValueProvider,
         IRangeValueProvider
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(RatingControl));
+
         public RatingControlAutomationPeer(RatingControl owner)
             : base(owner)
         {
-            ResourceHelper.Initialize();
         }
 
         protected override string GetLocalizedControlTypeCore()

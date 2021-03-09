@@ -90,31 +90,6 @@ namespace WinUIResourcesConverter
 
                 string controlName = destination.Parent.Name;
 
-                string GetRelativePath(DirectoryInfo directory)
-                {
-                    StringBuilder stringBuilder = new();
-
-                    bool IsProjectRoot(DirectoryInfo dir)
-                    {
-                        return string.Equals(dir.Name, nameof(ModernWpf), System.StringComparison.OrdinalIgnoreCase)
-                        || string.Equals(dir.Name, nameof(ModernWpf) + "." + nameof(ModernWpf.Controls), System.StringComparison.OrdinalIgnoreCase);
-                    }
-
-                    while (!IsProjectRoot(directory))
-                    {
-                        stringBuilder.Insert(0, directory.Name + ".");
-                        directory = directory.Parent;
-                    }
-
-                    stringBuilder.Insert(0, directory.Name + ".");
-                    directory = directory.Parent;
-
-                    return stringBuilder.ToString();
-                }
-
-                CodeGen codeGen = new(controlName, GetRelativePath(destination.Parent.Parent));
-                codeGen.AppendFirstPart();
-
                 ResourcesFile[] resFiles = null;
 
                 Dispatcher.Invoke(() =>
@@ -126,7 +101,7 @@ namespace WinUIResourcesConverter
 
                 foreach (var resFile in resFiles)
                 {
-                    resFile.HasConverted = RESXConverter.TryConvertReswToResx(resFile, sourceDirectory, destinationDirectory, resFile.IsDefaultResource ? codeGen : null);
+                    resFile.HasConverted = RESXConverter.TryConvertReswToResx(resFile, sourceDirectory, destinationDirectory);
                     convertedResFiles++;
 
                     Dispatcher.Invoke(() =>
@@ -134,11 +109,6 @@ namespace WinUIResourcesConverter
                         ProgressBar1.Value = convertedResFiles;
                     });
                 }
-
-                Dispatcher.Invoke(() =>
-                {
-                    TbCodeGen.Text = codeGen.GeneratedCode;
-                });
             }
         }
 

@@ -15,9 +15,10 @@ namespace ModernWpf.Controls
 {
     public partial class PersonPicture : Control
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(PersonPicture));
+
         static PersonPicture()
         {
-            ResourceHelper.Initialize();
             DefaultStyleKeyProperty.OverrideMetadata(typeof(PersonPicture), new FrameworkPropertyMetadata(typeof(PersonPicture)));
         }
 

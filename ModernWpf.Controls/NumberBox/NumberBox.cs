@@ -46,9 +46,10 @@ namespace ModernWpf.Controls
         const double c_popupShadowDepth = 16.0;
         const string c_numberBoxPopupShadowDepthName = "NumberBoxPopupShadowDepth";
 
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(NumberBox));
+
         static NumberBox()
         {
-            ResourceHelper.Initialize();
             DefaultStyleKeyProperty.OverrideMetadata(typeof(NumberBox), new FrameworkPropertyMetadata(typeof(NumberBox)));
         }
 

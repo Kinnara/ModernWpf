@@ -108,6 +108,8 @@ namespace ModernWpf.Controls
 
         static readonly Size c_infSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
 
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(NavigationView));
+
         /*
         ~NavigationView()
         {
@@ -214,7 +216,6 @@ namespace ModernWpf.Controls
 
         static NavigationView()
         {
-            ResourceHelper.Initialize();
             DefaultStyleKeyProperty.OverrideMetadata(typeof(NavigationView), new FrameworkPropertyMetadata(typeof(NavigationView)));
         }
 

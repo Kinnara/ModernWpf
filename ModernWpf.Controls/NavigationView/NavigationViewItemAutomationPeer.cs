@@ -16,10 +16,11 @@ namespace ModernWpf.Automation.Peers
         ISelectionItemProvider,
         IExpandCollapseProvider
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(NavigationView));
+
         public NavigationViewItemAutomationPeer(NavigationViewItem owner) :
             base(owner)
         {
-            ResourceHelper.Initialize();
         }
 
         protected override string GetNameCore()

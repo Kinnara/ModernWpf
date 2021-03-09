@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System;
 using System.Resources;
 
 namespace ModernWpf
 {
-    internal static class ResourceAccessor
+    internal class ResourceAccessor
     {
         #region Resource Keys
 
@@ -161,163 +160,26 @@ namespace ModernWpf
 
         #endregion
 
-        #region RESX Specific workarounds
+        private readonly Type _controlType;
+        private ResourceManager _resourceManager;
 
-        internal static Assembly modernWpfAssembly = typeof(ResourceAccessor).Assembly;
-        // Would be set by the ResourceHelper (present in the ModernWpf.Controls assembly)
-        internal static Assembly modernWpfControlsAssembly;
-
-        private const string ProgressBarResourcesName = "ModernWpf.ProgressBar.Strings.Resources";
-        private const string TextContextMenuResourcesName = "ModernWpf.Controls.TextContextMenu.Strings.Resources";
-
-        private const string NavigationViewResourcesName = "ModernWpf.Controls.NavigationView.Strings.Resources";
-        private const string NumberBoxResourcesName = "ModernWpf.Controls.NumberBox.Strings.Resources";
-        private const string PersonPictureResourcesName = "ModernWpf.Controls.PersonPicture.Strings.Resources";
-        private const string ProgressRingResourcesName = "ModernWpf.Controls.ProgressRing.Strings.Resources";
-        private const string RatingControlResourcesName = "ModernWpf.Controls.RatingControl.Strings.Resources";
-        private const string SplitButtonResourcesName = "ModernWpf.Controls.SplitButton.Strings.Resources";
-
-        /// <summary>
-        /// Used to map each resource keys to their respective <strong>*.resources files</strong> in the <strong>ModernWpf</strong> assembly.
-        /// </summary>
-        /// <remarks>
-        /// Update this map every time the resources are modified.
-        /// </remarks>
-        private static readonly Dictionary<string, string> resourceMapsM = new()
+        public ResourceAccessor(Type controlType)
         {
-            // ProgressBar resources
-            { SR_ProgressBarErrorStatus, ProgressBarResourcesName },
-            { SR_ProgressBarIndeterminateStatus, ProgressBarResourcesName },
-            { SR_ProgressBarPausedStatus, ProgressBarResourcesName },
+            _controlType = controlType ?? throw new ArgumentNullException(nameof(controlType));
+        }
 
-            // TextContextMenu resources
-            { SR_ProofingMenuItemLabel, TextContextMenuResourcesName },
-            { SR_TextCommandDescriptionBold, TextContextMenuResourcesName },
-            { SR_TextCommandDescriptionCopy, TextContextMenuResourcesName },
-            { SR_TextCommandDescriptionCut, TextContextMenuResourcesName },
-            { SR_TextCommandDescriptionItalic, TextContextMenuResourcesName },
-            { SR_TextCommandDescriptionPaste, TextContextMenuResourcesName },
-            { SR_TextCommandDescriptionRedo, TextContextMenuResourcesName },
-            { SR_TextCommandDescriptionSelectAll, TextContextMenuResourcesName },
-            { SR_TextCommandDescriptionUnderline, TextContextMenuResourcesName },
-            { SR_TextCommandDescriptionUndo, TextContextMenuResourcesName },
-            { SR_TextCommandKeyboardAcceleratorKeyBold, TextContextMenuResourcesName },
-            { SR_TextCommandKeyboardAcceleratorKeyCopy, TextContextMenuResourcesName },
-            { SR_TextCommandKeyboardAcceleratorKeyCut, TextContextMenuResourcesName },
-            { SR_TextCommandKeyboardAcceleratorKeyItalic, TextContextMenuResourcesName },
-            { SR_TextCommandKeyboardAcceleratorKeyPaste, TextContextMenuResourcesName },
-            { SR_TextCommandKeyboardAcceleratorKeyRedo, TextContextMenuResourcesName },
-            { SR_TextCommandKeyboardAcceleratorKeySelectAll, TextContextMenuResourcesName },
-            { SR_TextCommandKeyboardAcceleratorKeyUnderline, TextContextMenuResourcesName },
-            { SR_TextCommandKeyboardAcceleratorKeyUndo, TextContextMenuResourcesName },
-            { SR_TextCommandLabelBold, TextContextMenuResourcesName },
-            { SR_TextCommandLabelCopy, TextContextMenuResourcesName },
-            { SR_TextCommandLabelCut, TextContextMenuResourcesName },
-            { SR_TextCommandLabelItalic, TextContextMenuResourcesName },
-            { SR_TextCommandLabelPaste, TextContextMenuResourcesName },
-            { SR_TextCommandLabelRedo, TextContextMenuResourcesName },
-            { SR_TextCommandLabelSelectAll, TextContextMenuResourcesName },
-            { SR_TextCommandLabelUnderline, TextContextMenuResourcesName },
-            { SR_TextCommandLabelUndo, TextContextMenuResourcesName },
-        };
-
-        /// <summary>
-        /// Used to map each resource keys to their respective <strong>*.resources files</strong> in the <strong>ModernWpf.Controls</strong> assembly.
-        /// </summary>
-        /// <remarks>
-        /// Update this map every time the resources are modified.
-        /// </remarks>
-        private static readonly Dictionary<string, string> resourceMapsMC = new()
+        public string GetLocalizedStringResource(string resourceName)
         {
-            // NavigationView resources
-            { SR_NavigationButtonClosedName, NavigationViewResourcesName },
-            { SR_NavigationButtonOpenName, NavigationViewResourcesName },
-            { SR_NavigationViewItemDefaultControlName, NavigationViewResourcesName },
-            { SR_SettingsButtonName, NavigationViewResourcesName },
-            { SR_NavigationViewSearchButtonName, NavigationViewResourcesName },
-            { SR_NavigationBackButtonName, NavigationViewResourcesName },
-            { SR_NavigationBackButtonToolTip, NavigationViewResourcesName },
-            { SR_NavigationCloseButtonName, NavigationViewResourcesName },
-            { SR_NavigationOverflowButtonName, NavigationViewResourcesName },
-            { SR_NavigationOverflowButtonText, NavigationViewResourcesName },
-            { SR_NavigationOverflowButtonToolTip, NavigationViewResourcesName },
-
-            // NumberBox resources
-            { SR_NumberBoxDownSpinButtonName, NumberBoxResourcesName },
-            { SR_NumberBoxUpSpinButtonName, NumberBoxResourcesName },
-
-            // PersonPicture resources
-            { SR_BadgeItemPlural1, PersonPictureResourcesName },
-            { SR_BadgeItemPlural2, PersonPictureResourcesName },
-            { SR_BadgeItemPlural3, PersonPictureResourcesName },
-            { SR_BadgeItemPlural4, PersonPictureResourcesName },
-            { SR_BadgeItemPlural5, PersonPictureResourcesName },
-            { SR_BadgeItemPlural6, PersonPictureResourcesName },
-            { SR_BadgeItemPlural7, PersonPictureResourcesName },
-            { SR_BadgeItemSingular, PersonPictureResourcesName },
-            { SR_BadgeItemTextOverride, PersonPictureResourcesName },
-            { SR_BadgeIcon, PersonPictureResourcesName },
-            { SR_BadgeIconTextOverride, PersonPictureResourcesName },
-            { SR_PersonName, PersonPictureResourcesName },
-            { SR_GroupName, PersonPictureResourcesName },
-
-            // ProgressRing resources
-            { SR_ProgressRingIndeterminateStatus, ProgressRingResourcesName },
-            { SR_ProgressRingName, ProgressRingResourcesName },
-
-            // RatingControl resources
-            { SR_BasicRatingString, RatingControlResourcesName },
-            { SR_CommunityRatingString, RatingControlResourcesName },
-            { SR_RatingsControlName, RatingControlResourcesName },
-            { SR_RatingControlName, RatingControlResourcesName },
-            { SR_RatingUnset, RatingControlResourcesName },
-            { SR_RatingLocalizedControlType, RatingControlResourcesName },
-
-            // SplitButton resources
-            { SR_SplitButtonSecondaryButtonName, SplitButtonResourcesName },
-        };
-
-        /// <summary>
-        /// Used to cache <see cref="ResourceManager"/> instances associated with a particular
-        /// <strong>*.resources file</strong> (generated from a *.resx file)
-        /// </summary>
-        private static readonly Dictionary<string, ResourceManager> resourceManagers = new();
-
-        #endregion
-
-        public static string GetLocalizedStringResource(string resourceName)
-        {
-            string _resourcesFilePath;
-
-            string GetStringResource(string resourcesFilePath, Assembly assembly)
+            if (_resourceManager is null)
             {
-                if (!resourceManagers.TryGetValue(resourcesFilePath, out ResourceManager resourceManager))
-                {
-                    resourceManager = new(resourcesFilePath, assembly);
-                    resourceManagers.Add(resourcesFilePath, resourceManager);
-                }
-
-                if (resourceManager != null)
-                {
-                    return resourceManager.GetString(resourceName);
-                }
-
-                return string.Empty;
+                var assembly = _controlType.Assembly;
+                var assemblyName = assembly.GetName().Name;
+                var controlName = _controlType.Name;
+                var baseName = $"{assemblyName}.{controlName}.Strings.Resources";
+                _resourceManager = new ResourceManager(baseName, assembly);
             }
 
-            // Tries to get the string resource from the ModernWpf assembly
-            if (resourceMapsM.TryGetValue(resourceName, out _resourcesFilePath))
-            {
-                return GetStringResource(_resourcesFilePath, modernWpfAssembly);
-            }
-
-            // Tries to get the string resource from the ModernWpf.Controls assembly
-            if (resourceMapsMC.TryGetValue(resourceName, out _resourcesFilePath))
-            {
-                return GetStringResource(_resourcesFilePath, modernWpfControlsAssembly);
-            }
-
-            return string.Empty;
+            return _resourceManager.GetString(resourceName);
         }
     }
 }

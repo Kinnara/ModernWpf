@@ -14,6 +14,8 @@ namespace ModernWpf.Controls
     /// </summary>
     public class TextContextMenu : ContextMenu
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(TextContextMenu));
+
         private static readonly CommandBinding _selectAllBinding;
         private static readonly CommandBinding _undoBinding;
         private static readonly CommandBinding _redoBinding;

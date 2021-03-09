@@ -9,9 +9,10 @@ namespace ModernWpf.Automation.Peers
 {
     public class ProgressRingAutomationPeer : FrameworkElementAutomationPeer
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(ProgressRing));
+
         public ProgressRingAutomationPeer(ProgressRing owner) : base(owner)
         {
-            ResourceHelper.Initialize();
         }
 
         protected override string GetClassNameCore()
