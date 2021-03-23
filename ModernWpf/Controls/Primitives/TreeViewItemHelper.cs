@@ -32,27 +32,25 @@ namespace ModernWpf.Controls.Primitives
             var treeViewItem = (TreeViewItem)d;
             if ((bool)e.NewValue)
             {
-                if (treeViewItem.IsInitialized)
+                treeViewItem.IsVisibleChanged += OnTreeViewItemIsVisibleChanged;
+                if (treeViewItem.IsVisible)
                 {
                     UpdateIndentation(treeViewItem);
-                }
-                else
-                {
-                    treeViewItem.Initialized += OnTreeViewItemInitialized;
                 }
             }
             else
             {
-                treeViewItem.Initialized -= OnTreeViewItemInitialized;
+                treeViewItem.IsVisibleChanged -= OnTreeViewItemIsVisibleChanged;
                 treeViewItem.ClearValue(IndentationPropertyKey);
             }
         }
 
-        private static void OnTreeViewItemInitialized(object sender, System.EventArgs e)
+        private static void OnTreeViewItemIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            var treeViewItem = (TreeViewItem)sender;
-            treeViewItem.Initialized -= OnTreeViewItemInitialized;
-            UpdateIndentation(treeViewItem);
+            if ((bool)e.NewValue)
+            {
+                UpdateIndentation((TreeViewItem)sender);
+            }
         }
 
         #endregion
