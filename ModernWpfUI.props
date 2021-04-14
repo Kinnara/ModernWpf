@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <UseWPF Condition="'$(UseWPF)'==''">true</UseWPF>
+    <LangVersion Condition="'$(LangVersion)'==''">latest</LangVersion>
+  </PropertyGroup>
+</Project>

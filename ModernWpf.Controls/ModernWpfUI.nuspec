@@ -41,5 +41,10 @@
     <file src="bin\$configuration$\**\ModernWpf*.dll" target="lib" />
     <file src="bin\$configuration$\**\ModernWpf*.xml" target="lib" />
     <file src="readme.txt" target="" />
+    <file src="..\ModernWpfUI.props" target="build"/>
+    <file src="..\ModernWpfUI.props" target="buildTransitive"/>
+    <file src="..\ModernWpfUI.targets" target="build"/>
+    <file src="..\ModernWpfUI.targets" target="buildTransitive"/>
+
   </files>
 </package>
