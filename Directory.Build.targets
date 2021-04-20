@@ -1,8 +1,11 @@
 ﻿<Project>
-  <PropertyGroup Condition="'$(PackageId)' != ''">
-    <Version>0.9.3</Version>
+  <PropertyGroup>
+    <Version>0.9.4</Version>
     <Authors>Yimeng Wu</Authors>
     <Product>ModernWPF UI Library</Product>
+  </PropertyGroup>
+    
+  <PropertyGroup Condition="'$(PackageId)' != ''">
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Kinnara/ModernWpf</PackageProjectUrl>
     <PackageTags>WPF XAML UI Theme Controls Fluent Modern Metro WinUI</PackageTags>
