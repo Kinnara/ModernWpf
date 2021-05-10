@@ -7,6 +7,8 @@
     <AssemblyName>MUXControlsTestApp</AssemblyName>
     <RootNamespace>MUXControlsTestApp</RootNamespace>
     <LangVersion>8.0</LangVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>ModernWpf.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

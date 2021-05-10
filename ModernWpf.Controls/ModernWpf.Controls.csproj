@@ -8,6 +8,8 @@
     <NuspecFile>$(MSBuildThisFileDirectory)ModernWpfUI.nuspec</NuspecFile>
     <PackageId>ModernWpfUI</PackageId>
     <LangVersion>latest</LangVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>ModernWpf.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

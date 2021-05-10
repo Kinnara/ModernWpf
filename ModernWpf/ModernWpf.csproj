@@ -7,6 +7,8 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
     <UseWinRT>true</UseWinRT>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>ModernWpf.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup Condition="!$(DefineConstants.Contains('NET47_OR_NEWER'))">
