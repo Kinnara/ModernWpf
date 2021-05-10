@@ -6,7 +6,7 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetDocumentationFile</TargetsForTfmSpecificBuildOutput>
     <NuspecFile>$(MSBuildThisFileDirectory)ModernWpfUI.nuspec</NuspecFile>
-    <PackageId>ModernWpfUI.Signed</PackageId>
+    <PackageId>ModernWpfUI</PackageId>
     <LangVersion>latest</LangVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ModernWpf.snk</AssemblyOriginatorKeyFile>
