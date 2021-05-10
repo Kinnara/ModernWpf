@@ -1,13 +1,13 @@
 ﻿<Project>
   <PropertyGroup>
     <Version>0.9.4</Version>
-    <Authors>Yimeng Wu</Authors>
-    <Product>ModernWPF UI Library</Product>
+    <Authors>Gerhard Stephan</Authors>
+    <Product>ModernWPF UI -signed- Library (original by Yimeng Wu)</Product>
   </PropertyGroup>
     
   <PropertyGroup Condition="'$(PackageId)' != ''">
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/Kinnara/ModernWpf</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/BitKFu/ModernWpf</PackageProjectUrl>
     <PackageTags>WPF XAML UI Theme Controls Fluent Modern Metro WinUI</PackageTags>
     <PackageOutputPath>$(MSBuildThisFileDirectory)localpackages</PackageOutputPath>
   </PropertyGroup>
