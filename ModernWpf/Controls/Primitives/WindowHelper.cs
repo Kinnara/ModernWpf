@@ -88,7 +88,7 @@ namespace ModernWpf.Controls.Primitives
                 typeof(bool),
                 typeof(WindowHelper),
                 new PropertyMetadata(
-                    (d, e) => FixSizeToContent((Window)d)
+                    (d, e) => FixSizeToContent((Window)d, (bool)e.NewValue)
                 ));
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -103,13 +103,16 @@ namespace ModernWpf.Controls.Primitives
         ///   Work around extra space when using Window.SizeToContent. Fixes
         ///   #142.
         /// </summary>
-        static void FixSizeToContent(Window window)
+        static void FixSizeToContent(Window window, bool newValue)
         {
-            window.Activated += (s, e) => OnActivated();
+            if (newValue)
+                window.Activated += OnActivated;
+            else
+                window.Activated -= OnActivated;
 
-            void OnActivated()
+            void OnActivated(object sender, EventArgs e)
             {
-                window.Activated -= (s, e) => OnActivated();
+                window.Activated -= OnActivated;
 
                 void action() => window.InvalidateMeasure();
                 window.Dispatcher.BeginInvoke((Action)action);
