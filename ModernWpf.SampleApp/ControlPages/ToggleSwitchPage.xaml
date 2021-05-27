@@ -11,7 +11,7 @@
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample HeaderText="A simple ToggleSwitch.">
-                <ui:ToggleSwitch />
+                <ui:ToggleSwitch AutomationProperties.Name="simple ToggleSwitch" />
             </sc:ControlExample>
 
             <sc:ControlExample HeaderText="A ToggleSwitch with custom header and content.">

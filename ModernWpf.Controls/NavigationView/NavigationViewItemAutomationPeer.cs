@@ -6,6 +6,7 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using ModernWpf.Controls;
+using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Automation.Peers
 {
@@ -15,6 +16,8 @@ namespace ModernWpf.Automation.Peers
         ISelectionItemProvider,
         IExpandCollapseProvider
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(NavigationView));
+
         public NavigationViewItemAutomationPeer(NavigationViewItem owner) :
             base(owner)
         {
@@ -38,7 +41,7 @@ namespace ModernWpf.Automation.Peers
                 // NB: It'll be up to the app to determine the automation label for
                 // when they're using a PlaceholderValue vs. Value.
 
-                returnHString = Strings.NavigationViewItemDefaultControlName;
+                returnHString = ResourceAccessor.GetLocalizedStringResource(SR_NavigationViewItemDefaultControlName);
             }
 
             return returnHString;

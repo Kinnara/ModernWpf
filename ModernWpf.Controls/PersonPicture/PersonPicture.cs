@@ -9,11 +9,14 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using ModernWpf.Automation.Peers;
+using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Controls
 {
     public partial class PersonPicture : Control
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(PersonPicture));
+
         static PersonPicture()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(PersonPicture), new FrameworkPropertyMetadata(typeof(PersonPicture)));
@@ -268,7 +271,7 @@ namespace ModernWpf.Controls
             // if none exist, it defaults to "Person"
             if (IsGroup)
             {
-                contactName = Strings.GroupName;
+                contactName = ResourceAccessor.GetLocalizedStringResource(SR_GroupName);
             }
             else if (!string.IsNullOrEmpty(DisplayName))
             {
@@ -280,7 +283,7 @@ namespace ModernWpf.Controls
             }
             else
             {
-                contactName = Strings.PersonName;
+                contactName = ResourceAccessor.GetLocalizedStringResource(SR_PersonName);
             }
 
             // BadgeInformation portion of the AutomationName is set to 'n items' if there is a BadgeNumber,
@@ -291,7 +294,7 @@ namespace ModernWpf.Controls
                 if (!string.IsNullOrEmpty(BadgeText))
                 {
                     automationName = string.Format(
-                        Strings.BadgeItemTextOverride,
+                        ResourceAccessor.GetLocalizedStringResource(SR_BadgeItemTextOverride),
                         contactName,
                         BadgeNumber,
                         BadgeText);
@@ -309,14 +312,14 @@ namespace ModernWpf.Controls
                 if (!string.IsNullOrEmpty(BadgeText))
                 {
                     automationName = string.Format(
-                        Strings.BadgeIconTextOverride,
+                        ResourceAccessor.GetLocalizedStringResource(SR_BadgeIconTextOverride),
                         contactName,
                         BadgeText);
                 }
                 else
                 {
                     automationName = string.Format(
-                        Strings.BadgeIcon,
+                        ResourceAccessor.GetLocalizedStringResource(SR_BadgeIcon),
                         contactName);
                 }
             }
@@ -336,35 +339,35 @@ namespace ModernWpf.Controls
 
             if (numericValue == 1)  // Singular
             {
-                value = Strings.BadgeItemSingular;
+                value = ResourceAccessor.GetLocalizedStringResource(SR_BadgeItemSingular);
             }
             else if (numericValue == 2) // 2
             {
-                value = Strings.BadgeItemPlural7;
+                value = ResourceAccessor.GetLocalizedStringResource(SR_BadgeItemPlural7);
             }
             else if (numericValue == 3 || numericValue == 4) // 3,4
             {
-                value = Strings.BadgeItemPlural2;
+                value = ResourceAccessor.GetLocalizedStringResource(SR_BadgeItemPlural2);
             }
             else if (numericValue >= 5 && numericValue <= 10) // 5-10
             {
-                value = Strings.BadgeItemPlural5;
+                value = ResourceAccessor.GetLocalizedStringResource(SR_BadgeItemPlural5);
             }
             else if (numericValue >= 11 && numericValue <= 19) // 11-19
             {
-                value = Strings.BadgeItemPlural6;
+                value = ResourceAccessor.GetLocalizedStringResource(SR_BadgeItemPlural6);
             }
             else if (valueMod10 == 1) // 21, 31, 41, etc.
             {
-                value = Strings.BadgeItemPlural1;
+                value = ResourceAccessor.GetLocalizedStringResource(SR_BadgeItemPlural1);
             }
             else if (valueMod10 >= 2 && valueMod10 <= 4) // 22-24, 32-34, 42-44, etc.
             {
-                value = Strings.BadgeItemPlural3;
+                value = ResourceAccessor.GetLocalizedStringResource(SR_BadgeItemPlural3);
             }
             else // Everything else... 0, 20, 25-30, 35-40, etc.
             {
-                value = Strings.BadgeItemPlural4;
+                value = ResourceAccessor.GetLocalizedStringResource(SR_BadgeItemPlural4);
             }
 
             return value;

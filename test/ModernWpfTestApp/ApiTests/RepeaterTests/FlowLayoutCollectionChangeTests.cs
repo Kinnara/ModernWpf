@@ -165,7 +165,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 repeater.UpdateLayout();
 
                 realized = VerifyRealizedRange(repeater, dataSource);
-                Verify.IsLessThanOrEqual(3, realized);
+                Verify.IsLessThanOrEqual(2, realized);
             });
         }
 

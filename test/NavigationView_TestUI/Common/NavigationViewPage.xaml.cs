@@ -732,7 +732,7 @@ namespace MUXControlsTestApp
 
         private void GetTopLevelNavViewItemContentPresenterMarginButton_Click(object sender, RoutedEventArgs e)
         {         
-            if (FindVisualChildByName(HomeItem, "ContentPresenter") is ContentPresenter presenter)
+            if (FindVisualChildByName(HasChildItem, "ContentPresenter") is ContentPresenter presenter)
             {
                 NavViewItemContentPresenterMarginTextBlock.Text = presenter.Margin.ToString();
             }
@@ -751,6 +751,20 @@ namespace MUXControlsTestApp
             if (NavView.SettingsItem is NavigationViewItem settingsItem)
             {
                 settingsItem.BringIntoView();
+            }
+        }
+
+        private void ScrollItemIntoViewButton_Click(object sender, RoutedEventArgs e)
+        {
+            var tag = Convert.ToString((ScrollItemIntoViewComboBox.SelectedItem as ComboBoxItem).Tag);
+            switch (tag)
+            {
+                case "Home":
+                    HomeItem.BringIntoView();
+                    break;
+                case "HasChildItem":
+                    HasChildItem.BringIntoView();
+                    break;
             }
         }
     }

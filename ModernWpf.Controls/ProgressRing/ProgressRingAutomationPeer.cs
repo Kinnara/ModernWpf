@@ -3,11 +3,14 @@
 
 using System.Windows.Automation.Peers;
 using ModernWpf.Controls;
+using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Automation.Peers
 {
     public class ProgressRingAutomationPeer : FrameworkElementAutomationPeer
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(ProgressRing));
+
         public ProgressRingAutomationPeer(ProgressRing owner) : base(owner)
         {
         }
@@ -25,7 +28,7 @@ namespace ModernWpf.Automation.Peers
             {
                 if (progressRing.IsActive)
                 {
-                    return Strings.ProgressRingIndeterminateStatus + name;
+                    return ResourceAccessor.GetLocalizedStringResource(SR_ProgressRingIndeterminateStatus) + name;
                 }
             }
             return name;
@@ -34,6 +37,11 @@ namespace ModernWpf.Automation.Peers
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
             return AutomationControlType.ProgressBar;
+        }
+
+        protected override string GetLocalizedControlTypeCore()
+        {
+            return ResourceAccessor.GetLocalizedStringResource(SR_ProgressRingName);
         }
     }
 }

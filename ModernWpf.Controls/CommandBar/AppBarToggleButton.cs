@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using ModernWpf.Controls.Primitives;
@@ -329,10 +327,16 @@ namespace ModernWpf.Controls
 
         private void UpdateCommonState(bool useTransitions = true)
         {
+            if (_vsm is null)
+            {
+                return;
+            }
+
             string stateName;
+            bool isEnabled = IsEnabled;
             bool isChecked = IsChecked != false;
 
-            if (!IsEnabled)
+            if (!isEnabled)
             {
                 stateName = "Disabled";
             }
@@ -358,17 +362,14 @@ namespace ModernWpf.Controls
                 stateName = "Checked" + stateName;
             }
 
-            if (IsInOverflow)
+            if (isEnabled && IsInOverflow)
             {
                 stateName = "Overflow" + stateName;
             }
 
-            if (_vsm != null)
-            {
-                _vsm.CanChangeCommonState = true;
-                VisualStateManager.GoToState(this, stateName, useTransitions);
-                _vsm.CanChangeCommonState = false;
-            }
+            _vsm.CanChangeCommonState = true;
+            VisualStateManager.GoToState(this, stateName, useTransitions);
+            _vsm.CanChangeCommonState = false;
         }
 
         private void UpdateKeyboardAcceleratorTextVisibility(bool useTransitions = true)

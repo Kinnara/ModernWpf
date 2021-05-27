@@ -116,6 +116,8 @@
                             x:Name="ScrollViewer"
                             Padding="{TemplateBinding Padding}"
                             Focusable="False"
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
                             primitives:ScrollViewerHelper.AutoHideScrollBars="{TemplateBinding primitives:ScrollViewerHelper.AutoHideScrollBars}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </ScrollViewer>

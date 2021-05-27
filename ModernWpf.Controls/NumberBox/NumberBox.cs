@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using ModernWpf.Automation.Peers;
+using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Controls
 {
@@ -44,6 +45,8 @@ namespace ModernWpf.Controls
 
         const double c_popupShadowDepth = 16.0;
         const string c_numberBoxPopupShadowDepthName = "NumberBoxPopupShadowDepth";
+
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(NumberBox));
 
         static NumberBox()
         {
@@ -89,8 +92,8 @@ namespace ModernWpf.Controls
         {
             base.OnApplyTemplate();
 
-            var spinDownName = Strings.NumberBoxDownSpinButtonName;
-            var spinUpName = Strings.NumberBoxUpSpinButtonName;
+            var spinDownName = ResourceAccessor.GetLocalizedStringResource(SR_NumberBoxDownSpinButtonName);
+            var spinUpName = ResourceAccessor.GetLocalizedStringResource(SR_NumberBoxUpSpinButtonName);
 
             if (GetTemplateChild(c_numberBoxDownButtonName) is RepeatButton spinDown)
             {

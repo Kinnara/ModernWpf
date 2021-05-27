@@ -747,20 +747,20 @@
                             x:Name="OuterContentRoot"
                             VerticalAlignment="Top"
                             Margin="{TemplateBinding Padding}"
-                            Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.CurrentWidth}"
+                            MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.CurrentWidth}"
                             Height="{TemplateBinding Height}"
-                            Background="{TemplateBinding Background}"
                             CornerRadius="{Binding ElementName=LayoutRoot, Path=CornerRadius}">
                             <Border.Clip>
                                 <RectangleGeometry
                                     x:Name="OuterContentRootClip"
-                                    Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ContentClipRect}">
+                                    Rect="{Binding Source={StaticResource TemplateSettingsProxy}, Path=FlyoutTemplateSettings.ContentClipRect}">
                                     <RectangleGeometry.Transform>
                                         <TranslateTransform x:Name="OuterContentRootClipTransform" />
                                     </RectangleGeometry.Transform>
                                 </RectangleGeometry>
                             </Border.Clip>
-                            <Grid x:Name="ContentRoot">
+                            <Grid x:Name="ContentRoot"
+                                  Background="{TemplateBinding Background}">
                                 <Grid.Clip>
                                     <RectangleGeometry
                                         x:Name="ContentRootClip"
@@ -945,7 +945,7 @@
     </Style>
 
     <Style TargetType="primitives:CommandBarFlyoutCommandBar">
-        <Setter Property="Background" Value="{DynamicResource SystemControlAcrylicElementBrush}" />
+        <Setter Property="Background" Value="{DynamicResource AcrylicInAppFillColorDefaultBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource SystemControlTransientBorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderThemeThickness}" />

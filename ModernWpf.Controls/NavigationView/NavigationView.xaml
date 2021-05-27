@@ -281,11 +281,11 @@
                                 </Grid.ColumnDefinitions>
 
                                 <Viewbox x:Name="IconBox"
-                                Height="16"
-                                Margin="{DynamicResource NavigationViewItemOnLeftIconBoxMargin}">
+                                         Height="16"
+                                         Margin="{DynamicResource NavigationViewItemOnLeftIconBoxMargin}">
                                     <ContentPresenter 
-                                    x:Name="Icon" 
-                                    Content="{TemplateBinding Icon}" />
+                                        x:Name="Icon" 
+                                        Content="{TemplateBinding Icon}" />
                                 </Viewbox>
 
                                 <!-- Padding="{TemplateBinding Padding}" -->
@@ -747,13 +747,13 @@
                                 VerticalAlignment="Center">
 
                                 <Rectangle
-                                x:Name="SelectionIndicator"
-                                Width="2"
-                                Height="24"
-                                Fill="{DynamicResource NavigationViewSelectionIndicatorForeground}"
-                                Opacity="0.0"
-                                RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"/>
+                                    x:Name="SelectionIndicator"
+                                    Width="2"
+                                    Height="24"
+                                    Fill="{DynamicResource NavigationViewSelectionIndicatorForeground}"
+                                    Opacity="0.0"
+                                    RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                    RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"/>
                             </Grid>
                             <Grid x:Name="ContentGrid">
                                 <Grid.ColumnDefinitions>
@@ -1099,7 +1099,7 @@
 
                                     <!-- Top nav ItemsRepeater -->
                                     <local:ItemsRepeaterScrollHost
-                                            Grid.Column="3">
+                                        Grid.Column="3">
                                         <ScrollViewer
                                             HorizontalScrollBarVisibility="Hidden"
                                             VerticalScrollBarVisibility="Hidden">
@@ -1126,7 +1126,7 @@
                                                 Placement="BottomEdgeAlignedRight">
                                                 <local:Flyout.FlyoutPresenterStyle>
                                                     <Style TargetType="local:FlyoutPresenter">
-                                                        <Setter Property="Padding" Value="0,8" />
+                                                        <Setter Property="Padding" Value="{DynamicResource TopNavigationViewOverflowMenuPadding}" />
                                                         <!-- Set negative top margin to make the flyout align exactly with the button -->
                                                         <!--<Setter Property="Margin" Value="0,-4,0,0" />-->
                                                     </Style>
@@ -1134,7 +1134,7 @@
                                                 <local:ItemsRepeaterScrollHost>
                                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                                         <local:ItemsRepeater
-                                                                    x:Name="TopNavMenuItemsOverflowHost"/>
+                                                            x:Name="TopNavMenuItemsOverflowHost"/>
                                                     </ScrollViewer>
                                                 </local:ItemsRepeaterScrollHost>
                                             </local:Flyout>
@@ -1206,12 +1206,14 @@
                                         Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LeftPaneVisibility}">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="0"/> <!-- above button margin + back button space -->
+                                            <RowDefinition Height="0"/>
+                                            <!-- above button margin + back button space -->
                                             <RowDefinition x:Name="PaneContentGridToggleButtonRow" Height="Auto" MinHeight="{DynamicResource NavigationViewPaneHeaderRowMinHeight}"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="8"/> <!-- above list margin -->
-                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="8"/>
+                                            <!-- above list margin -->
+                                            <RowDefinition x:Name="ItemsContainerRow" Height="*"/>
                                         </Grid.RowDefinitions>
 
                                         <Grid x:Name="ContentPaneTopPadding"
@@ -1266,43 +1268,50 @@
                                             HorizontalContentAlignment="Stretch"
                                             Grid.Row="4" />
 
-                                        <local:ItemsRepeaterScrollHost
-                                            Grid.Row="6"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch">
-                                            <ScrollViewer
-                                                KeyboardNavigation.TabNavigation="Local"
-                                                VerticalScrollBarVisibility="Auto">
-                                                <Grid x:Name="ScrollingContentGrid">
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="*"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="8"/>
-                                                    </Grid.RowDefinitions>
+                                        <!-- "Non header" content -->
+                                        <Grid x:Name="ItemsContainerGrid" Grid.Row="6" Margin="0,0,0,8">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition x:Name="MenuItemsRow" Height="Auto" MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"/> <!-- MenuItems -->
+                                                <RowDefinition Height="*" MinHeight="21"/> <!-- Fill spacing -->
+                                                <RowDefinition Height="Auto" /> <!-- PaneFooter -->
+                                                <RowDefinition x:Name="FooterItemsRow" Height="Auto" MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"/> <!-- FooterItems -->
+                                            </Grid.RowDefinitions>
 
+                                            <!-- MenuItems -->
+                                            <local:ItemsRepeaterScrollHost
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch">
+                                                <ScrollViewer x:Name="MenuItemsScrollViewer"
+                                                    KeyboardNavigation.TabNavigation="Local"
+                                                    VerticalScrollBarVisibility="Auto">
                                                     <!-- Left nav ItemsRepeater -->
                                                     <local:ItemsRepeater
                                                         x:Name="MenuItemsHost"
-                                                        Margin="0,0,0,20"
                                                         AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}"/>
+                                                </ScrollViewer>
+                                            </local:ItemsRepeaterScrollHost>
 
+                                            <local:NavigationViewItemSeparator x:Name="VisualItemsSeparator"
+                                                Grid.Row="1" VerticalAlignment="Center"
+                                                Visibility="Collapsed" HorizontalAlignment="Stretch"/>
 
-                                                    <ContentControl
-                                                        x:Name="FooterContentBorder"
-                                                        Style="{StaticResource DefaultContentControlStyle}"
-                                                        IsTabStop="False"
-                                                        VerticalContentAlignment="Stretch"
-                                                        HorizontalContentAlignment="Stretch"
-                                                        Grid.Row="2" />
-                                                    <!-- Left footer menu ItemsRepeater -->
+                                            <!-- PaneFooter -->
+                                            <ContentControl x:Name="FooterContentBorder"
+                                                Style="{StaticResource DefaultContentControlStyle}"
+                                                IsTabStop="False"
+                                                VerticalContentAlignment="Stretch"
+                                                HorizontalContentAlignment="Stretch"
+                                                Grid.Row="2" />
+
+                                            <!-- FooterItems -->
+                                            <local:ItemsRepeaterScrollHost Grid.Row="3">
+                                                <ScrollViewer x:Name="FooterItemsScrollViewer">
+                                                    <!-- contract7Present:VerticalAnchorRatio="1" -->
                                                     <local:ItemsRepeater
-                                                        x:Name="FooterMenuItemsHost"
-                                                        Grid.Row="3"/>
-                                                </Grid>
-                                            </ScrollViewer>
-                                        </local:ItemsRepeaterScrollHost>
+                                                        x:Name="FooterMenuItemsHost"/>
+                                                </ScrollViewer>
+                                            </local:ItemsRepeaterScrollHost>
+                                        </Grid>
 
                                     </Grid>
                                 </local:SplitView.Pane>
@@ -1320,9 +1329,9 @@
                                         </Grid.ColumnDefinitions>
 
                                         <Grid x:Name="ContentTopPadding"
-                                            Grid.ColumnSpan="2"
-                                            Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}"
-                                            Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LeftPaneVisibility}"/>
+                                              Grid.ColumnSpan="2"
+                                              Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}"
+                                              Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LeftPaneVisibility}"/>
 
                                         <Grid x:Name="ContentLeftPadding" Grid.Row="1"/>
 
@@ -1407,7 +1416,7 @@
                                 </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="OnLeftNavigation" />
                                 <!--
-                                <VisualState x:Name="OnLeftNavigationReveal" />
+                                     <VisualState x:Name="OnLeftNavigationReveal" />
                                 -->
                                 <VisualState x:Name="OnTopNavigationPrimary">
                                     <Storyboard>
@@ -1417,13 +1426,13 @@
                                     </Storyboard>
                                 </VisualState>
                                 <!--
-                                <VisualState x:Name="OnTopNavigationPrimaryReveal">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ChildrenFlyout" Storyboard.TargetProperty="Placement">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static primitives:FlyoutPlacementMode.BottomEdgeAlignedLeft}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                     <VisualState x:Name="OnTopNavigationPrimaryReveal">
+                                     <Storyboard>
+                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ChildrenFlyout" Storyboard.TargetProperty="Placement">
+                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static primitives:FlyoutPlacementMode.BottomEdgeAlignedLeft}" />
+                                     </ObjectAnimationUsingKeyFrames>
+                                     </Storyboard>
+                                     </VisualState>
                                 -->
                                 <VisualState x:Name="OnTopNavigationOverflow" />
                             </VisualStateGroup>
@@ -1452,19 +1461,19 @@
                             ui:FocusVisualHelper.IsTemplateFocusTarget="True">
                         </primitives:NavigationViewItemPresenter>
                         <local:ItemsRepeater
-                                Grid.Row="1"
-                                Visibility="Collapsed"
-                                x:Name="NavigationViewItemMenuItemsHost">
+                            Grid.Row="1"
+                            Visibility="Collapsed"
+                            x:Name="NavigationViewItemMenuItemsHost">
                             <local:ItemsRepeater.Layout>
                                 <local:StackLayout Orientation="Vertical"/>
                             </local:ItemsRepeater.Layout>
                         </local:ItemsRepeater>
                         <primitives:FlyoutBase.AttachedFlyout>
                             <local:Flyout x:Name="ChildrenFlyout"
-                                       Placement="RightEdgeAlignedTop">
+                                          Placement="RightEdgeAlignedTop">
                                 <local:Flyout.FlyoutPresenterStyle>
                                     <Style TargetType="local:FlyoutPresenter">
-                                        <Setter Property="Padding" Value="0,8" />
+                                        <Setter Property="Padding" Value="{DynamicResource TopNavigationViewOverflowMenuPadding}" />
                                         <!-- Set negative top margin to make the flyout align exactly with the button -->
                                         <!--<Setter Property="Margin" Value="0,-4,0,0" />-->
                                     </Style>
@@ -1483,9 +1492,9 @@
                         </Trigger>
                         <!-- OnLeftNavigationReveal -->
                         <!--
-                        <Trigger Property="CurrentStateName" Value="OnLeftNavigationReveal" SourceName="ItemOnNavigationViewListPositionStatesListener">
-                            <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnLeftPaneWithRevealFocus}" />
-                        </Trigger>
+                             <Trigger Property="CurrentStateName" Value="OnLeftNavigationReveal" SourceName="ItemOnNavigationViewListPositionStatesListener">
+                             <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnLeftPaneWithRevealFocus}" />
+                             </Trigger>
                         -->
                         <!-- OnTopNavigationPrimary -->
                         <Trigger Property="CurrentStateName" Value="OnTopNavigationPrimary" SourceName="ItemOnNavigationViewListPositionStatesListener">
@@ -1494,10 +1503,10 @@
                         </Trigger>
                         <!-- OnTopNavigationPrimaryReveal -->
                         <!--
-                        <Trigger Property="CurrentStateName" Value="OnTopNavigationPrimaryReveal" SourceName="ItemOnNavigationViewListPositionStatesListener">
-                            <Setter TargetName="NavigationViewItemPresenter" Property="Margin" Value="{DynamicResource TopNavigationViewItemMargin}" />
-                            <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPaneWithRevealFocus}" />
-                        </Trigger>
+                             <Trigger Property="CurrentStateName" Value="OnTopNavigationPrimaryReveal" SourceName="ItemOnNavigationViewListPositionStatesListener">
+                             <Setter TargetName="NavigationViewItemPresenter" Property="Margin" Value="{DynamicResource TopNavigationViewItemMargin}" />
+                             <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPaneWithRevealFocus}" />
+                             </Trigger>
                         -->
                         <!-- OnTopNavigationOverflow -->
                         <Trigger Property="CurrentStateName" Value="OnTopNavigationOverflow" SourceName="ItemOnNavigationViewListPositionStatesListener">
@@ -1540,9 +1549,9 @@
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.0"/>
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0.1" Value="0.0"/>
                                                 <SplineDoubleKeyFrame
-                                                KeyTime="0:0:0.2"
-                                                KeySpline="0.0,0.35 0.15,1.0"
-                                                Value="1.0" />
+                                                    KeyTime="0:0:0.2"
+                                                    KeySpline="0.0,0.35 0.15,1.0"
+                                                    Value="1.0" />
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualTransition>
@@ -1560,9 +1569,9 @@
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Opacity">
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1.0"/>
                                                 <SplineDoubleKeyFrame
-                                                KeyTime="0:0:0.1"
-                                                KeySpline="0.0,0.35 0.15,1.0"
-                                                Value="0.0" />
+                                                    KeyTime="0:0:0.1"
+                                                    KeySpline="0.0,0.35 0.15,1.0"
+                                                    Value="0.0" />
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualTransition>

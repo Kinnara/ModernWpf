@@ -4,6 +4,7 @@
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using ProgressBar = ModernWpf.Controls.ProgressBar;
+using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Automation.Peers
 {
@@ -12,6 +13,8 @@ namespace ModernWpf.Automation.Peers
     /// </summary>
     public class ProgressBarAutomationPeer : RangeBaseAutomationPeer, IRangeValueProvider
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(ProgressBar));
+
         /// <summary>
         /// Initializes a new instance of the ProgressBarAutomationPeer class.
         /// </summary>
@@ -51,15 +54,15 @@ namespace ModernWpf.Automation.Peers
             {
                 if (progressBar.ShowError)
                 {
-                    return Strings.ProgressBarErrorStatus;
+                    return ResourceAccessor.GetLocalizedStringResource(SR_ProgressBarErrorStatus);
                 }
                 else if (progressBar.ShowPaused)
                 {
-                    return Strings.ProgressBarPausedStatus;
+                    return ResourceAccessor.GetLocalizedStringResource(SR_ProgressBarPausedStatus);
                 }
                 else if (progressBar.IsIndeterminate)
                 {
-                    return Strings.ProgressBarIndeterminateStatus;
+                    return ResourceAccessor.GetLocalizedStringResource(SR_ProgressBarIndeterminateStatus);
                 }
             }
             return name;
