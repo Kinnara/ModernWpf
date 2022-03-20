@@ -7,7 +7,7 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/ModernWpf;component/Styles/Button.xaml"/>
+        <ResourceDictionary Source="/ModernWpf;component/Styles/Button.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <ui:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
@@ -21,9 +21,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ContentControl">
-                    <ContentPresenter Margin="{TemplateBinding Padding}"
-                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    <ContentPresenter
+                        Margin="{TemplateBinding Padding}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -44,18 +45,18 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid 
-                        x:Name="RootGrid" 
+                    <Grid
+                        x:Name="RootGrid"
                         Height="{TemplateBinding Height}"
                         Width="{TemplateBinding Width}"
                         Background="{TemplateBinding Background}">
-                        <Rectangle 
-                            x:Name="PointerRectangle" 
+                        <Rectangle
+                            x:Name="PointerRectangle"
                             Fill="Transparent"
-                            Visibility="Collapsed"/>
-                        <Border		
-                            x:Name="RevealBorder"		
-                            BorderBrush="{TemplateBinding BorderBrush}"		
+                            Visibility="Collapsed" />
+                        <Border
+                            x:Name="RevealBorder"
+                            BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}" />
                         <ui:FontIconFallback
                             x:Name="Icon"
@@ -108,17 +109,17 @@
                     <ControlTemplate.Resources>
                         <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
                     </ControlTemplate.Resources>
-                    <Grid 
-                        x:Name="RootGrid" 
+                    <Grid
+                        x:Name="RootGrid"
                         Height="{TemplateBinding Height}"
                         Width="{TemplateBinding Width}"
                         Background="{TemplateBinding Background}">
-                        <Rectangle 
-                            x:Name="PointerRectangle" 
+                        <Rectangle
+                            x:Name="PointerRectangle"
                             Fill="Transparent" />
-                        <Border		
-                            x:Name="RevealBorder"		
-                            BorderBrush="{TemplateBinding BorderBrush}"		
+                        <Border
+                            x:Name="RevealBorder"
+                            BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}" />
                         <ui:FontIconFallback
                             x:Name="Icon"
@@ -173,13 +174,17 @@
                                 <DoubleAnimation
                                     Storyboard.TargetName="ExpandCollapseChevronRotateTransform"
                                     Storyboard.TargetProperty="Angle"
-                                    From="0.0" To="180.0" Duration="0:0:0.1"/>
+                                    From="0.0"
+                                    To="180.0"
+                                    Duration="0:0:0.1" />
                             </Storyboard>
                             <Storyboard x:Key="ExpandCollapseRotateCollapsedStoryboard">
                                 <DoubleAnimation
                                     Storyboard.TargetName="ExpandCollapseChevronRotateTransform"
                                     Storyboard.TargetProperty="Angle"
-                                    From="180.0" To="0.0" Duration="0:0:0.1"/>
+                                    From="180.0"
+                                    To="0.0"
+                                    Duration="0:0:0.1" />
                             </Storyboard>
                         </Grid.Resources>
 
@@ -200,8 +205,8 @@
                                 <ui:VisualStateGroupListener.Listener>
                                     <ui:VisualStateGroupListener x:Name="DisabledStatesListener" />
                                 </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="Enabled"/>
-                                <VisualState x:Name="Disabled"/>
+                                <VisualState x:Name="Enabled" />
+                                <VisualState x:Name="Disabled" />
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="IconStates">
@@ -223,7 +228,7 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="ChevronStates">
-                                <VisualState x:Name="ChevronHidden"/>
+                                <VisualState x:Name="ChevronHidden" />
                                 <VisualState x:Name="ChevronVisibleOpen">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
@@ -267,7 +272,7 @@
                                     Fill="{DynamicResource NavigationViewSelectionIndicatorForeground}"
                                     Opacity="0.0"
                                     RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                    RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"/>
+                                    RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                             </Grid>
 
                             <Grid
@@ -280,11 +285,12 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <Viewbox x:Name="IconBox"
-                                         Height="16"
-                                         Margin="{DynamicResource NavigationViewItemOnLeftIconBoxMargin}">
-                                    <ContentPresenter 
-                                        x:Name="Icon" 
+                                <Viewbox
+                                    x:Name="IconBox"
+                                    Height="16"
+                                    Margin="{DynamicResource NavigationViewItemOnLeftIconBoxMargin}">
+                                    <ContentPresenter
+                                        x:Name="Icon"
                                         Content="{TemplateBinding Icon}" />
                                 </Viewbox>
 
@@ -297,7 +303,7 @@
                                     Content="{TemplateBinding Content}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"/>
+                                    ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
 
                                 <Grid
                                     x:Name="ExpandCollapseChevron"
@@ -316,7 +322,7 @@
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center">
                                         <ui:FontIconFallback.RenderTransform>
-                                            <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" Angle="0"/>
+                                            <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" Angle="0" />
                                         </ui:FontIconFallback.RenderTransform>
                                     </ui:FontIconFallback>
                                 </Grid>
@@ -383,8 +389,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NavigationViewItem">
-                    <Grid 
-                        x:Name="LayoutRoot" 
+                    <Grid
+                        x:Name="LayoutRoot"
                         Background="{TemplateBinding Background}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PointerStates">
@@ -402,19 +408,17 @@
                                 <ui:VisualStateGroupListener.Listener>
                                     <ui:VisualStateGroupListener x:Name="DisabledStatesListener" />
                                 </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="Enabled"/>
-                                <VisualState x:Name="Disabled">
-                                </VisualState>
+                                <VisualState x:Name="Enabled" />
+                                <VisualState x:Name="Disabled" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Rectangle 
-                            x:Name="PointerRectangle" 
+                        <Rectangle
+                            x:Name="PointerRectangle"
                             Fill="Transparent" />
-                        <Border		
-                            x:Name="RevealBorder"		
-                            BorderBrush="{TemplateBinding BorderBrush}"		
-                            BorderThickness="{TemplateBinding BorderThickness}" >
-                        </Border>
+                        <Border
+                            x:Name="RevealBorder"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" />
                         <Grid x:Name="ContentGrid">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -424,17 +428,17 @@
                                 <RowDefinition x:Name="IconRow" Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <Viewbox 
-                                x:Name="IconBox" 
+                            <Viewbox
+                                x:Name="IconBox"
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Height="16"
-                                Width ="48"
+                                Width="48"
                                 Margin="0,0,0,0"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center">
-                                <ContentPresenter 
-                                    x:Name="Icon" 
+                                <ContentPresenter
+                                    x:Name="Icon"
                                     Content="{TemplateBinding Icon}"
                                     TextElement.Foreground="{TemplateBinding Foreground}" />
                             </Viewbox>
@@ -481,21 +485,25 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:NavigationViewItemPresenter">
-                    <Grid 
-                        x:Name="LayoutRoot" 
+                    <Grid
+                        x:Name="LayoutRoot"
                         Background="{TemplateBinding Background}">
                         <Grid.Resources>
                             <Storyboard x:Key="ExpandCollapseRotateExpandedStoryboard">
                                 <DoubleAnimation
                                     Storyboard.TargetName="ExpandCollapseChevronRotateTransform"
                                     Storyboard.TargetProperty="Angle"
-                                    From="0.0" To="180.0" Duration="0:0:0.1"/>
+                                    From="0.0"
+                                    To="180.0"
+                                    Duration="0:0:0.1" />
                             </Storyboard>
                             <Storyboard x:Key="ExpandCollapseRotateCollapsedStoryboard">
                                 <DoubleAnimation
                                     Storyboard.TargetName="ExpandCollapseChevronRotateTransform"
                                     Storyboard.TargetProperty="Angle"
-                                    From="180.0" To="0.0" Duration="0:0:0.1"/>
+                                    From="180.0"
+                                    To="0.0"
+                                    Duration="0:0:0.1" />
                             </Storyboard>
                         </Grid.Resources>
                         <VisualStateManager.VisualStateGroups>
@@ -514,8 +522,8 @@
                                 <ui:VisualStateGroupListener.Listener>
                                     <ui:VisualStateGroupListener x:Name="DisabledStatesListener" />
                                 </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="Enabled"/>
-                                <VisualState x:Name="Disabled"/>
+                                <VisualState x:Name="Enabled" />
+                                <VisualState x:Name="Disabled" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="NavigationViewIconPositionStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -526,7 +534,7 @@
                                 <VisualState x:Name="ContentOnly" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ChevronStates">
-                                <VisualState x:Name="ChevronHidden"/>
+                                <VisualState x:Name="ChevronHidden" />
                                 <VisualState x:Name="ChevronVisibleOpen">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
@@ -543,13 +551,13 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Rectangle 
-                            x:Name="PointerRectangle" 
+                        <Rectangle
+                            x:Name="PointerRectangle"
                             Fill="Transparent"
                             Visibility="Collapsed" />
-                        <Border		
-                            x:Name="RevealBorder"		
-                            BorderBrush="{TemplateBinding BorderBrush}"		
+                        <Border
+                            x:Name="RevealBorder"
+                            BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}" />
                         <Grid x:Name="ContentGrid">
                             <Grid.ColumnDefinitions>
@@ -557,17 +565,17 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Viewbox 
-                                x:Name="IconBox" 
+                            <Viewbox
+                                x:Name="IconBox"
                                 Height="16"
                                 Width="16"
                                 Margin="16,0,0,0"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center">
-                                <ContentPresenter 
-                                    x:Name="Icon" 
+                                <ContentPresenter
+                                    x:Name="Icon"
                                     Content="{TemplateBinding Icon}"
-                                    TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                    TextElement.Foreground="{TemplateBinding Foreground}" />
                             </Viewbox>
                             <ui:ContentPresenterEx
                                 x:Name="ContentPresenter"
@@ -579,7 +587,7 @@
                                 Content="{TemplateBinding Content}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                VerticalAlignment="Center"/>
+                                VerticalAlignment="Center" />
                             <Grid
                                 x:Name="ExpandCollapseChevron"
                                 Grid.Column="2"
@@ -597,12 +605,12 @@
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Center">
                                     <ui:FontIconFallback.RenderTransform>
-                                        <RotateTransform x:Name="ExpandCollapseChevronRotateTransform"/>
+                                        <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" />
                                     </ui:FontIconFallback.RenderTransform>
                                 </ui:FontIconFallback>
                             </Grid>
                         </Grid>
-                        <Grid 
+                        <Grid
                             x:Name="SelectionIndicatorGrid"
                             Margin="16,0,16,4"
                             VerticalAlignment="Bottom">
@@ -677,20 +685,24 @@
                 <ControlTemplate TargetType="primitives:NavigationViewItemPresenter">
                     <Grid
                         x:Name="LayoutRoot"
-                        Height="40" 
+                        Height="40"
                         Background="{TemplateBinding Background}">
                         <Grid.Resources>
                             <Storyboard x:Key="ExpandCollapseRotateExpandedStoryboard">
                                 <DoubleAnimation
                                     Storyboard.TargetName="ExpandCollapseChevronRotateTransform"
                                     Storyboard.TargetProperty="Angle"
-                                    From="0.0" To="180.0" Duration="0:0:0.1"/>
+                                    From="0.0"
+                                    To="180.0"
+                                    Duration="0:0:0.1" />
                             </Storyboard>
                             <Storyboard x:Key="ExpandCollapseRotateCollapsedStoryboard">
                                 <DoubleAnimation
                                     Storyboard.TargetName="ExpandCollapseChevronRotateTransform"
                                     Storyboard.TargetProperty="Angle"
-                                    From="180.0" To="0.0" Duration="0:0:0.1"/>
+                                    From="180.0"
+                                    To="0.0"
+                                    Duration="0:0:0.1" />
                             </Storyboard>
                         </Grid.Resources>
 
@@ -710,8 +722,8 @@
                                 <ui:VisualStateGroupListener.Listener>
                                     <ui:VisualStateGroupListener x:Name="DisabledStatesListener" />
                                 </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="Enabled"/>
-                                <VisualState x:Name="Disabled"/>
+                                <VisualState x:Name="Enabled" />
+                                <VisualState x:Name="Disabled" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="NavigationViewIconPositionStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -722,7 +734,7 @@
                                 <VisualState x:Name="ContentOnly" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ChevronStates">
-                                <VisualState x:Name="ChevronHidden"/>
+                                <VisualState x:Name="ChevronHidden" />
                                 <VisualState x:Name="ChevronVisibleOpen">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
@@ -753,7 +765,7 @@
                                     Fill="{DynamicResource NavigationViewSelectionIndicatorForeground}"
                                     Opacity="0.0"
                                     RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                    RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"/>
+                                    RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                             </Grid>
                             <Grid x:Name="ContentGrid">
                                 <Grid.ColumnDefinitions>
@@ -761,15 +773,15 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Viewbox 
-                                    x:Name="IconBox" 
+                                <Viewbox
+                                    x:Name="IconBox"
                                     Height="16"
                                     Width="16"
                                     Margin="16,0,0,0"
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Center">
-                                    <ContentPresenter 
-                                        x:Name="Icon" 
+                                    <ContentPresenter
+                                        x:Name="Icon"
                                         Content="{TemplateBinding Icon}"
                                         TextElement.Foreground="{TemplateBinding Foreground}" />
                                 </Viewbox>
@@ -783,7 +795,7 @@
                                     Content="{TemplateBinding Content}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                    VerticalAlignment="Center"/>
+                                    VerticalAlignment="Center" />
                                 <Grid
                                     x:Name="ExpandCollapseChevron"
                                     Grid.Column="2"
@@ -795,7 +807,8 @@
                                     <Border Padding="{DynamicResource TopNavigationViewItemOnOverflowExpandChevronPadding}">
                                         <ui:FontIconFallback
                                             Foreground="{DynamicResource NavigationViewItemForeground}"
-                                            Width="12" Height="12"
+                                            Width="12"
+                                            Height="12"
                                             RenderTransformOrigin="0.5, 0.5"
                                             FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
                                             Data="{DynamicResource NavigationViewItemExpandedPath}"
@@ -803,7 +816,7 @@
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center">
                                             <ui:FontIconFallback.RenderTransform>
-                                                <RotateTransform x:Name="ExpandCollapseChevronRotateTransform"/>
+                                                <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" />
                                             </ui:FontIconFallback.RenderTransform>
                                         </ui:FontIconFallback>
                                     </Border>
@@ -858,8 +871,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NavigationView">
-                    <Grid x:Name="RootGrid"
-                          KeyboardNavigation.TabNavigation="Local">
+                    <Grid
+                        x:Name="RootGrid"
+                        KeyboardNavigation.TabNavigation="Local">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DisplayModeGroup">
                                 <ui:VisualStateGroupListener.Listener>
@@ -920,8 +934,8 @@
                                 <ui:VisualStateGroupListener.Listener>
                                     <ui:VisualStateGroupListener x:Name="PaneStateListSizeGroupListener" />
                                 </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="ListSizeFull"/>
-                                <VisualState x:Name="ListSizeCompact"/>
+                                <VisualState x:Name="ListSizeFull" />
+                                <VisualState x:Name="ListSizeCompact" />
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="TitleBarVisibilityGroup">
@@ -966,10 +980,10 @@
                                         <!-- write it here and interfere. But these values work together to hide -->
                                         <!-- the left pane. -->
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootSplitView" Storyboard.TargetProperty="CompactPaneLength">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="0"/>
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
                                         </DoubleAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneToggleButtonGrid" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -987,14 +1001,17 @@
                             KeyboardNavigation.TabIndex="0">
 
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <Grid x:Name="TogglePaneTopPadding"
-                                  Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}"/>
+                            <Grid
+                                x:Name="TogglePaneTopPadding"
+                                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}" />
 
-                            <Grid x:Name="ButtonHolderGrid" Grid.Row="1">
+                            <Grid
+                                x:Name="ButtonHolderGrid"
+                                Grid.Row="1">
                                 <Button
                                     x:Name="NavigationViewBackButton"
                                     Style="{DynamicResource NavigationBackButtonNormalStyle}"
@@ -1002,15 +1019,15 @@
                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.BackButtonVisibility}"
                                     IsEnabled="{TemplateBinding IsBackEnabled}">
                                     <ToolTipService.ToolTip>
-                                        <ToolTip x:Name="NavigationViewBackButtonToolTip"/>
+                                        <ToolTip x:Name="NavigationViewBackButtonToolTip" />
                                     </ToolTipService.ToolTip>
                                 </Button>
-                                <Button 
+                                <Button
                                     x:Name="NavigationViewCloseButton"
                                     Style="{DynamicResource NavigationBackButtonNormalStyle}"
                                     VerticalAlignment="Top">
                                     <ToolTipService.ToolTip>
-                                        <ToolTip x:Name="NavigationViewCloseButtonToolTip"/>
+                                        <ToolTip x:Name="NavigationViewCloseButtonToolTip" />
                                     </ToolTipService.ToolTip>
                                 </Button>
                                 <Button
@@ -1020,12 +1037,12 @@
                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.PaneToggleButtonVisibility}"
                                     VerticalAlignment="Top">
                                     <TextBlock
-                                        x:Name="PaneTitleTextBlock" 
+                                        x:Name="PaneTitleTextBlock"
                                         Grid.Column="0"
                                         Text="{TemplateBinding PaneTitle}"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Style="{DynamicResource NavigationViewItemHeaderTextStyle}"/>
+                                        Style="{DynamicResource NavigationViewItemHeaderTextStyle}" />
                                 </Button>
                                 <Grid
                                     x:Name="PaneTitleHolder"
@@ -1036,7 +1053,7 @@
                                         Margin="{DynamicResource NavigationViewPaneTitlePresenterMargin}"
                                         IsTabStop="False"
                                         HorizontalContentAlignment="Stretch"
-                                        VerticalContentAlignment="Stretch"/>
+                                        VerticalContentAlignment="Stretch" />
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -1044,8 +1061,8 @@
                         <!-- Content layouts -->
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
                             <!-- DisplayMode top -->
@@ -1054,32 +1071,34 @@
                                 Background="{DynamicResource NavigationViewTopPaneBackground}"
                                 Grid.Row="0"
                                 HorizontalAlignment="Stretch"
-                                VerticalAlignment="Top"                                
+                                VerticalAlignment="Top"
                                 Canvas.ZIndex="1">
 
-                                <Grid x:Name="TopNavTopPadding"
-                                      Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}"
-                                      Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPaneVisibility}"/>
+                                <Grid
+                                    x:Name="TopNavTopPadding"
+                                    Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}"
+                                    Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPaneVisibility}" />
 
-                                <Grid x:Name="TopNavGrid" 
-                                      Height="{DynamicResource NavigationViewTopPaneHeight}"
-                                      Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPaneVisibility}">
+                                <Grid
+                                    x:Name="TopNavGrid"
+                                    Height="{DynamicResource NavigationViewTopPaneHeight}"
+                                    Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPaneVisibility}">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition x:Name="BackButtonPlaceholderOnTopNav" ui:ColumnDefinitionHelper.PixelWidth="{DynamicResource NavigationBackButtonWidth}"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*" MinWidth="{DynamicResource TopNavigationViewPaneCustomContentMinWidth}"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition x:Name="BackButtonPlaceholderOnTopNav" ui:ColumnDefinitionHelper.PixelWidth="{DynamicResource NavigationBackButtonWidth}" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" MinWidth="{DynamicResource TopNavigationViewPaneCustomContentMinWidth}" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <Grid 
-                                        x:Name="TopNavLeftPadding" 
+                                    <Grid
+                                        x:Name="TopNavLeftPadding"
                                         Grid.Column="1"
-                                        Width="0"/>
+                                        Width="0" />
 
                                     <ContentControl
                                         x:Name="PaneHeaderOnTopPane"
@@ -1087,7 +1106,7 @@
                                         IsTabStop="False"
                                         VerticalContentAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
-                                        Grid.Column="2"/>
+                                        Grid.Column="2" />
 
                                     <ContentControl
                                         x:Name="PaneTitleOnTopPane"
@@ -1095,25 +1114,24 @@
                                         IsTabStop="False"
                                         VerticalContentAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
-                                        Grid.Column="2"/>
+                                        Grid.Column="2" />
 
                                     <!-- Top nav ItemsRepeater -->
-                                    <local:ItemsRepeaterScrollHost
-                                        Grid.Column="3">
+                                    <local:ItemsRepeaterScrollHost Grid.Column="3">
                                         <ScrollViewer
                                             HorizontalScrollBarVisibility="Hidden"
                                             VerticalScrollBarVisibility="Hidden">
-                                            <local:ItemsRepeater 
+                                            <local:ItemsRepeater
                                                 AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}"
                                                 x:Name="TopNavMenuItemsHost">
                                                 <local:ItemsRepeater.Layout>
-                                                    <local:StackLayout Orientation="Horizontal"/>
+                                                    <local:StackLayout Orientation="Horizontal" />
                                                 </local:ItemsRepeater.Layout>
                                             </local:ItemsRepeater>
                                         </ScrollViewer>
                                     </local:ItemsRepeaterScrollHost>
 
-                                    <Button 
+                                    <Button
                                         x:Name="TopNavOverflowButton"
                                         Grid.Column="4"
                                         Content="More"
@@ -1122,8 +1140,7 @@
                                         Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OverflowButtonVisibility}">
 
                                         <local:FlyoutService.Flyout>
-                                            <local:Flyout
-                                                Placement="BottomEdgeAlignedRight">
+                                            <local:Flyout Placement="BottomEdgeAlignedRight">
                                                 <local:Flyout.FlyoutPresenterStyle>
                                                     <Style TargetType="local:FlyoutPresenter">
                                                         <Setter Property="Padding" Value="{DynamicResource TopNavigationViewOverflowMenuPadding}" />
@@ -1133,8 +1150,7 @@
                                                 </local:Flyout.FlyoutPresenterStyle>
                                                 <local:ItemsRepeaterScrollHost>
                                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                                        <local:ItemsRepeater
-                                                            x:Name="TopNavMenuItemsOverflowHost"/>
+                                                        <local:ItemsRepeater x:Name="TopNavMenuItemsOverflowHost" />
                                                     </ScrollViewer>
                                                 </local:ItemsRepeaterScrollHost>
                                             </local:Flyout>
@@ -1147,7 +1163,7 @@
                                         IsTabStop="False"
                                         VerticalContentAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
-                                        Grid.Column="5"/>
+                                        Grid.Column="5" />
 
                                     <Grid
                                         x:Name="TopPaneAutoSuggestArea"
@@ -1161,7 +1177,7 @@
                                             MinWidth="48"
                                             IsTabStop="False"
                                             HorizontalContentAlignment="Stretch"
-                                            VerticalContentAlignment="Center"/>
+                                            VerticalContentAlignment="Center" />
                                     </Grid>
 
                                     <ContentControl
@@ -1176,7 +1192,7 @@
                                         Grid.Column="8"
                                         x:Name="TopFooterMenuItemsHost">
                                         <local:ItemsRepeater.Layout>
-                                            <local:StackLayout Orientation="Horizontal"/>
+                                            <local:StackLayout Orientation="Horizontal" />
                                         </local:ItemsRepeater.Layout>
                                     </local:ItemsRepeater>
 
@@ -1196,38 +1212,38 @@
                                 IsTabStop="False"
                                 OpenPaneLength="{TemplateBinding OpenPaneLength}"
                                 PaneBackground="{DynamicResource NavigationViewDefaultPaneBackground}"
-                            
                                 Grid.Row="1">
 
                                 <local:SplitView.Pane>
-                                    <Grid 
+                                    <Grid
                                         x:Name="PaneContentGrid"
                                         HorizontalAlignment="Left"
                                         Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LeftPaneVisibility}">
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="0"/>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="0" />
                                             <!-- above button margin + back button space -->
-                                            <RowDefinition x:Name="PaneContentGridToggleButtonRow" Height="Auto" MinHeight="{DynamicResource NavigationViewPaneHeaderRowMinHeight}"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="8"/>
+                                            <RowDefinition x:Name="PaneContentGridToggleButtonRow" Height="Auto" MinHeight="{DynamicResource NavigationViewPaneHeaderRowMinHeight}" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="8" />
                                             <!-- above list margin -->
-                                            <RowDefinition x:Name="ItemsContainerRow" Height="*"/>
+                                            <RowDefinition x:Name="ItemsContainerRow" Height="*" />
                                         </Grid.RowDefinitions>
 
-                                        <Grid x:Name="ContentPaneTopPadding"
-                                              Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}"/>
+                                        <Grid
+                                            x:Name="ContentPaneTopPadding"
+                                            Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}" />
 
                                         <Grid Grid.Row="2">
                                             <Grid.RowDefinitions>
-                                                <RowDefinition x:Name="PaneHeaderContentBorderRow"/>
+                                                <RowDefinition x:Name="PaneHeaderContentBorderRow" />
                                             </Grid.RowDefinitions>
 
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition x:Name="PaneHeaderCloseButtonColumn"/>
-                                                <ColumnDefinition x:Name="PaneHeaderToggleButtonColumn"/>
-                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition x:Name="PaneHeaderCloseButtonColumn" />
+                                                <ColumnDefinition x:Name="PaneHeaderToggleButtonColumn" />
+                                                <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
 
                                             <ContentControl
@@ -1251,13 +1267,13 @@
                                                 Margin="{DynamicResource NavigationViewAutoSuggestBoxMargin}"
                                                 IsTabStop="False"
                                                 HorizontalContentAlignment="Stretch"
-                                                VerticalContentAlignment="Center"/>
+                                                VerticalContentAlignment="Center" />
 
                                             <Button
                                                 x:Name="PaneAutoSuggestButton"
                                                 Visibility="Collapsed"
                                                 Style="{DynamicResource NavigationViewPaneSearchButtonStyle}"
-                                                Width="{TemplateBinding CompactPaneLength}"/>
+                                                Width="{TemplateBinding CompactPaneLength}" />
                                         </Grid>
 
                                         <ContentControl
@@ -1269,34 +1285,46 @@
                                             Grid.Row="4" />
 
                                         <!-- "Non header" content -->
-                                        <Grid x:Name="ItemsContainerGrid" Grid.Row="6" Margin="0,0,0,8">
+                                        <Grid
+                                            x:Name="ItemsContainerGrid"
+                                            Grid.Row="6"
+                                            Margin="0,0,0,8">
                                             <Grid.RowDefinitions>
-                                                <RowDefinition x:Name="MenuItemsRow" Height="Auto" MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"/> <!-- MenuItems -->
-                                                <RowDefinition Height="*" MinHeight="21"/> <!-- Fill spacing -->
-                                                <RowDefinition Height="Auto" /> <!-- PaneFooter -->
-                                                <RowDefinition x:Name="FooterItemsRow" Height="Auto" MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"/> <!-- FooterItems -->
+                                                <RowDefinition x:Name="MenuItemsRow" Height="Auto" MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}" />
+                                                <!-- MenuItems -->
+                                                <RowDefinition Height="*" MinHeight="21" />
+                                                <!-- Fill spacing -->
+                                                <RowDefinition Height="Auto" />
+                                                <!-- PaneFooter -->
+                                                <RowDefinition x:Name="FooterItemsRow" Height="Auto" MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}" />
+                                                <!-- FooterItems -->
                                             </Grid.RowDefinitions>
 
                                             <!-- MenuItems -->
                                             <local:ItemsRepeaterScrollHost
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Stretch">
-                                                <ScrollViewer x:Name="MenuItemsScrollViewer"
+                                                <ScrollViewer
+                                                    x:Name="MenuItemsScrollViewer"
                                                     KeyboardNavigation.TabNavigation="Local"
                                                     VerticalScrollBarVisibility="Auto">
                                                     <!-- Left nav ItemsRepeater -->
                                                     <local:ItemsRepeater
                                                         x:Name="MenuItemsHost"
-                                                        AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}"/>
+                                                        AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}" />
                                                 </ScrollViewer>
                                             </local:ItemsRepeaterScrollHost>
 
-                                            <local:NavigationViewItemSeparator x:Name="VisualItemsSeparator"
-                                                Grid.Row="1" VerticalAlignment="Center"
-                                                Visibility="Collapsed" HorizontalAlignment="Stretch"/>
+                                            <local:NavigationViewItemSeparator
+                                                x:Name="VisualItemsSeparator"
+                                                Grid.Row="1"
+                                                VerticalAlignment="Center"
+                                                Visibility="Collapsed"
+                                                HorizontalAlignment="Stretch" />
 
                                             <!-- PaneFooter -->
-                                            <ContentControl x:Name="FooterContentBorder"
+                                            <ContentControl
+                                                x:Name="FooterContentBorder"
                                                 Style="{StaticResource DefaultContentControlStyle}"
                                                 IsTabStop="False"
                                                 VerticalContentAlignment="Stretch"
@@ -1307,8 +1335,7 @@
                                             <local:ItemsRepeaterScrollHost Grid.Row="3">
                                                 <ScrollViewer x:Name="FooterItemsScrollViewer">
                                                     <!-- contract7Present:VerticalAnchorRatio="1" -->
-                                                    <local:ItemsRepeater
-                                                        x:Name="FooterMenuItemsHost"/>
+                                                    <local:ItemsRepeater x:Name="FooterMenuItemsHost" />
                                                 </ScrollViewer>
                                             </local:ItemsRepeaterScrollHost>
                                         </Grid>
@@ -1324,16 +1351,19 @@
                                             <RowDefinition Height="*" />
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <Grid x:Name="ContentTopPadding"
-                                              Grid.ColumnSpan="2"
-                                              Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}"
-                                              Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LeftPaneVisibility}"/>
+                                        <Grid
+                                            x:Name="ContentTopPadding"
+                                            Grid.ColumnSpan="2"
+                                            Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPadding}"
+                                            Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LeftPaneVisibility}" />
 
-                                        <Grid x:Name="ContentLeftPadding" Grid.Row="1"/>
+                                        <Grid
+                                            x:Name="ContentLeftPadding"
+                                            Grid.Row="1" />
 
                                         <ContentControl
                                             x:Name="HeaderContent"
@@ -1345,12 +1375,12 @@
                                             ContentTemplate="{TemplateBinding HeaderTemplate}"
                                             VerticalContentAlignment="Stretch"
                                             HorizontalContentAlignment="Stretch"
-                                            Style="{DynamicResource NavigationViewTitleHeaderContentControlTextStyle}"/>
+                                            Style="{DynamicResource NavigationViewTitleHeaderContentControlTextStyle}" />
 
                                         <ContentPresenter
                                             Grid.Row="2"
                                             Grid.ColumnSpan="2"
-                                            Content="{TemplateBinding Content}"/>
+                                            Content="{TemplateBinding Content}" />
                                     </Grid>
                                 </local:SplitView.Content>
                             </local:SplitView>
@@ -1398,15 +1428,15 @@
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="KeyboardNavigation.TabNavigation" Value="Once"/>
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="Once" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NavigationViewItem">
                     <Grid x:Name="NVIRootGrid">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <VisualStateManager.VisualStateGroups>
@@ -1458,19 +1488,19 @@
                             Content="{TemplateBinding Content}"
                             CornerRadius="{TemplateBinding CornerRadius}"
                             IsTabStop="False"
-                            ui:FocusVisualHelper.IsTemplateFocusTarget="True">
-                        </primitives:NavigationViewItemPresenter>
+                            ui:FocusVisualHelper.IsTemplateFocusTarget="True" />
                         <local:ItemsRepeater
                             Grid.Row="1"
                             Visibility="Collapsed"
                             x:Name="NavigationViewItemMenuItemsHost">
                             <local:ItemsRepeater.Layout>
-                                <local:StackLayout Orientation="Vertical"/>
+                                <local:StackLayout Orientation="Vertical" />
                             </local:ItemsRepeater.Layout>
                         </local:ItemsRepeater>
                         <primitives:FlyoutBase.AttachedFlyout>
-                            <local:Flyout x:Name="ChildrenFlyout"
-                                          Placement="RightEdgeAlignedTop">
+                            <local:Flyout
+                                x:Name="ChildrenFlyout"
+                                Placement="RightEdgeAlignedTop">
                                 <local:Flyout.FlyoutPresenterStyle>
                                     <Style TargetType="local:FlyoutPresenter">
                                         <Setter Property="Padding" Value="{DynamicResource TopNavigationViewOverflowMenuPadding}" />
@@ -1479,7 +1509,7 @@
                                     </Style>
                                 </local:Flyout.FlyoutPresenterStyle>
                                 <Grid x:Name="FlyoutRootGrid">
-                                    <Grid x:Name="FlyoutContentGrid"/>
+                                    <Grid x:Name="FlyoutContentGrid" />
                                 </Grid>
                             </local:Flyout>
                         </primitives:FlyoutBase.AttachedFlyout>
@@ -1523,8 +1553,8 @@
     <Style TargetType="local:NavigationViewItemHeader">
         <Setter Property="IsEnabled" Value="False" />
         <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="MinHeight" Value="0"/>
-        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:NavigationViewItemHeader">
@@ -1546,12 +1576,9 @@
                                             </ObjectAnimationUsingKeyFrames>
 
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Opacity">
-                                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.0"/>
-                                                <LinearDoubleKeyFrame KeyTime="0:0:0.1" Value="0.0"/>
-                                                <SplineDoubleKeyFrame
-                                                    KeyTime="0:0:0.2"
-                                                    KeySpline="0.0,0.35 0.15,1.0"
-                                                    Value="1.0" />
+                                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.0" />
+                                                <LinearDoubleKeyFrame KeyTime="0:0:0.1" Value="0.0" />
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.2" KeySpline="0.0,0.35 0.15,1.0" Value="1.0" />
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualTransition>
@@ -1567,17 +1594,14 @@
                                             </ObjectAnimationUsingKeyFrames>
 
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Opacity">
-                                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1.0"/>
-                                                <SplineDoubleKeyFrame
-                                                    KeyTime="0:0:0.1"
-                                                    KeySpline="0.0,0.35 0.15,1.0"
-                                                    Value="0.0" />
+                                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1.0" />
+                                                <SplineDoubleKeyFrame KeyTime="0:0:0.1" KeySpline="0.0,0.35 0.15,1.0" Value="0.0" />
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualTransition>
                                 </VisualStateGroup.Transitions>
 
-                                <VisualState x:Name="HeaderTextVisible"/>
+                                <VisualState x:Name="HeaderTextVisible" />
                                 <VisualState x:Name="HeaderTextCollapsed">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Visibility">
@@ -1591,14 +1615,18 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid x:Name="InnerHeaderGrid" Height="40" HorizontalAlignment="Left" Margin="{DynamicResource NavigationViewItemInnerHeaderMargin}">
+                        <Grid
+                            x:Name="InnerHeaderGrid"
+                            Height="40"
+                            HorizontalAlignment="Left"
+                            Margin="{DynamicResource NavigationViewItemInnerHeaderMargin}">
                             <TextBlock
                                 x:Name="HeaderText"
                                 VerticalAlignment="Center"
                                 Margin="0,-1,0,-1"
                                 Style="{DynamicResource NavigationViewItemHeaderTextStyle}"
                                 Text="{TemplateBinding Content}"
-                                TextWrapping="NoWrap"/>
+                                TextWrapping="NoWrap" />
                         </Grid>
                     </Grid>
                 </ControlTemplate>
@@ -1624,7 +1652,7 @@
                                 <VisualState x:Name="VerticalLine" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Rectangle 
+                        <Rectangle
                             x:Name="SeparatorLine"
                             Height="{DynamicResource NavigationViewItemSeparatorHeight}"
                             Margin="{DynamicResource NavigationViewItemSeparatorMargin}"

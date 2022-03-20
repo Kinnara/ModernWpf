@@ -90,7 +90,7 @@
                                             Data="{TemplateBinding primitives:TreeViewItemHelper.CollapsedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             VerticalAlignment="Center"
-                                            IsHitTestVisible="False"/>
+                                            IsHitTestVisible="False" />
                                         <local:FontIconFallback
                                             x:Name="ExpandedGlyph"
                                             Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
@@ -101,7 +101,7 @@
                                             Data="{TemplateBinding primitives:TreeViewItemHelper.ExpandedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             VerticalAlignment="Center"
-                                            IsHitTestVisible="False"/>
+                                            IsHitTestVisible="False" />
                                     </Grid>
                                 </ToggleButton>
 

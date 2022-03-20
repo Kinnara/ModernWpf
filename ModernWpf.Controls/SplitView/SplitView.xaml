@@ -19,8 +19,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SplitView">
-                    <Grid Background="{TemplateBinding Background}"
-                          KeyboardNavigation.TabNavigation="Local">
+                    <Grid
+                        Background="{TemplateBinding Background}"
+                        KeyboardNavigation.TabNavigation="Local">
 
                         <Grid.Resources>
                             <Storyboard x:Key="FromClosedToOpenOverlayLeft">
@@ -593,7 +594,7 @@
                             <ColumnDefinition x:Name="ColumnDefinition1" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
                             <ColumnDefinition x:Name="ColumnDefinition2" Width="*" />
                         </Grid.ColumnDefinitions>
-                        <!-- Pane Content Area -->  
+                        <!-- Pane Content Area -->
                         <Grid
                             x:Name="PaneRoot"
                             Grid.ColumnSpan="2"

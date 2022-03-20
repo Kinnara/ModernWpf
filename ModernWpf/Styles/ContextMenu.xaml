@@ -69,6 +69,8 @@
 
     <Style TargetType="ContextMenu" BasedOn="{StaticResource DefaultContextMenuStyle}" />
 
-    <m:TextContextMenu x:Key="TextControlContextMenu" x:Shared="False" />
+    <m:TextContextMenu
+        x:Key="TextControlContextMenu"
+        x:Shared="False" />
 
 </ResourceDictionary>

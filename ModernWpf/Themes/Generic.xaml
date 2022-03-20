@@ -6,7 +6,7 @@
         <ResourceDictionary Source="/ModernWpf;component/Navigation/Frame.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/Navigation/Page.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/ProgressBar/ProgressBar.xaml" />
-        <ResourceDictionary Source="/ModernWpf;component/Themes/FontIconFallback.xaml"/>
+        <ResourceDictionary Source="/ModernWpf;component/Themes/FontIconFallback.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/Themes/ListViewHeaderItem.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/Themes/TextContextMenu.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/TitleBar/TitleBarButton.xaml" />

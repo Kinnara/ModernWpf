@@ -225,8 +225,7 @@
                 Margin="{DynamicResource SliderTopHeaderMargin}"
                 TextWrapping="Wrap"
                 Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
-                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-            </local:ContentPresenterEx>
+                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
             <Grid
                 x:Name="SliderContainer"
                 Grid.Row="1"

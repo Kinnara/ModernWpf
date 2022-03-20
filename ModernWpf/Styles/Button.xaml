@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
-    <Thickness x:Key="ButtonPadding">8,5,8,6</Thickness>
+    <Thickness x:Key="ButtonPadding">11,5,11,5</Thickness>
 
     <Style x:Key="DefaultButtonStyle" TargetType="Button">
         <Setter Property="OverridesDefaultStyle" Value="True" />

@@ -14,7 +14,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources CanBeAccessedAcrossThreads="{x:Static local:App.IsMultiThreaded}">
                     <ui:ThemeResources.ThemeDictionaries>
-                        <ResourceDictionary x:Key="Light" ui:ThemeDictionary.Key="Light">
+                        <ResourceDictionary
+                            x:Key="Light"
+                            ui:ThemeDictionary.Key="Light">
                             <ResourceDictionary.MergedDictionaries>
                                 <presets:ColorPresetResources TargetTheme="Light" />
                                 <presets:ShapePresetResources />
@@ -24,7 +26,9 @@
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Red" />
                         </ResourceDictionary>
 
-                        <ResourceDictionary x:Key="Dark" ui:ThemeDictionary.Key="Dark">
+                        <ResourceDictionary
+                            x:Key="Dark"
+                            ui:ThemeDictionary.Key="Dark">
                             <ResourceDictionary.MergedDictionaries>
                                 <presets:ColorPresetResources TargetTheme="Dark" />
                                 <presets:ShapePresetResources />
@@ -34,14 +38,16 @@
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Yellow" />
                         </ResourceDictionary>
 
-                        <ResourceDictionary x:Key="HighContrast" ui:ThemeDictionary.Key="HighContrast">
+                        <ResourceDictionary
+                            x:Key="HighContrast"
+                            ui:ThemeDictionary.Key="HighContrast">
                             <ResourceDictionary.MergedDictionaries>
                                 <ResourceDictionary Source="HighContrast.xaml" />
                             </ResourceDictionary.MergedDictionaries>
                         </ResourceDictionary>
                     </ui:ThemeResources.ThemeDictionaries>
                 </ui:ThemeResources>
-                
+
                 <ui:XamlControlsResources />
 
                 <!-- Font Overrides -->
@@ -53,7 +59,7 @@
                     <StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="DefaultFontFamily" />
                     <StaticResource x:Key="PivotTitleFontFamily" ResourceKey="DefaultFontFamily" />
                 </ResourceDictionary>-->
-                
+
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

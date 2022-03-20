@@ -19,7 +19,8 @@
                                 <VisualState x:Name="Disabled" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="HeaderContentPresenter"
+                        <ContentPresenter
+                            x:Name="HeaderContentPresenter"
                             Content="{TemplateBinding Header}"
                             ContentTemplate="{TemplateBinding HeaderTemplate}"
                             TextElement.Foreground="{DynamicResource RadioButtonsHeaderForeground}"

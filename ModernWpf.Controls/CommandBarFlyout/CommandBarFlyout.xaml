@@ -759,8 +759,9 @@
                                     </RectangleGeometry.Transform>
                                 </RectangleGeometry>
                             </Border.Clip>
-                            <Grid x:Name="ContentRoot"
-                                  Background="{TemplateBinding Background}">
+                            <Grid
+                                x:Name="ContentRoot"
+                                Background="{TemplateBinding Background}">
                                 <Grid.Clip>
                                     <RectangleGeometry
                                         x:Name="ContentRootClip"
