@@ -88,18 +88,18 @@
                 <RadioButton
                     Content="Unchecked"
                     GroupName="Test1"
-                    Initialized="RadioButton_Initialized"/>
+                    Initialized="RadioButton_Initialized" />
                 <RadioButton
                     Content="Checked"
                     GroupName="Test1"
                     IsChecked="True"
-                    Initialized="RadioButton_Initialized"/>
+                    Initialized="RadioButton_Initialized" />
                 <RadioButton
                     Content="Disabled"
                     GroupName="Test2"
                     IsChecked="True"
                     IsEnabled="False"
-                    Initialized="RadioButton_Initialized"/>
+                    Initialized="RadioButton_Initialized" />
             </ui:SimpleStackPanel>
         </HeaderedContentControl>
 

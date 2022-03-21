@@ -62,14 +62,6 @@
 
             </ResourceDictionary.MergedDictionaries>
 
-            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <sc:EnumValuesConverter x:Key="EnumValuesConverter" />
-            <sc:ColorToBrushConverter x:Key="ColorToBrushConverter" />
-            <common:BrushToColorConverter x:Key="BrushToColorConverter" />
-            <common:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
-            <common:BooleanToValueConverter x:Key="booleanToValueConverter" />
-            <common:CornerRadiusToDoubleConverter x:Key="CornerRadiusToDoubleConverter" />
-
             <Style TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
                 <Setter Property="sc:AutoPanningMode.IsEnabled" Value="True" />
             </Style>
@@ -87,10 +79,6 @@
                         <Setter Property="MinWidth" Value="200" />
                     </Style>
                 </Style.Resources>
-            </Style>
-
-            <Style x:Key="OutputTextBlockStyle" BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
-                <Setter Property="Margin" Value="8,8,0,0" />
             </Style>
 
             <Thickness x:Key="ControlPageContentMargin">24,0,24,20</Thickness>
@@ -132,6 +120,71 @@
                     </Style>
                 </Style.Resources>
             </Style>
+
+
+            <CornerRadius x:Key="ControlCornerRadius">4</CornerRadius>
+
+            <LinearGradientBrush x:Key="HeroImageGradientBrush" StartPoint="0.5,0" EndPoint="0.5,1.5">
+                <GradientStop Offset="0" Color="Transparent" />
+                <GradientStop Offset="0.5" Color="{DynamicResource LayerFillColorDefaultBrush}" />
+                <GradientStop Offset="1" Color="{DynamicResource LayerFillColorDefaultBrush}" />
+            </LinearGradientBrush>
+
+            <!-- Application-specific resources -->
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <sc:EnumValuesConverter x:Key="EnumValuesConverter" />
+            <sc:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+            <common:BrushToColorConverter x:Key="BrushToColorConverter" />
+            <common:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
+            <common:BooleanToValueConverter x:Key="booleanToValueConverter" />
+            <common:CornerRadiusToDoubleConverter x:Key="CornerRadiusToDoubleConverter" />
+
+            <!-- Breakpoints -->
+            <sys:Double x:Key="Breakpoint640Plus">641</sys:Double>
+
+            <Thickness x:Key="PageHeaderDefaultPadding">0</Thickness>
+            <Thickness x:Key="PageHeaderMinimalPadding">-4,0,12,0</Thickness>
+
+            <Thickness x:Key="ControlElementScreenshotModePadding">67</Thickness>
+
+            <!-- L-Pattern Overwriting resources -->
+            <Thickness x:Key="NavigationViewContentMargin">0,48,0,0</Thickness>
+            <Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>
+            <CornerRadius x:Key="NavigationViewContentGridCornerRadius">8,0,0,0</CornerRadius>
+            <Thickness x:Key="NavigationViewHeaderMargin">56,34,0,0</Thickness>
+
+            <SolidColorBrush x:Key="GridViewHeaderItemDividerStroke" Color="Transparent" />
+
+            <sys:String x:Key="ControlsName">All controls</sys:String>
+            <sys:String x:Key="NewControlsName">What's New</sys:String>
+
+            <Style x:Key="OutputTextBlockStyle" BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
+                <Setter Property="Margin" Value="8,8,0,0" />
+            </Style>
+
+            <Style x:Key="ControlPageScrollStyle" TargetType="ScrollViewer">
+                <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+            </Style>
+
+            <Style x:Key="GridViewItemStyle" TargetType="ui:GridViewItem" BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                <Setter Property="Margin" Value="0,0,12,12" />
+            </Style>
+
+            <Style x:Key="IndentedGridViewItemStyle" TargetType="ui:GridViewItem" BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                <Setter Property="Margin" Value="12,0,0,12" />
+            </Style>
+
+            <Style x:Key="GridViewItemStyleSmall" TargetType="ui:GridViewItem" BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                <Setter Property="Margin" Value="0,0,0,12" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            </Style>
+
+            <Style x:Key="IndentedGridViewItemStyleSmall" TargetType="ui:GridViewItem" BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                <Setter Property="Margin" Value="12,0,12,12" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            </Style>
+
+            <sys:Double x:Key="TeachingTipMinWidth">50</sys:Double>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

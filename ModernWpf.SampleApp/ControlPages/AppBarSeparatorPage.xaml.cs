@@ -19,10 +19,10 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void AppBarSeparatorPage_Unloaded(object sender, RoutedEventArgs e)
         {
-            CommandBar appBar = NavigationRootPage.Current.TopCommandBar;
-            compactButton.Click -= CompactButton_Click;
-            appBar.PrimaryCommands.Remove(compactButton);
-            appBar.PrimaryCommands.Remove(separator);
+            //CommandBar appBar = NavigationRootPage.Current.TopCommandBar;
+            //compactButton.Click -= CompactButton_Click;
+            //appBar.PrimaryCommands.Remove(compactButton);
+            //appBar.PrimaryCommands.Remove(separator);
         }
 
         void AppBarButtonPage_Loaded(object sender, RoutedEventArgs e)
@@ -30,15 +30,15 @@ namespace ModernWpf.SampleApp.ControlPages
             // Add compact button to the command bar. It provides functionality specific
             // to this page, and is removed when leaving the page.
 
-            CommandBar appBar = NavigationRootPage.Current.TopCommandBar;
-            separator = new AppBarSeparator();
-            appBar.PrimaryCommands.Insert(0, separator);
+            //CommandBar appBar = NavigationRootPage.Current.TopCommandBar;
+            //separator = new AppBarSeparator();
+            //appBar.PrimaryCommands.Insert(0, separator);
 
-            compactButton = new AppBarToggleButton();
-            compactButton.Icon = new SymbolIcon(Symbol.FontSize);
-            compactButton.Label = "IsCompact";
-            compactButton.Click += CompactButton_Click;
-            appBar.PrimaryCommands.Insert(0, compactButton);
+            //compactButton = new AppBarToggleButton();
+            //compactButton.Icon = new SymbolIcon(Symbol.FontSize);
+            //compactButton.Label = "IsCompact";
+            //compactButton.Click += CompactButton_Click;
+            //appBar.PrimaryCommands.Insert(0, compactButton);
         }
 
         private void CompactButton_Click(object sender, RoutedEventArgs e)

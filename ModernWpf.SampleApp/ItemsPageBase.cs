@@ -8,6 +8,7 @@
 //
 //*********************************************************
 using ModernWpf.Controls;
+using ModernWpf.SampleApp.DataModel;
 using SamplesCommon;
 using System;
 using System.Collections.Generic;
