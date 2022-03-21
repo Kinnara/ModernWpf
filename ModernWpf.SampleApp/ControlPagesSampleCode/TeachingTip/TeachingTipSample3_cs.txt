@@ -1,0 +1,4 @@
+﻿private void TestButtonClick3(object sender, RoutedEventArgs e)
+{
+    ToggleThemeTeachingTip3.IsOpen = true;
+}

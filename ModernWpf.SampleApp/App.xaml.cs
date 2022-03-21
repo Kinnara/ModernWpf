@@ -1,4 +1,6 @@
-﻿namespace ModernWpf.SampleApp
+﻿using ModernWpf.SampleApp.DataModel;
+
+namespace ModernWpf.SampleApp
 {
     public partial class App
     {

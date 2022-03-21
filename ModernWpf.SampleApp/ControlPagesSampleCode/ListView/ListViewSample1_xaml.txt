@@ -1,0 +1,18 @@
+<!-- XAML Code -->
+
+<ListView
+    x:Name="BaseExample"
+    ItemTemplate="{StaticResource ContactListViewTemplate}"
+    BorderThickness="1"
+    BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+    Width="350" 
+    Height="400"
+    HorizontalAlignment="Left"/>
+                
+<!-- In this example, the ListView's ItemTemplate property is bound to a data template (shown below)
+called ContactListViewTemplate, defined in a Page.Resources section. -->
+    
+<DataTemplate x:Key="ContactListViewTemplate" x:DataType="local1:Contact">
+     <TextBlock Text="{x:Bind Name}" x:Phase="1" Margin="0,5,0,5"/>
+</DataTemplate>
+                    

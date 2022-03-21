@@ -45,7 +45,7 @@
     <Color x:Key="SystemListLowColor">#19000000</Color>
     <Color x:Key="SystemListMediumColor">#33000000</Color>
     <Color x:Key="SystemErrorTextColor">#C50500</Color>
-    
+
     <!-- WinUI Colors -->
     <Color x:Key="TextFillColorPrimary">#E4000000</Color>
     <Color x:Key="TextFillColorSecondary">#9E000000</Color>
@@ -252,7 +252,7 @@
     <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="#2B2B2B" />
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
-    <SolidColorBrush x:Key="SystemControlDefaultBrighteningBrush" Color="#FFFFFF" Opacity="0.5"/>
+    <SolidColorBrush x:Key="SystemControlDefaultBrighteningBrush" Color="#FFFFFF" Opacity="0.5" />
     <m:StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
 
     <!-- WinUI Brushes -->
@@ -415,41 +415,41 @@
     <SolidColorBrush x:Key="ListViewItemRevealBorderBrushPressed" Color="Transparent" />
     <SolidColorBrush x:Key="GridViewItemRevealBorderBrush" Color="Transparent" />
 
-    <!-- Elevation border brushes-->
+    <!-- Elevation border brushes -->
     <LinearGradientBrush x:Key="ControlElevationBorderBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,3">
         <LinearGradientBrush.RelativeTransform>
-            <ScaleTransform ScaleY="-1" CenterY="0.5"/>
+            <ScaleTransform ScaleY="-1" CenterY="0.5" />
         </LinearGradientBrush.RelativeTransform>
         <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0.33" Color="{m:StaticColor ControlStrokeColorSecondary}"/>
-            <GradientStop Offset="1.0" Color="{m:StaticColor ControlStrokeColorDefault}"/>
+            <GradientStop Offset="0.33" Color="{m:StaticColor ControlStrokeColorSecondary}" />
+            <GradientStop Offset="1.0" Color="{m:StaticColor ControlStrokeColorDefault}" />
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="CircleElevationBorderBrush" MappingMode="RelativeToBoundingBox" StartPoint="0,0" EndPoint="0,1">
         <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0.50" Color="{m:StaticColor ControlStrokeColorDefault}"/>
-            <GradientStop Offset="0.70" Color="{m:StaticColor ControlStrokeColorSecondary}"/>
+            <GradientStop Offset="0.50" Color="{m:StaticColor ControlStrokeColorDefault}" />
+            <GradientStop Offset="0.70" Color="{m:StaticColor ControlStrokeColorSecondary}" />
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="AccentControlElevationBorderBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,3">
         <LinearGradientBrush.RelativeTransform>
-            <ScaleTransform ScaleY="-1" CenterY="0.5"/>
+            <ScaleTransform ScaleY="-1" CenterY="0.5" />
         </LinearGradientBrush.RelativeTransform>
         <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0.33" Color="{m:StaticColor ControlStrokeColorOnAccentSecondary}"/>
-            <GradientStop Offset="1.0" Color="{m:StaticColor ControlStrokeColorOnAccentDefault}"/>
+            <GradientStop Offset="0.33" Color="{m:StaticColor ControlStrokeColorOnAccentSecondary}" />
+            <GradientStop Offset="1.0" Color="{m:StaticColor ControlStrokeColorOnAccentDefault}" />
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 
     <!-- Legacy brushes -->
     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{m:StaticColor SolidBackgroundFillColorBase}" />
     <m:StaticResource x:Key="DefaultTextForegroundThemeBrush" ResourceKey="TextFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="SystemControlFocusVisualPrimaryBrush" ResourceKey="FocusStrokeColorOuterBrush"/>
-    <m:StaticResource x:Key="SystemControlFocusVisualSecondaryBrush" ResourceKey="FocusStrokeColorInnerBrush"/>
+    <m:StaticResource x:Key="SystemControlFocusVisualPrimaryBrush" ResourceKey="FocusStrokeColorOuterBrush" />
+    <m:StaticResource x:Key="SystemControlFocusVisualSecondaryBrush" ResourceKey="FocusStrokeColorInnerBrush" />
 
-    <!-- Duplication from HighContrast colors to match keys, set to magenta to show these should not be used  -->
+    <!-- Duplication from HighContrast colors to match keys, set to magenta to show these should not be used -->
     <SolidColorBrush x:Key="SystemColorWindowTextColorBrush" Color="#FF00FF" />
     <SolidColorBrush x:Key="SystemColorWindowColorBrush" Color="#FF00FF" />
     <SolidColorBrush x:Key="SystemColorButtonFaceColorBrush" Color="#FF00FF" />
@@ -1315,7 +1315,9 @@
     <m:StaticResource x:Key="RatingControlDisabledSelectedForeground" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
     <m:StaticResource x:Key="RatingControlCaptionForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
     <local:RatingItemFontInfo x:Key="RatingControlDefaultFontInfo" Glyph="&#xE735;" />
-    <local:RatingItemPathInfo x:Key="RatingControlDefaultPathInfo" Data="M 13.828125 12.246094 L 16.25 20 L 10 15.195313 L 3.75 20 L 6.171875 12.246094 L 0 7.5 L 7.65625 7.5 L 10 0 L 12.34375 7.5 L 20 7.5 Z" />
+    <local:RatingItemPathInfo
+        x:Key="RatingControlDefaultPathInfo"
+        Data="M 13.828125 12.246094 L 16.25 20 L 10 15.195313 L 3.75 20 L 6.171875 12.246094 L 0 7.5 L 7.65625 7.5 L 10 0 L 12.34375 7.5 L 20 7.5 Z" />
 
     <!-- Resources for RepeatButton -->
     <Thickness x:Key="RepeatButtonBorderThemeThickness">1</Thickness>

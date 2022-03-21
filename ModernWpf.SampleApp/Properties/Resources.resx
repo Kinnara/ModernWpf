@@ -117,4 +117,41 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ByFunctionHeader.Text" xml:space="preserve">
+    <value>Controls by function</value>
+  </data>
+  <data name="ByNameHeader.Text" xml:space="preserve">
+    <value>Controls by name</value>
+  </data>
+  <data name="DocHeader.Text" xml:space="preserve">
+    <value>Documentation</value>
+  </data>
+  <data name="FeedbackHeader.Text" xml:space="preserve">
+    <value>Feedback</value>
+  </data>
+  <data name="FeedbackLink.Text" xml:space="preserve">
+    <value>Send feedback about this page</value>
+  </data>
+  <data name="helpFlyoutContent" xml:space="preserve">
+    <value>From any control page, open the help panel from the bottom app bar to see custom help content for that control.</value>
+    <comment>Default content for the about settings flyout. Shown when data context is null.</comment>
+  </data>
+  <data name="helpFlyoutLabel" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="HTMLCloseTags" xml:space="preserve">
+    <value>&lt;/body&gt;&lt;/html&gt;</value>
+    <comment>Closing tags to add to WebView NavigateToString calls</comment>
+  </data>
+  <data name="HTMLOpenTags" xml:space="preserve">
+    <value>&lt;!DOCTYPE html&gt;&lt;html lang="en" xmlns="http://www.w3.org/1999/xhtml"&gt;&lt;head&gt;&lt;style&gt;body {font-family: 'Segoe UI';}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;</value>
+    <comment>Opening tags to add to WebView NavigateToString calls</comment>
+  </data>
+  <data name="PageStringRoot" xml:space="preserve">
+    <value>ModernWpf.SampleApp.ControlPages.</value>
+    <comment>Path to control pages. Used to load frame in ItemsPage.</comment>
+  </data>
+  <data name="RelatedControlsHeader.Text" xml:space="preserve">
+    <value>Related controls</value>
+  </data>
 </root>

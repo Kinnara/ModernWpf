@@ -1,0 +1,41 @@
+<!-- The nested ItemsRepeater experience is achieved by creating one ItemsRepeater (outerRepeater below) 
+and creating another ItemsRepeater (innerRepeater below) inside the outer one's DataTemplate. Below is 
+the outer ItemsRepeater definition and the DataTemplate it uses. -->
+                    
+<ScrollViewer HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Auto">
+    <muxc:ItemsRepeater 
+        x:Name="outerRepeater"
+        VerticalAlignment="Top"
+        ItemTemplate ="{StaticResource CategoryTemplate}">
+        <muxc:ItemsRepeater.Layout>
+           <muxc:StackLayout Orientation="Vertical" />
+        </muxc:ItemsRepeater.Layout>
+    </muxc:ItemsRepeater>
+</ScrollViewer>
+                    
+<DataTemplate x:Key="CategoryTemplate" x:DataType="l:NestedCategory">
+    <StackPanel>
+        <TextBlock Text="{x:Bind CategoryName}" Padding="8" Style="{StaticResource TitleTextBlockStyle}"/>
+        <muxc:ItemsRepeater x:Name="innerRepeater"
+                            ItemsSource="{x:Bind CategoryItems}"
+                            ItemTemplate="{StaticResource StringDataTemplateColor}">
+            <muxc:ItemsRepeater.Layout>
+                <muxc:StackLayout Orientation="Horizontal" />
+            </muxc:ItemsRepeater.Layout>
+        </muxc:ItemsRepeater>
+    </StackPanel>
+</DataTemplate>
+                    
+<!-- The DataTemplate shown above is bound to a custom-class type called NestedCategory, 
+which is defined in the code-behind. NestedCategory objects have the following two attributes: 
+a CategoryName (string), and a collection of strings called CategoryItems. -->
+                    
+<!-- The inner ItemsRepeater is bound to its own, separate DataTemplate called StringDataTemplateColor: -->
+                    
+<DataTemplate x:Key="StringDataTemplateColor" x:DataType="x:String">
+    <Grid Background="{StaticResource SystemControlBackgroundAccentBrush}" Margin="10, 0, 10 10">
+        <TextBlock Padding="10" Text="{x:Bind}" 
+                   Foreground="{StaticResource SystemControlForegroundAltHighBrush}" 
+                   HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center"/>
+    </Grid>
+</DataTemplate>            

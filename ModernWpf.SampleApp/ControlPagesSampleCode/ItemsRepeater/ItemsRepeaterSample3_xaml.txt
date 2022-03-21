@@ -1,0 +1,38 @@
+<!-- XAML Code -->
+
+<!-- The below code shows the XAML for the ItemsRepeater as well as the
+color-changing rectangle besides it. -->
+
+<Grid>
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="1*"/>
+        <ColumnDefinition Width="1*"/>
+    </Grid.ColumnDefinitions>
+
+    <ScrollViewer x:Name="Animated_ScrollViewer" 
+                    Grid.Column="0"
+                    Height="175"
+                    Width="250"
+                    ViewChanging="Animated_ScrollViewer_ViewChanging">
+        <muxc:ItemsRepeater x:Name="animatedScrollRepeater" >
+            <muxc:ItemsRepeater.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                    <Button Content="{x:Bind}"
+                            Background="{x:Bind}"
+                            Click="Animated_GotItem" 
+                            GotFocus="Animated_GotItem" 
+                            HorizontalAlignment="Stretch"
+                            Loaded="GetButtonSize"
+                            Foreground="{ThemeResource ButtonForeground}"/>
+                </DataTemplate>
+            </muxc:ItemsRepeater.ItemTemplate>
+        </muxc:ItemsRepeater>
+    </ScrollViewer>
+
+    <Rectangle x:Name="colorRectangle"
+                Grid.Column="1"
+                Stroke="Black"
+                Height="150"
+                Width="150"
+                Margin="10,0,0,0"/>
+</Grid>

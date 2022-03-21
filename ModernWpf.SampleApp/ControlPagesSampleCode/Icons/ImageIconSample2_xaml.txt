@@ -1,0 +1,3 @@
+﻿ <Button Name="ImageExample2">
+    <muxc:ImageIcon Source="https://raw.githubusercontent.com/DiemenDesign/LibreICONS/master/svg-color/libre-camera-panorama.svg" Width="50"/>
+</Button>

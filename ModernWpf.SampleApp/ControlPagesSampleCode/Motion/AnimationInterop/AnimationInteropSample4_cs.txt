@@ -1,0 +1,39 @@
+﻿private void ActualSizeExample_Loaded(object sender, RoutedEventArgs e)
+{
+    // Only create an expression using ActualSize if the API exists to do so.
+    if (!(ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8))) return;
+
+    // We will lay out some buttons in a circle.
+    // The formulas we will use are:
+    //   X = radius * cos(theta) + xOffset
+    //   Y = radius * sin(theta) + yOffset
+    //   radius = 1/2 the width and height of the parent container
+    //   theta = the angle for each element. The starting value of theta depends on both the number of elements and the relative index of each element.
+    //   xOffset = The starting horizontal offset for the element. 
+    //   yOffset = The starting vertical offset for the element.
+
+    String radius = "(source.ActualSize.X / 2)"; // Since the layout is a circle, width and height are equivalent meaning we could use X or Y. We'll use X.
+    String theta = ".02 * " + radius + " + ((2 * Pi)/total)*index"; // The first value is the rate of angular change based on radius. The last value spaces the buttons equally.
+    String xOffset = radius; // We offset x by radius because the buttons naturally layout along the left edge. We need to move them to center of the circle first.
+    String yOffset = "0"; // We don't need to offset y because the buttons naturally layout vertically centered.
+
+    // We combine X, Y, and Z subchannels into a single animation because we can only start a single animation on Translation.
+    String expression = String.Format("Vector3({0}*cos({1})+{2}, {0}*sin({1})+{3},0)", radius, theta, xOffset, yOffset);
+
+    int totalElements = 8;
+    for (int i = 0; i < totalElements; i++)
+    {
+        Button element = new Button() { Content = "Button" + i };
+        LayoutPanel.Children.Add(element);
+
+        var anim = _compositor.CreateExpressionAnimation();
+
+        anim.Expression = expression;
+        anim.SetScalarParameter("index", i + 1);
+        anim.SetScalarParameter("total", totalElements);
+        anim.Target = "Translation";
+        anim.SetExpressionReferenceParameter("source", LayoutPanel);
+
+        element.StartAnimation(anim);
+    }
+}

@@ -1,0 +1,8 @@
+﻿<muxc:SplitButton x:Name="myColorButton" Click="myColorButton_Click">
+    <Border x:Name="CurrentColor" Width="32" Height="32" Background="Green" CornerRadius="4,0,0,4"/>
+    <muxc:SplitButton.Flyout>
+        <Flyout Placement="Bottom">
+            <!-- flyout content -->
+        </Flyout>
+    </muxc:SplitButton.Flyout>
+</muxc:SplitButton>

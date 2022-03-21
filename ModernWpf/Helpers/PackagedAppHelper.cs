@@ -3,7 +3,7 @@ using System.Text;
 
 namespace ModernWpf
 {
-    internal static class PackagedAppHelper
+    public static class PackagedAppHelper
     {
         private const long APPMODEL_ERROR_NO_PACKAGE = 15700L;
 

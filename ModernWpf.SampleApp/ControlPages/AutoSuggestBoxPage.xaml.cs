@@ -1,4 +1,5 @@
 ﻿using ModernWpf.Controls;
+using ModernWpf.SampleApp.DataModel;
 using SamplesCommon;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace ModernWpf.SampleApp.ControlPages
     /// </summary>
     public partial class AutoSuggestBoxPage
     {
-        private readonly ControlPagesData _controlPages = new ControlPagesData();
+        //private readonly ControlPagesData _controlPages = new ControlPagesData();
 
         public AutoSuggestBoxPage()
         {
@@ -123,32 +124,33 @@ namespace ModernWpf.SampleApp.ControlPages
 
                 ControlTitle.Text = control.Title;
                 ControlLink.Content = "Go to " + control.Title;
-                ControlLink.Tag = control.PageType;
+                //ControlLink.Tag = control.PageType;
             }
         }
 
         private List<ControlInfoDataItem> SearchControls(string query)
         {
             var querySplit = query.Split(' ');
-            var suggestions = _controlPages.Where(
-                item =>
-                {
-                    // Idea: check for every word entered (separated by space) if it is in the name,  
-                    // e.g. for query "split button" the only result should "SplitButton" since its the only query to contain "split" and "button" 
-                    // If any of the sub tokens is not in the string, we ignore the item. So the search gets more precise with more words 
-                    bool flag = true;
-                    foreach (string queryToken in querySplit)
-                    {
-                        // Check if token is not in string 
-                        if (item.Title.IndexOf(queryToken, StringComparison.CurrentCultureIgnoreCase) < 0)
-                        {
-                            // Token is not in string, so we ignore this item. 
-                            flag = false;
-                        }
-                    }
-                    return flag;
-                });
-            return suggestions.OrderByDescending(i => i.Title.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ThenBy(i => i.Title).ToList();
+            //var suggestions = _controlPages.Where(
+            //    item =>
+            //    {
+            //        // Idea: check for every word entered (separated by space) if it is in the name,  
+            //        // e.g. for query "split button" the only result should "SplitButton" since its the only query to contain "split" and "button" 
+            //        // If any of the sub tokens is not in the string, we ignore the item. So the search gets more precise with more words 
+            //        bool flag = true;
+            //        foreach (string queryToken in querySplit)
+            //        {
+            //            // Check if token is not in string 
+            //            if (item.Title.IndexOf(queryToken, StringComparison.CurrentCultureIgnoreCase) < 0)
+            //            {
+            //                // Token is not in string, so we ignore this item. 
+            //                flag = false;
+            //            }
+            //        }
+            //        return flag;
+            //    });
+            //return suggestions.OrderByDescending(i => i.Title.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ThenBy(i => i.Title).ToList();
+            return new();
         }
 
         private void ControlLink_Click(object sender, RoutedEventArgs e)

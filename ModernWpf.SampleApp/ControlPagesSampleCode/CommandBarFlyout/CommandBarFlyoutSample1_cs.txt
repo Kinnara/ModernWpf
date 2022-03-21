@@ -1,0 +1,17 @@
+﻿private void ShowMenu(bool isTransient)
+{
+    FlyoutShowOptions myOption = new FlyoutShowOptions();
+    myOption.ShowMode = isTransient ? FlyoutShowMode.Transient : FlyoutShowMode.Standard;
+    CommandBarFlyout1.ShowAt(Image1, myOption);
+}
+
+private void MyImageButton_ContextRequested(Windows.UI.Xaml.UIElement sender, ContextRequestedEventArgs args)
+{
+    // always show a context menu in standard mode
+    ShowMenu(false);
+}
+
+private void MyImageButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+{
+    ShowMenu((sender as Button).IsPointerOver);
+}

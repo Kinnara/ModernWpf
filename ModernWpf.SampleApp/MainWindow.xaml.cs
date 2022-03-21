@@ -1,4 +1,5 @@
 ﻿using ModernWpf.Controls;
+using ModernWpf.SampleApp.DataModel;
 using ModernWpf.SampleApp.Helpers;
 using ModernWpf.SampleApp.Properties;
 using SamplesCommon;
@@ -6,6 +7,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
@@ -13,15 +15,22 @@ namespace ModernWpf.SampleApp
 {
     public partial class MainWindow
     {
+        public static MainWindow Current;
+
         public MainWindow()
         {
+            Current = this;
             InitializeComponent();
+            InitialzeApp();
+        }
 
-            var rootFrame = NavigationRootPage.RootFrame;
-            SetBinding(TitleBar.IsBackButtonVisibleProperty,
-                new Binding { Path = new PropertyPath(System.Windows.Controls.Frame.CanGoBackProperty), Source = rootFrame });
-
+        private async void InitialzeApp()
+        {
+            await Task.Delay(1);
+            await ControlInfoDataSource.Instance.GetGroupsAsync();
             SubscribeToResourcesChanged();
+            NavigationRootPage NavigationRootPage = new NavigationRootPage();
+            Content = NavigationRootPage;
         }
 
         protected override void OnSourceInitialized(EventArgs e)
@@ -63,15 +72,6 @@ namespace ModernWpf.SampleApp
                 Debug.WriteLine("FocusedElement: " + e.NewValue);
             }
         }*/
-
-        private void OnBackRequested(object sender, BackRequestedEventArgs e)
-        {
-            var rootFrame = NavigationRootPage.RootFrame;
-            if (rootFrame.CanGoBack)
-            {
-                rootFrame.GoBack();
-            }
-        }
 
         [Conditional("DEBUG")]
         private void SubscribeToResourcesChanged()

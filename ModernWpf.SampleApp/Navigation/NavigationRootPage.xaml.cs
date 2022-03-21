@@ -1,173 +1,337 @@
-﻿using ModernWpf.Controls;
-using ModernWpf.SampleApp.ControlPages;
-using ModernWpf.SampleApp.Presets;
-using SamplesCommon;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
+using ModernWpf.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Threading;
-using Frame = ModernWpf.Controls.Frame;
+using System.Windows.Shapes;
+using ModernWpf.SampleApp.ControlPages;
+using Windows.Foundation.Metadata;
+using Windows.System;
+using ModernWpf.SampleApp.DataModel;
+using Windows.Gaming.Input;
+using Windows.System.Profile;
+using System.Windows.Automation;
+using System.Diagnostics;
+using Windows.Devices.Input;
+using ModernWpf.SampleApp.Helper;
 
 namespace ModernWpf.SampleApp
 {
-    public partial class NavigationRootPage
+    /// <summary>
+    /// NavigationRootPage.xaml 的交互逻辑
+    /// </summary>
+    public partial class NavigationRootPage : Page
     {
-        private const string AutoHideScrollBarsKey = "AutoHideScrollBars";
+        public static NavigationRootPage Current;
+        public static Frame RootFrame = null;
 
-        public static NavigationRootPage Current
+        public VirtualKey ArrowKey;
+
+        private RootFrameNavigationHelper _navHelper;
+        private bool _isGamePadConnected;
+        private bool _isKeyboardConnected;
+        private NavigationViewItem _allControlsMenuItem;
+        private NavigationViewItem _newControlsMenuItem;
+
+        public NavigationView NavigationView
         {
-            get => _current.Value;
-            private set => _current.Value = value;
+            get { return NavigationViewControl; }
         }
 
-        public static Frame RootFrame
+        public Action NavigationViewLoaded { get; set; }
+
+        public DeviceType DeviceFamily { get; set; }
+
+        public bool IsFocusSupported
         {
-            get => _rootFrame.Value;
-            private set => _rootFrame.Value = value;
+            get
+            {
+                return DeviceFamily == DeviceType.Xbox || _isGamePadConnected || _isKeyboardConnected;
+            }
         }
 
-        private static readonly ThreadLocal<NavigationRootPage> _current = new ThreadLocal<NavigationRootPage>();
-        private static readonly ThreadLocal<Frame> _rootFrame = new ThreadLocal<Frame>();
-
-        private bool _ignoreSelectionChange;
-        private readonly ControlPagesData _controlPagesData = new ControlPagesData();
-        private Type _startPage;
+        public PageHeader PageHeader
+        {
+            get
+            {
+                return VisualTree.FindDescendants<PageHeader>(NavigationViewControl).FirstOrDefault();
+            }
+        }
 
         public NavigationRootPage()
         {
             InitializeComponent();
+            // Workaround for VisualState issue that should be fixed
+            // by https://github.com/microsoft/microsoft-ui-xaml/pull/2271
+            NavigationViewControl.PaneDisplayMode = NavigationViewPaneDisplayMode.Left;
 
-            if (App.IsMultiThreaded)
-            {
-                PresetsMenu.Visibility = Visibility.Collapsed;
-                NewWindowMenuItem.Visibility = Visibility.Visible;
-            }
+            _navHelper = new RootFrameNavigationHelper(rootFrame, NavigationViewControl);
 
-            Loaded += delegate
-            {
-                PresetManager.Current.ColorPresetChanged += OnColorPresetChanged;
-
-                controlsSearchBox.Focus();
-            };
-
-            Unloaded += delegate
-            {
-                PresetManager.Current.ColorPresetChanged -= OnColorPresetChanged;
-            };
-
-            OnColorPresetChanged(null, null);
-
+            SetDeviceFamily();
+            AddNavigationMenuItems();
             Current = this;
             RootFrame = rootFrame;
 
-            SetStartPage();
-            if (_startPage != null)
-            {
-                PagesList.SelectedItem = PagesList.Items.OfType<ControlInfoDataItem>().FirstOrDefault(x => x.PageType == _startPage);
-            }
+            Gamepad.GamepadAdded += OnGamepadAdded;
+            Gamepad.GamepadRemoved += OnGamepadRemoved;
 
-            NavigateToSelectedPage();
+            _isKeyboardConnected = Convert.ToBoolean(new KeyboardCapabilities().KeyboardPresent);
 
-            if (Debugger.IsAttached)
+            // remove the solid-colored backgrounds behind the caption controls and system back button if we are in left mode
+            // This is done when the app is loaded since before that the actual theme that is used is not "determined" yet
+            Loaded += delegate (object sender, RoutedEventArgs e)
             {
-                DebugMenuItem.Visibility = Visibility.Visible;
-            }
+                //NavigationOrientationHelper.UpdateTitleBar(NavigationOrientationHelper.IsLeftMode);
+            };
         }
 
-        partial void SetStartPage();
-
-        private void ContextMenu_Loaded(object sender, RoutedEventArgs e)
+        public static string GetAppTitleFromSystem
         {
-            //Debug.WriteLine(nameof(ContextMenu_Loaded));
-            var menu = (ContextMenu)sender;
-            var tabItem = (TabItem)menu.PlacementTarget;
-            var content = (FrameworkElement)tabItem.Content;
-            FindMenuItem(menu, ThemeManager.GetRequestedTheme(content)).IsChecked = true;
-        }
-
-        private void ToggleTheme(object sender, RoutedEventArgs e)
-        {
-            GetTabItemContent(sender as MenuItem)?.ToggleTheme();
-        }
-
-        private void ThemeMenuItem_Checked(object sender, RoutedEventArgs e)
-        {
-            //Debug.WriteLine($"{((RadioMenuItem)e.Source).Header} checked");
-            var menuItem = (RadioMenuItem)e.Source;
-            var tabItemContent = GetTabItemContent(menuItem);
-            if (tabItemContent != null)
+            get
             {
-                ThemeManager.SetRequestedTheme(tabItemContent, (ElementTheme)menuItem.Tag);
+                if (PackagedAppHelper.IsPackagedApp)
+                {
+                    return Windows.ApplicationModel.Package.Current.DisplayName;
+                }
+                else
+                {
+                    return System.Reflection.Assembly.GetExecutingAssembly().GetName().Name.ToString();
+                }
             }
         }
 
-        private void ThemeMenuItem_Unchecked(object sender, RoutedEventArgs e)
+        public bool CheckNewControlSelected()
         {
-            //Debug.WriteLine($"{((RadioMenuItem)e.Source).Header} unchecked");
+            return _newControlsMenuItem.IsSelected;
         }
 
-        private RadioMenuItem FindMenuItem(ContextMenu menu, ElementTheme theme)
+        public void EnsureNavigationSelection(string id)
         {
-            return menu.Items.OfType<RadioMenuItem>().First(x => (ElementTheme)x.Tag == theme);
-        }
-
-        private FrameworkElement GetTabItemContent(MenuItem menuItem)
-        {
-            return ((menuItem
-                ?.Parent as ContextMenu)
-                ?.PlacementTarget as TabItem)
-                ?.Content as FrameworkElement;
-        }
-
-        private void NavigateToSelectedPage()
-        {
-            if (PagesList.SelectedValue is Type type)
+            foreach (object rawGroup in this.NavigationView.MenuItems)
             {
-                RootFrame?.Navigate(type);
+                if (rawGroup is NavigationViewItem group)
+                {
+                    foreach (object rawItem in group.MenuItems)
+                    {
+                        if (rawItem is NavigationViewItem item)
+                        {
+                            if ((string)item.Tag == id)
+                            {
+                                group.IsExpanded = true;
+                                NavigationView.SelectedItem = item;
+                                item.IsSelected = true;
+                                return;
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        private void PagesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void AddNavigationMenuItems()
         {
-            if (!_ignoreSelectionChange)
+            foreach (var group in ControlInfoDataSource.Instance.Groups.OrderBy(i => i.Title))
             {
-                NavigateToSelectedPage();
+                var itemGroup = new NavigationViewItem() { Content = group.Title, Tag = group.UniqueId, DataContext = group, Icon = GetIcon(group.ImagePath) };
+
+                //var groupMenuFlyoutItem = new MenuFlyoutItem() { Text = $"Copy Link to {group.Title} Samples", Icon = new FontIcon() { Glyph = "\uE8C8" }, Tag = group };
+                //groupMenuFlyoutItem.Click += this.OnMenuFlyoutItemClick;
+                //itemGroup.ContextFlyout = new MenuFlyout() { Items = { groupMenuFlyoutItem } };
+
+                AutomationProperties.SetName(itemGroup, group.Title);
+
+                foreach (var item in group.Items)
+                {
+                    var itemInGroup = new NavigationViewItem() { Content = item.Title, Tag = item.UniqueId, DataContext = item, Icon = GetIcon(item.ImagePath) };
+
+                    //var itemInGroupMenuFlyoutItem = new MenuFlyoutItem() { Text = $"Copy Link to {item.Title} Sample", Icon = new FontIcon() { Glyph = "\uE8C8" }, Tag = item };
+                    //itemInGroupMenuFlyoutItem.Click += this.OnMenuFlyoutItemClick;
+                    //itemInGroup.ContextFlyout = new MenuFlyout() { Items = { itemInGroupMenuFlyoutItem } };
+
+                    itemGroup.MenuItems.Add(itemInGroup);
+                    AutomationProperties.SetName(itemInGroup, item.Title);
+                }
+
+                NavigationViewControl.MenuItems.Add(itemGroup);
+
+                if (group.UniqueId == "AllControls")
+                {
+                    this._allControlsMenuItem = itemGroup;
+                }
+                else if (group.UniqueId == "NewControls")
+                {
+                    this._newControlsMenuItem = itemGroup;
+                }
+            }
+
+            // Move "What's New" and "All Controls" to the top of the NavigationView
+            NavigationViewControl.MenuItems.Remove(_allControlsMenuItem);
+            NavigationViewControl.MenuItems.Remove(_newControlsMenuItem);
+            NavigationViewControl.MenuItems.Insert(0, _allControlsMenuItem);
+            NavigationViewControl.MenuItems.Insert(0, _newControlsMenuItem);
+
+            // Separate the All/New items from the rest of the categories.
+            NavigationViewControl.MenuItems.Insert(2, new NavigationViewItemSeparator());
+
+            _newControlsMenuItem.Loaded += OnNewControlsMenuItemLoaded;
+            NavigationViewControl.SelectedItem = _newControlsMenuItem;
+        }
+
+        private void OnMenuFlyoutItemClick(object sender, RoutedEventArgs e)
+        {
+            //switch ((sender as MenuFlyoutItem).Tag)
+            //{
+            //    case ControlInfoDataItem item:
+            //        ProtocolActivationClipboardHelper.Copy(item);
+            //        return;
+            //    case ControlInfoDataGroup group:
+            //        ProtocolActivationClipboardHelper.Copy(group);
+            //        return;
+            //}
+        }
+
+        private static IconElement GetIcon(string imagePath)
+        {
+            return imagePath.ToLowerInvariant().EndsWith(".png") ?
+                        (IconElement)new BitmapIcon() { UriSource = new Uri(imagePath, UriKind.RelativeOrAbsolute), ShowAsMonochrome = false } :
+                        (IconElement)new FontIcon()
+                        {
+                            // FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                            Glyph = imagePath
+                        };
+        }
+
+        private void SetDeviceFamily()
+        {
+            var familyName = AnalyticsInfo.VersionInfo.DeviceFamily;
+
+            if (!Enum.TryParse(familyName.Replace("Windows.", string.Empty), out DeviceType parsedDeviceType))
+            {
+                parsedDeviceType = DeviceType.Other;
+            }
+
+            DeviceFamily = parsedDeviceType;
+        }
+
+        private void OnNewControlsMenuItemLoaded(object sender, RoutedEventArgs e)
+        {
+            if (IsFocusSupported && NavigationViewControl.DisplayMode == NavigationViewDisplayMode.Expanded)
+            {
+                //controlsSearchBox.Focus(FocusState.Keyboard);
+            }
+        }
+
+        private void OnGamepadRemoved(object sender, Gamepad e)
+        {
+            _isGamePadConnected = Gamepad.Gamepads.Any();
+        }
+
+        private void OnGamepadAdded(object sender, Gamepad e)
+        {
+            _isGamePadConnected = Gamepad.Gamepads.Any();
+        }
+
+        private void OnNavigationViewControlLoaded(object sender, RoutedEventArgs e)
+        {
+            // Delay necessary to ensure NavigationView visual state can match navigation
+            Task.Delay(500).ContinueWith(_ => this.NavigationViewLoaded?.Invoke(), TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private void OnNavigationViewSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        {
+            if (args.IsSettingsSelected)
+            {
+                if (rootFrame.CurrentSourcePageType != typeof(SettingsPage))
+                {
+                    rootFrame.Navigate(typeof(SettingsPage));
+                }
+            }
+            else
+            {
+                var selectedItem = args.SelectedItemContainer;
+
+                if (selectedItem == _allControlsMenuItem)
+                {
+                    if (rootFrame.CurrentSourcePageType != typeof(AllControlsPage))
+                    {
+                        rootFrame.Navigate(typeof(AllControlsPage));
+                    }
+                }
+                else if (selectedItem == _newControlsMenuItem)
+                {
+                    if (rootFrame.CurrentSourcePageType != typeof(NewControlsPage))
+                    {
+                        rootFrame.Navigate(typeof(NewControlsPage));
+                    }
+                }
+                else
+                {
+                    if (selectedItem.DataContext is ControlInfoDataGroup)
+                    {
+                        var itemId = ((ControlInfoDataGroup)selectedItem.DataContext).UniqueId;
+                        rootFrame.Navigate(typeof(SectionPage), itemId);
+                    }
+                    else if (selectedItem.DataContext is ControlInfoDataItem)
+                    {
+                        var item = (ControlInfoDataItem)selectedItem.DataContext;
+                        rootFrame.Navigate(typeof(ItemPage), item.UniqueId);
+                    }
+                }
+            }
+        }
+
+        private void OnRootFrameNavigated(object sender, NavigationEventArgs e)
+        {
+            if (rootFrame.SourcePageType == typeof(AllControlsPage) ||
+                rootFrame.SourcePageType == typeof(NewControlsPage))
+            {
+                //NavigationViewControl.AlwaysShowHeader = false;
+            }
+            else
+            {
+                NavigationViewControl.AlwaysShowHeader = true;
             }
         }
 
         private void OnControlsSearchBoxTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            var suggestions = new List<ControlInfoDataItem>();
-
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
+                var suggestions = new List<ControlInfoDataItem>();
+
                 var querySplit = sender.Text.Split(' ');
-                var matchingItems = _controlPagesData.Where(
-                    item =>
-                    {
-                        // Idea: check for every word entered (separated by space) if it is in the name,  
-                        // e.g. for query "split button" the only result should "SplitButton" since its the only query to contain "split" and "button" 
-                        // If any of the sub tokens is not in the string, we ignore the item. So the search gets more precise with more words 
-                        bool flag = true;
-                        foreach (string queryToken in querySplit)
-                        {
-                            // Check if token is not in string 
-                            if (item.Title.IndexOf(queryToken, StringComparison.CurrentCultureIgnoreCase) < 0)
-                            {
-                                // Token is not in string, so we ignore this item. 
-                                flag = false;
-                            }
-                        }
-                        return flag;
-                    });
-                foreach (var item in matchingItems)
+                foreach (var group in ControlInfoDataSource.Instance.Groups)
                 {
-                    suggestions.Add(item);
+                    var matchingItems = group.Items.Where(
+                        item =>
+                        {
+                            // Idea: check for every word entered (separated by space) if it is in the name, 
+                            // e.g. for query "split button" the only result should "SplitButton" since its the only query to contain "split" and "button"
+                            // If any of the sub tokens is not in the string, we ignore the item. So the search gets more precise with more words
+                            bool flag = true;
+                            foreach (string queryToken in querySplit)
+                            {
+                                // Check if token is not in string
+                                if (item.Title.IndexOf(queryToken, StringComparison.CurrentCultureIgnoreCase) < 0)
+                                {
+                                    // Token is not in string, so we ignore this item.
+                                    flag = false;
+                                }
+                            }
+                            return flag;
+                        });
+                    foreach (var item in matchingItems)
+                    {
+                        suggestions.Add(item);
+                    }
                 }
                 if (suggestions.Count > 0)
                 {
@@ -184,241 +348,148 @@ namespace ModernWpf.SampleApp
         {
             if (args.ChosenSuggestion != null && args.ChosenSuggestion is ControlInfoDataItem)
             {
-                var pageType = (args.ChosenSuggestion as ControlInfoDataItem).PageType;
-                RootFrame.Navigate(pageType);
+                var infoDataItem = args.ChosenSuggestion as ControlInfoDataItem;
+                var itemId = infoDataItem.UniqueId;
+                bool changedSelection = false;
+                EnsureItemIsVisibleInNavigation(infoDataItem.Title);
+                //NavigationRootPage.RootFrame.Navigate(typeof(ItemPage), itemId);
             }
             else if (!string.IsNullOrEmpty(args.QueryText))
             {
-                var item = _controlPagesData.FirstOrDefault(i => i.Title.Equals(args.QueryText, StringComparison.OrdinalIgnoreCase));
-                if (item != null)
+                //NavigationRootPage.RootFrame.Navigate(typeof(SearchResultsPage), args.QueryText);
+            }
+        }
+
+        public void EnsureItemIsVisibleInNavigation(string name)
+        {
+            bool changedSelection = false;
+            foreach (object rawItem in NavigationView.MenuItems)
+            {
+                // Check if we encountered the separator
+                if (!(rawItem is NavigationViewItem))
                 {
-                    RootFrame.Navigate(item.PageType);
+                    // Skipping this item
+                    continue;
+                }
+
+                var item = rawItem as NavigationViewItem;
+
+                // Check if we are this category
+                if ((string)item.Content == name)
+                {
+                    NavigationView.SelectedItem = item;
+                    changedSelection = true;
+                }
+                // We are not :/
+                else
+                {
+                    // Maybe one of our items is? ಠಿ_ಠ
+                    if (item.MenuItems.Count != 0)
+                    {
+                        foreach (NavigationViewItem child in item.MenuItems)
+                        {
+                            if ((string)child.Content == name)
+                            {
+                                // We are the item corresponding to the selected one, update selection!
+
+                                // Deal with differences in displaymodes
+                                if (NavigationView.PaneDisplayMode == NavigationViewPaneDisplayMode.Top)
+                                {
+                                    // In Topmode, the child is not visible, so set parent as selected
+                                    // Everything else does not work unfortunately
+                                    NavigationView.SelectedItem = item;
+                                }
+                                else
+                                {
+                                    // Expand so we animate
+                                    item.IsExpanded = true;
+                                    // Ensure parent is expanded so we actually show the selection indicator
+                                    NavigationView.UpdateLayout();
+                                    // Set selected item
+                                    NavigationView.SelectedItem = child;
+                                }
+                                // Set to true to also skip out of outer for loop
+                                changedSelection = true;
+                                // Break out of child iteration for loop
+                                break;
+                            }
+                        }
+                    }
+                }
+                // We updated selection, break here!
+                if (changedSelection)
+                {
+                    break;
                 }
             }
         }
 
-        private void RootFrame_Navigating(object sender, NavigatingCancelEventArgs e)
+        private void NavigationViewControl_PaneClosing(NavigationView sender, NavigationViewPaneClosingEventArgs args)
         {
-            if (e.NavigationMode == NavigationMode.Back)
+            UpdateAppTitleMargin(sender);
+        }
+
+        private void NavigationViewControl_PaneOpening(NavigationView sender, object args)
+        {
+            UpdateAppTitleMargin(sender);
+        }
+
+        private void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
+        {
+            Thickness currMargin = AppTitleBar.Margin;
+            if (sender.DisplayMode == NavigationViewDisplayMode.Minimal)
             {
-                RootFrame.RemoveBackEntry();
+                AppTitleBar.Margin = new Thickness((sender.CompactPaneLength * 2), currMargin.Top, currMargin.Right, currMargin.Bottom);
+
+            }
+            else
+            {
+                AppTitleBar.Margin = new Thickness(sender.CompactPaneLength, currMargin.Top, currMargin.Right, currMargin.Bottom);
+            }
+            AppTitleBar.Visibility = sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Top ? Visibility.Collapsed : Visibility.Visible;
+            UpdateAppTitleMargin(sender);
+            UpdateHeaderMargin(sender);
+        }
+
+        private void UpdateAppTitleMargin(NavigationView sender)
+        {
+            const int smallLeftIndent = 4, largeLeftIndent = 24;
+
+
+            Thickness currMargin = AppTitle.Margin;
+
+            if ((sender.DisplayMode == NavigationViewDisplayMode.Expanded && sender.IsPaneOpen) ||
+                     sender.DisplayMode == NavigationViewDisplayMode.Minimal)
+            {
+                AppTitle.Margin = new Thickness(smallLeftIndent, currMargin.Top, currMargin.Right, currMargin.Bottom);
+            }
+            else
+            {
+                AppTitle.Margin = new Thickness(largeLeftIndent, currMargin.Top, currMargin.Right, currMargin.Bottom);
             }
         }
 
-        private void RootFrame_Navigated(object sender, NavigationEventArgs e)
+        private void UpdateHeaderMargin(NavigationView sender)
         {
-            Debug.Assert(!RootFrame.CanGoForward);
-
-            _ignoreSelectionChange = true;
-            PagesList.SelectedValue = RootFrame.CurrentSourcePageType;
-            _ignoreSelectionChange = false;
-        }
-
-        private void Default_Checked(object sender, RoutedEventArgs e)
-        {
-            SetApplicationTheme(null);
-        }
-
-        private void Light_Checked(object sender, RoutedEventArgs e)
-        {
-            SetApplicationTheme(ApplicationTheme.Light);
-        }
-
-        private void Dark_Checked(object sender, RoutedEventArgs e)
-        {
-            SetApplicationTheme(ApplicationTheme.Dark);
-        }
-
-        private void PresetMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (e.OriginalSource is MenuItem menuItem)
+            if (PageHeader != null)
             {
-                PresetManager.Current.ColorPreset = (string)menuItem.Header;
-            }
-        }
-
-        private void SizingMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (e.OriginalSource is MenuItem menuItem)
-            {
-                bool compact = menuItem.Tag as string == "Compact";
-
-                var xcr = Application.Current.Resources.MergedDictionaries.OfType<XamlControlsResources>().FirstOrDefault();
-                if (xcr != null)
+                if (sender.DisplayMode == NavigationViewDisplayMode.Minimal)
                 {
-                    xcr.UseCompactResources = compact;
-                }
-            }
-        }
-
-        private void ShadowsAuto_Checked(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Resources.Remove(SystemParameters.DropShadowKey);
-        }
-
-        private void ShadowsEnabled_Checked(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Resources[SystemParameters.DropShadowKey] = true;
-        }
-
-        private void ShadowsDisabled_Checked(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Resources[SystemParameters.DropShadowKey] = false;
-        }
-
-        private void AutoHideScrollBarsAuto_Checked(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Resources.Remove(AutoHideScrollBarsKey);
-        }
-
-        private void AutoHideScrollBarsOn_Checked(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Resources[AutoHideScrollBarsKey] = true;
-        }
-
-        private void AutoHideScrollBarsOff_Checked(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Resources[AutoHideScrollBarsKey] = false;
-        }
-
-        private void ForceGC(object sender, RoutedEventArgs e)
-        {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-        }
-
-        private void NewWindow(object sender, RoutedEventArgs e)
-        {
-            var thread = new Thread(() =>
-            {
-                var window = new MainWindow();
-                window.Closed += delegate
-                {
-                    Dispatcher.CurrentDispatcher.BeginInvokeShutdown(DispatcherPriority.Normal);
-                };
-                window.Show();
-                Dispatcher.Run();
-            });
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.IsBackground = true;
-            thread.Start();
-        }
-
-        private void OnThemeButtonClick(object sender, RoutedEventArgs e)
-        {
-            DispatcherHelper.RunOnMainThread(() =>
-            {
-                if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark)
-                {
-                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
+                    PageHeader.HeaderPadding = (Thickness)App.Current.Resources["PageHeaderMinimalPadding"];
                 }
                 else
                 {
-                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+                    PageHeader.HeaderPadding = (Thickness)App.Current.Resources["PageHeaderDefaultPadding"];
                 }
-            });
-        }
-
-        private void SetApplicationTheme(ApplicationTheme? theme)
-        {
-            DispatcherHelper.RunOnMainThread(() =>
-            {
-                ThemeManager.Current.ApplicationTheme = theme;
-            });
-        }
-
-        private void OnColorPresetChanged(object sender, EventArgs e)
-        {
-            this.RunOnUIThread(() =>
-            {
-                PresetsMenu.Items
-                .OfType<RadioMenuItem>()
-                .Single(mi => mi.Header.ToString() == PresetManager.Current.ColorPreset)
-                .IsChecked = true;
-            });
+            }
         }
     }
 
-    public class ControlPagesData : List<ControlInfoDataItem>
+    public enum DeviceType
     {
-        public ControlPagesData()
-        {
-            AddPage(typeof(ControlPalettePage), "Control Palette");
-            AddPage(typeof(ThemesPage));
-            AddPage(typeof(ThemeResourcesPage), "Theme Resources");
-            AddPage(typeof(CompactSizingPage), "Compact Sizing");
-            AddPage(typeof(PageTransitionPage), "Page Transitions");
-            AddPage(typeof(ThreadedUIPage), "Threaded UI");
-            AddPage(typeof(AppBarButtonPage));
-            AddPage(typeof(AppBarSeparatorPage));
-            AddPage(typeof(AppBarToggleButtonPage));
-            AddPage(typeof(AutoSuggestBoxPage));
-            AddPage(typeof(ButtonsPage));
-            AddPage(typeof(CalendarPage));
-            //AddPage(typeof(CheckBoxPage));
-            AddPage(typeof(ComboBoxPage));
-            AddPage(typeof(CommandBarPage));
-            AddPage(typeof(CommandBarFlyoutPage));
-            AddPage(typeof(ContentDialogPage));
-            AddPage(typeof(ContextMenuPage));
-            AddPage(typeof(DataGridPage));
-            AddPage(typeof(DatePickerPage));
-            AddPage(typeof(ExpanderPage));
-            AddPage(typeof(FlyoutPage));
-            //AddPage(typeof(GridSplitterPage));
-            AddPage(typeof(GridViewPage));
-            AddPage(typeof(GroupBoxPage));
-            AddPage(typeof(HyperlinkButtonPage));
-            AddPage(typeof(ItemsRepeaterPage));
-            AddPage(typeof(ListBoxPage));
-            AddPage(typeof(ListViewPage));
-            AddPage(typeof(ListView2Page), "ListView (ModernWPF)");
-            AddPage(typeof(MenuPage));
-            AddPage(typeof(MenuFlyoutPage));
-            AddPage(typeof(NavigationViewPage));
-            AddPage(typeof(NumberBoxPage));
-            AddPage(typeof(PasswordBoxPage));
-            AddPage(typeof(PersonPicturePage));
-            //AddPage(typeof(PopupPlacementPage));
-            AddPage(typeof(ProgressPage), "Progress Controls");
-            AddPage(typeof(RadioButtonsPage));
-            AddPage(typeof(RatingControlPage));
-            AddPage(typeof(RichTextBoxPage));
-            AddPage(typeof(ShadowPage));
-            AddPage(typeof(SimpleStackPanelPage));
-            AddPage(typeof(SliderPage));
-            AddPage(typeof(SplitViewPage));
-            //AddPage(typeof(StatusBarPage));
-            AddPage(typeof(TabControlPage));
-            AddPage(typeof(PivotPage), "TabControlPivotStyle");
-            AddPage(typeof(TextBoxPage));
-            AddPage(typeof(ToggleSwitchPage));
-            AddPage(typeof(ToolTipPage));
-            AddPage(typeof(TreeViewPage));
-            AddPage(typeof(WindowPage));
-        }
-
-        private void AddPage(Type pageType, string displayName = null)
-        {
-            Add(new ControlInfoDataItem(pageType, displayName));
-        }
-    }
-
-    public class ControlInfoDataItem
-    {
-        public ControlInfoDataItem(Type pageType, string title = null)
-        {
-            PageType = pageType;
-            Title = title ?? pageType.Name.Replace("Page", null);
-        }
-
-        public string Title { get; }
-
-        public Type PageType { get; }
-
-        public override string ToString()
-        {
-            return Title;
-        }
+        Desktop,
+        Mobile,
+        Other,
+        Xbox
     }
 }

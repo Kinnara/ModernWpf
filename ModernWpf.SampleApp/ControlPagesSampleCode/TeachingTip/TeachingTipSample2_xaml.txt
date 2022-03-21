@@ -1,0 +1,12 @@
+﻿<Button Content="Show TeachingTip" Click="TestButtonClick2" />
+
+<muxc:TeachingTip x:Name="ToggleThemeTeachingTip2"                   
+	Title="Change themes without hassle"
+	Subtitle="It's easier than ever to see control samples in both light and dark theme!"
+	PreferredPlacement="Auto"                                              
+	PlacementMargin="20"
+	IsLightDismissEnabled="True"
+	ActionButtonClick="ToggleThemeTeachingTip2_ActionButtonClick"
+	ActionButtonContent="Toggle theme now"
+	CloseButtonContent="Got it!">
+</muxc:TeachingTip>

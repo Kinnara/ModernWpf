@@ -1,0 +1,228 @@
+﻿<ui:Page
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    x:Class="ModernWpf.SampleApp.ItemPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
+    xmlns:str="clr-namespace:ModernWpf.SampleApp.Properties"
+    xmlns:datamodel="clr-namespace:ModernWpf.SampleApp.DataModel"
+    d:DataContext="{d:DesignInstance Type=datamodel:ControlInfoDataItem}"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Title="ItemPage">
+    <!--
+        This grid acts as a root panel for the page that defines two rows:
+        * Row 0 contains the back button and page title
+        * Row 1 contains the rest of the page layout
+    -->
+    <Grid x:Name="rootPanel">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="NormalFrameContent" />
+                <VisualState x:Name="WideFrameContent">
+                    <VisualState.Storyboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="contentFrame"
+                                Storyboard.TargetProperty="Width"
+                                To="1028"
+                                Duration="0:0:0" />
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="contentFrame" Storyboard.TargetProperty="HorizontalAlignment" Duration="0:0:0">
+                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static HorizontalAlignment.Left}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState.Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <!-- Content Region -->
+        <ScrollViewer
+            x:Name="svPanel"
+            VerticalScrollBarVisibility="Auto">
+            <Border
+                x:Name="contentRoot"
+                Padding="56,0,12,36"
+                SizeChanged="OnContentRootSizeChanged">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition x:Name="contentColumn" />
+                        <ColumnDefinition x:Name="rightMargin" Width="20" />
+                        <ColumnDefinition x:Name="infoColumn" Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        x:Name="descriptionText"
+                        Style="{DynamicResource BodyTextBlockStyle}"
+                        Grid.ColumnSpan="2"
+                        Margin="0,5,24,0"
+                        Text="{Binding Description}" />
+
+                    <ui:Frame
+                        x:Name="contentFrame"
+                        Grid.Row="1" />
+
+                    <Grid
+                        x:Name="seeAlsoPanel"
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Grid.Column="2"
+                        Width="280"
+                        Margin="0,12,10,24">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <ui:SimpleStackPanel
+                            x:Name="SourcePanel"
+                            Grid.Row="0"
+                            Grid.ColumnSpan="3"
+                            Margin="0,0,0,24"
+                            Spacing="4">
+                            <TextBlock
+                                x:Name="SourceHeader"
+                                x:Uid="SourceHeader"
+                                Margin="0,0,0,12"
+                                Style="{DynamicResource SubtitleTextBlockStyle}"
+                                Text="View page code on GitHub" />
+                            <ui:HyperlinkButton
+                                x:Name="PageMarkupGitHubLink"
+                                ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri}">
+                                <TextBlock Text="XAML source code" />
+                            </ui:HyperlinkButton>
+                            <ui:HyperlinkButton
+                                x:Name="PageCodeGitHubLink"
+                                ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri}">
+                                <TextBlock Text="C# source code" />
+                            </ui:HyperlinkButton>
+                        </ui:SimpleStackPanel>
+
+                        <StackPanel
+                            x:Name="DocumentationPanel"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="3"
+                            Margin="0,0,0,24">
+                            <TextBlock
+                                x:Name="docHeader"
+                                Text="{x:Static str:Resources.DocHeader_Text}"
+                                Margin="0,0,0,12"
+                                Style="{StaticResource SubtitleTextBlockStyle}" />
+                            <ItemsControl
+                                x:Name="DocsList"
+                                IsTabStop="False"
+                                ItemsSource="{Binding Docs}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <ui:HyperlinkButton
+                                            NavigateUri="{Binding Uri}"
+                                            ToolTipService.ToolTip="{Binding Uri}">
+                                            <TextBlock Text="{Binding Title}" />
+                                        </ui:HyperlinkButton>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <StackPanel
+                            x:Name="RelatedControlsPanel"
+                            Grid.Row="2"
+                            Grid.ColumnSpan="3"
+                            Margin="0,0,0,24">
+                            <TextBlock
+                                x:Name="relatedControlsHeader"
+                                Text="{x:Static str:Resources.RelatedControlsHeader_Text}"
+                                Margin="0,0,0,12"
+                                Style="{DynamicResource SubtitleTextBlockStyle}" />
+
+                            <ItemsControl
+                                x:Name="relatedItemsControl"
+                                Margin="0,12,0,0"
+                                IsTabStop="False"
+                                ItemsSource="{Binding RelatedControls}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <!--
+                                            A HyperlinkButton must always provide an accessible name to a screen reader which
+                                            conveys the purpose of the link. By default, when the HyperlinkButton is built
+                                            as below, with an Image and TextBlock, the HyperlinkButton provides no accessible
+                                            name. So bind the accessible name to the same data that provides the text shown
+                                            visually on the contained TextBlock.
+                                        -->
+                                        <ui:HyperlinkButton
+                                            AutomationProperties.Name="{Binding}"
+                                            Click="OnRelatedControlClick">
+                                            <ui:SimpleStackPanel Orientation="Horizontal">
+                                                <!--
+                                                    Now that the HyperlinkButton has a helpful accessible name, it serves no
+                                                    useful purpose for the contained Image, (which is purely decorative,) or
+                                                    the contained TextBlock to be exposed to a screen reader. All the information
+                                                    required by customers using a screen reader is accessible directly through the
+                                                    Hyperlink button. As such, mark the contained elements as not being interesting
+                                                    to a screen reader through use of the AutomationProperties.AccessibilityView
+                                                    property.
+                                                -->
+                                                <Image
+                                                    x:Name="iconImage"
+                                                    Width="25"
+                                                    Margin="0,0,15,0"
+                                                    common:ImageLoader.Source="{Binding}" />
+                                                <TextBlock
+                                                    Foreground="{DynamicResource HyperlinkButtonForeground}"
+                                                    Text="{Binding}"
+                                                    VerticalAlignment="Center"
+                                                    TextWrapping="Wrap" />
+                                            </ui:SimpleStackPanel>
+                                        </ui:HyperlinkButton>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <StackPanel
+                            x:Name="FeedbackPanel"
+                            Grid.Row="3"
+                            Grid.ColumnSpan="3">
+                            <TextBlock
+                                x:Name="feedbackHeader"
+                                Margin="0,0,0,12"
+                                Text="{x:Static str:Resources.FeedbackHeader_Text}"
+                                Style="{StaticResource SubtitleTextBlockStyle}" />
+                            <ui:HyperlinkButton
+                                NavigateUri="https://github.com/microsoft/Xaml-Controls-Gallery/issues/new/choose"
+                                ToolTipService.ToolTip="https://github.com/microsoft/Xaml-Controls-Gallery/issues/new/choose">
+                                <TextBlock Text="{x:Static str:Resources.FeedbackLink_Text}" />
+                            </ui:HyperlinkButton>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+        </ScrollViewer>
+    </Grid>
+</ui:Page>

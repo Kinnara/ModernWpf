@@ -1,0 +1,9 @@
+﻿<muxc:DropDownButton Content="Email" Style="{ThemeResource DropDownButtonRevealStyle}">
+    <muxc:DropDownButton.Flyout>
+        <MenuFlyout Placement="Bottom">
+            <MenuFlyoutItem Text="Send"/>
+            <MenuFlyoutItem Text="Reply"/>
+            <MenuFlyoutItem Text="Reply All"/>
+        </MenuFlyout>
+    </muxc:DropDownButton.Flyout>
+</muxc:DropDownButton>

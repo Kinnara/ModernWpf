@@ -8,13 +8,17 @@
 //
 //*********************************************************
 using ModernWpf.Controls;
+using ModernWpf.Media.Animation;
+using ModernWpf.SampleApp.DataModel;
 using SamplesCommon;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using GridView = ModernWpf.Controls.GridView;
 using Page = ModernWpf.Controls.Page;
 
@@ -41,46 +45,33 @@ namespace ModernWpf.SampleApp
             throw new NotImplementedException();
         }
 
-        /*protected void OnItemGridViewContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (sender.ContainerFromItem(sender.Items.LastOrDefault()) is GridViewItem container)
-            {
-                container.XYFocusDown = container;
-            }
-        }*/
-
-        /*protected void OnItemGridViewItemClick(object sender, ItemClickEventArgs e)
+        protected void OnItemGridViewItemClick(object sender, ItemClickEventArgs e)
         {
             var gridView = (GridView)sender;
             var item = (ControlInfoDataItem)e.ClickedItem;
 
             _itemId = item.UniqueId;
 
-            if (gridView.ContainerFromItem(item) is GridViewItem)
-            {
-                gridView.PrepareConnectedAnimation("controlAnimation", item, "controlRoot");
-            }
+            this.Frame.Navigate(typeof(ItemPage), _itemId, new DrillInNavigationTransitionInfo());
+        }
 
-            this.Frame.Navigate(typeof(ItemPage), _itemId);
-        }*/
-
-        /*protected void OnItemGridViewKeyDown(object sender, KeyRoutedEventArgs e)
+        protected void OnItemGridViewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == VirtualKey.Up)
+            if (e.Key == Key.Up)
             {
-                var nextElement = FocusManager.FindNextElement(FocusNavigationDirection.Up);
-                if (nextElement?.GetType() == typeof(Microsoft.UI.Xaml.Controls.NavigationViewItem))
-                {
-                    NavigationRootPage.Current.PageHeader.Focus(FocusState.Programmatic);
-                }
-                else
-                {
-                    FocusManager.TryMoveFocus(FocusNavigationDirection.Up);
-                }
+                //var nextElement = FocusManager.FindNextElement(FocusNavigationDirection.Up);
+                //if (nextElement?.GetType() == typeof(NavigationViewItem))
+                //{
+                //    NavigationRootPage.Current.PageHeader.Focus();
+                //}
+                //else
+                //{
+                //    FocusManager.(FocusNavigationDirection.Up);
+                //}
             }
-        }*/
+        }
 
-        /*protected async void OnItemGridViewLoaded(object sender, RoutedEventArgs e)
+        protected async void OnItemGridViewLoaded(object sender, RoutedEventArgs e)
         {
             if (_itemId != null)
             {
@@ -93,41 +84,32 @@ namespace ModernWpf.SampleApp
 
                     if (NavigationRootPage.Current.IsFocusSupported)
                     {
-                        ((GridViewItem)gridView.ContainerFromItem(item))?.Focus(FocusState.Programmatic);
-                    }
-
-                    ConnectedAnimation animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("controlAnimation");
-
-                    if (animation != null)
-                    {
-                        // Setup the "basic" configuration if the API is present. 
-                        if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7))
-                        {
-                            animation.Configuration = new BasicConnectedAnimationConfiguration();
-                        }
-
-                        await gridView.TryStartConnectedAnimationAsync(animation, item, "controlRoot");
+                        //((GridViewItem)gridView.ContainerFromItem(item))?.Focus(FocusState.Programmatic);
                     }
                 }
             }
-        }*/
+        }
 
-        /*protected void OnItemGridViewSizeChanged(object sender, SizeChangedEventArgs e)
+        protected void OnItemGridViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
             var gridView = (GridView)sender;
 
-            if (gridView.ItemsPanelRoot is ItemsWrapGrid wrapGrid)
-            {
-                if (GetIsNarrowLayoutState())
-                {
-                    wrapGrid.ItemWidth = gridView.ActualWidth - gridView.Padding.Left - gridView.Padding.Right;
-                }
-                else
-                {
-                    wrapGrid.ItemWidth = double.NaN;
-                }
-            }
-        }*/
+            //if (gridView.ItemsPanelRoot is ItemsWrapGrid wrapGrid)
+            //{
+            //    if (GetIsNarrowLayoutState())
+            //    {
+            //        double wrapGridPadding = 88;
+            //        wrapGrid.HorizontalAlignment = HorizontalAlignment.Center;
+
+            //        wrapGrid.ItemWidth = gridView.ActualWidth - gridView.Padding.Left - gridView.Padding.Right - wrapGridPadding;
+            //    }
+            //    else
+            //    {
+            //        wrapGrid.HorizontalAlignment = HorizontalAlignment.Left;
+            //        wrapGrid.ItemWidth = double.NaN;
+            //    }
+            //}
+        }
 
         protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
