@@ -274,17 +274,16 @@ namespace ModernWpf.SampleApp
                 }
                 else
                 {
-                    //if (selectedItem.DataContext is ControlInfoDataGroup)
-                    //{
-                    //    var itemId = ((ControlInfoDataGroup)selectedItem.DataContext).UniqueId;
-                    //    rootFrame.Navigate(typeof(SectionPage), itemId);
-                    //}
-                    //else if (selectedItem.DataContext is ControlInfoDataItem)
-                    //{
-                    //    var item = (ControlInfoDataItem)selectedItem.DataContext;
-                    //    rootFrame.Navigate(typeof(ItemPage), item.UniqueId);
-                    //}
-
+                    if (selectedItem.DataContext is ControlInfoDataGroup)
+                    {
+                        var itemId = ((ControlInfoDataGroup)selectedItem.DataContext).UniqueId;
+                        //rootFrame.Navigate(typeof(SectionPage), itemId);
+                    }
+                    else if (selectedItem.DataContext is ControlInfoDataItem)
+                    {
+                        var item = (ControlInfoDataItem)selectedItem.DataContext;
+                        rootFrame.Navigate(typeof(ItemPage), item.UniqueId);
+                    }
                 }
             }
         }

@@ -8,6 +8,7 @@
 //
 //*********************************************************
 using ModernWpf.Controls;
+using ModernWpf.Media.Animation;
 using ModernWpf.SampleApp.DataModel;
 using SamplesCommon;
 using System;
@@ -51,7 +52,7 @@ namespace ModernWpf.SampleApp
 
             _itemId = item.UniqueId;
 
-            //this.Frame.Navigate(typeof(ItemPage), _itemId, new DrillInNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(ItemPage), _itemId, new DrillInNavigationTransitionInfo());
         }
 
         protected void OnItemGridViewKeyDown(object sender, KeyEventArgs e)

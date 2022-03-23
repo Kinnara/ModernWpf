@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Compile Update="PageHeader.xaml.cs">
@@ -87,7 +87,6 @@
     <Resource Remove="Assets\CommandBarFlyout.png" />
     <Resource Remove="Assets\CompactSizing.png" />
     <Resource Remove="Assets\ConnectedAnimations.png" />
-    <Resource Remove="Assets\Contacts.txt" />
     <Resource Remove="Assets\ContentDialog.png" />
     <Resource Remove="Assets\CopyLinkTeachingTip.png" />
     <Resource Remove="Assets\DarkGray.png" />
@@ -115,7 +114,6 @@
     <Resource Remove="Assets\MediumGray.png" />
     <Resource Remove="Assets\MenuBar.png" />
     <Resource Remove="Assets\MenuFlyout.png" />
-    <Resource Remove="Assets\mtns.csv" />
     <Resource Remove="Assets\NavigationView.png" />
     <Resource Remove="Assets\NavigationViewItemIcons\AllControlsIcon.png" />
     <Resource Remove="Assets\NavigationViewItemIcons\ButtonsIcon.png" />
@@ -276,9 +274,6 @@
     <Content Include="Assets\ConnectedAnimations.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Contacts.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assets\ContentDialog.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -358,9 +353,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\MenuFlyout.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\mtns.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\NavigationView.png">
@@ -615,9 +607,9 @@
     <Content Include="Assets\Windows_Desktop.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DataModel\ControlInfoData.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="DataModel\ControlInfoData.json">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -633,6 +625,15 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Update="Assets\Contacts.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Update="Assets\mtns.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

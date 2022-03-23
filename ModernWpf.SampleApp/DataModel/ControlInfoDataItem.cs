@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Windows.Data.Json;
 using Windows.Storage;
 
@@ -170,9 +171,15 @@ namespace ModernWpf.SampleApp.DataModel
                 }
             }
 
-            string dataUri = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"DataModel\ControlInfoData.json");
+            var dataUri = new Uri("/DataModel/ControlInfoData.json", UriKind.Relative);
 
-            string jsonText = await Task.Run(() => { return File.ReadAllText(dataUri); });
+            var file = Application.GetResourceStream(dataUri);
+            string jsonText = string.Empty;
+
+            using (var reader = new StreamReader(file.Stream))
+            {
+                await Task.Run(() => jsonText = reader.ReadToEnd());
+            }
 
             JsonObject jsonObject = JsonObject.Parse(jsonText);
             JsonArray jsonArray = jsonObject["Groups"].GetArray();
