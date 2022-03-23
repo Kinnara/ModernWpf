@@ -15,17 +15,22 @@ namespace ModernWpf.SampleApp
 {
     public partial class MainWindow
     {
+        public static MainWindow Current;
+
         public MainWindow()
         {
+            Current = this;
             InitializeComponent();
             InitialzeApp();
         }
 
         private async void InitialzeApp()
         {
+            await Task.Delay(1);
             await ControlInfoDataSource.Instance.GetGroupsAsync();
             SubscribeToResourcesChanged();
-            Content = new NavigationRootPage();
+            NavigationRootPage NavigationRootPage = new NavigationRootPage();
+            Content = NavigationRootPage;
         }
 
         protected override void OnSourceInitialized(EventArgs e)

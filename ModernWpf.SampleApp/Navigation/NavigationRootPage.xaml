@@ -29,14 +29,6 @@
                         </ResourceDictionary>
                     </ui:ThemeResources.ThemeDictionaries>
                 </ui:ThemeResources>
-                <ResourceDictionary>
-                    <DataTemplate x:Key="NavigationViewHeaderTemplate">
-                        <local:PageHeader
-                            Title="{Binding}"
-                            Background="Transparent"
-                            BackgroundColorOpacity="1" />
-                    </DataTemplate>
-                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Page.Resources>
@@ -74,7 +66,6 @@
             Grid.Column="1"
             AlwaysShowHeader="True"
             Header=" "
-            HeaderTemplate="{StaticResource NavigationViewHeaderTemplate}"
             IsTabStop="False"
             IsTitleBarAutoPaddingEnabled="False"
             PaneOpening="NavigationViewControl_PaneOpening"
@@ -82,6 +73,14 @@
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
             SelectionChanged="OnNavigationViewSelectionChanged"
             Loaded="OnNavigationViewControlLoaded">
+            <ui:NavigationView.HeaderTemplate>
+                <DataTemplate>
+                    <local:PageHeader
+                        Title="{Binding Header, ElementName=NavigationViewControl}"
+                        Background="Transparent"
+                        BackgroundColorOpacity="1" />
+                </DataTemplate>
+            </ui:NavigationView.HeaderTemplate>
             <ui:NavigationView.AutoSuggestBox>
                 <ui:AutoSuggestBox
                     x:Name="controlsSearchBox"

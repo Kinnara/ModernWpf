@@ -21,6 +21,7 @@ using Windows.System.Profile;
 using System.Windows.Automation;
 using System.Diagnostics;
 using Windows.Devices.Input;
+using ModernWpf.SampleApp.Helper;
 
 namespace ModernWpf.SampleApp
 {
@@ -34,7 +35,7 @@ namespace ModernWpf.SampleApp
 
         public VirtualKey ArrowKey;
 
-        //private RootFrameNavigationHelper _navHelper;
+        private RootFrameNavigationHelper _navHelper;
         private bool _isGamePadConnected;
         private bool _isKeyboardConnected;
         private NavigationViewItem _allControlsMenuItem;
@@ -72,7 +73,7 @@ namespace ModernWpf.SampleApp
             // by https://github.com/microsoft/microsoft-ui-xaml/pull/2271
             NavigationViewControl.PaneDisplayMode = NavigationViewPaneDisplayMode.Left;
 
-            //_navHelper = new RootFrameNavigationHelper(rootFrame, NavigationViewControl);
+            _navHelper = new RootFrameNavigationHelper(rootFrame, NavigationViewControl);
 
             SetDeviceFamily();
             AddNavigationMenuItems();
@@ -90,14 +91,6 @@ namespace ModernWpf.SampleApp
             {
                 //NavigationOrientationHelper.UpdateTitleBar(NavigationOrientationHelper.IsLeftMode);
             };
-
-            //NavigationViewControl.RegisterPropertyChangedCallback(muxc.NavigationView.PaneDisplayModeProperty, new DependencyPropertyChangedCallback(OnPaneDisplayModeChanged));
-        }
-
-        private void OnPaneDisplayModeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            var navigationView = sender as NavigationView;
-            AppTitleBar.Visibility = navigationView.PaneDisplayMode == NavigationViewPaneDisplayMode.Top ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public static string GetAppTitleFromSystem
@@ -189,6 +182,7 @@ namespace ModernWpf.SampleApp
             NavigationViewControl.MenuItems.Insert(2, new NavigationViewItemSeparator());
 
             _newControlsMenuItem.Loaded += OnNewControlsMenuItemLoaded;
+            NavigationViewControl.SelectedItem = _newControlsMenuItem;
         }
 
         private void OnMenuFlyoutItemClick(object sender, RoutedEventArgs e)
@@ -253,46 +247,46 @@ namespace ModernWpf.SampleApp
 
         private void OnNavigationViewSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
-            //if (args.IsSettingsSelected)
-            //{
-            //    if (rootFrame.CurrentSourcePageType != typeof(SettingsPage))
-            //    {
-            //        rootFrame.Navigate(typeof(SettingsPage));
-            //    }
-            //}
-            //else
-            //{
-            //    var selectedItem = args.SelectedItemContainer;
+            if (args.IsSettingsSelected)
+            {
+                //if (rootFrame.CurrentSourcePageType != typeof(SettingsPage))
+                //{
+                //    rootFrame.Navigate(typeof(SettingsPage));
+                //}
+            }
+            else
+            {
+                var selectedItem = args.SelectedItemContainer;
 
-            //    if (selectedItem == _allControlsMenuItem)
-            //    {
-            //        if (rootFrame.CurrentSourcePageType != typeof(AllControlsPage))
-            //        {
-            //            rootFrame.Navigate(typeof(AllControlsPage));
-            //        }
-            //    }
-            //    else if (selectedItem == _newControlsMenuItem)
-            //    {
-            //        if (rootFrame.CurrentSourcePageType != typeof(NewControlsPage))
-            //        {
-            //            rootFrame.Navigate(typeof(NewControlsPage));
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (selectedItem.DataContext is ControlInfoDataGroup)
-            //        {
-            //            var itemId = ((ControlInfoDataGroup)selectedItem.DataContext).UniqueId;
-            //            rootFrame.Navigate(typeof(SectionPage), itemId);
-            //        }
-            //        else if (selectedItem.DataContext is ControlInfoDataItem)
-            //        {
-            //            var item = (ControlInfoDataItem)selectedItem.DataContext;
-            //            rootFrame.Navigate(typeof(ItemPage), item.UniqueId);
-            //        }
+                if (selectedItem == _allControlsMenuItem)
+                {
+                    //if (rootFrame.CurrentSourcePageType != typeof(AllControlsPage))
+                    //{
+                    //    rootFrame.Navigate(typeof(AllControlsPage));
+                    //}
+                }
+                else if (selectedItem == _newControlsMenuItem)
+                {
+                    if (rootFrame.CurrentSourcePageType != typeof(NewControlsPage))
+                    {
+                        rootFrame.Navigate(typeof(NewControlsPage));
+                    }
+                }
+                else
+                {
+                    //if (selectedItem.DataContext is ControlInfoDataGroup)
+                    //{
+                    //    var itemId = ((ControlInfoDataGroup)selectedItem.DataContext).UniqueId;
+                    //    rootFrame.Navigate(typeof(SectionPage), itemId);
+                    //}
+                    //else if (selectedItem.DataContext is ControlInfoDataItem)
+                    //{
+                    //    var item = (ControlInfoDataItem)selectedItem.DataContext;
+                    //    rootFrame.Navigate(typeof(ItemPage), item.UniqueId);
+                    //}
 
-            //    }
-            //}
+                }
+            }
         }
 
         private void OnRootFrameNavigated(object sender, NavigationEventArgs e)
@@ -453,7 +447,7 @@ namespace ModernWpf.SampleApp
             {
                 AppTitleBar.Margin = new Thickness(sender.CompactPaneLength, currMargin.Top, currMargin.Right, currMargin.Bottom);
             }
-
+            AppTitleBar.Visibility = sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Top ? Visibility.Collapsed : Visibility.Visible;
             UpdateAppTitleMargin(sender);
             UpdateHeaderMargin(sender);
         }
@@ -462,18 +456,18 @@ namespace ModernWpf.SampleApp
         {
             const int smallLeftIndent = 4, largeLeftIndent = 24;
 
-            
-                Thickness currMargin = AppTitle.Margin;
 
-                if ((sender.DisplayMode == NavigationViewDisplayMode.Expanded && sender.IsPaneOpen) ||
-                         sender.DisplayMode == NavigationViewDisplayMode.Minimal)
-                {
-                    AppTitle.Margin = new Thickness(smallLeftIndent, currMargin.Top, currMargin.Right, currMargin.Bottom);
-                }
-                else
-                {
-                    AppTitle.Margin = new Thickness(largeLeftIndent, currMargin.Top, currMargin.Right, currMargin.Bottom);
-                }
+            Thickness currMargin = AppTitle.Margin;
+
+            if ((sender.DisplayMode == NavigationViewDisplayMode.Expanded && sender.IsPaneOpen) ||
+                     sender.DisplayMode == NavigationViewDisplayMode.Minimal)
+            {
+                AppTitle.Margin = new Thickness(smallLeftIndent, currMargin.Top, currMargin.Right, currMargin.Bottom);
+            }
+            else
+            {
+                AppTitle.Margin = new Thickness(largeLeftIndent, currMargin.Top, currMargin.Right, currMargin.Bottom);
+            }
         }
 
         private void UpdateHeaderMargin(NavigationView sender)

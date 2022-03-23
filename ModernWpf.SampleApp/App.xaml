@@ -131,6 +131,8 @@
             </LinearGradientBrush>
 
             <!-- Application-specific resources -->
+            <common:NullToVisibilityConverter x:Key="nullToVisibilityConverter" />
+            <common:NullToVisibilityConverter x:Key="inverseNullToVisibilityConverter" NonNullValue="Collapsed" NullValue="Visible" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <sc:EnumValuesConverter x:Key="EnumValuesConverter" />
             <sc:ColorToBrushConverter x:Key="ColorToBrushConverter" />
@@ -166,20 +168,20 @@
                 <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
             </Style>
 
-            <Style x:Key="GridViewItemStyle" TargetType="ui:GridViewItem" BasedOn="{StaticResource DefaultGridViewItemStyle}">
+            <Style x:Key="GridViewItemStyle" TargetType="ui:GridViewItem">
                 <Setter Property="Margin" Value="0,0,12,12" />
             </Style>
 
-            <Style x:Key="IndentedGridViewItemStyle" TargetType="ui:GridViewItem" BasedOn="{StaticResource DefaultGridViewItemStyle}">
+            <Style x:Key="IndentedGridViewItemStyle" TargetType="ui:GridViewItem">
                 <Setter Property="Margin" Value="12,0,0,12" />
             </Style>
 
-            <Style x:Key="GridViewItemStyleSmall" TargetType="ui:GridViewItem" BasedOn="{StaticResource DefaultGridViewItemStyle}">
+            <Style x:Key="GridViewItemStyleSmall" TargetType="ui:GridViewItem">
                 <Setter Property="Margin" Value="0,0,0,12" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             </Style>
 
-            <Style x:Key="IndentedGridViewItemStyleSmall" TargetType="ui:GridViewItem" BasedOn="{StaticResource DefaultGridViewItemStyle}">
+            <Style x:Key="IndentedGridViewItemStyleSmall" TargetType="ui:GridViewItem">
                 <Setter Property="Margin" Value="12,0,12,12" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             </Style>

@@ -1,0 +1,71 @@
+﻿<ResourceDictionary
+    x:Class="ModernWpf.SampleApp.ItemTemplates"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019">
+    <DataTemplate x:Key="ControlItemTemplate">
+        <UserControl>
+            <Border
+                x:Name="controlRoot"
+                Width="360"
+                Height="90"
+                Padding="8"
+                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="{StaticResource ControlCornerRadius}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border
+                        Width="70"
+                        Background="{DynamicResource SolidBackgroundFillColorSecondaryBrush}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <Image
+                            x:Name="gridImage"
+                            Width="45"
+                            VerticalAlignment="Center"
+                            AutomationProperties.Name="{Binding Title}"
+                            Source="{Binding ImagePath}"
+                            Stretch="Uniform" />
+                    </Border>
+
+
+                    <ui:SimpleStackPanel
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        Margin="16,6,0,0">
+                        <TextBlock
+                            x:Name="titleText"
+                            Style="{DynamicResource BodyStrongTextBlockStyle}"
+                            Text="{Binding Title}"
+                            TextWrapping="NoWrap" />
+                        <TextBlock
+                            Margin="0,2,8,0"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Text="{Binding Subtitle}"
+                            TextTrimming="CharacterEllipsis" />
+                    </ui:SimpleStackPanel>
+
+                    <Border
+                        Grid.Column="2"
+                        Margin="0"
+                        VerticalAlignment="Top"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Visibility="{Binding BadgeString, Converter={StaticResource nullToVisibilityConverter}}">
+
+                        <Ellipse
+                            Width="12"
+                            Height="12"
+                            Fill="{DynamicResource SystemAccentColorDark1Brush}" />
+                    </Border>
+                </Grid>
+            </Border>
+        </UserControl>
+    </DataTemplate>
+</ResourceDictionary>

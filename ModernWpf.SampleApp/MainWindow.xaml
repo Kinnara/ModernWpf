@@ -12,7 +12,6 @@
     Width="1000"
     Height="750"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
-    WindowStartupLocation="CenterScreen"
     Background="{DynamicResource ApplicationPageBackgroundThemeBrush}"
     ui:ThemeManager.IsThemeAware="True"
     ui:WindowHelper.UseModernWindowStyle="True">
@@ -22,14 +21,21 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
         <Image
             Grid.Row="1"
-            HorizontalAlignment="Center"
+            Grid.Column="1"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             x:Name="extendedSplashImage"
             Source="pack://Application:,,,/ModernWpf.SampleApp;component/Assets/AppIcon.ico" />
         <ui:ProgressRing
             Grid.Row="2"
+            Grid.Column="1"
             Name="splashProgressRing"
             IsActive="True"
             Width="20"
