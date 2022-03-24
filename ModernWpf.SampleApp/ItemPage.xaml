@@ -196,6 +196,7 @@
                                                 <TextBlock
                                                     Foreground="{DynamicResource HyperlinkButtonForeground}"
                                                     Text="{Binding}"
+                                                    VerticalAlignment="Center"
                                                     TextWrapping="Wrap" />
                                             </ui:SimpleStackPanel>
                                         </ui:HyperlinkButton>

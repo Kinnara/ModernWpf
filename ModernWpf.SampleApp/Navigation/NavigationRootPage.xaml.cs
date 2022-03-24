@@ -277,7 +277,7 @@ namespace ModernWpf.SampleApp
                     if (selectedItem.DataContext is ControlInfoDataGroup)
                     {
                         var itemId = ((ControlInfoDataGroup)selectedItem.DataContext).UniqueId;
-                        //rootFrame.Navigate(typeof(SectionPage), itemId);
+                        rootFrame.Navigate(typeof(SectionPage), itemId);
                     }
                     else if (selectedItem.DataContext is ControlInfoDataItem)
                     {
@@ -290,15 +290,15 @@ namespace ModernWpf.SampleApp
 
         private void OnRootFrameNavigated(object sender, NavigationEventArgs e)
         {
-            //if (rootFrame.SourcePageType == typeof(AllControlsPage) ||
-            //    rootFrame.SourcePageType == typeof(NewControlsPage))
-            //{
-            //    NavigationViewControl.AlwaysShowHeader = false;
-            //}
-            //else
-            //{
-            //    NavigationViewControl.AlwaysShowHeader = true;
-            //}
+            if (rootFrame.SourcePageType == typeof(AllControlsPage) ||
+                rootFrame.SourcePageType == typeof(NewControlsPage))
+            {
+                //NavigationViewControl.AlwaysShowHeader = false;
+            }
+            else
+            {
+                NavigationViewControl.AlwaysShowHeader = true;
+            }
         }
 
         private void OnControlsSearchBoxTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
