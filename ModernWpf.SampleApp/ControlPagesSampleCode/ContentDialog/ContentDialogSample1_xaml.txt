@@ -1,0 +1,12 @@
+﻿<Page
+    x:Class="AppUIBasics.ControlPages.ContentDialogContent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <!-- Content body -->
+        <TextBlock Text="Lorem ipsum dolor sit amet, adipisicing elit." TextWrapping="Wrap" />
+        <CheckBox Content="Upload your content to the cloud."/>
+    </StackPanel>
+
+</Page>

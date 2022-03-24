@@ -1,0 +1,69 @@
+// C# Code
+
+// Make sure to add this to your declarations at the top for the filtering method:
+using System.Linq;
+// ...
+
+// Define an ObservableCollection<Contact> object to serve as the ListView's
+// ItemsSource. This collection will get updated after the filters are used:
+ObservableCollection<Contact> contactsFiltered = new ObservableCollection<Contact>();
+
+/* Populate contactsFiltered with all contact objects (in this case, contacts holds
+all of our Contact objects so we copy them into contactsFiltered). Set this newly populated
+collection as the ItemsSource for the ListView. */
+contactsFiltered = new ObservableCollection<Contact>(allContacts);
+FilteredListView.ItemsSource = contactsFiltered;
+
+
+// Whenever text changes in any of the filtering text boxes, the following function is called:
+private void OnFilterChanged(object sender, TextChangedEventArgs args)
+{
+    // This is a Linq query that selects only items that return True after being passed through
+    // the Filter function, and adds all of those selected items to filtered.
+    var filtered = allContacts.Where(contact => Filter(contact));
+    Remove_NonMatching(filtered);
+    AddBack_Contacts(filtered);
+}
+
+// The following functions are called inside OnFilterChanged:
+
+/* When the text in any filter is changed, perform a check on each item in the original 
+contact list to see if the item should be displayed, taking into account all three of the
+filters currently applied. If the item passes all three checks for all three filters, 
+the function returns true and the item is added to the filtered list above. */
+private bool Filter(Contact contact)
+{
+    return contact.FirstName.Contains(FilterByFirstName.Text, StringComparison.InvariantCultureIgnoreCase) &&
+            contact.LastName.Contains(FilterByLastName.Text, StringComparison.InvariantCultureIgnoreCase) &&
+            contact.Company.Contains(FilterByCompany.Text, StringComparison.InvariantCultureIgnoreCase);
+}
+
+/* These functions go through the current list being displayed (contactsFiltered), and remove
+any items not in the filtered collection (any items that don't belong), or add back any items 
+from the original allContacts list that are now supposed to be displayed (i.e. when backspace is hit). */
+
+private void Remove_NonMatching(IEnumerable<Contact> filteredData)
+{
+    for (int i = contacts3Filtered.Count - 1; i >= 0; i--)
+    {
+        var item = contacts3Filtered[i];
+        // If contact is not in the filtered argument list, remove it from the ListView's source.
+        if (!filteredData.Contains(item))
+        {
+            contacts3Filtered.Remove(item);
+        }
+    }
+}
+
+private void AddBack_Contacts(IEnumerable<Contact> filteredData)
+{
+    foreach (var item in filteredData)
+    {
+        // If item in filtered list is not currently in ListView's source collection, add it back in
+        if (!contacts3Filtered.Contains(item))
+        {
+            contacts3Filtered.Add(item);
+        }
+    }
+}
+

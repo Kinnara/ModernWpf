@@ -1,0 +1,10 @@
+﻿<muxc:NavigationView x:Name="nvSample" PaneDisplayMode="Top" 
+    SelectionFollowsFocus="Enabled" IsBackButtonVisible="Collapsed">
+    <muxc:NavigationView.MenuItems>
+        <muxc:NavigationViewItem Icon="Play" Content="Item1" x:Name="SamplePage1Item" />
+        <muxc:NavigationViewItem Icon="Save" Content="Item2" x:Name="SamplePage2Item" />
+        <muxc:NavigationViewItem Icon="Refresh" Content="Item3" x:Name="SamplePage3Item" />
+        <muxc:NavigationViewItem Icon="Download" Content="Item4" x:Name="SamplePage4Item" />
+    </muxc:NavigationView.MenuItems>
+    <Frame x:Name="contentFrame"/>
+</muxc:NavigationView>

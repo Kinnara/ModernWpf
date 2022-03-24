@@ -54,6 +54,91 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ControlPagesSampleCode\Brushes\RadialGradientBrushSample_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\Buttons\Button\CustomButtonStyle.txt" />
+    <None Remove="ControlPagesSampleCode\Buttons\DropDown\DropDownButton_Icon.txt" />
+    <None Remove="ControlPagesSampleCode\Buttons\DropDown\DropDownButton_RevealStyle.txt" />
+    <None Remove="ControlPagesSampleCode\Buttons\DropDown\DropDownButton_Simple.txt" />
+    <None Remove="ControlPagesSampleCode\Buttons\SplitButton\SplitButtonSample1.txt" />
+    <None Remove="ControlPagesSampleCode\Buttons\SplitButton\SplitButtonSample2.txt" />
+    <None Remove="ControlPagesSampleCode\Buttons\ToggleSplitButton\ToggleSplitButtonSample1.txt" />
+    <None Remove="ControlPagesSampleCode\CommandBarFlyout\CommandBarFlyoutSample1_cs.txt" />
+    <None Remove="ControlPagesSampleCode\CommandBarFlyout\CommandBarFlyoutSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\ContentDialog\ContentDialogSample1_cs.txt" />
+    <None Remove="ControlPagesSampleCode\ContentDialog\ContentDialogSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\DropDownButtonCode.html" />
+    <None Remove="ControlPagesSampleCode\GridView\GridViewSample1_cs.txt" />
+    <None Remove="ControlPagesSampleCode\GridView\GridViewSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\Icons\AnimatedIconSample1_cs.txt" />
+    <None Remove="ControlPagesSampleCode\Icons\AnimatedIconSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\Icons\AnimatedIconSample2_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\Icons\FontIconSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\Icons\ImageIconSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\Icons\ImageIconSample2_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\Icons\PathIconSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\Icons\SymbolIconSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\Icons\SymbolIconSample_1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterNestedSample_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample1_cs.txt" />
+    <None Remove="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample2_cs.txt" />
+    <None Remove="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample2_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample3_cs.txt" />
+    <None Remove="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample3_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample4_cs.txt" />
+    <None Remove="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample4_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\ListView\ListViewGroupedHeaderSample_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\ListView\ListViewSample1_cs.txt" />
+    <None Remove="ControlPagesSampleCode\ListView\ListViewSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\ListView\ListViewSample2_cs.txt" />
+    <None Remove="ControlPagesSampleCode\ListView\ListViewSample2_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\ListView\ListViewSample3_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\ListView\ListViewSample4_cs.txt" />
+    <None Remove="ControlPagesSampleCode\ListView\ListViewSample4_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\ListView\ListViewStickyHeaderSample_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\MenuBar\MenuBarSample1.txt" />
+    <None Remove="ControlPagesSampleCode\MenuBar\MenuBarSample2.txt" />
+    <None Remove="ControlPagesSampleCode\MenuBar\MenuBarSample3.txt" />
+    <None Remove="ControlPagesSampleCode\Motion\AnimationInterop\AnimationInteropSample1_cs.txt" />
+    <None Remove="ControlPagesSampleCode\Motion\AnimationInterop\AnimationInteropSample2_cs.txt" />
+    <None Remove="ControlPagesSampleCode\Motion\AnimationInterop\AnimationInteropSample3_cs.txt" />
+    <None Remove="ControlPagesSampleCode\Motion\AnimationInterop\AnimationInteropSample4_cs.txt" />
+    <None Remove="ControlPagesSampleCode\Motion\AnimationInterop\AnimationInteropSample5_cs.txt" />
+    <None Remove="ControlPagesSampleCode\Motion\AnimationInterop\AnimationInteropSample5_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\Motion\ConnectedAnimation\ConnectedAnimationSimple.txt" />
+    <None Remove="ControlPagesSampleCode\NavigationView\NavigationViewSample1.txt" />
+    <None Remove="ControlPagesSampleCode\NavigationView\NavigationViewSample2.txt" />
+    <None Remove="ControlPagesSampleCode\NavigationView\NavigationViewSample3.txt" />
+    <None Remove="ControlPagesSampleCode\NavigationView\NavigationViewSample4.txt" />
+    <None Remove="ControlPagesSampleCode\NavigationView\NavigationViewSample4_cs.txt" />
+    <None Remove="ControlPagesSampleCode\NavigationView\NavigationViewSample4_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\NavigationView\NavigationViewSample5.txt" />
+    <None Remove="ControlPagesSampleCode\NavigationView\NavigationViewSample5_cs.txt" />
+    <None Remove="ControlPagesSampleCode\NavigationView\NavigationViewSample5_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\NavigationView\NavigationViewSample6.txt" />
+    <None Remove="ControlPagesSampleCode\NavigationView\NavigationViewSample8_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\NavigationView\NavigationViewSample9_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\NumberBox\NumberBoxSample2_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\NumberBox\NumberBoxSample3_cs.txt" />
+    <None Remove="ControlPagesSampleCode\NumberBox\NumberBoxSample3_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\StandardUICommand\StandardUICommandSample1_cs.txt" />
+    <None Remove="ControlPagesSampleCode\StandardUICommand\StandardUICommandSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\TabView\TabViewBasicSample_cs.txt" />
+    <None Remove="ControlPagesSampleCode\TabView\TabViewKeyboardAcceleratorSample_cs.txt" />
+    <None Remove="ControlPagesSampleCode\TeachingTip\TeachingTipSample1_cs.txt" />
+    <None Remove="ControlPagesSampleCode\TeachingTip\TeachingTipSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\TeachingTip\TeachingTipSample2_cs.txt" />
+    <None Remove="ControlPagesSampleCode\TeachingTip\TeachingTipSample2_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\TeachingTip\TeachingTipSample3_cs.txt" />
+    <None Remove="ControlPagesSampleCode\TeachingTip\TeachingTipSample3_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\Text\RichEditBox\RichEditBoxSample3_cs.txt" />
+    <None Remove="ControlPagesSampleCode\Text\RichEditBox\RichEditBoxSample3_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\Text\RichEditBox\RichEditBoxSample4_cs.txt" />
+    <None Remove="ControlPagesSampleCode\Text\RichEditBox\RichEditBoxSample4_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\TreeView\TreeViewDataBindingSample_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\TreeView\TreeViewTemplateSelectorSample_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\XamlUICommand\XamlUICommandSample1_cs.txt" />
+    <None Remove="ControlPagesSampleCode\XamlUICommand\XamlUICommandSample1_xaml.txt" />
     <None Remove="DataModel\ControlInfoData.json" />
   </ItemGroup>
 
@@ -607,6 +692,91 @@
     <Content Include="Assets\Windows_Desktop.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="ControlPagesSampleCode\Brushes\RadialGradientBrushSample_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\Buttons\Button\CustomButtonStyle.txt" />
+    <Resource Include="ControlPagesSampleCode\Buttons\DropDown\DropDownButton_Icon.txt" />
+    <Resource Include="ControlPagesSampleCode\Buttons\DropDown\DropDownButton_RevealStyle.txt" />
+    <Resource Include="ControlPagesSampleCode\Buttons\DropDown\DropDownButton_Simple.txt" />
+    <Resource Include="ControlPagesSampleCode\Buttons\SplitButton\SplitButtonSample1.txt" />
+    <Resource Include="ControlPagesSampleCode\Buttons\SplitButton\SplitButtonSample2.txt" />
+    <Resource Include="ControlPagesSampleCode\Buttons\ToggleSplitButton\ToggleSplitButtonSample1.txt" />
+    <Resource Include="ControlPagesSampleCode\CommandBarFlyout\CommandBarFlyoutSample1_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\CommandBarFlyout\CommandBarFlyoutSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\ContentDialog\ContentDialogSample1_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\ContentDialog\ContentDialogSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\DropDownButtonCode.html" />
+    <Resource Include="ControlPagesSampleCode\GridView\GridViewSample1_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\GridView\GridViewSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\Icons\AnimatedIconSample1_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\Icons\AnimatedIconSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\Icons\AnimatedIconSample2_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\Icons\FontIconSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\Icons\ImageIconSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\Icons\ImageIconSample2_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\Icons\PathIconSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\Icons\SymbolIconSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\Icons\SymbolIconSample_1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterNestedSample_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample1_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample2_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample2_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample3_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample3_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample4_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\ItemsRepeater\ItemsRepeaterSample4_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\ListView\ListViewGroupedHeaderSample_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\ListView\ListViewSample1_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\ListView\ListViewSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\ListView\ListViewSample2_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\ListView\ListViewSample2_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\ListView\ListViewSample3_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\ListView\ListViewSample4_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\ListView\ListViewSample4_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\ListView\ListViewStickyHeaderSample_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\MenuBar\MenuBarSample1.txt" />
+    <Resource Include="ControlPagesSampleCode\MenuBar\MenuBarSample2.txt" />
+    <Resource Include="ControlPagesSampleCode\MenuBar\MenuBarSample3.txt" />
+    <Resource Include="ControlPagesSampleCode\Motion\AnimationInterop\AnimationInteropSample1_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\Motion\AnimationInterop\AnimationInteropSample2_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\Motion\AnimationInterop\AnimationInteropSample3_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\Motion\AnimationInterop\AnimationInteropSample4_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\Motion\AnimationInterop\AnimationInteropSample5_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\Motion\AnimationInterop\AnimationInteropSample5_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\Motion\ConnectedAnimation\ConnectedAnimationSimple.txt" />
+    <Resource Include="ControlPagesSampleCode\NavigationView\NavigationViewSample1.txt" />
+    <Resource Include="ControlPagesSampleCode\NavigationView\NavigationViewSample2.txt" />
+    <Resource Include="ControlPagesSampleCode\NavigationView\NavigationViewSample3.txt" />
+    <Resource Include="ControlPagesSampleCode\NavigationView\NavigationViewSample4.txt" />
+    <Resource Include="ControlPagesSampleCode\NavigationView\NavigationViewSample4_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\NavigationView\NavigationViewSample4_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\NavigationView\NavigationViewSample5.txt" />
+    <Resource Include="ControlPagesSampleCode\NavigationView\NavigationViewSample5_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\NavigationView\NavigationViewSample5_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\NavigationView\NavigationViewSample6.txt" />
+    <Resource Include="ControlPagesSampleCode\NavigationView\NavigationViewSample8_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\NavigationView\NavigationViewSample9_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\NumberBox\NumberBoxSample2_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\NumberBox\NumberBoxSample3_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\NumberBox\NumberBoxSample3_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\StandardUICommand\StandardUICommandSample1_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\StandardUICommand\StandardUICommandSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\TabView\TabViewBasicSample_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\TabView\TabViewKeyboardAcceleratorSample_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\TeachingTip\TeachingTipSample1_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\TeachingTip\TeachingTipSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\TeachingTip\TeachingTipSample2_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\TeachingTip\TeachingTipSample2_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\TeachingTip\TeachingTipSample3_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\TeachingTip\TeachingTipSample3_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\Text\RichEditBox\RichEditBoxSample3_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\Text\RichEditBox\RichEditBoxSample3_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\Text\RichEditBox\RichEditBoxSample4_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\Text\RichEditBox\RichEditBoxSample4_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\TreeView\TreeViewDataBindingSample_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\TreeView\TreeViewTemplateSelectorSample_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\XamlUICommand\XamlUICommandSample1_cs.txt" />
+    <Resource Include="ControlPagesSampleCode\XamlUICommand\XamlUICommandSample1_xaml.txt" />
     <Resource Include="DataModel\ControlInfoData.json">
       <CopyToOutputDirectory></CopyToOutputDirectory>
     </Resource>
@@ -618,6 +788,10 @@
       <SubType>Designer</SubType>
       <ContainsDesignTimeResources>True</ContainsDesignTimeResources>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ColorCodeStandard" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,19 @@
+﻿<!-- In Page.Resources -->
+<CollectionViewSource x:Name="ContactsCVS" IsSourceGrouped="True" />
+
+<ListView 
+    ItemsSource="{x:Bind ContactsCVS.View, Mode=OneWay}"
+    ItemTemplate="{StaticResource ContactListViewTemplate}"
+    SelectionMode="Single">
+    <ListView.GroupStyle>
+        <GroupStyle>
+            <GroupStyle.HeaderTemplate>
+                <DataTemplate x:DataType="local1:GroupInfoList">
+                    <Border AutomationProperties.Name="{x:Bind Key}">
+                        <TextBlock Text="{x:Bind Key}" Style="{ThemeResource TitleTextBlockStyle}"/>
+                    </Border>
+                </DataTemplate>
+            </GroupStyle.HeaderTemplate>
+        </GroupStyle>
+    </ListView.GroupStyle>
+</ListView>

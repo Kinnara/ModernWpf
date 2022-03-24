@@ -1,0 +1,25 @@
+<!-- XAML Code -->
+
+<GridView
+    x:Name="BasicGridView"
+    ItemTemplate="{StaticResource ImageTemplate}"
+    IsItemClickEnabled="True"
+    ItemClick="BasicGridView_ItemClick"
+    SelectionMode="Single"/>
+                    
+<DataTemplate x:Key="ImageTemplate" x:DataType="local1:CustomDataObject">
+     <Image Stretch="UniformToFill" Source="{x:Bind ImageLocation}" Width="190" Height="130"/>
+</DataTemplate>
+                    
+<!-- In this example, the GridView's ItemTemplate property is bound to a data template (shown above)
+called ImageTemplate, defined in the Page.Resources section of the XAML file. 
+                    
+The data template is defined to display an object of type CustomDataObject, which is created from a class
+that's defined in the code-behind (see code below).
+                    
+The ItemsSource for the GridView is an ObservableCollection<CustomDataObject> called Items and
+is defined in the C# code-behind. It is bound to the GridView's ItemsSource property in the code-behind.
+                    
+The IsItemClickEnabled property allows items to be clicked, and a function called BasicGridView_ItemClick 
+is called when an item is clicked. This function is defined in the C# code-behind and simply outputs 
+the title of the selected item into a TextBlock below the GridView. -->

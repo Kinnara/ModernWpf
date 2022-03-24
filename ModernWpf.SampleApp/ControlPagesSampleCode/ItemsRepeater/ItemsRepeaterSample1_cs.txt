@@ -1,0 +1,27 @@
+// C# code-behind
+
+public class StringOrIntTemplateSelector : DataTemplateSelector
+{
+    // Define the (currently empty) data templates to return
+    // These will be "filled-in" in the XAML code.
+    public DataTemplate StringTemplate { get; set; }
+
+    public DataTemplate IntTemplate { get; set; }
+
+    protected override DataTemplate SelectTemplateCore(object item)
+    {
+        // Return the correct data template based on the item's type.
+        if (item.GetType() == typeof(String))
+        {
+            return StringTemplate;
+        }
+        else if (item.GetType() == typeof(int))
+        {
+            return IntTemplate;
+        }
+        else
+        {
+            return null;
+        }
+    }
+}

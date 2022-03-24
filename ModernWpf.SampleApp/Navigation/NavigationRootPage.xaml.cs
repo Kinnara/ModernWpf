@@ -249,10 +249,10 @@ namespace ModernWpf.SampleApp
         {
             if (args.IsSettingsSelected)
             {
-                //if (rootFrame.CurrentSourcePageType != typeof(SettingsPage))
-                //{
-                //    rootFrame.Navigate(typeof(SettingsPage));
-                //}
+                if (rootFrame.CurrentSourcePageType != typeof(SettingsPage))
+                {
+                    rootFrame.Navigate(typeof(SettingsPage));
+                }
             }
             else
             {
@@ -260,10 +260,10 @@ namespace ModernWpf.SampleApp
 
                 if (selectedItem == _allControlsMenuItem)
                 {
-                    //if (rootFrame.CurrentSourcePageType != typeof(AllControlsPage))
-                    //{
-                    //    rootFrame.Navigate(typeof(AllControlsPage));
-                    //}
+                    if (rootFrame.CurrentSourcePageType != typeof(AllControlsPage))
+                    {
+                        rootFrame.Navigate(typeof(AllControlsPage));
+                    }
                 }
                 else if (selectedItem == _newControlsMenuItem)
                 {

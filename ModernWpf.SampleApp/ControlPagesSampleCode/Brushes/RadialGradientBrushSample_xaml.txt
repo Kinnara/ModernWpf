@@ -1,0 +1,14 @@
+﻿<Rectangle Width="200" Height="200">
+    <Rectangle.Fill>
+        <media:RadialGradientBrush
+                MappingMode="$(MappingMode)"
+                Center="$(CenterX),$(CenterY)"
+                RadiusX="$(RadiusX)"
+                RadiusY="$(RadiusY)"
+                GradientOrigin="$(OriginX),$(OriginY)"
+                SpreadMethod="$(SpreadMethod)">
+            <GradientStop Color="Yellow" Offset="0.0" />
+            <GradientStop Color="Blue" Offset="1" />
+        </media:RadialGradientBrush>
+    </Rectangle.Fill>
+</Rectangle>

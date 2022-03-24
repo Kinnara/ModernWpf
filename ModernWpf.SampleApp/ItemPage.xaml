@@ -32,7 +32,7 @@
                                 To="1028"
                                 Duration="0:0:0" />
                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="contentFrame" Storyboard.TargetProperty="HorizontalAlignment" Duration="0:0:0">
-                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Left" />
+                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static HorizontalAlignment.Left}" />
                             </ObjectAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState.Storyboard>

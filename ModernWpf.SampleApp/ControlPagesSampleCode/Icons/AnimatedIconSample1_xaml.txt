@@ -1,0 +1,10 @@
+﻿<Button PointerEntered="Button_PointerEntered" PointerExited="Button_PointerExited" Width="75">
+    <muxc:AnimatedIcon x:Name="SearchAnimatedIcon">
+        <muxc:AnimatedIcon.Source>
+            <animatedvisuals:AnimatedFindVisualSource/>
+        </muxc:AnimatedIcon.Source>
+        <muxc:AnimatedIcon.FallbackIconSource>
+            <muxc:SymbolIconSource Symbol="Find"/>
+        </muxc:AnimatedIcon.FallbackIconSource>
+    </muxc:AnimatedIcon>
+</Button>

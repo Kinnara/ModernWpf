@@ -1,0 +1,9 @@
+﻿<muxc:NavigationView x:Name="nvSample" Header="This is Header Text" PaneDisplayMode="Top">
+    <muxc:NavigationView.MenuItems>
+        <muxc:NavigationViewItem  Content="Menu Item1" Tag="SamplePage1" />
+        <muxc:NavigationViewItem  Content="Menu Item2" Tag="SamplePage2" />
+        <muxc:NavigationViewItem  Content="Menu Item3" Tag="SamplePage3" />
+        <muxc:NavigationViewItem  Content="Menu Item4" Tag="SamplePage4" />
+    </muxc:NavigationView.MenuItems>
+    <Frame x:Name="contentFrame"/>
+</muxc:NavigationView>

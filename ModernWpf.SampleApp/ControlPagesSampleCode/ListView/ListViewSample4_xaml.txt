@@ -1,0 +1,26 @@
+<!-- XAML Code -->
+
+<!-- The ListView's ItemsSource is an ObservableCollection<Contact> that is defined and bound
+in the code-behind, called contactsFiltered. This ListView uses the same DataTemplate as the
+samples above it, called ContactListViewTemplate - you can see its definition above. -->
+
+<ListView 
+    x:Name="FilteredListView"
+    ItemTemplate="{StaticResource ContactListViewTemplate}"
+    SelectionMode="Single"
+    ShowsScrollingPlaceholders="True"
+    Height="400"
+    Width="400"
+    BorderThickness="1"
+    BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"/>
+
+<!-- The textboxes used for filtering are shown below: -->
+<StackPanel Width="200">
+    <TextBlock Margin="8,8,8,4" Style="{ThemeResource BaseTextBlockStyle}">Filter by...</TextBlock>
+    <TextBox x:Name="FilterByFirstName" Width="150" Header="First name" Margin="8"
+	     HorizontalAlignment="Left" TextChanged="OnFilterChanged"/>
+    <TextBox x:Name="FilterByLastName" Width="150" Header="Last name" Margin="8"
+	     HorizontalAlignment="Left" TextChanged="OnFilterChanged"/>
+    <TextBox x:Name="FilterByCompany" Width="150" Header="Company" Margin="8" 
+	     HorizontalAlignment="Left" TextChanged="OnFilterChanged"/>
+</StackPanel>

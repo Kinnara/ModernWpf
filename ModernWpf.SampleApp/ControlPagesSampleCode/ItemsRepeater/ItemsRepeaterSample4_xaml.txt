@@ -1,0 +1,36 @@
+<!-- XAML Code: -->
+<muxc:ItemsRepeaterScrollHost>
+    <ScrollViewer>
+        <muxc:ItemsRepeater x:Name="VariedImageSizeRepeater" 
+			    ItemTemplate="{StaticResource RecipeTemplate}">
+	    
+           <!-- IMPORTANT: This ItemsRepeater uses a custom-created layout 
+		called VariedImageSize Layout (referenced below).You can find 
+  		the full source code for this layout in the file 
+		VariedImageSizeLayout.cs in the XAML Controls Gallery repo. -->
+
+            <muxc:ItemsRepeater.Layout>
+                <common:VariedImageSizeLayout Width="200" />
+            </muxc:ItemsRepeater.Layout>
+        </muxc:ItemsRepeater>
+    </ScrollViewer>
+</muxc:ItemsRepeaterScrollHost>
+
+<!-- DataTemplate used: -->
+<!-- This repeater holds Recipe objects, which is a custom class defined in 
+     the code-behind, and shown below. -->
+<DataTemplate x:DataType="l:Recipe" x:Key="RecipeTemplate">
+    <StackPanel BorderThickness="1" Background="LightGray" Margin="5">
+        <StackPanel Background="{x:Bind Color}" Margin="8" Height="75" Opacity=".8">
+            <TextBlock Text="{x:Bind Num.ToString()}" FontSize="35" TextAlignment="Center" 
+                        Padding="12"  Foreground="{ThemeResource SystemControlForegroundAltHighBrush}"/>
+        </StackPanel>
+        <TextBlock 
+            x:Name="recipeName" 
+            Text="{x:Bind Name}"
+            TextWrapping="Wrap"
+            Margin="15,0,10,0" 
+            Style="{StaticResource TitleTextBlockStyle}"/>
+        <TextBlock Text="{x:Bind Ingredients}" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,15,15"/>
+    </StackPanel>
+</DataTemplate>

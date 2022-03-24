@@ -1,0 +1,194 @@
+// C# Code
+
+// ==========================  Recipe class used for items ========================== 
+public class Recipe
+{
+    public int Num { get; set; }
+    public string Ingredients { get; set; }
+    public List<string> IngList { get; set; }
+    public string Name { get; set; }
+    public string Color { get; set; }
+    public int numIngredients {
+        get 
+        {
+            return IngList.Count();
+        }
+    }
+
+    public void RandomizeIngredients()
+    {
+        // To give the items different heights for visual variety, give recipes 
+	// random numbers of random "extra" ingredients
+        Random rndNum = new Random();
+        Random rndIng = new Random();
+
+        ObservableCollection<string> extras = new ObservableCollection<string>{
+                                                        "Garlic",
+                                                        "Lemon",
+                                                        "Butter",
+                                                        "Lime",
+                                                        "Feta Cheese",
+                                                        "Parmesan Cheese",
+                                                        "Breadcrumbs"};
+        for (int i =0; i < rndNum.Next(0,4); i++)
+        {
+            string newIng = extras[rndIng.Next(0, 6)];
+	    // If the ingredient is not already present in the recipe, add it
+            if (!IngList.Contains(newIng))
+            {
+                Ingredients += "\n" + newIng;
+                IngList.Add(newIng);
+            }
+        }
+
+    }
+}
+
+// ==========================  Data source class ========================== 
+/* To hold the recipe items, a data source class was created called MyItemsSource. The class
+   inherits from IList and IKeyIndexMapping interfaces, basically creating a collection class 
+   that can easily filter and sort its items. Important methods are shown below, but full source
+   code can be found in XCG repo. See the linked ItemsRepeater guidance documentation as
+   well for a full tutorial on how to implement this type of class. */
+
+public class MyItemsSource : IList, 
+			     Microsoft.UI.Xaml.Controls.IKeyIndexMapping, 
+			     INotifyCollectionChanged
+{
+    private List<Recipe> inner = new List<Recipe>();
+
+    public MyItemsSource(IEnumerable<Recipe> collection)
+    {
+        InitializeCollection(collection);
+    }
+
+    public void InitializeCollection(IEnumerable<Recipe> collection)
+    {
+        inner.Clear();
+        if (collection != null)
+        {
+            inner.AddRange(collection);  
+        }
+
+        if (CollectionChanged != null)
+        {
+            CollectionChanged(this, 
+		new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+    }
+
+    //...
+
+    #region IKeyIndexMapping
+
+    public string KeyFromIndex(int index)
+    {
+        return inner[index].Num.ToString();
+    }
+
+    public int IndexFromKey(string key)
+    {
+        foreach (Recipe item in inner)
+        {
+            if (item.Num.ToString() == key)
+            {
+                return inner.IndexOf(item);
+            }
+        }
+        return -1;
+    }
+    // ...
+
+}
+
+// ========================== Initialization code ==========================
+
+public MyItemsSource filteredRecipeData = new MyItemsSource(null);
+public List<Recipe> staticRecipeData;
+
+private void InitializeData()
+{
+    // ...
+    // Create a list of Recipe objects, initializing each of them with a random number,
+    // correlating name, and random color to associate with it.
+    var rnd = new Random();
+    List<Recipe> tempList = new List<Recipe>(
+                              Enumerable.Range(0, 1000).Select(k =>
+                                new Recipe
+                                  {
+                                    Num = k,
+                                    Name = "Recipe " + k.ToString(),
+                                    Color = colors[k % 15 + 1]
+                                }));
+
+    // The lists fruits, vegetables, grains, and proteins were all populated with strings. 
+    // This loop goes through each Recipe item and populates its ingredients list with one 
+    // string from each list/category, then randomizes the ingredients list by adding extras.            
+    foreach (Recipe rec in tempList)
+    {
+        string fruitOption = fruits[rnd.Next(0, 6)];
+        string vegOption = vegetables[rnd.Next(0, 6)];
+        string grainOption = grains[rnd.Next(0, 6)];
+        string proteinOption = proteins[rnd.Next(0, 6)];
+        rec.Ingredients = "\n" + fruitOption + "\n" + vegOption + "\n" + 
+	    grainOption + "\n" + proteinOption;
+        rec.IngList = new List<string>() { fruitOption, vegOption, grainOption, proteinOption };
+        rec.RandomizeIngredients();
+    }
+
+    // The custom MyItemsSource object, filteredRecipeData, is initialized.
+    filteredRecipeData.InitializeCollection(tempList);
+    // A static list of the original recipe data is saved to use for filtering.
+    staticRecipeData = new List<Recipe>(tempList);
+    // The ItemsSource is set for the ItemsRepeater created in the XAML file.
+    VariedImageSizeRepeater.ItemsSource = filteredRecipeData;
+
+    // ...
+}
+
+// ========================== Filtering, sorting, animating ========================== 
+private void OnEnableAnimationsChanged(object sender, RoutedEventArgs e)
+{   
+    // This function calls a custom animator called DefaultElementAnimator.
+    // See the XCG source code for full implementation in DefaultElementAnimator.cs
+    VariedImageSizeRepeater.Animator = EnableAnimations.IsChecked.GetValueOrDefault() 
+					? new DefaultElementAnimator() : null;
+}
+
+public void FilterRecipes_FilterChanged(object sender, RoutedEventArgs e)
+{
+    UpdateSortAndFilter();
+}
+
+private void OnSortAscClick(object sender, RoutedEventArgs e)
+{
+    if (IsSortDescending == true)
+    {
+        IsSortDescending = false;
+        UpdateSortAndFilter();
+    }
+}
+
+private void OnSortDesClick(object sender, RoutedEventArgs e)
+{
+    if (!IsSortDescending == true)
+    {
+        IsSortDescending = true;
+        UpdateSortAndFilter();
+    }
+}
+
+private void UpdateSortAndFilter()
+{
+    // This is a Linq query that fetches all Recipes containing the ingredient 
+    // typed into the filter text box.
+    var filteredTypes = staticRecipeData.Where(i => i.Ingredients.Contains(
+						      FilterRecipes.Text, 
+						      StringComparison.InvariantCultureIgnoreCase));
+    // After filtering, sort the collection    
+    var sortedFilteredTypes = IsSortDescending ?
+        filteredTypes.OrderByDescending(i => i.numIngredients) :
+        filteredTypes.OrderBy(i => i.numIngredients);
+    // Re-initialize the collection with this newly filtered data
+    filteredRecipeData.InitializeCollection(sortedFilteredTypes);
+}

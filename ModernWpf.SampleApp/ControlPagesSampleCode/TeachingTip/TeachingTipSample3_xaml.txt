@@ -1,0 +1,14 @@
+﻿<Button Content="Show TeachingTip" Click="TestButtonClick3" />
+
+<muxc:TeachingTip x:Name="ToggleThemeTeachingTip3" 
+    Target="{x:Bind ThemeButton}"
+    Title="Change themes without hassle"
+    Subtitle="It's easier than ever to see control samples in both light and dark theme!"
+    PreferredPlacement="LeftEdgeAlignedBottom">
+    <muxc:TeachingTip.HeroContent>
+        <Image Source="/Assets/SampleMedia/sunset.jpg" AutomationProperties.Name="Sunset" />
+    </muxc:TeachingTip.HeroContent>
+    <muxc:TeachingTip.Content>
+        <TextBlock TextWrapping="WrapWholeWords" Margin="0,16,0,0">To change your desktop theme visit the <Hyperlink NavigateUri="ms-settings:colors">Settings app</Hyperlink>.</TextBlock>
+    </muxc:TeachingTip.Content>
+</muxc:TeachingTip>

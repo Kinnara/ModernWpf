@@ -1,0 +1,23 @@
+﻿<!-- Put the following VisualStateGroup(s) inside the first component of your Page -->
+<VisualStateManager.VisualStateGroups>
+    <VisualStateGroup>
+        <VisualState>
+            <VisualState.StateTriggers>
+                <AdaptiveTrigger MinWindowWidth="{x:Bind nvSample.CompactModeThresholdWidth}" />
+            </VisualState.StateTriggers>
+            <VisualState.Setters>
+                <Setter Target="nvSample.PaneDisplayMode" Value="Top" />
+            </VisualState.Setters>
+        </VisualState>
+    </VisualStateGroup>
+</VisualStateManager.VisualStateGroups >
+
+<muxc:NavigationView x:Name="nvSample">
+    <muxc:NavigationView.MenuItems>
+        <muxc:NavigationViewItem Content="Menu Item1" Tag="SamplePage1" />
+        <muxc:NavigationViewItem Content="Menu Item2" Tag="SamplePage2" />
+        <muxc:NavigationViewItem Content="Menu Item3" Tag="SamplePage3" />
+        <muxc:NavigationViewItem Content="Menu Item4" Tag="SamplePage4" />
+    </muxc:NavigationView.MenuItems>
+    <Frame x:Name="contentFrame"/>
+</muxc:NavigationView>

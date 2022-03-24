@@ -1,0 +1,46 @@
+<!-- XAML Code -->
+
+<!-- The ItemsRepeater and ScrollViewer used: -->
+<ScrollViewer x:Name="scrollViewer"
+                Height="400"
+                IsVerticalScrollChainingEnabled="False"
+                Padding="0,0,16,0">
+    <muxc:ItemsRepeater
+            ItemsSource="{x:Bind NumberedItems}"
+            Layout="{StaticResource $(Layout)}"
+            ItemTemplate="{StaticResource $(ItemTemplate)}" />
+<ScrollViewer/> 
+                    
+<!-- The Layout specifications used: -->
+                    
+$(SampleCodeLayout2)     
+                    
+<!-- The ItemTemplate is bound to a DataTemplateSelector called MyDataTemplateSelector. 
+MyDataTemplateSelector is defined in the code-behind to return the Accent DataTemplate 
+for odd-numbered-items, and returns the Normal DataTemplate for even-numbered-items 
+(shown in C# code-behind section below). The two data templates and the XAML declaration
+of MyDataTemplateSelector are below: -->
+
+<MyDataTemplateSelector x:Key="MyDataTemplateSelector"
+                            Normal="{StaticResource NormalItemTemplate}"
+                            Accent="{StaticResource AccentItemTemplate}"/>    
+                    
+<DataTemplate x:Key="NormalItemTemplate" x:DataType="x:Int32">
+    <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+	    Background="{ThemeResource SystemChromeLowColor}">
+        <TextBlock Text="{x:Bind}" />
+    </Button>
+</DataTemplate>
+
+<DataTemplate x:Key="AccentItemTemplate" x:DataType="x:Int32">
+    <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+	    Background="{ThemeResource SystemAccentColor}">
+        <TextBlock Text="{x:Bind}" />
+    </Button>
+</DataTemplate>
+                    
+<!-- The ItemsSource for this ItemsRepeater is a list of integers called NumberedItems.-->
+                    
+<!-- ActivityFeedLayout is a custom designed virtualizing layout that loads images only as you come 
+accross them, defined in the code-behind. View the XAML Controls Gallery source code to see more
+details about this custom layout. -->

@@ -1,0 +1,73 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.Controls.SampleCodePresenter"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SampleProgrammingLanguageState">
+                <VisualState x:Name="XAMLSample">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SampleHeader" Storyboard.TargetProperty="Text" Duration="0:0:0">
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="XAML" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="CSharpSample">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SampleHeader" Storyboard.TargetProperty="Text" Duration="0:0:0">
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="C#" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup x:Name="ConfirmDialogGroups">
+                <VisualState x:Name="ConfirmationDialogHidden" />
+                <VisualState x:Name="ConfirmationDialogVisible">
+                    <Storyboard>
+                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="CopyCodeButton" Storyboard.TargetProperty="IsEnabled" Duration="0:0:0">
+                            <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="False" />
+                        </BooleanAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <TextBlock x:Name="SampleHeader" />
+        <ScrollViewer
+            x:Name="CodeScrollViewer"
+            Padding="0,4,0,10"
+            HorizontalScrollBarVisibility="Auto"
+            Grid.Row="1"
+            VerticalScrollBarVisibility="Disabled">
+            <ContentPresenter
+                x:Name="CodePresenter"
+                Loaded="CodePresenter_Loaded" />
+        </ScrollViewer>
+        <Button
+            x:Name="CopyCodeButton"
+            Grid.Row="0"
+            AutomationProperties.Name="Copy sample code"
+            ToolTipService.ToolTip="Copy sample code"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Right"
+            Click="CopyCodeButton_Click"
+            Padding="4">
+            <ui:FontIcon
+                Glyph="&#xE8C8;"
+                FontSize="16" />
+        </Button>
+    </Grid>
+</UserControl>

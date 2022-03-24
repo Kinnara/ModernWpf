@@ -1,0 +1,17 @@
+<!-- XAML Code -->
+
+<!-- ListViews with grouped items must be bound to a CollectionViewSource, as shown below.
+This CollectionViewSource is defined in the XAML below, but is bound to an ItemsSource in the C#
+code-behind. See the C# code below for more details on how to create/bind to a grouped list. -->
+
+<CollectionViewSource x:Name="ContactsCVS" IsSourceGrouped="True"/>
+                          
+<ListView ItemsSource="{x:Bind ContactsCVS.View, Mode=OneWay}">
+    <ListView.ItemsPanel>
+        <ItemsPanelTemplate>
+            <ItemsStackPanel AreStickyGroupHeadersEnabled="$(AreStickyGroupHeadersEnabled)"/>
+        </ItemsPanelTemplate>
+    </ListView.ItemsPanel>
+</ListView>
+                    
+<!-- Data template used is same as above examples. -->
