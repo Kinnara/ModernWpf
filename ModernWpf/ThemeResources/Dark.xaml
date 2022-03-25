@@ -910,6 +910,35 @@
     <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
 
+    <!-- Resources for Expander -->
+    
+    <!-- Header -->
+    <m:StaticResource x:Key="ExpanderHeaderBackground" ResourceKey="CardBackgroundFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderForegroundPressed" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderPointerOverBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderPressedBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderDisabledForeground" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderDisabledBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+    <Thickness x:Key="ExpanderHeaderBorderThickness">1</Thickness>
+
+    <m:StaticResource x:Key="ExpanderChevronBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPointerOverBackground" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPressedBackground" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ExpanderChevronForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPointerOverForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPressedForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ExpanderChevronBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ExpanderChevronBorderPointerOverBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ExpanderChevronBorderPressedBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <Thickness x:Key="ExpanderChevronBorderThickness">0</Thickness>
+
+    <!-- Content -->
+    <m:StaticResource x:Key="ExpanderContentBackground" ResourceKey="CardBackgroundFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ExpanderContentBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+
     <!-- Resources for FlipView -->
     <Thickness x:Key="FlipViewButtonBorderThemeThickness">0</Thickness>
     <m:StaticResource x:Key="FlipViewBackground" ResourceKey="SystemControlPageBackgroundListLowBrush" />
