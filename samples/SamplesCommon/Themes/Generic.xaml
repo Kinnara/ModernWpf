@@ -37,7 +37,7 @@
                             Grid.Column="0"
                             BorderBrush="{DynamicResource SystemControlBackgroundListLowBrush}"
                             BorderThickness="1"
-                            Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+                            Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
                             <Grid x:Name="ExampleContainer">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />

@@ -8,6 +8,7 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    d:DataContext="{d:DesignInstance Type=local:ControlExample}"
     mc:Ignorable="d"
     d:DesignHeight="450"
     d:DesignWidth="800">
@@ -145,10 +146,9 @@
                             Padding="16"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
+                            Visibility="{Binding Options, Converter={StaticResource nullToVisibilityConverter}}"
                             Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
-                            <ContentPresenter
-                                Content="{Binding Options}"
-                                Visibility="{Binding Options, Converter={StaticResource nullToVisibilityConverter}}" />
+                            <ContentPresenter Content="{Binding Options}" />
                         </Border>
                     </Grid>
                 </Border>
@@ -165,7 +165,7 @@
                         <TextBlock Text="Source code" />
                     </Expander.Header>
 
-                    <StackPanel>
+                    <StackPanel Margin="8,0">
                         <controls:SampleCodePresenter
                             x:Name="XamlPresenter"
                             Code="{Binding Xaml}"
@@ -217,7 +217,7 @@
                         Margin="5,0,5,1" />
                     <TextBox
                         x:Name="ControlPaddingBox"
-                        AutomationProperties.LabeledBy="{Binding PaddingLabel}"
+                        AutomationProperties.LabeledBy="{Binding ElementName=PaddingLabel}"
                         Width="150"
                         KeyUp="ControlPaddingBox_KeyUp"
                         LostFocus="ControlPaddingBox_LostFocus" />

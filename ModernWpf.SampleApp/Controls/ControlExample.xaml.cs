@@ -26,27 +26,32 @@ namespace ModernWpf.SampleApp
     {
         public event TypedEventHandler<ControlExampleSubstitution, object> ValueChanged;
 
-        public string Key { get; set; }
-
-        private object _value = null;
-        public object Value
+        public static readonly DependencyProperty KeyProperty = DependencyProperty.Register("Key", typeof(string), typeof(ControlExampleSubstitution), new PropertyMetadata(default));
+        public string Key
         {
-            get { return _value; }
-            set
-            {
-                _value = value;
-                ValueChanged?.Invoke(this, null);
-            }
+            get { return (string)GetValue(KeyProperty); }
+            set { SetValue(KeyProperty, value); }
         }
 
-        private bool _enabled = true;
+        public static readonly DependencyProperty ValueProperty = DependencyProperty.Register("Value", typeof(object), typeof(ControlExampleSubstitution), new PropertyMetadata(null, OnDependencyPropertyChanged));
+        public object Value
+        {
+            get { return GetValue(ValueProperty); }
+            set { SetValue(ValueProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.Register("IsEnabled", typeof(bool), typeof(ControlExampleSubstitution), new PropertyMetadata(false, OnDependencyPropertyChanged));
         public bool IsEnabled
         {
-            get { return _enabled; }
-            set
+            get { return (bool)GetValue(IsEnabledProperty); }
+            set { SetValue(IsEnabledProperty, value); }
+        }
+
+        private static void OnDependencyPropertyChanged(DependencyObject target, DependencyPropertyChangedEventArgs args)
+        {
+            if (target is ControlExampleSubstitution presenter)
             {
-                _enabled = value;
-                ValueChanged?.Invoke(this, null);
+                presenter.ValueChanged?.Invoke(presenter, null);
             }
         }
 
@@ -132,7 +137,7 @@ namespace ModernWpf.SampleApp
             set { SetValue(CSharpSourceProperty, value); }
         }
 
-        public static readonly DependencyProperty SubstitutionsProperty = DependencyProperty.Register("Substitutions", typeof(IList<ControlExampleSubstitution>), typeof(ControlExample), new PropertyMetadata(null));
+        public static readonly DependencyProperty SubstitutionsProperty = DependencyProperty.Register("Substitutions", typeof(IList<ControlExampleSubstitution>), typeof(ControlExample), new PropertyMetadata(default));
         public IList<ControlExampleSubstitution> Substitutions
         {
             get { return (IList<ControlExampleSubstitution>)GetValue(SubstitutionsProperty); }
@@ -177,6 +182,7 @@ namespace ModernWpf.SampleApp
         public ControlExample()
         {
             InitializeComponent();
+            DataContext = this;
         }
 
         private void ControlExample_Loaded(object sender, RoutedEventArgs e)

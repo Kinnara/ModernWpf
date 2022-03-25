@@ -24,14 +24,14 @@ namespace ModernWpf.SampleApp.Controls
     /// </summary>
     public partial class SampleCodePresenter : UserControl
     {
-        public static readonly DependencyProperty CodeProperty = DependencyProperty.Register("Code", typeof(string), typeof(SampleCodePresenter), new PropertyMetadata("", OnDependencyPropertyChanged));
+        public static readonly DependencyProperty CodeProperty = DependencyProperty.Register("Code", typeof(string), typeof(SampleCodePresenter), new PropertyMetadata(string.Empty, OnCodeSourceFilePropertyChanged));
         public string Code
         {
             get { return (string)GetValue(CodeProperty); }
             set { SetValue(CodeProperty, value); }
         }
 
-        public static readonly DependencyProperty CodeSourceFileProperty = DependencyProperty.Register("CodeSourceFile", typeof(object), typeof(SampleCodePresenter), new PropertyMetadata(null, OnDependencyPropertyChanged));
+        public static readonly DependencyProperty CodeSourceFileProperty = DependencyProperty.Register("CodeSourceFile", typeof(object), typeof(SampleCodePresenter), new PropertyMetadata(null, OnCodeSourceFilePropertyChanged));
         public Uri CodeSourceFile
         {
             get { return (Uri)GetValue(CodeSourceFileProperty); }
@@ -45,7 +45,7 @@ namespace ModernWpf.SampleApp.Controls
             set { SetValue(IsCSharpSampleProperty, value); }
         }
 
-        public static readonly DependencyProperty SubstitutionsProperty = DependencyProperty.Register("Substitutions", typeof(IList<ControlExampleSubstitution>), typeof(ControlExample), new PropertyMetadata(null));
+        public static readonly DependencyProperty SubstitutionsProperty = DependencyProperty.Register("Substitutions", typeof(IList<ControlExampleSubstitution>), typeof(SampleCodePresenter), new PropertyMetadata(default, OnSubstitutionsPropertyChanged));
         public IList<ControlExampleSubstitution> Substitutions
         {
             get { return (IList<ControlExampleSubstitution>)GetValue(SubstitutionsProperty); }
@@ -62,7 +62,15 @@ namespace ModernWpf.SampleApp.Controls
             InitializeComponent();
         }
 
-        private static void OnDependencyPropertyChanged(DependencyObject target, DependencyPropertyChangedEventArgs args)
+        private static void OnSubstitutionsPropertyChanged(DependencyObject target, DependencyPropertyChangedEventArgs args)
+        {
+            if (target is SampleCodePresenter presenter)
+            {
+                presenter.RegisterSubstitutions();
+            }
+        }
+
+        private static void OnCodeSourceFilePropertyChanged(DependencyObject target, DependencyPropertyChangedEventArgs args)
         {
             if (target is SampleCodePresenter presenter)
             {
@@ -72,7 +80,7 @@ namespace ModernWpf.SampleApp.Controls
 
         private void ReevaluateVisibility()
         {
-            if (Code.Length == 0 && CodeSourceFile == null)
+            if (string.IsNullOrEmpty(Code) && CodeSourceFile == null)
             {
                 Visibility = Visibility.Collapsed;
             }
@@ -82,14 +90,18 @@ namespace ModernWpf.SampleApp.Controls
             }
         }
 
-        private void SampleCodePresenter_Loaded(object sender, RoutedEventArgs e)
+        private void RegisterSubstitutions()
         {
-            ReevaluateVisibility();
-            VisualStateManager.GoToState(this, IsCSharpSample ? "CSharpSample" : "XAMLSample", false);
             foreach (var substitution in Substitutions)
             {
                 substitution.ValueChanged += OnValueChanged;
             }
+        }
+
+        private void SampleCodePresenter_Loaded(object sender, RoutedEventArgs e)
+        {
+            ReevaluateVisibility();
+            SampleHeader.Text = IsCSharpSample ? "C#" : "XAML";
         }
 
         private void CodePresenter_Loaded(object sender, RoutedEventArgs e)
@@ -97,7 +109,7 @@ namespace ModernWpf.SampleApp.Controls
             GenerateSyntaxHighlightedContent();
         }
 
-        private void SampleCodePresenter_ActualThemeChanged(FrameworkElement sender, object args)
+        private void SampleCodePresenter_ActualThemeChanged(object sender, RoutedEventArgs e)
         {
             // If the theme has changed after the user has already opened the app (ie. via settings), then the new locally set theme will overwrite the colors that are set during Loaded.
             // Therefore we need to re-format the REB to use the correct colors.
@@ -166,14 +178,17 @@ namespace ModernWpf.SampleApp.Controls
             // Perform any applicable substitutions.
             sampleString = SubstitutionPattern.Replace(sampleString, match =>
             {
-                foreach (var substitution in Substitutions)
+                if (Substitutions != null)
                 {
-                    if (substitution.Key == match.Groups[1].Value)
+                    foreach (var substitution in Substitutions)
                     {
-                        return substitution.ValueAsString();
+                        if (substitution.Key == match.Groups[1].Value)
+                        {
+                            return substitution.ValueAsString();
+                        }
                     }
                 }
-                throw new KeyNotFoundException(match.Groups[1].Value);
+                return string.Empty;
             });
 
             actualCode = sampleString;

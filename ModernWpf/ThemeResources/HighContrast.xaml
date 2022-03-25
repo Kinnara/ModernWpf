@@ -869,6 +869,35 @@
     <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
 
+    <!-- Resources for Expander -->
+
+    <!-- Header -->
+    <m:StaticResource x:Key="ExpanderHeaderBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderPointerOverBrush" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderPressedBrush" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderDisabledForeground" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderDisabledBorderBrush" ResourceKey="TextFillColorDisabledBrush" />
+    <Thickness x:Key="ExpanderHeaderBorderThickness">2</Thickness>
+
+    <m:StaticResource x:Key="ExpanderChevronBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPointerOverBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPressedBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ExpanderChevronForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPointerOverForeground" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPressedForeground" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderChevronBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ExpanderChevronBorderPointerOverBrush" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderChevronBorderPressedBrush" ResourceKey="SystemColorHighlightColorBrush" />
+    <Thickness x:Key="ExpanderChevronBorderThickness">2</Thickness>
+
+    <!-- Content -->
+    <m:StaticResource x:Key="ExpanderContentBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="ExpanderContentBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+
     <!-- Resources for FlipView -->
     <Thickness x:Key="FlipViewButtonBorderThemeThickness">0</Thickness>
     <m:StaticResource x:Key="FlipViewBackground" ResourceKey="SystemControlPageBackgroundListLowBrush" />

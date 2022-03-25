@@ -1,0 +1,152 @@
+﻿<ui:Page
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    x:Class="ModernWpf.SampleApp.ControlPages.ButtonPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Title="ButtonPage">
+    <StackPanel>
+        <local:ControlExample
+            x:Name="Example1"
+            HeaderText="A simple Button with text content.">
+            <local:ControlExample.Example>
+                <Button
+                    Tag="Button1"
+                    Content="Standard XAML button"
+                    Click="Button_Click"
+                    Loaded="Button_Loaded" />
+            </local:ControlExample.Example>
+            <local:ControlExample.Output>
+                <TextBlock
+                    Tag="Control1Output"
+                    Loaded="TextBlock_Loaded"
+                    FontFamily="Global User Interface" />
+            </local:ControlExample.Output>
+            <local:ControlExample.Options>
+                <StackPanel>
+                    <CheckBox
+                        Tag="DisableButton1"
+                        Loaded="CheckBox_Loaded"
+                        Content="Disable button" />
+                </StackPanel>
+            </local:ControlExample.Options>
+            <local:ControlExample.Xaml>
+                <sys:String>
+                    &lt;Button Content=&quot;Standard XAML button&quot; Click=&quot;Button_Click&quot; $(IsEnabled)/&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+
+        <local:ControlExample
+            x:Name="Example2"
+            HeaderText="A Button with graphical content.">
+            <local:ControlExample.Example>
+                <StackPanel Orientation="Horizontal">
+                    <Button
+                        Tag="Button2"
+                        Click="Button_Click"
+                        Width="50"
+                        Height="50"
+                        AutomationProperties.Name="Pie">
+                        <Image
+                            Source="/Assets/Slices.png"
+                            AutomationProperties.Name="Slice" />
+                    </Button>
+                </StackPanel>
+            </local:ControlExample.Example>
+            <local:ControlExample.Output>
+                <TextBlock
+                    Tag="Control2Output"
+                    Loaded="TextBlock_Loaded" />
+            </local:ControlExample.Output>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;Button Content=&quot;Button&quot; Click=&quot;Button_Click&quot; AutomationProperties.Name=&quot;Pie&quot;&gt;
+    &lt;Image Source=&quot;/Assets/Slices.png&quot; AutomationProperties.Name=&quot;Slice&quot;/&gt;
+&lt;/Button&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+
+        <local:ControlExample HeaderText="Wrapping Buttons with large content">
+            <local:ControlExample.Example>
+                <StackPanel>
+                    <TextBlock
+                        Text="The following buttons' content may get clipped if we don't pay careful attention to their layout containers."
+                        Margin="0,0,0,8"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        Text="One option to mitigate clipped content is to place Buttons underneath each other, allowing for more space to grow horizontally:"
+                        Margin="0,0,0,8"
+                        TextWrapping="Wrap" />
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        Margin="0,0,0,5">
+                        This is some text that is too long and will get cut off
+                    </Button>
+                    <Button HorizontalAlignment="Stretch">This is another text that would result in being cut off</Button>
+
+                    <TextBlock
+                        Text="Another option is to explicitly wrap the Button's content"
+                        Margin="0,8,0,8" />
+                    <StackPanel
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center">
+                        <Button
+                            MaxWidth="240"
+                            Margin="0,0,8,0">
+                            <TextBlock
+                                Text="This is some text that is too long and will get cut off"
+                                TextWrapping="Wrap" />
+                        </Button>
+                        <Button MaxWidth="240">
+                            <TextBlock
+                                Text="This is another text that would result in being cut off"
+                                TextWrapping="Wrap" />
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;StackPanel&gt;
+    &lt;TextBlock Text=&quot;The following buttons' content may get clipped if we don't pay careful attention to their layout containers.&quot; Margin=&quot;0,0,0,8&quot; TextWrapping=&quot;Wrap&quot;/&gt;
+    &lt;TextBlock Text=&quot;One option to mitigate clipped content is to place Buttons underneath each other, allowing for more space to grow horizontally:&quot; Margin=&quot;0,0,0,8&quot; TextWrapping=&quot;Wrap&quot;/&gt;
+    &lt;Button HorizontalAlignment=&quot;Stretch&quot; Margin=&quot;0,0,0,5&quot;&gt;This is some text that is too long and will get cut off&lt;/Button&gt;
+    &lt;Button HorizontalAlignment=&quot;Stretch&quot;&gt;This is another text that would result in being cut off&lt;/Button&gt;
+
+    &lt;TextBlock Text=&quot;Another option is to explicitly wrap the Button's content&quot; Margin=&quot;0,8,0,8&quot;/&gt;
+    &lt;StackPanel Orientation=&quot;Horizontal&quot; HorizontalAlignment=&quot;Center&quot;&gt;
+        &lt;Button MaxWidth=&quot;240&quot; Margin=&quot;0,0,8,0&quot;&gt;
+            &lt;TextBlock Text=&quot;This is some text that is too long and will get cut off&quot; TextWrapping=&quot;WrapWholeWords&quot;/&gt;
+        &lt;/Button&gt;
+        &lt;Button MaxWidth=&quot;240&quot;&gt;
+            &lt;TextBlock Text=&quot;This is another text that would result in being cut off&quot; TextWrapping=&quot;WrapWholeWords&quot;/&gt;
+        &lt;/Button&gt;
+    &lt;/StackPanel&gt;
+&lt;/StackPanel&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+
+        <local:ControlExample HeaderText="Accent style applied to Button.">
+            <local:ControlExample.Example>
+                <Button
+                    Style="{DynamicResource AccentButtonStyle}"
+                    Content="Accent style button" />
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String>
+                    &lt;Button Style=&quot;{StaticResource AccentButtonStyle}&quot; Content=&quot;Accent style button&quot; /&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+
+    </StackPanel>
+</ui:Page>

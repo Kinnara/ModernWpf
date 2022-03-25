@@ -6,7 +6,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.Controls"
     xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     mc:Ignorable="d"
+    Loaded="SampleCodePresenter_Loaded"
+    ui:ThemeManager.ActualThemeChanged="SampleCodePresenter_ActualThemeChanged"
     d:DesignHeight="450"
     d:DesignWidth="800">
     <Grid>
@@ -16,23 +19,6 @@
         </Grid.RowDefinitions>
 
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="SampleProgrammingLanguageState">
-                <VisualState x:Name="XAMLSample">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SampleHeader" Storyboard.TargetProperty="Text" Duration="0:0:0">
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="XAML" />
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="CSharpSample">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SampleHeader" Storyboard.TargetProperty="Text" Duration="0:0:0">
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="C#" />
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-
             <VisualStateGroup x:Name="ConfirmDialogGroups">
                 <VisualState x:Name="ConfirmationDialogHidden" />
                 <VisualState x:Name="ConfirmationDialogVisible">
