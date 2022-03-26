@@ -5,47 +5,68 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
-    mc:Ignorable="d">
-
-    <ScrollViewer>
-        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
-            <sc:ControlExample
-                x:Name="Example1"
-                HeaderText="An AppBarButton with a symbol icon.">
-                <StackPanel
-                    Orientation="Horizontal"
-                    VerticalAlignment="Top">
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Title="AppBar Button">
+    <StackPanel>
+        <local:ControlExample
+            x:Name="Example1"
+            HeaderText="An AppBarButton with a symbol icon.">
+            <local:ControlExample.Example>
+                <StackPanel Orientation="Horizontal">
                     <!-- App bar button with symbol icon. -->
-                    <ui:AppBarButton x:Name="Button1" Label="SymbolIcon" Icon="Like" Click="AppBarButton_Click" />
+                    <ui:AppBarButton Tag="Button1" Loaded="AppBarButton_Loaded" Icon="Like" Label="SymbolIcon" Click="AppBarButton_Click" />
                     <TextBlock
-                        x:Name="Control1Output"
+                        Tag="Control1Output"
                         Margin="8,0,0,0"
+                        Loaded="TextBlock_Loaded"
                         VerticalAlignment="Center" />
                 </StackPanel>
-            </sc:ControlExample>
-            <sc:ControlExample
-                x:Name="Example2"
-                HeaderText="An AppBarButton with a bitmap icon.">
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String>
+                    &lt;ui:AppBarButton Icon=&quot;Like&quot; Label=&quot;SymbolIcon&quot; Click=&quot;AppBarButton_Click&quot;/&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+        <local:ControlExample
+            x:Name="Example2"
+            HeaderText="An AppBarButton with a bitmap icon.">
+            <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with bitmap icon. -->
-                    <ui:AppBarButton x:Name="Button2" Label="BitmapIcon" Click="AppBarButton_Click">
+                    <ui:AppBarButton Tag="Button2" Loaded="AppBarButton_Loaded" Label="BitmapIcon" Click="AppBarButton_Click">
                         <ui:AppBarButton.Icon>
                             <ui:BitmapIcon UriSource="/Assets/Slices2.png" />
                         </ui:AppBarButton.Icon>
                     </ui:AppBarButton>
                     <TextBlock
-                        x:Name="Control2Output"
+                        Tag="Control2Output"
                         Margin="8,0,0,0"
+                        Loaded="TextBlock_Loaded"
                         VerticalAlignment="Center" />
                 </StackPanel>
-            </sc:ControlExample>
-            <sc:ControlExample
-                x:Name="Example3"
-                HeaderText="An AppBarButton with a font icon.">
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;ui:AppBarButton Label=&quot;BitmapIcon&quot; Click=&quot;AppBarButton_Click&quot;&gt;
+    &lt;ui:AppBarButton.Icon&gt;
+        &lt;ui:BitmapIcon UriSource=&quot;/Assets/Slices2.png&quot;/&gt;
+    &lt;/ui:AppBarButton.Icon&gt;
+&lt;/ui:AppBarButton&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+        <local:ControlExample
+            x:Name="Example3"
+            HeaderText="An AppBarButton with a font icon.">
+            <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with font icon. -->
-                    <ui:AppBarButton x:Name="Button3" Label="FontIcon" Click="AppBarButton_Click">
+                    <ui:AppBarButton Tag="Button3" Loaded="AppBarButton_Loaded" Label="FontIcon" Click="AppBarButton_Click">
                         <ui:AppBarButton.Icon>
                             <ui:FontIcon
                                 FontFamily="Candara"
@@ -53,42 +74,77 @@
                         </ui:AppBarButton.Icon>
                     </ui:AppBarButton>
                     <TextBlock
-                        x:Name="Control3Output"
+                        Tag="Control3Output"
                         Margin="8,0,0,0"
+                        Loaded="TextBlock_Loaded"
                         VerticalAlignment="Center" />
                 </StackPanel>
-            </sc:ControlExample>
-            <sc:ControlExample
-                x:Name="Example4"
-                HeaderText="An AppBarButton with a path icon.">
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;ui:AppBarButton Label=&quot;FontIcon&quot; Click=&quot;AppBarButton_Click&quot;&gt;
+    &lt;ui:AppBarButton.Icon&gt;
+        &lt;ui:FontIcon FontFamily=&quot;Candara&quot; Glyph=&quot;&#x03A3;&quot;/&gt;
+    &lt;/ui:AppBarButton.Icon&gt;
+&lt;/ui:AppBarButton&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+        <local:ControlExample
+            x:Name="Example4"
+            HeaderText="An AppBarButton with a path icon.">
+            <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with path icon. -->
-                    <ui:AppBarButton x:Name="Button4" Label="PathIcon" Click="AppBarButton_Click">
+                    <ui:AppBarButton Tag="Button4" Loaded="AppBarButton_Loaded" Label="PathIcon" Click="AppBarButton_Click">
                         <ui:AppBarButton.Icon>
                             <ui:PathIcon Data="F1 M 20,20L 24,10L 24,24L 5,24" />
                         </ui:AppBarButton.Icon>
                     </ui:AppBarButton>
                     <TextBlock
-                        x:Name="Control4Output"
+                        Tag="Control4Output"
                         Margin="8,0,0,0"
+                        Loaded="TextBlock_Loaded"
                         VerticalAlignment="Center" />
                 </StackPanel>
-            </sc:ControlExample>
-            <sc:ControlExample
-                x:Name="Example5"
-                HeaderText="An AppBarButton with an InputGesture">
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;ui:AppBarButton Label=&quot;PathIcon&quot; Click=&quot;AppBarButton_Click&quot;&gt;
+    &lt;ui:AppBarButton.Icon&gt;
+        &lt;ui:PathIcon Data=&quot;F1 M 20,20L 24,10L 24,24L 5,24&quot;/&gt;
+    &lt;/ui:AppBarButton.Icon&gt;
+&lt;/ui:AppBarButton&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+
+        <local:ControlExample
+            x:Name="Example5"
+            HeaderText="An AppBarButton with an InputGesture">
+            <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <ui:AppBarButton x:Name="Button5" Icon="Save" Label="Save" Command="Save" Click="AppBarButton_Click">
+                    <ui:AppBarButton Tag="Button5" Loaded="AppBarButton_Loaded" Icon="Save" Label="Save" Command="Save" Click="AppBarButton_Click">
                         <ui:AppBarButton.CommandBindings>
                             <CommandBinding Command="Save" CanExecute="Save_CanExecute" />
                         </ui:AppBarButton.CommandBindings>
                     </ui:AppBarButton>
                     <TextBlock
-                        x:Name="Control5Output"
+                        Tag="Control5Output"
                         Margin="8,0,0,0"
+                        Loaded="TextBlock_Loaded"
                         VerticalAlignment="Center" />
                 </StackPanel>
-            </sc:ControlExample>
-        </ui:SimpleStackPanel>
-    </ScrollViewer>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;ui:AppBarButton Icon=&quot;Save&quot; Label=&quot;Save&quot; Command=&quot;Save&quot; Click=&quot;AppBarButton_Click&quot;&gt;
+    &lt;ui:AppBarButton.CommandBindings&gt;
+        &lt;CommandBinding Command=&quot;Save&quot; CanExecute=&quot;Save_CanExecute&quot;/&gt;
+    &lt;ui:AppBarButton.CommandBindings/&gt;
+&lt;/ui:AppBarButton&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+    </StackPanel>
 </ui:Page>
