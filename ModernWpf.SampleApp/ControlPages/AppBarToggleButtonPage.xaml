@@ -5,81 +5,119 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
-    mc:Ignorable="d">
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Title="App Bar Toggle Button">
+    <StackPanel>
+        <local:ControlExample
+            x:Name="Example1"
+            HeaderText="An AppBarToggleButton with a symbol icon.">
+            <local:ControlExample.Example>
+                <StackPanel Orientation="Horizontal">
+                    <!-- App bar button with symbol icon. -->
+                    <ui:AppBarToggleButton Tag="Button1" Loaded="AppBarToggleButton_Loaded" Icon="Shuffle" Label="SymbolIcon" Click="AppBarButton_Click" />
+                    <TextBlock
+                        Tag="Control1Output"
+                        Margin="8,0,0,0"
+                        Loaded="TextBlock_Loaded"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String>
+                    &lt;ui:AppBarToggleButton Icon=&quot;Shuffle&quot; Label=&quot;SymbolIcon&quot; Click=&quot;AppBarButton_Click&quot;/&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+        <local:ControlExample
+            x:Name="Example2"
+            HeaderText="An AppBarToggleButton with a bitmap icon.">
+            <local:ControlExample.Example>
+                <StackPanel Orientation="Horizontal">
+                    <!-- App bar button with bitmap icon. -->
+                    <ui:AppBarToggleButton Tag="Button2" Loaded="AppBarToggleButton_Loaded" Label="BitmapIcon" Click="AppBarButton_Click">
+                        <ui:AppBarToggleButton.Icon>
+                            <ui:BitmapIcon UriSource="/Assets/Slices2.png" />
+                        </ui:AppBarToggleButton.Icon>
+                    </ui:AppBarToggleButton>
+                    <TextBlock
+                        Tag="Control2Output"
+                        Margin="8,0,0,0"
+                        Loaded="TextBlock_Loaded"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;ui:AppBarToggleButton Label=&quot;BitmapIcon&quot; Click=&quot;AppBarButton_Click&quot;&gt;
+    &lt;ui:AppBarToggleButton.Icon&gt;
+        &lt;ui:BitmapIcon UriSource=&quot;/Assets/Slices2.png&quot;/&gt;
+    &lt;/ui:AppBarToggleButton.Icon&gt;
+&lt;/ui:AppBarToggleButton&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+        <local:ControlExample
+            x:Name="Example3"
+            HeaderText="An AppBarToggleButton with a font icon.">
+            <local:ControlExample.Example>
+                <StackPanel Orientation="Horizontal">
+                    <!-- App bar button with font icon. -->
+                    <ui:AppBarToggleButton Tag="Button3" Loaded="AppBarToggleButton_Loaded" Label="FontIcon" Click="AppBarButton_Click">
+                        <ui:AppBarToggleButton.Icon>
+                            <ui:FontIcon
+                                FontFamily="Candara"
+                                Glyph="&#x03A3;" />
+                        </ui:AppBarToggleButton.Icon>
+                    </ui:AppBarToggleButton>
+                    <TextBlock
+                        Tag="Control3Output"
+                        Margin="8,0,0,0"
+                        Loaded="TextBlock_Loaded"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;ui:AppBarToggleButton Label=&quot;FontIcon&quot; Click=&quot;AppBarButton_Click&quot;&gt;
+    &lt;ui:AppBarToggleButton.Icon&gt;
+        &lt;ui:FontIcon FontFamily=&quot;Candara&quot; Glyph=&quot;&#x03A3;&quot;/&gt;
+    &lt;/ui:AppBarToggleButton.Icon&gt;
+&lt;/ui:AppBarToggleButton&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
 
-    <ScrollViewer>
-        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
-            <sc:ControlExample
-                x:Name="Example1"
-                HeaderText="An AppBarToggleButton with a symbol icon.">
-                <sc:ControlExample.Example>
-                    <StackPanel Orientation="Horizontal">
-                        <!-- App bar button with symbol icon. -->
-                        <ui:AppBarToggleButton x:Name="Button1" Label="SymbolIcon" Icon="Shuffle" Click="AppBarButton_Click" />
-                        <TextBlock
-                            x:Name="Control1Output"
-                            Margin="8,0,0,0"
-                            VerticalAlignment="Center" />
-                    </StackPanel>
-                </sc:ControlExample.Example>
-            </sc:ControlExample>
-            <sc:ControlExample
-                x:Name="Example2"
-                HeaderText="An AppBarToggleButton with a bitmap icon.">
-                <sc:ControlExample.Example>
-                    <StackPanel Orientation="Horizontal">
-                        <!-- App bar button with bitmap icon. -->
-                        <ui:AppBarToggleButton x:Name="Button2" Label="BitmapIcon" Click="AppBarButton_Click">
-                            <ui:AppBarToggleButton.Icon>
-                                <ui:BitmapIcon UriSource="/Assets/Slices2.png" />
-                            </ui:AppBarToggleButton.Icon>
-                        </ui:AppBarToggleButton>
-                        <TextBlock
-                            x:Name="Control2Output"
-                            Margin="8,0,0,0"
-                            VerticalAlignment="Center" />
-                    </StackPanel>
-                </sc:ControlExample.Example>
-            </sc:ControlExample>
-            <sc:ControlExample
-                x:Name="Example3"
-                HeaderText="An AppBarToggleButton with a font icon.">
-                <sc:ControlExample.Example>
-                    <StackPanel Orientation="Horizontal">
-                        <!-- App bar button with font icon. -->
-                        <ui:AppBarToggleButton x:Name="Button3" Label="FontIcon" Click="AppBarButton_Click">
-                            <ui:AppBarToggleButton.Icon>
-                                <ui:FontIcon
-                                    FontFamily="Candara"
-                                    Glyph="&#x03A3;" />
-                            </ui:AppBarToggleButton.Icon>
-                        </ui:AppBarToggleButton>
-                        <TextBlock
-                            x:Name="Control3Output"
-                            Margin="8,0,0,0"
-                            VerticalAlignment="Center" />
-                    </StackPanel>
-                </sc:ControlExample.Example>
-            </sc:ControlExample>
-            <sc:ControlExample
-                x:Name="Example4"
-                HeaderText="A three-state AppBarToggleButton with a path icon.">
-                <sc:ControlExample.Example>
-                    <StackPanel Orientation="Horizontal">
-                        <!-- App bar button with path icon. -->
-                        <ui:AppBarToggleButton x:Name="Button4" Label="PathIcon" Click="AppBarButton_Click" IsThreeState="True">
-                            <ui:AppBarToggleButton.Icon>
-                                <ui:PathIcon Data="F1 M 20,20L 24,10L 24,24L 5,24" />
-                            </ui:AppBarToggleButton.Icon>
-                        </ui:AppBarToggleButton>
-                        <TextBlock
-                            x:Name="Control4Output"
-                            Margin="8,0,0,0"
-                            VerticalAlignment="Center" />
-                    </StackPanel>
-                </sc:ControlExample.Example>
-            </sc:ControlExample>
-        </ui:SimpleStackPanel>
-    </ScrollViewer>
+        <local:ControlExample
+            x:Name="Example4"
+            HeaderText="A three-state AppBarToggleButton with a path icon.">
+            <local:ControlExample.Example>
+                <StackPanel Orientation="Horizontal">
+                    <!-- App bar button with path icon. -->
+                    <ui:AppBarToggleButton Tag="Button4" Loaded="AppBarToggleButton_Loaded" Label="PathIcon" Click="AppBarButton_Click" IsThreeState="True">
+                        <ui:AppBarToggleButton.Icon>
+                            <ui:PathIcon Data="F1 M 20,20L 24,10L 24,24L 5,24" />
+                        </ui:AppBarToggleButton.Icon>
+                    </ui:AppBarToggleButton>
+                    <TextBlock
+                        Tag="Control4Output"
+                        Margin="8,0,0,0"
+                        Loaded="TextBlock_Loaded"
+                        VerticalAlignment="Center" />
+                </StackPanel>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;ui:AppBarToggleButton Label=&quot;PathIcon&quot; Click=&quot;AppBarButton_Click&quot; IsThreeState=&quot;True&quot;&gt;
+    &lt;ui:AppBarToggleButton.Icon&gt;
+        &lt;ui:PathIcon Data=&quot;F1 M 20,20L 24,10L 24,24L 5,24&quot;/&gt;
+    &lt;/ui:AppBarToggleButton.Icon&gt;
+&lt;/ui:AppBarToggleButton&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+    </StackPanel>
 </ui:Page>
