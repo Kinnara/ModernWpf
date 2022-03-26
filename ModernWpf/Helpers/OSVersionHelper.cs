@@ -4,15 +4,17 @@ using System.Runtime.InteropServices;
 
 namespace ModernWpf
 {
-    internal static class OSVersionHelper
+    public static class OSVersionHelper
     {
         private static readonly Version _osVersion = GetOSVersion();
 
-        internal static bool IsWindowsNT { get; } = Environment.OSVersion.Platform == PlatformID.Win32NT;
+        public static bool IsWindowsNT { get; } = Environment.OSVersion.Platform == PlatformID.Win32NT;
 
-        internal static bool IsWindows8OrGreater { get; } = IsWindowsNT && _osVersion >= new Version(6, 2);
+        public static bool IsWindows8OrGreater { get; } = IsWindowsNT && _osVersion >= new Version(6, 2);
 
-        internal static bool IsWindows10OrGreater { get; } = IsWindowsNT && _osVersion >= new Version(10, 0);
+        public static bool IsWindows10OrGreater { get; } = IsWindowsNT && _osVersion >= new Version(10, 0);
+
+        public static bool IsWindows11OrGreater { get; } = IsWindowsNT && _osVersion >= new Version(10, 0, 21996);
 
         private static Version GetOSVersion()
         {

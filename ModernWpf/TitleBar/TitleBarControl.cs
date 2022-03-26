@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 namespace ModernWpf.Controls.Primitives
 {
     [TemplatePart(Name = BackButtonName, Type = typeof(Button))]
+    [TemplatePart(Name = MaximizeButtonName, Type = typeof(TitleBarButton))]
     [TemplatePart(Name = LeftSystemOverlayName, Type = typeof(FrameworkElement))]
     [TemplatePart(Name = RightSystemOverlayName, Type = typeof(FrameworkElement))]
     [StyleTypedProperty(Property = nameof(ButtonStyle), StyleTargetType = typeof(TitleBarButton))]
@@ -19,10 +20,12 @@ namespace ModernWpf.Controls.Primitives
     public class TitleBarControl : Control
     {
         private const string BackButtonName = "PART_BackButton";
+        private const string MaximizeButtonName = "MaximizeRestoreButton";
         private const string LeftSystemOverlayName = "PART_LeftSystemOverlay";
         private const string RightSystemOverlayName = "PART_RightSystemOverlay";
 
         private Window _parentWindow;
+        private SnapLayout _snapLayout;
         private KeyBinding _altLeftBinding;
 
         static TitleBarControl()
@@ -319,6 +322,8 @@ namespace ModernWpf.Controls.Primitives
 
         private Button BackButton { get; set; }
 
+        private TitleBarButton MaximizeRestoreButton { get; set; }
+
         private FrameworkElement LeftSystemOverlay { get; set; }
 
         private FrameworkElement RightSystemOverlay { get; set; }
@@ -328,6 +333,11 @@ namespace ModernWpf.Controls.Primitives
             if (BackButton != null)
             {
                 BackButton.Click -= OnBackButtonClick;
+            }
+
+            if (MaximizeRestoreButton != null)
+            {
+                MaximizeRestoreButton.Loaded -= OnMaximizeRestoreButtonLoaded;
             }
 
             if (LeftSystemOverlay != null)
@@ -343,12 +353,18 @@ namespace ModernWpf.Controls.Primitives
             base.OnApplyTemplate();
 
             BackButton = GetTemplateChild(BackButtonName) as Button;
+            MaximizeRestoreButton = GetTemplateChild(MaximizeButtonName) as TitleBarButton;
             LeftSystemOverlay = GetTemplateChild(LeftSystemOverlayName) as FrameworkElement;
             RightSystemOverlay = GetTemplateChild(RightSystemOverlayName) as FrameworkElement;
 
             if (BackButton != null)
             {
                 BackButton.Click += OnBackButtonClick;
+            }
+
+            if (MaximizeRestoreButton != null)
+            {
+                MaximizeRestoreButton.Loaded += OnMaximizeRestoreButtonLoaded;
             }
 
             if (LeftSystemOverlay != null)
@@ -421,6 +437,11 @@ namespace ModernWpf.Controls.Primitives
             UpdateSystemOverlayRightInset(e.NewSize.Width);
         }
 
+        private void OnMaximizeRestoreButtonLoaded(object sender, RoutedEventArgs e)
+        {
+            //InitializeSnapLayout(MaximizeRestoreButton);
+        }
+
         private void UpdateSystemOverlayLeftInset(double value)
         {
             Debug.Assert(TemplatedParent is Window);
@@ -437,6 +458,14 @@ namespace ModernWpf.Controls.Primitives
             {
                 TitleBar.SetSystemOverlayRightInset(window, value);
             }
+        }
+
+        private void InitializeSnapLayout(TitleBarButton maximizeButton)
+        {
+            if (!SnapLayout.IsSupported) return;
+
+            _snapLayout = new SnapLayout();
+            _snapLayout.Register(maximizeButton);
         }
 
         private void MinimizeWindow(object sender, ExecutedRoutedEventArgs e)
