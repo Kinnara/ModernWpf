@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
@@ -15,7 +16,117 @@ namespace ModernWpf.SampleApp.ControlPages
     /// </summary>
     public partial class AutoSuggestBoxPage
     {
-        //private readonly ControlPagesData _controlPages = new ControlPagesData();
+        private Image ControlImage;
+        private StackPanel ControlDetails;
+
+        private TextBlock ControlTitle;
+        private TextBlock ControlSubtitle;
+        private TextBlock SuggestionOutput;
+
+        private List<string> Cats = new List<string>()
+        {
+            "Abyssinian",
+            "Aegean",
+            "American Bobtail",
+            "American Curl",
+            "American Ringtail",
+            "American Shorthair",
+            "American Wirehair",
+            "Aphrodite Giant",
+            "Arabian Mau",
+            "Asian cat",
+            "Asian Semi-longhair",
+            "Australian Mist",
+            "Balinese",
+            "Bambino",
+            "Bengal",
+            "Birman",
+            "Bombay",
+            "Brazilian Shorthair",
+            "British Longhair",
+            "British Shorthair",
+            "Burmese",
+            "Burmilla",
+            "California Spangled",
+            "Chantilly-Tiffany",
+            "Chartreux",
+            "Chausie",
+            "Colorpoint Shorthair",
+            "Cornish Rex",
+            "Cymric",
+            "Cyprus",
+            "Devon Rex",
+            "Donskoy",
+            "Dragon Li",
+            "Dwelf",
+            "Egyptian Mau",
+            "European Shorthair",
+            "Exotic Shorthair",
+            "Foldex",
+            "German Rex",
+            "Havana Brown",
+            "Highlander",
+            "Himalayan",
+            "Japanese Bobtail",
+            "Javanese",
+            "Kanaani",
+            "Khao Manee",
+            "Kinkalow",
+            "Korat",
+            "Korean Bobtail",
+            "Korn Ja",
+            "Kurilian Bobtail",
+            "Lambkin",
+            "LaPerm",
+            "Lykoi",
+            "Maine Coon",
+            "Manx",
+            "Mekong Bobtail",
+            "Minskin",
+            "Napoleon",
+            "Munchkin",
+            "Nebelung",
+            "Norwegian Forest Cat",
+            "Ocicat",
+            "Ojos Azules",
+            "Oregon Rex",
+            "Oriental Bicolor",
+            "Oriental Longhair",
+            "Oriental Shorthair",
+            "Persian (modern)",
+            "Persian (traditional)",
+            "Peterbald",
+            "Pixie-bob",
+            "Ragamuffin",
+            "Ragdoll",
+            "Raas",
+            "Russian Blue",
+            "Russian White",
+            "Sam Sawet",
+            "Savannah",
+            "Scottish Fold",
+            "Selkirk Rex",
+            "Serengeti",
+            "Serrade Petit",
+            "Siamese",
+            "Siberian or´Siberian Forest Cat",
+            "Singapura",
+            "Snowshoe",
+            "Sokoke",
+            "Somali",
+            "Sphynx",
+            "Suphalak",
+            "Thai",
+            "Thai Lilac",
+            "Tonkinese",
+            "Toyger",
+            "Turkish Angora",
+            "Turkish Van",
+            "Turkish Vankedisi",
+            "Ukrainian Levkoy",
+            "Wila Krungthep",
+            "York Chocolate"
+        };
 
         public AutoSuggestBoxPage()
         {
@@ -24,27 +135,34 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            Debug.WriteLine("TextChanged: " + args.Reason);
+            // Since selecting an item will also change the text,
+            // only listen to changes caused by user entering text.
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
-                List<string> suggestions = new List<string>()
+                var suitableItems = new List<string>();
+                var splitText = sender.Text.ToLower().Split(' ');
+                foreach (var cat in Cats)
                 {
-                    sender.Text + "1",
-                    sender.Text + "2"
-                };
-                Control1.ItemsSource = suggestions;
+                    var found = splitText.All((key) =>
+                    {
+                        return cat.ToLower().Contains(key);
+                    });
+                    if (found)
+                    {
+                        suitableItems.Add(cat);
+                    }
+                }
+                if (suitableItems.Count == 0)
+                {
+                    suitableItems.Add("No results found");
+                }
+                sender.ItemsSource = suitableItems;
             }
         }
 
         private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            Debug.WriteLine("SuggestionChosen");
             SuggestionOutput.Text = args.SelectedItem.ToString();
-        }
-
-        private void AutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        {
-            Debug.WriteLine("QuerySubmitted: " + args.QueryText);
         }
 
         /// <summary>
@@ -122,42 +240,95 @@ namespace ModernWpf.SampleApp.ControlPages
             {
                 ControlDetails.Visibility = Visibility.Visible;
 
+                BitmapImage image = new BitmapImage(new Uri(control.ImagePath));
+                ControlImage.Source = image;
+
                 ControlTitle.Text = control.Title;
-                ControlLink.Content = "Go to " + control.Title;
-                //ControlLink.Tag = control.PageType;
+                ControlSubtitle.Text = control.Subtitle;
             }
         }
 
         private List<ControlInfoDataItem> SearchControls(string query)
         {
+            var suggestions = new List<ControlInfoDataItem>();
+
             var querySplit = query.Split(' ');
-            //var suggestions = _controlPages.Where(
-            //    item =>
-            //    {
-            //        // Idea: check for every word entered (separated by space) if it is in the name,  
-            //        // e.g. for query "split button" the only result should "SplitButton" since its the only query to contain "split" and "button" 
-            //        // If any of the sub tokens is not in the string, we ignore the item. So the search gets more precise with more words 
-            //        bool flag = true;
-            //        foreach (string queryToken in querySplit)
-            //        {
-            //            // Check if token is not in string 
-            //            if (item.Title.IndexOf(queryToken, StringComparison.CurrentCultureIgnoreCase) < 0)
-            //            {
-            //                // Token is not in string, so we ignore this item. 
-            //                flag = false;
-            //            }
-            //        }
-            //        return flag;
-            //    });
-            //return suggestions.OrderByDescending(i => i.Title.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ThenBy(i => i.Title).ToList();
-            return new();
+            foreach (var group in ControlInfoDataSource.Instance.Groups)
+            {
+                var matchingItems = group.Items.Where(
+                    item =>
+                    {
+                        // Idea: check for every word entered (separated by space) if it is in the name,  
+                        // e.g. for query "split button" the only result should "SplitButton" since its the only query to contain "split" and "button" 
+                        // If any of the sub tokens is not in the string, we ignore the item. So the search gets more precise with more words 
+                        bool flag = true;
+                        foreach (string queryToken in querySplit)
+                        {
+                            // Check if token is not in string 
+                            if (item.Title.IndexOf(queryToken, StringComparison.CurrentCultureIgnoreCase) < 0)
+                            {
+                                // Token is not in string, so we ignore this item. 
+                                flag = false;
+                            }
+                        }
+                        return flag;
+                    });
+                foreach (var item in matchingItems)
+                {
+                    suggestions.Add(item);
+                }
+            }
+            return suggestions.OrderByDescending(i => i.Title.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ThenBy(i => i.Title).ToList();
         }
 
-        private void ControlLink_Click(object sender, RoutedEventArgs e)
+        private void TextBlock_Loaded(object sender, RoutedEventArgs e)
         {
-            if (ControlLink.Tag is Type pageType)
+            if (sender is TextBlock b)
             {
-                Frame.Navigate(pageType);
+                string name = b.Tag.ToString();
+
+                switch (name)
+                {
+                    case "ControlTitle":
+                        ControlTitle = b;
+                        break;
+                    case "ControlSubtitle":
+                        ControlSubtitle = b;
+                        break;
+                    case "SuggestionOutput":
+                        SuggestionOutput = b;
+                        break;
+                }
+            }
+        }
+
+        private void StackPanel_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is StackPanel b)
+            {
+                string name = b.Tag.ToString();
+
+                switch (name)
+                {
+                    case "ControlDetails":
+                        ControlDetails = b;
+                        break;
+                }
+            }
+        }
+
+        private void Image_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is Image b)
+            {
+                string name = b.Tag.ToString();
+
+                switch (name)
+                {
+                    case "ControlImage":
+                        ControlImage = b;
+                        break;
+                }
             }
         }
     }

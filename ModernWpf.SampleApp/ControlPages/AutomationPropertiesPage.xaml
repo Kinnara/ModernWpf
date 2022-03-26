@@ -1,0 +1,84 @@
+﻿<ui:Page
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    x:Class="ModernWpf.SampleApp.ControlPages.AutomationPropertiesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Title="Automation Properties">
+    <StackPanel>
+        <TextBlock
+            Margin="0,8,0,0"
+            Text="To start the Narrator app, press Windows logo key + Ctrl + Enter. To navigate through text, press Caps + Left/Right arrow"
+            TextWrapping="Wrap" />
+
+        <!-- AutomationProperties.Name sample -->
+        <local:ControlExample HeaderText="Enabling alternate text for controls">
+            <local:ControlExample.Example>
+                <StackPanel>
+                    <Image
+                        AutomationProperties.Name="Image of treetops"
+                        Source="/Assets/SampleMedia/treetops.jpg"
+                        Height="100"
+                        HorizontalAlignment="Left" />
+                </StackPanel>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;!-- This image will be announced as &quot;Image of treetops,Image&quot; --&gt;
+&lt;Image Source=&quot;/Assets/SampleMedia/treetops.jpg&quot; Height=&quot;100&quot; 
+       AutomationProperties.Name=&quot;Image of treetops&quot;/&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+
+        <!-- AutomationProperties.LabeledBy sample -->
+        <local:ControlExample HeaderText="Providing a label for another control">
+            <local:ControlExample.Example>
+                <StackPanel>
+                    <TextBlock
+                        Tag="FontSizeChangingTextBlock"
+                        Loaded="TextBlock_Loaded"
+                        TextWrapping="Wrap"
+                        Margin="0,8,0,8">
+                        Cat ipsum dolor sit amet, incidunt. Ratione.
+                        Ipsa omnis dolor rem or vel. Ipsa elit quaerat sequi, nequeporro nisi qui. Vel autem.
+                        Laborum pariatur nemo for veritatis yet explicabo eaque or esse. Ipsum ullam omnis so sed nequeporro but magna.
+                    </TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            Tag="FontSizeLabel"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Margin="0,0,8,0"
+                            Text="Font size of text" />
+                        <ui:NumberBox
+                            Tag="FontSizeNumberBox"
+                            Minimum="10"
+                            Maximum="32"
+                            Value="14"
+                            ValueChanged="FontSizeNumberBox_ValueChanged" />
+                    </StackPanel>
+                </StackPanel>
+            </local:ControlExample.Example>
+
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;StackPanel Orientation=&quot;Horizontal&quot;&gt;
+    &lt;TextBlock x:Name=&quot;FontSizeLabel&quot; Margin=&quot;0,0,8,0&quot; Text=&quot;Font size of text&quot;/&gt;
+                    
+    &lt;!-- This NumberBox is labeled by the TextBlock above --&gt;
+    &lt;ui:NumberBox x:Name=&quot;FontSizeNumberBox&quot; AutomationProperties.LabeledBy=&quot;{Binding ElementName=FontSizeLabel}&quot;
+                    Minimum=&quot;10&quot; Maximum=&quot;32&quot;/&gt;
+&lt;/StackPanel&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+
+        </local:ControlExample>
+    </StackPanel>
+</ui:Page>

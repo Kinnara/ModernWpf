@@ -413,5 +413,25 @@ namespace ModernWpf.SampleApp
                     break;
             }
         }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (Application.Current.MainWindow.ActualWidth < 740)
+            {
+                OptionsPresenter.HorizontalAlignment = HorizontalAlignment.Left;
+                OptionsPresenterBorder.Margin = new Thickness(0, 24, 0, 0);
+                Grid.SetRow(OptionsPresenterBorder, 1);
+                Grid.SetColumn(OptionsPresenterBorder, 0);
+                Grid.SetColumnSpan(OptionsPresenterBorder, 2);
+            }
+            else
+            {
+                OptionsPresenter.HorizontalAlignment = HorizontalAlignment.Stretch;
+                OptionsPresenterBorder.Margin = new Thickness(0, 12, 12, 12);
+                Grid.SetRow(OptionsPresenterBorder, 0);
+                Grid.SetColumn(OptionsPresenterBorder, 2);
+                Grid.SetColumnSpan(OptionsPresenterBorder, 1);
+            }
+        }
     }
 }

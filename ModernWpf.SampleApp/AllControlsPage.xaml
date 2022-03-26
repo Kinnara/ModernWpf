@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Title="AllControlsPage">
+    Title="All Controls">
     <local:ItemsPageBase.Resources>
         <ResourceDictionary Source="ItemTemplates.xaml" />
     </local:ItemsPageBase.Resources>

@@ -5,28 +5,43 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
-    xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
     mc:Ignorable="d">
-
-    <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
-        <sc:ControlExample HeaderText="AppBarButtons separated by AppBarSeparators.">
-            <sc:ControlExample.Example>
+    <StackPanel>
+        <local:ControlExample HeaderText="AppBarButtons separated by AppBarSeparators.">
+            <local:ControlExample.Example>
                 <ScrollViewer
-                    VerticalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Hidden"
                     HorizontalScrollBarVisibility="Hidden">
-                    <StackPanel
-                        x:Name="Control1"
-                        Orientation="Horizontal">
-                        <ui:AppBarButton Label="Attach Camera" Icon="AttachCamera" />
-                        <ui:AppBarSeparator />
-                        <ui:AppBarButton Label="Like" Icon="Like" />
-                        <ui:AppBarButton Label="Dislike" Icon="Dislike" />
-                        <ui:AppBarSeparator />
-                        <ui:AppBarButton Label="Orientation" Icon="Orientation" />
-                    </StackPanel>
+                    <ui:CommandBar
+                        Tag="Control1"
+                        Loaded="CommandBar_Loaded">
+                        <ui:CommandBar.PrimaryCommands>
+                            <ui:AppBarButton Icon="AttachCamera" Label="Attach Camera" />
+                            <ui:AppBarSeparator />
+                            <ui:AppBarButton Icon="Like" Label="Like" />
+                            <ui:AppBarButton Icon="Dislike" Label="Dislike" />
+                            <ui:AppBarSeparator />
+                            <ui:AppBarButton Icon="Orientation" Label="Orientation" />
+                        </ui:CommandBar.PrimaryCommands>
+                    </ui:CommandBar>
                 </ScrollViewer>
-            </sc:ControlExample.Example>
-        </sc:ControlExample>
-    </ui:SimpleStackPanel>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;ui:CommandBar&gt;
+    &lt;ui:CommandBar.PrimaryCommands&gt;
+        &lt;ui:AppBarButton Icon=&quot;AttachCamera&quot; Label=&quot;Attach Camera&quot;/&gt;
+        &lt;ui:AppBarSeparator /&gt;
+        &lt;ui:AppBarButton Icon=&quot;Like&quot; Label=&quot;Like&quot;/&gt;
+        &lt;ui:AppBarButton Icon=&quot;Dislike&quot; Label=&quot;Dislike&quot;/&gt;
+        &lt;ui:AppBarSeparator /&gt;
+        &lt;ui:AppBarButton Icon=&quot;Orientation&quot; Label=&quot;Orientation&quot;/&gt;
+    &lt;/ui:CommandBar.PrimaryCommands&gt;
+&lt;/ui:CommandBar&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+    </StackPanel>
 </ui:Page>
