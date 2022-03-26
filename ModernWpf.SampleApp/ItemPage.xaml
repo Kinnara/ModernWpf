@@ -13,6 +13,7 @@
     mc:Ignorable="d"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    Loaded="Page_Loaded"
     Title="ItemPage">
     <!--
         This grid acts as a root panel for the page that defines two rows:
@@ -20,25 +21,6 @@
         * Row 1 contains the rest of the page layout
     -->
     <Grid x:Name="rootPanel">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="NormalFrameContent" />
-                <VisualState x:Name="WideFrameContent">
-                    <VisualState.Storyboard>
-                        <Storyboard>
-                            <DoubleAnimation
-                                Storyboard.TargetName="contentFrame"
-                                Storyboard.TargetProperty="Width"
-                                To="1028"
-                                Duration="0:0:0" />
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="contentFrame" Storyboard.TargetProperty="HorizontalAlignment" Duration="0:0:0">
-                                <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static HorizontalAlignment.Left}" />
-                            </ObjectAnimationUsingKeyFrames>
-                        </Storyboard>
-                    </VisualState.Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
         <!-- Content Region -->
         <ScrollViewer
             x:Name="svPanel"

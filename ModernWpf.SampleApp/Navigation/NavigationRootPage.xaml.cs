@@ -483,6 +483,14 @@ namespace ModernWpf.SampleApp
                 }
             }
         }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Xbox")
+            {
+                XboxContentSafeRect.Visibility = Visibility.Visible;
+            }
+        }
     }
 
     public enum DeviceType

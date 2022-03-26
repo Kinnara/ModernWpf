@@ -11,7 +11,8 @@
     d:DataContext="{d:DesignInstance Type=local:ControlExample}"
     mc:Ignorable="d"
     d:DesignHeight="450"
-    d:DesignWidth="800">
+    d:DesignWidth="800"
+    SizeChanged="UserControl_SizeChanged">
     <UserControl.Resources>
         <sys:Double x:Key="ExampleMaxWidth">1000</sys:Double>
     </UserControl.Resources>
@@ -139,7 +140,7 @@
 
                         <!-- Options Display -->
                         <Border
-                            x:Name="OptionsPresenter"
+                            x:Name="OptionsPresenterBorder"
                             Grid.Column="2"
                             CornerRadius="8"
                             Margin="0,12,12,12"
@@ -148,7 +149,9 @@
                             VerticalAlignment="Stretch"
                             Visibility="{Binding Options, Converter={StaticResource nullToVisibilityConverter}}"
                             Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
-                            <ContentPresenter Content="{Binding Options}" />
+                            <ContentPresenter
+                                x:Name="OptionsPresenter"
+                                Content="{Binding Options}" />
                         </Border>
                     </Grid>
                 </Border>
