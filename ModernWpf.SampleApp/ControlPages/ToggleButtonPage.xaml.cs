@@ -1,6 +1,5 @@
 ﻿using ModernWpf.Controls;
 using ModernWpf.SampleApp.Common;
-using ModernWpf.SampleApp.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -20,35 +20,26 @@ using Page = ModernWpf.Controls.Page;
 namespace ModernWpf.SampleApp.ControlPages
 {
     /// <summary>
-    /// ButtonPage.xaml 的交互逻辑
+    /// ToggleButtonPage.xaml 的交互逻辑
     /// </summary>
-    public partial class ButtonPage : Page
+    public partial class ToggleButtonPage : Page
     {
-        private Button Button1;
         private TextBlock Control1Output;
-        private TextBlock Control2Output;
+        private ToggleButton Toggle1;
 
-        public ButtonPage()
+        public ToggleButtonPage()
         {
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ToggleButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (sender is Button b)
-            {
-                string name = b.Tag.ToString();
+            Control1Output.Text = "On";
+        }
 
-                switch (name)
-                {
-                    case "Button1":
-                        Control1Output.Text = "You clicked: " + name;
-                        break;
-                    case "Button2":
-                        Control2Output.Text = "You clicked: " + name;
-                        break;
-                }
-            }
+        private void ToggleButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Control1Output.Text = "Off";
         }
 
         private void TextBlock_Loaded(object sender, RoutedEventArgs e)
@@ -61,24 +52,22 @@ namespace ModernWpf.SampleApp.ControlPages
                 {
                     case "Control1Output":
                         Control1Output = b;
-                        break;
-                    case "Control2Output":
-                        Control2Output = b;
+                        b.Text = (bool)Toggle1?.IsChecked ? "On" : "Off";
                         break;
                 }
             }
         }
 
-        private void Button_Loaded(object sender, RoutedEventArgs e)
+        private void Toggle_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is Button b)
+            if (sender is ToggleButton b)
             {
                 string name = b.Tag.ToString();
 
                 switch (name)
                 {
-                    case "Button1":
-                        Button1 = b;
+                    case "Toggle1":
+                        Toggle1 = b;
                         break;
                 }
             }
@@ -92,8 +81,8 @@ namespace ModernWpf.SampleApp.ControlPages
 
                 switch (name)
                 {
-                    case "DisableButton1":
-                        Button1.SetBinding(IsEnabledProperty, new Binding
+                    case "DisableToggle1":
+                        Toggle1.SetBinding(IsEnabledProperty, new Binding
                         {
                             Source = b,
                             Path = new PropertyPath("IsChecked"),

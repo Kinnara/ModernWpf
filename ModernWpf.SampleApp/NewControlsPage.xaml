@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Title="NewControlsPage">
+    Title="New Controls">
     <local:ItemsPageBase.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
