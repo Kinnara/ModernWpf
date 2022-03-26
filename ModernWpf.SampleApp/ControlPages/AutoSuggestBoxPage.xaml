@@ -5,44 +5,96 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
-    mc:Ignorable="d">
-
-    <ScrollViewer>
-        <ui:SimpleStackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <sc:ControlExample
-                x:Name="Example1"
-                HeaderText="A basic autosuggest box.">
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Title="Automation Properties">
+    <StackPanel>
+        <local:ControlExample
+            x:Name="Example1"
+            HeaderText="A basic autosuggest box.">
+            <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <ui:AutoSuggestBox
-                        x:Name="Control1"
+                        Tag="Control1"
                         TextChanged="AutoSuggestBox_TextChanged"
                         SuggestionChosen="AutoSuggestBox_SuggestionChosen"
-                        QuerySubmitted="AutoSuggestBox_QuerySubmitted"
                         Width="300"
                         AutomationProperties.Name="Basic AutoSuggestBox" />
                     <TextBlock
-                        x:Name="SuggestionOutput"
-                        Style="{StaticResource OutputTextBlockStyle}" />
+                        Tag="SuggestionOutput"
+                        Loaded="TextBlock_Loaded"
+                        Style="{StaticResource OutputTextBlockStyle}"
+                        FontFamily="Global User Interface" />
                 </StackPanel>
-                <sc:ControlExample.Options>
-                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <CheckBox
-                            Content="UpdateTextOnSelect"
-                            IsChecked="{Binding ElementName=Control1, Path=UpdateTextOnSelect}" />
-                    </ui:SimpleStackPanel>
-                </sc:ControlExample.Options>
-            </sc:ControlExample>
-            <sc:ControlExample
-                x:Name="Example2"
-                HeaderText="An AutoSuggestBox that provides a SearchBox experience">
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;ui:AutoSuggestBox TextChanged=&quot;AutoSuggestBox_TextChanged&quot;
+                SuggestionChosen=&quot;AutoSuggestBox_SuggestionChosen&quot;
+                Width=&quot;300&quot; AutomationProperties.Name=&quot;Basic AutoSuggestBox&quot;/&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+            <local:ControlExample.CSharp>
+                <sys:String xml:space="preserve">
+// List of cats
+private List&lt;string&gt; Cats = new List&lt;string&gt;()
+{
+    &quot;Abyssinian&quot;,
+    &quot;Aegean&quot;,
+    &quot;American Bobtail&quot;,
+    ...
+};
+
+// Handle text change and present suitable items
+private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+{
+    // Since selecting an item will also change the text,
+    // only listen to changes caused by user entering text.
+    if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+    {
+        var suitableItems = new List&lt;string&gt;();
+        var splitText = sender.Text.ToLower().Split(&quot; &quot;);
+        foreach(var cat in Cats)
+        {
+            var found = splitText.All((key)=&gt;
+            {
+                return cat.ToLower().Contains(key);
+            });
+            if(found)
+            {
+                suitableItems.Add(cat);
+            }
+        }
+        if(suitableItems.Count == 0)
+        {
+            suitableItems.Add(&quot;No results found&quot;);
+        }
+        sender.ItemsSource = suitableItems;
+    }
+}
+
+// Handle user selecting an item, in our case just output the selected item.
+private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+{
+    SuggestionOutput.Text = args.SelectedItem.ToString();
+}
+                </sys:String>
+            </local:ControlExample.CSharp>
+        </local:ControlExample>
+        <local:ControlExample
+            x:Name="Example2"
+            HeaderText="An AutoSuggestBox that provides a SearchBox experience">
+            <local:ControlExample.Example>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <ui:AutoSuggestBox
-                        x:Name="Control2"
+                        Tag="Control2"
                         PlaceholderText="Type a control name"
                         TextChanged="Control2_TextChanged"
                         QueryIcon="Find"
@@ -51,18 +103,41 @@
                         Width="300"
                         HorizontalAlignment="Left" />
                     <StackPanel
-                        x:Name="ControlDetails"
+                        Orientation="Horizontal"
+                        Tag="ControlDetails"
                         Grid.Row="1"
+                        Loaded="StackPanel_Loaded"
                         HorizontalAlignment="Left"
                         Visibility="Collapsed"
                         Margin="0,8,0,0">
-                        <TextBlock
-                            x:Name="ControlTitle"
-                            Style="{StaticResource BaseTextBlockStyle}" />
-                        <ui:HyperlinkButton x:Name="ControlLink" Click="ControlLink_Click" />
+                        <Image
+                            Loaded="Image_Loaded"
+                            Tag="ControlImage"
+                            Height="110" />
+                        <StackPanel>
+                            <TextBlock
+                                Tag="ControlTitle"
+                                Loaded="TextBlock_Loaded"
+                                Style="{DynamicResource BaseTextBlockStyle}"
+                                Margin="8,0,0,0" />
+                            <TextBlock
+                                Tag="ControlSubtitle"
+                                Loaded="TextBlock_Loaded"
+                                TextWrapping="Wrap"
+                                Margin="8,0,0,0" />
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
-            </sc:ControlExample>
-        </ui:SimpleStackPanel>
-    </ScrollViewer>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;ui:AutoSuggestBox PlaceholderText=&quot;Type a control name&quot;
+        TextChanged=&quot;Control2_TextChanged&quot;
+        QueryIcon=&quot;Find&quot;
+        QuerySubmitted=&quot;Control2_QuerySubmitted&quot;
+        SuggestionChosen=&quot;Control2_SuggestionChosen&quot;/&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+    </StackPanel>
 </ui:Page>
