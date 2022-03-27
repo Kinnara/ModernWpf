@@ -1,0 +1,107 @@
+﻿<ui:Page
+    x:Class="ModernWpf.SampleApp.ControlPages.CanvasPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="Canvas"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel>
+        <local:ControlExample
+            x:Name="Example1"
+            HeaderText="A Canvas control.">
+
+            <local:ControlExample.Example>
+                <Canvas
+                    Width="140"
+                    Height="140"
+                    VerticalAlignment="Top"
+                    Background="Gray"
+                    Tag="Control1">
+                    <Canvas.Resources>
+                        <Style TargetType="Rectangle">
+                            <Setter Property="Height" Value="40" />
+                            <Setter Property="Width" Value="40" />
+                        </Style>
+                    </Canvas.Resources>
+                    <Rectangle
+                        Fill="Red"
+                        Loaded="Rectangle_Loaded" />
+                    <Rectangle
+                        Canvas.Left="20"
+                        Canvas.Top="20"
+                        Canvas.ZIndex="1"
+                        Fill="Blue" />
+                    <Rectangle
+                        Canvas.Left="40"
+                        Canvas.Top="40"
+                        Canvas.ZIndex="2"
+                        Fill="Green" />
+                    <Rectangle
+                        Canvas.Left="60"
+                        Canvas.Top="60"
+                        Canvas.ZIndex="3"
+                        Fill="Yellow" />
+                </Canvas>
+            </local:ControlExample.Example>
+
+            <local:ControlExample.Options>
+                <StackPanel Orientation="Horizontal">
+                    <Slider
+                        Height="110"
+                        VerticalAlignment="Top"
+                        AutoToolTipPlacement="TopLeft"
+                        IsDirectionReversed="True"
+                        Loaded="Slider_Loaded"
+                        Maximum="100"
+                        Minimum="0"
+                        Orientation="Vertical"
+                        Tag="TopSlider"
+                        TickFrequency="1">
+                        <ui:ControlHelper.Header>
+                            <TextBlock
+                                Margin="0,0,0,10"
+                                Text="Canvas.Top" />
+                        </ui:ControlHelper.Header>
+                    </Slider>
+                    <StackPanel Margin="16,0,0,0">
+                        <Slider
+                            Width="100"
+                            ui:ControlHelper.Header="Canvas.Left"
+                            AutoToolTipPlacement="TopLeft"
+                            Loaded="Slider_Loaded"
+                            Maximum="100"
+                            Minimum="0"
+                            Tag="LeftSlider"
+                            TickFrequency="1" />
+                        <Slider
+                            Width="100"
+                            ui:ControlHelper.Header="Canvas.ZIndex"
+                            AutoToolTipPlacement="TopLeft"
+                            IsSnapToTickEnabled="True"
+                            Loaded="Slider_Loaded"
+                            Maximum="4"
+                            Minimum="0"
+                            Tag="ZSlider"
+                            TickFrequency="1" />
+                    </StackPanel>
+                </StackPanel>
+            </local:ControlExample.Options>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;Canvas Width=&quot;120&quot; Height=&quot;120&quot; Background=&quot;Gray&quot;&gt;
+    &lt;Rectangle Fill=&quot;Red&quot; Canvas.Left=&quot;$(Left)&quot; Canvas.Top=&quot;$(Top)&quot; Canvas.ZIndex=&quot;$(Z)&quot; /&gt;
+    &lt;Rectangle Fill=&quot;Blue&quot; Canvas.Left=&quot;20&quot; Canvas.Top=&quot;20&quot; Canvas.ZIndex=&quot;1&quot; /&gt;
+    &lt;Rectangle Fill=&quot;Green&quot; Canvas.Left=&quot;40&quot; Canvas.Top=&quot;40&quot; Canvas.ZIndex=&quot;2&quot; /&gt;
+    &lt;Rectangle Fill=&quot;Yellow&quot; Canvas.Left=&quot;60&quot; Canvas.Top=&quot;60&quot; Canvas.ZIndex=&quot;3&quot; /&gt;
+&lt;/Canvas&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+    </StackPanel>
+</ui:Page>

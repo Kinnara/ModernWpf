@@ -1,9 +1,9 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:local="clr-namespace:ModernWpf.Controls"
-    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Button.xaml" />
@@ -65,7 +65,7 @@
     <sys:String x:Key="NavigationViewItemExpandedGlyph">&#xE70D;</sys:String>
     <StreamGeometry x:Key="NavigationViewItemExpandedPath">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
 
-    <Style x:Key="PaneToggleButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+    <Style x:Key="PaneToggleButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
         <Setter Property="FontSize" Value="16" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="MinHeight" Value="{StaticResource PaneToggleButtonHeight}" />
@@ -84,11 +84,11 @@
                 <ControlTemplate TargetType="Button">
                     <Grid
                         x:Name="LayoutRoot"
-                        MinWidth="{TemplateBinding MinWidth}"
                         Height="{TemplateBinding MinHeight}"
+                        MinWidth="{TemplateBinding MinWidth}"
                         Margin="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
                         HorizontalAlignment="Stretch"
+                        Background="{TemplateBinding Background}"
                         SnapsToDevicePixels="True">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition primitives:ColumnDefinitionHelper.PixelWidth="{TemplateBinding MinWidth}" />
@@ -114,16 +114,16 @@
 
                         <ContentPresenter
                             x:Name="ContentPresenter"
+                            Grid.Column="1"
                             VerticalAlignment="Center"
                             Content="{TemplateBinding Content}"
-                            TextElement.FontSize="{TemplateBinding FontSize}"
-                            Grid.Column="1" />
+                            TextElement.FontSize="{TemplateBinding FontSize}" />
 
                         <Border
                             x:Name="RevealBorder"
+                            Grid.ColumnSpan="2"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Grid.ColumnSpan="2" />
+                            BorderThickness="{TemplateBinding BorderThickness}" />
                     </Grid>
 
                     <ControlTemplate.Triggers>
@@ -147,7 +147,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="NavigationViewPaneSearchButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+    <Style x:Key="NavigationViewPaneSearchButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
         <Setter Property="MinHeight" Value="40" />
         <Setter Property="ContentTemplate">
             <Setter.Value>
@@ -162,7 +162,7 @@
         <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
     </Style>
 
-    <Style x:Key="NavigationViewItemHeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+    <Style x:Key="NavigationViewItemHeaderTextStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontWeight" Value="SemiBold" />
         <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
         <Setter Property="TextWrapping" Value="NoWrap" />

@@ -28,35 +28,35 @@
                     </ControlTemplate.Resources>
                     <Border
                         x:Name="LayoutRoot"
-                        SnapsToDevicePixels="true"
                         Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="true">
                         <Grid x:Name="AnimationRoot">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition SharedSizeGroup="{TemplateBinding Visibility, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemCheckColumnGroup}" Width="Auto" />
-                                <ColumnDefinition SharedSizeGroup="{TemplateBinding Visibility, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemIconColumnGroup}" Width="Auto" />
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="{TemplateBinding Visibility, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemCheckColumnGroup}" />
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="{TemplateBinding Visibility, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemIconColumnGroup}" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <ui:FontIconFallback
                                 x:Name="CheckGlyph"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                Width="16"
+                                Margin="0,0,12,0"
                                 Data="{StaticResource RadioBullet}"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 FontSize="16"
                                 Foreground="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForeground}"
-                                Opacity="0"
-                                Width="16"
-                                Margin="0,0,12,0" />
+                                Opacity="0" />
                             <Viewbox
                                 x:Name="IconRoot"
                                 Grid.Column="1"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
                                 Width="16"
                                 Height="16"
-                                Margin="0,0,12,0">
+                                Margin="0,0,12,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center">
                                 <ContentPresenter
                                     x:Name="IconContent"
                                     ContentSource="Icon"
@@ -65,29 +65,29 @@
                             <ContentPresenter
                                 x:Name="ContentPresenter"
                                 Grid.Column="2"
-                                ContentSource="Header"
-                                RecognizesAccessKey="True"
-                                TextElement.Foreground="{TemplateBinding Foreground}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                ContentSource="Header"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                TextElement.Foreground="{TemplateBinding Foreground}" />
                             <TextBlock
                                 x:Name="KeyboardAcceleratorTextBlock"
                                 Grid.Column="3"
-                                Style="{DynamicResource CaptionTextBlockStyle}"
-                                Text="{TemplateBinding InputGestureText}"
                                 Margin="24,0,0,0"
-                                Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
                                 HorizontalAlignment="Right"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
+                                Style="{DynamicResource CaptionTextBlockStyle}"
+                                Text="{TemplateBinding InputGestureText}" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="Icon" Value="{x:Null}">
-                            <Setter Property="Visibility" TargetName="IconRoot" Value="Collapsed" />
+                            <Setter TargetName="IconRoot" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="InputGestureText" Value="">
-                            <Setter Property="Visibility" TargetName="KeyboardAcceleratorTextBlock" Value="Collapsed" />
+                            <Setter TargetName="KeyboardAcceleratorTextBlock" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />

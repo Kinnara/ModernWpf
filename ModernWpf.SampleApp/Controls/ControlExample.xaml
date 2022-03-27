@@ -2,17 +2,17 @@
     x:Class="ModernWpf.SampleApp.ControlExample"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:controls="clr-namespace:ModernWpf.SampleApp.Controls"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     d:DataContext="{d:DesignInstance Type=local:ControlExample}"
-    mc:Ignorable="d"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    SizeChanged="UserControl_SizeChanged">
+    SizeChanged="UserControl_SizeChanged"
+    mc:Ignorable="d">
     <UserControl.Resources>
         <sys:Double x:Key="ExampleMaxWidth">1000</sys:Double>
     </UserControl.Resources>
@@ -63,16 +63,16 @@
         </Grid.RowDefinitions>
 
         <TextBlock
-            Style="{DynamicResource SubtitleTextBlockStyle}"
             Margin="0,16"
+            Style="{DynamicResource SubtitleTextBlockStyle}"
             Text="{Binding HeaderText}" />
 
         <TextBlock
             x:Name="ErrorTextBlock"
-            Visibility="Collapsed"
             Grid.Row="1"
             Margin="0,0,0,12"
-            Foreground="Red">
+            Foreground="Red"
+            Visibility="Collapsed">
             <Run>
                 This sample requires a later version of Windows to be fully functional. Learn more about version adaptive apps:
             </Run>
@@ -91,10 +91,10 @@
 
                 <Border
                     x:Name="ExampleContainer"
+                    Background="{DynamicResource ControlExampleDisplayBrush}"
                     BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                     BorderThickness="1"
-                    CornerRadius="8,8,0,0"
-                    Background="{DynamicResource ControlExampleDisplayBrush}">
+                    CornerRadius="8,8,0,0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -108,13 +108,13 @@
 
                         <!-- Example Display -->
                         <Border
-                            CornerRadius="8,8,0,0"
                             Padding="12"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
+                            Background="{DynamicResource ControlExampleDisplayBrush}"
                             BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                             BorderThickness="{DynamicResource ControlExampleDisplayBorderThickness}"
-                            Background="{DynamicResource ControlExampleDisplayBrush}">
+                            CornerRadius="8,8,0,0">
                             <ui:ContentPresenterEx
                                 x:Name="ControlPresenter"
                                 Content="{Binding Example}" />
@@ -125,10 +125,10 @@
                             Grid.Column="1"
                             Margin="0,12,12,12"
                             Padding="16"
-                            CornerRadius="8"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Stretch"
                             Background="{DynamicResource ControlExampleDisplayBrush}"
+                            CornerRadius="8"
                             Visibility="{Binding Output, Converter={StaticResource nullToVisibilityConverter}}">
                             <StackPanel Orientation="Vertical">
                                 <TextBlock Text="Output:" />
@@ -142,13 +142,13 @@
                         <Border
                             x:Name="OptionsPresenterBorder"
                             Grid.Column="2"
-                            CornerRadius="8"
                             Margin="0,12,12,12"
                             Padding="16"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
-                            Visibility="{Binding Options, Converter={StaticResource nullToVisibilityConverter}}"
-                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                            CornerRadius="8"
+                            Visibility="{Binding Options, Converter={StaticResource nullToVisibilityConverter}}">
                             <ContentPresenter
                                 x:Name="OptionsPresenter"
                                 Content="{Binding Options}" />
@@ -159,10 +159,10 @@
                 <!-- Sample code display -->
                 <Expander
                     Grid.Row="1"
-                    Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}"
-                    ui:ControlHelper.CornerRadius="0,0,8,8"
                     HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch">
+                    HorizontalContentAlignment="Stretch"
+                    ui:ControlHelper.CornerRadius="0,0,8,8"
+                    Background="{DynamicResource CardBackgroundFillColorSecondaryBrush}">
 
                     <Expander.Header>
                         <TextBlock Text="Source code" />
@@ -176,52 +176,52 @@
                             Substitutions="{Binding Substitutions}" />
                         <Border
                             x:Name="SampleCodeSeparator"
-                            Visibility="Collapsed"
                             Margin="0,20"
+                            BorderBrush="{DynamicResource SystemControlBackgroundBaseMediumBrush}"
                             BorderThickness="1"
-                            BorderBrush="{DynamicResource SystemControlBackgroundBaseMediumBrush}" />
+                            Visibility="Collapsed" />
                         <controls:SampleCodePresenter
                             x:Name="CSharpPresenter"
                             Code="{Binding CSharp}"
                             CodeSourceFile="{Binding CSharpSource}"
-                            Substitutions="{Binding Substitutions}"
-                            IsCSharpSample="true" />
+                            IsCSharpSample="true"
+                            Substitutions="{Binding Substitutions}" />
                     </StackPanel>
                 </Expander>
 
                 <ui:SimpleStackPanel
                     x:Name="ScreenshotControls"
                     Grid.Row="2"
+                    Margin="0,6,0,0"
                     Orientation="Horizontal"
                     Spacing="6"
-                    Margin="0,6,0,0"
                     Visibility="Collapsed">
                     <Button
                         x:Name="ScreenshotButton"
-                        Content="Take Screenshot"
                         HorizontalAlignment="Left"
-                        Click="ScreenshotButton_Click" />
+                        Click="ScreenshotButton_Click"
+                        Content="Take Screenshot" />
 
                     <Button
                         x:Name="ScreenshotDelayButton"
-                        Content="Take Screenshot With Delay"
                         HorizontalAlignment="Left"
-                        Click="ScreenshotDelayButton_Click" />
+                        Click="ScreenshotDelayButton_Click"
+                        Content="Take Screenshot With Delay" />
 
                     <TextBlock
                         x:Name="ScreenshotStatusTextBlock"
-                        VerticalAlignment="Center"
-                        Margin="0,0,0,1" />
+                        Margin="0,0,0,1"
+                        VerticalAlignment="Center" />
 
                     <TextBlock
                         x:Name="PaddingLabel"
-                        Text="Padding:"
+                        Margin="5,0,5,1"
                         VerticalAlignment="Center"
-                        Margin="5,0,5,1" />
+                        Text="Padding:" />
                     <TextBox
                         x:Name="ControlPaddingBox"
-                        AutomationProperties.LabeledBy="{Binding ElementName=PaddingLabel}"
                         Width="150"
+                        AutomationProperties.LabeledBy="{Binding ElementName=PaddingLabel}"
                         KeyUp="ControlPaddingBox_KeyUp"
                         LostFocus="ControlPaddingBox_LostFocus" />
                 </ui:SimpleStackPanel>

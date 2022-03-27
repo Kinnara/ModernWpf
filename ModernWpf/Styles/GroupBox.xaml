@@ -23,11 +23,11 @@
                         </Grid.RowDefinitions>
                         <ContentPresenter
                             Grid.Row="0"
-                            TextElement.FontSize="{DynamicResource GroupBoxHeaderFontSize}"
                             Margin="{DynamicResource GroupBoxHeaderMargin}"
                             ContentSource="Header"
                             RecognizesAccessKey="True"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            TextElement.FontSize="{DynamicResource GroupBoxHeaderFontSize}" />
                         <ContentPresenter
                             Grid.Row="1"
                             Margin="{TemplateBinding Padding}"
@@ -38,5 +38,5 @@
         </Setter>
     </Style>
 
-    <Style TargetType="GroupBox" BasedOn="{StaticResource DefaultGroupBoxStyle}" />
+    <Style BasedOn="{StaticResource DefaultGroupBoxStyle}" TargetType="GroupBox" />
 </ResourceDictionary>

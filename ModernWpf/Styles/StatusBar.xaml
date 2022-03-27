@@ -7,7 +7,7 @@
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
     </Style>
 
-    <Style TargetType="StatusBar" BasedOn="{StaticResource DefaultStatusBarStyle}" />
+    <Style BasedOn="{StaticResource DefaultStatusBarStyle}" TargetType="StatusBar" />
 
     <Style x:Key="{x:Static StatusBar.SeparatorStyleKey}" TargetType="Separator">
         <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
@@ -52,6 +52,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="StatusBarItem" BasedOn="{StaticResource DefaultStatusBarItemStyle}" />
+    <Style BasedOn="{StaticResource DefaultStatusBarItemStyle}" TargetType="StatusBarItem" />
 
 </ResourceDictionary>

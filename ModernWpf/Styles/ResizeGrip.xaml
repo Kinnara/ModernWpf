@@ -11,21 +11,21 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ResizeGrip">
                     <Grid
-                        SnapsToDevicePixels="true"
-                        Background="{TemplateBinding Background}">
+                        Background="{TemplateBinding Background}"
+                        SnapsToDevicePixels="true">
                         <Path
+                            Margin="0,0,2,2"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
-                            Margin="0,0,2,2"
                             Data="M 9,0 L 11,0 L 11,11 L 0,11 L 0,9 L 3,9 L 3,6 L 6,6 L 6,3 L 9,3 z">
 
                             <Path.Fill>
                                 <DrawingBrush
-                                    Viewbox="0,0,3,3"
-                                    Viewport="0,0,3,3"
                                     TileMode="Tile"
-                                    ViewportUnits="Absolute"
-                                    ViewboxUnits="Absolute">
+                                    Viewbox="0,0,3,3"
+                                    ViewboxUnits="Absolute"
+                                    Viewport="0,0,3,3"
+                                    ViewportUnits="Absolute">
                                     <DrawingBrush.Drawing>
                                         <DrawingGroup>
                                             <DrawingGroup.Children>
@@ -44,5 +44,5 @@
         </Setter>
     </Style>
 
-    <Style TargetType="ResizeGrip" BasedOn="{StaticResource ResizeGripDefaultStyle}" />
+    <Style BasedOn="{StaticResource ResizeGripDefaultStyle}" TargetType="ResizeGrip" />
 </ResourceDictionary>

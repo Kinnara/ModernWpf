@@ -2,8 +2,8 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:local="clr-namespace:ModernWpf.Controls">
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:ui="http://schemas.modernwpf.com/2019">
 
     <Style TargetType="local:RatingControl">
         <Setter Property="Height" Value="32" />
@@ -32,22 +32,22 @@
                         </VisualStateManager.VisualStateGroups>
 
                         <StackPanel
-                            Orientation="Horizontal"
                             Grid.Row="0"
-                            Margin="-20,-20,-20,-20">
+                            Margin="-20,-20,-20,-20"
+                            Orientation="Horizontal">
                             <StackPanel
                                 x:Name="RatingBackgroundStackPanel"
-                                Orientation="Horizontal"
+                                Margin="20,20,0,20"
                                 Background="Transparent"
-                                Margin="20,20,0,20" />
+                                Orientation="Horizontal" />
                             <TextBlock
                                 x:Name="Caption"
                                 Height="32"
                                 Margin="4,9,20,0"
-                                Style="{DynamicResource CaptionTextBlockStyle}"
                                 VerticalAlignment="Center"
                                 AutomationProperties.Name="RatingCaption"
                                 IsHitTestVisible="False"
+                                Style="{DynamicResource CaptionTextBlockStyle}"
                                 Text="{TemplateBinding Caption}" />
                             <!-- 4 = 8 item spacing +4 of magic redline spacing -8 to compensate for scale of the last RatingItem -->
                             <!--
@@ -60,18 +60,18 @@
 
                         <ContentPresenter
                             x:Name="ForegroundContentPresenter"
-                            IsHitTestVisible="False"
-                            Grid.Row="0">
+                            Grid.Row="0"
+                            IsHitTestVisible="False">
                             <!-- Margin is on the StackPanel because ContentPresenter clips differently such that moving the reverse margin up won't work -->
                             <ContentPresenter.Content>
                                 <StackPanel
-                                    Orientation="Horizontal"
-                                    Margin="-40,-40,-40,-40">
+                                    Margin="-40,-40,-40,-40"
+                                    Orientation="Horizontal">
                                     <StackPanel
                                         x:Name="RatingForegroundStackPanel"
-                                        Orientation="Horizontal"
+                                        Margin="40,40,40,40"
                                         IsHitTestVisible="False"
-                                        Margin="40,40,40,40" />
+                                        Orientation="Horizontal" />
                                 </StackPanel>
                             </ContentPresenter.Content>
                         </ContentPresenter>

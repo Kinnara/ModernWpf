@@ -7,6 +7,6 @@
         <ResourceDictionary Source="/ModernWpf;component/Styles/ContextMenu.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="local:TextContextMenu" BasedOn="{StaticResource ContextMenuStyleBase}" />
+    <Style BasedOn="{StaticResource ContextMenuStyleBase}" TargetType="local:TextContextMenu" />
 
 </ResourceDictionary>

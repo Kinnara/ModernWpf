@@ -123,13 +123,18 @@ namespace ModernWpf.SampleApp.Controls
 
         private Uri GetDerivedSource(Uri rawSource)
         {
+            Uri derivedSource;
             // Get the full path of the source string
-            string concatString = "";
-            for (int i = 2; i < rawSource.Segments.Length; i++)
+            string concatString = rawSource.OriginalString;
+
+            if (concatString.StartsWith("/"))
             {
-                concatString += rawSource.Segments[i];
+                derivedSource = new Uri($"/ControlPagesSampleCode{concatString}", UriKind.Relative);
             }
-            Uri derivedSource = new Uri(new Uri("/ControlPagesSampleCode/", UriKind.Relative), concatString);
+            else
+            {
+                derivedSource = new Uri($"/ControlPagesSampleCode/{concatString}", UriKind.Relative);
+            }
 
             return derivedSource;
         }
@@ -148,7 +153,7 @@ namespace ModernWpf.SampleApp.Controls
 
         private async void FormatAndRenderSampleFromFile(Uri source, ContentPresenter presenter, ILanguage highlightLanguage)
         {
-            if (source != null && source.AbsolutePath.EndsWith("txt"))
+            if (source != null && source.OriginalString.EndsWith("txt"))
             {
                 Uri derivedSource = GetDerivedSource(source);
                 var file = Application.GetResourceStream(derivedSource);

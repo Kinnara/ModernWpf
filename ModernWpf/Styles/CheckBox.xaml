@@ -49,32 +49,32 @@
                             <Grid VerticalAlignment="Top">
                                 <Rectangle
                                     x:Name="NormalRectangle"
+                                    Width="20"
+                                    Height="20"
                                     Fill="{DynamicResource CheckBoxCheckBackgroundFillUnchecked}"
+                                    RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                    RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
                                     Stroke="{DynamicResource CheckBoxCheckBackgroundStrokeUnchecked}"
                                     StrokeThickness="{DynamicResource CheckBoxBorderThemeThickness}"
-                                    UseLayoutRounding="False"
-                                    Height="20"
-                                    Width="20"
-                                    RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                    RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                    UseLayoutRounding="False" />
                                 <local:FontIconFallback
                                     x:Name="CheckGlyph"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     Data="{StaticResource CheckMark}"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="16"
                                     Foreground="{DynamicResource CheckBoxCheckGlyphForegroundUnchecked}"
                                     Opacity="0" />
                             </Grid>
                             <local:ContentPresenterEx
                                 x:Name="ContentPresenter"
+                                Grid.Column="1"
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Grid.Column="1"
-                                TextWrapping="Wrap"
                                 Focusable="False"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                TextWrapping="Wrap" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -259,16 +259,16 @@
         </Setter>
     </Style>
 
-    <Style TargetType="CheckBox" BasedOn="{StaticResource DefaultCheckBoxStyle}" />
+    <Style BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox" />
 
-    <Style x:Key="DataGridCheckBoxStyle" TargetType="CheckBox" BasedOn="{StaticResource DefaultCheckBoxStyle}">
+    <Style x:Key="DataGridCheckBoxStyle" BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox">
         <Setter Property="MinWidth" Value="0" />
         <Setter Property="MinHeight" Value="0" />
         <Setter Property="Margin" Value="12,0" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
     </Style>
 
-    <Style x:Key="DataGridReadOnlyCheckBoxStyle" TargetType="CheckBox" BasedOn="{StaticResource DataGridCheckBoxStyle}">
+    <Style x:Key="DataGridReadOnlyCheckBoxStyle" BasedOn="{StaticResource DataGridCheckBoxStyle}" TargetType="CheckBox">
         <Setter Property="IsHitTestVisible" Value="False" />
         <Setter Property="Focusable" Value="False" />
     </Style>

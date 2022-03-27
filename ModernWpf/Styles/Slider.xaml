@@ -41,7 +41,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="Thumb" x:Key="SliderThumbStyle">
+    <Style x:Key="SliderThumbStyle" TargetType="Thumb">
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Background" Value="{DynamicResource SliderThumbBackground}" />
         <Setter Property="IsTabStop" Value="False" />
@@ -58,7 +58,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="SliderAutoToolTipStyle" TargetType="ToolTip" BasedOn="{StaticResource DefaultToolTipStyle}">
+    <Style x:Key="SliderAutoToolTipStyle" BasedOn="{StaticResource DefaultToolTipStyle}" TargetType="ToolTip">
         <Setter Property="primitives:SliderAutoToolTipHelper.IsEnabled" Value="True" />
     </Style>
 
@@ -74,19 +74,19 @@
             <local:ContentPresenterEx
                 x:Name="HeaderContentPresenter"
                 Grid.Row="0"
+                Margin="{DynamicResource SliderTopHeaderMargin}"
                 Content="{TemplateBinding primitives:ControlHelper.Header}"
                 ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
                 FontWeight="{DynamicResource SliderHeaderThemeFontWeight}"
                 Foreground="{DynamicResource SliderHeaderForeground}"
-                Margin="{DynamicResource SliderTopHeaderMargin}"
+                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                 TextWrapping="Wrap"
-                Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
-                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}" />
             <Grid
                 x:Name="SliderContainer"
                 Grid.Row="1"
-                Background="{DynamicResource SliderContainerBackground}"
-                primitives:FocusVisualHelper.IsTemplateFocusTarget="True">
+                primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
+                Background="{DynamicResource SliderContainerBackground}">
                 <Grid
                     x:Name="HorizontalTemplate"
                     MinHeight="{DynamicResource SliderHorizontalHeight}">
@@ -105,38 +105,38 @@
 
                     <Rectangle
                         x:Name="HorizontalTrackRect"
-                        Fill="{TemplateBinding Background}"
-                        Height="{DynamicResource SliderTrackThemeHeight}"
                         Grid.Row="1"
                         Grid.ColumnSpan="3"
+                        Height="{DynamicResource SliderTrackThemeHeight}"
+                        Fill="{TemplateBinding Background}"
                         RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
                         RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                     <Rectangle
                         x:Name="HorizontalDecreaseRect"
+                        Grid.Row="1"
                         Width="{Binding ActualWidth, ElementName=HorizontalDecrease}"
                         Fill="{TemplateBinding Foreground}"
-                        Grid.Row="1"
                         RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
                         RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                     <TickBar
                         x:Name="TopTickBar"
-                        Placement="Top"
-                        Visibility="Collapsed"
-                        Fill="{DynamicResource SliderTickBarFill}"
+                        Grid.ColumnSpan="3"
                         Height="{DynamicResource SliderOutsideTickBarThemeHeight}"
-                        VerticalAlignment="Bottom"
                         Margin="0,0,0,4"
-                        Grid.ColumnSpan="3" />
+                        VerticalAlignment="Bottom"
+                        Fill="{DynamicResource SliderTickBarFill}"
+                        Placement="Top"
+                        Visibility="Collapsed" />
                     <TickBar
                         x:Name="BottomTickBar"
-                        Placement="Bottom"
-                        Visibility="Collapsed"
-                        Fill="{DynamicResource SliderTickBarFill}"
-                        Height="{DynamicResource SliderOutsideTickBarThemeHeight}"
-                        VerticalAlignment="Top"
-                        Margin="0,4,0,0"
                         Grid.Row="2"
-                        Grid.ColumnSpan="3" />
+                        Grid.ColumnSpan="3"
+                        Height="{DynamicResource SliderOutsideTickBarThemeHeight}"
+                        Margin="0,4,0,0"
+                        VerticalAlignment="Top"
+                        Fill="{DynamicResource SliderTickBarFill}"
+                        Placement="Bottom"
+                        Visibility="Collapsed" />
                     <Track
                         x:Name="PART_Track"
                         Grid.Row="0"
@@ -157,13 +157,13 @@
                         <Track.Thumb>
                             <Thumb
                                 x:Name="HorizontalThumb"
-                                Style="{StaticResource SliderThumbStyle}"
-                                DataContext="{TemplateBinding Value}"
-                                Height="{DynamicResource SliderHorizontalThumbHeight}"
                                 Width="{DynamicResource SliderHorizontalThumbWidth}"
-                                primitives:FocusVisualHelper.FocusVisualMargin="-14,-6,-14,-6">
+                                Height="{DynamicResource SliderHorizontalThumbHeight}"
+                                primitives:FocusVisualHelper.FocusVisualMargin="-14,-6,-14,-6"
+                                DataContext="{TemplateBinding Value}"
+                                Style="{StaticResource SliderThumbStyle}">
                                 <Thumb.Resources>
-                                    <Style TargetType="ToolTip" BasedOn="{StaticResource SliderAutoToolTipStyle}" />
+                                    <Style BasedOn="{StaticResource SliderAutoToolTipStyle}" TargetType="ToolTip" />
                                 </Thumb.Resources>
                             </Thumb>
                         </Track.Thumb>
@@ -218,19 +218,19 @@
             <local:ContentPresenterEx
                 x:Name="HeaderContentPresenter"
                 Grid.Row="0"
+                Margin="{DynamicResource SliderTopHeaderMargin}"
                 Content="{TemplateBinding primitives:ControlHelper.Header}"
                 ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
                 FontWeight="{DynamicResource SliderHeaderThemeFontWeight}"
                 Foreground="{DynamicResource SliderHeaderForeground}"
-                Margin="{DynamicResource SliderTopHeaderMargin}"
+                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                 TextWrapping="Wrap"
-                Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
-                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}" />
             <Grid
                 x:Name="SliderContainer"
                 Grid.Row="1"
-                Background="{DynamicResource SliderContainerBackground}"
-                primitives:FocusVisualHelper.IsTemplateFocusTarget="True">
+                primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
+                Background="{DynamicResource SliderContainerBackground}">
                 <Grid
                     x:Name="VerticalTemplate"
                     MinWidth="{DynamicResource SliderVerticalWidth}">
@@ -249,39 +249,39 @@
 
                     <Rectangle
                         x:Name="VerticalTrackRect"
-                        Fill="{TemplateBinding Background}"
-                        Width="{DynamicResource SliderTrackThemeHeight}"
-                        Grid.Column="1"
                         Grid.RowSpan="3"
+                        Grid.Column="1"
+                        Width="{DynamicResource SliderTrackThemeHeight}"
+                        Fill="{TemplateBinding Background}"
                         RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
                         RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                     <Rectangle
                         x:Name="VerticalDecreaseRect"
+                        Grid.Row="2"
+                        Grid.Column="1"
                         Height="{Binding ActualHeight, ElementName=VerticalDecrease}"
                         Fill="{TemplateBinding Foreground}"
-                        Grid.Column="1"
-                        Grid.Row="2"
                         RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
                         RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                     <TickBar
                         x:Name="LeftTickBar"
-                        Placement="Left"
-                        Visibility="Collapsed"
-                        Fill="{DynamicResource SliderTickBarFill}"
+                        Grid.RowSpan="3"
                         Width="{DynamicResource SliderOutsideTickBarThemeHeight}"
-                        HorizontalAlignment="Right"
                         Margin="0,0,4,0"
-                        Grid.RowSpan="3" />
+                        HorizontalAlignment="Right"
+                        Fill="{DynamicResource SliderTickBarFill}"
+                        Placement="Left"
+                        Visibility="Collapsed" />
                     <TickBar
                         x:Name="RightTickBar"
-                        Placement="Right"
-                        Visibility="Collapsed"
-                        Fill="{DynamicResource SliderTickBarFill}"
-                        Width="{DynamicResource SliderOutsideTickBarThemeHeight}"
-                        HorizontalAlignment="Left"
-                        Margin="4,0,0,0"
+                        Grid.RowSpan="3"
                         Grid.Column="2"
-                        Grid.RowSpan="3" />
+                        Width="{DynamicResource SliderOutsideTickBarThemeHeight}"
+                        Margin="4,0,0,0"
+                        HorizontalAlignment="Left"
+                        Fill="{DynamicResource SliderTickBarFill}"
+                        Placement="Right"
+                        Visibility="Collapsed" />
                     <Track
                         x:Name="PART_Track"
                         Grid.Row="0"
@@ -302,13 +302,13 @@
                         <Track.Thumb>
                             <Thumb
                                 x:Name="VerticalThumb"
-                                Style="{StaticResource SliderThumbStyle}"
-                                DataContext="{TemplateBinding Value}"
                                 Width="{DynamicResource SliderVerticalThumbWidth}"
                                 Height="{DynamicResource SliderVerticalThumbHeight}"
-                                primitives:FocusVisualHelper.FocusVisualMargin="-6,-14,-6,-14">
+                                primitives:FocusVisualHelper.FocusVisualMargin="-6,-14,-6,-14"
+                                DataContext="{TemplateBinding Value}"
+                                Style="{StaticResource SliderThumbStyle}">
                                 <Thumb.Resources>
-                                    <Style TargetType="ToolTip" BasedOn="{StaticResource SliderAutoToolTipStyle}" />
+                                    <Style BasedOn="{StaticResource SliderAutoToolTipStyle}" TargetType="ToolTip" />
                                 </Thumb.Resources>
                             </Thumb>
                         </Track.Thumb>
@@ -372,6 +372,6 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="Slider" BasedOn="{StaticResource DefaultSliderStyle}" />
+    <Style BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider" />
 
 </ResourceDictionary>

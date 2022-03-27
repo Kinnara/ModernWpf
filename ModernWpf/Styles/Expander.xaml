@@ -3,8 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ModernWpf.Controls"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary>
             <primitives:CornerRadiusFilterConverter x:Key="TopCornerRadiusFilterConverter" Filter="Top" />
@@ -49,51 +49,51 @@
                 <ControlTemplate TargetType="ToggleButton">
                     <Border
                         x:Name="ToggleButtonGrid"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                        Background="{TemplateBinding Background}"
-                        MinHeight="{TemplateBinding MinHeight}"
-                        MinWidth="{TemplateBinding MinWidth}"
-                        MaxWidth="{TemplateBinding MaxWidth}"
                         Width="{TemplateBinding Width}"
+                        MinWidth="{TemplateBinding MinWidth}"
+                        MinHeight="{TemplateBinding MinHeight}"
+                        MaxWidth="{TemplateBinding MaxWidth}"
+                        Padding="{TemplateBinding Padding}"
                         HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        Background="{TemplateBinding Background}"
                         BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        Padding="{TemplateBinding Padding}">
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                         <Grid SnapsToDevicePixels="False">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <local:ContentPresenterEx
-                                Margin="8,0,0,0"
                                 x:Name="ContentPresenter"
+                                Margin="8,0,0,0"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Foreground="{TemplateBinding Foreground}"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="True"
-                                Foreground="{TemplateBinding Foreground}" />
+                                SnapsToDevicePixels="True" />
                             <Border
                                 x:Name="ExpandCollapseChevronBorder"
                                 Grid.Column="1"
                                 Width="{DynamicResource ExpanderChevronButtonSize}"
                                 Height="{DynamicResource ExpanderChevronButtonSize}"
                                 Margin="{DynamicResource ExpanderChevronHorizontalMargin}"
-                                CornerRadius="{DynamicResource ControlCornerRadius}"
+                                Background="{DynamicResource ExpanderChevronBackground}"
                                 BorderBrush="{DynamicResource ExpanderChevronBorderBrush}"
                                 BorderThickness="{DynamicResource ExpanderChevronBorderThickness}"
-                                Background="{DynamicResource ExpanderChevronBackground}">
+                                CornerRadius="{DynamicResource ControlCornerRadius}">
                                 <local:FontIconFallback
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
                                     x:Name="ExpandCollapseChevron"
-                                    RenderTransformOrigin="0.5, 0.5"
                                     Width="{DynamicResource ExpanderChevronGlyphSize}"
                                     Height="{DynamicResource ExpanderChevronGlyphSize}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="{DynamicResource ExpanderChevronDownGlyph}"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="12"
-                                    Data="{DynamicResource ExpanderChevronDownGlyph}"
-                                    SnapsToDevicePixels="false"
-                                    Foreground="{DynamicResource ExpanderChevronForeground}" />
+                                    Foreground="{DynamicResource ExpanderChevronForeground}"
+                                    RenderTransformOrigin="0.5, 0.5"
+                                    SnapsToDevicePixels="false" />
                             </Border>
                         </Grid>
                     </Border>
@@ -142,16 +142,16 @@
                 <ControlTemplate TargetType="ToggleButton">
                     <Border
                         x:Name="ToggleButtonGrid"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                        Background="{TemplateBinding Background}"
-                        MinHeight="{TemplateBinding MinHeight}"
-                        MinWidth="{TemplateBinding MinWidth}"
-                        MaxWidth="{TemplateBinding MaxWidth}"
                         Width="{TemplateBinding Width}"
+                        MinWidth="{TemplateBinding MinWidth}"
+                        MinHeight="{TemplateBinding MinHeight}"
+                        MaxWidth="{TemplateBinding MaxWidth}"
+                        Padding="{TemplateBinding Padding}"
                         HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        Background="{TemplateBinding Background}"
                         BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        Padding="{TemplateBinding Padding}">
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                         <Grid SnapsToDevicePixels="False">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -162,31 +162,31 @@
                                 Margin="8,0,0,0"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Foreground="{TemplateBinding Foreground}"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="True"
-                                Foreground="{TemplateBinding Foreground}" />
+                                SnapsToDevicePixels="True" />
                             <Border
                                 x:Name="ExpandCollapseChevronBorder"
                                 Grid.Column="1"
                                 Width="{DynamicResource ExpanderChevronButtonSize}"
                                 Height="{DynamicResource ExpanderChevronButtonSize}"
                                 Margin="{DynamicResource ExpanderChevronHorizontalMargin}"
-                                CornerRadius="{DynamicResource ControlCornerRadius}"
+                                Background="{DynamicResource ExpanderChevronBackground}"
                                 BorderBrush="{DynamicResource ExpanderChevronBorderBrush}"
                                 BorderThickness="{DynamicResource ExpanderChevronBorderThickness}"
-                                Background="{DynamicResource ExpanderChevronBackground}">
+                                CornerRadius="{DynamicResource ControlCornerRadius}">
                                 <local:FontIconFallback
                                     x:Name="ExpandCollapseChevron"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    RenderTransformOrigin="0.5, 0.5"
                                     Width="{DynamicResource ExpanderChevronGlyphSize}"
                                     Height="{DynamicResource ExpanderChevronGlyphSize}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="{DynamicResource ExpanderChevronUpGlyph}"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="12"
-                                    Data="{DynamicResource ExpanderChevronUpGlyph}"
-                                    SnapsToDevicePixels="false"
-                                    Foreground="{DynamicResource ExpanderChevronForeground}" />
+                                    Foreground="{DynamicResource ExpanderChevronForeground}"
+                                    RenderTransformOrigin="0.5, 0.5"
+                                    SnapsToDevicePixels="false" />
                             </Border>
                         </Grid>
                     </Border>
@@ -235,29 +235,29 @@
                 <ControlTemplate TargetType="ToggleButton">
                     <Border
                         x:Name="ToggleButtonGrid"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                        Background="{TemplateBinding Background}"
-                        MinHeight="{TemplateBinding MinWidth}"
-                        MinWidth="{TemplateBinding MinHeight}"
-                        MaxHeight="{TemplateBinding MaxWidth}"
                         Width="{TemplateBinding Width}"
+                        MinWidth="{TemplateBinding MinHeight}"
+                        MinHeight="{TemplateBinding MinWidth}"
+                        MaxHeight="{TemplateBinding MaxWidth}"
+                        Padding="{TemplateBinding Padding}"
                         HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        Background="{TemplateBinding Background}"
                         BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        Padding="{TemplateBinding Padding}">
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                         <Grid SnapsToDevicePixels="False">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <local:ContentPresenterEx
-                                Margin="0,8,0,0"
                                 x:Name="ContentPresenter"
+                                Margin="0,8,0,0"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Foreground="{TemplateBinding Foreground}"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="True"
-                                Foreground="{TemplateBinding Foreground}">
+                                SnapsToDevicePixels="True">
                                 <local:ContentPresenterEx.LayoutTransform>
                                     <TransformGroup>
                                         <TransformGroup.Children>
@@ -274,22 +274,22 @@
                                 Width="{DynamicResource ExpanderChevronButtonSize}"
                                 Height="{DynamicResource ExpanderChevronButtonSize}"
                                 Margin="{DynamicResource ExpanderChevronVerticalMargin}"
-                                CornerRadius="{DynamicResource ControlCornerRadius}"
+                                Background="{DynamicResource ExpanderChevronBackground}"
                                 BorderBrush="{DynamicResource ExpanderChevronBorderBrush}"
                                 BorderThickness="{DynamicResource ExpanderChevronBorderThickness}"
-                                Background="{DynamicResource ExpanderChevronBackground}">
+                                CornerRadius="{DynamicResource ControlCornerRadius}">
                                 <local:FontIconFallback
                                     x:Name="ExpandCollapseChevron"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    RenderTransformOrigin="0.5, 0.5"
                                     Width="{DynamicResource ExpanderChevronGlyphSize}"
                                     Height="{DynamicResource ExpanderChevronGlyphSize}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="{DynamicResource ExpanderChevronUpGlyph}"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="12"
-                                    Data="{DynamicResource ExpanderChevronUpGlyph}"
-                                    SnapsToDevicePixels="false"
-                                    Foreground="{DynamicResource ExpanderChevronForeground}" />
+                                    Foreground="{DynamicResource ExpanderChevronForeground}"
+                                    RenderTransformOrigin="0.5, 0.5"
+                                    SnapsToDevicePixels="false" />
                                 <Border.LayoutTransform>
                                     <TransformGroup>
                                         <TransformGroup.Children>
@@ -347,16 +347,16 @@
                 <ControlTemplate TargetType="ToggleButton">
                     <Border
                         x:Name="ToggleButtonGrid"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                        Background="{TemplateBinding Background}"
-                        MinHeight="{TemplateBinding MinWidth}"
-                        MinWidth="{TemplateBinding MinHeight}"
-                        MaxHeight="{TemplateBinding MaxWidth}"
                         Width="{TemplateBinding Width}"
+                        MinWidth="{TemplateBinding MinHeight}"
+                        MinHeight="{TemplateBinding MinWidth}"
+                        MaxHeight="{TemplateBinding MaxWidth}"
+                        Padding="{TemplateBinding Padding}"
                         HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        Background="{TemplateBinding Background}"
                         BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        Padding="{TemplateBinding Padding}">
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                         <Grid SnapsToDevicePixels="False">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
@@ -367,9 +367,9 @@
                                 Margin="0,8,0,0"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Foreground="{TemplateBinding Foreground}"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="True"
-                                Foreground="{TemplateBinding Foreground}">
+                                SnapsToDevicePixels="True">
                                 <local:ContentPresenterEx.LayoutTransform>
                                     <TransformGroup>
                                         <TransformGroup.Children>
@@ -386,22 +386,22 @@
                                 Width="{DynamicResource ExpanderChevronButtonSize}"
                                 Height="{DynamicResource ExpanderChevronButtonSize}"
                                 Margin="{DynamicResource ExpanderChevronVerticalMargin}"
-                                CornerRadius="{DynamicResource ControlCornerRadius}"
+                                Background="{DynamicResource ExpanderChevronBackground}"
                                 BorderBrush="{DynamicResource ExpanderChevronBorderBrush}"
                                 BorderThickness="{DynamicResource ExpanderChevronBorderThickness}"
-                                Background="{DynamicResource ExpanderChevronBackground}">
+                                CornerRadius="{DynamicResource ControlCornerRadius}">
                                 <local:FontIconFallback
                                     x:Name="ExpandCollapseChevron"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    RenderTransformOrigin="0.5, 0.5"
                                     Width="{DynamicResource ExpanderChevronGlyphSize}"
                                     Height="{DynamicResource ExpanderChevronGlyphSize}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="{DynamicResource ExpanderChevronDownGlyph}"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="12"
-                                    Data="{DynamicResource ExpanderChevronDownGlyph}"
-                                    SnapsToDevicePixels="false"
-                                    Foreground="{DynamicResource ExpanderChevronForeground}" />
+                                    Foreground="{DynamicResource ExpanderChevronForeground}"
+                                    RenderTransformOrigin="0.5, 0.5"
+                                    SnapsToDevicePixels="false" />
                                 <Border.LayoutTransform>
                                     <TransformGroup>
                                         <TransformGroup.Children>
@@ -472,46 +472,46 @@
                         MaxWidth="{TemplateBinding MaxWidth}">
                         <ToggleButton
                             x:Name="ExpanderHeader"
-                            Tag="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                            MinHeight="{TemplateBinding MinHeight}"
+                            Padding="{DynamicResource ExpanderHeaderHorizontalPadding}"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="{DynamicResource ExpanderHeaderHorizontalContentAlignment}"
+                            VerticalContentAlignment="{DynamicResource ExpanderHeaderVerticalContentAlignment}"
+                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                             AutomationProperties.AutomationId="ExpanderToggleButton"
                             Background="{DynamicResource ExpanderHeaderBackground}"
                             BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
                             BorderThickness="{DynamicResource ExpanderHeaderBorderThickness}"
-                            MinHeight="{TemplateBinding MinHeight}"
-                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                            IsEnabled="{TemplateBinding IsEnabled}"
-                            Padding="{DynamicResource ExpanderHeaderHorizontalPadding}"
-                            Style="{DynamicResource ExpanderHeaderDownStyle}"
-                            HorizontalAlignment="Stretch"
-                            DockPanel.Dock="Top"
-                            HorizontalContentAlignment="{DynamicResource ExpanderHeaderHorizontalContentAlignment}"
-                            VerticalContentAlignment="{DynamicResource ExpanderHeaderVerticalContentAlignment}"
                             Content="{TemplateBinding Header}"
                             ContentTemplate="{TemplateBinding HeaderTemplate}"
                             ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
-                            IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" />
+                            DockPanel.Dock="Top"
+                            IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                            IsEnabled="{TemplateBinding IsEnabled}"
+                            Style="{DynamicResource ExpanderHeaderDownStyle}"
+                            Tag="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
                         <!-- The clip is a composition clip applied in code -->
                         <Border
                             x:Name="ExpanderContentClip"
                             DockPanel.Dock="Bottom">
                             <Border
                                 x:Name="ExpanderContent"
-                                Visibility="Collapsed"
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomCornerRadiusFilterConverter}}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{StaticResource ExpanderContentDownBorderThickness}"
                                 MinHeight="{TemplateBinding MinHeight}"
+                                Padding="{TemplateBinding Padding}"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                Padding="{TemplateBinding Padding}">
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{StaticResource ExpanderContentDownBorderThickness}"
+                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomCornerRadiusFilterConverter}}"
+                                Visibility="Collapsed">
                                 <ContentPresenter
                                     x:Name="ExpandSite"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     Content="{TemplateBinding Content}"
                                     ContentTemplate="{TemplateBinding ContentTemplate}"
-                                    ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                    ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
                             </Border>
                         </Border>
                     </DockPanel>
@@ -592,6 +592,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="Expander" BasedOn="{StaticResource DefaultExpanderStyle}" />
+    <Style BasedOn="{StaticResource DefaultExpanderStyle}" TargetType="Expander" />
 
 </ResourceDictionary>

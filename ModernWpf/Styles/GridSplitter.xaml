@@ -18,12 +18,12 @@
             <Setter.Value>
                 <ControlTemplate TargetType="GridSplitter">
                     <Border
+                        Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        Background="{TemplateBinding Background}" />
+                        BorderThickness="{TemplateBinding BorderThickness}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    <Style TargetType="GridSplitter" BasedOn="{StaticResource DefaultGridSplitterStyle}" />
+    <Style BasedOn="{StaticResource DefaultGridSplitterStyle}" TargetType="GridSplitter" />
 </ResourceDictionary>

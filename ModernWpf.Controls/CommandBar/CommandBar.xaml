@@ -43,10 +43,10 @@
                         </VisualStateManager.VisualStateGroups>
                         <Grid
                             x:Name="ContentRoot"
-                            VerticalAlignment="Top"
-                            Margin="{TemplateBinding Padding}"
                             Height="{TemplateBinding Height}"
                             MinHeight="{DynamicResource AppBarThemeCompactHeight}"
+                            Margin="{TemplateBinding Padding}"
+                            VerticalAlignment="Top"
                             Background="{TemplateBinding Background}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -63,70 +63,70 @@
                                 -->
                                 <ContentControl
                                     x:Name="ContentControl"
-                                    Content="{TemplateBinding Header}"
-                                    ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                    Foreground="{TemplateBinding Foreground}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Content="{TemplateBinding Header}"
+                                    ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                    Foreground="{TemplateBinding Foreground}"
                                     IsTabStop="False"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                 <primitives:CommandBarPanel
                                     x:Name="PART_ToolBarPanel"
-                                    HorizontalAlignment="Right"
-                                    MinHeight="{DynamicResource AppBarThemeCompactHeight}"
                                     Grid.Column="1"
+                                    MinHeight="{DynamicResource AppBarThemeCompactHeight}"
+                                    HorizontalAlignment="Right"
                                     IsItemsHost="true"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             </Grid>
                             <ToggleButton
                                 x:Name="MoreButton"
-                                IsEnabled="{TemplateBinding HasOverflowItems}"
-                                Foreground="{TemplateBinding Foreground}"
-                                Style="{DynamicResource EllipsisButton}"
-                                Padding="{DynamicResource CommandBarMoreButtonMargin}"
-                                MinHeight="{DynamicResource AppBarThemeCompactHeight}"
-                                VerticalAlignment="Top"
                                 Grid.Column="1"
-                                Visibility="{TemplateBinding EffectiveOverflowButtonVisibility}"
+                                MinHeight="{DynamicResource AppBarThemeCompactHeight}"
+                                Padding="{DynamicResource CommandBarMoreButtonMargin}"
+                                VerticalAlignment="Top"
+                                ClickMode="Press"
+                                Foreground="{TemplateBinding Foreground}"
                                 IsChecked="{Binding Path=IsOverflowOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                ClickMode="Press">
+                                IsEnabled="{TemplateBinding HasOverflowItems}"
+                                Style="{DynamicResource EllipsisButton}"
+                                Visibility="{TemplateBinding EffectiveOverflowButtonVisibility}">
                                 <ui:FontIconFallback
                                     x:Name="EllipsisIcon"
+                                    Height="{DynamicResource AppBarExpandButtonCircleDiameter}"
                                     VerticalAlignment="Center"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    FontSize="20"
                                     Data="{StaticResource More}"
-                                    Height="{DynamicResource AppBarExpandButtonCircleDiameter}" />
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="20" />
                             </ToggleButton>
                             <ui:MenuPopup
                                 x:Name="OverflowPopup"
                                 AllowsTransparency="true"
-                                Placement="Custom"
-                                IsOpen="{Binding Path=IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                                StaysOpen="True"
                                 Focusable="false"
-                                PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
+                                IsOpen="{Binding Path=IsOverflowOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                Placement="Custom"
+                                PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+                                StaysOpen="True">
                                 <ui:ThemeShadowChrome
                                     x:Name="OverflowContentRoot"
-                                    IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
-                                    CornerRadius="{Binding ElementName=SecondaryItemsControl, Path=CornerRadius}"
                                     MinWidth="{DynamicResource CommandBarOverflowMinWidth}"
                                     MaxWidth="{DynamicResource CommandBarOverflowMaxWidth}"
                                     MaxHeight="{TemplateBinding OverflowContentMaxHeight}"
+                                    CornerRadius="{Binding ElementName=SecondaryItemsControl, Path=CornerRadius}"
+                                    IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
                                     RenderOptions.ClearTypeHint="Enabled">
 
                                     <primitives:CommandBarOverflowPresenter
                                         x:Name="SecondaryItemsControl"
-                                        Style="{TemplateBinding OverflowPresenterStyle}"
-                                        IsTabStop="False">
+                                        IsTabStop="False"
+                                        Style="{TemplateBinding OverflowPresenterStyle}">
                                         <primitives:CommandBarOverflowPanel
                                             x:Name="PART_ToolBarOverflowPanel"
-                                            Focusable="true"
                                             FocusVisualStyle="{x:Null}"
-                                            KeyboardNavigation.TabNavigation="Once"
+                                            Focusable="true"
                                             KeyboardNavigation.DirectionalNavigation="Cycle"
+                                            KeyboardNavigation.TabNavigation="Once"
                                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                     </primitives:CommandBarOverflowPresenter>
                                 </ui:ThemeShadowChrome>
@@ -134,10 +134,10 @@
                             <Rectangle
                                 x:Name="HighContrastBorder"
                                 Grid.ColumnSpan="2"
-                                Visibility="Collapsed"
                                 VerticalAlignment="Stretch"
                                 Stroke="{DynamicResource CommandBarHighContrastBorder}"
-                                StrokeThickness="1" />
+                                StrokeThickness="1"
+                                Visibility="Collapsed" />
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -192,11 +192,11 @@
                             BorderThickness="{DynamicResource CommandBarOverflowPresenterBorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}">
                             <ScrollViewer
+                                Padding="{DynamicResource CommandBarOverflowPresenterMargin}"
                                 Content="{TemplateBinding Content}"
                                 HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                Padding="{DynamicResource CommandBarOverflowPresenterMargin}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" />
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -229,20 +229,20 @@
                 <ControlTemplate TargetType="local:CommandBar">
                     <primitives:CommandBarToolBar
                         x:Name="PART_ToolBar"
-                        Background="{TemplateBinding Background}"
-                        Foreground="{TemplateBinding Foreground}"
-                        IsTabStop="{TemplateBinding IsTabStop}"
-                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
                         HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
                         HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Background="{TemplateBinding Background}"
+                        DefaultLabelPosition="{TemplateBinding DefaultLabelPosition}"
+                        Foreground="{TemplateBinding Foreground}"
                         Header="{TemplateBinding Content}"
                         HeaderTemplate="{TemplateBinding ContentTemplate}"
-                        DefaultLabelPosition="{TemplateBinding DefaultLabelPosition}"
                         IsDynamicOverflowEnabled="{TemplateBinding IsDynamicOverflowEnabled}"
+                        IsOverflowOpen="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                        IsTabStop="{TemplateBinding IsTabStop}"
                         OverflowButtonVisibility="{TemplateBinding OverflowButtonVisibility}"
-                        OverflowPresenterStyle="{TemplateBinding CommandBarOverflowPresenterStyle}"
-                        IsOverflowOpen="{Binding IsOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                        OverflowPresenterStyle="{TemplateBinding CommandBarOverflowPresenterStyle}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

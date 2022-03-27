@@ -306,14 +306,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (sender is StackPanel b)
             {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "ControlDetails":
-                        ControlDetails = b;
-                        break;
-                }
+                ControlDetails = b;
             }
         }
 
@@ -321,14 +314,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (sender is Image b)
             {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "ControlImage":
-                        ControlImage = b;
-                        break;
-                }
+                ControlImage = b;
             }
         }
     }

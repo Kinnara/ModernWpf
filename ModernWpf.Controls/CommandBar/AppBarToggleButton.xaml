@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:local="clr-namespace:ModernWpf.Controls">
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:ui="http://schemas.modernwpf.com/2019">
 
     <Style TargetType="local:AppBarToggleButton">
         <Setter Property="Background" Value="{DynamicResource AppBarToggleButtonBackground}" />
@@ -79,8 +79,8 @@
                                 Fill="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlay}" />
                             <Rectangle
                                 x:Name="AppBarToggleButtonInnerBorder"
-                                StrokeThickness="1"
-                                Stroke="{TemplateBinding BorderBrush}" />
+                                Stroke="{TemplateBinding BorderBrush}"
+                                StrokeThickness="1" />
                             <Grid
                                 x:Name="ContentRoot"
                                 MinHeight="{DynamicResource AppBarThemeMinHeight}">
@@ -96,15 +96,15 @@
                                 </Grid.RowDefinitions>
                                 <ui:FontIconFallback
                                     x:Name="OverflowCheckGlyph"
-                                    Data="{StaticResource CheckMark}"
-                                    Foreground="{DynamicResource AppBarToggleButtonCheckGlyphForeground}"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    FontSize="16"
+                                    Width="14"
+                                    Height="14"
+                                    Margin="{DynamicResource AppBarToggleButtonOverflowCheckMargin}"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Height="14"
-                                    Width="14"
-                                    Margin="{DynamicResource AppBarToggleButtonOverflowCheckMargin}"
+                                    Data="{StaticResource CheckMark}"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontSize="16"
+                                    Foreground="{DynamicResource AppBarToggleButtonCheckGlyphForeground}"
                                     Opacity="0"
                                     Visibility="Collapsed" />
                                 <Viewbox
@@ -120,36 +120,36 @@
                                 <TextBlock
                                     x:Name="TextLabel"
                                     Grid.Row="1"
-                                    Text="{TemplateBinding Label}"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    FontSize="12"
+                                    Margin="{DynamicResource AppBarToggleButtonTextLabelMargin}"
                                     FontFamily="{TemplateBinding FontFamily}"
+                                    FontSize="12"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding Label}"
                                     TextAlignment="Center"
-                                    TextWrapping="Wrap"
-                                    Margin="{DynamicResource AppBarToggleButtonTextLabelMargin}" />
+                                    TextWrapping="Wrap" />
                                 <TextBlock
                                     x:Name="OverflowTextLabel"
-                                    Text="{TemplateBinding Label}"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    FontSize="{DynamicResource ControlContentThemeFontSize}"
-                                    FontFamily="{TemplateBinding FontFamily}"
-                                    TextAlignment="Left"
-                                    TextWrapping="NoWrap"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
                                     Margin="38,0,12,0"
                                     Padding="{DynamicResource AppBarToggleButtonOverflowTextLabelPadding}"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    FontSize="{DynamicResource ControlContentThemeFontSize}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding Label}"
+                                    TextAlignment="Left"
+                                    TextWrapping="NoWrap"
                                     Visibility="Collapsed" />
                                 <TextBlock
                                     x:Name="KeyboardAcceleratorTextLabel"
                                     Grid.Column="1"
-                                    Style="{DynamicResource CaptionTextBlockStyle}"
-                                    Text="{TemplateBinding InputGestureText}"
                                     MinWidth="34"
                                     Margin="24,0,12,0"
-                                    Foreground="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForeground}"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
+                                    Foreground="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForeground}"
+                                    Style="{DynamicResource CaptionTextBlockStyle}"
+                                    Text="{TemplateBinding InputGestureText}"
                                     Visibility="Collapsed" />
 
                             </Grid>

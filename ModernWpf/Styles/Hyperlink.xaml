@@ -23,5 +23,5 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="Hyperlink" BasedOn="{StaticResource DefaultHyperlinkStyle}" />
+    <Style BasedOn="{StaticResource DefaultHyperlinkStyle}" TargetType="Hyperlink" />
 </ResourceDictionary>

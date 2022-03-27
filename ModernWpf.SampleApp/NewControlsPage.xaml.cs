@@ -38,11 +38,6 @@ namespace ModernWpf.SampleApp
             Items = ControlInfoDataSource.Instance.Groups.SelectMany(g => g.Items.Where(i => i.BadgeString != null)).OrderBy(i => i.Title).ToList();
             DataContext = Items;
         }
-
-        protected override bool GetIsNarrowLayoutState()
-        {
-            return /*LayoutVisualStates.CurrentState == NarrowLayout*/false;
-        }
     }
 
     public class ControlsGroupKeyConverter : IValueConverter

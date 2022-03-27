@@ -12,9 +12,9 @@
                         <local:ListViewHeaderItem
                             x:Name="PART_Header"
                             Content="{TemplateBinding Content}"
+                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
                             ContentTemplate="{TemplateBinding ContentTemplate}"
-                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                            ContentStringFormat="{TemplateBinding ContentStringFormat}" />
+                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
                         <ItemsPresenter x:Name="ItemsPresenter" />
                     </StackPanel>
                 </ControlTemplate>
@@ -22,6 +22,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="GroupItem" BasedOn="{StaticResource DefaultGroupItemStyle}" />
+    <Style BasedOn="{StaticResource DefaultGroupItemStyle}" TargetType="GroupItem" />
 
 </ResourceDictionary>

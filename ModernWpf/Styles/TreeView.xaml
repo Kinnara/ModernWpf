@@ -2,9 +2,9 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:local="clr-namespace:ModernWpf.Controls"
-    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:Double x:Key="TreeViewItemMinHeight">32</sys:Double>
 
@@ -15,8 +15,8 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
                     <Border
-                        Background="{TemplateBinding Background}"
-                        Padding="{TemplateBinding Padding}">
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}">
                         <ContentPresenter />
                     </Border>
                 </ControlTemplate>
@@ -56,14 +56,14 @@
 
                         <Border
                             x:Name="ContentPresenterGrid"
+                            MinHeight="{TemplateBinding MinHeight}"
+                            Padding="{TemplateBinding primitives:TreeViewItemHelper.Indentation}"
+                            primitives:PressHelper.IsEnabled="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                            MinHeight="{TemplateBinding MinHeight}"
-                            Padding="{TemplateBinding primitives:TreeViewItemHelper.Indentation}"
-                            SnapsToDevicePixels="true"
-                            primitives:PressHelper.IsEnabled="True">
+                            SnapsToDevicePixels="true">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -73,45 +73,45 @@
                                 <ToggleButton
                                     x:Name="ExpandCollapseChevron"
                                     Grid.Column="0"
-                                    Padding="12,0,12,0"
                                     Width="Auto"
-                                    Opacity="{TemplateBinding primitives:TreeViewItemHelper.GlyphOpacity}"
+                                    Padding="12,0,12,0"
                                     Background="Transparent"
                                     IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                    Opacity="{TemplateBinding primitives:TreeViewItemHelper.GlyphOpacity}"
                                     Style="{StaticResource ExpandCollapseToggleStyle}">
                                     <Grid>
                                         <local:FontIconFallback
                                             x:Name="CollapsedGlyph"
-                                            Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
                                             Width="12"
                                             Height="12"
-                                            Visibility="Collapsed"
-                                            FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
+                                            VerticalAlignment="Center"
                                             Data="{TemplateBinding primitives:TreeViewItemHelper.CollapsedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            VerticalAlignment="Center"
-                                            IsHitTestVisible="False" />
+                                            FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
+                                            Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
+                                            IsHitTestVisible="False"
+                                            Visibility="Collapsed" />
                                         <local:FontIconFallback
                                             x:Name="ExpandedGlyph"
-                                            Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
                                             Width="12"
                                             Height="12"
-                                            Visibility="Collapsed"
-                                            FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
+                                            VerticalAlignment="Center"
                                             Data="{TemplateBinding primitives:TreeViewItemHelper.ExpandedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            VerticalAlignment="Center"
-                                            IsHitTestVisible="False" />
+                                            FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
+                                            Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
+                                            IsHitTestVisible="False"
+                                            Visibility="Collapsed" />
                                     </Grid>
                                 </ToggleButton>
 
                                 <ContentPresenter
                                     x:Name="PART_Header"
                                     Grid.Column="1"
-                                    ContentSource="Header"
+                                    Margin="{TemplateBinding Padding}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    Margin="{TemplateBinding Padding}"
+                                    ContentSource="Header"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             </Grid>
                         </Border>
@@ -200,7 +200,7 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="TreeViewItem" BasedOn="{StaticResource DefaultTreeViewItemStyle}" />
+    <Style BasedOn="{StaticResource DefaultTreeViewItemStyle}" TargetType="TreeViewItem" />
 
     <Style x:Key="DefaultTreeViewStyle" TargetType="TreeView">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -222,13 +222,13 @@
                         <ScrollViewer
                             x:Name="_tv_scrollviewer_"
                             Padding="{TemplateBinding Padding}"
+                            primitives:ScrollViewerHelper.AutoHideScrollBars="{TemplateBinding primitives:ScrollViewerHelper.AutoHideScrollBars}"
                             Background="{TemplateBinding Background}"
                             CanContentScroll="false"
                             Focusable="false"
                             HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                            primitives:ScrollViewerHelper.AutoHideScrollBars="{TemplateBinding primitives:ScrollViewerHelper.AutoHideScrollBars}">
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
                             <ItemsPresenter />
                         </ScrollViewer>
                     </Border>
@@ -253,6 +253,6 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="TreeView" BasedOn="{StaticResource DefaultTreeViewStyle}" />
+    <Style BasedOn="{StaticResource DefaultTreeViewStyle}" TargetType="TreeView" />
 
 </ResourceDictionary>

@@ -90,7 +90,6 @@ namespace ModernWpf.SampleApp
 
         public PageHeader()
         {
-            DataContext = this;
             this.InitializeComponent();
             this.ResetCopyLinkButton();
         }

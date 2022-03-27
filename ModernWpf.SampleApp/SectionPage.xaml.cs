@@ -32,7 +32,7 @@ namespace ModernWpf.SampleApp
             base.OnNavigatedTo(e);
             var group = await ControlInfoDataSource.Instance.GetGroupAsync((string)e.ExtraData);
 
-            var menuItem = NavigationRootPage.Current.NavigationView.MenuItems.Cast<NavigationViewItemBase>().Single(i => (string)i.Tag == group.UniqueId);
+            var menuItem = NavigationRootPage.Current.NavigationView.MenuItems.Cast<NavigationViewItemBase>().Single(i => (string)i.Tag == group?.UniqueId);
             menuItem.IsSelected = true;
             NavigationRootPage.Current.NavigationView.Header = menuItem.Content;
 

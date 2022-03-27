@@ -3,8 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ModernWpf.Controls"
-    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:m="clr-namespace:ModernWpf.Markup"
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <CornerRadius x:Key="ControlCornerRadius">2,2,2,2</CornerRadius>
@@ -208,9 +208,9 @@
     <SolidColorBrush x:Key="SystemControlHighlightAltBaseMediumHighBrush" Color="{m:StaticColor SystemBaseMediumHighColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightAltAltMediumHighBrush" Color="{m:StaticColor SystemAltMediumHighColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightAltBaseMediumLowBrush" Color="{m:StaticColor SystemBaseMediumLowColor}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltListAccentHighBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.7" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltListAccentLowBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.4" />
-    <SolidColorBrush x:Key="SystemControlHighlightAltListAccentMediumBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.6" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltListAccentHighBrush" Opacity="0.7" Color="{m:DynamicColor SystemAccentColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltListAccentLowBrush" Opacity="0.4" Color="{m:DynamicColor SystemAccentColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAltListAccentMediumBrush" Opacity="0.6" Color="{m:DynamicColor SystemAccentColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightAltChromeWhiteBrush" Color="{m:StaticColor SystemChromeWhiteColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightAltTransparentBrush" Color="Transparent" />
     <SolidColorBrush x:Key="SystemControlHighlightBaseHighBrush" Color="{m:StaticColor SystemBaseHighColor}" />
@@ -220,11 +220,11 @@
     <SolidColorBrush x:Key="SystemControlHighlightBaseMediumLowBrush" Color="{m:StaticColor SystemBaseMediumLowColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightChromeAltLowBrush" Color="{m:StaticColor SystemChromeAltLowColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightChromeHighBrush" Color="{m:StaticColor SystemChromeHighColor}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.7" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.4" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.6" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentVeryHighBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.9" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumLowBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.75" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Opacity="0.7" Color="{m:DynamicColor SystemAccentColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Opacity="0.4" Color="{m:DynamicColor SystemAccentColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Opacity="0.6" Color="{m:DynamicColor SystemAccentColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentVeryHighBrush" Opacity="0.9" Color="{m:DynamicColor SystemAccentColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumLowBrush" Opacity="0.75" Color="{m:DynamicColor SystemAccentColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightListMediumBrush" Color="{m:StaticColor SystemListMediumColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="{m:StaticColor SystemListLowColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightChromeWhiteBrush" Color="{m:StaticColor SystemChromeWhiteColor}" />
@@ -247,12 +247,12 @@
     <SolidColorBrush x:Key="SystemControlPageTextChromeBlackMediumLowBrush" Color="{m:StaticColor SystemChromeBlackMediumLowColor}" />
     <SolidColorBrush x:Key="SystemControlTransparentBrush" Color="Transparent" />
     <SolidColorBrush x:Key="SystemControlErrorTextForegroundBrush" Color="{m:StaticColor SystemErrorTextColor}" />
-    <SolidColorBrush x:Key="SystemControlTransientBorderBrush" Color="#000000" Opacity="0.14" />
+    <SolidColorBrush x:Key="SystemControlTransientBorderBrush" Opacity="0.14" Color="#000000" />
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
     <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="#2B2B2B" />
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
-    <SolidColorBrush x:Key="SystemControlDefaultBrighteningBrush" Color="#FFFFFF" Opacity="0.5" />
+    <SolidColorBrush x:Key="SystemControlDefaultBrighteningBrush" Opacity="0.5" Color="#FFFFFF" />
     <m:StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
 
     <!-- WinUI Brushes -->
@@ -304,8 +304,8 @@
     <SolidColorBrush x:Key="AccentFillColorSelectedTextBackgroundBrush" Color="{m:DynamicColor SystemAccentColor}" />
 
     <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{m:DynamicColor SystemAccentColorDark1}" />
-    <SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="{m:DynamicColor SystemAccentColorDark1}" Opacity="0.9" />
-    <SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="{m:DynamicColor SystemAccentColorDark1}" Opacity="0.8" />
+    <SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Opacity="0.9" Color="{m:DynamicColor SystemAccentColorDark1}" />
+    <SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Opacity="0.8" Color="{m:DynamicColor SystemAccentColorDark1}" />
     <SolidColorBrush x:Key="AccentFillColorDisabledBrush" Color="{m:StaticColor AccentFillColorDisabled}" />
 
     <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush" Color="{m:StaticColor ControlStrokeColorDefault}" />
@@ -375,14 +375,14 @@
     <SolidColorBrush x:Key="SystemControlTransparentRevealBackgroundBrush" Color="Transparent" />
     <SolidColorBrush x:Key="SystemControlBackgroundAltHighRevealBackgroundBrush" Color="{m:StaticColor SystemAltHighColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightAccentRevealBackgroundBrush" Color="{m:DynamicColor SystemAccentColor}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAccent3RevealBackgroundBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.6" />
-    <SolidColorBrush x:Key="SystemControlHighlightAccent2RevealBackgroundBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.8" />
+    <SolidColorBrush x:Key="SystemControlHighlightAccent3RevealBackgroundBrush" Opacity="0.6" Color="{m:DynamicColor SystemAccentColor}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAccent2RevealBackgroundBrush" Opacity="0.8" Color="{m:DynamicColor SystemAccentColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightListMediumRevealBackgroundBrush" Color="{m:StaticColor SystemListMediumColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightListLowRevealBackgroundBrush" Color="{m:StaticColor SystemListLowColor}" />
     <SolidColorBrush x:Key="SystemControlBackgroundBaseMediumLowRevealBaseLowBackgroundBrush" Color="{m:StaticColor SystemBaseMediumLowColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightBaseMediumLowRevealAccentBackgroundBrush" Color="{m:StaticColor SystemBaseMediumLowColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightListMediumRevealListLowBackgroundBrush" Color="{m:StaticColor SystemListMediumColor}" />
-    <SolidColorBrush x:Key="SystemControlHighlightAccent3RevealAccent2BackgroundBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.6" />
+    <SolidColorBrush x:Key="SystemControlHighlightAccent3RevealAccent2BackgroundBrush" Opacity="0.6" Color="{m:DynamicColor SystemAccentColor}" />
 
     <!-- Border Brushes -->
     <SolidColorBrush x:Key="SystemControlBackgroundAccentRevealBorderBrush" Color="{m:DynamicColor SystemAccentColor}" />
@@ -418,7 +418,7 @@
     <!-- Elevation border brushes -->
     <LinearGradientBrush x:Key="ControlElevationBorderBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,3">
         <LinearGradientBrush.RelativeTransform>
-            <ScaleTransform ScaleY="-1" CenterY="0.5" />
+            <ScaleTransform CenterY="0.5" ScaleY="-1" />
         </LinearGradientBrush.RelativeTransform>
         <LinearGradientBrush.GradientStops>
             <GradientStop Offset="0.33" Color="{m:StaticColor ControlStrokeColorSecondary}" />
@@ -435,7 +435,7 @@
 
     <LinearGradientBrush x:Key="AccentControlElevationBorderBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,3">
         <LinearGradientBrush.RelativeTransform>
-            <ScaleTransform ScaleY="-1" CenterY="0.5" />
+            <ScaleTransform CenterY="0.5" ScaleY="-1" />
         </LinearGradientBrush.RelativeTransform>
         <LinearGradientBrush.GradientStops>
             <GradientStop Offset="0.33" Color="{m:StaticColor ControlStrokeColorOnAccentSecondary}" />
@@ -865,7 +865,7 @@
     <sys:Double x:Key="ListAccentMediumOpacity">0.6</sys:Double>
     <SolidColorBrush x:Key="InvalidBrush" Color="#C50500" />
     <SolidColorBrush x:Key="FillerGridLinesBrush" Color="Transparent" />
-    <SolidColorBrush x:Key="ScrollBarsSeparatorBackground" Color="{m:StaticColor SystemChromeMediumColor}" Opacity="0.9" />
+    <SolidColorBrush x:Key="ScrollBarsSeparatorBackground" Opacity="0.9" Color="{m:StaticColor SystemChromeMediumColor}" />
     <m:StaticResource x:Key="DataGridColumnHeaderForegroundBrush" ResourceKey="SystemControlForegroundBaseMediumBrush" />
     <SolidColorBrush x:Key="DataGridColumnHeaderBackgroundBrush" Color="{m:StaticColor SystemAltHighColor}" />
     <SolidColorBrush x:Key="DataGridColumnHeaderHoveredBackgroundBrush" Color="{m:StaticColor SystemListLowColor}" />
@@ -1351,7 +1351,7 @@
     <!-- Resources for RepeatButton -->
     <Thickness x:Key="RepeatButtonBorderThemeThickness">1</Thickness>
     <m:StaticResource x:Key="RepeatButtonBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <SolidColorBrush x:Key="RepeatButtonBackgroundPointerOver" Color="{m:StaticColor SystemBaseHighColor}" Opacity="0.1" />
+    <SolidColorBrush x:Key="RepeatButtonBackgroundPointerOver" Opacity="0.1" Color="{m:StaticColor SystemBaseHighColor}" />
     <m:StaticResource x:Key="RepeatButtonBackgroundPressed" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
     <m:StaticResource x:Key="RepeatButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <m:StaticResource x:Key="RepeatButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
@@ -1391,8 +1391,8 @@
     <m:StaticResource x:Key="ScrollBarThumbFillPointerOver" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
     <m:StaticResource x:Key="ScrollBarThumbFillPressed" ResourceKey="SystemControlBackgroundBaseMediumBrush" />
     <m:StaticResource x:Key="ScrollBarThumbFillDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
-    <SolidColorBrush x:Key="ScrollBarTrackFill" Color="{m:StaticColor SystemChromeMediumColor}" Opacity="0.9" />
-    <SolidColorBrush x:Key="ScrollBarTrackFillPointerOver" Color="{m:StaticColor SystemChromeMediumColor}" Opacity="0.9" />
+    <SolidColorBrush x:Key="ScrollBarTrackFill" Opacity="0.9" Color="{m:StaticColor SystemChromeMediumColor}" />
+    <SolidColorBrush x:Key="ScrollBarTrackFillPointerOver" Opacity="0.9" Color="{m:StaticColor SystemChromeMediumColor}" />
     <m:StaticResource x:Key="ScrollBarTrackFillDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
     <m:StaticResource x:Key="ScrollBarTrackStroke" ResourceKey="SystemControlForegroundTransparentBrush" />
     <m:StaticResource x:Key="ScrollBarTrackStrokePointerOver" ResourceKey="SystemControlForegroundTransparentBrush" />
@@ -1404,7 +1404,7 @@
     <SolidColorBrush x:Key="ScrollBarPanningThumbBackground" Color="{m:StaticResource ScrollBarPanningThumbBackgroundColor}" />
 
     <!-- Resource for ScrollViewer -->
-    <SolidColorBrush x:Key="ScrollViewerScrollBarSeparatorBackground" Color="{m:StaticColor SystemChromeMediumColor}" Opacity="0.9" />
+    <SolidColorBrush x:Key="ScrollViewerScrollBarSeparatorBackground" Opacity="0.9" Color="{m:StaticColor SystemChromeMediumColor}" />
 
     <!-- Resources for Slider -->
     <sys:Double x:Key="SliderOutsideTickBarThemeHeight">4</sys:Double>
@@ -1436,7 +1436,7 @@
 
     <!-- Resources for SplitButton -->
     <m:StaticResource x:Key="SplitButtonBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <SolidColorBrush x:Key="SplitButtonBackgroundPointerOver" Color="{m:StaticColor SystemBaseHighColor}" Opacity="0.1" />
+    <SolidColorBrush x:Key="SplitButtonBackgroundPointerOver" Opacity="0.1" Color="{m:StaticColor SystemBaseHighColor}" />
     <m:StaticResource x:Key="SplitButtonBackgroundPressed" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
     <m:StaticResource x:Key="SplitButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <m:StaticResource x:Key="SplitButtonBackgroundChecked" ResourceKey="SystemControlHighlightAccentBrush" />

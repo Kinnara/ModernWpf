@@ -1,13 +1,13 @@
 ﻿<!--
-//*********************************************************
-//
-// Copyright (c) Microsoft. All rights reserved.
-// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
-// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
-// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
-//
-//*********************************************************
+    //*********************************************************
+    //
+    // Copyright (c) Microsoft. All rights reserved.
+    // THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
+    // ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
+    // IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
+    // PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
+    //
+    //*********************************************************
 -->
 <ui:Page
     x:Class="SamplesCommon.SamplePages.SampleCompactSizingPage"
@@ -24,12 +24,21 @@
 
     <Grid Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
         <ui:SimpleStackPanel Spacing="4">
-            <TextBlock x:Name="HeaderBlock" Text="Compact Size" FontSize="18"/>
-            <TextBox ui:ControlHelper.Header="First Name:" x:Name="txtfirstName" />
-            <TextBox ui:ControlHelper.Header="Last Name:" x:Name="txtLastName"  />
+            <TextBlock
+                x:Name="HeaderBlock"
+                FontSize="18"
+                Text="Compact Size" />
+            <TextBox
+                x:Name="txtfirstName"
+                ui:ControlHelper.Header="First Name:" />
+            <TextBox
+                x:Name="txtLastName"
+                ui:ControlHelper.Header="Last Name:" />
             <PasswordBox ui:ControlHelper.Header="Password:" />
             <PasswordBox ui:ControlHelper.Header="Confirm Password:" />
-            <DatePicker ui:ControlHelper.Header="Pick a date" HorizontalAlignment="Stretch" />
+            <DatePicker
+                HorizontalAlignment="Stretch"
+                ui:ControlHelper.Header="Pick a date" />
         </ui:SimpleStackPanel>
     </Grid>
 </ui:Page>

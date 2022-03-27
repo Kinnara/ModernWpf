@@ -68,15 +68,15 @@
                                 </ContentControl.CacheMode>
                                 <Rectangle
                                     x:Name="rect"
-                                    IsHitTestVisible="False"
                                     Width="{Binding Target.ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
                                     Height="{Binding Target.ActualHeight, RelativeSource={RelativeSource TemplatedParent}}"
-                                    ClipToBounds="False">
+                                    ClipToBounds="False"
+                                    IsHitTestVisible="False">
                                     <Rectangle.Fill>
                                         <VisualBrush
-                                            Stretch="None"
                                             AlignmentX="Left"
                                             AlignmentY="Top"
+                                            Stretch="None"
                                             ViewboxUnits="Absolute"
                                             Visual="{Binding Target, RelativeSource={RelativeSource TemplatedParent}}" />
                                     </Rectangle.Fill>

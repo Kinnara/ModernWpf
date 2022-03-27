@@ -1,38 +1,51 @@
 ﻿<ui:Page
     x:Class="ModernWpf.SampleApp.ControlPages.CompactSizingPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    Title="Compact Sizing"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
     mc:Ignorable="d">
+    <Grid>
+        <local:ControlExample
+            x:Name="Example1"
+            HeaderText="Compact Sizing for controls">
+            <local:ControlExample.Example>
+                <ui:Frame Tag="ContentFrame" Loaded="Frame_Loaded"/>
+            </local:ControlExample.Example>
 
-    <ScrollViewer>
-        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
-            <sc:ControlExample
-                x:Name="Example1"
-                HeaderText="Compact Sizing for controls"
-                Loaded="Example1_Loaded">
-                <ui:Frame x:Name="ContentFrame" Width="296" />
+            <local:ControlExample.Options>
+                <ui:RadioButtons Header="Fluent Standard and Compact Sizing">
+                    <RadioButton
+                        Checked="Standard_Checked"
+                        Content="Standard"
+                        GroupName="ControlSize"
+                        IsChecked="True"
+                        Tag="StandardSize" />
+                    <RadioButton
+                        Checked="Compact_Checked"
+                        Content="Compact"
+                        GroupName="ControlSize"
+                        Tag="CompactSize" />
+                </ui:RadioButtons>
+            </local:ControlExample.Options>
 
-                <sc:ControlExample.Options>
-                    <StackPanel>
-                        <TextBlock Text="Fluent Standard and Compact Sizing" />
-                        <RadioButton
-                            Content="Standard"
-                            Tag="StandardSize"
-                            GroupName="ControlSize"
-                            Checked="Standard_Checked"
-                            IsChecked="True" />
-                        <RadioButton
-                            Content="Compact"
-                            Tag="CompactSize"
-                            GroupName="ControlSize"
-                            Checked="Compact_Checked" />
-                    </StackPanel>
-                </sc:ControlExample.Options>
-            </sc:ControlExample>
-        </ui:SimpleStackPanel>
-    </ScrollViewer>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;Page.Resources&gt;
+    &lt;ResourceDictionary Source=&quot;pack://application:,,,/ModernWpf;component/DensityStyles/Compact.xaml&quot; /&gt;
+&lt;/Page.Resources&gt;
+                    
+&lt;Grid.Resources&gt;
+    &lt;ResourceDictionary Source=&quot;pack://application:,,,/ModernWpf;component/DensityStyles/Compact.xaml&quot; /&gt;
+&lt;/Grid.Resources&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+    </Grid>
 </ui:Page>

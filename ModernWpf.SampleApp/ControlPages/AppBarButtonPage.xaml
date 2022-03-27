@@ -1,16 +1,16 @@
 ﻿<ui:Page
     x:Class="ModernWpf.SampleApp.ControlPages.AppBarButtonPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
-    mc:Ignorable="d"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="AppBar Button"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Title="AppBar Button">
+    mc:Ignorable="d">
     <StackPanel>
         <local:ControlExample
             x:Name="Example1"
@@ -18,12 +18,12 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with symbol icon. -->
-                    <ui:AppBarButton Tag="Button1" Loaded="AppBarButton_Loaded" Icon="Like" Label="SymbolIcon" Click="AppBarButton_Click" />
+                    <ui:AppBarButton Click="AppBarButton_Click" Icon="Like" Label="SymbolIcon" Loaded="AppBarButton_Loaded" Tag="Button1" />
                     <TextBlock
-                        Tag="Control1Output"
                         Margin="8,0,0,0"
+                        VerticalAlignment="Center"
                         Loaded="TextBlock_Loaded"
-                        VerticalAlignment="Center" />
+                        Tag="Control1Output" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -38,16 +38,16 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with bitmap icon. -->
-                    <ui:AppBarButton Tag="Button2" Loaded="AppBarButton_Loaded" Label="BitmapIcon" Click="AppBarButton_Click">
+                    <ui:AppBarButton Click="AppBarButton_Click" Label="BitmapIcon" Loaded="AppBarButton_Loaded" Tag="Button2">
                         <ui:AppBarButton.Icon>
                             <ui:BitmapIcon UriSource="/Assets/Slices2.png" />
                         </ui:AppBarButton.Icon>
                     </ui:AppBarButton>
                     <TextBlock
-                        Tag="Control2Output"
                         Margin="8,0,0,0"
+                        VerticalAlignment="Center"
                         Loaded="TextBlock_Loaded"
-                        VerticalAlignment="Center" />
+                        Tag="Control2Output" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -66,7 +66,7 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with font icon. -->
-                    <ui:AppBarButton Tag="Button3" Loaded="AppBarButton_Loaded" Label="FontIcon" Click="AppBarButton_Click">
+                    <ui:AppBarButton Click="AppBarButton_Click" Label="FontIcon" Loaded="AppBarButton_Loaded" Tag="Button3">
                         <ui:AppBarButton.Icon>
                             <ui:FontIcon
                                 FontFamily="Candara"
@@ -74,10 +74,10 @@
                         </ui:AppBarButton.Icon>
                     </ui:AppBarButton>
                     <TextBlock
-                        Tag="Control3Output"
                         Margin="8,0,0,0"
+                        VerticalAlignment="Center"
                         Loaded="TextBlock_Loaded"
-                        VerticalAlignment="Center" />
+                        Tag="Control3Output" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -96,16 +96,16 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with path icon. -->
-                    <ui:AppBarButton Tag="Button4" Loaded="AppBarButton_Loaded" Label="PathIcon" Click="AppBarButton_Click">
+                    <ui:AppBarButton Click="AppBarButton_Click" Label="PathIcon" Loaded="AppBarButton_Loaded" Tag="Button4">
                         <ui:AppBarButton.Icon>
                             <ui:PathIcon Data="F1 M 20,20L 24,10L 24,24L 5,24" />
                         </ui:AppBarButton.Icon>
                     </ui:AppBarButton>
                     <TextBlock
-                        Tag="Control4Output"
                         Margin="8,0,0,0"
+                        VerticalAlignment="Center"
                         Loaded="TextBlock_Loaded"
-                        VerticalAlignment="Center" />
+                        Tag="Control4Output" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -124,16 +124,16 @@
             HeaderText="An AppBarButton with an InputGesture">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <ui:AppBarButton Tag="Button5" Loaded="AppBarButton_Loaded" Icon="Save" Label="Save" Command="Save" Click="AppBarButton_Click">
+                    <ui:AppBarButton Click="AppBarButton_Click" Command="Save" Icon="Save" Label="Save" Loaded="AppBarButton_Loaded" Tag="Button5">
                         <ui:AppBarButton.CommandBindings>
-                            <CommandBinding Command="Save" CanExecute="Save_CanExecute" />
+                            <CommandBinding CanExecute="Save_CanExecute" Command="Save" />
                         </ui:AppBarButton.CommandBindings>
                     </ui:AppBarButton>
                     <TextBlock
-                        Tag="Control5Output"
                         Margin="8,0,0,0"
+                        VerticalAlignment="Center"
                         Loaded="TextBlock_Loaded"
-                        VerticalAlignment="Center" />
+                        Tag="Control5Output" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>

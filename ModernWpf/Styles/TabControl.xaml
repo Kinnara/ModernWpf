@@ -54,27 +54,27 @@
                         IsShadowEnabled="False">
                         <Border
                             x:Name="LayoutRoot"
-                            Padding="{TemplateBinding Padding}"
                             Margin="-1,0,0,0"
+                            Padding="{TemplateBinding Padding}"
                             SnapsToDevicePixels="True">
                             <Grid>
 
                                 <Border
                                     x:Name="TabSeparator"
-                                    HorizontalAlignment="Right"
                                     Width="1"
+                                    Margin="{DynamicResource TabViewItemSeparatorMargin}"
+                                    HorizontalAlignment="Right"
                                     BorderBrush="{DynamicResource TabViewItemSeparator}"
-                                    BorderThickness="1"
-                                    Margin="{DynamicResource TabViewItemSeparatorMargin}" />
+                                    BorderThickness="1" />
 
                                 <Border
                                     x:Name="TabContainer"
                                     Grid.Column="1"
+                                    Padding="{DynamicResource TabViewItemHeaderPadding}"
+                                    primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
                                     Background="{DynamicResource TabViewItemHeaderBackground}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
-                                    primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
-                                    Padding="{DynamicResource TabViewItemHeaderPadding}"
                                     CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}">
                                     <Grid>
 
@@ -92,8 +92,8 @@
                                             <ContentControl
                                                 x:Name="IconControl"
                                                 Content="{TemplateBinding primitives:TabItemHelper.Icon}"
-                                                IsTabStop="False"
-                                                Foreground="{DynamicResource TabViewItemIconForeground}" />
+                                                Foreground="{DynamicResource TabViewItemIconForeground}"
+                                                IsTabStop="False" />
                                         </Viewbox>
 
                                         <ContentPresenter
@@ -102,12 +102,12 @@
                                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                             ContentSource="Header"
-                                            TextElement.Foreground="{DynamicResource TabViewItemHeaderForeground}"
-                                            TextElement.FontWeight="{TemplateBinding FontWeight}"
-                                            TextElement.FontSize="{DynamicResource TabViewItemHeaderFontSize}"
                                             Focusable="False"
                                             RecognizesAccessKey="True"
-                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                            TextElement.FontSize="{DynamicResource TabViewItemHeaderFontSize}"
+                                            TextElement.FontWeight="{TemplateBinding FontWeight}"
+                                            TextElement.Foreground="{DynamicResource TabViewItemHeaderForeground}" />
 
                                     </Grid>
                                 </Border>
@@ -167,7 +167,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="TabItem" BasedOn="{StaticResource DefaultTabItemStyle}" />
+    <Style BasedOn="{StaticResource DefaultTabItemStyle}" TargetType="TabItem" />
 
     <Style x:Key="DefaultTabControlStyle" TargetType="TabControl">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -192,32 +192,32 @@
                         </Grid.RowDefinitions>
                         <DockPanel
                             x:Name="headerPanel"
-                            ClipToBounds="True"
-                            Panel.ZIndex="1"
                             Grid.Row="0"
                             Grid.Column="0"
-                            Background="{TemplateBinding Background}">
+                            Panel.ZIndex="1"
+                            Background="{TemplateBinding Background}"
+                            ClipToBounds="True">
 
                             <ContentPresenter
-                                DockPanel.Dock="Left"
                                 x:Name="HeaderContentPresenter"
                                 Content="{TemplateBinding primitives:TabControlHelper.TabStripHeader}"
                                 ContentTemplate="{TemplateBinding primitives:TabControlHelper.TabStripHeaderTemplate}"
+                                DockPanel.Dock="Left"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
                             <TabPanel
-                                DockPanel.Dock="Left"
                                 x:Name="TabPanel"
-                                Background="Transparent"
                                 Margin="{DynamicResource TabViewTopHeaderPadding}"
+                                Background="Transparent"
+                                DockPanel.Dock="Left"
                                 IsItemsHost="true" />
 
                             <ContentPresenter
-                                DockPanel.Dock="Right"
                                 x:Name="FooterContentPresenter"
                                 HorizontalAlignment="Stretch"
                                 Content="{TemplateBinding primitives:TabControlHelper.TabStripFooter}"
                                 ContentTemplate="{TemplateBinding primitives:TabControlHelper.TabStripFooterTemplate}"
+                                DockPanel.Dock="Right"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
                         </DockPanel>
@@ -284,6 +284,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="TabControl" BasedOn="{StaticResource DefaultTabControlStyle}" />
+    <Style BasedOn="{StaticResource DefaultTabControlStyle}" TargetType="TabControl" />
 
 </ResourceDictionary>

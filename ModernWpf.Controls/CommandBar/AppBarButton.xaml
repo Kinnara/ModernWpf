@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:local="clr-namespace:ModernWpf.Controls">
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:ui="http://schemas.modernwpf.com/2019">
 
     <Style TargetType="local:AppBarButton">
         <Setter Property="Background" Value="{DynamicResource AppBarButtonBackground}" />
@@ -75,8 +75,8 @@
                         <Grid>
                             <Rectangle
                                 x:Name="AppBarButtonInnerBorder"
-                                StrokeThickness="1"
-                                Stroke="{TemplateBinding BorderBrush}" />
+                                Stroke="{TemplateBinding BorderBrush}"
+                                StrokeThickness="1" />
                             <Grid
                                 x:Name="ContentRoot"
                                 MinHeight="{DynamicResource AppBarThemeMinHeight}">
@@ -104,45 +104,45 @@
                                 <TextBlock
                                     x:Name="TextLabel"
                                     Grid.Row="1"
-                                    Text="{TemplateBinding Label}"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    FontSize="12"
+                                    Margin="{DynamicResource AppBarButtonTextLabelMargin}"
                                     FontFamily="{TemplateBinding FontFamily}"
+                                    FontSize="12"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding Label}"
                                     TextAlignment="Center"
-                                    TextWrapping="Wrap"
-                                    Margin="{DynamicResource AppBarButtonTextLabelMargin}" />
+                                    TextWrapping="Wrap" />
                                 <TextBlock
                                     x:Name="OverflowTextLabel"
-                                    Text="{TemplateBinding Label}"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    FontSize="{DynamicResource ControlContentThemeFontSize}"
-                                    FontFamily="{TemplateBinding FontFamily}"
-                                    TextAlignment="Left"
-                                    TextWrapping="NoWrap"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
                                     Margin="12,0,12,0"
                                     Padding="{DynamicResource AppBarButtonOverflowTextLabelPadding}"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    FontSize="{DynamicResource ControlContentThemeFontSize}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding Label}"
+                                    TextAlignment="Left"
+                                    TextWrapping="NoWrap"
                                     Visibility="Collapsed" />
                                 <TextBlock
                                     x:Name="KeyboardAcceleratorTextLabel"
                                     Grid.Column="1"
-                                    Style="{DynamicResource CaptionTextBlockStyle}"
-                                    Text="{TemplateBinding InputGestureText}"
                                     MinWidth="34"
                                     Margin="24,0,12,0"
-                                    Foreground="{DynamicResource AppBarButtonKeyboardAcceleratorTextForeground}"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
+                                    Foreground="{DynamicResource AppBarButtonKeyboardAcceleratorTextForeground}"
+                                    Style="{DynamicResource CaptionTextBlockStyle}"
+                                    Text="{TemplateBinding InputGestureText}"
                                     Visibility="Collapsed" />
                                 <ui:FontIconFallback
                                     x:Name="SubItemChevron"
                                     Grid.Column="2"
+                                    Margin="12,0,12,0"
                                     Data="{StaticResource ChevronRight}"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="12"
                                     Foreground="{DynamicResource MenuFlyoutSubItemChevron}"
-                                    Margin="12,0,12,0"
                                     Visibility="Collapsed" />
 
                             </Grid>

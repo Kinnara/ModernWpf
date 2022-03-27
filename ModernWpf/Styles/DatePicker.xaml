@@ -33,20 +33,20 @@
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         <ContentControl
                             x:Name="PART_Watermark"
-                            Focusable="False"
-                            IsHitTestVisible="False"
-                            Opacity="0"
-                            Foreground="{DynamicResource CalendarDatePickerTextForeground}"
                             Margin="{TemplateBinding Padding}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Focusable="False"
+                            Foreground="{DynamicResource CalendarDatePickerTextForeground}"
+                            IsHitTestVisible="False"
+                            Opacity="0" />
                         <ScrollViewer
                             x:Name="PART_ContentHost"
-                            Style="{DynamicResource TextControlContentHostStyle}"
                             Margin="0"
                             Padding="{TemplateBinding Padding}"
                             HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Style="{DynamicResource TextControlContentHostStyle}" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="WatermarkStates">
                                 <VisualState x:Name="Unwatermarked" />
@@ -86,7 +86,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="DatePickerTextBox" BasedOn="{StaticResource DefaultDatePickerTextBoxStyle}" />
+    <Style BasedOn="{StaticResource DefaultDatePickerTextBoxStyle}" TargetType="DatePickerTextBox" />
 
     <Style x:Key="DefaultDatePickerStyle" TargetType="DatePicker">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -121,12 +121,12 @@
                         </Grid.RowDefinitions>
                         <local:ContentPresenterEx
                             x:Name="HeaderContentPresenter"
-                            Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
+                            Margin="{StaticResource CalendarDatePickerTopHeaderMargin}"
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
-                            Margin="{StaticResource CalendarDatePickerTopHeaderMargin}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             TextWrapping="Wrap"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}" />
                         <Grid
                             x:Name="PART_Root"
                             Grid.Row="1">
@@ -134,42 +134,42 @@
                                 <ControlTemplate x:Key="DropDownButtonTemplate" TargetType="Button">
                                     <Grid>
                                         <Rectangle
-                                            Fill="{TemplateBinding Background}"
-                                            Margin="{TemplateBinding Padding}" />
+                                            Margin="{TemplateBinding Padding}"
+                                            Fill="{TemplateBinding Background}" />
                                         <local:FontIconFallback
-                                            Foreground="{TemplateBinding Foreground}"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="{StaticResource Calendar}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             FontSize="12"
-                                            Data="{StaticResource Calendar}"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center" />
+                                            Foreground="{TemplateBinding Foreground}" />
                                     </Grid>
                                 </ControlTemplate>
                             </Grid.Resources>
                             <Border
                                 x:Name="Background"
+                                MinHeight="{DynamicResource ComboBoxMinHeight}"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                                MinHeight="{DynamicResource ComboBoxMinHeight}" />
+                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
                             <DatePickerTextBox
                                 x:Name="PART_TextBox"
-                                BorderThickness="{TemplateBinding BorderThickness}"
                                 Padding="{DynamicResource ComboBoxEditableTextPadding}"
                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Focusable="{TemplateBinding Focusable}"
-                                primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
+                                primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Focusable="{TemplateBinding Focusable}" />
                             <Button
                                 x:Name="PART_Button"
-                                Focusable="False"
-                                Background="Transparent"
-                                Foreground="{TemplateBinding Foreground}"
                                 Width="30"
                                 Padding="0,1,1,1"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Stretch"
+                                Background="Transparent"
+                                Focusable="False"
+                                Foreground="{TemplateBinding Foreground}"
                                 Template="{StaticResource DropDownButtonTemplate}" />
                             <Popup
                                 x:Name="PART_Popup"
@@ -191,9 +191,9 @@
                             x:Name="DescriptionPresenter"
                             Grid.Row="2"
                             Content="{TemplateBinding primitives:ControlHelper.Description}"
-                            Visibility="{TemplateBinding primitives:ControlHelper.DescriptionVisibility}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            Visibility="{TemplateBinding primitives:ControlHelper.DescriptionVisibility}" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger SourceName="PART_Root" Property="IsMouseOver" Value="True">
@@ -261,6 +261,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="DatePicker" BasedOn="{StaticResource DefaultDatePickerStyle}" />
+    <Style BasedOn="{StaticResource DefaultDatePickerStyle}" TargetType="DatePicker" />
 
 </ResourceDictionary>

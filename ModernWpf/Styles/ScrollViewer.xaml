@@ -2,8 +2,8 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:root="clr-namespace:ModernWpf"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:root="clr-namespace:ModernWpf"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <Duration x:Key="ScrollViewerSeparatorExpandDuration">00:00:00.1</Duration>
@@ -135,8 +135,8 @@
                             <ScrollContentPresenter
                                 x:Name="PART_ScrollContentPresenter"
                                 Grid.Row="0"
-                                Grid.Column="0"
                                 Grid.RowSpan="2"
+                                Grid.Column="0"
                                 Grid.ColumnSpan="2"
                                 Margin="{TemplateBinding Padding}"
                                 CanContentScroll="{TemplateBinding CanContentScroll}"
@@ -172,9 +172,9 @@
         </Setter>
     </Style>
 
-    <Style TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}" />
+    <Style BasedOn="{StaticResource DefaultScrollViewerStyle}" TargetType="ScrollViewer" />
 
-    <Style x:Key="TextControlContentHostStyle" TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
+    <Style x:Key="TextControlContentHostStyle" BasedOn="{StaticResource DefaultScrollViewerStyle}" TargetType="ScrollViewer">
         <Setter Property="primitives:TextControlContentHostHelper.ContentPresenterMargin" Value="-2,0" />
         <Setter Property="Template">
             <Setter.Value>
@@ -194,8 +194,8 @@
                             </Grid.RowDefinitions>
                             <Border
                                 Grid.Row="0"
-                                Grid.Column="0"
                                 Grid.RowSpan="2"
+                                Grid.Column="0"
                                 Grid.ColumnSpan="2"
                                 Padding="{TemplateBinding Padding}">
                                 <ScrollContentPresenter
@@ -235,12 +235,12 @@
         </Setter>
     </Style>
 
-    <ControlTemplate TargetType="ScrollViewer" x:Key="ScrollViewerScrollBarlessTemplate">
+    <ControlTemplate x:Key="ScrollViewerScrollBarlessTemplate" TargetType="ScrollViewer">
         <Grid Background="{TemplateBinding Background}">
             <ScrollContentPresenter
                 x:Name="ScrollContentPresenter"
-                ContentTemplate="{TemplateBinding ContentTemplate}"
-                Margin="{TemplateBinding Padding}" />
+                Margin="{TemplateBinding Padding}"
+                ContentTemplate="{TemplateBinding ContentTemplate}" />
         </Grid>
     </ControlTemplate>
 
