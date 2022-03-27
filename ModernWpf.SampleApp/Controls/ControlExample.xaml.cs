@@ -40,7 +40,7 @@ namespace ModernWpf.SampleApp
             set { SetValue(ValueProperty, value); }
         }
 
-        public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.Register("IsEnabled", typeof(bool), typeof(ControlExampleSubstitution), new PropertyMetadata(false, OnDependencyPropertyChanged));
+        public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.Register("IsEnabled", typeof(bool), typeof(ControlExampleSubstitution), new PropertyMetadata(true, OnDependencyPropertyChanged));
         public bool IsEnabled
         {
             get { return (bool)GetValue(IsEnabledProperty); }

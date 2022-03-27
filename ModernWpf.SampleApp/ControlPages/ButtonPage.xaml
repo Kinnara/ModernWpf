@@ -54,7 +54,7 @@
                         Width="50"
                         Height="50"
                         AutomationProperties.Name="Pie">
-                        <ui:ImageEx
+                        <Image
                             Source="/Assets/Slices.png"
                             AutomationProperties.Name="Slice" />
                     </Button>
