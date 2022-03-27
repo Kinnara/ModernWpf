@@ -39,6 +39,7 @@
             Name="splashProgressRing"
             IsActive="True"
             Width="20"
+            Visibility="Collapsed"
             HorizontalAlignment="Center" />
     </Grid>
 </Window>
