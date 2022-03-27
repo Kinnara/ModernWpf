@@ -1,0 +1,28 @@
+﻿<ui:Page
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    x:Class="ModernWpf.SampleApp.ControlPages.AcrylicPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Title="Acrylic">
+    <Grid x:Name="grid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Rectangle Fill="White" />
+        <Rectangle
+            Grid.Column="1"
+            Fill="Green" />
+        <Rectangle
+            Width="200"
+            Height="200"
+            Grid.ColumnSpan="2"
+            Fill="{ui:AcrylicBrush grid}" />
+    </Grid>
+</ui:Page>
