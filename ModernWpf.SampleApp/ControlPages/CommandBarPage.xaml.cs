@@ -154,14 +154,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (sender is TextBlock b)
             {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "SelectedOptionText":
-                        SelectedOptionText = b;
-                        break;
-                }
+                SelectedOptionText = b;
             }
         }
 
@@ -169,36 +162,29 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (sender is CommandBar b)
             {
-                string name = b.Tag.ToString();
-
-                switch (name)
+                PrimaryCommandBar = b;
+                ControlExampleSubstitution Substitution1 = new ControlExampleSubstitution
                 {
-                    case "PrimaryCommandBar":
-                        PrimaryCommandBar = b;
-                        ControlExampleSubstitution Substitution1 = new ControlExampleSubstitution
-                        {
-                            Key = "IsOpen",
-                            IsEnabled = true,
-                        };
-                        BindingOperations.SetBinding(Substitution1, ControlExampleSubstitution.ValueProperty, new Binding
-                        {
-                            Source = b,
-                            Path = new PropertyPath("IsOpen"),
-                        });
-                        ControlExampleSubstitution Substitution2 = new ControlExampleSubstitution
-                        {
-                            Key = "MultipleButtonsSecondaryCommands",
-                            Value = (string)Resources["MultipleButtonsSecondaryCommands"],
-                        };
-                        BindingOperations.SetBinding(Substitution2, ControlExampleSubstitution.IsEnabledProperty, new Binding
-                        {
-                            Source = this,
-                            Path = new PropertyPath("MultipleButtons"),
-                        });
-                        List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2 };
-                        Example3.Substitutions = Substitutions;
-                        break;
-                }
+                    Key = "IsOpen",
+                    IsEnabled = true,
+                };
+                BindingOperations.SetBinding(Substitution1, ControlExampleSubstitution.ValueProperty, new Binding
+                {
+                    Source = b,
+                    Path = new PropertyPath("IsOpen"),
+                });
+                ControlExampleSubstitution Substitution2 = new ControlExampleSubstitution
+                {
+                    Key = "MultipleButtonsSecondaryCommands",
+                    Value = (string)Resources["MultipleButtonsSecondaryCommands"],
+                };
+                BindingOperations.SetBinding(Substitution2, ControlExampleSubstitution.IsEnabledProperty, new Binding
+                {
+                    Source = this,
+                    Path = new PropertyPath("MultipleButtons"),
+                });
+                List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2 };
+                Example3.Substitutions = Substitutions;
             }
         }
     }

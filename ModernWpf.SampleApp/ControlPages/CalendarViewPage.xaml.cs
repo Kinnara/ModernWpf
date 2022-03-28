@@ -74,52 +74,44 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (sender is Calendar b)
             {
-                string name = b.Tag.ToString();
+                Control1 = b;
 
-                switch (name)
+                if (SelectionMode != null && Enum.TryParse(SelectionMode.SelectedItem.ToString(), out CalendarSelectionMode selectionMode))
                 {
-                    case "Control1":
-                        Control1 = b;
-
-                        if (SelectionMode != null && Enum.TryParse(SelectionMode.SelectedItem.ToString(), out CalendarSelectionMode selectionMode))
-                        {
-                            b.SelectionMode = selectionMode;
-                        }
-
-                        if (CalendarLanguages != null)
-                        {
-                            string selectedLang = CalendarLanguages.SelectedValue.ToString();
-                            if (Windows.Globalization.Language.IsWellFormed(selectedLang))
-                            {
-                                b.Language = XmlLanguage.GetLanguage(selectedLang);
-                            }
-                        }
-
-                        ControlExampleSubstitution Substitution1 = new ControlExampleSubstitution
-                        {
-                            Key = "SelectionMode",
-                        };
-                        BindingOperations.SetBinding(Substitution1, ControlExampleSubstitution.ValueProperty, new Binding
-                        {
-                            Source = b,
-                            Path = new PropertyPath("SelectionMode"),
-                        });
-
-                        ControlExampleSubstitution Substitution2 = new ControlExampleSubstitution
-                        {
-                            Key = "Language",
-                        };
-                        BindingOperations.SetBinding(Substitution2, ControlExampleSubstitution.ValueProperty, new Binding
-                        {
-                            Source = b,
-                            Path = new PropertyPath("Language"),
-                        });
-
-                        List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2 };
-                        ExampleAccessories.Substitutions = Substitutions;
-
-                        break;
+                    b.SelectionMode = selectionMode;
                 }
+
+                if (CalendarLanguages != null)
+                {
+                    string selectedLang = CalendarLanguages.SelectedValue.ToString();
+                    if (Windows.Globalization.Language.IsWellFormed(selectedLang))
+                    {
+                        b.Language = XmlLanguage.GetLanguage(selectedLang);
+                    }
+                }
+
+                ControlExampleSubstitution Substitution1 = new ControlExampleSubstitution
+                {
+                    Key = "SelectionMode",
+                };
+                BindingOperations.SetBinding(Substitution1, ControlExampleSubstitution.ValueProperty, new Binding
+                {
+                    Source = b,
+                    Path = new PropertyPath("SelectionMode"),
+                });
+
+                ControlExampleSubstitution Substitution2 = new ControlExampleSubstitution
+                {
+                    Key = "Language",
+                };
+                BindingOperations.SetBinding(Substitution2, ControlExampleSubstitution.ValueProperty, new Binding
+                {
+                    Source = b,
+                    Path = new PropertyPath("Language"),
+                });
+
+                List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2 };
+                ExampleAccessories.Substitutions = Substitutions;
             }
         }
     }

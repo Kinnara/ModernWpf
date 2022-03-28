@@ -143,6 +143,7 @@
             <common:BooleanToValueConverter x:Key="booleanToValueConverter" />
             <common:InverseAppThemeConverter x:Key="InverseAppThemeConverter" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <common:RelativeToAbsoluteConverter x:Key="RelativeToAbsoluteConverter"/>
             <common:CornerRadiusToDoubleConverter x:Key="CornerRadiusToDoubleConverter" />
 
             <!-- Breakpoints -->

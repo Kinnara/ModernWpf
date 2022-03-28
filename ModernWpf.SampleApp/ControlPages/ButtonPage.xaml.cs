@@ -73,14 +73,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (sender is Button b)
             {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "Button1":
-                        Button1 = b;
-                        break;
-                }
+                Button1 = b;
             }
         }
 

@@ -61,14 +61,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (sender is CommandBar b)
             {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "Control1":
-                        Control1 = b;
-                        break;
-                }
+                Control1 = b;
             }
         }
     }

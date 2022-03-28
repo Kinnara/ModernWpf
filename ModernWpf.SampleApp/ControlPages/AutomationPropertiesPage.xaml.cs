@@ -47,14 +47,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (sender is TextBlock b)
             {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "FontSizeChangingTextBlock":
-                        FontSizeChangingTextBlock = b;
-                        break;
-                }
+                FontSizeChangingTextBlock = b;
             }
         }
     }
