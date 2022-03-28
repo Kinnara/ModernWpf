@@ -98,6 +98,7 @@ namespace ModernWpf.SampleApp.ControlPages
                         Substitutions.Add(Substitution3);
                         break;
                 }
+
                 if (Substitutions.Count >= 3) { Example1.Substitutions = Substitutions; }
             }
         }
