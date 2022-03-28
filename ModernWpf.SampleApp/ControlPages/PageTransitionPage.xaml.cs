@@ -1,4 +1,5 @@
 ﻿using ModernWpf.Media.Animation;
+using SamplesCommon.SamplePages;
 using System.Windows;
 using System.Windows.Controls;
 using Page = ModernWpf.Controls.Page;
@@ -14,13 +15,13 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             InitializeComponent();
 
-            ContentFrame.Navigate(typeof(SamplePages.SamplePage1));
+            ContentFrame.Navigate(typeof(SamplePage1));
         }
 
         private void ForwardButton1_Click(object sender, RoutedEventArgs e)
         {
 
-            var pageToNavigateTo = ContentFrame.BackStackDepth % 2 == 1 ? typeof(SamplePages.SamplePage1) : typeof(SamplePages.SamplePage2);
+            var pageToNavigateTo = ContentFrame.BackStackDepth % 2 == 1 ? typeof(SamplePage1) : typeof(SamplePage2);
 
             if (_transitionInfo == null)
             {
