@@ -43,54 +43,54 @@
                         <local:ContentPresenterEx
                             x:Name="HeaderContentPresenter"
                             Grid.Row="0"
-                            Foreground="{DynamicResource TextControlHeaderForeground}"
                             Margin="{DynamicResource RichEditBoxTopHeaderMargin}"
+                            VerticalAlignment="Top"
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
                             FontWeight="Normal"
+                            Foreground="{DynamicResource TextControlHeaderForeground}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             TextWrapping="Wrap"
-                            VerticalAlignment="Top"
-                            Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}" />
                         <Border
                             x:Name="BorderElement"
                             Grid.Row="1"
                             Grid.RowSpan="1"
+                            MinWidth="{DynamicResource TextControlThemeMinWidth}"
+                            MinHeight="{DynamicResource TextControlThemeMinHeight}"
+                            primitives:ValidationHelper.IsTemplateValidationAdornerSite="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                            MinWidth="{DynamicResource TextControlThemeMinWidth}"
-                            MinHeight="{DynamicResource TextControlThemeMinHeight}"
-                            primitives:ValidationHelper.IsTemplateValidationAdornerSite="True" />
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
                         <ScrollViewer
                             x:Name="PART_ContentHost"
                             Grid.Row="1"
-                            Style="{DynamicResource TextControlContentHostStyle}"
-                            primitives:TextControlContentHostHelper.ContentPresenterMargin="-5,-1"
-                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
+                            primitives:TextControlContentHostHelper.ContentPresenterMargin="-5,-1"
+                            Focusable="False"
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                             IsTabStop="False"
-                            Focusable="False" />
+                            Style="{DynamicResource TextControlContentHostStyle}"
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" />
                         <TextBlock
                             x:Name="PlaceholderTextContentPresenter"
                             Grid.Row="1"
-                            Foreground="{DynamicResource TextControlPlaceholderForeground}"
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
-                            Text="{TemplateBinding primitives:ControlHelper.PlaceholderText}"
+                            Foreground="{DynamicResource TextControlPlaceholderForeground}"
                             IsHitTestVisible="False"
+                            Text="{TemplateBinding primitives:ControlHelper.PlaceholderText}"
                             Visibility="Collapsed" />
                         <ContentPresenter
                             x:Name="DescriptionPresenter"
                             Grid.Row="2"
                             Content="{TemplateBinding primitives:ControlHelper.Description}"
-                            Visibility="{TemplateBinding primitives:ControlHelper.DescriptionVisibility}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            Visibility="{TemplateBinding primitives:ControlHelper.DescriptionVisibility}" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="false">
@@ -128,6 +128,6 @@
         </Style.Resources>
     </Style>
 
-    <Style TargetType="RichTextBox" BasedOn="{StaticResource DefaultRichTextBoxStyle}" />
+    <Style BasedOn="{StaticResource DefaultRichTextBoxStyle}" TargetType="RichTextBox" />
 
 </ResourceDictionary>

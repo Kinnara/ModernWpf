@@ -23,22 +23,22 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ToolTip">
                     <primitives:ThemeShadowChrome
-                        Depth="16"
-                        IsShadowEnabled="{TemplateBinding HasDropShadow}"
                         MaxWidth="320"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        Depth="16"
+                        IsShadowEnabled="{TemplateBinding HasDropShadow}"
                         SnapsToDevicePixels="True">
                         <Border
                             Background="{TemplateBinding Background}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                             <Border
+                                Padding="{TemplateBinding Padding}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                Padding="{TemplateBinding Padding}"
                                 CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                                 <local:ContentPresenterEx
-                                    TextWrapping="Wrap"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                    TextWrapping="Wrap" />
                             </Border>
                         </Border>
                     </primitives:ThemeShadowChrome>
@@ -47,6 +47,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="ToolTip" BasedOn="{StaticResource DefaultToolTipStyle}" />
+    <Style BasedOn="{StaticResource DefaultToolTipStyle}" TargetType="ToolTip" />
 
 </ResourceDictionary>

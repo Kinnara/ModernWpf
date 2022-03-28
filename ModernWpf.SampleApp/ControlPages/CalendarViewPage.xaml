@@ -54,7 +54,7 @@
 
             <local:ControlExample.Xaml>
                 <sys:String xml:space="preserve">
-&lt;CalendarView 
+&lt;Calendar 
     SelectionMode=&quot;$(SelectionMode)&quot; 
     Language=&quot;$(Language)&quot; /&gt;
                 </sys:String>

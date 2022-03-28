@@ -22,29 +22,29 @@
                 <ControlTemplate TargetType="TabItem">
                     <Border
                         x:Name="Border"
-                        Background="{TemplateBinding Background}"
                         Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
                         SnapsToDevicePixels="True">
                         <Grid>
                             <ContentPresenter
                                 x:Name="ContentPresenter"
-                                ContentSource="Header"
-                                TextElement.Foreground="{DynamicResource PivotHeaderItemForegroundUnselected}"
-                                TextElement.FontSize="{DynamicResource PivotHeaderItemFontSize}"
-                                TextElement.FontFamily="{DynamicResource PivotHeaderItemFontFamily}"
-                                TextElement.FontWeight="{DynamicResource PivotHeaderItemThemeFontWeight}"
-                                VerticalAlignment="Center"
                                 HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                ContentSource="Header"
                                 Focusable="False"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                TextElement.FontFamily="{DynamicResource PivotHeaderItemFontFamily}"
+                                TextElement.FontSize="{DynamicResource PivotHeaderItemFontSize}"
+                                TextElement.FontWeight="{DynamicResource PivotHeaderItemThemeFontWeight}"
+                                TextElement.Foreground="{DynamicResource PivotHeaderItemForegroundUnselected}" />
                             <Rectangle
                                 x:Name="SelectedPipe"
-                                Fill="{DynamicResource PivotHeaderItemSelectedPipeFill}"
                                 Height="2"
-                                VerticalAlignment="Bottom"
-                                HorizontalAlignment="Stretch"
                                 Margin="0,0,0,2"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Bottom"
+                                Fill="{DynamicResource PivotHeaderItemSelectedPipeFill}"
                                 RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
                                 RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                         </Grid>
@@ -116,9 +116,9 @@
                     <Grid
                         x:Name="templateRoot"
                         Background="{TemplateBinding Background}"
+                        ClipToBounds="true"
                         KeyboardNavigation.TabNavigation="Local"
-                        SnapsToDevicePixels="true"
-                        ClipToBounds="true">
+                        SnapsToDevicePixels="true">
 
                         <Grid.Resources>
                             <Style x:Key="BaseContentControlStyle" TargetType="ContentControl">
@@ -130,16 +130,16 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ContentControl">
                                             <ContentPresenter
-                                                Content="{TemplateBinding Content}"
-                                                ContentTemplate="{TemplateBinding ContentTemplate}"
                                                 Margin="{TemplateBinding Padding}"
                                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                Content="{TemplateBinding Content}"
+                                                ContentTemplate="{TemplateBinding ContentTemplate}" />
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
                             </Style>
-                            <Style x:Key="TitleContentControlStyle" TargetType="ContentControl" BasedOn="{StaticResource BaseContentControlStyle}">
+                            <Style x:Key="TitleContentControlStyle" BasedOn="{StaticResource BaseContentControlStyle}" TargetType="ContentControl">
                                 <Setter Property="FontFamily" Value="{DynamicResource PivotTitleFontFamily}" />
                                 <Setter Property="FontWeight" Value="{DynamicResource PivotTitleThemeFontWeight}" />
                                 <Setter Property="FontSize" Value="{DynamicResource PivotTitleFontSize}" />
@@ -152,13 +152,13 @@
                         </Grid.RowDefinitions>
                         <ContentControl
                             x:Name="TitleContentControl"
-                            IsTabStop="False"
                             Margin="{DynamicResource PivotPortraitThemePadding}"
-                            Style="{StaticResource TitleContentControlStyle}"
-                            Visibility="Collapsed"
                             Content="{TemplateBinding primitives:PivotHelper.Title}"
                             ContentTemplate="{TemplateBinding primitives:PivotHelper.TitleTemplate}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            IsTabStop="False"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            Style="{StaticResource TitleContentControlStyle}"
+                            Visibility="Collapsed" />
                         <Grid
                             Grid.Row="1"
                             Margin="{TemplateBinding Padding}">
@@ -167,16 +167,16 @@
                                     <Border
                                         x:Name="Root"
                                         Background="{DynamicResource PivotNextButtonBackground}"
-                                        BorderThickness="{DynamicResource PivotNavButtonBorderThemeThickness}"
-                                        BorderBrush="{DynamicResource PivotNextButtonBorderBrush}">
+                                        BorderBrush="{DynamicResource PivotNextButtonBorderBrush}"
+                                        BorderThickness="{DynamicResource PivotNavButtonBorderThemeThickness}">
                                         <local:FontIconFallback
                                             x:Name="Arrow"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="{StaticResource ChevronRight}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             FontSize="12"
                                             Foreground="{DynamicResource PivotNextButtonForeground}"
-                                            Data="{StaticResource ChevronRight}"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
                                             UseLayoutRounding="False" />
                                     </Border>
                                     <ControlTemplate.Triggers>
@@ -196,16 +196,16 @@
                                     <Border
                                         x:Name="Root"
                                         Background="{DynamicResource PivotPreviousButtonBackground}"
-                                        BorderThickness="{DynamicResource PivotNavButtonBorderThemeThickness}"
-                                        BorderBrush="{DynamicResource PivotPreviousButtonBorderBrush}">
+                                        BorderBrush="{DynamicResource PivotPreviousButtonBorderBrush}"
+                                        BorderThickness="{DynamicResource PivotNavButtonBorderThemeThickness}">
                                         <local:FontIconFallback
                                             x:Name="Arrow"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="{StaticResource ChevronLeft}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             FontSize="12"
                                             Foreground="{DynamicResource PivotPreviousButtonForeground}"
-                                            Data="{StaticResource ChevronLeft}"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
                                             UseLayoutRounding="False" />
                                     </Border>
                                     <ControlTemplate.Triggers>
@@ -237,67 +237,67 @@
                                 </Grid.ColumnDefinitions>
                                 <ContentPresenter
                                     x:Name="LeftHeaderPresenter"
-                                    Content="{TemplateBinding primitives:PivotHelper.LeftHeader}"
-                                    ContentTemplate="{TemplateBinding primitives:PivotHelper.LeftHeaderTemplate}"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
+                                    Content="{TemplateBinding primitives:PivotHelper.LeftHeader}"
+                                    ContentTemplate="{TemplateBinding primitives:PivotHelper.LeftHeaderTemplate}"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                 <primitives:PivotHeaderScrollViewer
                                     x:Name="ScrollViewer"
                                     Grid.Column="1"
-                                    Style="{DynamicResource {x:Type ScrollViewer}}"
-                                    HorizontalScrollBarVisibility="Hidden"
-                                    VerticalScrollBarVisibility="Disabled"
                                     VerticalContentAlignment="Stretch"
-                                    Template="{DynamicResource ScrollViewerScrollBarlessTemplate}">
+                                    HorizontalScrollBarVisibility="Hidden"
+                                    Style="{DynamicResource {x:Type ScrollViewer}}"
+                                    Template="{DynamicResource ScrollViewerScrollBarlessTemplate}"
+                                    VerticalScrollBarVisibility="Disabled">
                                     <StackPanel
                                         Panel.ZIndex="1"
                                         Background="{DynamicResource PivotHeaderBackground}"
                                         IsItemsHost="true"
-                                        Orientation="Horizontal"
+                                        KeyboardNavigation.DirectionalNavigation="Contained"
                                         KeyboardNavigation.TabIndex="1"
                                         KeyboardNavigation.TabNavigation="Once"
-                                        KeyboardNavigation.DirectionalNavigation="Contained" />
+                                        Orientation="Horizontal" />
                                 </primitives:PivotHeaderScrollViewer>
                                 <RepeatButton
                                     x:Name="PreviousButton"
                                     Grid.Column="1"
-                                    Template="{StaticResource PreviousTemplate}"
                                     Width="20"
                                     Height="36"
-                                    FocusVisualStyle="{x:Null}"
                                     Margin="{DynamicResource PivotNavButtonMargin}"
-                                    IsTabStop="False"
-                                    IsEnabled="False"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Top"
-                                    Opacity="0"
                                     Background="Transparent"
                                     Command="{x:Static ScrollBar.LineLeftCommand}"
-                                    CommandTarget="{Binding ElementName=ScrollViewer}" />
+                                    CommandTarget="{Binding ElementName=ScrollViewer}"
+                                    FocusVisualStyle="{x:Null}"
+                                    IsEnabled="False"
+                                    IsTabStop="False"
+                                    Opacity="0"
+                                    Template="{StaticResource PreviousTemplate}" />
                                 <RepeatButton
                                     x:Name="NextButton"
                                     Grid.Column="1"
-                                    Template="{StaticResource NextTemplate}"
                                     Width="20"
                                     Height="36"
-                                    FocusVisualStyle="{x:Null}"
                                     Margin="{DynamicResource PivotNavButtonMargin}"
-                                    IsTabStop="False"
-                                    IsEnabled="False"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Top"
-                                    Opacity="0"
                                     Background="Transparent"
                                     Command="{x:Static ScrollBar.LineRightCommand}"
-                                    CommandTarget="{Binding ElementName=ScrollViewer}" />
+                                    CommandTarget="{Binding ElementName=ScrollViewer}"
+                                    FocusVisualStyle="{x:Null}"
+                                    IsEnabled="False"
+                                    IsTabStop="False"
+                                    Opacity="0"
+                                    Template="{StaticResource NextTemplate}" />
                                 <ContentPresenter
                                     x:Name="RightHeaderPresenter"
                                     Grid.Column="2"
-                                    Content="{TemplateBinding primitives:PivotHelper.RightHeader}"
-                                    ContentTemplate="{TemplateBinding primitives:PivotHelper.RightHeaderTemplate}"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
+                                    Content="{TemplateBinding primitives:PivotHelper.RightHeader}"
+                                    ContentTemplate="{TemplateBinding primitives:PivotHelper.RightHeaderTemplate}"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             </Grid>
                             <Border
@@ -310,8 +310,8 @@
                                 KeyboardNavigation.TabNavigation="Local">
                                 <ContentPresenter
                                     x:Name="PART_SelectedContentHost"
-                                    ContentSource="SelectedContent"
                                     Margin="{DynamicResource PivotItemMargin}"
+                                    ContentSource="SelectedContent"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             </Border>
                         </Grid>

@@ -27,16 +27,16 @@
                         <Grid>
                             <Rectangle
                                 x:Name="PressedBackground"
-                                Fill="Transparent"
-                                primitives:FocusVisualHelper.IsTemplateFocusTarget="True" />
+                                primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
+                                Fill="Transparent" />
                             <ContentPresenter
                                 x:Name="ContentPresenter"
-                                TextElement.FontWeight="Normal"
-                                TextElement.FontSize="{DynamicResource ControlContentThemeFontSize}"
+                                Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Margin="{TemplateBinding Padding}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                TextElement.FontSize="{DynamicResource ControlContentThemeFontSize}"
+                                TextElement.FontWeight="Normal" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -82,7 +82,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}" />
+    <Style BasedOn="{StaticResource DefaultListBoxItemStyle}" TargetType="ListBoxItem" />
 
     <Style x:Key="DefaultListBoxStyle" TargetType="ListBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -115,10 +115,10 @@
                         <ScrollViewer
                             x:Name="ScrollViewer"
                             Padding="{TemplateBinding Padding}"
+                            primitives:ScrollViewerHelper.AutoHideScrollBars="{TemplateBinding primitives:ScrollViewerHelper.AutoHideScrollBars}"
                             Focusable="False"
                             HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                            primitives:ScrollViewerHelper.AutoHideScrollBars="{TemplateBinding primitives:ScrollViewerHelper.AutoHideScrollBars}">
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </ScrollViewer>
                     </Border>
@@ -136,6 +136,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="ListBox" BasedOn="{StaticResource DefaultListBoxStyle}" />
+    <Style BasedOn="{StaticResource DefaultListBoxStyle}" TargetType="ListBox" />
 
 </ResourceDictionary>

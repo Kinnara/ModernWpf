@@ -63,45 +63,45 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid
-                                VerticalAlignment="Top"
-                                Height="32">
+                                Height="32"
+                                VerticalAlignment="Top">
                                 <Ellipse
                                     x:Name="OuterEllipse"
                                     Width="20"
                                     Height="20"
-                                    UseLayoutRounding="False"
-                                    Stroke="{DynamicResource RadioButtonOuterEllipseStroke}"
                                     Fill="{DynamicResource RadioButtonOuterEllipseFill}"
-                                    StrokeThickness="{DynamicResource RadioButtonBorderThemeThickness}" />
+                                    Stroke="{DynamicResource RadioButtonOuterEllipseStroke}"
+                                    StrokeThickness="{DynamicResource RadioButtonBorderThemeThickness}"
+                                    UseLayoutRounding="False" />
                                 <Ellipse
                                     x:Name="CheckOuterEllipse"
                                     Width="20"
                                     Height="20"
-                                    UseLayoutRounding="False"
-                                    Stroke="{DynamicResource RadioButtonOuterEllipseCheckedStroke}"
                                     Fill="{DynamicResource RadioButtonOuterEllipseCheckedFill}"
                                     Opacity="0"
-                                    StrokeThickness="{DynamicResource RadioButtonBorderThemeThickness}" />
+                                    Stroke="{DynamicResource RadioButtonOuterEllipseCheckedStroke}"
+                                    StrokeThickness="{DynamicResource RadioButtonBorderThemeThickness}"
+                                    UseLayoutRounding="False" />
                                 <Ellipse
                                     x:Name="CheckGlyph"
                                     Width="8"
                                     Height="8"
-                                    UseLayoutRounding="False"
-                                    Opacity="0"
                                     Fill="{DynamicResource RadioButtonCheckGlyphFill}"
-                                    Stroke="{DynamicResource RadioButtonCheckGlyphStroke}" />
+                                    Opacity="0"
+                                    Stroke="{DynamicResource RadioButtonCheckGlyphStroke}"
+                                    UseLayoutRounding="False" />
                             </Grid>
                             <local:ContentPresenterEx
                                 x:Name="ContentPresenter"
-                                TextElement.Foreground="{TemplateBinding Foreground}"
+                                Grid.Column="1"
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Grid.Column="1"
-                                TextWrapping="Wrap"
                                 Focusable="False"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                TextElement.Foreground="{TemplateBinding Foreground}"
+                                TextWrapping="Wrap" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -144,6 +144,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="RadioButton" BasedOn="{StaticResource DefaultRadioButtonStyle}" />
+    <Style BasedOn="{StaticResource DefaultRadioButtonStyle}" TargetType="RadioButton" />
 
 </ResourceDictionary>

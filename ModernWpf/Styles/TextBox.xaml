@@ -49,33 +49,33 @@
                                         </ControlTemplate.Resources>
                                         <Border
                                             x:Name="ButtonLayoutGrid"
+                                            Background="{DynamicResource TextControlButtonBackground}"
                                             BorderBrush="{DynamicResource TextControlButtonBorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
-                                            Background="{DynamicResource TextControlButtonBackground}"
                                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                                             <local:FontIconFallback
                                                 x:Name="GlyphElement"
-                                                Foreground="{DynamicResource TextControlButtonForeground}"
-                                                VerticalAlignment="Center"
                                                 HorizontalAlignment="Center"
-                                                FontStyle="Normal"
-                                                FontSize="12"
+                                                VerticalAlignment="Center"
                                                 Data="{StaticResource Cancel}"
-                                                FontFamily="{DynamicResource SymbolThemeFontFamily}" />
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                FontSize="12"
+                                                FontStyle="Normal"
+                                                Foreground="{DynamicResource TextControlButtonForeground}" />
                                         </Border>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="true">
-                                                <Setter Property="Background" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBackgroundPointerOver}" />
-                                                <Setter Property="BorderBrush" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBorderBrushPointerOver}" />
-                                                <Setter Property="Foreground" TargetName="GlyphElement" Value="{DynamicResource TextControlButtonForegroundPointerOver}" />
+                                                <Setter TargetName="ButtonLayoutGrid" Property="Background" Value="{DynamicResource TextControlButtonBackgroundPointerOver}" />
+                                                <Setter TargetName="ButtonLayoutGrid" Property="BorderBrush" Value="{DynamicResource TextControlButtonBorderBrushPointerOver}" />
+                                                <Setter TargetName="GlyphElement" Property="Foreground" Value="{DynamicResource TextControlButtonForegroundPointerOver}" />
                                             </Trigger>
                                             <Trigger Property="IsPressed" Value="true">
-                                                <Setter Property="Background" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBackgroundPressed}" />
-                                                <Setter Property="BorderBrush" TargetName="ButtonLayoutGrid" Value="{DynamicResource TextControlButtonBorderBrushPressed}" />
-                                                <Setter Property="Foreground" TargetName="GlyphElement" Value="{DynamicResource TextControlButtonForegroundPressed}" />
+                                                <Setter TargetName="ButtonLayoutGrid" Property="Background" Value="{DynamicResource TextControlButtonBackgroundPressed}" />
+                                                <Setter TargetName="ButtonLayoutGrid" Property="BorderBrush" Value="{DynamicResource TextControlButtonBorderBrushPressed}" />
+                                                <Setter TargetName="GlyphElement" Property="Foreground" Value="{DynamicResource TextControlButtonForegroundPressed}" />
                                             </Trigger>
                                             <Trigger Property="IsEnabled" Value="false">
-                                                <Setter Property="Opacity" TargetName="ButtonLayoutGrid" Value="0" />
+                                                <Setter TargetName="ButtonLayoutGrid" Property="Opacity" Value="0" />
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
@@ -110,79 +110,79 @@
                             Grid.Row="0"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
+                            Margin="{DynamicResource TextBoxTopHeaderMargin}"
+                            VerticalAlignment="Top"
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
                             FontWeight="Normal"
                             Foreground="{DynamicResource TextControlHeaderForeground}"
-                            Margin="{DynamicResource TextBoxTopHeaderMargin}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             TextWrapping="Wrap"
-                            VerticalAlignment="Top"
-                            Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}" />
                         <Border
                             x:Name="BorderElement"
                             Grid.Row="1"
-                            Grid.Column="0"
                             Grid.RowSpan="1"
+                            Grid.Column="0"
                             Grid.ColumnSpan="2"
+                            MinWidth="{TemplateBinding MinWidth}"
+                            MinHeight="{TemplateBinding MinHeight}"
+                            primitives:ValidationHelper.IsTemplateValidationAdornerSite="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                            MinWidth="{TemplateBinding MinWidth}"
-                            MinHeight="{TemplateBinding MinHeight}"
-                            primitives:ValidationHelper.IsTemplateValidationAdornerSite="True" />
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
                         <ScrollViewer
                             x:Name="PART_ContentHost"
                             Grid.Row="1"
                             Grid.Column="0"
-                            Style="{DynamicResource TextControlContentHostStyle}"
-                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
-                            IsTabStop="False"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             Focusable="False"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                            IsTabStop="False"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            Style="{DynamicResource TextControlContentHostStyle}"
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" />
                         <TextBlock
                             x:Name="PlaceholderTextContentPresenter"
                             Grid.Row="1"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
-                            Foreground="{TemplateBinding primitives:ControlHelper.PlaceholderForeground}"
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
+                            Foreground="{TemplateBinding primitives:ControlHelper.PlaceholderForeground}"
+                            IsHitTestVisible="False"
                             Text="{TemplateBinding primitives:ControlHelper.PlaceholderText}"
                             TextAlignment="{TemplateBinding TextAlignment}"
-                            TextWrapping="{TemplateBinding TextWrapping}"
-                            IsHitTestVisible="False" />
+                            TextWrapping="{TemplateBinding TextWrapping}" />
                         <Button
                             x:Name="DeleteButton"
                             Grid.Row="1"
                             Grid.Column="1"
-                            Focusable="False"
-                            Style="{StaticResource DeleteButtonStyle}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}"
-                            Padding="{DynamicResource HelperButtonThemePadding}"
-                            IsTabStop="False"
-                            Visibility="Collapsed"
-                            FontSize="{TemplateBinding FontSize}"
                             MinWidth="34"
+                            Padding="{DynamicResource HelperButtonThemePadding}"
                             VerticalAlignment="Stretch"
-                            primitives:TextBoxHelper.IsDeleteButton="True" />
+                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                            primitives:TextBoxHelper.IsDeleteButton="True"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Focusable="False"
+                            FontSize="{TemplateBinding FontSize}"
+                            IsTabStop="False"
+                            Style="{StaticResource DeleteButtonStyle}"
+                            Visibility="Collapsed" />
                         <ContentPresenter
                             x:Name="DescriptionPresenter"
                             Grid.Row="2"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
                             Content="{TemplateBinding primitives:ControlHelper.Description}"
-                            Visibility="{TemplateBinding primitives:ControlHelper.DescriptionVisibility}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            Visibility="{TemplateBinding primitives:ControlHelper.DescriptionVisibility}" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="primitives:ControlHelper.PlaceholderForeground" Value="{x:Null}">
@@ -227,9 +227,9 @@
         </Setter>
     </Style>
 
-    <Style TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}" />
+    <Style BasedOn="{StaticResource DefaultTextBoxStyle}" TargetType="TextBox" />
 
-    <Style x:Key="DataGridTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
+    <Style x:Key="DataGridTextBoxStyle" BasedOn="{StaticResource DefaultTextBoxStyle}" TargetType="TextBox">
         <Setter Property="MinWidth" Value="0" />
         <Setter Property="Padding" Value="11,0,6,0" />
         <Setter Property="VerticalAlignment" Value="Stretch" />

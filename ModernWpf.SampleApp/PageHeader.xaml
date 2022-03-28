@@ -2,18 +2,18 @@
     x:Class="ModernWpf.SampleApp.PageHeader"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    d:DataContext="{d:DesignInstance Type=local:PageHeader}"
-    mc:Ignorable="d"
+    x:Name="headerControl"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    x:Name="headerControl"
     Background="Transparent"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}"
+    FontSize="24"
     Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-    FontSize="24">
+    mc:Ignorable="d">
     <Grid>
         <Rectangle
             x:Name="NarrowBackground"
@@ -34,18 +34,18 @@
                 </Grid.ColumnDefinitions>
                 <Grid
                     x:Name="pageTitle"
-                    Background="Transparent"
                     Height="44"
-                    VerticalAlignment="Top">
+                    VerticalAlignment="Top"
+                    Background="Transparent">
                     <Canvas
                         x:Name="ShadowHost"
                         Opacity="{Binding ShadowOpacity, Mode=OneWay}" />
                     <TextBlock
                         x:Name="TitleTextBlock"
-                        Style="{DynamicResource TitleTextBlockStyle}"
                         VerticalAlignment="Center"
                         FontSize="{Binding ElementName=headerControl, Path=FontSize}"
                         Foreground="{Binding ElementName=headerControl, Path=Foreground}"
+                        Style="{DynamicResource TitleTextBlockStyle}"
                         Text="{Binding Title, Mode=OneWay}"
                         TextTrimming="CharacterEllipsis"
                         TextWrapping="NoWrap" />
@@ -73,8 +73,8 @@
                         <ui:AppBarButton x:Name="ThemeButton" Click="OnThemeButtonClick" Label="Toggle Theme">
                             <ui:AppBarButton.Icon>
                                 <ui:FontIcon
-                                    Glyph="&#xE771;"
-                                    Margin="0,-2,0,0" />
+                                    Margin="0,-2,0,0"
+                                    Glyph="&#xE771;" />
                             </ui:AppBarButton.Icon>
                         </ui:AppBarButton>
                     </ui:CommandBar>

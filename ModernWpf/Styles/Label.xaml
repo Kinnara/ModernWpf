@@ -34,6 +34,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="Label" BasedOn="{StaticResource DefaultLabelStyle}" />
+    <Style BasedOn="{StaticResource DefaultLabelStyle}" TargetType="Label" />
 
 </ResourceDictionary>

@@ -31,8 +31,8 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        SnapsToDevicePixels="True"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        SnapsToDevicePixels="True">
                         <Border
                             x:Name="Border"
                             Padding="{TemplateBinding Padding}"
@@ -172,6 +172,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="ToggleButton" BasedOn="{StaticResource DefaultToggleButtonStyle}" />
+    <Style BasedOn="{StaticResource DefaultToggleButtonStyle}" TargetType="ToggleButton" />
 
 </ResourceDictionary>

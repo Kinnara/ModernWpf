@@ -19,23 +19,23 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ProgressBar">
                     <local:ProgressBar
-                        Foreground="{TemplateBinding Foreground}"
-                        Background="{TemplateBinding Background}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
                         MinHeight="{TemplateBinding MinHeight}"
-                        IsTabStop="{TemplateBinding IsTabStop}"
                         VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                        Minimum="{TemplateBinding Minimum}"
+                        Foreground="{TemplateBinding Foreground}"
+                        IsIndeterminate="{TemplateBinding IsIndeterminate}"
+                        IsTabStop="{TemplateBinding IsTabStop}"
                         Maximum="{TemplateBinding Maximum}"
-                        Value="{TemplateBinding Value}"
-                        IsIndeterminate="{TemplateBinding IsIndeterminate}" />
+                        Minimum="{TemplateBinding Minimum}"
+                        Value="{TemplateBinding Value}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style TargetType="ProgressBar" BasedOn="{StaticResource DefaultProgressBarStyle}" />
+    <Style BasedOn="{StaticResource DefaultProgressBarStyle}" TargetType="ProgressBar" />
 
 </ResourceDictionary>

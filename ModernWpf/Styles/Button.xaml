@@ -33,8 +33,8 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        SnapsToDevicePixels="True"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        SnapsToDevicePixels="True">
                         <Border
                             x:Name="Border"
                             Padding="{TemplateBinding Padding}"
@@ -70,9 +70,9 @@
         </Setter>
     </Style>
 
-    <Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}" />
+    <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button" />
 
-    <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+    <Style x:Key="AccentButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
         <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
         <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrush}" />
@@ -82,8 +82,8 @@
                     <Border
                         x:Name="Background"
                         Background="{TemplateBinding Background}"
-                        SnapsToDevicePixels="True"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        SnapsToDevicePixels="True">
                         <Border
                             x:Name="Border"
                             Padding="{TemplateBinding Padding}"
@@ -92,12 +92,12 @@
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                             <ContentPresenter
                                 x:Name="ContentPresenter"
-                                TextElement.Foreground="{TemplateBinding Foreground}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Focusable="False"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                TextElement.Foreground="{TemplateBinding Foreground}" />
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>

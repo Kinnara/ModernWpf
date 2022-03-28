@@ -2,8 +2,8 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:m="clr-namespace:ModernWpf.Markup"
     xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:m="clr-namespace:ModernWpf.Markup"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
     <Thickness x:Key="MenuFlyoutScrollerMargin">0,4,0,4</Thickness>
@@ -31,8 +31,8 @@
                 <ControlTemplate TargetType="ContextMenu">
                     <primitives:ThemeShadowChrome
                         x:Name="Shdw"
-                        IsShadowEnabled="{TemplateBinding HasDropShadow}"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        IsShadowEnabled="{TemplateBinding HasDropShadow}"
                         SnapsToDevicePixels="True">
                         <Border
                             Background="{TemplateBinding Background}"
@@ -40,14 +40,14 @@
                             <Grid>
                                 <ScrollViewer
                                     x:Name="ContextMenuScrollViewer"
-                                    Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
-                                                                                  TypeInTargetAssembly={x:Type FrameworkElement}}}"
+                                    MinWidth="{DynamicResource FlyoutThemeMinWidth}"
                                     Margin="{TemplateBinding Padding}"
-                                    MinWidth="{DynamicResource FlyoutThemeMinWidth}">
+                                    Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
+                                                                                  TypeInTargetAssembly={x:Type FrameworkElement}}}">
                                     <ItemsPresenter
-                                        RenderOptions.ClearTypeHint="Enabled"
                                         Margin="{StaticResource MenuFlyoutScrollerMargin}"
                                         KeyboardNavigation.DirectionalNavigation="Cycle"
+                                        RenderOptions.ClearTypeHint="Enabled"
                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                 </ScrollViewer>
                                 <Border
@@ -63,11 +63,11 @@
         </Setter>
     </Style>
 
-    <Style x:Key="DefaultContextMenuStyle" TargetType="ContextMenu" BasedOn="{StaticResource ContextMenuStyleBase}">
+    <Style x:Key="DefaultContextMenuStyle" BasedOn="{StaticResource ContextMenuStyleBase}" TargetType="ContextMenu">
         <Setter Property="OverridesDefaultStyle" Value="True" />
     </Style>
 
-    <Style TargetType="ContextMenu" BasedOn="{StaticResource DefaultContextMenuStyle}" />
+    <Style BasedOn="{StaticResource DefaultContextMenuStyle}" TargetType="ContextMenu" />
 
     <m:TextContextMenu
         x:Key="TextControlContextMenu"

@@ -33,9 +33,9 @@
                         SnapsToDevicePixels="True">
                         <Border
                             x:Name="Border"
+                            Padding="{TemplateBinding Padding}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Padding="{TemplateBinding Padding}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                             <ContentPresenter
                                 x:Name="ContentPresenter"
@@ -68,6 +68,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="RepeatButton" BasedOn="{StaticResource DefaultRepeatButtonStyle}" />
+    <Style BasedOn="{StaticResource DefaultRepeatButtonStyle}" TargetType="RepeatButton" />
 
 </ResourceDictionary>

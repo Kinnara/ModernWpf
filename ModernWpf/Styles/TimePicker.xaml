@@ -30,10 +30,10 @@
                     <Grid Background="{TemplateBinding Background}">
                         <Border
                             x:Name="Border"
+                            Padding="{TemplateBinding Padding}"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{DynamicResource DateTimePickerFlyoutButtonBorderBrush}"
                             BorderThickness="{DynamicResource DateTimeFlyoutButtonBorderThickness}"
-                            Padding="{TemplateBinding Padding}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                             <ContentPresenter
                                 x:Name="ContentPresenter"

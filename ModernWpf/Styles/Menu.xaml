@@ -26,6 +26,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="Menu" BasedOn="{StaticResource DefaultMenuStyle}" />
+    <Style BasedOn="{StaticResource DefaultMenuStyle}" TargetType="Menu" />
 
 </ResourceDictionary>

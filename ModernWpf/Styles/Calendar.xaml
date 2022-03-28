@@ -18,7 +18,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="CalendarItem">
                     <ControlTemplate.Resources>
-                        <Style TargetType="TextBlock" x:Key="WeekDayNameStyle">
+                        <Style x:Key="WeekDayNameStyle" TargetType="TextBlock">
                             <Setter Property="FontWeight" Value="Normal" />
                             <Setter Property="FontSize" Value="12" />
                             <Setter Property="TextTrimming" Value="None" />
@@ -42,7 +42,7 @@
                         x:Name="PART_Root"
                         SnapsToDevicePixels="True">
                         <Grid.Resources>
-                            <Style TargetType="Button" x:Key="NavigationButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}">
+                            <Style x:Key="NavigationButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
                                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                                 <Setter Property="VerticalAlignment" Value="Stretch" />
                                 <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
@@ -53,8 +53,8 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
                                             <Border
-                                                Background="{TemplateBinding Background}"
-                                                Margin="{TemplateBinding Padding}">
+                                                Margin="{TemplateBinding Padding}"
+                                                Background="{TemplateBinding Background}">
                                                 <Border
                                                     x:Name="Border"
                                                     BorderBrush="{DynamicResource CalendarViewNavigationButtonBorderBrush}"
@@ -85,8 +85,8 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                             <Grid
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="40" />
                                     <RowDefinition Height="*" />
@@ -99,43 +99,43 @@
                                     </Grid.ColumnDefinitions>
                                     <Button
                                         x:Name="PART_HeaderButton"
-                                        Style="{StaticResource NavigationButtonStyle}"
-                                        Foreground="{TemplateBinding Foreground}"
-                                        Focusable="False"
                                         Padding="12,0,0,0"
-                                        HorizontalContentAlignment="Left" />
+                                        HorizontalContentAlignment="Left"
+                                        Focusable="False"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        Style="{StaticResource NavigationButtonStyle}" />
                                     <Button
                                         x:Name="PART_PreviousButton"
                                         Grid.Column="1"
+                                        Padding="1"
+                                        HorizontalContentAlignment="Center"
                                         Content="{StaticResource ChevronUp}"
                                         ContentTemplate="{StaticResource IconTemplate}"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                         Focusable="False"
-                                        Padding="1"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                         Foreground="{TemplateBinding Foreground}"
-                                        HorizontalContentAlignment="Center"
                                         Style="{StaticResource NavigationButtonStyle}" />
                                     <Button
                                         x:Name="PART_NextButton"
                                         Grid.Column="2"
+                                        Padding="1"
+                                        HorizontalContentAlignment="Center"
                                         Content="{StaticResource ChevronDown}"
                                         ContentTemplate="{StaticResource IconTemplate}"
-                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                         Focusable="False"
-                                        Padding="1"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                         Foreground="{TemplateBinding Foreground}"
-                                        HorizontalContentAlignment="Center"
                                         Style="{StaticResource NavigationButtonStyle}" />
                                 </Grid>
                                 <Grid Grid.Row="1">
                                     <Rectangle
                                         x:Name="BackgroundLayer"
-                                        Fill="{TemplateBinding BorderBrush}"
-                                        Margin="0,38,0,0" />
+                                        Margin="0,38,0,0"
+                                        Fill="{TemplateBinding BorderBrush}" />
                                     <Grid
                                         x:Name="PART_MonthView"
-                                        Visibility="Visible"
-                                        TextElement.Foreground="{DynamicResource CalendarViewCalendarItemForeground}">
+                                        TextElement.Foreground="{DynamicResource CalendarViewCalendarItemForeground}"
+                                        Visibility="Visible">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="*" />
@@ -194,7 +194,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="CalendarItem" BasedOn="{StaticResource DefaultCalendarItemStyle}" />
+    <Style BasedOn="{StaticResource DefaultCalendarItemStyle}" TargetType="CalendarItem" />
 
     <Style x:Key="DefaultCalendarDayButtonStyle" TargetType="CalendarDayButton">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -225,9 +225,9 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Border
+                            Margin="-1"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Margin="-1" />
+                            BorderThickness="{TemplateBinding BorderThickness}" />
                         <Rectangle
                             x:Name="Background"
                             Fill="{TemplateBinding Background}" />
@@ -236,12 +236,12 @@
                             BorderThickness="2" />
                         <TextBlock
                             x:Name="NormalText"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             FontFamily="{TemplateBinding FontFamily}"
                             FontSize="{TemplateBinding FontSize}"
                             FontWeight="{TemplateBinding FontWeight}"
-                            Text="{TemplateBinding Content}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            Text="{TemplateBinding Content}">
                             <TextBlock.RenderTransform>
                                 <TranslateTransform Y="-1" />
                             </TextBlock.RenderTransform>
@@ -302,7 +302,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="CalendarDayButton" BasedOn="{StaticResource DefaultCalendarDayButtonStyle}" />
+    <Style BasedOn="{StaticResource DefaultCalendarDayButtonStyle}" TargetType="CalendarDayButton" />
 
     <Style x:Key="DefaultCalendarButtonStyle" TargetType="CalendarButton">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -326,21 +326,21 @@
                     <Grid SnapsToDevicePixels="True">
                         <Border
                             x:Name="Background"
+                            Margin="-1"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Margin="-1" />
+                            BorderThickness="{TemplateBinding BorderThickness}" />
                         <Border
                             x:Name="HighlightBorder"
                             BorderThickness="2" />
                         <TextBlock
                             x:Name="NormalText"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             FontFamily="{TemplateBinding FontFamily}"
                             FontSize="{TemplateBinding FontSize}"
                             FontWeight="{TemplateBinding FontWeight}"
-                            Text="{TemplateBinding Content}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            Text="{TemplateBinding Content}" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -379,7 +379,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="CalendarButton" BasedOn="{StaticResource DefaultCalendarButtonStyle}" />
+    <Style BasedOn="{StaticResource DefaultCalendarButtonStyle}" TargetType="CalendarButton" />
 
     <Style x:Key="DefaultCalendarStyle" TargetType="Calendar">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -403,29 +403,29 @@
                         SnapsToDevicePixels="True">
                         <CalendarItem
                             x:Name="PART_CalendarItem"
+                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                            Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Background="{TemplateBinding Background}"
-                            Style="{TemplateBinding CalendarItemStyle}"
-                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
+                            Style="{TemplateBinding CalendarItemStyle}" />
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style TargetType="Calendar" BasedOn="{StaticResource DefaultCalendarStyle}" />
+    <Style BasedOn="{StaticResource DefaultCalendarStyle}" TargetType="Calendar" />
 
-    <Style x:Key="DatePickerCalendarStyle" TargetType="Calendar" BasedOn="{StaticResource DefaultCalendarStyle}">
+    <Style x:Key="DatePickerCalendarStyle" BasedOn="{StaticResource DefaultCalendarStyle}" TargetType="Calendar">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Calendar">
                     <primitives:ThemeShadowChrome
                         x:Name="Shdw"
-                        IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
+                        primitives:OpeningAnimationHelper.Storyboard="{DynamicResource OpeningStoryboard}"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                        SnapsToDevicePixels="True"
-                        primitives:OpeningAnimationHelper.Storyboard="{DynamicResource OpeningStoryboard}">
+                        IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
+                        SnapsToDevicePixels="True">
                         <primitives:ThemeShadowChrome.Resources>
                             <Storyboard x:Key="OpeningStoryboard">
                                 <DoubleAnimation
@@ -439,11 +439,11 @@
                         <StackPanel x:Name="PART_Root">
                             <CalendarItem
                                 x:Name="PART_CalendarItem"
+                                primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                                Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                Background="{TemplateBinding Background}"
-                                Style="{TemplateBinding CalendarItemStyle}"
-                                primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
+                                Style="{TemplateBinding CalendarItemStyle}" />
                         </StackPanel>
                     </primitives:ThemeShadowChrome>
                 </ControlTemplate>
