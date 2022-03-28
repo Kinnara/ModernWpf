@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:local="clr-namespace:ModernWpf.Controls">
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:ui="http://schemas.modernwpf.com/2019">
 
     <Style TargetType="local:FlyoutPresenter">
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -29,18 +29,18 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:FlyoutPresenter">
                     <ui:ThemeShadowChrome
-                        IsShadowEnabled="{TemplateBinding IsDefaultShadowEnabled}"
                         CornerRadius="{TemplateBinding CornerRadius}"
+                        IsShadowEnabled="{TemplateBinding IsDefaultShadowEnabled}"
                         SnapsToDevicePixels="True">
                         <Border
                             x:Name="LayoutRoot"
                             Background="{TemplateBinding Background}"
                             CornerRadius="{TemplateBinding CornerRadius}">
                             <Border
+                                Padding="{DynamicResource FlyoutBorderThemePadding}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                Padding="{DynamicResource FlyoutBorderThemePadding}">
+                                CornerRadius="{TemplateBinding CornerRadius}">
                                 <ScrollViewer
                                     x:Name="ScrollViewer"
                                     HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"

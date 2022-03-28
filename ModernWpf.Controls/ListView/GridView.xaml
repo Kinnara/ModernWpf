@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:local="clr-namespace:ModernWpf.Controls">
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:ui="http://schemas.modernwpf.com/2019">
 
     <Style TargetType="local:GridViewItem">
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
@@ -62,29 +62,29 @@
                         <Grid>
                             <ContentPresenter
                                 x:Name="ContentPresenter"
+                                Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Margin="{TemplateBinding Padding}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             <Rectangle
                                 x:Name="BorderRectangle"
                                 IsHitTestVisible="False"
+                                Opacity="0"
                                 Stroke="{DynamicResource SystemControlHighlightListAccentLowBrush}"
-                                StrokeThickness="2"
-                                Opacity="0" />
+                                StrokeThickness="2" />
                             <Border
                                 x:Name="MultiSelectSquare"
-                                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                 Width="20"
                                 Height="20"
                                 Margin="0,2,2,0"
-                                VerticalAlignment="Top"
                                 HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
                                 Visibility="Collapsed">
                                 <ui:FontIconFallback
                                     x:Name="MultiSelectCheck"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     Data="{StaticResource CheckMark}"
+                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     FontSize="16"
                                     Foreground="{DynamicResource SystemControlForegroundBaseMediumHighBrush}"
                                     Opacity="0" />
@@ -174,12 +174,12 @@
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             <Rectangle
-                                Stroke="{DynamicResource GridViewHeaderItemDividerStroke}"
-                                StrokeThickness="0.5"
                                 Height="1"
-                                VerticalAlignment="Bottom"
+                                Margin="12,8,12,0"
                                 HorizontalAlignment="Stretch"
-                                Margin="12,8,12,0" />
+                                VerticalAlignment="Bottom"
+                                Stroke="{DynamicResource GridViewHeaderItemDividerStroke}"
+                                StrokeThickness="0.5" />
                         </StackPanel>
                     </Border>
                 </ControlTemplate>
@@ -209,19 +209,19 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:GridView">
                     <Border
-                        BorderBrush="{TemplateBinding BorderBrush}"
                         Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <ui:ScrollViewerEx
                             x:Name="ScrollViewer"
-                            KeyboardNavigation.TabNavigation="{TemplateBinding KeyboardNavigation.TabNavigation}"
-                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                            ui:ScrollViewerHelper.AutoHideScrollBars="{TemplateBinding ui:ScrollViewerHelper.AutoHideScrollBars}"
                             Focusable="false"
-                            ui:ScrollViewerHelper.AutoHideScrollBars="{TemplateBinding ui:ScrollViewerHelper.AutoHideScrollBars}">
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                            KeyboardNavigation.TabNavigation="{TemplateBinding KeyboardNavigation.TabNavigation}"
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
                             <ItemsPresenter
                                 Margin="{TemplateBinding Padding}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />

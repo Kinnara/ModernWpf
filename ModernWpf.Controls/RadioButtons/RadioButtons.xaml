@@ -21,11 +21,11 @@
                         </VisualStateManager.VisualStateGroups>
                         <ContentPresenter
                             x:Name="HeaderContentPresenter"
+                            Margin="{DynamicResource RadioButtonsTopHeaderMargin}"
                             Content="{TemplateBinding Header}"
                             ContentTemplate="{TemplateBinding HeaderTemplate}"
-                            TextElement.Foreground="{DynamicResource RadioButtonsHeaderForeground}"
-                            Margin="{DynamicResource RadioButtonsTopHeaderMargin}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                            TextElement.Foreground="{DynamicResource RadioButtonsHeaderForeground}" />
                         <local:ItemsRepeater x:Name="InnerRepeater">
                             <local:ItemsRepeater.Layout>
                                 <primitives:ColumnMajorUniformToLargestGridLayout

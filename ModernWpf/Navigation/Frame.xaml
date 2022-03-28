@@ -11,22 +11,22 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:Frame">
                     <Border
+                        Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        Padding="{TemplateBinding Padding}"
                         ClipToBounds="True">
                         <Grid>
                             <ContentPresenter
                                 x:Name="FirstContentPresenter"
-                                Content="{x:Null}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{x:Null}" />
                             <ContentPresenter
                                 x:Name="SecondContentPresenter"
-                                Content="{x:Null}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{x:Null}" />
                         </Grid>
                     </Border>
                 </ControlTemplate>

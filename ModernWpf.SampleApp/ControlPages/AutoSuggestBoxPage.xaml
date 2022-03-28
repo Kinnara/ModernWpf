@@ -1,16 +1,16 @@
 ﻿<ui:Page
     x:Class="ModernWpf.SampleApp.ControlPages.AutoSuggestBoxPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    mc:Ignorable="d"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="AutoSuggestBox"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Title="Automation Properties">
+    mc:Ignorable="d">
     <StackPanel>
         <local:ControlExample
             x:Name="Example1"
@@ -18,16 +18,16 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <ui:AutoSuggestBox
-                        Tag="Control1"
-                        TextChanged="AutoSuggestBox_TextChanged"
-                        SuggestionChosen="AutoSuggestBox_SuggestionChosen"
                         Width="300"
-                        AutomationProperties.Name="Basic AutoSuggestBox" />
+                        AutomationProperties.Name="Basic AutoSuggestBox"
+                        SuggestionChosen="AutoSuggestBox_SuggestionChosen"
+                        Tag="Control1"
+                        TextChanged="AutoSuggestBox_TextChanged" />
                     <TextBlock
-                        Tag="SuggestionOutput"
+                        FontFamily="Global User Interface"
                         Loaded="TextBlock_Loaded"
                         Style="{StaticResource OutputTextBlockStyle}"
-                        FontFamily="Global User Interface" />
+                        Tag="SuggestionOutput" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -94,37 +94,37 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <ui:AutoSuggestBox
-                        Tag="Control2"
+                        Width="300"
+                        HorizontalAlignment="Left"
                         PlaceholderText="Type a control name"
-                        TextChanged="Control2_TextChanged"
                         QueryIcon="Find"
                         QuerySubmitted="Control2_QuerySubmitted"
                         SuggestionChosen="Control2_SuggestionChosen"
-                        Width="300"
-                        HorizontalAlignment="Left" />
+                        Tag="Control2"
+                        TextChanged="Control2_TextChanged" />
                     <StackPanel
+                        Grid.Row="1"
+                        Margin="0,8,0,0"
+                        HorizontalAlignment="Left"
+                        Loaded="StackPanel_Loaded"
                         Orientation="Horizontal"
                         Tag="ControlDetails"
-                        Grid.Row="1"
-                        Loaded="StackPanel_Loaded"
-                        HorizontalAlignment="Left"
-                        Visibility="Collapsed"
-                        Margin="0,8,0,0">
+                        Visibility="Collapsed">
                         <Image
+                            Height="110"
                             Loaded="Image_Loaded"
-                            Tag="ControlImage"
-                            Height="110" />
+                            Tag="ControlImage" />
                         <StackPanel>
                             <TextBlock
-                                Tag="ControlTitle"
+                                Margin="8,0,0,0"
                                 Loaded="TextBlock_Loaded"
                                 Style="{DynamicResource BaseTextBlockStyle}"
-                                Margin="8,0,0,0" />
+                                Tag="ControlTitle" />
                             <TextBlock
-                                Tag="ControlSubtitle"
+                                Margin="8,0,0,0"
                                 Loaded="TextBlock_Loaded"
-                                TextWrapping="Wrap"
-                                Margin="8,0,0,0" />
+                                Tag="ControlSubtitle"
+                                TextWrapping="Wrap" />
                         </StackPanel>
                     </StackPanel>
                 </Grid>

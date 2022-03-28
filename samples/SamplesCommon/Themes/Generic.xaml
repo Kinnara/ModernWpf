@@ -28,20 +28,20 @@
 
                         <TextBlock
                             Grid.Column="0"
-                            Style="{DynamicResource SubtitleTextBlockStyle}"
                             Margin="0,15"
+                            Style="{DynamicResource SubtitleTextBlockStyle}"
                             Text="{TemplateBinding HeaderText}" />
 
                         <Border
                             Grid.Row="1"
                             Grid.Column="0"
+                            Background="{DynamicResource ApplicationPageBackgroundThemeBrush}"
                             BorderBrush="{DynamicResource SystemControlBackgroundListLowBrush}"
-                            BorderThickness="1"
-                            Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
+                            BorderThickness="1">
                             <Grid x:Name="ExampleContainer">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
-                                    <ColumnDefinition x:Name="OptionsColumn" Width="Auto" MaxWidth="320" MinWidth="200" />
+                                    <ColumnDefinition x:Name="OptionsColumn" Width="Auto" MinWidth="200" MaxWidth="320" />
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Example Display -->
@@ -61,9 +61,9 @@
                                     Background="{DynamicResource SystemControlPageBackgroundChromeLowBrush}">
                                     <ContentPresenter
                                         x:Name="OptionsPresenter"
+                                        Margin="16"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        Margin="16"
                                         Content="{TemplateBinding Options}"
                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                 </Border>
@@ -88,14 +88,14 @@
                     <Grid>
                         <ContentPresenter
                             x:Name="FirstContentPresenter"
-                            Content="{x:Null}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Content="{x:Null}" />
                         <ContentPresenter
                             x:Name="SecondContentPresenter"
-                            Content="{x:Null}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Content="{x:Null}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

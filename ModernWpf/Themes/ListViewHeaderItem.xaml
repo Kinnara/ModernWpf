@@ -33,12 +33,12 @@
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             <Rectangle
-                                Stroke="{DynamicResource ListViewHeaderItemDividerStroke}"
-                                StrokeThickness="0.5"
                                 Height="1"
-                                VerticalAlignment="Bottom"
+                                Margin="12,8,12,0"
                                 HorizontalAlignment="Stretch"
-                                Margin="12,8,12,0" />
+                                VerticalAlignment="Bottom"
+                                Stroke="{DynamicResource ListViewHeaderItemDividerStroke}"
+                                StrokeThickness="0.5" />
                         </StackPanel>
                     </Border>
                 </ControlTemplate>

@@ -2,9 +2,9 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls"
-    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:ui="http://schemas.modernwpf.com/2019">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/ModernWpf;component/Styles/Button.xaml" />
@@ -30,7 +30,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="NavigationViewOverflowButtonStyleWhenPaneOnTop" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+    <Style x:Key="NavigationViewOverflowButtonStyleWhenPaneOnTop" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource NavigationViewItemBorderBrush}" />
@@ -47,8 +47,8 @@
                 <ControlTemplate TargetType="Button">
                     <Grid
                         x:Name="RootGrid"
-                        Height="{TemplateBinding Height}"
                         Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
                         Background="{TemplateBinding Background}">
                         <Rectangle
                             x:Name="PointerRectangle"
@@ -60,11 +60,11 @@
                             BorderThickness="{TemplateBinding BorderThickness}" />
                         <ui:FontIconFallback
                             x:Name="Icon"
-                            VerticalAlignment="Center"
                             HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Data="{StaticResource More}"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             FontSize="20"
-                            Data="{StaticResource More}"
                             Foreground="{TemplateBinding Foreground}"
                             IsHitTestVisible="False" />
                     </Grid>
@@ -91,7 +91,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="NavigationViewOverflowButtonNoLabelStyleWhenPaneOnTop" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+    <Style x:Key="NavigationViewOverflowButtonNoLabelStyleWhenPaneOnTop" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource NavigationViewItemBorderBrush}" />
@@ -111,8 +111,8 @@
                     </ControlTemplate.Resources>
                     <Grid
                         x:Name="RootGrid"
-                        Height="{TemplateBinding Height}"
                         Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
                         Background="{TemplateBinding Background}">
                         <Rectangle
                             x:Name="PointerRectangle"
@@ -123,11 +123,11 @@
                             BorderThickness="{TemplateBinding BorderThickness}" />
                         <ui:FontIconFallback
                             x:Name="Icon"
-                            VerticalAlignment="Center"
                             HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Data="{StaticResource More}"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             FontSize="20"
-                            Data="{StaticResource More}"
                             Foreground="{TemplateBinding Foreground}"
                             IsHitTestVisible="False" />
                     </Grid>
@@ -154,7 +154,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="primitives:NavigationViewItemPresenter" x:Key="MUX_NavigationViewItemPresenterStyleWhenOnLeftPane">
+    <Style x:Key="MUX_NavigationViewItemPresenterStyleWhenOnLeftPane" TargetType="primitives:NavigationViewItemPresenter">
         <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource NavigationViewItemBorderBrush}" />
@@ -276,9 +276,9 @@
                             </Grid>
 
                             <Grid
-                                HorizontalAlignment="Stretch"
                                 x:Name="ContentGrid"
-                                MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}">
+                                MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"
+                                HorizontalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition x:Name="IconColumn" ui:ColumnDefinitionHelper.PixelWidth="{DynamicResource NavigationViewCompactPaneLength}" />
                                     <ColumnDefinition Width="*" />
@@ -299,28 +299,28 @@
                                     x:Name="ContentPresenter"
                                     Grid.Column="1"
                                     Margin="{DynamicResource NavigationViewItemContentPresenterMargin}"
-                                    ContentTemplate="{TemplateBinding ContentTemplate}"
-                                    Content="{TemplateBinding Content}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
                                     ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
 
                                 <Grid
                                     x:Name="ExpandCollapseChevron"
                                     Grid.Column="2"
-                                    Visibility="Collapsed"
-                                    HorizontalAlignment="Right"
                                     Width="40"
                                     Margin="{DynamicResource NavigationViewItemExpandChevronMargin}"
-                                    Background="Transparent">
+                                    HorizontalAlignment="Right"
+                                    Background="Transparent"
+                                    Visibility="Collapsed">
                                     <ui:FontIconFallback
-                                        RenderTransformOrigin="0.5, 0.5"
-                                        Foreground="{DynamicResource NavigationViewItemForeground}"
-                                        FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
                                         Data="{DynamicResource NavigationViewItemExpandedPath}"
                                         FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center">
+                                        FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
+                                        Foreground="{DynamicResource NavigationViewItemForeground}"
+                                        RenderTransformOrigin="0.5, 0.5">
                                         <ui:FontIconFallback.RenderTransform>
                                             <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" Angle="0" />
                                         </ui:FontIconFallback.RenderTransform>
@@ -375,7 +375,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:NavigationViewItem" x:Key="MUX_NavigationViewSettingsItemStyleWhenOnTopPane">
+    <Style x:Key="MUX_NavigationViewSettingsItemStyleWhenOnTopPane" TargetType="local:NavigationViewItem">
         <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource NavigationViewItemBorderBrush}" />
@@ -432,11 +432,11 @@
                                 x:Name="IconBox"
                                 Grid.Row="1"
                                 Grid.Column="1"
-                                Height="16"
                                 Width="48"
+                                Height="16"
                                 Margin="0,0,0,0"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center">
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
                                 <ContentPresenter
                                     x:Name="Icon"
                                     Content="{TemplateBinding Icon}"
@@ -480,7 +480,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="primitives:NavigationViewItemPresenter" x:Key="MUX_NavigationViewItemPresenterStyleWhenOnTopPane">
+    <Style x:Key="MUX_NavigationViewItemPresenterStyleWhenOnTopPane" TargetType="primitives:NavigationViewItemPresenter">
         <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -567,11 +567,11 @@
                             </Grid.ColumnDefinitions>
                             <Viewbox
                                 x:Name="IconBox"
-                                Height="16"
                                 Width="16"
+                                Height="16"
                                 Margin="16,0,0,0"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center">
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
                                 <ContentPresenter
                                     x:Name="Icon"
                                     Content="{TemplateBinding Icon}"
@@ -581,29 +581,29 @@
                                 x:Name="ContentPresenter"
                                 Grid.Column="1"
                                 Margin="{DynamicResource TopNavigationViewItemContentPresenterMargin}"
-                                TextWrapping="NoWrap"
-                                Foreground="{TemplateBinding Foreground}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                Content="{TemplateBinding Content}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
                                 ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                VerticalAlignment="Center" />
+                                Foreground="{TemplateBinding Foreground}"
+                                TextWrapping="NoWrap" />
                             <Grid
                                 x:Name="ExpandCollapseChevron"
                                 Grid.Column="2"
-                                Visibility="Collapsed"
-                                HorizontalAlignment="Right"
                                 Width="40"
                                 Margin="{DynamicResource TopNavigationViewItemExpandChevronMargin}"
-                                Background="Transparent">
+                                HorizontalAlignment="Right"
+                                Background="Transparent"
+                                Visibility="Collapsed">
                                 <ui:FontIconFallback
-                                    Foreground="{DynamicResource NavigationViewItemForeground}"
-                                    RenderTransformOrigin="0.5, 0.5"
-                                    FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
                                     Data="{DynamicResource NavigationViewItemExpandedPath}"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center">
+                                    FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
+                                    Foreground="{DynamicResource NavigationViewItemForeground}"
+                                    RenderTransformOrigin="0.5, 0.5">
                                     <ui:FontIconFallback.RenderTransform>
                                         <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" />
                                     </ui:FontIconFallback.RenderTransform>
@@ -678,7 +678,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="primitives:NavigationViewItemPresenter" x:Key="MUX_NavigationViewItemPresenterStyleWhenOnTopPaneOverflow">
+    <Style x:Key="MUX_NavigationViewItemPresenterStyleWhenOnTopPaneOverflow" TargetType="primitives:NavigationViewItemPresenter">
         <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -775,11 +775,11 @@
                                 </Grid.ColumnDefinitions>
                                 <Viewbox
                                     x:Name="IconBox"
-                                    Height="16"
                                     Width="16"
+                                    Height="16"
                                     Margin="16,0,0,0"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center">
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
                                     <ContentPresenter
                                         x:Name="Icon"
                                         Content="{TemplateBinding Icon}"
@@ -789,32 +789,32 @@
                                     x:Name="ContentPresenter"
                                     Grid.Column="1"
                                     Margin="{DynamicResource TopNavigationViewItemOnOverflowContentPresenterMargin}"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    TextWrapping="NoWrap"
-                                    ContentTemplate="{TemplateBinding ContentTemplate}"
-                                    Content="{TemplateBinding Content}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="Center"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
                                     ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                    VerticalAlignment="Center" />
+                                    Foreground="{TemplateBinding Foreground}"
+                                    TextWrapping="NoWrap" />
                                 <Grid
                                     x:Name="ExpandCollapseChevron"
                                     Grid.Column="2"
-                                    Visibility="Collapsed"
-                                    HorizontalAlignment="Right"
                                     Width="40"
                                     Margin="{DynamicResource TopNavigationViewItemOnOverflowExpandChevronMargin}"
-                                    Background="Transparent">
+                                    HorizontalAlignment="Right"
+                                    Background="Transparent"
+                                    Visibility="Collapsed">
                                     <Border Padding="{DynamicResource TopNavigationViewItemOnOverflowExpandChevronPadding}">
                                         <ui:FontIconFallback
-                                            Foreground="{DynamicResource NavigationViewItemForeground}"
                                             Width="12"
                                             Height="12"
-                                            RenderTransformOrigin="0.5, 0.5"
-                                            FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
                                             Data="{DynamicResource NavigationViewItemExpandedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center">
+                                            FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
+                                            Foreground="{DynamicResource NavigationViewItemForeground}"
+                                            RenderTransformOrigin="0.5, 0.5">
                                             <ui:FontIconFallback.RenderTransform>
                                                 <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" />
                                             </ui:FontIconFallback.RenderTransform>
@@ -997,8 +997,8 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
                             Canvas.ZIndex="100"
-                            KeyboardNavigation.TabNavigation="Local"
-                            KeyboardNavigation.TabIndex="0">
+                            KeyboardNavigation.TabIndex="0"
+                            KeyboardNavigation.TabNavigation="Local">
 
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -1014,46 +1014,46 @@
                                 Grid.Row="1">
                                 <Button
                                     x:Name="NavigationViewBackButton"
-                                    Style="{DynamicResource NavigationBackButtonNormalStyle}"
                                     VerticalAlignment="Top"
-                                    Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.BackButtonVisibility}"
-                                    IsEnabled="{TemplateBinding IsBackEnabled}">
+                                    IsEnabled="{TemplateBinding IsBackEnabled}"
+                                    Style="{DynamicResource NavigationBackButtonNormalStyle}"
+                                    Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.BackButtonVisibility}">
                                     <ToolTipService.ToolTip>
                                         <ToolTip x:Name="NavigationViewBackButtonToolTip" />
                                     </ToolTipService.ToolTip>
                                 </Button>
                                 <Button
                                     x:Name="NavigationViewCloseButton"
-                                    Style="{DynamicResource NavigationBackButtonNormalStyle}"
-                                    VerticalAlignment="Top">
+                                    VerticalAlignment="Top"
+                                    Style="{DynamicResource NavigationBackButtonNormalStyle}">
                                     <ToolTipService.ToolTip>
                                         <ToolTip x:Name="NavigationViewCloseButtonToolTip" />
                                     </ToolTipService.ToolTip>
                                 </Button>
                                 <Button
                                     x:Name="TogglePaneButton"
-                                    Style="{TemplateBinding PaneToggleButtonStyle}"
                                     HorizontalAlignment="Center"
-                                    Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.PaneToggleButtonVisibility}"
-                                    VerticalAlignment="Top">
+                                    VerticalAlignment="Top"
+                                    Style="{TemplateBinding PaneToggleButtonStyle}"
+                                    Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.PaneToggleButtonVisibility}">
                                     <TextBlock
                                         x:Name="PaneTitleTextBlock"
                                         Grid.Column="0"
-                                        Text="{TemplateBinding PaneTitle}"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Style="{DynamicResource NavigationViewItemHeaderTextStyle}" />
+                                        Style="{DynamicResource NavigationViewItemHeaderTextStyle}"
+                                        Text="{TemplateBinding PaneTitle}" />
                                 </Button>
                                 <Grid
                                     x:Name="PaneTitleHolder"
                                     Visibility="Collapsed">
                                     <ContentControl
                                         x:Name="PaneTitlePresenter"
-                                        Style="{StaticResource DefaultContentControlStyle}"
                                         Margin="{DynamicResource NavigationViewPaneTitlePresenterMargin}"
-                                        IsTabStop="False"
                                         HorizontalContentAlignment="Stretch"
-                                        VerticalContentAlignment="Stretch" />
+                                        VerticalContentAlignment="Stretch"
+                                        IsTabStop="False"
+                                        Style="{StaticResource DefaultContentControlStyle}" />
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -1068,10 +1068,10 @@
                             <!-- DisplayMode top -->
                             <StackPanel
                                 x:Name="TopNavArea"
-                                Background="{DynamicResource NavigationViewTopPaneBackground}"
                                 Grid.Row="0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Top"
+                                Background="{DynamicResource NavigationViewTopPaneBackground}"
                                 Canvas.ZIndex="1">
 
                                 <Grid
@@ -1102,19 +1102,19 @@
 
                                     <ContentControl
                                         x:Name="PaneHeaderOnTopPane"
-                                        Style="{StaticResource DefaultContentControlStyle}"
-                                        IsTabStop="False"
-                                        VerticalContentAlignment="Stretch"
+                                        Grid.Column="2"
                                         HorizontalContentAlignment="Stretch"
-                                        Grid.Column="2" />
+                                        VerticalContentAlignment="Stretch"
+                                        IsTabStop="False"
+                                        Style="{StaticResource DefaultContentControlStyle}" />
 
                                     <ContentControl
                                         x:Name="PaneTitleOnTopPane"
-                                        Style="{StaticResource DefaultContentControlStyle}"
-                                        IsTabStop="False"
-                                        VerticalContentAlignment="Stretch"
+                                        Grid.Column="2"
                                         HorizontalContentAlignment="Stretch"
-                                        Grid.Column="2" />
+                                        VerticalContentAlignment="Stretch"
+                                        IsTabStop="False"
+                                        Style="{StaticResource DefaultContentControlStyle}" />
 
                                     <!-- Top nav ItemsRepeater -->
                                     <local:ItemsRepeaterScrollHost Grid.Column="3">
@@ -1122,8 +1122,8 @@
                                             HorizontalScrollBarVisibility="Hidden"
                                             VerticalScrollBarVisibility="Hidden">
                                             <local:ItemsRepeater
-                                                AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}"
-                                                x:Name="TopNavMenuItemsHost">
+                                                x:Name="TopNavMenuItemsHost"
+                                                AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}">
                                                 <local:ItemsRepeater.Layout>
                                                     <local:StackLayout Orientation="Horizontal" />
                                                 </local:ItemsRepeater.Layout>
@@ -1134,8 +1134,8 @@
                                     <Button
                                         x:Name="TopNavOverflowButton"
                                         Grid.Column="4"
-                                        Content="More"
                                         Margin="{DynamicResource TopNavigationViewOverflowButtonMargin}"
+                                        Content="More"
                                         Style="{StaticResource NavigationViewOverflowButtonStyleWhenPaneOnTop}"
                                         Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OverflowButtonVisibility}">
 
@@ -1159,38 +1159,38 @@
 
                                     <ContentControl
                                         x:Name="PaneCustomContentOnTopPane"
-                                        Style="{StaticResource DefaultContentControlStyle}"
-                                        IsTabStop="False"
-                                        VerticalContentAlignment="Stretch"
+                                        Grid.Column="5"
                                         HorizontalContentAlignment="Stretch"
-                                        Grid.Column="5" />
+                                        VerticalContentAlignment="Stretch"
+                                        IsTabStop="False"
+                                        Style="{StaticResource DefaultContentControlStyle}" />
 
                                     <Grid
                                         x:Name="TopPaneAutoSuggestArea"
-                                        Height="{DynamicResource NavigationViewTopPaneHeight}"
-                                        Grid.Column="6">
+                                        Grid.Column="6"
+                                        Height="{DynamicResource NavigationViewTopPaneHeight}">
 
                                         <ContentControl
                                             x:Name="TopPaneAutoSuggestBoxPresenter"
-                                            Style="{StaticResource DefaultContentControlStyle}"
-                                            Margin="{DynamicResource TopNavigationViewAutoSuggestBoxMargin}"
                                             MinWidth="48"
-                                            IsTabStop="False"
+                                            Margin="{DynamicResource TopNavigationViewAutoSuggestBoxMargin}"
                                             HorizontalContentAlignment="Stretch"
-                                            VerticalContentAlignment="Center" />
+                                            VerticalContentAlignment="Center"
+                                            IsTabStop="False"
+                                            Style="{StaticResource DefaultContentControlStyle}" />
                                     </Grid>
 
                                     <ContentControl
                                         x:Name="PaneFooterOnTopPane"
-                                        Style="{StaticResource DefaultContentControlStyle}"
-                                        IsTabStop="False"
-                                        VerticalContentAlignment="Stretch"
+                                        Grid.Column="7"
                                         HorizontalContentAlignment="Stretch"
-                                        Grid.Column="7" />
+                                        VerticalContentAlignment="Stretch"
+                                        IsTabStop="False"
+                                        Style="{StaticResource DefaultContentControlStyle}" />
                                     <!-- Top footer menu ItemsRepeater -->
                                     <local:ItemsRepeater
-                                        Grid.Column="8"
-                                        x:Name="TopFooterMenuItemsHost">
+                                        x:Name="TopFooterMenuItemsHost"
+                                        Grid.Column="8">
                                         <local:ItemsRepeater.Layout>
                                             <local:StackLayout Orientation="Horizontal" />
                                         </local:ItemsRepeater.Layout>
@@ -1205,14 +1205,14 @@
                             <!-- Displaymode (compact/minimal/normal) left -->
                             <local:SplitView
                                 x:Name="RootSplitView"
+                                Grid.Row="1"
                                 Background="{TemplateBinding Background}"
                                 CompactPaneLength="{TemplateBinding CompactPaneLength}"
                                 DisplayMode="Inline"
                                 IsPaneOpen="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=IsPaneOpen, Mode=TwoWay}"
                                 IsTabStop="False"
                                 OpenPaneLength="{TemplateBinding OpenPaneLength}"
-                                PaneBackground="{DynamicResource NavigationViewDefaultPaneBackground}"
-                                Grid.Row="1">
+                                PaneBackground="{DynamicResource NavigationViewDefaultPaneBackground}">
 
                                 <local:SplitView.Pane>
                                     <Grid
@@ -1248,11 +1248,11 @@
 
                                             <ContentControl
                                                 x:Name="PaneHeaderContentBorder"
-                                                Style="{StaticResource DefaultContentControlStyle}"
-                                                IsTabStop="False"
-                                                VerticalContentAlignment="Stretch"
+                                                Grid.Column="2"
                                                 HorizontalContentAlignment="Stretch"
-                                                Grid.Column="2" />
+                                                VerticalContentAlignment="Stretch"
+                                                IsTabStop="False"
+                                                Style="{StaticResource DefaultContentControlStyle}" />
                                         </Grid>
 
                                         <Grid
@@ -1263,26 +1263,26 @@
 
                                             <ContentControl
                                                 x:Name="PaneAutoSuggestBoxPresenter"
-                                                Style="{StaticResource DefaultContentControlStyle}"
                                                 Margin="{DynamicResource NavigationViewAutoSuggestBoxMargin}"
-                                                IsTabStop="False"
                                                 HorizontalContentAlignment="Stretch"
-                                                VerticalContentAlignment="Center" />
+                                                VerticalContentAlignment="Center"
+                                                IsTabStop="False"
+                                                Style="{StaticResource DefaultContentControlStyle}" />
 
                                             <Button
                                                 x:Name="PaneAutoSuggestButton"
-                                                Visibility="Collapsed"
+                                                Width="{TemplateBinding CompactPaneLength}"
                                                 Style="{DynamicResource NavigationViewPaneSearchButtonStyle}"
-                                                Width="{TemplateBinding CompactPaneLength}" />
+                                                Visibility="Collapsed" />
                                         </Grid>
 
                                         <ContentControl
                                             x:Name="PaneCustomContentBorder"
-                                            Style="{StaticResource DefaultContentControlStyle}"
-                                            IsTabStop="False"
-                                            VerticalContentAlignment="Stretch"
+                                            Grid.Row="4"
                                             HorizontalContentAlignment="Stretch"
-                                            Grid.Row="4" />
+                                            VerticalContentAlignment="Stretch"
+                                            IsTabStop="False"
+                                            Style="{StaticResource DefaultContentControlStyle}" />
 
                                         <!-- "Non header" content -->
                                         <Grid
@@ -1318,18 +1318,18 @@
                                             <local:NavigationViewItemSeparator
                                                 x:Name="VisualItemsSeparator"
                                                 Grid.Row="1"
+                                                HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
-                                                Visibility="Collapsed"
-                                                HorizontalAlignment="Stretch" />
+                                                Visibility="Collapsed" />
 
                                             <!-- PaneFooter -->
                                             <ContentControl
                                                 x:Name="FooterContentBorder"
-                                                Style="{StaticResource DefaultContentControlStyle}"
-                                                IsTabStop="False"
-                                                VerticalContentAlignment="Stretch"
+                                                Grid.Row="2"
                                                 HorizontalContentAlignment="Stretch"
-                                                Grid.Row="2" />
+                                                VerticalContentAlignment="Stretch"
+                                                IsTabStop="False"
+                                                Style="{StaticResource DefaultContentControlStyle}" />
 
                                             <!-- FooterItems -->
                                             <local:ItemsRepeaterScrollHost Grid.Row="3">
@@ -1370,11 +1370,11 @@
                                             Grid.Row="1"
                                             Grid.Column="1"
                                             MinHeight="{DynamicResource PaneToggleButtonHeight}"
-                                            IsTabStop="False"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
                                             Content="{TemplateBinding Header}"
                                             ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                            VerticalContentAlignment="Stretch"
-                                            HorizontalContentAlignment="Stretch"
+                                            IsTabStop="False"
                                             Style="{DynamicResource NavigationViewTitleHeaderContentControlTextStyle}" />
 
                                         <ContentPresenter
@@ -1471,28 +1471,28 @@
 
                         <primitives:NavigationViewItemPresenter
                             x:Name="NavigationViewItemPresenter"
-                            Icon="{TemplateBinding Icon}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
                             Margin="{TemplateBinding Margin}"
                             Padding="{TemplateBinding Padding}"
-                            Foreground="{TemplateBinding Foreground}"
+                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            ui:FocusVisualHelper.IsTemplateFocusTarget="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            UseSystemFocusVisuals="{TemplateBinding UseSystemFocusVisuals}"
-                            VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                             Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                             CornerRadius="{TemplateBinding CornerRadius}"
+                            Foreground="{TemplateBinding Foreground}"
+                            Icon="{TemplateBinding Icon}"
                             IsTabStop="False"
-                            ui:FocusVisualHelper.IsTemplateFocusTarget="True" />
+                            UseSystemFocusVisuals="{TemplateBinding UseSystemFocusVisuals}" />
                         <local:ItemsRepeater
+                            x:Name="NavigationViewItemMenuItemsHost"
                             Grid.Row="1"
-                            Visibility="Collapsed"
-                            x:Name="NavigationViewItemMenuItemsHost">
+                            Visibility="Collapsed">
                             <local:ItemsRepeater.Layout>
                                 <local:StackLayout Orientation="Vertical" />
                             </local:ItemsRepeater.Layout>
@@ -1517,7 +1517,7 @@
 
                     <ControlTemplate.Triggers>
                         <!-- OnLeftNavigation -->
-                        <Trigger Property="CurrentStateName" Value="OnLeftNavigation" SourceName="ItemOnNavigationViewListPositionStatesListener">
+                        <Trigger SourceName="ItemOnNavigationViewListPositionStatesListener" Property="CurrentStateName" Value="OnLeftNavigation">
                             <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnLeftPane}" />
                         </Trigger>
                         <!-- OnLeftNavigationReveal -->
@@ -1527,7 +1527,7 @@
                              </Trigger>
                         -->
                         <!-- OnTopNavigationPrimary -->
-                        <Trigger Property="CurrentStateName" Value="OnTopNavigationPrimary" SourceName="ItemOnNavigationViewListPositionStatesListener">
+                        <Trigger SourceName="ItemOnNavigationViewListPositionStatesListener" Property="CurrentStateName" Value="OnTopNavigationPrimary">
                             <Setter TargetName="NavigationViewItemPresenter" Property="Margin" Value="{DynamicResource TopNavigationViewItemMargin}" />
                             <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPane}" />
                         </Trigger>
@@ -1539,7 +1539,7 @@
                              </Trigger>
                         -->
                         <!-- OnTopNavigationOverflow -->
-                        <Trigger Property="CurrentStateName" Value="OnTopNavigationOverflow" SourceName="ItemOnNavigationViewListPositionStatesListener">
+                        <Trigger SourceName="ItemOnNavigationViewListPositionStatesListener" Property="CurrentStateName" Value="OnTopNavigationOverflow">
                             <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPaneOverflow}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -1578,7 +1578,7 @@
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Opacity">
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0.0" />
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0.1" Value="0.0" />
-                                                <SplineDoubleKeyFrame KeyTime="0:0:0.2" KeySpline="0.0,0.35 0.15,1.0" Value="1.0" />
+                                                <SplineDoubleKeyFrame KeySpline="0.0,0.35 0.15,1.0" KeyTime="0:0:0.2" Value="1.0" />
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualTransition>
@@ -1595,7 +1595,7 @@
 
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Opacity">
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0" Value="1.0" />
-                                                <SplineDoubleKeyFrame KeyTime="0:0:0.1" KeySpline="0.0,0.35 0.15,1.0" Value="0.0" />
+                                                <SplineDoubleKeyFrame KeySpline="0.0,0.35 0.15,1.0" KeyTime="0:0:0.1" Value="0.0" />
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualTransition>
@@ -1618,12 +1618,12 @@
                         <Grid
                             x:Name="InnerHeaderGrid"
                             Height="40"
-                            HorizontalAlignment="Left"
-                            Margin="{DynamicResource NavigationViewItemInnerHeaderMargin}">
+                            Margin="{DynamicResource NavigationViewItemInnerHeaderMargin}"
+                            HorizontalAlignment="Left">
                             <TextBlock
                                 x:Name="HeaderText"
-                                VerticalAlignment="Center"
                                 Margin="0,-1,0,-1"
+                                VerticalAlignment="Center"
                                 Style="{DynamicResource NavigationViewItemHeaderTextStyle}"
                                 Text="{TemplateBinding Content}"
                                 TextWrapping="NoWrap" />

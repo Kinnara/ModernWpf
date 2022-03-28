@@ -47,16 +47,16 @@
                             Orientation="Horizontal">
                             <primitives:TitleBarButton
                                 x:Name="PART_BackButton"
-                                Style="{TemplateBinding BackButtonStyle}"
                                 Height="{TemplateBinding Height}"
-                                IsEnabled="{TemplateBinding IsBackEnabled}"
+                                AutomationProperties.Name="Back"
                                 Command="{TemplateBinding BackButtonCommand}"
                                 CommandParameter="{TemplateBinding BackButtonCommandParameter}"
                                 CommandTarget="{TemplateBinding BackButtonCommandTarget}"
                                 IsActive="{TemplateBinding IsActive}"
-                                Visibility="Collapsed"
+                                IsEnabled="{TemplateBinding IsBackEnabled}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                AutomationProperties.Name="Back" />
+                                Style="{TemplateBinding BackButtonStyle}"
+                                Visibility="Collapsed" />
                         </StackPanel>
 
                         <StackPanel
@@ -65,19 +65,19 @@
                             Orientation="Horizontal">
                             <Image
                                 x:Name="Icon"
-                                Source="{TemplateBinding ActualIcon}"
                                 Width="{DynamicResource {x:Static SystemParameters.SmallIconWidthKey}}"
                                 Height="{DynamicResource {x:Static SystemParameters.SmallIconHeightKey}}"
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
+                                Source="{TemplateBinding ActualIcon}"
                                 Visibility="Collapsed" />
 
                             <TextBlock
                                 x:Name="Title"
                                 Margin="12,0,12,0"
                                 VerticalAlignment="Center"
-                                FontSize="12"
                                 Background="{x:Null}"
+                                FontSize="12"
                                 Foreground="{TemplateBinding Foreground}"
                                 Text="{TemplateBinding Title}"
                                 TextTrimming="CharacterEllipsis">
@@ -93,37 +93,37 @@
                             Orientation="Horizontal">
                             <primitives:TitleBarButton
                                 x:Name="MinimizeButton"
+                                AutomationProperties.Name="Minimize"
                                 Command="{x:Static SystemCommands.MinimizeWindowCommand}"
                                 Content="{StaticResource ChromeMinimize}"
                                 ContentTemplate="{StaticResource IconTemplate}"
                                 IsActive="{TemplateBinding IsActive}"
-                                Style="{TemplateBinding ButtonStyle}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                AutomationProperties.Name="Minimize" />
+                                Style="{TemplateBinding ButtonStyle}" />
 
                             <primitives:TitleBarButton
                                 x:Name="MaximizeRestoreButton"
+                                AutomationProperties.Name="Maximize"
                                 Command="{x:Static SystemCommands.MaximizeWindowCommand}"
                                 Content="{StaticResource ChromeMaximize}"
                                 ContentTemplate="{StaticResource IconTemplate}"
                                 IsActive="{TemplateBinding IsActive}"
-                                Style="{TemplateBinding ButtonStyle}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                AutomationProperties.Name="Maximize" />
+                                Style="{TemplateBinding ButtonStyle}" />
 
                             <primitives:TitleBarButton
                                 x:Name="CloseButton"
+                                AutomationProperties.Name="Close"
                                 Command="{x:Static SystemCommands.CloseWindowCommand}"
                                 Content="{StaticResource ChromeClose}"
                                 ContentTemplate="{StaticResource IconTemplate}"
-                                IsActive="{TemplateBinding IsActive}"
-                                Style="{TemplateBinding ButtonStyle}"
                                 HoverBackground="#E81123"
                                 HoverForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
+                                IsActive="{TemplateBinding IsActive}"
                                 PressedBackground="#F1707A"
                                 PressedForeground="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                AutomationProperties.Name="Close" />
+                                Style="{TemplateBinding ButtonStyle}" />
                         </StackPanel>
                     </Grid>
                     <ControlTemplate.Triggers>

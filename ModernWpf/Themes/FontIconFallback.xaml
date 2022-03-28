@@ -17,8 +17,8 @@
                         <Path
                             Width="20"
                             Height="20"
-                            Fill="{TemplateBinding Foreground}"
-                            Data="{TemplateBinding Data}" />
+                            Data="{TemplateBinding Data}"
+                            Fill="{TemplateBinding Foreground}" />
                     </Viewbox>
                 </ControlTemplate>
             </Setter.Value>

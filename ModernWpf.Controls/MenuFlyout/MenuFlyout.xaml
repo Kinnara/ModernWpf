@@ -7,7 +7,7 @@
         <ResourceDictionary Source="/ModernWpf;component/Styles/ContextMenu.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="local:MenuFlyoutPresenter" BasedOn="{StaticResource ContextMenuStyleBase}">
+    <Style BasedOn="{StaticResource ContextMenuStyleBase}" TargetType="local:MenuFlyoutPresenter">
         <Setter Property="IsDefaultShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
         <Setter Property="HasDropShadow" Value="{Binding IsDefaultShadowEnabled, RelativeSource={RelativeSource Self}}" />
     </Style>
