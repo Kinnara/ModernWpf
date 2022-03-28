@@ -13,11 +13,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Page = ModernWpf.Controls.Page;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class CommandBarFlyoutPage
+    public partial class CommandBarFlyoutPage : Page
     {
+        private Image Image1;
+        private TextBlock SelectedOptionText;
         private CommandBarFlyout CommandBarFlyout1;
 
         public CommandBarFlyoutPage()
@@ -30,21 +33,10 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             // Do custom logic
             SelectedOptionText.Text = "You clicked: " + (sender as AppBarButton).Label;
-
-            //var command = (ICommandBarElement)sender;
-            //if (CommandBarFlyout1.PrimaryCommands.Contains(command))
-            //{
-            //    CommandBarFlyout1.PrimaryCommands.Remove(command);
-            //}
-            //else if (CommandBarFlyout1.SecondaryCommands.Contains(command))
-            //{
-            //    CommandBarFlyout1.SecondaryCommands.Remove(command);
-            //}
         }
 
         private void ShowMenu(bool isTransient)
         {
-            CommandBarFlyout1.ShowMode = isTransient ? FlyoutShowMode.Transient : FlyoutShowMode.Standard;
             CommandBarFlyout1.ShowAt(Image1);
         }
 
@@ -57,6 +49,16 @@ namespace ModernWpf.SampleApp.ControlPages
         private void MyImageButton_Click(object sender, RoutedEventArgs e)
         {
             ShowMenu((sender as Button).IsMouseOver);
+        }
+
+        private void TextBlock_Loaded(object sender, RoutedEventArgs e)
+        {
+            SelectedOptionText = sender as TextBlock;
+        }
+
+        private void Image_Loaded(object sender, RoutedEventArgs e)
+        {
+            Image1 = sender as Image;
         }
     }
 }

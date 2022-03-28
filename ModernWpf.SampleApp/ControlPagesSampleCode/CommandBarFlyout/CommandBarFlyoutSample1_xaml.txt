@@ -1,16 +1,16 @@
 ﻿<Page.Resources>
-    <muxc:CommandBarFlyout Placement="Right" x:Name="CommandBarFlyout1">
-        <AppBarButton Label="Share" Icon="Share" ToolTipService.ToolTip="Share" Click="OnElementClicked" />
-        <AppBarButton Label="Save" Icon="Save" ToolTipService.ToolTip="Save" Click="OnElementClicked" />
-        <AppBarButton Label="Delete" Icon="Delete" ToolTipService.ToolTip="Delete" Click="OnElementClicked" />
-        <muxc:CommandBarFlyout.SecondaryCommands>
+    <ui:CommandBarFlyout Placement="Right" x:Key="CommandBarFlyout1">
+        <ui:AppBarButton Label="Share" Icon="Share" ToolTipService.ToolTip="Share" Click="OnElementClicked" />
+        <ui:AppBarButton Label="Save" Icon="Save" ToolTipService.ToolTip="Save" Click="OnElementClicked" />
+        <ui:AppBarButton Label="Delete" Icon="Delete" ToolTipService.ToolTip="Delete" Click="OnElementClicked" />
+        <ui:CommandBarFlyout.SecondaryCommands>
             <AppBarButton x:Name="ResizeButton1" Label="Resize" Click="OnElementClicked" />
             <AppBarButton x:Name="MoveButton1" Label="Move" Click="OnElementClicked" />
-        </muxc:CommandBarFlyout.SecondaryCommands>
-    </muxc:CommandBarFlyout>
+        </ui:CommandBarFlyout.SecondaryCommands>
+    </ui:CommandBarFlyout>
 </Page.Resources>
 
 <Button x:Name="myImageButton" AutomationProperties.Name="mountain" Padding="0"
-    Click="MyImageButton_Click" ContextRequested="MyImageButton_ContextRequested" >
+    Click="MyImageButton_Click" ContextMenuOpening="MyImageButton_ContextMenuOpening" >
     <Image x:Name="Image1" Height="300" Source="/Assets/SampleMedia/rainier.jpg"/>
 </Button>
