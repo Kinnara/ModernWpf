@@ -1,0 +1,64 @@
+﻿<ui:Page
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    x:Class="ModernWpf.SampleApp.ControlPages.CalendarViewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    mc:Ignorable="d"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Title="Calendar View">
+    <StackPanel>
+        <local:ControlExample
+            x:Name="ExampleAccessories"
+            HeaderText="A basic calendar view.">
+
+            <local:ControlExample.Example>
+                <Calendar
+                    Tag="Control1"
+                    VerticalAlignment="Top"
+                    SelectionMode="SingleDate"
+                    Loaded="Calendar_Loaded" />
+            </local:ControlExample.Example>
+
+            <local:ControlExample.Options>
+                <StackPanel Margin="0,-5,0,0">
+                    <ComboBox
+                        Tag="SelectionMode"
+                        Margin="0,10,0,0"
+                        ui:ControlHelper.Header="SelectionMode"
+                        SelectedValue="SingleDate"
+                        Loaded="ComboBox_Loaded"
+                        SelectionChanged="SelectionMode_SelectionChanged">
+                        <sys:String>None</sys:String>
+                        <sys:String>SingleDate</sys:String>
+                        <sys:String>SingleRange</sys:String>
+                        <sys:String>MultipleRange</sys:String>
+                    </ComboBox>
+
+                    <ComboBox
+                        Tag="CalendarLanguages"
+                        ui:ControlHelper.Header="Language"
+                        Margin="0,10,0,0"
+                        Width="220"
+                        DisplayMemberPath="Name"
+                        SelectedIndex="0"
+                        SelectedValuePath="Code"
+                        Loaded="ComboBox_Loaded"
+                        SelectionChanged="CalendarLanguages_SelectionChanged" />
+                </StackPanel>
+            </local:ControlExample.Options>
+
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;CalendarView 
+    SelectionMode=&quot;$(SelectionMode)&quot; 
+    Language=&quot;$(Language)&quot; /&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+    </StackPanel>
+</ui:Page>

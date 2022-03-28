@@ -123,6 +123,7 @@ namespace ModernWpf.SampleApp.ControlPages
 
                         List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2, Substitution3 };
                         Example1.Substitutions = Substitutions;
+
                         break;
                 }
             }
