@@ -14,11 +14,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Fonts\FluentSystemIcons-Filled.ttf" />
+    <None Remove="Fonts\FluentSystemIcons-Regular.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Remove="Properties\DesignTimeResources.xaml" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="Properties\DesignTimeResources.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Fonts\FluentSystemIcons-Filled.ttf" />
+    <Resource Include="Fonts\FluentSystemIcons-Regular.ttf" />
   </ItemGroup>
 
   <ItemGroup>

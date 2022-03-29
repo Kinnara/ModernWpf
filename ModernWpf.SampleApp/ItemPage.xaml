@@ -1,20 +1,20 @@
 ﻿<ui:Page
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     x:Class="ModernWpf.SampleApp.ItemPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
-    xmlns:str="clr-namespace:ModernWpf.SampleApp.Properties"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:datamodel="clr-namespace:ModernWpf.SampleApp.DataModel"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:str="clr-namespace:ModernWpf.SampleApp.Properties"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="ItemPage"
     d:DataContext="{d:DesignInstance Type=datamodel:ControlInfoDataItem}"
-    mc:Ignorable="d"
     d:DesignHeight="450"
     d:DesignWidth="800"
     Loaded="Page_Loaded"
-    Title="ItemPage">
+    mc:Ignorable="d">
     <!--
         This grid acts as a root panel for the page that defines two rows:
         * Row 0 contains the back button and page title
@@ -44,9 +44,9 @@
 
                     <TextBlock
                         x:Name="descriptionText"
-                        Style="{DynamicResource BodyTextBlockStyle}"
                         Grid.ColumnSpan="2"
                         Margin="0,5,24,0"
+                        Style="{DynamicResource BodyTextBlockStyle}"
                         Text="{Binding Description}" />
 
                     <ui:Frame
@@ -103,9 +103,9 @@
                             Margin="0,0,0,24">
                             <TextBlock
                                 x:Name="docHeader"
-                                Text="{x:Static str:Resources.DocHeader_Text}"
                                 Margin="0,0,0,12"
-                                Style="{StaticResource SubtitleTextBlockStyle}" />
+                                Style="{StaticResource SubtitleTextBlockStyle}"
+                                Text="{x:Static str:Resources.DocHeader_Text}" />
                             <ItemsControl
                                 x:Name="DocsList"
                                 IsTabStop="False"
@@ -134,9 +134,9 @@
                             Margin="0,0,0,24">
                             <TextBlock
                                 x:Name="relatedControlsHeader"
-                                Text="{x:Static str:Resources.RelatedControlsHeader_Text}"
                                 Margin="0,0,0,12"
-                                Style="{DynamicResource SubtitleTextBlockStyle}" />
+                                Style="{DynamicResource SubtitleTextBlockStyle}"
+                                Text="{x:Static str:Resources.RelatedControlsHeader_Text}" />
 
                             <ItemsControl
                                 x:Name="relatedItemsControl"
@@ -176,9 +176,9 @@
                                                     Margin="0,0,15,0"
                                                     common:ImageLoader.Source="{Binding}" />
                                                 <TextBlock
+                                                    VerticalAlignment="Center"
                                                     Foreground="{DynamicResource HyperlinkButtonForeground}"
                                                     Text="{Binding}"
-                                                    VerticalAlignment="Center"
                                                     TextWrapping="Wrap" />
                                             </ui:SimpleStackPanel>
                                         </ui:HyperlinkButton>
@@ -194,8 +194,8 @@
                             <TextBlock
                                 x:Name="feedbackHeader"
                                 Margin="0,0,0,12"
-                                Text="{x:Static str:Resources.FeedbackHeader_Text}"
-                                Style="{StaticResource SubtitleTextBlockStyle}" />
+                                Style="{StaticResource SubtitleTextBlockStyle}"
+                                Text="{x:Static str:Resources.FeedbackHeader_Text}" />
                             <ui:HyperlinkButton
                                 NavigateUri="https://github.com/microsoft/Xaml-Controls-Gallery/issues/new/choose"
                                 ToolTipService.ToolTip="https://github.com/microsoft/Xaml-Controls-Gallery/issues/new/choose">

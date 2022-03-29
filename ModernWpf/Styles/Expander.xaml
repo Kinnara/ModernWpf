@@ -28,10 +28,10 @@
     <sys:Double x:Key="ExpanderChevronGlyphSize">12</sys:Double>
 
     <!-- Icons -->
-    <StreamGeometry x:Key="ExpanderChevronUpGlyph">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
-    <StreamGeometry x:Key="ExpanderChevronDownGlyph">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
-    <StreamGeometry x:Key="ExpanderChevronChevronLeftGlyph">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
-    <StreamGeometry x:Key="ExpanderChevronChevronRightGlyph">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
+    <sys:String x:Key="ExpanderChevronUpGlyph">&#xF2B6;</sys:String>
+    <sys:String x:Key="ExpanderChevronDownGlyph">&#xF2A3;</sys:String>
+    <sys:String x:Key="ExpanderChevronChevronLeftGlyph">&#xF2AA;</sys:String>
+    <sys:String x:Key="ExpanderChevronChevronRightGlyph">&#xF2B0;</sys:String>
 
     <!-- Content -->
     <Thickness x:Key="ExpanderContentPadding">16</Thickness>
@@ -41,8 +41,11 @@
     <Thickness x:Key="ExpanderContentRightBorderThickness">0,1,1,1</Thickness>
 
     <Style x:Key="ExpanderHeaderDownStyle" TargetType="ToggleButton">
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="Padding" Value="{DynamicResource ExpanderHeaderHorizontalPadding}" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-3" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="Template">
             <Setter.Value>
@@ -82,16 +85,16 @@
                                 BorderBrush="{DynamicResource ExpanderChevronBorderBrush}"
                                 BorderThickness="{DynamicResource ExpanderChevronBorderThickness}"
                                 CornerRadius="{DynamicResource ControlCornerRadius}">
-                                <local:FontIconFallback
+                                <local:FontIcon
                                     x:Name="ExpandCollapseChevron"
                                     Width="{DynamicResource ExpanderChevronGlyphSize}"
                                     Height="{DynamicResource ExpanderChevronGlyphSize}"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Data="{DynamicResource ExpanderChevronDownGlyph}"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontFamily="{DynamicResource FluentSystemIcons}"
                                     FontSize="12"
                                     Foreground="{DynamicResource ExpanderChevronForeground}"
+                                    Glyph="{DynamicResource ExpanderChevronDownGlyph}"
                                     RenderTransformOrigin="0.5, 0.5"
                                     SnapsToDevicePixels="false" />
                             </Border>
@@ -99,7 +102,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="ExpandCollapseChevron" Property="Data" Value="{DynamicResource ExpanderChevronUpGlyph}" />
+                            <Setter TargetName="ExpandCollapseChevron" Property="Glyph" Value="{DynamicResource ExpanderChevronUpGlyph}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ExpanderHeaderForeground}" />
                             <Setter TargetName="ToggleButtonGrid" Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
                             <Setter TargetName="ExpandCollapseChevron" Property="Foreground" Value="{DynamicResource ExpanderChevronForeground}" />
@@ -134,8 +137,11 @@
     </Style>
 
     <Style x:Key="ExpanderHeaderUpStyle" TargetType="ToggleButton">
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="Padding" Value="{DynamicResource ExpanderHeaderHorizontalPadding}" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-3" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="Template">
             <Setter.Value>
@@ -175,16 +181,16 @@
                                 BorderBrush="{DynamicResource ExpanderChevronBorderBrush}"
                                 BorderThickness="{DynamicResource ExpanderChevronBorderThickness}"
                                 CornerRadius="{DynamicResource ControlCornerRadius}">
-                                <local:FontIconFallback
+                                <local:FontIcon
                                     x:Name="ExpandCollapseChevron"
                                     Width="{DynamicResource ExpanderChevronGlyphSize}"
                                     Height="{DynamicResource ExpanderChevronGlyphSize}"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Data="{DynamicResource ExpanderChevronUpGlyph}"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontFamily="{DynamicResource FluentSystemIcons}"
                                     FontSize="12"
                                     Foreground="{DynamicResource ExpanderChevronForeground}"
+                                    Glyph="{DynamicResource ExpanderChevronUpGlyph}"
                                     RenderTransformOrigin="0.5, 0.5"
                                     SnapsToDevicePixels="false" />
                             </Border>
@@ -192,7 +198,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="ExpandCollapseChevron" Property="Data" Value="{DynamicResource ExpanderChevronDownGlyph}" />
+                            <Setter TargetName="ExpandCollapseChevron" Property="Glyph" Value="{DynamicResource ExpanderChevronDownGlyph}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ExpanderHeaderForeground}" />
                             <Setter TargetName="ToggleButtonGrid" Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
                             <Setter TargetName="ExpandCollapseChevron" Property="Foreground" Value="{DynamicResource ExpanderChevronForeground}" />
@@ -227,8 +233,11 @@
     </Style>
 
     <Style x:Key="ExpanderHeaderLeftStyle" TargetType="ToggleButton">
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="Padding" Value="{DynamicResource ExpanderHeaderVerticalPadding}" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-3" />
         <Setter Property="VerticalContentAlignment" Value="Top" />
         <Setter Property="Template">
             <Setter.Value>
@@ -262,7 +271,7 @@
                                     <TransformGroup>
                                         <TransformGroup.Children>
                                             <TransformCollection>
-                                                <RotateTransform Angle="-90" />
+                                                <RotateTransform Angle="90" />
                                             </TransformCollection>
                                         </TransformGroup.Children>
                                     </TransformGroup>
@@ -278,33 +287,24 @@
                                 BorderBrush="{DynamicResource ExpanderChevronBorderBrush}"
                                 BorderThickness="{DynamicResource ExpanderChevronBorderThickness}"
                                 CornerRadius="{DynamicResource ControlCornerRadius}">
-                                <local:FontIconFallback
+                                <local:FontIcon
                                     x:Name="ExpandCollapseChevron"
                                     Width="{DynamicResource ExpanderChevronGlyphSize}"
                                     Height="{DynamicResource ExpanderChevronGlyphSize}"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Data="{DynamicResource ExpanderChevronUpGlyph}"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontFamily="{DynamicResource FluentSystemIcons}"
                                     FontSize="12"
                                     Foreground="{DynamicResource ExpanderChevronForeground}"
+                                    Glyph="{DynamicResource ExpanderChevronChevronLeftGlyph}"
                                     RenderTransformOrigin="0.5, 0.5"
                                     SnapsToDevicePixels="false" />
-                                <Border.LayoutTransform>
-                                    <TransformGroup>
-                                        <TransformGroup.Children>
-                                            <TransformCollection>
-                                                <RotateTransform Angle="90" />
-                                            </TransformCollection>
-                                        </TransformGroup.Children>
-                                    </TransformGroup>
-                                </Border.LayoutTransform>
                             </Border>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="ExpandCollapseChevron" Property="Data" Value="{DynamicResource ExpanderChevronDownGlyph}" />
+                            <Setter TargetName="ExpandCollapseChevron" Property="Glyph" Value="{DynamicResource ExpanderChevronChevronRightGlyph}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ExpanderHeaderForeground}" />
                             <Setter TargetName="ToggleButtonGrid" Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
                             <Setter TargetName="ExpandCollapseChevron" Property="Foreground" Value="{DynamicResource ExpanderChevronForeground}" />
@@ -339,8 +339,11 @@
     </Style>
 
     <Style x:Key="ExpanderRightHeaderRightStyle" TargetType="ToggleButton">
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="Padding" Value="{DynamicResource ExpanderHeaderVerticalPadding}" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-3" />
         <Setter Property="VerticalContentAlignment" Value="Top" />
         <Setter Property="Template">
             <Setter.Value>
@@ -390,33 +393,24 @@
                                 BorderBrush="{DynamicResource ExpanderChevronBorderBrush}"
                                 BorderThickness="{DynamicResource ExpanderChevronBorderThickness}"
                                 CornerRadius="{DynamicResource ControlCornerRadius}">
-                                <local:FontIconFallback
+                                <local:FontIcon
                                     x:Name="ExpandCollapseChevron"
                                     Width="{DynamicResource ExpanderChevronGlyphSize}"
                                     Height="{DynamicResource ExpanderChevronGlyphSize}"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Data="{DynamicResource ExpanderChevronDownGlyph}"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                    FontFamily="{DynamicResource FluentSystemIcons}"
                                     FontSize="12"
                                     Foreground="{DynamicResource ExpanderChevronForeground}"
+                                    Glyph="{DynamicResource ExpanderChevronChevronRightGlyph}"
                                     RenderTransformOrigin="0.5, 0.5"
                                     SnapsToDevicePixels="false" />
-                                <Border.LayoutTransform>
-                                    <TransformGroup>
-                                        <TransformGroup.Children>
-                                            <TransformCollection>
-                                                <RotateTransform Angle="90" />
-                                            </TransformCollection>
-                                        </TransformGroup.Children>
-                                    </TransformGroup>
-                                </Border.LayoutTransform>
                             </Border>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="ExpandCollapseChevron" Property="Data" Value="{DynamicResource ExpanderChevronUpGlyph}" />
+                            <Setter TargetName="ExpandCollapseChevron" Property="Glyph" Value="{DynamicResource ExpanderChevronChevronLeftGlyph}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ExpanderHeaderForeground}" />
                             <Setter TargetName="ToggleButtonGrid" Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
                             <Setter TargetName="ExpandCollapseChevron" Property="Foreground" Value="{DynamicResource ExpanderChevronForeground}" />
