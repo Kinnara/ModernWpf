@@ -1,16 +1,16 @@
 ﻿<ui:Page
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     x:Class="ModernWpf.SampleApp.NavigationRootPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
-    mc:Ignorable="d"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="NavigationRootPage"
     d:DesignHeight="450"
     d:DesignWidth="800"
     Loaded="Page_Loaded"
-    Title="NavigationRootPage">
+    mc:Ignorable="d">
     <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -42,38 +42,38 @@
         <Rectangle
             x:Name="XboxContentSafeRect"
             Width="48"
+            Canvas.ZIndex="0"
             Fill="{DynamicResource NavigationViewDefaultPaneBackground}"
-            Visibility="Collapsed"
-            Canvas.ZIndex="0" />
+            Visibility="Collapsed" />
 
         <Border
             x:Name="AppTitleBar"
             Grid.Column="1"
-            IsHitTestVisible="True"
+            Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
             VerticalAlignment="Top"
             Background="Transparent"
-            Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
-            Canvas.ZIndex="1">
+            Canvas.ZIndex="1"
+            IsHitTestVisible="True">
             <TextBlock
                 x:Name="AppTitle"
-                Text="{x:Static local:NavigationRootPage.GetAppTitleFromSystem}"
                 VerticalAlignment="Center"
-                Style="{DynamicResource CaptionTextBlockStyle}" />
+                Style="{DynamicResource CaptionTextBlockStyle}"
+                Text="{x:Static local:NavigationRootPage.GetAppTitleFromSystem}" />
         </Border>
 
         <ui:NavigationView
-            Canvas.ZIndex="0"
             x:Name="NavigationViewControl"
             Grid.Column="1"
             AlwaysShowHeader="True"
+            Canvas.ZIndex="0"
+            DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
             Header=" "
             IsTabStop="False"
             IsTitleBarAutoPaddingEnabled="False"
-            PaneOpening="NavigationViewControl_PaneOpening"
+            Loaded="OnNavigationViewControlLoaded"
             PaneClosing="NavigationViewControl_PaneClosing"
-            DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
-            SelectionChanged="OnNavigationViewSelectionChanged"
-            Loaded="OnNavigationViewControlLoaded">
+            PaneOpening="NavigationViewControl_PaneOpening"
+            SelectionChanged="OnNavigationViewSelectionChanged">
             <ui:NavigationView.HeaderTemplate>
                 <DataTemplate>
                     <local:PageHeader
@@ -85,12 +85,12 @@
             <ui:NavigationView.AutoSuggestBox>
                 <ui:AutoSuggestBox
                     x:Name="controlsSearchBox"
+                    MinWidth="200"
                     VerticalAlignment="Center"
                     x:FieldModifier="public"
                     PlaceholderText="Search"
                     QueryIcon="Find"
                     QuerySubmitted="OnControlsSearchBoxQuerySubmitted"
-                    MinWidth="200"
                     TextChanged="OnControlsSearchBoxTextChanged" />
             </ui:NavigationView.AutoSuggestBox>
 
