@@ -7,8 +7,6 @@ namespace ModernWpf.SampleApp.ControlPages
 {
     public partial class ContentDialogPage : Page
     {
-        private TextBlock DialogResult;
-
         public ContentDialogPage()
         {
             InitializeComponent();
@@ -38,11 +36,6 @@ namespace ModernWpf.SampleApp.ControlPages
             {
                 DialogResult.Text = "User cancelled the dialog";
             }
-        }
-
-        private void TextBlock_Loaded(object sender, RoutedEventArgs e)
-        {
-            DialogResult = sender as TextBlock;
         }
     }
 }

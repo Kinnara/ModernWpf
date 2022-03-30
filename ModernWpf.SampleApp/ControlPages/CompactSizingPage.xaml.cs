@@ -8,11 +8,14 @@ namespace ModernWpf.SampleApp.ControlPages
 {
     public partial class CompactSizingPage : Page
     {
-        private Frame ContentFrame;
-
         public CompactSizingPage()
         {
             InitializeComponent();
+        }
+
+        private void Example1_Loaded(object sender, RoutedEventArgs e)
+        {
+            ContentFrame.Navigate(typeof(SampleStandardSizingPage), null, new SuppressNavigationTransitionInfo());
         }
 
         private async void Standard_Checked(object sender, RoutedEventArgs e)
@@ -45,12 +48,6 @@ namespace ModernWpf.SampleApp.ControlPages
                 var page = ContentFrame.Content as SampleCompactSizingPage;
                 page?.CopyState(oldPage);
             }
-        }
-
-        private void Frame_Loaded(object sender, RoutedEventArgs e)
-        {
-            ContentFrame = sender as Frame;
-            ContentFrame.Navigate(typeof(SampleStandardSizingPage), null, new SuppressNavigationTransitionInfo());
         }
     }
 }

@@ -18,12 +18,11 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with symbol icon. -->
-                    <ui:AppBarToggleButton Click="AppBarButton_Click" Icon="Shuffle" Label="SymbolIcon" Loaded="AppBarToggleButton_Loaded" Tag="Button1" />
+                    <ui:AppBarToggleButton x:Name="Button1" Click="AppBarButton_Click" Icon="Shuffle" Label="SymbolIcon" />
                     <TextBlock
+                        x:Name="Control1Output"
                         Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        Loaded="TextBlock_Loaded"
-                        Tag="Control1Output" />
+                        VerticalAlignment="Center" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -38,16 +37,15 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with bitmap icon. -->
-                    <ui:AppBarToggleButton Click="AppBarButton_Click" Label="BitmapIcon" Loaded="AppBarToggleButton_Loaded" Tag="Button2">
+                    <ui:AppBarToggleButton x:Name="Button2" Click="AppBarButton_Click" Label="BitmapIcon">
                         <ui:AppBarToggleButton.Icon>
                             <ui:BitmapIcon UriSource="/Assets/Slices2.png" />
                         </ui:AppBarToggleButton.Icon>
                     </ui:AppBarToggleButton>
                     <TextBlock
+                        x:Name="Control2Output"
                         Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        Loaded="TextBlock_Loaded"
-                        Tag="Control2Output" />
+                        VerticalAlignment="Center" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -66,7 +64,7 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with font icon. -->
-                    <ui:AppBarToggleButton Click="AppBarButton_Click" Label="FontIcon" Loaded="AppBarToggleButton_Loaded" Tag="Button3">
+                    <ui:AppBarToggleButton x:Name="Button3" Click="AppBarButton_Click" Label="FontIcon">
                         <ui:AppBarToggleButton.Icon>
                             <ui:FontIcon
                                 FontFamily="Candara"
@@ -74,10 +72,9 @@
                         </ui:AppBarToggleButton.Icon>
                     </ui:AppBarToggleButton>
                     <TextBlock
+                        x:Name="Control3Output"
                         Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        Loaded="TextBlock_Loaded"
-                        Tag="Control3Output" />
+                        VerticalAlignment="Center" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -97,16 +94,15 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with path icon. -->
-                    <ui:AppBarToggleButton Click="AppBarButton_Click" IsThreeState="True" Label="PathIcon" Loaded="AppBarToggleButton_Loaded" Tag="Button4">
+                    <ui:AppBarToggleButton x:Name="Button4" Click="AppBarButton_Click" IsThreeState="True" Label="PathIcon">
                         <ui:AppBarToggleButton.Icon>
                             <ui:PathIcon Data="F1 M 20,20L 24,10L 24,24L 5,24" />
                         </ui:AppBarToggleButton.Icon>
                     </ui:AppBarToggleButton>
                     <TextBlock
+                        x:Name="Control4Output"
                         Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        Loaded="TextBlock_Loaded"
-                        Tag="Control4Output" />
+                        VerticalAlignment="Center" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>

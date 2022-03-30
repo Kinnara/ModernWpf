@@ -43,8 +43,7 @@
                 <StackPanel>
                     <TextBlock
                         Margin="0,8,0,8"
-                        Loaded="TextBlock_Loaded"
-                        Tag="FontSizeChangingTextBlock"
+                        x:Name="FontSizeChangingTextBlock"
                         TextWrapping="Wrap">
                         Cat ipsum dolor sit amet, incidunt. Ratione.
                         Ipsa omnis dolor rem or vel. Ipsa elit quaerat sequi, nequeporro nisi qui. Vel autem.
@@ -55,12 +54,12 @@
                             Margin="0,0,8,0"
                             VerticalAlignment="Center"
                             FontSize="16"
-                            Tag="FontSizeLabel"
+                            x:Name="FontSizeLabel"
                             Text="Font size of text" />
                         <ui:NumberBox
                             Maximum="32"
                             Minimum="10"
-                            Tag="FontSizeNumberBox"
+                            x:Name="FontSizeNumberBox"
                             ValueChanged="FontSizeNumberBox_ValueChanged"
                             Value="14" />
                     </StackPanel>

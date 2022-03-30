@@ -1,12 +1,13 @@
 ﻿<ui:Page
     x:Class="ModernWpf.SampleApp.ControlPages.DataGridPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:common="clr-namespace:ModernWpf.SampleApp.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -18,16 +19,16 @@
 
         <DataTemplate x:Key="RowGroupHeaderTemplate">
             <StackPanel
-                Orientation="Horizontal"
-                VerticalAlignment="Center">
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
                 <TextBlock
                     Margin="4,0,0,0"
-                    Text="{Binding Name}"
-                    Style="{StaticResource BodyTextBlockStyle}" />
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="{Binding Name}" />
                 <TextBlock
                     Margin="4,0,0,0"
-                    Text="{Binding ItemCount, Converter={StaticResource ItemCountConverter}}"
-                    Style="{StaticResource BodyTextBlockStyle}" />
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="{Binding ItemCount, Converter={StaticResource ItemCountConverter}}" />
             </StackPanel>
         </DataTemplate>
 
@@ -48,119 +49,115 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock
-                        Text="Coordinates: "
+                        FontSize="13"
                         FontWeight="SemiBold"
-                        FontSize="13" />
+                        Text="Coordinates: " />
                     <TextBlock
                         Grid.Row="1"
-                        Text="Prominence (m): "
+                        FontSize="13"
                         FontWeight="SemiBold"
-                        FontSize="13" />
+                        Text="Prominence (m): " />
                     <TextBlock
                         Grid.Row="2"
-                        Text="First Ascent (year): "
+                        FontSize="13"
                         FontWeight="SemiBold"
-                        FontSize="13" />
+                        Text="First Ascent (year): " />
                     <TextBlock
                         Grid.Row="3"
-                        Text="No. of ascents: "
+                        FontSize="13"
                         FontWeight="SemiBold"
-                        FontSize="13" />
+                        Text="No. of ascents: " />
                     <TextBlock
                         Grid.Column="1"
+                        HorizontalAlignment="Right"
                         FontSize="13"
-                        Text="{Binding Coordinates}"
-                        HorizontalAlignment="Right" />
+                        Text="{Binding Coordinates}" />
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="1"
+                        HorizontalAlignment="Right"
                         FontSize="13"
-                        Text="{Binding Prominence}"
-                        HorizontalAlignment="Right" />
+                        Text="{Binding Prominence}" />
                     <TextBlock
                         Grid.Row="2"
                         Grid.Column="1"
+                        HorizontalAlignment="Right"
                         FontSize="13"
-                        Text="{Binding First_ascent}"
-                        HorizontalAlignment="Right" />
+                        Text="{Binding First_ascent}" />
                     <TextBlock
                         Grid.Row="3"
                         Grid.Column="1"
+                        HorizontalAlignment="Right"
                         FontSize="13"
-                        Text="{Binding Ascents}"
-                        HorizontalAlignment="Right" />
+                        Text="{Binding Ascents}" />
                 </Grid>
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
 
-    <Grid
-        x:Name="LayoutRoot"
-        Margin="{StaticResource ControlPageContentMargin}">
-        <sc:ControlExample
-            HeaderText="DataGrid Sample: Mountains"
-            Style="{StaticResource ControlExampleFullStyle}">
-
-            <DataGrid
-                x:Name="dataGrid"
-                AutoGenerateColumns="False"
-                HeadersVisibility="Column"
-                GridLinesVisibility="Horizontal"
-                RowDetailsTemplate="{StaticResource RowDetailsTemplate}"
-                RowDetailsVisibilityMode="Collapsed"
-                ItemsSource="{Binding Source={StaticResource cvs}}"
-                VirtualizingPanel.VirtualizationMode="Recycling"
-                VirtualizingPanel.IsVirtualizingWhenGrouping="True">
-                <DataGrid.Columns>
-                    <DataGridTextColumn
-                        Header="Rank"
-                        Width="105"
-                        Binding="{Binding Rank}" />
-                    <DataGridComboBoxColumn
-                        Header="Mountain"
-                        Width="200"
-                        SelectedItemBinding="{Binding Mountain}" />
-                    <DataGridTextColumn
-                        Header="Height (m)"
-                        Width="135"
-                        Binding="{Binding Height_m}" />
-                    <DataGridTextColumn
-                        Header="Range"
-                        Width="260"
-                        Binding="{Binding Range}" />
-                    <DataGridTextColumn
-                        Header="Parent Mountain"
-                        Width="180"
-                        Binding="{Binding Parent_mountain}" />
-                    <DataGridCheckBoxColumn
-                        Header="CheckBox Column"
-                        Width="145"
-                        Binding="{Binding CheckBoxColumnValue}"
-                        Visibility="{Binding Source={x:Reference CheckBoxColumnVisibilityToggle}, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <DataGridHyperlinkColumn
-                        Header="Hyperlink Column"
-                        Width="220"
-                        Binding="{Binding HyperlinkColumnValue}"
-                        Visibility="{Binding Source={x:Reference HyperlinkColumnVisibilityToggle}, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                </DataGrid.Columns>
-                <DataGrid.GroupStyle>
-                    <GroupStyle
-                        ContainerStyle="{StaticResource DataGridRowGroupContainerStyle}"
-                        HeaderTemplate="{StaticResource RowGroupHeaderTemplate}" />
-                </DataGrid.GroupStyle>
-            </DataGrid>
-
-            <sc:ControlExample.Options>
+    <Grid x:Name="LayoutRoot">
+        <local:ControlExample HeaderText="DataGrid Sample: Mountains">
+            <local:ControlExample.Example>
+                <DataGrid
+                    x:Name="dataGrid"
+                    AutoGenerateColumns="False"
+                    GridLinesVisibility="Horizontal"
+                    HeadersVisibility="Column"
+                    ItemsSource="{Binding Source={StaticResource cvs}}"
+                    RowDetailsTemplate="{StaticResource RowDetailsTemplate}"
+                    RowDetailsVisibilityMode="Collapsed"
+                    VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                    VirtualizingPanel.VirtualizationMode="Recycling">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Width="105"
+                            Binding="{Binding Rank}"
+                            Header="Rank" />
+                        <DataGridComboBoxColumn
+                            Width="200"
+                            Header="Mountain"
+                            SelectedItemBinding="{Binding Mountain}" />
+                        <DataGridTextColumn
+                            Width="135"
+                            Binding="{Binding Height_m}"
+                            Header="Height (m)" />
+                        <DataGridTextColumn
+                            Width="260"
+                            Binding="{Binding Range}"
+                            Header="Range" />
+                        <DataGridTextColumn
+                            Width="180"
+                            Binding="{Binding Parent_mountain}"
+                            Header="Parent Mountain" />
+                        <DataGridCheckBoxColumn
+                            Width="145"
+                            Binding="{Binding CheckBoxColumnValue}"
+                            Header="CheckBox Column"
+                            Visibility="{Binding Source={x:Reference CheckBoxColumnVisibilityToggle}, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <DataGridHyperlinkColumn
+                            Width="220"
+                            Binding="{Binding HyperlinkColumnValue}"
+                            Header="Hyperlink Column"
+                            Visibility="{Binding Source={x:Reference HyperlinkColumnVisibilityToggle}, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </DataGrid.Columns>
+                    <DataGrid.GroupStyle>
+                        <GroupStyle
+                            ContainerStyle="{StaticResource DataGridRowGroupContainerStyle}"
+                            HeaderTemplate="{StaticResource RowGroupHeaderTemplate}" />
+                    </DataGrid.GroupStyle>
+                </DataGrid>
+            </local:ControlExample.Example>
+            <local:ControlExample.Options>
                 <ScrollViewer
-                    Margin="-16"
-                    Width="300">
+                    Width="300"
+                    Margin="-16">
                     <ui:SimpleStackPanel
                         Margin="16"
                         Style="{StaticResource OptionsPanelStyle}">
                         <TextBlock
                             x:Name="LoadTimeTextBlock"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            MouseLeftButtonUp="LoadTimeTextBlock_MouseLeftButtonUp" />
+                            MouseLeftButtonUp="LoadTimeTextBlock_MouseLeftButtonUp"
+                            Style="{StaticResource BodyTextBlockStyle}" />
                         <sc:LayoutDensitySelector TargetElement="{Binding ElementName=dataGrid}" />
                         <CheckBox
                             x:Name="CheckBoxColumnVisibilityToggle"
@@ -170,8 +167,8 @@
                             Content="Show Hyperlink Column" />
                         <CheckBox
                             x:Name="GroupingToggle"
-                            Content="Group by Range"
                             Checked="GroupingToggle_Checked"
+                            Content="Group by Range"
                             Unchecked="GroupingToggle_Unchecked" />
                         <ComboBox
                             ui:ControlHelper.Header="VerticalScrollBarVisibility"
@@ -261,7 +258,7 @@
                             SelectedItem="{Binding ElementName=dataGrid, Path=SelectionMode}" />
                     </ui:SimpleStackPanel>
                 </ScrollViewer>
-            </sc:ControlExample.Options>
-        </sc:ControlExample>
+            </local:ControlExample.Options>
+        </local:ControlExample>
     </Grid>
 </ui:Page>

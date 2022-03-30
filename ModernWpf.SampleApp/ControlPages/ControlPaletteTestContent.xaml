@@ -1,14 +1,14 @@
 ﻿<UserControl
-    x:Name="Root"
     x:Class="ModernWpf.SampleApp.ControlPages.ControlPaletteTestContent"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
-    mc:Ignorable="d"
-    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}">
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    x:Name="Root"
+    Foreground="{DynamicResource SystemControlPageTextBaseHighBrush}"
+    mc:Ignorable="d">
 
     <UserControl.Resources>
         <Style TargetType="HeaderedContentControl">
@@ -18,9 +18,9 @@
                 <Setter.Value>
                     <DataTemplate>
                         <TextBlock
-                            Text="{Binding}"
+                            Margin="0,0,0,16"
                             Style="{StaticResource BaseTextBlockStyle}"
-                            Margin="0,0,0,16" />
+                            Text="{Binding}" />
                     </DataTemplate>
                 </Setter.Value>
             </Setter>
@@ -57,12 +57,12 @@
                     Content="Toggled button"
                     IsChecked="True" />
                 <Button
-                    Style="{DynamicResource AccentButtonStyle}"
-                    Content="Enabled accent button" />
+                    Content="Enabled accent button"
+                    Style="{DynamicResource AccentButtonStyle}" />
                 <Button
-                    Style="{DynamicResource AccentButtonStyle}"
                     Content="Disabled accent button"
-                    IsEnabled="False" />
+                    IsEnabled="False"
+                    Style="{DynamicResource AccentButtonStyle}" />
             </ui:SimpleStackPanel>
         </HeaderedContentControl>
 
@@ -74,8 +74,8 @@
                     IsChecked="True" />
                 <CheckBox
                     Content="Third state"
-                    IsThreeState="True"
-                    IsChecked="{x:Null}" />
+                    IsChecked="{x:Null}"
+                    IsThreeState="True" />
                 <CheckBox
                     Content="Disabled"
                     IsChecked="True"
@@ -92,14 +92,14 @@
                 <RadioButton
                     Content="Checked"
                     GroupName="Test1"
-                    IsChecked="True"
-                    Initialized="RadioButton_Initialized" />
+                    Initialized="RadioButton_Initialized"
+                    IsChecked="True" />
                 <RadioButton
                     Content="Disabled"
                     GroupName="Test2"
+                    Initialized="RadioButton_Initialized"
                     IsChecked="True"
-                    IsEnabled="False"
-                    Initialized="RadioButton_Initialized" />
+                    IsEnabled="False" />
             </ui:SimpleStackPanel>
         </HeaderedContentControl>
 
@@ -126,9 +126,9 @@
 
         <HeaderedContentControl Header="Textbox">
             <TextBox
-                ui:ControlHelper.PlaceholderText="Enter text here"
                 Width="200"
-                HorizontalAlignment="Left" />
+                HorizontalAlignment="Left"
+                ui:ControlHelper.PlaceholderText="Enter text here" />
         </HeaderedContentControl>
 
         <HeaderedContentControl Header="Toggle switch">
@@ -140,9 +140,9 @@
 
         <HeaderedContentControl Header="Slider">
             <Slider
+                AutoToolTipPlacement="TopLeft"
                 Maximum="100"
-                Value="50"
-                AutoToolTipPlacement="TopLeft" />
+                Value="50" />
         </HeaderedContentControl>
 
         <HeaderedContentControl Header="List view">
@@ -162,12 +162,12 @@
 
         <HeaderedContentControl Header="Command bar">
             <ui:CommandBar>
-                <ui:AppBarButton Label="Refresh" Icon="Refresh" />
-                <ui:AppBarButton Label="New" Icon="Add" />
-                <ui:AppBarButton Label="Select" Icon="Bullets" />
+                <ui:AppBarButton Icon="Refresh" Label="Refresh" />
+                <ui:AppBarButton Icon="Add" Label="New" />
+                <ui:AppBarButton Icon="Bullets" Label="Select" />
                 <ui:CommandBar.SecondaryCommands>
-                    <ui:AppBarButton Label="Share" Icon="Share" />
-                    <ui:AppBarButton Label="Print" Icon="Print" />
+                    <ui:AppBarButton Icon="Share" Label="Share" />
+                    <ui:AppBarButton Icon="Print" Label="Print" />
                     <ui:AppBarSeparator />
                     <ui:AppBarButton Label="Settings" />
                     <ui:AppBarButton Label="Send feedback" />

@@ -14,24 +14,25 @@
     <Grid>
         <local:ControlExample
             x:Name="Example1"
-            HeaderText="Compact Sizing for controls">
+            HeaderText="Compact Sizing for controls"
+            Loaded="Example1_Loaded">
             <local:ControlExample.Example>
-                <ui:Frame Tag="ContentFrame" Loaded="Frame_Loaded"/>
+                <ui:Frame x:Name="ContentFrame" />
             </local:ControlExample.Example>
 
             <local:ControlExample.Options>
                 <ui:RadioButtons Header="Fluent Standard and Compact Sizing">
                     <RadioButton
+                        x:Name="StandardSize"
                         Checked="Standard_Checked"
                         Content="Standard"
                         GroupName="ControlSize"
-                        IsChecked="True"
-                        Tag="StandardSize" />
+                        IsChecked="True" />
                     <RadioButton
+                        x:Name="CompactSize"
                         Checked="Compact_Checked"
                         Content="Compact"
-                        GroupName="ControlSize"
-                        Tag="CompactSize" />
+                        GroupName="ControlSize" />
                 </ui:RadioButtons>
             </local:ControlExample.Options>
 

@@ -10,6 +10,7 @@
     Title="Button"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
     <StackPanel>
         <local:ControlExample
@@ -17,23 +18,21 @@
             HeaderText="A simple Button with text content.">
             <local:ControlExample.Example>
                 <Button
+                    x:Name="Button1"
                     Click="Button_Click"
                     Content="Standard XAML button"
-                    Loaded="Button_Loaded"
-                    Tag="Button1" />
+                    IsEnabled="{Binding IsChecked, ElementName=DisableButton1, Converter={StaticResource BoolNegationConverter}}" />
             </local:ControlExample.Example>
             <local:ControlExample.Output>
                 <TextBlock
-                    FontFamily="Global User Interface"
-                    Loaded="TextBlock_Loaded"
-                    Tag="Control1Output" />
+                    x:Name="Control1Output"
+                    FontFamily="Global User Interface" />
             </local:ControlExample.Output>
             <local:ControlExample.Options>
                 <StackPanel>
                     <CheckBox
-                        Content="Disable button"
-                        Loaded="CheckBox_Loaded"
-                        Tag="DisableButton1" />
+                        x:Name="DisableButton1"
+                        Content="Disable button" />
                 </StackPanel>
             </local:ControlExample.Options>
             <local:ControlExample.Xaml>
@@ -49,11 +48,11 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <Button
+                        x:Name="Button2"
                         Width="50"
                         Height="50"
                         AutomationProperties.Name="Pie"
-                        Click="Button_Click"
-                        Tag="Button2">
+                        Click="Button_Click">
                         <Image
                             AutomationProperties.Name="Slice"
                             Source="/Assets/Slices.png" />
@@ -61,9 +60,7 @@
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Output>
-                <TextBlock
-                    Loaded="TextBlock_Loaded"
-                    Tag="Control2Output" />
+                <TextBlock x:Name="Control2Output" />
             </local:ControlExample.Output>
             <local:ControlExample.Xaml>
                 <sys:String xml:space="preserve">

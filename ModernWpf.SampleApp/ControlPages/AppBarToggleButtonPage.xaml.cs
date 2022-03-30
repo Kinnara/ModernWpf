@@ -2,21 +2,12 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using Page = ModernWpf.Controls.Page;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class AppBarToggleButtonPage
+    public partial class AppBarToggleButtonPage : Page
     {
-        private TextBlock Control1Output;
-        private TextBlock Control2Output;
-        private TextBlock Control3Output;
-        private TextBlock Control4Output;
-
-        private AppBarToggleButton Button1;
-        private AppBarToggleButton Button2;
-        private AppBarToggleButton Button3;
-        private AppBarToggleButton Button4;
-
         AppBarToggleButton compactButton = null;
         AppBarSeparator separator = null;
 
@@ -83,54 +74,6 @@ namespace ModernWpf.SampleApp.ControlPages
                         break;
                     case "Button4":
                         Control4Output.Text = "IsChecked = " + b.IsChecked.ToString();
-                        break;
-                }
-            }
-        }
-
-        private void TextBlock_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is TextBlock b)
-            {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "Control1Output":
-                        Control1Output = b;
-                        break;
-                    case "Control2Output":
-                        Control2Output = b;
-                        break;
-                    case "Control3Output":
-                        Control3Output = b;
-                        break;
-                    case "Control4Output":
-                        Control4Output = b;
-                        break;
-                }
-            }
-        }
-
-        private void AppBarToggleButton_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is AppBarToggleButton b)
-            {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "Button1":
-                        Button1 = b;
-                        break;
-                    case "Button2":
-                        Button2 = b;
-                        break;
-                    case "Button3":
-                        Button3 = b;
-                        break;
-                    case "Button4":
-                        Button4 = b;
                         break;
                 }
             }

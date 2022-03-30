@@ -21,12 +21,11 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <Button
-                        Tag="ShowDialog"
+                        x:Name="ShowDialog"
                         Click="ShowDialog_Click"
                         Content="Show dialog" />
                     <TextBlock
-                        Tag="DialogResult"
-                        Loaded="TextBlock_Loaded"
+                        x:Name="DialogResult"
                         Style="{StaticResource OutputTextBlockStyle}" />
                 </StackPanel>
             </local:ControlExample.Example>

@@ -22,12 +22,6 @@ namespace ModernWpf.SampleApp.ControlPages
     /// </summary>
     public partial class CanvasPage : Page
     {
-        private Rectangle Rectangle;
-
-        private Slider TopSlider;
-        private Slider LeftSlider;
-        private Slider ZSlider;
-
         private List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>();
 
         public CanvasPage()
@@ -35,77 +29,36 @@ namespace ModernWpf.SampleApp.ControlPages
             InitializeComponent();
         }
 
-        private void Slider_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is Slider b)
+            ControlExampleSubstitution Substitution1 = new ControlExampleSubstitution
             {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "TopSlider":
-                        TopSlider = b;
-                        Rectangle.SetBinding(Canvas.TopProperty, new Binding
-                        {
-                            Source = TopSlider,
-                            Path = new PropertyPath("Value")
-                        });
-                        ControlExampleSubstitution Substitution1 = new ControlExampleSubstitution
-                        {
-                            Key = "Left",
-                        };
-                        BindingOperations.SetBinding(Substitution1, ControlExampleSubstitution.ValueProperty, new Binding
-                        {
-                            Source = b,
-                            Path = new PropertyPath("Value"),
-                        });
-                        Substitutions.Add(Substitution1);
-                        break;
-                    case "LeftSlider":
-                        LeftSlider = b;
-                        Rectangle.SetBinding(Canvas.LeftProperty, new Binding
-                        {
-                            Source = LeftSlider,
-                            Path = new PropertyPath("Value")
-                        });
-                        ControlExampleSubstitution Substitution2 = new ControlExampleSubstitution
-                        {
-                            Key = "Top",
-                        };
-                        BindingOperations.SetBinding(Substitution2, ControlExampleSubstitution.ValueProperty, new Binding
-                        {
-                            Source = b,
-                            Path = new PropertyPath("Value"),
-                        });
-                        Substitutions.Add(Substitution2);
-                        break;
-                    case "ZSlider":
-                        ZSlider = b;
-                        Rectangle.SetBinding(Panel.ZIndexProperty, new Binding
-                        {
-                            Source = ZSlider,
-                            Path = new PropertyPath("Value")
-                        });
-                        ControlExampleSubstitution Substitution3 = new ControlExampleSubstitution
-                        {
-                            Key = "Z",
-                        };
-                        BindingOperations.SetBinding(Substitution3, ControlExampleSubstitution.ValueProperty, new Binding
-                        {
-                            Source = b,
-                            Path = new PropertyPath("Value"),
-                        });
-                        Substitutions.Add(Substitution3);
-                        break;
-                }
-
-                if (Substitutions.Count >= 3) { Example1.Substitutions = Substitutions; }
-            }
-        }
-
-        private void Rectangle_Loaded(object sender, RoutedEventArgs e)
-        {
-            Rectangle = sender as Rectangle;
+                Key = "Left",
+            };
+            BindingOperations.SetBinding(Substitution1, ControlExampleSubstitution.ValueProperty, new Binding
+            {
+                Source = TopSlider,
+                Path = new PropertyPath("Value"),
+            });
+            ControlExampleSubstitution Substitution2 = new ControlExampleSubstitution
+            {
+                Key = "Top",
+            };
+            BindingOperations.SetBinding(Substitution2, ControlExampleSubstitution.ValueProperty, new Binding
+            {
+                Source = LeftSlider,
+                Path = new PropertyPath("Value"),
+            });
+            ControlExampleSubstitution Substitution3 = new ControlExampleSubstitution
+            {
+                Key = "Z",
+            };
+            BindingOperations.SetBinding(Substitution3, ControlExampleSubstitution.ValueProperty, new Binding
+            {
+                Source = ZSlider,
+                Path = new PropertyPath("Value"),
+            });
+            Example1.Substitutions = new List<ControlExampleSubstitution> { Substitution1, Substitution2, Substitution3 };
         }
     }
 }

@@ -2,13 +2,12 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using Page = ModernWpf.Controls.Page;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class AppBarSeparatorPage
+    public partial class AppBarSeparatorPage : Page
     {
-        private CommandBar Control1;
-
         private AppBarToggleButton compactButton = null;
         private AppBarSeparator separator = null;
 
@@ -54,14 +53,6 @@ namespace ModernWpf.SampleApp.ControlPages
             else
             {
                 Control1.DefaultLabelPosition = CommandBarDefaultLabelPosition.Bottom;
-            }
-        }
-
-        private void CommandBar_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is CommandBar b)
-            {
-                Control1 = b;
             }
         }
     }

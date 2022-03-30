@@ -34,21 +34,19 @@
                 <StackPanel>
                     <TextBlock Text="Click or right click the image to open a CommandBarFlyout" />
                     <Button
-                        Tag="MyImageButton"
+                        x:Name="MyImageButton"
                         Margin="0,12"
                         Padding="0"
                         AutomationProperties.Name="mountain"
                         Click="MyImageButton_Click"
                         ContextMenuOpening="MyImageButton_ContextMenuOpening">
                         <Image
-                            Tag="Image1"
+                            x:Name="Image1"
                             Height="300"
-                            Loaded="Image_Loaded"
                             Source="/Assets/SampleMedia/rainier.jpg" />
                     </Button>
                     <TextBlock
-                        Tag="SelectedOptionText"
-                        Loaded="TextBlock_Loaded"
+                        x:Name="SelectedOptionText"
                         Text="" />
                 </StackPanel>
             </local:ControlExample.Example>

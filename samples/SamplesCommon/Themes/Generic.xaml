@@ -28,7 +28,7 @@
 
                         <TextBlock
                             Grid.Column="0"
-                            Margin="0,15"
+                            Margin="0,16"
                             Style="{DynamicResource SubtitleTextBlockStyle}"
                             Text="{TemplateBinding HeaderText}" />
 

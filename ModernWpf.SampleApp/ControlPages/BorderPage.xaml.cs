@@ -22,8 +22,6 @@ namespace ModernWpf.SampleApp.ControlPages
     /// </summary>
     public partial class BorderPage : Page
     {
-        private Border Control1;
-
         public BorderPage()
         {
             InitializeComponent();
@@ -80,45 +78,40 @@ namespace ModernWpf.SampleApp.ControlPages
             }
         }
 
-        private void Border_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is Border b)
+            ControlExampleSubstitution Substitution1 = new ControlExampleSubstitution
             {
-                Control1 = b;
+                Key = "BorderThickness",
+            };
+            BindingOperations.SetBinding(Substitution1, ControlExampleSubstitution.ValueProperty, new Binding
+            {
+                Source = Control1,
+                Path = new PropertyPath("BorderThickness.Top"),
+            });
 
-                ControlExampleSubstitution Substitution1 = new ControlExampleSubstitution
-                {
-                    Key = "BorderThickness",
-                };
-                BindingOperations.SetBinding(Substitution1, ControlExampleSubstitution.ValueProperty, new Binding
-                {
-                    Source = b,
-                    Path = new PropertyPath("BorderThickness.Top"),
-                });
+            ControlExampleSubstitution Substitution2 = new ControlExampleSubstitution
+            {
+                Key = "BorderBrush",
+            };
+            BindingOperations.SetBinding(Substitution2, ControlExampleSubstitution.ValueProperty, new Binding
+            {
+                Source = Control1,
+                Path = new PropertyPath("BorderBrush"),
+            });
 
-                ControlExampleSubstitution Substitution2 = new ControlExampleSubstitution
-                {
-                    Key = "BorderBrush",
-                };
-                BindingOperations.SetBinding(Substitution2, ControlExampleSubstitution.ValueProperty, new Binding
-                {
-                    Source = b,
-                    Path = new PropertyPath("BorderBrush"),
-                });
+            ControlExampleSubstitution Substitution3 = new ControlExampleSubstitution
+            {
+                Key = "Background",
+            };
+            BindingOperations.SetBinding(Substitution3, ControlExampleSubstitution.ValueProperty, new Binding
+            {
+                Source = Control1,
+                Path = new PropertyPath("Background"),
+            });
 
-                ControlExampleSubstitution Substitution3 = new ControlExampleSubstitution
-                {
-                    Key = "Background",
-                };
-                BindingOperations.SetBinding(Substitution3, ControlExampleSubstitution.ValueProperty, new Binding
-                {
-                    Source = b,
-                    Path = new PropertyPath("Background"),
-                });
-
-                List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2, Substitution3 };
-                Example1.Substitutions = Substitutions;
-            }
+            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2, Substitution3 };
+            Example1.Substitutions = Substitutions;
         }
     }
 }

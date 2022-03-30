@@ -11,6 +11,7 @@
     Title="CommandBar"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
     <Page.Resources>
         <sys:String
@@ -29,21 +30,19 @@
             <local:ControlExample.Example>
                 <StackPanel>
                     <ui:CommandBar
+                        x:Name="PrimaryCommandBar"
                         DefaultLabelPosition="Right"
-                        IsOpen="False"
-                        Loaded="CommandBar_Loaded"
-                        Tag="PrimaryCommandBar">
-                        <ui:AppBarButton Click="OnElementClicked" Icon="Add" Label="Add" Loaded="AppBarButton_Loaded" Tag="AddButton" />
-                        <ui:AppBarButton Click="OnElementClicked" Icon="Edit" Label="Edit" Loaded="AppBarButton_Loaded" Tag="EditButton" />
-                        <ui:AppBarButton Click="OnElementClicked" Icon="Share" Label="Share" Loaded="AppBarButton_Loaded" Tag="ShareButton" />
+                        IsOpen="False">
+                        <ui:AppBarButton x:Name="AddButton" Click="OnElementClicked" Icon="Add" Label="Add" />
+                        <ui:AppBarButton x:Name="EditButton" Click="OnElementClicked" Icon="Edit" Label="Edit" />
+                        <ui:AppBarButton x:Name="ShareButton" Click="OnElementClicked" Icon="Share" Label="Share" />
                         <ui:CommandBar.SecondaryCommands>
-                            <ui:AppBarButton Click="OnElementClicked" Icon="Setting" Label="Settings" Loaded="AppBarButton_Loaded" Tag="SettingsButton" />
+                            <ui:AppBarButton x:Name="SettingsButton" Click="OnElementClicked" Icon="Setting" Label="Settings" />
                         </ui:CommandBar.SecondaryCommands>
                     </ui:CommandBar>
                     <TextBlock
-                        Padding="0,8,0,0"
-                        Loaded="TextBlock_Loaded"
-                        Tag="SelectedOptionText" />
+                        x:Name="SelectedOptionText"
+                        Padding="0,8,0,0" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Options>
