@@ -18,12 +18,11 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with symbol icon. -->
-                    <ui:AppBarButton Click="AppBarButton_Click" Icon="Like" Label="SymbolIcon" Loaded="AppBarButton_Loaded" Tag="Button1" />
+                    <ui:AppBarButton x:Name="Button1" Click="AppBarButton_Click" Icon="Like" Label="SymbolIcon" />
                     <TextBlock
+                        x:Name="Control1Output"
                         Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        Loaded="TextBlock_Loaded"
-                        Tag="Control1Output" />
+                        VerticalAlignment="Center" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -38,16 +37,15 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with bitmap icon. -->
-                    <ui:AppBarButton Click="AppBarButton_Click" Label="BitmapIcon" Loaded="AppBarButton_Loaded" Tag="Button2">
+                    <ui:AppBarButton x:Name="Button2" Click="AppBarButton_Click" Label="BitmapIcon">
                         <ui:AppBarButton.Icon>
                             <ui:BitmapIcon UriSource="/Assets/Slices2.png" />
                         </ui:AppBarButton.Icon>
                     </ui:AppBarButton>
                     <TextBlock
+                        x:Name="Control2Output"
                         Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        Loaded="TextBlock_Loaded"
-                        Tag="Control2Output" />
+                        VerticalAlignment="Center" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -66,7 +64,7 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with font icon. -->
-                    <ui:AppBarButton Click="AppBarButton_Click" Label="FontIcon" Loaded="AppBarButton_Loaded" Tag="Button3">
+                    <ui:AppBarButton x:Name="Button3" Click="AppBarButton_Click" Label="FontIcon">
                         <ui:AppBarButton.Icon>
                             <ui:FontIcon
                                 FontFamily="Candara"
@@ -74,10 +72,9 @@
                         </ui:AppBarButton.Icon>
                     </ui:AppBarButton>
                     <TextBlock
+                        x:Name="Control3Output"
                         Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        Loaded="TextBlock_Loaded"
-                        Tag="Control3Output" />
+                        VerticalAlignment="Center"/>
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -96,16 +93,15 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <!-- App bar button with path icon. -->
-                    <ui:AppBarButton Click="AppBarButton_Click" Label="PathIcon" Loaded="AppBarButton_Loaded" Tag="Button4">
+                    <ui:AppBarButton x:Name="Button4" Click="AppBarButton_Click" Label="PathIcon">
                         <ui:AppBarButton.Icon>
                             <ui:PathIcon Data="F1 M 20,20L 24,10L 24,24L 5,24" />
                         </ui:AppBarButton.Icon>
                     </ui:AppBarButton>
                     <TextBlock
+                        x:Name="Control4Output"
                         Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        Loaded="TextBlock_Loaded"
-                        Tag="Control4Output" />
+                        VerticalAlignment="Center" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -124,16 +120,15 @@
             HeaderText="An AppBarButton with an InputGesture">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <ui:AppBarButton Click="AppBarButton_Click" Command="Save" Icon="Save" Label="Save" Loaded="AppBarButton_Loaded" Tag="Button5">
+                    <ui:AppBarButton x:Name="Button5" Click="AppBarButton_Click" Command="Save" Icon="Save" Label="Save">
                         <ui:AppBarButton.CommandBindings>
                             <CommandBinding CanExecute="Save_CanExecute" Command="Save" />
                         </ui:AppBarButton.CommandBindings>
                     </ui:AppBarButton>
                     <TextBlock
+                        x:Name="Control5Output"
                         Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        Loaded="TextBlock_Loaded"
-                        Tag="Control5Output" />
+                        VerticalAlignment="Center" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>

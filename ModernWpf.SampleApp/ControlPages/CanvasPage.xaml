@@ -10,6 +10,7 @@
     Title="Canvas"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
     <StackPanel>
         <local:ControlExample
@@ -18,11 +19,11 @@
 
             <local:ControlExample.Example>
                 <Canvas
+                    x:Name="Control1"
                     Width="140"
                     Height="140"
                     VerticalAlignment="Top"
-                    Background="Gray"
-                    Tag="Control1">
+                    Background="Gray">
                     <Canvas.Resources>
                         <Style TargetType="Rectangle">
                             <Setter Property="Height" Value="40" />
@@ -30,8 +31,10 @@
                         </Style>
                     </Canvas.Resources>
                     <Rectangle
-                        Fill="Red"
-                        Loaded="Rectangle_Loaded" />
+                        Canvas.Left="{Binding Value, ElementName=LeftSlider, Mode=OneWay}"
+                        Canvas.Top="{Binding Value, ElementName=TopSlider, Mode=OneWay}"
+                        Canvas.ZIndex="{Binding Value, ElementName=ZSlider, Mode=OneWay}"
+                        Fill="Red" />
                     <Rectangle
                         Canvas.Left="20"
                         Canvas.Top="20"
@@ -53,15 +56,14 @@
             <local:ControlExample.Options>
                 <StackPanel Orientation="Horizontal">
                     <Slider
+                        x:Name="TopSlider"
                         Height="110"
                         VerticalAlignment="Top"
                         AutoToolTipPlacement="TopLeft"
                         IsDirectionReversed="True"
-                        Loaded="Slider_Loaded"
                         Maximum="100"
                         Minimum="0"
                         Orientation="Vertical"
-                        Tag="TopSlider"
                         TickFrequency="1">
                         <ui:ControlHelper.Header>
                             <TextBlock
@@ -71,23 +73,21 @@
                     </Slider>
                     <StackPanel Margin="16,0,0,0">
                         <Slider
+                            x:Name="LeftSlider"
                             Width="100"
                             ui:ControlHelper.Header="Canvas.Left"
                             AutoToolTipPlacement="TopLeft"
-                            Loaded="Slider_Loaded"
                             Maximum="100"
                             Minimum="0"
-                            Tag="LeftSlider"
                             TickFrequency="1" />
                         <Slider
+                            x:Name="ZSlider"
                             Width="100"
                             ui:ControlHelper.Header="Canvas.ZIndex"
                             AutoToolTipPlacement="TopLeft"
                             IsSnapToTickEnabled="True"
-                            Loaded="Slider_Loaded"
                             Maximum="4"
                             Minimum="0"
-                            Tag="ZSlider"
                             TickFrequency="1" />
                     </StackPanel>
                 </StackPanel>

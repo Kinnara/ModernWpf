@@ -1,16 +1,16 @@
 ﻿<ui:Page
     x:Class="ModernWpf.SampleApp.ControlPages.TabControlPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style TargetType="TabControl" BasedOn="{StaticResource DefaultTabControlStyle}">
+        <Style BasedOn="{StaticResource DefaultTabControlStyle}" TargetType="TabControl">
             <Setter Property="MinHeight" Value="475" />
         </Style>
     </Page.Resources>
@@ -21,18 +21,18 @@
                 <TabControl x:Name="tabControl">
                     <ui:TabControlHelper.TabStripHeader>
                         <Button
-                            Content="Header"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             ui:FocusVisualHelper.FocusVisualMargin="0"
+                            Content="Header"
                             Visibility="{Binding IsChecked, ElementName=ShowHeaderAndFooterCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </ui:TabControlHelper.TabStripHeader>
                     <ui:TabControlHelper.TabStripFooter>
                         <Button
-                            Content="Footer"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             ui:FocusVisualHelper.FocusVisualMargin="0"
+                            Content="Footer"
                             Visibility="{Binding IsChecked, ElementName=ShowHeaderAndFooterCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </ui:TabControlHelper.TabStripFooter>
                 </TabControl>
@@ -54,29 +54,29 @@
                 <sc:ControlExample.Example>
                     <StackPanel>
                         <TextBlock
-                            TextWrapping="Wrap"
                             Margin="0,0,0,12"
-                            Text="Use BitmapIcon.ShowAsMonochrome=&quot;False&quot; to display full color icons in the TabItem" />
+                            Text="Use BitmapIcon.ShowAsMonochrome=&quot;False&quot; to display full color icons in the TabItem"
+                            TextWrapping="Wrap" />
 
                         <TabControl
                             x:Name="TabView4"
-                            SelectedIndex="0"
                             MinWidth="490"
-                            MinHeight="0">
+                            MinHeight="0"
+                            SelectedIndex="0">
                             <TabControl.Items>
                                 <TabItem Header="CMD Prompt">
                                     <ui:TabItemHelper.Icon>
-                                        <ui:BitmapIcon UriSource="/Assets/TabViewIcons/cmd.png" ShowAsMonochrome="False" />
+                                        <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/TabViewIcons/cmd.png" />
                                     </ui:TabItemHelper.Icon>
                                 </TabItem>
                                 <TabItem Header="Powershell">
                                     <ui:TabItemHelper.Icon>
-                                        <ui:BitmapIcon UriSource="/Assets/TabViewIcons/powershell.png" ShowAsMonochrome="False" />
+                                        <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/TabViewIcons/powershell.png" />
                                     </ui:TabItemHelper.Icon>
                                 </TabItem>
                                 <TabItem Header="Windows Subsystem for Linux">
                                     <ui:TabItemHelper.Icon>
-                                        <ui:BitmapIcon UriSource="/Assets/TabViewIcons/linux.png" ShowAsMonochrome="False" />
+                                        <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/TabViewIcons/linux.png" />
                                     </ui:TabItemHelper.Icon>
                                 </TabItem>
                             </TabControl.Items>
@@ -89,29 +89,29 @@
                 <sc:ControlExample.Example>
                     <StackPanel>
                         <TextBlock
-                            TextWrapping="Wrap"
                             Margin="0,0,0,24"
-                            Text="You can put any content in the TabStripHeader and TabStripFooter areas" />
+                            Text="You can put any content in the TabStripHeader and TabStripFooter areas"
+                            TextWrapping="Wrap" />
 
                         <TabControl
-                            SelectedIndex="0"
+                            MinHeight="475"
                             Margin="-12"
                             Loaded="TabView_Loaded"
-                            MinHeight="475">
+                            SelectedIndex="0">
                             <ui:TabControlHelper.TabStripHeader>
                                 <TextBlock
-                                    Text="TabStripHeader Content"
-                                    VerticalAlignment="Center"
                                     Margin="8,6"
-                                    Style="{DynamicResource BaseTextBlockStyle}" />
+                                    VerticalAlignment="Center"
+                                    Style="{DynamicResource BaseTextBlockStyle}"
+                                    Text="TabStripHeader Content" />
                             </ui:TabControlHelper.TabStripHeader>
                             <ui:TabControlHelper.TabStripFooter>
                                 <TextBlock
-                                    Text="TabStripFooter Content"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Right"
                                     Margin="6"
-                                    Style="{DynamicResource BaseTextBlockStyle}" />
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Style="{DynamicResource BaseTextBlockStyle}"
+                                    Text="TabStripFooter Content" />
                             </ui:TabControlHelper.TabStripFooter>
                         </TabControl>
                     </StackPanel>
@@ -144,7 +144,7 @@
                         <sys:Double x:Key="TabViewItemHeaderIconSize">32</sys:Double>
                     </TabControl.Resources>
                     <TabControl.ItemContainerStyle>
-                        <Style TargetType="TabItem" BasedOn="{StaticResource DefaultTabItemStyle}">
+                        <Style BasedOn="{StaticResource DefaultTabItemStyle}" TargetType="TabItem">
                             <Setter Property="FontFamily" Value="Courier New" />
                         </Style>
                     </TabControl.ItemContainerStyle>

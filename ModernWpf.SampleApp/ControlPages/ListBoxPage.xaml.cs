@@ -7,14 +7,17 @@
 // PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 //
 //*********************************************************
+using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using Page = ModernWpf.Controls.Page;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class ListBoxPage
+    public partial class ListBoxPage : Page
     {
         private List<Tuple<string, FontFamily>> _fonts = new List<Tuple<string, FontFamily>>()
         {
@@ -29,11 +32,34 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             get { return _fonts; }
         }
-
         public ListBoxPage()
         {
-            InitializeComponent();
-            DataContext = this;
+            this.InitializeComponent();
+        }
+
+        private void ColorListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string colorName = e.AddedItems[0].ToString();
+            switch (colorName)
+            {
+                case "Yellow":
+                    Control1Output.Fill = new SolidColorBrush(Colors.Yellow);
+                    break;
+                case "Green":
+                    Control1Output.Fill = new SolidColorBrush(Colors.Green);
+                    break;
+                case "Blue":
+                    Control1Output.Fill = new SolidColorBrush(Colors.Blue);
+                    break;
+                case "Red":
+                    Control1Output.Fill = new SolidColorBrush(Colors.Red);
+                    break;
+            }
+        }
+
+        private void ListBox2_Loaded(object sender, RoutedEventArgs e)
+        {
+            ListBox2.SelectedIndex = 2;
         }
     }
 }

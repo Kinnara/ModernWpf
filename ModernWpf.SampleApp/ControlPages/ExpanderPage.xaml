@@ -1,61 +1,121 @@
 ﻿<ui:Page
     x:Class="ModernWpf.SampleApp.ControlPages.ExpanderPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    Title="Expander"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
-    <Grid>
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="ExpandDirectionStates">
-                <VisualState x:Name="Down" />
-                <VisualState x:Name="Up">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="expander" Storyboard.TargetProperty="(DockPanel.Dock)">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Dock.Bottom}" />
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="expander" Storyboard.TargetProperty="VerticalAlignment">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static VerticalAlignment.Bottom}" />
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="Left" />
-                <VisualState x:Name="Right" />
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
+    <StackPanel>
+        <local:ControlExample
+            x:Name="Example1"
+            HeaderText="An Expander with text in the header and content areas">
+            <local:ControlExample.Example>
+                <Expander
+                    x:Name="Expander1"
+                    VerticalAlignment="Top"
+                    Content="This is in the content"
+                    ExpandDirection="Down"
+                    Header="This text is in the header"
+                    IsExpanded="False" />
+            </local:ControlExample.Example>
+            <local:ControlExample.Options>
+                <StackPanel>
+                    <ComboBox
+                        x:Name="ExpandDirectionComboBox"
+                        ui:ControlHelper.Header="ExpandDirection"
+                        SelectedValue="Down"
+                        SelectionChanged="ExpandDirectionComboBox_SelectionChanged">
+                        <sys:String>Down</sys:String>
+                        <sys:String>Up</sys:String>
+                        <sys:String>Left</sys:String>
+                        <sys:String>Right</sys:String>
+                    </ComboBox>
+                </StackPanel>
+            </local:ControlExample.Options>
 
-        <ScrollViewer>
-            <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
-                <sc:ControlExample
-                    HeaderText="A simple expander."
-                    HorizontalContentAlignment="Stretch"
-                    VerticalContentAlignment="Stretch">
-                    <DockPanel>
-                        <Expander
-                            x:Name="expander"
-                            Header="My Expander"
-                            ExpandDirection="Down"
-                            IsExpanded="True"
-                            VerticalAlignment="Top">
-                            <TextBlock TextWrapping="Wrap">
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipisicing elit, sed do eiusmod tempor incididunt ut
-                                labore et dolore magna aliqua
-                            </TextBlock>
-                        </Expander>
-                    </DockPanel>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;Expander
+     IsExpanded=&quot;$(IsExpanded)&quot;
+     ExpandDirection=&quot;$(ExpandDirection)&quot;
+     VerticalAlignment=&quot;$(VerticalAlignment)&quot;
+     HorizontalAlignment=&quot;$(HorizontalAlignment)&quot;
+     Header=&quot;This text is in the header&quot;
+     Content=&quot;This is in the content&quot;/&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
 
-                    <sc:ControlExample.Options>
-                        <ui:RadioButtons
-                            Header="ExpandDirection"
-                            ItemsSource="{Binding Converter={StaticResource EnumValuesConverter}, Source={x:Type ExpandDirection}}"
-                            SelectedItem="{Binding ExpandDirection, ElementName=expander}"
-                            SelectionChanged="ExpandDirection_SelectionChanged" />
-                    </sc:ControlExample.Options>
-                </sc:ControlExample>
-            </ui:SimpleStackPanel>
-        </ScrollViewer>
-    </Grid>
+        <local:ControlExample
+            x:Name="Example2"
+            HeaderText="An Expander with other controls in the header and content">
+            <local:ControlExample.Example>
+                <Expander x:Name="Expander2">
+                    <Expander.Header>
+                        <ToggleButton Content="This is a ToggleButton in the header" />
+                    </Expander.Header>
+                    <Expander.Content>
+                        <Grid>
+                            <Button
+                                Margin="15"
+                                Content="This is a Button in the content" />
+                        </Grid>
+                    </Expander.Content>
+                </Expander>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;Expander x:Name=&quot;Expander2&quot; &gt;
+    &lt;Expander.Header&gt;
+        &lt;ToggleButton Content=&quot;This is a ToggleButton in the header&quot;/&gt;
+    &lt;/Expander.Header&gt;
+    &lt;Expander.Content&gt;
+        &lt;Grid&gt;
+            &lt;Button Margin=&quot;15&quot; Content=&quot;This is a Button in the content&quot;/&gt;
+        &lt;/Grid&gt;
+    &lt;/Expander.Content&gt;
+&lt;/Expander&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+
+        <local:ControlExample HeaderText="Modifying Expanders content alignment">
+            <local:ControlExample.Example>
+                <Expander
+                    Width="500"
+                    Padding="0"
+                    HorizontalContentAlignment="Left">
+                    <Expander.Header>
+                        <ToggleButton
+                            HorizontalAlignment="Center"
+                            Content="This ToggleButton is centered" />
+                    </Expander.Header>
+                    <Expander.Content>
+                        <Button
+                            Margin="4"
+                            Content="This Button is left aligned" />
+                    </Expander.Content>
+                </Expander>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;Expander Width=&quot;500&quot; HorizontalContentAlignment=&quot;Left&quot; Padding=&quot;0&quot;&gt;
+    &lt;Expander.Header&gt;
+        &lt;ToggleButton Content=&quot;This ToggleButton is centered&quot; HorizontalAlignment=&quot;Center&quot;/&gt;
+    &lt;/Expander.Header&gt;
+    &lt;Expander.Content&gt;
+        &lt;Button Margin=&quot;4&quot; Content=&quot;This Button is left aligned&quot;/&gt;
+    &lt;/Expander.Content&gt;
+&lt;/Expander&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+    </StackPanel>
 </ui:Page>

@@ -1,21 +1,19 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using ModernWpf.Controls;
+using System.Windows;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class CheckBoxPage
+    public partial class CheckBoxPage : Page
     {
-        private TextBlock Control1Output;
-        private TextBlock Control2Output;
-
-        private CheckBox Option1CheckBox;
-        private CheckBox Option2CheckBox;
-        private CheckBox Option3CheckBox;
-        private CheckBox OptionsAllCheckBox;
-
         public CheckBoxPage()
         {
             InitializeComponent();
+            Loaded += CheckBoxPage_Loaded;
+        }
+
+        void CheckBoxPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetCheckedState();
         }
 
         private void Control1_Checked(object sender, RoutedEventArgs e)
@@ -108,52 +106,5 @@ namespace ModernWpf.SampleApp.ControlPages
             SetCheckedState();
         }
         #endregion
-
-        private void CheckBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is CheckBox b)
-            {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "Option1CheckBox":
-                        Option1CheckBox = b;
-                        break;
-                    case "Option2CheckBox":
-                        Option2CheckBox = b;
-                        break;
-                    case "Option3CheckBox":
-                        Option3CheckBox = b;
-                        break;
-                    case "OptionsAllCheckBox":
-                        OptionsAllCheckBox = b;
-                        break;
-                }
-
-                if (Option1CheckBox != null && Option2CheckBox != null && Option3CheckBox != null && OptionsAllCheckBox != null)
-                {
-                    SetCheckedState();
-                }
-            }
-        }
-
-        private void TextBlock_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is TextBlock b)
-            {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "Control1Output":
-                        Control1Output = b;
-                        break;
-                    case "Control2Output":
-                        Control2Output = b;
-                        break;
-                }
-            }
-        }
     }
 }

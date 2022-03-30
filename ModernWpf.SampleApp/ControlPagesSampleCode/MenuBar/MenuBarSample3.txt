@@ -1,55 +1,55 @@
-﻿<muxc:MenuBar>
-  <muxc:MenuBarItem Title="File">
-    <MenuFlyoutItem Text="New">
-      <MenuFlyoutItem.KeyboardAccelerators>
+﻿<Menu>
+  <MenuItem Header="File">
+    <MenuItem Header="New">
+      <MenuItem.KeyboardAccelerators>
         <KeyboardAccelerator Modifiers="Control" Key="N"/>
-      </MenuFlyoutItem.KeyboardAccelerators>
-    </MenuFlyoutItem>
-    <MenuFlyoutItem Text="Open...">
-      <MenuFlyoutItem.KeyboardAccelerators>
+      </MenuItem.KeyboardAccelerators>
+    </MenuItem>
+    <MenuItem Header="Open...">
+      <MenuItem.KeyboardAccelerators>
         <KeyboardAccelerator Modifiers="Control" Key="O"/>
-      </MenuFlyoutItem.KeyboardAccelerators>
-    </MenuFlyoutItem>
-    <MenuFlyoutItem Text="Save">
-      <MenuFlyoutItem.KeyboardAccelerators>
+      </MenuItem.KeyboardAccelerators>
+    </MenuItem>
+    <MenuItem Header="Save">
+      <MenuItem.KeyboardAccelerators>
         <KeyboardAccelerator Modifiers="Control" Key="S"/>
-      </MenuFlyoutItem.KeyboardAccelerators>
-    </MenuFlyoutItem>
-    <MenuFlyoutItem Text="Exit">
-      <MenuFlyoutItem.KeyboardAccelerators>
+      </MenuItem.KeyboardAccelerators>
+    </MenuItem>
+    <MenuItem Header="Exit">
+      <MenuItem.KeyboardAccelerators>
         <KeyboardAccelerator Modifiers="Control" Key="E"/>
-      </MenuFlyoutItem.KeyboardAccelerators>
-    </MenuFlyoutItem>
-  </muxc:MenuBarItem>
+      </MenuItem.KeyboardAccelerators>
+    </MenuItem>
+  </MenuItem>
 
-  <muxc:MenuBarItem Title="Edit">
-    <MenuFlyoutItem Text="Undo">
-      <MenuFlyoutItem.KeyboardAccelerators>
+  <MenuItem Header="Edit">
+    <MenuItem Header="Undo">
+      <MenuItem.KeyboardAccelerators>
         <KeyboardAccelerator Modifiers="Control" Key="Z"/>
-      </MenuFlyoutItem.KeyboardAccelerators>
-    </MenuFlyoutItem>
-    <MenuFlyoutItem Text="Cut">
-      <MenuFlyoutItem.KeyboardAccelerators>
+      </MenuItem.KeyboardAccelerators>
+    </MenuItem>
+    <MenuItem Header="Cut">
+      <MenuItem.KeyboardAccelerators>
         <KeyboardAccelerator Modifiers="Control" Key="X"/>
-      </MenuFlyoutItem.KeyboardAccelerators>
-    </MenuFlyoutItem>
-    <MenuFlyoutItem Text="Copy">
-      <MenuFlyoutItem.KeyboardAccelerators>
+      </MenuItem.KeyboardAccelerators>
+    </MenuItem>
+    <MenuItem Header="Copy">
+      <MenuItem.KeyboardAccelerators>
         <KeyboardAccelerator Modifiers="Control" Key="C"/>
-      </MenuFlyoutItem.KeyboardAccelerators>
-    </MenuFlyoutItem>
-    <MenuFlyoutItem Text="Paste">
-      <MenuFlyoutItem.KeyboardAccelerators>
+      </MenuItem.KeyboardAccelerators>
+    </MenuItem>
+    <MenuItem Header="Paste">
+      <MenuItem.KeyboardAccelerators>
         <KeyboardAccelerator Modifiers="Control" Key="V"/>
-      </MenuFlyoutItem.KeyboardAccelerators>
-    </MenuFlyoutItem>
-  </muxc:MenuBarItem>
+      </MenuItem.KeyboardAccelerators>
+    </MenuItem>
+  </MenuItem>
 
-  <muxc:MenuBarItem Title="Help">
-    <MenuFlyoutItem Text="About">
-      <MenuFlyoutItem.KeyboardAccelerators>
+  <MenuItem Header="Help">
+    <MenuItem Header="About">
+      <MenuItem.KeyboardAccelerators>
         <KeyboardAccelerator Modifiers="Control" Key="I"/>
-      </MenuFlyoutItem.KeyboardAccelerators>
-    </MenuFlyoutItem>
-  </muxc:MenuBarItem>
-</muxc:MenuBar>
+      </MenuItem.KeyboardAccelerators>
+    </MenuItem>
+  </MenuItem>
+</Menu>

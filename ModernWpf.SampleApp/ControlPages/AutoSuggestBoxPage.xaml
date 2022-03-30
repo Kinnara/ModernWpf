@@ -18,16 +18,15 @@
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <ui:AutoSuggestBox
+                        x:Name="Control1"
                         Width="300"
                         AutomationProperties.Name="Basic AutoSuggestBox"
                         SuggestionChosen="AutoSuggestBox_SuggestionChosen"
-                        Tag="Control1"
                         TextChanged="AutoSuggestBox_TextChanged" />
                     <TextBlock
+                        x:Name="SuggestionOutput"
                         FontFamily="Global User Interface"
-                        Loaded="TextBlock_Loaded"
-                        Style="{StaticResource OutputTextBlockStyle}"
-                        Tag="SuggestionOutput" />
+                        Style="{StaticResource OutputTextBlockStyle}" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -94,36 +93,32 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <ui:AutoSuggestBox
+                        x:Name="Control2"
                         Width="300"
                         HorizontalAlignment="Left"
                         PlaceholderText="Type a control name"
                         QueryIcon="Find"
                         QuerySubmitted="Control2_QuerySubmitted"
                         SuggestionChosen="Control2_SuggestionChosen"
-                        Tag="Control2"
                         TextChanged="Control2_TextChanged" />
                     <StackPanel
+                        x:Name="ControlDetails"
                         Grid.Row="1"
                         Margin="0,8,0,0"
                         HorizontalAlignment="Left"
-                        Loaded="StackPanel_Loaded"
                         Orientation="Horizontal"
-                        Tag="ControlDetails"
                         Visibility="Collapsed">
                         <Image
-                            Height="110"
-                            Loaded="Image_Loaded"
-                            Tag="ControlImage" />
+                            x:Name="ControlImage"
+                            Height="110" />
                         <StackPanel>
                             <TextBlock
+                                x:Name="ControlTitle"
                                 Margin="8,0,0,0"
-                                Loaded="TextBlock_Loaded"
-                                Style="{DynamicResource BaseTextBlockStyle}"
-                                Tag="ControlTitle" />
+                                Style="{DynamicResource BaseTextBlockStyle}" />
                             <TextBlock
+                                x:Name="ControlSubtitle"
                                 Margin="8,0,0,0"
-                                Loaded="TextBlock_Loaded"
-                                Tag="ControlSubtitle"
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </StackPanel>

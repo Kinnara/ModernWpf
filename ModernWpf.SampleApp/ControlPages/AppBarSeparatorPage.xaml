@@ -17,9 +17,7 @@
                 <ScrollViewer
                     HorizontalScrollBarVisibility="Hidden"
                     VerticalScrollBarVisibility="Hidden">
-                    <ui:CommandBar
-                        Loaded="CommandBar_Loaded"
-                        Tag="Control1">
+                    <ui:CommandBar x:Name="Control1">
                         <ui:CommandBar.PrimaryCommands>
                             <ui:AppBarButton Icon="AttachCamera" Label="Attach Camera" />
                             <ui:AppBarSeparator />

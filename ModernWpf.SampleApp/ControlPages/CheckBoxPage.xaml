@@ -27,8 +27,7 @@
             </local:ControlExample.Example>
             <local:ControlExample.Output>
                 <TextBlock
-                    Loaded="TextBlock_Loaded"
-                    Tag="Control1Output" />
+                    x:Name="Control1Output" />
             </local:ControlExample.Output>
             <local:ControlExample.Xaml>
                 <sys:String xml:space="preserve">
@@ -53,8 +52,7 @@
             </local:ControlExample.Example>
             <local:ControlExample.Output>
                 <TextBlock
-                    Loaded="TextBlock_Loaded"
-                    Tag="Control2Output" />
+                    x:Name="Control2Output" />
             </local:ControlExample.Output>
             <local:ControlExample.Xaml>
                 <sys:String xml:space="preserve">
@@ -76,30 +74,26 @@
                         Content="Select all"
                         Indeterminate="SelectAll_Indeterminate"
                         IsThreeState="True"
-                        Loaded="CheckBox_Loaded"
-                        Tag="OptionsAllCheckBox"
+                        x:Name="OptionsAllCheckBox"
                         Unchecked="SelectAll_Unchecked" />
                     <CheckBox
                         Margin="24,0,0,0"
                         Checked="Option_Checked"
                         Content="Option 1"
-                        Loaded="CheckBox_Loaded"
-                        Tag="Option1CheckBox"
+                        x:Name="Option1CheckBox"
                         Unchecked="Option_Unchecked" />
                     <CheckBox
                         Margin="24,0,0,0"
                         Checked="Option_Checked"
                         Content="Option 2"
                         IsChecked="True"
-                        Loaded="CheckBox_Loaded"
-                        Tag="Option2CheckBox"
+                        x:Name="Option2CheckBox"
                         Unchecked="Option_Unchecked" />
                     <CheckBox
                         Margin="24,0,0,0"
                         Checked="Option_Checked"
                         Content="Option 3"
-                        Loaded="CheckBox_Loaded"
-                        Tag="Option3CheckBox"
+                        x:Name="Option3CheckBox"
                         Unchecked="Option_Unchecked" />
                 </StackPanel>
             </local:ControlExample.Example>

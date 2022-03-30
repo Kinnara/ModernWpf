@@ -3,23 +3,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using Page = ModernWpf.Controls.Page;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class AppBarButtonPage
+    public partial class AppBarButtonPage : Page
     {
-        private TextBlock Control1Output;
-        private TextBlock Control2Output;
-        private TextBlock Control3Output;
-        private TextBlock Control4Output;
-        private TextBlock Control5Output;
-
-        private AppBarButton Button1;
-        private AppBarButton Button2;
-        private AppBarButton Button3;
-        private AppBarButton Button4;
-        private AppBarButton Button5;
-
         private AppBarToggleButton compactButton = null;
         private AppBarSeparator separator = null;
 
@@ -71,7 +60,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (sender is Button b)
             {
-                string name = b.Tag.ToString();
+                string name = b.Name;
 
                 switch (name)
                 {
@@ -89,60 +78,6 @@ namespace ModernWpf.SampleApp.ControlPages
                         break;
                     case "Button5":
                         Control5Output.Text = "You clicked: " + name;
-                        break;
-                }
-            }
-        }
-
-        private void TextBlock_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is TextBlock b)
-            {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "Control1Output":
-                        Control1Output = b;
-                        break;
-                    case "Control2Output":
-                        Control2Output = b;
-                        break;
-                    case "Control3Output":
-                        Control3Output = b;
-                        break;
-                    case "Control4Output":
-                        Control4Output = b;
-                        break;
-                    case "Control5Output":
-                        Control5Output = b;
-                        break;
-                }
-            }
-        }
-
-        private void AppBarButton_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is AppBarButton b)
-            {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "Button1":
-                        Button1 = b;
-                        break;
-                    case "Button2":
-                        Button2 = b;
-                        break;
-                    case "Button3":
-                        Button3 = b;
-                        break;
-                    case "Button4":
-                        Button4 = b;
-                        break;
-                    case "Button5":
-                        Button5 = b;
                         break;
                 }
             }

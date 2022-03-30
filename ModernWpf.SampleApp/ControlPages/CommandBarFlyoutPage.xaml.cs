@@ -19,8 +19,6 @@ namespace ModernWpf.SampleApp.ControlPages
 {
     public partial class CommandBarFlyoutPage : Page
     {
-        private Image Image1;
-        private TextBlock SelectedOptionText;
         private CommandBarFlyout CommandBarFlyout1;
 
         public CommandBarFlyoutPage()
@@ -49,16 +47,6 @@ namespace ModernWpf.SampleApp.ControlPages
         private void MyImageButton_Click(object sender, RoutedEventArgs e)
         {
             ShowMenu((sender as Button).IsMouseOver);
-        }
-
-        private void TextBlock_Loaded(object sender, RoutedEventArgs e)
-        {
-            SelectedOptionText = sender as TextBlock;
-        }
-
-        private void Image_Loaded(object sender, RoutedEventArgs e)
-        {
-            Image1 = sender as Image;
         }
     }
 }

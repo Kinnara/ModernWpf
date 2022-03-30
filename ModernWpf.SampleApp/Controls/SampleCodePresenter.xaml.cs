@@ -38,7 +38,7 @@ namespace ModernWpf.SampleApp.Controls
             set { SetValue(CodeSourceFileProperty, value); }
         }
 
-        public static readonly DependencyProperty IsCSharpSampleProperty = DependencyProperty.Register("IsCSharpSample", typeof(bool), typeof(SampleCodePresenter), new PropertyMetadata(false));
+        public static readonly DependencyProperty IsCSharpSampleProperty = DependencyProperty.Register("IsCSharpSample", typeof(bool), typeof(SampleCodePresenter), new PropertyMetadata(false, OnCodeSourceFilePropertyChanged));
         public bool IsCSharpSample
         {
             get { return (bool)GetValue(IsCSharpSampleProperty); }
@@ -52,7 +52,7 @@ namespace ModernWpf.SampleApp.Controls
             set { SetValue(SubstitutionsProperty, value); }
         }
 
-        public bool IsEmpty => Code.Length == 0 && CodeSourceFile == null;
+        public bool IsEmpty => string.IsNullOrEmpty(Code) && CodeSourceFile == null;
 
         private string actualCode = "";
         private static Regex SubstitutionPattern = new Regex(@"\$\(([^\)]+)\)");
@@ -87,6 +87,8 @@ namespace ModernWpf.SampleApp.Controls
             else
             {
                 Visibility = Visibility.Visible;
+                GenerateSyntaxHighlightedContent();
+                SampleHeader.Text = IsCSharpSample ? "C#" : "XAML";
             }
         }
 
@@ -205,6 +207,8 @@ namespace ModernWpf.SampleApp.Controls
 
             sampleCodeRTB.Text = sampleString;
             presenter.Content = sampleCodeRTB;
+
+            presenter.Visibility = Visibility.Visible;
         }
 
         private CodeColorizer GenerateRichTextFormatter()

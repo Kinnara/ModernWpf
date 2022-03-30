@@ -1,4 +1,5 @@
 ﻿using ModernWpf.Controls;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -56,7 +57,7 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void WriteCallerName([CallerMemberName] string name = "")
         {
-            //Debug.WriteLine(name);
+            Debug.WriteLine(name);
         }
 
         private void ShowDialog(object sender, RoutedEventArgs e)

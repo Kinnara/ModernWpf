@@ -1,13 +1,13 @@
 ﻿<ui:Page
     x:Class="ModernWpf.SampleApp.ControlPages.ControlPalettePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
-    mc:Ignorable="d"
-    Background="{DynamicResource AppBackgroundBrush}">
+    Background="{DynamicResource AppBackgroundBrush}"
+    mc:Ignorable="d">
 
     <Grid
         Margin="12"
@@ -26,14 +26,14 @@
 
         <Border
             Grid.Column="0"
+            ui:ThemeManager.RequestedTheme="Light"
             Background="{DynamicResource RegionBrush}"
-            CornerRadius="2 0 0 2"
-            ui:ThemeManager.RequestedTheme="Light" />
+            CornerRadius="2 0 0 2" />
         <Border
             Grid.Column="1"
+            ui:ThemeManager.RequestedTheme="Dark"
             Background="{DynamicResource RegionBrush}"
-            CornerRadius="0 2 2 0"
-            ui:ThemeManager.RequestedTheme="Dark" />
+            CornerRadius="0 2 2 0" />
 
         <ScrollViewer
             x:Name="ContentScrollViewer"

@@ -10,7 +10,6 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     Background="Transparent"
-    DataContext="{Binding RelativeSource={RelativeSource Self}}"
     FontSize="24"
     Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
     mc:Ignorable="d">
@@ -39,14 +38,14 @@
                     Background="Transparent">
                     <Canvas
                         x:Name="ShadowHost"
-                        Opacity="{Binding ShadowOpacity, Mode=OneWay}" />
+                        Opacity="{Binding ShadowOpacity, ElementName=headerControl, Mode=OneWay}" />
                     <TextBlock
                         x:Name="TitleTextBlock"
                         VerticalAlignment="Center"
                         FontSize="{Binding ElementName=headerControl, Path=FontSize}"
                         Foreground="{Binding ElementName=headerControl, Path=Foreground}"
                         Style="{DynamicResource TitleTextBlockStyle}"
-                        Text="{Binding Title, Mode=OneWay}"
+                        Text="{Binding Title, ElementName=headerControl, Mode=OneWay}"
                         TextTrimming="CharacterEllipsis"
                         TextWrapping="NoWrap" />
                 </Grid>

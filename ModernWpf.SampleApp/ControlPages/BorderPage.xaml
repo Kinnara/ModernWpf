@@ -10,6 +10,7 @@
     Title="Border"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
     <StackPanel>
         <local:ControlExample
@@ -17,12 +18,11 @@
             HeaderText="A Border around a TextBlock.">
             <local:ControlExample.Example>
                 <Border
+                    x:Name="Control1"
                     VerticalAlignment="Top"
                     Background="#FFFFFFFF"
                     BorderBrush="#FFFFD700"
-                    BorderThickness="2"
-                    Loaded="Border_Loaded"
-                    Tag="Control1">
+                    BorderThickness="2">
                     <TextBlock
                         Margin="8,5"
                         FontSize="18"
@@ -34,11 +34,11 @@
             <local:ControlExample.Options>
                 <StackPanel>
                     <Slider
+                        x:Name="ThicknessSlider"
                         ui:ControlHelper.Header="BorderThickness"
                         AutoToolTipPlacement="TopLeft"
                         Maximum="10"
                         Minimum="0"
-                        Tag="ThicknessSlider"
                         TickFrequency="1"
                         ValueChanged="ThicknessSlider_ValueChanged"
                         Value="2" />

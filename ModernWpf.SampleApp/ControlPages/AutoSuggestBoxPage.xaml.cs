@@ -8,21 +8,15 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Page = ModernWpf.Controls.Page;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
     /// <summary>
     /// Interaction logic for AutoSuggestBoxPage.xaml
     /// </summary>
-    public partial class AutoSuggestBoxPage
+    public partial class AutoSuggestBoxPage : Page
     {
-        private Image ControlImage;
-        private StackPanel ControlDetails;
-
-        private TextBlock ControlTitle;
-        private TextBlock ControlSubtitle;
-        private TextBlock SuggestionOutput;
-
         private List<string> Cats = new List<string>()
         {
             "Abyssinian",
@@ -279,43 +273,6 @@ namespace ModernWpf.SampleApp.ControlPages
                 }
             }
             return suggestions.OrderByDescending(i => i.Title.StartsWith(query, StringComparison.CurrentCultureIgnoreCase)).ThenBy(i => i.Title).ToList();
-        }
-
-        private void TextBlock_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is TextBlock b)
-            {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "ControlTitle":
-                        ControlTitle = b;
-                        break;
-                    case "ControlSubtitle":
-                        ControlSubtitle = b;
-                        break;
-                    case "SuggestionOutput":
-                        SuggestionOutput = b;
-                        break;
-                }
-            }
-        }
-
-        private void StackPanel_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is StackPanel b)
-            {
-                ControlDetails = b;
-            }
-        }
-
-        private void Image_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is Image b)
-            {
-                ControlImage = b;
-            }
         }
     }
 }

@@ -22,8 +22,6 @@ namespace ModernWpf.SampleApp.ControlPages
     /// </summary>
     public partial class AutomationPropertiesPage : Page
     {
-        private TextBlock FontSizeChangingTextBlock;
-
         public AutomationPropertiesPage()
         {
             InitializeComponent();
@@ -40,14 +38,6 @@ namespace ModernWpf.SampleApp.ControlPages
             {
                 // We fell below minimum, so lets restore a correct value
                 sender.Value = sender.Minimum;
-            }
-        }
-
-        private void TextBlock_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is TextBlock b)
-            {
-                FontSizeChangingTextBlock = b;
             }
         }
     }

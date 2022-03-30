@@ -1,24 +1,24 @@
-﻿<muxc:DropDownButton AutomationProperties.Name="Email">
-    <muxc:DropDownButton.Content>
-        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE715;"/>
-    </muxc:DropDownButton.Content>
-    <muxc:DropDownButton.Flyout>
-        <MenuFlyout Placement="Bottom">
-            <MenuFlyoutItem Text="Send">
-                <MenuFlyoutItem.Icon>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE725;"/>
-                </MenuFlyoutItem.Icon>
-            </MenuFlyoutItem>
-            <MenuFlyoutItem Text="Reply">
-                <MenuFlyoutItem.Icon>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8CA;"/>
-                </MenuFlyoutItem.Icon>
-            </MenuFlyoutItem>
-            <MenuFlyoutItem Text="Reply All">
-                <MenuFlyoutItem.Icon>
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8C2;"/>
-                </MenuFlyoutItem.Icon>
-            </MenuFlyoutItem>
-        </MenuFlyout>
-    </muxc:DropDownButton.Flyout>
+﻿<ui:DropDownButton AutomationProperties.Name="Email">
+    <ui:DropDownButton.Content>
+        <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE715;"/>
+    </ui:DropDownButton.Content>
+    <ui:DropDownButton.Flyout>
+        <ui:MenuFlyout Placement="Bottom">
+            <MenuItem Header="Send">
+                <MenuItem.Icon>
+                    <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE725;"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Reply">
+                <MenuItem.Icon>
+                    <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8CA;"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Reply All">
+                <MenuItem.Icon>
+                    <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8C2;"/>
+                </MenuItem.Icon>
+            </MenuItem>
+        </ui:MenuFlyout>
+    </ui:DropDownButton.Flyout>
 </muxc:DropDownButton>

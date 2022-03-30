@@ -24,10 +24,6 @@ namespace ModernWpf.SampleApp.ControlPages
     /// </summary>
     public partial class ButtonPage : Page
     {
-        private Button Button1;
-        private TextBlock Control1Output;
-        private TextBlock Control2Output;
-
         public ButtonPage()
         {
             InitializeComponent();
@@ -37,7 +33,7 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             if (sender is Button b)
             {
-                string name = b.Tag.ToString();
+                string name = b.Name;
 
                 switch (name)
                 {
@@ -51,64 +47,20 @@ namespace ModernWpf.SampleApp.ControlPages
             }
         }
 
-        private void TextBlock_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is TextBlock b)
+            ControlExampleSubstitution Substitution = new ControlExampleSubstitution
             {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "Control1Output":
-                        Control1Output = b;
-                        break;
-                    case "Control2Output":
-                        Control2Output = b;
-                        break;
-                }
-            }
-        }
-
-        private void Button_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button b)
+                Key = "IsEnabled",
+                Value = @"IsEnabled=""False"" "
+            };
+            BindingOperations.SetBinding(Substitution, ControlExampleSubstitution.IsEnabledProperty, new Binding
             {
-                Button1 = b;
-            }
-        }
-
-        private void CheckBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is CheckBox b)
-            {
-                string name = b.Tag.ToString();
-
-                switch (name)
-                {
-                    case "DisableButton1":
-                        Button1.SetBinding(IsEnabledProperty, new Binding
-                        {
-                            Source = b,
-                            Path = new PropertyPath("IsChecked"),
-                            Converter = new BoolNegationConverter()
-                        });
-
-                        ControlExampleSubstitution Substitution = new ControlExampleSubstitution
-                        {
-                            Key = "IsEnabled",
-                            Value = @"IsEnabled=""False"" "
-                        };
-                        BindingOperations.SetBinding(Substitution, ControlExampleSubstitution.IsEnabledProperty, new Binding
-                        {
-                            Source = b,
-                            Path = new PropertyPath("IsChecked"),
-                        });
-                        List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution };
-                        Example1.Substitutions = Substitutions;
-
-                        break;
-                }
-            }
+                Source = DisableButton1,
+                Path = new PropertyPath("IsChecked"),
+            });
+            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution };
+            Example1.Substitutions = Substitutions;
         }
     }
 }

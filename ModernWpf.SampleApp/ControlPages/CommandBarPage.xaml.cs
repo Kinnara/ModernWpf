@@ -13,13 +13,6 @@ namespace ModernWpf.SampleApp.ControlPages
 {
     public partial class CommandBarPage : Page, INotifyPropertyChanged
     {
-        private AppBarButton AddButton;
-        private AppBarButton EditButton;
-        private AppBarButton ShareButton;
-        private AppBarButton SettingsButton;
-        private CommandBar PrimaryCommandBar;
-        private TextBlock SelectedOptionText;
-
         private bool multipleButtons = false;
         public bool MultipleButtons
         {
@@ -40,6 +33,7 @@ namespace ModernWpf.SampleApp.ControlPages
         public CommandBarPage()
         {
             InitializeComponent();
+            AddKeyboardAccelerators();
         }
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
@@ -122,70 +116,41 @@ namespace ModernWpf.SampleApp.ControlPages
             MultipleButtons = false;
         }
 
-        private void AppBarButton_Loaded(object sender, RoutedEventArgs e)
+        private void AddKeyboardAccelerators()
         {
-            if (sender is AppBarButton b)
-            {
-                string name = b.Tag.ToString();
+            EditButton.AddKeyboardAccelerator(Key.E, ModifierKeys.Control);
 
-                switch (name)
-                {
-                    case "AddButton":
-                        AddButton = b;
-                        b.AddKeyboardAccelerator(Key.A, ModifierKeys.Control);
-                        break;
-                    case "EditButton":
-                        EditButton = b;
-                        b.AddKeyboardAccelerator(Key.E, ModifierKeys.Control);
-                        break;
-                    case "ShareButton":
-                        ShareButton = b;
-                        b.AddKeyboardAccelerator(Key.F4);
-                        break;
-                    case "SettingsButton":
-                        SettingsButton = b;
-                        b.AddKeyboardAccelerator(Key.I, ModifierKeys.Control);
-                        break;
-                }
-            }
+            ShareButton.AddKeyboardAccelerator(Key.F4);
+
+            AddButton.AddKeyboardAccelerator(Key.A, ModifierKeys.Control);
+
+            SettingsButton.AddKeyboardAccelerator(Key.I, ModifierKeys.Control);
         }
 
-        private void TextBlock_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (sender is TextBlock b)
+            ControlExampleSubstitution Substitution1 = new ControlExampleSubstitution
             {
-                SelectedOptionText = b;
-            }
-        }
-
-        private void CommandBar_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is CommandBar b)
+                Key = "IsOpen",
+                IsEnabled = true,
+            };
+            BindingOperations.SetBinding(Substitution1, ControlExampleSubstitution.ValueProperty, new Binding
             {
-                PrimaryCommandBar = b;
-                ControlExampleSubstitution Substitution1 = new ControlExampleSubstitution
-                {
-                    Key = "IsOpen",
-                    IsEnabled = true,
-                };
-                BindingOperations.SetBinding(Substitution1, ControlExampleSubstitution.ValueProperty, new Binding
-                {
-                    Source = b,
-                    Path = new PropertyPath("IsOpen"),
-                });
-                ControlExampleSubstitution Substitution2 = new ControlExampleSubstitution
-                {
-                    Key = "MultipleButtonsSecondaryCommands",
-                    Value = (string)Resources["MultipleButtonsSecondaryCommands"],
-                };
-                BindingOperations.SetBinding(Substitution2, ControlExampleSubstitution.IsEnabledProperty, new Binding
-                {
-                    Source = this,
-                    Path = new PropertyPath("MultipleButtons"),
-                });
-                List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2 };
-                Example3.Substitutions = Substitutions;
-            }
+                Source = PrimaryCommandBar,
+                Path = new PropertyPath("IsOpen"),
+            });
+            ControlExampleSubstitution Substitution2 = new ControlExampleSubstitution
+            {
+                Key = "MultipleButtonsSecondaryCommands",
+                Value = (string)Resources["MultipleButtonsSecondaryCommands"],
+            };
+            BindingOperations.SetBinding(Substitution2, ControlExampleSubstitution.IsEnabledProperty, new Binding
+            {
+                Source = this,
+                Path = new PropertyPath("MultipleButtons"),
+            });
+            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2 };
+            Example3.Substitutions = Substitutions;
         }
     }
 }

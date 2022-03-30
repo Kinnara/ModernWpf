@@ -1,9 +1,9 @@
-﻿<muxc:DropDownButton Content="Email">
-    <muxc:DropDownButton.Flyout>
-        <MenuFlyout Placement="Bottom">
-            <MenuFlyoutItem Text="Send"/>
-            <MenuFlyoutItem Text="Reply"/>
-            <MenuFlyoutItem Text="Reply All"/>
-        </MenuFlyout>
-    </muxc:DropDownButton.Flyout>
-</muxc:DropDownButton>
+﻿<ui:DropDownButton Content="Email">
+    <ui:DropDownButton.Flyout>
+        <ui:MenuFlyout Placement="Bottom">
+            <MenuItem Header="Send"/>
+            <MenuItem Header="Reply"/>
+            <MenuItem Header="Reply All"/>
+        </ui:MenuFlyout>
+    </ui:DropDownButton.Flyout>
+</ui:DropDownButton>

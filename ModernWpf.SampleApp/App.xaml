@@ -21,9 +21,16 @@
                                 <presets:ColorPresetResources TargetTheme="Light" />
                                 <presets:ShapePresetResources />
                             </ResourceDictionary.MergedDictionaries>
-                            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FFF1F1F1" />
-                            <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
+                            <Thickness x:Key="SearchBoxBorderThickness">0</Thickness>
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Red" />
+                            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FFF1F1F1" />
+                            <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="Black" />
+                            <Thickness x:Key="ControlExampleDisplayBorderThickness">0</Thickness>
+                            <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="Transparent" />
+                            <SolidColorBrush x:Key="HomePageBackgroundBrush" Color="Transparent" />
+                            <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
+                            <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{StaticResource SystemAltHighColor}" />
+                            <StaticResource x:Key="ControlExampleDisplayBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
                         </ResourceDictionary>
 
                         <ResourceDictionary
@@ -33,9 +40,16 @@
                                 <presets:ColorPresetResources TargetTheme="Dark" />
                                 <presets:ShapePresetResources />
                             </ResourceDictionary.MergedDictionaries>
-                            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FF232323" />
-                            <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="#FF282828" />
+                            <Thickness x:Key="SearchBoxBorderThickness">0</Thickness>
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Yellow" />
+                            <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FF232323" />
+                            <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="White" />
+                            <Thickness x:Key="ControlExampleDisplayBorderThickness">0</Thickness>
+                            <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="Transparent" />
+                            <SolidColorBrush x:Key="HomePageBackgroundBrush" Color="Transparent" />
+                            <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="#FF282828" />
+                            <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
+                            <StaticResource x:Key="ControlExampleDisplayBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
                         </ResourceDictionary>
 
                         <ResourceDictionary
@@ -44,6 +58,13 @@
                             <ResourceDictionary.MergedDictionaries>
                                 <ResourceDictionary Source="HighContrast.xaml" />
                             </ResourceDictionary.MergedDictionaries>
+                            <Thickness x:Key="SearchBoxBorderThickness">2</Thickness>
+                            <Thickness x:Key="ControlExampleDisplayBorderThickness">1</Thickness>
+                            <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
+                            <SolidColorBrush x:Key="HomePageBackgroundBrush" Color="{DynamicResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="{DynamicResource SystemColorWindowTextColor}" />
+                            <SolidColorBrush x:Key="ControlExampleDisplayBrush" Color="{DynamicResource SystemColorWindowColor}" />
+                            <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="{DynamicResource SystemColorWindowTextColor}" />
                         </ResourceDictionary>
                     </ui:ThemeResources.ThemeDictionaries>
                 </ui:ThemeResources>

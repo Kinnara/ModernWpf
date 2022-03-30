@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -13,18 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Page = ModernWpf.Controls.Page;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
     /// <summary>
-    /// CanvasPage.xaml 的交互逻辑
+    /// GridPage.xaml 的交互逻辑
     /// </summary>
-    public partial class CanvasPage : Page
+    public partial class GridPage : Page
     {
-        private List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>();
-
-        public CanvasPage()
+        public GridPage()
         {
             InitializeComponent();
         }
@@ -33,32 +29,23 @@ namespace ModernWpf.SampleApp.ControlPages
         {
             ControlExampleSubstitution Substitution1 = new ControlExampleSubstitution
             {
-                Key = "Left",
+                Key = "Column",
             };
             BindingOperations.SetBinding(Substitution1, ControlExampleSubstitution.ValueProperty, new Binding
             {
-                Source = TopSlider,
+                Source = ColumnSlider,
                 Path = new PropertyPath("Value"),
             });
             ControlExampleSubstitution Substitution2 = new ControlExampleSubstitution
             {
-                Key = "Top",
+                Key = "Row",
             };
             BindingOperations.SetBinding(Substitution2, ControlExampleSubstitution.ValueProperty, new Binding
             {
-                Source = LeftSlider,
+                Source = RowSlider,
                 Path = new PropertyPath("Value"),
             });
-            ControlExampleSubstitution Substitution3 = new ControlExampleSubstitution
-            {
-                Key = "Z",
-            };
-            BindingOperations.SetBinding(Substitution3, ControlExampleSubstitution.ValueProperty, new Binding
-            {
-                Source = ZSlider,
-                Path = new PropertyPath("Value"),
-            });
-            Example1.Substitutions = new List<ControlExampleSubstitution> { Substitution1, Substitution2, Substitution3 };
+            Example1.Substitutions = new List<ControlExampleSubstitution> { Substitution1, Substitution2 };
         }
     }
 }

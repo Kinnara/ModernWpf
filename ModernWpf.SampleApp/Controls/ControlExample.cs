@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Windows.Foundation.Metadata;
+using System.Windows.Markup;
+using ModernWpf.SampleApp.Controls;
 
 namespace ModernWpf.SampleApp
 {
@@ -79,8 +81,51 @@ namespace ModernWpf.SampleApp
         }
     }
 
-    public partial class ControlExample : UserControl
+    [ContentProperty(nameof(Example))]
+    [TemplatePart(Name = nameof(RootGrid), Type = typeof(Grid))]
+    [TemplatePart(Name = nameof(ExampleContainer), Type = typeof(Border))]
+    [TemplatePart(Name = nameof(OptionsPresenterBorder), Type = typeof(Border))]
+    [TemplatePart(Name = nameof(ScreenshotButton), Type = typeof(Button))]
+    [TemplatePart(Name = nameof(ScreenshotDelayButton), Type = typeof(Button))]
+    [TemplatePart(Name = nameof(ControlPaddingBox), Type = typeof(TextBox))]
+    [TemplatePart(Name = nameof(ErrorTextBlock), Type = typeof(TextBlock))]
+    [TemplatePart(Name = nameof(ScreenshotStatusTextBlock), Type = typeof(TextBlock))]
+    [TemplatePart(Name = nameof(ControlPresenter), Type = typeof(ContentPresenter))]
+    [TemplatePart(Name = nameof(OptionsPresenter), Type = typeof(ContentPresenter))]
+    [TemplatePart(Name = nameof(XamlPresenter), Type = typeof(SampleCodePresenter))]
+    [TemplatePart(Name = nameof(CSharpPresenter), Type = typeof(SampleCodePresenter))]
+    public class ControlExample : Control
     {
+        private Grid RootGrid;
+
+        public Border ExampleContainer;
+        private Border OptionsPresenterBorder;
+
+        private Button ScreenshotButton;
+        private Button ScreenshotDelayButton;
+
+        private TextBox ControlPaddingBox;
+
+        private TextBlock ErrorTextBlock;
+        private TextBlock ScreenshotStatusTextBlock;
+
+        private ContentPresenter ControlPresenter;
+        private ContentPresenter OptionsPresenter;
+
+        private SampleCodePresenter XamlPresenter;
+        private SampleCodePresenter CSharpPresenter;
+
+        static ControlExample()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(ControlExample), new FrameworkPropertyMetadata(typeof(ControlExample)));
+        }
+
+        public ControlExample()
+        {
+            Loaded += ControlExample_Loaded;
+            SizeChanged += Control_SizeChanged;
+        }
+
         public static readonly DependencyProperty HeaderTextProperty = DependencyProperty.Register("HeaderText", typeof(string), typeof(ControlExample), new PropertyMetadata(null));
         public string HeaderText
         {
@@ -179,21 +224,73 @@ namespace ModernWpf.SampleApp
             set { SetValue(MinimumUniversalAPIContractProperty, value); }
         }
 
-        public ControlExample()
+        public override void OnApplyTemplate()
         {
-            InitializeComponent();
-            DataContext = this;
+            if (RootGrid != null)
+            {
+                RootGrid.Loaded -= RootGrid_Loaded;
+            }
+            if (ScreenshotButton != null)
+            {
+                ScreenshotButton.Click -= ScreenshotButton_Click;
+            }
+            if (ScreenshotDelayButton != null)
+            {
+                ScreenshotDelayButton.Click -= ScreenshotDelayButton_Click;
+            }
+            if (ControlPaddingBox != null)
+            {
+                ControlPaddingBox.KeyUp -= ControlPaddingBox_KeyUp;
+                ControlPaddingBox.LostFocus -= ControlPaddingBox_LostFocus;
+            }
+
+            base.OnApplyTemplate();
+
+            RootGrid = GetTemplateChild(nameof(RootGrid)) as Grid;
+            ExampleContainer = GetTemplateChild(nameof(ExampleContainer)) as Border;
+            OptionsPresenterBorder = GetTemplateChild(nameof(OptionsPresenterBorder)) as Border;
+            ScreenshotButton = GetTemplateChild(nameof(ScreenshotButton)) as Button;
+            ScreenshotDelayButton = GetTemplateChild(nameof(ScreenshotDelayButton)) as Button;
+            ControlPaddingBox = GetTemplateChild(nameof(ControlPaddingBox)) as TextBox;
+            ErrorTextBlock = GetTemplateChild(nameof(ErrorTextBlock)) as TextBlock;
+            ScreenshotStatusTextBlock = GetTemplateChild(nameof(ScreenshotStatusTextBlock)) as TextBlock;
+            ControlPresenter = GetTemplateChild(nameof(ControlPresenter)) as ContentPresenter;
+            OptionsPresenter = GetTemplateChild(nameof(OptionsPresenter)) as ContentPresenter;
+            XamlPresenter = GetTemplateChild(nameof(XamlPresenter)) as SampleCodePresenter;
+            CSharpPresenter = GetTemplateChild(nameof(CSharpPresenter)) as SampleCodePresenter;
+
+            if (RootGrid != null)
+            {
+                RootGrid.Loaded += RootGrid_Loaded;
+            }
+            if (ScreenshotButton != null)
+            {
+                ScreenshotButton.Click += ScreenshotButton_Click;
+            }
+            if (ScreenshotDelayButton != null)
+            {
+                ScreenshotDelayButton.Click += ScreenshotDelayButton_Click;
+            }
+            if (ControlPaddingBox != null)
+            {
+                ControlPaddingBox.KeyUp += ControlPaddingBox_KeyUp;
+                ControlPaddingBox.LostFocus += ControlPaddingBox_LostFocus;
+            }
         }
 
         private void ControlExample_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!XamlPresenter.IsEmpty && !CSharpPresenter.IsEmpty)
+            if (XamlPresenter == null && CSharpPresenter == null)
+            {
+                VisualStateManager.GoToState(this, "ExpanderCollapsed", false);
+            }
+            else if (!XamlPresenter.IsEmpty && !CSharpPresenter.IsEmpty)
             {
                 VisualStateManager.GoToState(this, "SeparatorVisible", false);
             }
         }
 
-        private void rootGrid_Loaded(object sender, RoutedEventArgs e)
+        private void RootGrid_Loaded(object sender, RoutedEventArgs e)
         {
             if (MinimumUniversalAPIContract != 0 && !(ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", (ushort)MinimumUniversalAPIContract)))
             {
@@ -414,7 +511,7 @@ namespace ModernWpf.SampleApp
             }
         }
 
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Control_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (Application.Current.MainWindow.ActualWidth < 740)
             {

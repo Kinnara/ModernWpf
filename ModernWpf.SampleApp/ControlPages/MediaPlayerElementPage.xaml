@@ -18,6 +18,7 @@
             <local:ControlExample.Example>
                 <MediaElement
                     MaxWidth="400"
+                    HorizontalAlignment="Left"
                     Source="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource RelativeToAbsoluteConverter}}"
                     Tag="Assets/SampleMedia/ladybug.wmv" />
             </local:ControlExample.Example>
@@ -34,6 +35,7 @@
             <local:ControlExample.Example>
                 <MediaElement
                     MaxWidth="400"
+                    HorizontalAlignment="Left"
                     LoadedBehavior="Play"
                     Source="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource RelativeToAbsoluteConverter}}"
                     Tag="Assets/SampleMedia/fishes.wmv" />

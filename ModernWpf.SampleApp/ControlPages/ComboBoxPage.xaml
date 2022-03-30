@@ -16,24 +16,22 @@
             <local:ControlExample.Example>
                 <StackPanel>
                     <ComboBox
+                        x:Name="Combo1"
                         Width="200"
                         ui:ControlHelper.Header="Colors"
                         ui:ControlHelper.PlaceholderText="Pick a color"
-                        Loaded="Combo1_Loaded"
-                        SelectionChanged="ColorComboBox_SelectionChanged"
-                        Tag="Combo1">
+                        SelectionChanged="ColorComboBox_SelectionChanged">
                         <sys:String>Blue</sys:String>
                         <sys:String>Green</sys:String>
                         <sys:String>Red</sys:String>
                         <sys:String>Yellow</sys:String>
                     </ComboBox>
                     <Rectangle
+                        x:Name="Control1Output"
                         Width="100"
                         Height="30"
                         Margin="0,8,0,0"
-                        Fill="{DynamicResource ControlFillColorTransparentBrush}"
-                        Loaded="Rectangle_Loaded"
-                        Tag="Control1Output" />
+                        Fill="{DynamicResource ControlFillColorTransparentBrush}" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -52,6 +50,7 @@
             <local:ControlExample.Example>
                 <StackPanel>
                     <ComboBox
+                        x:Name="Combo2"
                         MinWidth="200"
                         d:DataContext="{d:DesignInstance Type=local:ControlPages.ComboBoxPage}"
                         ui:ControlHelper.Header="Font"
@@ -59,12 +58,11 @@
                         DisplayMemberPath="Item1"
                         ItemsSource="{Binding Fonts}"
                         Loaded="Combo2_Loaded"
-                        SelectedValuePath="Item2"
-                        Tag="Combo2" />
+                        SelectedValuePath="Item2" />
                     <TextBlock
-                        Loaded="TextBlock_Loaded"
+                        x:Name="Control2Output"
+                        FontFamily="{Binding SelectedValue, ElementName=Combo2}"
                         Style="{DynamicResource OutputTextBlockStyle}"
-                        Tag="Control2Output"
                         Text="You can set the font used for this text." />
                 </StackPanel>
             </local:ControlExample.Example>
@@ -82,19 +80,19 @@
             <local:ControlExample.Example>
                 <StackPanel>
                     <ComboBox
+                        x:Name="Combo3"
                         Width="200"
                         d:DataContext="{d:DesignInstance Type=local:ControlPages.ComboBoxPage}"
                         ui:ControlHelper.Header="Font Size"
                         DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ui:Page}}}"
                         IsEditable="True"
                         ItemsSource="{Binding FontSizes}"
-                        Loaded="Combo3_Loaded"
-                        Tag="Combo3" />
+                        Loaded="Combo3_Loaded" />
                     <TextBlock
+                        x:Name="Control3Output"
                         FontFamily="Segoe UI"
-                        Loaded="TextBlock_Loaded"
+                        FontSize="{Binding SelectedValue, ElementName=Combo3}"
                         Style="{DynamicResource OutputTextBlockStyle}"
-                        Tag="Control3Output"
                         Text="You can set the font size used for this text." />
                 </StackPanel>
             </local:ControlExample.Example>

@@ -1,33 +1,39 @@
-﻿using SamplesCommon;
+﻿using ModernWpf.Controls;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class HyperlinkButtonPage
+    /// <summary>
+    /// IconElementPage.xaml 的交互逻辑
+    /// </summary>
+    public partial class IconElementPage : Page
     {
-        public HyperlinkButtonPage()
+        public IconElementPage()
         {
             InitializeComponent();
-        }
-
-        private void GoToHyperlinkButton_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationRootPage.RootFrame.Navigate(typeof(ItemPage), "ToggleButton");
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ControlExampleSubstitution Substitution = new ControlExampleSubstitution
             {
-                Key = "IsEnabled",
-                Value = @"IsEnabled=""False"" "
+                Key = "ShowAsMonochrome",
             };
-            BindingOperations.SetBinding(Substitution, ControlExampleSubstitution.IsEnabledProperty, new Binding
+            BindingOperations.SetBinding(Substitution, ControlExampleSubstitution.ValueProperty, new Binding
             {
-                Source = DisableControl1,
+                Source = MonochromeButton,
                 Path = new PropertyPath("IsChecked"),
             });
             List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution };
