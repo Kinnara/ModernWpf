@@ -1,32 +1,31 @@
 ﻿<UserControl
     x:Class="ModernWpf.SampleApp.ControlPages.ContentDialogTestContent"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
-    mc:Ignorable="d"
-    d:DesignWidth="800"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     d:DesignHeight="450"
-    Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <Grid Margin="12">
         <ui:SimpleStackPanel
-            Spacing="12"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Spacing="12">
             <Button
-                Content="Show ContentDialog"
-                Click="ShowDialog" />
+                Click="ShowDialog"
+                Content="Show ContentDialog" />
             <Button
-                Content="Show parented ContentDialog (Popup)"
-                Click="ShowParentedDialogPopup" />
+                Click="ShowParentedDialogPopup"
+                Content="Show parented ContentDialog (Popup)" />
             <Button
-                Content="Show parented ContentDialog (InPlace)"
-                Click="ShowParentedDialogInPlace" />
+                Click="ShowParentedDialogInPlace"
+                Content="Show parented ContentDialog (InPlace)" />
             <Button
-                Content="Open a new window"
-                Click="OpenNewWindow" />
+                Click="OpenNewWindow"
+                Content="Open a new window" />
         </ui:SimpleStackPanel>
 
         <local:TestContentDialog

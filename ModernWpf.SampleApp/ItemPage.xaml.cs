@@ -92,23 +92,20 @@ namespace ModernWpf.SampleApp
 
         private void OnToggleTheme()
         {
-            //var currentElementTheme = ((_currentElementTheme ?? ElementTheme.Default) == ElementTheme.Default) ? ThemeHelper.ActualTheme : _currentElementTheme.Value;
-            //var newTheme = currentElementTheme == ElementTheme.Dark ? ElementTheme.Light : ElementTheme.Dark;
-            //SetControlExamplesTheme(newTheme);
+            SetControlExamplesTheme();
         }
 
-        private void SetControlExamplesTheme(ElementTheme theme)
+        private void SetControlExamplesTheme()
         {
             var controlExamples = (this.contentFrame.Content as UIElement)?.FindDescendants<ControlExample>();
 
             if (controlExamples != null)
             {
-                _currentElementTheme = theme;
                 foreach (var controlExample in controlExamples)
                 {
                     var exampleContent = controlExample.Example as FrameworkElement;
-                    //exampleContent.RequestedTheme = theme;
-                    //controlExample.ExampleContainer.RequestedTheme = theme;
+                    exampleContent.ToggleTheme();
+                    controlExample.ExampleContainer.ToggleTheme();
                 }
             }
         }

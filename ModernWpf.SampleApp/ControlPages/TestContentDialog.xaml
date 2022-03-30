@@ -1,30 +1,30 @@
 ﻿<ui:ContentDialog
     x:Class="ModernWpf.SampleApp.ControlPages.TestContentDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
-    mc:Ignorable="d"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    x:Name="dialog"
+    Title="Title"
     d:DesignHeight="756"
     d:DesignWidth="548"
-    x:Name="dialog"
-    Style="{StaticResource ScrollableContentDialogStyle}"
-    Title="Title"
-    PrimaryButtonText="Yes"
-    SecondaryButtonText="No"
+    CloseButtonClick="OnCloseButtonClick"
     CloseButtonText="Cancel"
+    Closed="OnClosed"
     DefaultButton="Primary"
     PrimaryButtonClick="OnPrimaryButtonClick"
+    PrimaryButtonText="Yes"
     SecondaryButtonClick="OnSecondaryButtonClick"
-    CloseButtonClick="OnCloseButtonClick"
-    Closed="OnClosed">
+    SecondaryButtonText="No"
+    Style="{StaticResource ScrollableContentDialogStyle}"
+    mc:Ignorable="d">
     <ui:SimpleStackPanel Spacing="12">
         <TextBox
             ui:ControlHelper.Header="Title"
-            Text="{Binding ElementName=dialog, Path=Title, UpdateSourceTrigger=PropertyChanged}"
-            AcceptsReturn="True" />
+            AcceptsReturn="True"
+            Text="{Binding ElementName=dialog, Path=Title, UpdateSourceTrigger=PropertyChanged}" />
         <TextBox
             ui:ControlHelper.Header="PrimaryButtonText"
             Text="{Binding ElementName=dialog, Path=PrimaryButtonText, UpdateSourceTrigger=PropertyChanged}" />
@@ -46,13 +46,13 @@
             IsChecked="{Binding ElementName=dialog, Path=IsShadowEnabled}" />
         <StackPanel>
             <Button
-                Content="Try to open another ContentDialog"
-                Click="TryOpenAnother" />
+                Click="TryOpenAnother"
+                Content="Try to open another ContentDialog" />
             <TextBlock
                 x:Name="ErrorText"
-                Style="{StaticResource BodyTextBlockStyle}"
-                Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
                 Margin="0,8,0,0"
+                Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
+                Style="{StaticResource BodyTextBlockStyle}"
                 Visibility="Collapsed" />
         </StackPanel>
     </ui:SimpleStackPanel>
