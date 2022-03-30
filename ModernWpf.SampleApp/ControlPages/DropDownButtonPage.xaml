@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    Title="DropDownButtonPage"
+    Title="DropDown Button"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
