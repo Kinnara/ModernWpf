@@ -1,0 +1,111 @@
+﻿<ui:Page
+    x:Class="ModernWpf.SampleApp.ControlPages.GridPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="Grid"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
+    <StackPanel>
+        <local:ControlExample
+            x:Name="Example1"
+            HeaderText="A 3x3 Grid control.">
+            <Grid
+                x:Name="Control1"
+                Width="240"
+                Height="160"
+                Background="Gray">
+                <Grid.Resources>
+                    <Style TargetType="Rectangle">
+                        <Setter Property="Height" Value="40" />
+                        <Setter Property="Width" Value="40" />
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Rectangle
+                    x:Name="Rectangle1"
+                    Grid.Row="{Binding Value, ElementName=RowSlider, Mode=OneWay}"
+                    Grid.Column="{Binding Value, ElementName=ColumnSlider, Mode=OneWay}"
+                    Width="50"
+                    Height="50"
+                    Fill="Red" />
+                <Rectangle
+                    Grid.Row="1"
+                    Fill="Blue" />
+                <Rectangle
+                    Grid.Column="1"
+                    Fill="Green" />
+                <Rectangle
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Fill="Yellow" />
+            </Grid>
+
+            <local:ControlExample.Options>
+                <StackPanel Orientation="Horizontal">
+                    <Slider
+                        x:Name="RowSlider"
+                        Height="110"
+                        VerticalAlignment="Top"
+                        IsDirectionReversed="True"
+                        IsSnapToTickEnabled="True"
+                        Maximum="2"
+                        Minimum="0"
+                        Orientation="Vertical"
+                        TickFrequency="1">
+                        <ui:ControlHelper.Header>
+                            <TextBlock
+                                Margin="0,0,0,10"
+                                Text="Grid.Row" />
+                        </ui:ControlHelper.Header>
+                    </Slider>
+                    <Slider
+                        x:Name="ColumnSlider"
+                        Width="100"
+                        Margin="16,0,0,0"
+                        ui:ControlHelper.Header="Grid.Column"
+                        IsSnapToTickEnabled="True"
+                        Maximum="2"
+                        Minimum="0"
+                        TickFrequency="1" />
+                </StackPanel>
+            </local:ControlExample.Options>
+
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;Grid Width=&quot;240&quot; Height=&quot;120&quot; Background=&quot;Gray&quot;&gt;
+    &lt;Grid.ColumnDefinitions&gt;
+        &lt;ColumnDefinition Width=&quot;50&quot; /&gt;
+        &lt;ColumnDefinition Width=&quot;Auto&quot; /&gt;
+        &lt;ColumnDefinition /&gt;
+    &lt;/Grid.ColumnDefinitions&gt;
+    &lt;Grid.RowDefinitions&gt;
+        &lt;RowDefinition Height=&quot;50&quot; /&gt;
+        &lt;RowDefinition Height=&quot;Auto&quot; /&gt;
+        &lt;RowDefinition /&gt;
+    &lt;/Grid.RowDefinitions&gt;
+    &lt;Rectangle Fill=&quot;Red&quot; Grid.Column=&quot;$(Column)&quot; Grid.Row=&quot;$(Row)&quot; /&gt;
+    &lt;Rectangle Fill=&quot;Blue&quot; Grid.Row=&quot;1&quot; /&gt;
+    &lt;Rectangle Fill=&quot;Green&quot; Grid.Column=&quot;1&quot; /&gt;
+    &lt;Rectangle Fill=&quot;Yellow&quot; Grid.Row=&quot;1&quot; Grid.Column=&quot;1&quot; /&gt;
+&lt;/Grid&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+    </StackPanel>
+</ui:Page>
