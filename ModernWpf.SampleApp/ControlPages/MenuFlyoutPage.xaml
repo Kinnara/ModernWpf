@@ -1,11 +1,11 @@
 ﻿<ui:Page
     x:Class="ModernWpf.SampleApp.ControlPages.MenuFlyoutPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
 
     <ScrollViewer>
@@ -14,20 +14,20 @@
                 <StackPanel
                     x:Name="Control1"
                     Orientation="Horizontal">
-                    <ui:AppBarButton Icon="Sort" IsCompact="True" ToolTipService.ToolTip="Sort" AutomationProperties.Name="Sort">
+                    <ui:AppBarButton AutomationProperties.Name="Sort" Icon="Sort" IsCompact="True" ToolTipService.ToolTip="Sort">
                         <ui:AppBarButton.Flyout>
                             <ui:MenuFlyout>
                                 <MenuItem
-                                    Header="By rating"
                                     Click="MenuFlyoutItem_Click"
+                                    Header="By rating"
                                     Tag="rating" />
                                 <MenuItem
-                                    Header="By match"
                                     Click="MenuFlyoutItem_Click"
+                                    Header="By match"
                                     Tag="match" />
                                 <MenuItem
-                                    Header="By distance"
                                     Click="MenuFlyoutItem_Click"
+                                    Header="By distance"
                                     Tag="distance" />
                             </ui:MenuFlyout>
                         </ui:AppBarButton.Flyout>

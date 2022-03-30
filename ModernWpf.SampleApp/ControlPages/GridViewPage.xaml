@@ -1,98 +1,86 @@
 ﻿<local:ItemsPageBase
     x:Class="ModernWpf.SampleApp.ControlPages.GridViewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
 
     <Page.Resources>
         <DataTemplate x:Key="ImageTemplate">
             <Image
-                Stretch="UniformToFill"
-                Source="{Binding ImageLocation, Mode=OneTime}"
-                AutomationProperties.Name="{Binding Title, Mode=OneTime}"
                 Width="190"
-                Height="130" />
+                Height="130"
+                AutomationProperties.Name="{Binding Title}"
+                Source="{Binding ImageLocation}"
+                Stretch="UniformToFill" />
         </DataTemplate>
 
         <DataTemplate x:Key="IconTextTemplate">
-            <Grid
-                AutomationProperties.Name="{Binding Title}"
+            <StackPanel
                 Width="280"
-                MinHeight="160">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Image
-                    x:Name="image"
-                    Width="18"
-                    Margin="0,4,0,0"
-                    VerticalAlignment="Top"
-                    Source="{Binding ImageLocation}"
-                    Stretch="Uniform" />
+                MinHeight="160"
+                AutomationProperties.Name="{Binding Title}">
+                <StackPanel Orientation="Horizontal">
+                    <Image
+                        x:Name="image"
+                        Width="18"
+                        Margin="0,4,0,0"
+                        Source="{Binding ImageLocation}"
+                        Stretch="Uniform" />
+                    <TextBlock
+                        x:Name="title"
+                        Margin="8,0,0,0"
+                        Style="{DynamicResource BaseTextBlockStyle}"
+                        Text="{Binding Title}" />
+                </StackPanel>
                 <TextBlock
-                    x:Name="title"
-                    Style="{StaticResource BaseTextBlockStyle}"
-                    Margin="8,0,0,0"
-                    Text="{Binding Title}"
-                    Grid.Column="1"
-                    VerticalAlignment="Top" />
-                <TextBlock
-                    Text="{Binding Description}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
-                    TextWrapping="Wrap"
                     Margin="0,4,8,0"
-                    Grid.Row="1"
-                    Grid.ColumnSpan="2"
-                    TextTrimming="WordEllipsis" />
-            </Grid>
+                    Style="{DynamicResource CaptionTextBlockStyle}"
+                    Text="{Binding Description}"
+                    TextTrimming="WordEllipsis"
+                    TextWrapping="Wrap" />
+            </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="ImageTextTemplate">
             <Grid
-                AutomationProperties.Name="{Binding Title}"
-                Width="280">
+                Width="280"
+                AutomationProperties.Name="{Binding Title}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Image
-                    Source="{Binding ImageLocation}"
                     Height="100"
-                    Stretch="Fill"
-                    VerticalAlignment="Top" />
+                    VerticalAlignment="Top"
+                    Source="{Binding ImageLocation}"
+                    Stretch="Fill" />
                 <StackPanel
                     Grid.Column="1"
                     Margin="8,0,0,8">
                     <TextBlock
-                        Text="{Binding Title}"
+                        Margin="0,0,0,8"
                         Style="{DynamicResource SubtitleTextBlockStyle}"
-                        Margin="0,0,0,8" />
+                        Text="{Binding Title}" />
                     <StackPanel Orientation="Horizontal">
                         <TextBlock
-                            Text="{Binding Views}"
-                            Style="{DynamicResource CaptionTextBlockStyle}" />
+                            Style="{DynamicResource CaptionTextBlockStyle}"
+                            Text="{Binding Views}" />
                         <TextBlock
-                            Text=" Views "
-                            Style="{DynamicResource CaptionTextBlockStyle}" />
+                            Style="{DynamicResource CaptionTextBlockStyle}"
+                            Text=" Views " />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock
-                            Text="{Binding Likes}"
-                            Style="{DynamicResource CaptionTextBlockStyle}" />
+                            Style="{DynamicResource CaptionTextBlockStyle}"
+                            Text="{Binding Likes}" />
                         <TextBlock
-                            Text=" Likes"
-                            Style="{DynamicResource CaptionTextBlockStyle}" />
+                            Style="{DynamicResource CaptionTextBlockStyle}"
+                            Text=" Likes" />
                     </StackPanel>
                 </StackPanel>
             </Grid>
@@ -103,8 +91,8 @@
                 Width="240"
                 Orientation="Horizontal">
                 <TextBlock
-                    Style="{StaticResource TitleTextBlockStyle}"
                     Margin="8,0,0,0"
+                    Style="{DynamicResource TitleTextBlockStyle}"
                     Text="{Binding Title}" />
             </StackPanel>
         </DataTemplate>
@@ -118,23 +106,23 @@
                     Stretch="UniformToFill" />
                 <Border
                     Height="40"
-                    VerticalAlignment="Bottom"
                     Padding="5,1,5,1"
+                    VerticalAlignment="Bottom"
                     Background="{DynamicResource SystemControlBackgroundBaseMediumBrush}"
                     Opacity=".75">
                     <StackPanel Orientation="Vertical">
                         <TextBlock
-                            Text="{Binding Title}"
-                            Foreground="{DynamicResource SystemControlForegroundAltHighBrush}" />
+                            Foreground="{DynamicResource SystemControlForegroundAltHighBrush}"
+                            Text="{Binding Title}" />
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
-                                Text="{Binding Likes}"
+                                Foreground="{DynamicResource SystemControlForegroundAltHighBrush}"
                                 Style="{DynamicResource CaptionTextBlockStyle}"
-                                Foreground="{DynamicResource SystemControlForegroundAltHighBrush}" />
+                                Text="{Binding Likes}" />
                             <TextBlock
-                                Text=" Likes"
+                                Foreground="{DynamicResource SystemControlForegroundAltHighBrush}"
                                 Style="{DynamicResource CaptionTextBlockStyle}"
-                                Foreground="{DynamicResource SystemControlForegroundAltHighBrush}" />
+                                Text=" Likes" />
                         </StackPanel>
                     </StackPanel>
                 </Border>
@@ -142,192 +130,270 @@
         </DataTemplate>
     </Page.Resources>
 
-    <ScrollViewer>
-        <ui:SimpleStackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <sc:ControlExample HeaderText="Basic GridView with Simple DataTemplate">
+    <StackPanel>
+        <local:ControlExample
+            CSharpSource="GridView/GridViewSample1_cs.txt"
+            HeaderText="Basic GridView with Simple DataTemplate"
+            XamlSource="GridView/GridViewSample1_xaml.txt">
+            <StackPanel>
+                <TextBlock Margin="0,0,0,15">
+                    This is a basic GridView that has the full source code below.<LineBreak />
+                    Other samples on this page display only the additional markup needed to customize the specific GridView.</TextBlock>
+                <ui:GridView
+                    x:Name="BasicGridView"
+                    IsItemClickEnabled="True"
+                    ItemClick="BasicGridView_ItemClick"
+                    ItemTemplate="{StaticResource ImageTemplate}"
+                    SelectionMode="Single" />
+                <TextBlock
+                    x:Name="ClickOutput0"
+                    Style="{DynamicResource OutputTextBlockStyle}" />
+            </StackPanel>
+        </local:ControlExample>
+
+        <local:ControlExample
+            HeaderText="GridView with Layout Customization"
+            Loaded="ControlExample_Loaded">
+            <StackPanel>
+                <TextBlock
+                    Margin="0,0,0,15"
+                    TextWrapping="Wrap">
+                    Use the options on the right to control different layout customizations to the GridView below.
+                </TextBlock>
+                <ui:GridView
+                    x:Name="StyledGrid"
+                    ItemTemplate="{StaticResource ImageOverlayTemplate}">
+                    <ui:GridView.ItemContainerStyle>
+                        <Style TargetType="ui:GridViewItem">
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                    </ui:GridView.ItemContainerStyle>
+
+                    <ui:GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel
+                                x:Name="MaxItemsWrapGrid"
+                                Loaded="StyledGrid_InitWrapGrid"
+                                Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ui:GridView.ItemsPanel>
+
+                </ui:GridView>
+            </StackPanel>
+
+            <local:ControlExample.Options>
                 <StackPanel>
-                    <TextBlock Margin="0,0,0,15">
-                        This is a basic GridView that has the full source code below.<LineBreak />
-                        Other samples on this page display only the additional markup needed to customize the specific GridView.</TextBlock>
-                    <ui:GridView
-                        x:Name="BasicGridView"
-                        ItemTemplate="{StaticResource ImageTemplate}"
-                        IsItemClickEnabled="True"
-                        ItemClick="BasicGridView_ItemClick"
-                        SelectionMode="Single" />
+                    <StackPanel.Resources>
+                        <Style x:Key="DefaultNumberBoxStyle" TargetType="ui:NumberBox">
+                            <Setter Property="SpinButtonPlacementMode" Value="Inline" />
+                            <Setter Property="SmallChange" Value="1" />
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="MaxWidth" Value="250" />
+                            <Setter Property="Margin" Value="0,0,0,16" />
+                        </Style>
+                    </StackPanel.Resources>
+
+                    <ui:NumberBox
+                        x:Name="ColumnSpace"
+                        AutomationProperties.Name="Space between columns"
+                        Header="Space between columns"
+                        Maximum="100"
+                        Minimum="0"
+                        Style="{DynamicResource DefaultNumberBoxStyle}"
+                        ValueChanged="NumberBox_ValueChanged"
+                        Value="5" />
+
+                    <ui:NumberBox
+                        x:Name="RowSpace"
+                        AutomationProperties.Name="Space between rows"
+                        Header="Space between rows"
+                        Maximum="100"
+                        Minimum="0"
+                        Style="{DynamicResource DefaultNumberBoxStyle}"
+                        ValueChanged="NumberBox_ValueChanged"
+                        Value="5" />
+
+                </StackPanel>
+            </local:ControlExample.Options>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;!-- The GridView used for this example is shown below. Setter properties are used to customize 
+some parts of the GridViewItems (i.e. the margins). --&gt;
+&lt;GridView
+    x:Name=&quot;StyledGrid&quot;
+    ItemTemplate=&quot;{StaticResource ImageOverlayTemplate}&quot;&gt;
+
+    &lt;GridView.ItemContainerStyle&gt;
+        &lt;Style TargetType=&quot;GridViewItem&quot;&gt;
+            &lt;Setter Property=&quot;Margin&quot; Value=&quot;$(ColMargin), $(RowMargin), $(ColMargin), $(RowMargin)&quot;/&gt;
+        &lt;/Style&gt;
+    &lt;/GridView.ItemContainerStyle&gt;
+                    
+    &lt;!-- An extra property also needs to be added to the GridView's ItemsWrapGrid. 
+    The following sets the maximum # of items to show before wrapping.--&gt;
+    &lt;GridView.ItemsPanel&gt;
+        &lt;ItemsPanelTemplate&gt;
+            &lt;ItemsWrapGrid x:Name=&quot;MaxItemsWrapGrid&quot; 
+                           Orientation=&quot;Horizontal&quot;/&gt;
+        &lt;/ItemsPanelTemplate&gt;
+    &lt;/GridView.ItemsPanel&gt;                  
+&lt;/GridView&gt;      
+                    
+&lt;!-- In this example, the ListView's ItemTemplate property is bound to a data template (shown below)
+called StyledGridTemplate, defined in the Page.Resources section of the XAML file. 
+                    
+The data template is defined to display a CustomDataObject object (same type as in above sample). --&gt;
+                    
+&lt;DataTemplate x:Name=&quot;ImageOverlayTemplate&quot; x:DataType=&quot;local1:CustomDataObject&quot;&gt;
+    &lt;Grid Width=&quot;100&quot;&gt;
+        &lt;Image Source=&quot;{x:Bind ImageLocation}&quot; Stretch=&quot;UniformToFill&quot;/&gt;
+        &lt;StackPanel Orientation=&quot;Vertical&quot; Height=&quot;40&quot; VerticalAlignment=&quot;Bottom&quot; Padding=&quot;5,1,5,1&quot; 
+                    Background=&quot;LightGray&quot; Opacity=&quot;.75&quot;&gt;
+            &lt;TextBlock Text=&quot;{x:Bind Title}&quot;/&gt;
+            &lt;StackPanel Orientation=&quot;Horizontal&quot;&gt;
+                &lt;TextBlock Text=&quot;{x:Bind Likes}&quot; Style=&quot;{ThemeResource CaptionTextBlockStyle}&quot; 
+                           Foreground=&quot;{ThemeResource SystemControlPageTextBaseMediumBrush}&quot;/&gt;
+                &lt;TextBlock Text=&quot; Likes&quot; Style=&quot;{ThemeResource CaptionTextBlockStyle}&quot; 
+                           Foreground=&quot;{ThemeResource SystemControlPageTextBaseMediumBrush}&quot;/&gt;
+            &lt;/StackPanel&gt;
+        &lt;/StackPanel&gt;
+    &lt;/Grid&gt;
+&lt;/DataTemplate&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+
+        <local:ControlExample
+            HeaderText="Content inside of a GridView."
+            Loaded="ControlExample2_Loaded">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <ui:GridView
+                    x:Name="ContentGridView"
+                    AllowDrop="{Binding IsChecked, ElementName=DropCheckBox, Mode=OneWay}"
+                    FlowDirection="LeftToRight"
+                    IsItemClickEnabled="{Binding IsChecked, ElementName=ItemClickCheckBox, Mode=OneWay}"
+                    IsMultiSelectCheckBoxEnabled="{Binding IsChecked, ElementName=MultiSelectCheckBoxCheckBox, Mode=OneWay}"
+                    ItemClick="ContentGridView_ItemClick"
+                    ItemTemplate="{StaticResource ImageTemplate}"
+                    SelectionChanged="ContentGridView_SelectionChanged" />
+
+                <StackPanel Grid.Row="1">
                     <TextBlock
-                        x:Name="ClickOutput0"
+                        x:Name="ClickOutput"
+                        Style="{StaticResource OutputTextBlockStyle}" />
+                    <TextBlock
+                        x:Name="SelectionOutput"
                         Style="{StaticResource OutputTextBlockStyle}" />
                 </StackPanel>
-            </sc:ControlExample>
 
-            <sc:ControlExample HeaderText="GridView with Layout Customization">
-                <StackPanel>
-                    <TextBlock
-                        TextWrapping="Wrap"
-                        Margin="0,0,0,15">
-                        Use the options on the right to control different layout customizations to the GridView below.
-                    </TextBlock>
-                    <ui:GridView
-                        x:Name="StyledGrid"
-                        ItemTemplate="{StaticResource ImageOverlayTemplate}">
-                        <ui:GridView.ItemContainerStyle>
-                            <Style TargetType="ui:GridViewItem">
-                                <Setter Property="Margin" Value="5" />
-                            </Style>
-                        </ui:GridView.ItemContainerStyle>
-
-                        <ui:GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <WrapPanel
-                                    Loaded="StyledGrid_InitWrapGrid"
-                                    x:Name="MaxItemsWrapGrid"
-                                    Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ui:GridView.ItemsPanel>
-
-                    </ui:GridView>
-                </StackPanel>
-
-                <sc:ControlExample.Options>
+            </Grid>
+            <local:ControlExample.Options>
+                <StackPanel x:Name="Control2">
+                    <ui:RadioButtons Header="ItemTemplate">
+                        <RadioButton
+                            Checked="ItemTemplate_Checked"
+                            Content="Image"
+                            GroupName="Template"
+                            IsChecked="True"
+                            Tag="ImageTemplate" />
+                        <RadioButton
+                            Checked="ItemTemplate_Checked"
+                            Content="Icon/Text"
+                            GroupName="Template"
+                            Tag="IconTextTemplate" />
+                        <RadioButton
+                            Checked="ItemTemplate_Checked"
+                            Content="Image/Text"
+                            GroupName="Template"
+                            Tag="ImageTextTemplate" />
+                        <RadioButton
+                            Checked="ItemTemplate_Checked"
+                            Content="Text"
+                            GroupName="Template"
+                            Tag="TextTemplate" />
+                    </ui:RadioButtons>
                     <StackPanel>
-                        <StackPanel.Resources>
-                            <Style x:Key="DefaultNumberBoxStyle" TargetType="ui:NumberBox">
-                                <Setter Property="SpinButtonPlacementMode" Value="Inline" />
-                                <Setter Property="SmallChange" Value="1" />
-                                <Setter Property="HorizontalAlignment" Value="Stretch" />
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                <Setter Property="MaxWidth" Value="250" />
-                                <Setter Property="Margin" Value="0,0,0,16" />
-                            </Style>
-                        </StackPanel.Resources>
-
-                        <ui:NumberBox
-                            x:Name="ColumnSpace"
-                            Minimum="0"
-                            Maximum="100"
-                            Value="5"
-                            Header="Space between columns"
-                            AutomationProperties.Name="Space between columns"
-                            Style="{DynamicResource DefaultNumberBoxStyle}"
-                            ValueChanged="NumberBox_ValueChanged" />
-
-                        <ui:NumberBox
-                            x:Name="RowSpace"
-                            Minimum="0"
-                            Maximum="100"
-                            Value="5"
-                            Header="Space between rows"
-                            AutomationProperties.Name="Space between rows"
-                            Style="{DynamicResource DefaultNumberBoxStyle}"
-                            ValueChanged="NumberBox_ValueChanged" />
-
-                        <!--<ui:NumberBox
-                            x:Name="WrapItemCount"
-                            Minimum="1"
-                            Maximum="8"
-                            Value="3"
-                            Header="Maximum number of items before wrapping"
-                            AutomationProperties.Name="Maximum number of items before wrapping"
-                            Style="{DynamicResource DefaultNumberBoxStyle}"
-                            ValueChanged="NumberBox_ValueChanged" />-->
-
-                    </StackPanel>
-                </sc:ControlExample.Options>
-            </sc:ControlExample>
-
-            <sc:ControlExample HeaderText="Content inside of a GridView.">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <ui:GridView
-                        x:Name="ContentGridView"
-                        IsItemClickEnabled="{Binding IsChecked, ElementName=ItemClickCheckBox}"
-                        IsSelectionEnabled="{Binding IsChecked, ElementName=SelectionCheckBox}"
-                        IsMultiSelectCheckBoxEnabled="{Binding IsChecked, ElementName=MultiSelectCheckBoxCheckBox}"
-                        ItemClick="ContentGridView_ItemClick"
-                        ItemTemplate="{StaticResource ImageTemplate}"
-                        SelectionChanged="ContentGridView_SelectionChanged"
-                        FlowDirection="LeftToRight" />
-
-                    <StackPanel Grid.Row="1">
+                        <ToggleButton
+                            Margin="0,8,0,0"
+                            Click="FlowDirectionCheckBox_Click"
+                            Content="Reverse FlowDirection" />
                         <TextBlock
-                            x:Name="ClickOutput"
-                            Style="{StaticResource OutputTextBlockStyle}" />
+                            Margin="0,18,0,10"
+                            Text="GridView Properties" />
                         <TextBlock
-                            x:Name="SelectionOutput"
-                            Style="{StaticResource OutputTextBlockStyle}" />
+                            MaxWidth="150"
+                            FontSize="13"
+                            TextWrapping="Wrap">
+                            In order to drag, drop, and reorder items within the GridView, make sure the last three boxes are checked below.<LineBreak /></TextBlock>
+                        <TextBlock
+                            MaxWidth="150"
+                            FontSize="13"
+                            TextWrapping="Wrap">
+                            Turning on IsItemClickEnabled will allow the user to click on an item (and print output below the GridView), regardless of selection mode.<LineBreak /></TextBlock>
+                        <CheckBox
+                            x:Name="DropCheckBox"
+                            Content="AllowDrop" />
+                        <CheckBox
+                            x:Name="ItemClickCheckBox"
+                            Click="ItemClickCheckBox_Click"
+                            Content="IsItemClickEnabled" />
+                        <CheckBox
+                            x:Name="MultiSelectCheckBoxCheckBox"
+                            Content="IsMultiSelectCheckBoxEnabled" />
+                        <ComboBox
+                            Margin="0,12,0,0"
+                            ui:ControlHelper.Header="SelectionMode"
+                            SelectedIndex="1"
+                            SelectionChanged="SelectionModeComboBox_SelectionChanged">
+                            <sys:String>None</sys:String>
+                            <sys:String>Single</sys:String>
+                            <sys:String>Multiple</sys:String>
+                            <sys:String>Extended</sys:String>
+                        </ComboBox>
                     </StackPanel>
+                </StackPanel>
+            </local:ControlExample.Options>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
 
-                </Grid>
-                <sc:ControlExample.Options>
-                    <StackPanel x:Name="Control2">
-                        <StackPanel>
-                            <TextBlock
-                                Margin="0,0,0,10"
-                                Text="ItemTemplate" />
-                            <RadioButton
-                                Checked="ItemTemplate_Checked"
-                                Content="Image"
-                                GroupName="Template"
-                                IsChecked="True"
-                                Tag="ImageTemplate" />
-                            <RadioButton
-                                Checked="ItemTemplate_Checked"
-                                Content="Icon/Text"
-                                GroupName="Template"
-                                Tag="IconTextTemplate" />
-                            <RadioButton
-                                Checked="ItemTemplate_Checked"
-                                Content="Image/Text"
-                                GroupName="Template"
-                                Tag="ImageTextTemplate" />
-                            <RadioButton
-                                Checked="ItemTemplate_Checked"
-                                Content="Text"
-                                GroupName="Template"
-                                Tag="TextTemplate" />
-                            <ToggleButton
-                                Margin="0,8,0,0"
-                                Click="FlowDirectionCheckBox_Click"
-                                Content="Reverse FlowDirection" />
-                            <TextBlock
-                                Margin="0,18,0,10"
-                                Text="GridView Properties" />
-                            <TextBlock
-                                TextWrapping="Wrap"
-                                FontSize="13"
-                                MaxWidth="150"
-                                HorizontalAlignment="Left">
-                                Turning on IsItemClickEnabled will allow the user to click on an item (and print output below the GridView), regardless of selection mode.<LineBreak /></TextBlock>
-                            <CheckBox
-                                x:Name="ItemClickCheckBox"
-                                Click="ItemClickCheckBox_Click"
-                                Content="IsItemClickEnabled" />
-                            <CheckBox
-                                x:Name="SelectionCheckBox"
-                                Click="SelectionCheckBox_Click"
-                                Content="IsSelectionEnabled"
-                                IsChecked="True" />
-                            <CheckBox
-                                x:Name="MultiSelectCheckBoxCheckBox"
-                                Content="IsMultiSelectCheckBoxEnabled" />
-                            <ComboBox
-                                Margin="0,12,0,0"
-                                ui:ControlHelper.Header="SelectionMode"
-                                SelectedIndex="0"
-                                SelectionChanged="SelectionModeComboBox_SelectionChanged">
-                                <sys:String>Single</sys:String>
-                                <sys:String>Multiple</sys:String>
-                                <sys:String>Extended</sys:String>
-                            </ComboBox>
-                        </StackPanel>
-                    </StackPanel>
-                </sc:ControlExample.Options>
-            </sc:ControlExample>
-        </ui:SimpleStackPanel>
-    </ScrollViewer>
+&lt;!-- The GridView used for this sample is shown below, with all of the necessary added properties. --&gt;
+&lt;GridView 
+    x:Name=&quot;ContentGridView&quot;
+    ItemsSource=&quot;{x:Bind Items}&quot;
+    ItemTemplate=&quot;{StaticResource $(ItemTemplate)}&quot;
+    IsItemClickEnabled=&quot;$(IsItemClickEnabled)&quot;
+    AllowDrop=&quot;$(CanDropItems)&quot;
+    SelectionMode=&quot;$(SelectionMode)&quot;
+    SelectionChanged=&quot;ContentGridView_SelectionChanged&quot;
+    ItemClick=&quot;ContentGridView_ItemClick&quot; 
+    FlowDirection=&quot;$(FlowDirection)&quot;/&gt;
+
+&lt;!-- ContentGridView_SelectionChanged and ContentGridView_ItemClick are functions defined in the code-behind
+to handle the events of when a selection changes on the GridView and when an item is clicked. --&gt;
+                    
+&lt;!-- The data template bound to this GridView's ItemTemplate property is based on which one you
+select from the options on the right. The currently selected DataTemplate is: --&gt;
+
+$(DisplayDT)
+                </sys:String>
+            </local:ControlExample.Xaml>
+            <!--<local:ControlExample.Substitutions>
+                <local:ControlExampleSubstitution x:Name="itemTemplate" Key="ItemTemplate" Value="ImageTemplate" />
+                <local:ControlExampleSubstitution Key="IsItemClickEnabled" Value="{x:Bind ContentGridView.IsItemClickEnabled, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="CanDragItems" Value="{x:Bind ContentGridView.CanDragItems, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="CanDropItems" Value="{x:Bind ContentGridView.AllowDrop, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="CanReorderItems" Value="{x:Bind ContentGridView.CanReorderItems, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="SelectionMode" Value="{x:Bind ContentGridView.SelectionMode, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="FlowDirection" Value="{x:Bind ContentGridView.FlowDirection, Mode=OneWay}" />
+                <local:ControlExampleSubstitution x:Name="DisplayDT" Key="DisplayDT" />
+
+            </local:ControlExample.Substitutions>-->
+        </local:ControlExample>
+    </StackPanel>
 </local:ItemsPageBase>
