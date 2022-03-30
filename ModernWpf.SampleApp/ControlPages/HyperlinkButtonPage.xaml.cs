@@ -1,5 +1,7 @@
 ﻿using SamplesCommon;
+using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Navigation;
 
 namespace ModernWpf.SampleApp.ControlPages
@@ -13,7 +15,23 @@ namespace ModernWpf.SampleApp.ControlPages
 
         private void GoToHyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(ListBoxPage));
+            NavigationRootPage.RootFrame.Navigate(typeof(ItemPage), "ToggleButton");
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            ControlExampleSubstitution Substitution = new ControlExampleSubstitution
+            {
+                Key = "IsEnabled",
+                Value = @"IsEnabled=""False"" "
+            };
+            BindingOperations.SetBinding(Substitution, ControlExampleSubstitution.IsEnabledProperty, new Binding
+            {
+                Source = DisableControl1,
+                Path = new PropertyPath("IsChecked"),
+            });
+            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution };
+            Example1.Substitutions = Substitutions;
         }
     }
 }
