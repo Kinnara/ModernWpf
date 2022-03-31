@@ -1,35 +1,35 @@
-﻿<muxc:MenuBar>
-    <muxc:MenuBarItem Title="File">
-        <MenuFlyoutSubItem Text="New">
-            <MenuFlyoutItem Text="Plain Text Document"/>
-            <MenuFlyoutItem Text="Rich Text Document"/>
-            <MenuFlyoutItem Text="Other Formats..."/>
-        </MenuFlyoutSubItem>
-        <MenuFlyoutItem Text="Open..."/>
-        <MenuFlyoutItem Text="Save"/>
-        <MenuFlyoutSeparator />
-        <MenuFlyoutItem Text="Exit"/>
-    </muxc:MenuBarItem>
+﻿<Menu>
+    <MenuItem Header="File">
+        <MenuItem Header="New">
+            <MenuItem Header="Plain Header Document"/>
+            <MenuItem Header="Rich Header Document"/>
+            <MenuItem Header="Other Formats..."/>
+        </MenuItem>
+        <MenuItem Header="Open..."/>
+        <MenuItem Header="Save"/>
+        <Separator />
+        <MenuItem Header="Exit"/>
+    </MenuItem>
 
-    <muxc:MenuBarItem Title="Edit">
-        <MenuFlyoutItem Text="Undo"/>
-        <MenuFlyoutItem Text="Cut"/>
-        <MenuFlyoutItem Text="Copy"/>
-        <MenuFlyoutItem Text="Paste"/>
-    </muxc:MenuBarItem>
+    <MenuItem Header="Edit">
+        <MenuItem Header="Undo"/>
+        <MenuItem Header="Cut"/>
+        <MenuItem Header="Copy"/>
+        <MenuItem Header="Paste"/>
+    </MenuItem>
 
-    <muxc:MenuBarItem Title="View">
-        <MenuFlyoutItem Text="Output"/>
-        <MenuFlyoutSeparator/>
-        <muxc:RadioMenuFlyoutItem Text="Landscape" GroupName="OrientationGroup"/>
-        <muxc:RadioMenuFlyoutItem Text="Portrait" GroupName="OrientationGroup" IsChecked="True"/>
-        <MenuFlyoutSeparator/>
-        <muxc:RadioMenuFlyoutItem Text="Small icons" GroupName="SizeGroup"/>
-        <muxc:RadioMenuFlyoutItem Text="Medium icons" IsChecked="True" GroupName="SizeGroup"/>
-        <muxc:RadioMenuFlyoutItem Text="Large icons" GroupName="SizeGroup"/>
-    </muxc:MenuBarItem>
+    <MenuItem Header="View">
+        <MenuItem Header="Output"/>
+        <Separator/>
+        <ui:RadioMenuItem Header="Landscape" GroupName="OrientationGroup"/>
+        <ui:RadioMenuItem Header="Portrait" GroupName="OrientationGroup" IsChecked="True"/>
+        <Separator/>
+        <ui:RadioMenuItem Header="Small icons" GroupName="SizeGroup"/>
+        <ui:RadioMenuItem Header="Medium icons" IsChecked="True" GroupName="SizeGroup"/>
+        <ui:RadioMenuItem Header="Large icons" GroupName="SizeGroup"/>
+    </MenuItem>
                     
-    <muxc:MenuBarItem Title="Help">
-        <MenuFlyoutItem Text="About"/>
-    </muxc:MenuBarItem>
-</muxc:MenuBar>
+    <MenuItem Header="Help">
+        <MenuItem Header="About"/>
+    </MenuItem>
+</Menu>
