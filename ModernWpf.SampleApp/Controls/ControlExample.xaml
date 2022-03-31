@@ -49,6 +49,13 @@
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
+                                <VisualState x:Name="ExpanderCollapsed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CodeExpander" Storyboard.TargetProperty="Visibility" Duration="0:0:0">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -154,6 +161,7 @@
 
                                 <!-- Sample code display -->
                                 <Expander
+                                    x:Name="CodeExpander"
                                     Grid.Row="1"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Stretch"

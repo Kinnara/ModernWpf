@@ -122,7 +122,8 @@ namespace ModernWpf.SampleApp
 
         public ControlExample()
         {
-            this.Loaded += ControlExample_Loaded;
+            Loaded += ControlExample_Loaded;
+            SizeChanged += Control_SizeChanged;
         }
 
         public static readonly DependencyProperty HeaderTextProperty = DependencyProperty.Register("HeaderText", typeof(string), typeof(ControlExample), new PropertyMetadata(null));
@@ -279,7 +280,11 @@ namespace ModernWpf.SampleApp
 
         private void ControlExample_Loaded(object sender, RoutedEventArgs e)
         {
-            if (!XamlPresenter.IsEmpty && !CSharpPresenter.IsEmpty)
+            if (XamlPresenter == null && CSharpPresenter == null)
+            {
+                VisualStateManager.GoToState(this, "ExpanderCollapsed", false);
+            }
+            else if (!XamlPresenter.IsEmpty && !CSharpPresenter.IsEmpty)
             {
                 VisualStateManager.GoToState(this, "SeparatorVisible", false);
             }
@@ -506,7 +511,7 @@ namespace ModernWpf.SampleApp
             }
         }
 
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Control_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (Application.Current.MainWindow.ActualWidth < 740)
             {

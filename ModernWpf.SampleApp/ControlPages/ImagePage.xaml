@@ -10,8 +10,8 @@
     Title="Image"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    mc:Ignorable="d"
-    Loaded="Page_Loaded">
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
     <StackPanel>
         <local:ControlExample
             x:Name="Example1"
@@ -19,6 +19,7 @@
 
             <Image
                 Height="100"
+                HorizontalAlignment="Left"
                 Source="/Assets/SampleMedia/treetops.jpg" />
 
             <local:ControlExample.Xaml>
@@ -32,7 +33,9 @@
             x:Name="Example2"
             HeaderText="An image decoded to the rendering size">
 
-            <Image Height="100">
+            <Image
+                Height="100"
+                HorizontalAlignment="Left">
                 <Image.Source>
                     <BitmapImage
                         DecodePixelHeight="100"
@@ -60,6 +63,7 @@
                 x:Name="StretchImage"
                 Width="100"
                 Height="100"
+                HorizontalAlignment="Left"
                 Source="/Assets/SampleMedia/valley.jpg"
                 Stretch="None" />
 
