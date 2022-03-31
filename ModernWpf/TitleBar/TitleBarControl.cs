@@ -439,7 +439,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnMaximizeRestoreButtonLoaded(object sender, RoutedEventArgs e)
         {
-            //InitializeSnapLayout(MaximizeRestoreButton);
+            InitializeSnapLayout(MaximizeRestoreButton);
         }
 
         private void UpdateSystemOverlayLeftInset(double value)

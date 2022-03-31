@@ -29,12 +29,14 @@
         x:Shared="False"
         CaptionHeight="{DynamicResource {x:Static local:TitleBar.HeightKey}}"
         CornerRadius="0"
-        GlassFrameThickness="0,1,0,0"
+        GlassFrameThickness="-1"
+        NonClientFrameEdges="None"
+        ResizeBorderThickness="4"
         UseAeroCaptionButtons="False" />
 
     <Style x:Key="BaseWindowStyle" TargetType="Window">
         <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
-        <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundAltHighBrush}" />
+        <Setter Property="Background" Value="{DynamicResource ApplicationPageBackgroundThemeBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource WindowBorder}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />

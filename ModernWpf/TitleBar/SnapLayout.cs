@@ -21,6 +21,8 @@ namespace ModernWpf.Controls.Primitives
 
         private bool _isButtonFocused;
 
+        private bool _isButtonClicked;
+
         private double _dpiScale;
 
         private Button _button;
@@ -68,13 +70,24 @@ namespace ModernWpf.Controls.Primitives
                 case 0x00A1:
                     if (IsOverButton(wParam, lParam))
                     {
-                        RaiseButtonClick();
+                        _isButtonClicked = true;
                         handled = true;
                     }
                     break;
 
                 case 0x02A2:
                     DefocusButton();
+                    break;
+
+                case 0x00A2:
+                    if (_isButtonClicked)
+                    {
+                        if (IsOverButton(wParam, lParam))
+                        {
+                            RaiseButtonClick();
+                        }
+                        _isButtonClicked = false;
+                    }
                     break;
 
                 case 0x0084:
