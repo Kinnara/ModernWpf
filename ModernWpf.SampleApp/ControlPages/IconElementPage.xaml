@@ -1,0 +1,126 @@
+﻿<ui:Page
+    x:Class="ModernWpf.SampleApp.ControlPages.IconElementPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="Icon Element"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
+    <StackPanel>
+        <local:ControlExample
+            x:Name="Example1"
+            HeaderText="A BitmapIcon with a multicolor bitmap image">
+            <local:ControlExample.Example>
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        Style="{DynamicResource BodyTextBlockStyle}"
+                        Text="The ShowAsMonochrome property (true by default) will result in a solid block of the foreground color if the property is set to true and the icon is more than one color. This behavior can be ignored by setting the ShowAsMonochrome property to false." />
+                    <ui:BitmapIcon x:Name="SlicesIcon" Width="50" HorizontalAlignment="Left" ShowAsMonochrome="False" UriSource="/Assets/slices.png" />
+                </StackPanel>
+            </local:ControlExample.Example>
+            <local:ControlExample.Options>
+                <CheckBox
+                    x:Name="MonochromeButton"
+                    Content="Monochrome"
+                    IsChecked="{Binding ShowAsMonochrome, ElementName=SlicesIcon, Mode=TwoWay}" />
+            </local:ControlExample.Options>
+            <local:ControlExample.Xaml>
+                <sys:String>
+                    &lt;ui:BitmapIcon Name=&quot;SlicesIcon&quot; UriSource=&quot;/Assets/slices.png&quot; Width=&quot;50&quot; ShowAsMonochrome=&quot;$(ShowAsMonochrome)&quot;/&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+        <local:ControlExample
+            x:Name="Example2"
+            HeaderText="A FontIcon using a glyph from a specific font family in a button"
+            XamlSource="Icons/FontIconSample1_xaml.txt">
+            <local:ControlExample.Example>
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        Style="{DynamicResource BodyTextBlockStyle}"
+                        Text="Use FontIcon as the icon for a control if you want to specify a Glyph value from a FontFamily. Windows 10 uses the Segoe MDL2 Assets FontFamily and that is what this example is showing." />
+                    <Button Name="ExampleButton1">
+                        <ui:FontIcon
+                            FontFamily="Segoe MDL2 Assets"
+                            Glyph="&#xE790;" />
+                    </Button>
+                </StackPanel>
+            </local:ControlExample.Example>
+        </local:ControlExample>
+        <local:ControlExample
+            x:Name="Example3"
+            HeaderText="A ImageIcon using a bitmap image in a button"
+            XamlSource="Icons/ImageIconSample1_xaml.txt">
+            <local:ControlExample.Example>
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        Style="{DynamicResource BodyTextBlockStyle}"
+                        Text="To use an ImageIcon as the icon for a control, you can set image that has a file format supported by the Image class. The two examples here show a PNG and SVG image as the icon." />
+                    <Button
+                        Name="ImageExample1"
+                        Width="100">
+                        <Image Source="/Assets/slices.png" />
+                    </Button>
+                </StackPanel>
+            </local:ControlExample.Example>
+        </local:ControlExample>
+        <local:ControlExample
+            x:Name="Example4"
+            HeaderText="A ImageIcon using a SVG image in a button"
+            XamlSource="Icons/ImageIconSample2_xaml.txt">
+            <local:ControlExample.Example>
+                <Button Name="ImageExample2">
+                    <Image
+                        Width="50"
+                        Source="https://raw.githubusercontent.com/DiemenDesign/LibreICONS/master/svg-color/libre-camera-panorama.svg" />
+                </Button>
+            </local:ControlExample.Example>
+        </local:ControlExample>
+        <local:ControlExample
+            x:Name="Example5"
+            HeaderText="A PathIcon in a button"
+            XamlSource="Icons/PathIconSample1_xaml.txt">
+            <local:ControlExample.Example>
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        Style="{DynamicResource BodyTextBlockStyle}"
+                        Text="To use a PathIcon as the icon for a control, you specify the path data of the image you are trying to display. The path data draws a series of connected lines and curves." />
+                    <Button Name="Example1Button">
+                        <ui:PathIcon
+                            HorizontalAlignment="Center"
+                            Data="F1 M 16,12 20,2L 20,16 1,16" />
+                    </Button>
+                </StackPanel>
+            </local:ControlExample.Example>
+        </local:ControlExample>
+        <local:ControlExample
+            x:Name="Example6"
+            HeaderText="A SymbolIcon in a button"
+            XamlSource="Icons/SymbolIconSample_1_xaml.txt">
+            <local:ControlExample.Example>
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        Style="{DynamicResource BodyTextBlockStyle}"
+                        Text="To use a SymbolIcon as the icon for a control, you specify the enum value for the glyph you would like to display. SymbolIcon's enum is based off of icons from the Segoe MDL2 font used by Windows 10." />
+                    <Button Name="AcceptButton">
+                        <StackPanel>
+                            <ui:SymbolIcon Symbol="Accept" />
+                            <TextBlock Text="Accept" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </local:ControlExample.Example>
+        </local:ControlExample>
+    </StackPanel>
+</ui:Page>
