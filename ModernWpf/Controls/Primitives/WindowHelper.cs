@@ -1,6 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -70,6 +73,35 @@ namespace ModernWpf.Controls.Primitives
                 {
                     window.ClearValue(FrameworkElement.StyleProperty);
                 }
+            }
+        }
+
+        #endregion
+
+        #region SystemBackdropType
+
+        public static readonly DependencyProperty SystemBackdropTypeProperty =
+            DependencyProperty.RegisterAttached(
+                "SystemBackdropType",
+                typeof(BackdropType),
+                typeof(WindowHelper),
+                new PropertyMetadata(BackdropType.Auto, OnSystemBackdropTypeChanged));
+
+        public static BackdropType GetSystemBackdropType(Window window)
+        {
+            return (BackdropType)window.GetValue(SystemBackdropTypeProperty);
+        }
+
+        public static void SetSystemBackdropType(Window window, BackdropType value)
+        {
+            window.SetValue(SystemBackdropTypeProperty, value);
+        }
+
+        private static void OnSystemBackdropTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Window window)
+            {
+                window.Apply((BackdropType)e.NewValue);
             }
         }
 

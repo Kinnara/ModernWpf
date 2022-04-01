@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MS.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -63,11 +64,11 @@ namespace ModernWpf.Controls.Primitives
         {
             // TODO: This whole class is one big todo
 
-            int mouseNotification = uMsg;
+            User32.WM mouseNotification = (User32.WM)uMsg;
 
             switch (mouseNotification)
             {
-                case 0x00A1:
+                case User32.WM.NCLBUTTONDOWN:
                     if (IsOverButton(wParam, lParam))
                     {
                         _isButtonClicked = true;
@@ -75,11 +76,11 @@ namespace ModernWpf.Controls.Primitives
                     }
                     break;
 
-                case 0x02A2:
+                case User32.WM.NCMOUSELEAVE:
                     DefocusButton();
                     break;
 
-                case 0x00A2:
+                case User32.WM.NCLBUTTONUP:
                     if (_isButtonClicked)
                     {
                         if (IsOverButton(wParam, lParam))
@@ -90,7 +91,7 @@ namespace ModernWpf.Controls.Primitives
                     }
                     break;
 
-                case 0x0084:
+                case User32.WM.NCHITTEST:
                     if (IsOverButton(wParam, lParam))
                     {
                         FocusButton();
@@ -100,13 +101,13 @@ namespace ModernWpf.Controls.Primitives
                     {
                         DefocusButton();
                     }
-                    return new IntPtr(9);
+                    return new IntPtr((int)HT.MAXBUTTON);
 
                 default:
                     handled = false;
                     break;
             }
-            return new IntPtr(1);
+            return new IntPtr((int)HT.CLIENT);
         }
 
         private void FocusButton()

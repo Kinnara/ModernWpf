@@ -9,6 +9,7 @@
     Title="MainWindow"
     Width="800"
     Height="450"
+    ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseModernWindowStyle="True"
     mc:Ignorable="d">
     <Grid

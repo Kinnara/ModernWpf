@@ -6,15 +6,15 @@ namespace ModernWpf
 {
     public static class OSVersionHelper
     {
-        private static readonly Version _osVersion = GetOSVersion();
+        public static readonly Version OSVersion = GetOSVersion();
 
         public static bool IsWindowsNT { get; } = Environment.OSVersion.Platform == PlatformID.Win32NT;
 
-        public static bool IsWindows8OrGreater { get; } = IsWindowsNT && _osVersion >= new Version(6, 2);
+        public static bool IsWindows8OrGreater { get; } = IsWindowsNT && OSVersion >= new Version(6, 2);
 
-        public static bool IsWindows10OrGreater { get; } = IsWindowsNT && _osVersion >= new Version(10, 0);
+        public static bool IsWindows10OrGreater { get; } = IsWindowsNT && OSVersion >= new Version(10, 0);
 
-        public static bool IsWindows11OrGreater { get; } = IsWindowsNT && _osVersion >= new Version(10, 0, 21996);
+        public static bool IsWindows11OrGreater { get; } = IsWindowsNT && OSVersion >= new Version(10, 0, 21996);
 
         private static Version GetOSVersion()
         {
