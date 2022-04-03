@@ -37,7 +37,7 @@ namespace ModernWpf.Controls.Primitives
                 BackdropType.Auto => OSVersionHelper.OSVersion >= new Version(10, 0, 22523), // Insider with new API                
                 BackdropType.Tabbed => OSVersionHelper.OSVersion >= new Version(10, 0, 22523),
                 BackdropType.Mica => OSVersionHelper.OSVersion >= new Version(10, 0, 22000),
-                BackdropType.Acrylic => OSVersionHelper.OSVersion >= new Version(6, 1, 7601),
+                BackdropType.Acrylic => (OSVersionHelper.OSVersion >= new Version(6, 0) && OSVersionHelper.OSVersion < new Version(6, 3)) || (OSVersionHelper.OSVersion >= new Version(10, 0) && OSVersionHelper.OSVersion < new Version(10, 0, 22000)) || OSVersionHelper.OSVersion >= new Version(10, 0, 22523),
                 _ => false
             };
         }
@@ -52,10 +52,21 @@ namespace ModernWpf.Controls.Primitives
         {
             if (!force && (!IsSupported(type))) { return false; }
 
+            var windowHandle = new WindowInteropHelper(window).EnsureHandle();
+
+            if (windowHandle == IntPtr.Zero) { return false; }
+
             void SetStyle()
             {
                 if (window.Style != null)
                 {
+                    foreach (Setter setter in window.Style.Setters)
+                    {
+                        if (setter.Property == Control.BackgroundProperty && setter.Value == Brushes.Transparent)
+                        {
+                            goto stylesetted;
+                        }
+                    }
                     Style style = new Style
                     {
                         TargetType = typeof(Window),
@@ -63,10 +74,16 @@ namespace ModernWpf.Controls.Primitives
                     };
                     style.Setters.Add(new Setter
                     {
+                        Property = FrameworkElement.TagProperty,
+                        Value = true
+                    });
+                    style.Setters.Add(new Setter
+                    {
                         Property = Control.BackgroundProperty,
                         Value = Brushes.Transparent
                     });
                     window.Style = style;
+                stylesetted:;
                 }
                 else
                 {
@@ -76,31 +93,28 @@ namespace ModernWpf.Controls.Primitives
                     };
                     style.Setters.Add(new Setter
                     {
+                        Property = FrameworkElement.TagProperty,
+                        Value = true
+                    });
+                    style.Setters.Add(new Setter
+                    {
                         Property = Control.BackgroundProperty,
                         Value = Brushes.Transparent
                     });
                     window.Style = style;
                 }
-                WindowApply();
             }
 
-            void WindowApply()
+            if (window.IsLoaded)
             {
-                var windowHandle = new WindowInteropHelper(window).Handle;
-
-                if (windowHandle == IntPtr.Zero) return;
-
-                Apply(windowHandle, type);
-            }
-
-            if (!window.IsLoaded)
-            {
-                window.Loaded += (sender, args) => PresentationSource.FromVisual(window)!.ContentRendered += (o, args) => SetStyle();
+                SetStyle();
             }
             else
             {
-                WindowApply();
+                window.Loaded += (sender, e) => SetStyle();
             }
+
+            Apply(windowHandle, type);
 
             return true;
         }
@@ -135,9 +149,27 @@ namespace ModernWpf.Controls.Primitives
         /// <param name="window">The window from which the effect should be removed.</param>
         public static void Remove(this Window window)
         {
-            var windowHandle = new WindowInteropHelper(window).Handle;
+            var windowHandle = new WindowInteropHelper(window).EnsureHandle();
 
             if (windowHandle == IntPtr.Zero) return;
+
+            if (window.Style != null)
+            {
+                foreach(Setter setter in window.Style.Setters)
+                {
+                    if(setter.Property == FrameworkElement.TagProperty&& setter.Value is bool boolen && boolen)
+                    {
+                        if (window.Style.BasedOn != null)
+                        {
+                            window.Style = window.Style.BasedOn;
+                        }
+                        else
+                        {
+                            window.ClearValue(FrameworkElement.StyleProperty);
+                        }
+                    }
+                }
+            }
 
             Remove(windowHandle);
         }
@@ -169,7 +201,7 @@ namespace ModernWpf.Controls.Primitives
         /// <param name="window">Window to apply effect.</param>
         public static void ApplyDarkMode(this Window window)
         {
-            var windowHandle = new WindowInteropHelper(window).Handle;
+            var windowHandle = new WindowInteropHelper(window).EnsureHandle();
 
             if (windowHandle == IntPtr.Zero) return;
 
@@ -203,7 +235,7 @@ namespace ModernWpf.Controls.Primitives
         /// <param name="window">Window to remove effect.</param>
         public static void RemoveDarkMode(this Window window)
         {
-            var windowHandle = new WindowInteropHelper(window).Handle;
+            var windowHandle = new WindowInteropHelper(window).EnsureHandle();
 
             if (windowHandle == IntPtr.Zero) return;
 
@@ -234,6 +266,19 @@ namespace ModernWpf.Controls.Primitives
         /// <summary>
         /// Tries to remove default TitleBar from <c>hWnd</c>.
         /// </summary>
+        /// <param name="window">Window to remove effect.</param>
+        public static void RemoveTitleBar(this Window window)
+        {
+            var windowHandle = new WindowInteropHelper(window).EnsureHandle();
+
+            if (windowHandle == IntPtr.Zero) return;
+
+            RemoveTitleBar(windowHandle);
+        }
+
+        /// <summary>
+        /// Tries to remove default TitleBar from <c>hWnd</c>.
+        /// </summary>
         /// <param name="handle">Pointer to the window handle.</param>
         /// <returns><see langowrd="false"/> is problem occurs.</returns>
         private static bool RemoveTitleBar(this IntPtr handle)
@@ -257,8 +302,6 @@ namespace ModernWpf.Controls.Primitives
 
         private static bool TryApplyAuto(this IntPtr handle)
         {
-            if (!RemoveTitleBar(handle)) { return false; }
-
             int backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_AUTO;
 
             DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
@@ -270,8 +313,6 @@ namespace ModernWpf.Controls.Primitives
 
         private static bool TryApplyTabbed(this IntPtr handle)
         {
-            if (!RemoveTitleBar(handle)) { return false; }
-
             int backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_TABBEDWINDOW;
 
             DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
@@ -287,8 +328,6 @@ namespace ModernWpf.Controls.Primitives
 
             if (OSVersionHelper.OSVersion>= new Version(10,0,22523))
             {
-                if (!RemoveTitleBar(handle)) { return false; }
-
                 backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_MAINWINDOW;
 
                 DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
@@ -313,9 +352,6 @@ namespace ModernWpf.Controls.Primitives
         {
             if (OSVersionHelper.OSVersion >= new Version(10, 0, 22523))
             {
-                if (!RemoveTitleBar(handle))
-                    return false;
-
                 int backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_TRANSIENTWINDOW;
 
                 DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
@@ -325,10 +361,8 @@ namespace ModernWpf.Controls.Primitives
                 return true;
             }
 
-            if (OSVersionHelper.OSVersion < new Version(6, 1, 7601))
+            if (OSVersionHelper.OSVersion >= new Version(10, 0, 17763))
             {
-                //TODO: We need to set window transparency to True
-
                 User32.ACCENT_POLICY accentPolicy = new User32.ACCENT_POLICY
                 {
                     AccentState = User32.ACCENT_STATE.ACCENT_ENABLE_ACRYLICBLURBEHIND,
@@ -351,6 +385,37 @@ namespace ModernWpf.Controls.Primitives
 
                 Marshal.FreeHGlobal(accentPtr);
 
+                return true;
+            }
+
+            if (OSVersionHelper.OSVersion >= new Version(10, 0))
+            {
+                User32.ACCENT_POLICY accentPolicy = new User32.ACCENT_POLICY
+                {
+                    AccentState = User32.ACCENT_STATE.ACCENT_ENABLE_BLURBEHIND,
+                };
+
+                int accentStructSize = Marshal.SizeOf(accentPolicy);
+
+                IntPtr accentPtr = Marshal.AllocHGlobal(accentStructSize);
+                Marshal.StructureToPtr(accentPolicy, accentPtr, false);
+
+                User32.WINCOMPATTRDATA data = new User32.WINCOMPATTRDATA
+                {
+                    Attribute = User32.WINCOMPATTR.WCA_ACCENT_POLICY,
+                    SizeOfData = accentStructSize,
+                    Data = accentPtr
+                };
+
+                User32.SetWindowCompositionAttribute(handle, ref data);
+
+                Marshal.FreeHGlobal(accentPtr);
+
+                return true;
+            }
+
+            if (OSVersionHelper.OSVersion >= new Version(6, 0))
+            {
                 return true;
             }
 

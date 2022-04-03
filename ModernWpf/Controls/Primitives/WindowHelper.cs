@@ -68,6 +68,14 @@ namespace ModernWpf.Controls.Primitives
                 if (newValue)
                 {
                     window.SetResourceReference(FrameworkElement.StyleProperty, DefaultWindowStyleKey);
+                    if (window.IsLoaded)
+                    {
+                        window.RemoveTitleBar();
+                    }
+                    else
+                    {
+                        window.Loaded += (sender, e) => window.RemoveTitleBar();
+                    }
                 }
                 else
                 {

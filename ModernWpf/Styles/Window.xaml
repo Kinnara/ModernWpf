@@ -28,7 +28,6 @@
         x:Key="DefaultWindowChrome"
         x:Shared="False"
         CaptionHeight="{DynamicResource {x:Static local:TitleBar.HeightKey}}"
-        CornerRadius="0"
         GlassFrameThickness="-1"
         NonClientFrameEdges="None"
         ResizeBorderThickness="4"
@@ -38,7 +37,7 @@
         <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
         <Setter Property="Background" Value="{DynamicResource ApplicationPageBackgroundThemeBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource WindowBorder}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="0.5" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="UseLayoutRounding" Value="True" />
@@ -113,6 +112,9 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="Background" Value="Transparent">
+                            <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="0" />
+                        </Trigger>
                         <Trigger Property="IsActive" Value="False">
                             <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource WindowBorderInactive}" />
                             <Setter TargetName="HighContrastBorder" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />

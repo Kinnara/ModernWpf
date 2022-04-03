@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "SingleControlTest": {
+      "commandName": "Project",
+      "remoteDebugEnabled": false
+    },
+    "SingleControlTest Remote": {
+      "commandName": "Project",
+      "remoteDebugEnabled": true,
+      "authenticationMode": "None",
+      "remoteDebugMachine": "WIN-SNJU2217J36:4026"
+    }
+  }
+}

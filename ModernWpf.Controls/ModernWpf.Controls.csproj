@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>net4.5.2;net4.6.2;net4.7.2;net4.8;netcoreapp3.1;net5.0-windows10.0.18362.0;net6.0-windows10.0.18362.0;net7.0-windows10.0.18362.0</TargetFrameworks>
+    <TargetFrameworks>net4.5.2;net4.6.2;netcoreapp3.1;net5.0-windows10.0.18362.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <NeutralLanguage>en-US</NeutralLanguage>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetDocumentationFile</TargetsForTfmSpecificBuildOutput>

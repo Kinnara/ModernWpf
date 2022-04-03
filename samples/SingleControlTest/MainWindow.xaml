@@ -9,12 +9,15 @@
     Title="MainWindow"
     Width="800"
     Height="450"
-    ui:WindowHelper.SystemBackdropType="Mica"
+    ui:WindowHelper.SystemBackdropType="Acrylic"
     ui:WindowHelper.UseModernWindowStyle="True"
+    Background="Transparent"
     mc:Ignorable="d">
     <Grid
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
-        <Button Content="Test" />
+        <CheckBox
+            Content="Test"
+            IsThreeState="True" />
     </Grid>
 </Window>
