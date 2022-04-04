@@ -3,21 +3,21 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ModernWpf.Controls"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:Double x:Key="CheckBoxBorderThickness">1</sys:Double>
     <sys:Double x:Key="CheckBoxSize">20</sys:Double>
     <sys:Double x:Key="CheckBoxGlyphSize">12</sys:Double>
     <sys:Double x:Key="CheckBoxHeight">32</sys:Double>
     <sys:Double x:Key="CheckBoxMinWidth">120</sys:Double>
-    <Thickness x:Key="CheckBoxPadding">8,5,0,0</Thickness>
+    <Thickness x:Key="CheckBoxPadding">8,7,0,0</Thickness>
     <Thickness x:Key="CheckBoxFocusVisualMargin">-7,-3,-7,-3</Thickness>
-    <sys:String x:Key="CheckBoxCheckedGlyph">&#xF294;</sys:String>
-    <sys:String x:Key="CheckBoxIndeterminateGlyph">&#xFC72;</sys:String>
-    
-    <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" Scale="2"/>
-    <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" Scale="2"/>
+    <sys:String x:Key="CheckBoxCheckedGlyph">&#xF984;</sys:String>
+    <sys:String x:Key="CheckBoxIndeterminateGlyph">&#xFC7D;</sys:String>
+
+    <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" Scale="2" />
+    <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" Scale="2" />
 
     <Style x:Key="DefaultCheckBoxStyle" TargetType="CheckBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -41,10 +41,6 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
-                    <ControlTemplate.Resources>
-                        <StreamGeometry x:Key="CheckMark">M 17.939453 5.439453 L 7.5 15.888672 L 2.060547 10.439453 L 2.939453 9.560547 L 7.5 14.111328 L 17.060547 4.560547 Z</StreamGeometry>
-                        <StreamGeometry x:Key="CheckboxIndeterminate">M 15 5 L 15 15 L 5 15 L 5 5 Z</StreamGeometry>
-                    </ControlTemplate.Resources>
                     <Border
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
@@ -52,28 +48,32 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <Grid VerticalAlignment="Center">
+                        <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Grid VerticalAlignment="Top">
+                            <Grid
+                                Grid.Column="0"
+                                Width="{DynamicResource CheckBoxSize}"
+                                Height="{DynamicResource CheckBoxSize}"
+                                VerticalAlignment="Center">
                                 <Rectangle
                                     x:Name="NormalRectangle"
-                                    Width="20"
-                                    Height="20"
+                                    Width="{DynamicResource CheckBoxSize}"
+                                    Height="{DynamicResource CheckBoxSize}"
                                     Fill="{DynamicResource CheckBoxCheckBackgroundFillUnchecked}"
                                     RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
                                     RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
                                     Stroke="{DynamicResource CheckBoxCheckBackgroundStrokeUnchecked}"
                                     StrokeThickness="{DynamicResource CheckBoxBorderThemeThickness}"
                                     UseLayoutRounding="False" />
-                                <local:FontIconFallback
+                                <local:FontIcon
                                     x:Name="CheckGlyph"
-                                    Data="{StaticResource CheckMark}"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    FontSize="16"
+                                    FontFamily="{DynamicResource FluentSystemIconsFilled}"
+                                    FontSize="{DynamicResource CheckBoxGlyphSize}"
                                     Foreground="{DynamicResource CheckBoxCheckGlyphForegroundUnchecked}"
+                                    Glyph="{DynamicResource CheckBoxCheckedGlyph}"
                                     Opacity="0" />
                             </Grid>
                             <local:ContentPresenterEx
@@ -82,6 +82,8 @@
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
                                 Focusable="False"
                                 RecognizesAccessKey="True"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
@@ -216,7 +218,7 @@
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminate}" />
                             <Setter TargetName="NormalRectangle" Property="Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminate}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundIndeterminate}" />
-                            <Setter TargetName="CheckGlyph" Property="Data" Value="{StaticResource CheckboxIndeterminate}" />
+                            <Setter TargetName="CheckGlyph" Property="Glyph" Value="{DynamicResource CheckBoxIndeterminateGlyph}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
                         <!-- IndeterminatePointerOver -->
@@ -231,7 +233,7 @@
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminatePointerOver}" />
                             <Setter TargetName="NormalRectangle" Property="Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminatePointerOver}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundIndeterminatePointerOver}" />
-                            <Setter TargetName="CheckGlyph" Property="Data" Value="{StaticResource CheckboxIndeterminate}" />
+                            <Setter TargetName="CheckGlyph" Property="Glyph" Value="{DynamicResource CheckBoxIndeterminateGlyph}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
                         <!-- IndeterminatePressed -->
@@ -246,7 +248,7 @@
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminatePressed}" />
                             <Setter TargetName="NormalRectangle" Property="Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminatePressed}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundIndeterminatePressed}" />
-                            <Setter TargetName="CheckGlyph" Property="Data" Value="{StaticResource CheckboxIndeterminate}" />
+                            <Setter TargetName="CheckGlyph" Property="Glyph" Value="{DynamicResource CheckBoxIndeterminateGlyph}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
                         <!-- IndeterminateDisabled -->
@@ -261,7 +263,7 @@
                             <Setter TargetName="NormalRectangle" Property="Stroke" Value="{DynamicResource CheckBoxCheckBackgroundStrokeIndeterminateDisabled}" />
                             <Setter TargetName="NormalRectangle" Property="Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillIndeterminateDisabled}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundIndeterminateDisabled}" />
-                            <Setter TargetName="CheckGlyph" Property="Data" Value="{StaticResource CheckboxIndeterminate}" />
+                            <Setter TargetName="CheckGlyph" Property="Glyph" Value="{DynamicResource CheckBoxIndeterminateGlyph}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
                     </ControlTemplate.Triggers>

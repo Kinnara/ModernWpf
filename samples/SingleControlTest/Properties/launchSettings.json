@@ -8,7 +8,7 @@
       "commandName": "Project",
       "remoteDebugEnabled": true,
       "authenticationMode": "None",
-      "remoteDebugMachine": "WIN-SNJU2217J36:4026"
+      "remoteDebugMachine": "VMware-Workstation:4026"
     }
   }
 }

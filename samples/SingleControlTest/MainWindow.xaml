@@ -9,7 +9,7 @@
     Title="MainWindow"
     Width="800"
     Height="450"
-    ui:WindowHelper.SystemBackdropType="Acrylic"
+    ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseModernWindowStyle="True"
     Background="Transparent"
     mc:Ignorable="d">
