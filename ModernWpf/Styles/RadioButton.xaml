@@ -3,7 +3,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ModernWpf.Controls"
-    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:Double x:Key="RadioButtonCheckGlyphSize">12</sys:Double>
+    <sys:Double x:Key="RadioButtonCheckGlyphPointerOverSize">14</sys:Double>
+    <sys:Double x:Key="RadioButtonCheckGlyphPressedOverSize">10</sys:Double>
 
     <Style x:Key="DefaultRadioButtonStyle" TargetType="RadioButton">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -21,6 +26,7 @@
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-7,-3,-7,-3" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
@@ -51,6 +57,17 @@
                                             Storyboard.TargetProperty="Opacity"
                                             To="1"
                                             Duration="0" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="PressedCheckGlyph"
+                                            Storyboard.TargetProperty="Opacity"
+                                            To="0"
+                                            Duration="0" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Stroke">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource RadioButtonCheckGlyphStrokeChecked}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PressedCheckGlyph" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource RadioButtonCheckGlyphFillPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Unchecked" />
@@ -73,6 +90,7 @@
                                     Stroke="{DynamicResource RadioButtonOuterEllipseStroke}"
                                     StrokeThickness="{DynamicResource RadioButtonBorderThemeThickness}"
                                     UseLayoutRounding="False" />
+                                <!-- A seperate element is added since the two orthogonal state groups that cannot touch the same property -->
                                 <Ellipse
                                     x:Name="CheckOuterEllipse"
                                     Width="20"
@@ -84,11 +102,21 @@
                                     UseLayoutRounding="False" />
                                 <Ellipse
                                     x:Name="CheckGlyph"
-                                    Width="8"
-                                    Height="8"
+                                    Width="{DynamicResource RadioButtonCheckGlyphSize}"
+                                    Height="{DynamicResource RadioButtonCheckGlyphSize}"
                                     Fill="{DynamicResource RadioButtonCheckGlyphFill}"
                                     Opacity="0"
                                     Stroke="{DynamicResource RadioButtonCheckGlyphStroke}"
+                                    UseLayoutRounding="False" />
+                                <!-- A seperate element is added since the two orthogonal state groups that cannot touch the same property -->
+                                <Border
+                                    x:Name="PressedCheckGlyph"
+                                    Width="4"
+                                    Height="4"
+                                    Background="{DynamicResource RadioButtonCheckGlyphFill}"
+                                    BorderBrush="{DynamicResource RadioButtonCheckGlyphStroke}"
+                                    CornerRadius="6"
+                                    Opacity="0"
                                     UseLayoutRounding="False" />
                             </Grid>
                             <local:ContentPresenterEx
@@ -97,7 +125,10 @@
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
                                 Focusable="False"
+                                Foreground="{TemplateBinding Foreground}"
                                 RecognizesAccessKey="True"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                 TextElement.Foreground="{TemplateBinding Foreground}"
@@ -115,6 +146,8 @@
                             <Setter TargetName="CheckOuterEllipse" Property="Fill" Value="{DynamicResource RadioButtonOuterEllipseCheckedFillPointerOver}" />
                             <Setter TargetName="CheckGlyph" Property="Fill" Value="{DynamicResource RadioButtonCheckGlyphFillPointerOver}" />
                             <Setter TargetName="CheckGlyph" Property="Stroke" Value="{DynamicResource RadioButtonCheckGlyphStrokePointerOver}" />
+                            <Setter TargetName="CheckGlyph" Property="Width" Value="14" />
+                            <Setter TargetName="CheckGlyph" Property="Height" Value="14" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource RadioButtonForegroundPressed}" />
@@ -126,6 +159,11 @@
                             <Setter TargetName="CheckOuterEllipse" Property="Fill" Value="{DynamicResource RadioButtonOuterEllipseCheckedFillPressed}" />
                             <Setter TargetName="CheckGlyph" Property="Fill" Value="{DynamicResource RadioButtonCheckGlyphFillPressed}" />
                             <Setter TargetName="CheckGlyph" Property="Stroke" Value="{DynamicResource RadioButtonCheckGlyphStrokePressed}" />
+                            <Setter TargetName="CheckGlyph" Property="Width" Value="10" />
+                            <Setter TargetName="CheckGlyph" Property="Height" Value="10" />
+                            <Setter TargetName="PressedCheckGlyph" Property="Opacity" Value="1" />
+                            <Setter TargetName="PressedCheckGlyph" Property="Width" Value="10" />
+                            <Setter TargetName="PressedCheckGlyph" Property="Height" Value="10" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource RadioButtonForegroundDisabled}" />
@@ -137,6 +175,8 @@
                             <Setter TargetName="CheckOuterEllipse" Property="Fill" Value="{DynamicResource RadioButtonOuterEllipseCheckedFillDisabled}" />
                             <Setter TargetName="CheckGlyph" Property="Fill" Value="{DynamicResource RadioButtonCheckGlyphFillDisabled}" />
                             <Setter TargetName="CheckGlyph" Property="Stroke" Value="{DynamicResource RadioButtonCheckGlyphStrokeDisabled}" />
+                            <Setter TargetName="CheckGlyph" Property="Width" Value="14" />
+                            <Setter TargetName="CheckGlyph" Property="Height" Value="14" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

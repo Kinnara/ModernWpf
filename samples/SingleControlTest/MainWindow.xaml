@@ -15,6 +15,10 @@
     <Grid
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
-        <Button Content="Test"/>
+        <ui:RadioButtons>
+            <RadioButton Content="Test"/>
+            <RadioButton Content="Test"/>
+            <RadioButton Content="Test"/>
+        </ui:RadioButtons>
     </Grid>
 </Window>
