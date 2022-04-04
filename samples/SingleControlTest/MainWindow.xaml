@@ -18,6 +18,7 @@
         VerticalAlignment="Center">
         <CheckBox
             Content="Test"
-            IsThreeState="True" />
+            IsThreeState="True"
+            ToolTipService.ToolTip="Test" />
     </Grid>
 </Window>

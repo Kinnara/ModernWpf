@@ -1623,10 +1623,9 @@
     <!-- Resources for ToolTip -->
     <sys:Double x:Key="ToolTipContentThemeFontSize">12</sys:Double>
     <Thickness x:Key="ToolTipBorderThemeThickness">1</Thickness>
-    <Thickness x:Key="ToolTipBorderThemePadding">8,5,8,7</Thickness>
-    <m:StaticResource x:Key="ToolTipForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="ToolTipBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
-    <m:StaticResource x:Key="ToolTipBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
+    <m:StaticResource x:Key="ToolTipForegroundBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="ToolTipBackgroundBrush" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="ToolTipBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
 
     <!-- Resources for TreeView -->
     <m:StaticResource x:Key="TreeViewItemBackground" ResourceKey="SystemControlTransparentRevealBackgroundBrush" />
