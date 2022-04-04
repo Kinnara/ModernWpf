@@ -2,8 +2,8 @@
     x:Class="MahAppsSample.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -32,7 +32,7 @@
 
             </ResourceDictionary.MergedDictionaries>
 
-            <Style TargetType="ScrollViewer" BasedOn="{StaticResource DefaultScrollViewerStyle}">
+            <Style BasedOn="{StaticResource DefaultScrollViewerStyle}" TargetType="ScrollViewer">
                 <Setter Property="sc:AutoPanningMode.IsEnabled" Value="True" />
             </Style>
 
@@ -48,13 +48,13 @@
             <Style x:Key="OptionsPanelStyle" TargetType="ui:SimpleStackPanel">
                 <Setter Property="Spacing" Value="12" />
                 <Style.Resources>
-                    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                    <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="ComboBox">
                         <Setter Property="MinWidth" Value="200" />
                     </Style>
-                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                    <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
                         <Setter Property="MinWidth" Value="200" />
                     </Style>
-                    <Style TargetType="DatePicker" BasedOn="{StaticResource {x:Type DatePicker}}">
+                    <Style BasedOn="{StaticResource {x:Type DatePicker}}" TargetType="DatePicker">
                         <Setter Property="MinWidth" Value="200" />
                     </Style>
                 </Style.Resources>

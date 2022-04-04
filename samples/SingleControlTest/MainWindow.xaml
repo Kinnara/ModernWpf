@@ -11,14 +11,10 @@
     Height="450"
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseModernWindowStyle="True"
-    Background="Transparent"
     mc:Ignorable="d">
     <Grid
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
-        <CheckBox
-            Content="Test"
-            IsThreeState="True"
-            ToolTipService.ToolTip="Test" />
+        <Button Content="Test"/>
     </Grid>
 </Window>

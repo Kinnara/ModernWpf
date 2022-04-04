@@ -3,8 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ModernWpf.Controls"
-    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:m="clr-namespace:ModernWpf.Markup"
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <CornerRadius x:Key="ControlCornerRadius">2,2,2,2</CornerRadius>
@@ -46,8 +46,10 @@
     <Color x:Key="SystemListMediumColor">#33FFFFFF</Color>
     <Color x:Key="SystemErrorTextColor">#FFF000</Color>
 
-    <!-- Colors copied from Default theme to match list of keys. Should not
-                 be using these keys. These are set to Red to notify that.-->
+    <!--
+        Colors copied from Default theme to match list of keys. Should not
+        be using these keys. These are set to Red to notify that.
+    -->
     <Color x:Key="TextFillColorPrimary">#FF0000</Color>
     <Color x:Key="TextFillColorSecondary">#FF0000</Color>
     <Color x:Key="TextFillColorTertiary">#FF0000</Color>
@@ -213,7 +215,7 @@
     <SolidColorBrush x:Key="SystemControlHyperlinkBaseMediumHighBrush" Color="{m:ThemeResource SystemColorHotlightColor}" />
     <SolidColorBrush x:Key="SystemControlPageBackgroundAltMediumBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemControlPageBackgroundAltHighBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
-    <SolidColorBrush x:Key="SystemControlPageBackgroundMediumAltMediumBrush" Color="{m:ThemeResource SystemColorWindowColor}" Opacity="0.6" />
+    <SolidColorBrush x:Key="SystemControlPageBackgroundMediumAltMediumBrush" Opacity="0.6" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemControlPageBackgroundBaseLowBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemControlPageBackgroundBaseMediumBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemControlPageBackgroundListLowBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
@@ -226,11 +228,11 @@
     <SolidColorBrush x:Key="SystemControlTransparentBrush" Color="Transparent" />
     <SolidColorBrush x:Key="SystemControlErrorTextForegroundBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="SystemControlTransientBorderBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
-    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
-    <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
-    <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
-    <SolidColorBrush x:Key="SystemControlDefaultBrighteningBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemControlDefaultBrighteningBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <m:StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
 
     <!-- WinUI Brushes -->
@@ -318,7 +320,7 @@
     <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="LayerFillColorAltBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="LayerOnAcrylicFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
-    <SolidColorBrush x:Key="LayerOnAccentAcrylicFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
+    <SolidColorBrush x:Key="LayerOnAccentAcrylicFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
     <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorSecondaryBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
@@ -344,7 +346,7 @@
     <SolidColorBrush x:Key="SystemFillColorSolidAttentionBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemFillColorSolidNeutralBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
-    <!-- Elevation border brushes-->
+    <!-- Elevation border brushes -->
     <SolidColorBrush x:Key="ControlElevationBorderBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="CircleElevationBorderBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="AccentControlElevationBorderBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
@@ -410,8 +412,8 @@
     <!-- Legacy brushes -->
     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <m:StaticResource x:Key="DefaultTextForegroundThemeBrush" ResourceKey="TextFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="SystemControlFocusVisualPrimaryBrush" ResourceKey="FocusStrokeColorOuterBrush"/>
-    <m:StaticResource x:Key="SystemControlFocusVisualSecondaryBrush" ResourceKey="FocusStrokeColorInnerBrush"/>
+    <m:StaticResource x:Key="SystemControlFocusVisualPrimaryBrush" ResourceKey="FocusStrokeColorOuterBrush" />
+    <m:StaticResource x:Key="SystemControlFocusVisualSecondaryBrush" ResourceKey="FocusStrokeColorInnerBrush" />
 
     <!-- Resources for AppBarButton -->
     <sys:Double x:Key="AppBarExpandButtonThemeHeight">24</sys:Double>
@@ -535,7 +537,7 @@
     <m:StaticResource x:Key="AccentButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
     <m:StaticResource x:Key="AccentButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
     <m:StaticResource x:Key="AccentButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
-    
+
     <!-- Resources for Button -->
     <Thickness x:Key="ButtonBorderThemeThickness">1</Thickness>
     <m:StaticResource x:Key="ButtonBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
@@ -1338,7 +1340,6 @@
         UnsetData="M 13.828125 12.246094 L 16.25 20 L 10 15.195313 L 3.75 20 L 6.171875 12.246094 L 0 7.5 L 7.65625 7.5 L 10 0 L 12.34375 7.5 L 20 7.5 Z M 13.876953 16.601563 C 13.629557 15.794271 13.38216 14.991862 13.134766 14.194336 C 12.887369 13.396811 12.633463 12.594401 12.373047 11.787109 C 13.043619 11.285808 13.704427 10.78125 14.355469 10.273438 C 15.00651 9.765625 15.664063 9.257813 16.328125 8.75 L 11.425781 8.75 L 10 4.189453 L 8.574219 8.75 L 3.671875 8.75 C 4.335938 9.257813 4.993489 9.765625 5.644531 10.273438 C 6.295572 10.78125 6.95638 11.285808 7.626953 11.787109 C 7.366536 12.594401 7.11263 13.396811 6.865234 14.194336 C 6.617838 14.991862 6.370442 15.794271 6.123047 16.601563 L 10 13.613281 Z" />
 
     <!-- Resources for RepeatButton -->
-    <Thickness x:Key="RepeatButtonBorderThemeThickness">1</Thickness>
     <m:StaticResource x:Key="RepeatButtonBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <m:StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <m:StaticResource x:Key="RepeatButtonBackgroundPressed" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
@@ -1351,6 +1352,16 @@
     <m:StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
     <m:StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
     <m:StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
+    <Thickness x:Key="RepeatButtonBorderThemeThickness">1</Thickness>
+    <SolidColorBrush x:Key="RepeatButtonBorderThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="RepeatButtonDisabledBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="RepeatButtonDisabledBorderThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="RepeatButtonDisabledForegroundThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="RepeatButtonForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="RepeatButtonPointerOverBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="RepeatButtonPointerOverForegroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="RepeatButtonPressedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="RepeatButtonPressedForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
 
     <!-- Resources for ResizeGrip -->
     <m:StaticResource x:Key="ResizeGripForeground" ResourceKey="SystemControlForegroundBaseMediumLowBrush" />
