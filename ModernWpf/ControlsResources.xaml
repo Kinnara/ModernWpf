@@ -50,8 +50,9 @@
     <m:StaticResource x:Key="ContentControlThemeFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
     <m:StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
     <m:StaticResource x:Key="PivotTitleFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
-    <m:StaticResource x:Key="SymbolThemeFontFamily" ResourceKey="{x:Static helpers:FontHelper.SymbolThemeFontFamilyKey}" />
-    <sys:Double x:Key="ControlContentThemeFontSize">14</sys:Double>
+    <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons,Segoe MDL2 Assets,Segoe UI Symbol</FontFamily>
+    <FontFamily x:Key="PhoneFontFamilySemiLight">Segoe WP SemiLight</FontFamily>
+    <FontFamily x:Key="PhoneFontFamilyNormal">Segoe WP</FontFamily>
     <sys:Double x:Key="ContentControlFontSize">14</sys:Double>
     <sys:Double x:Key="GridViewItemMinWidth">44</sys:Double>
     <sys:Double x:Key="GridViewItemMinHeight">44</sys:Double>

@@ -12,13 +12,12 @@
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseModernWindowStyle="True"
     mc:Ignorable="d">
-    <Grid
+    <StackPanel
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
-        <ui:RadioButtons>
-            <RadioButton Content="Test"/>
-            <RadioButton Content="Test"/>
-            <RadioButton Content="Test"/>
-        </ui:RadioButtons>
-    </Grid>
+        <Calendar IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}" />
+        <CheckBox
+            x:Name="IsEnable"
+            Content="IsEnable" />
+    </StackPanel>
 </Window>

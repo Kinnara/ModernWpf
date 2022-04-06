@@ -16,8 +16,8 @@
     <sys:String x:Key="CheckBoxCheckedGlyph">&#xF984;</sys:String>
     <sys:String x:Key="CheckBoxIndeterminateGlyph">&#xFC7D;</sys:String>
 
-    <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" Scale="2" />
-    <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" Scale="2" />
+    <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
+    <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
 
     <Style x:Key="DefaultCheckBoxStyle" TargetType="CheckBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />

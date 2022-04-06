@@ -13,7 +13,7 @@
     ui:ThemeManager.IsThemeAware="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:WindowHelper.UseModernWindowStyle="True"
-    Background="{DynamicResource ApplicationPageBackgroundThemeBrush}"
+    ui:WindowHelper.SystemBackdropType="Mica"
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>

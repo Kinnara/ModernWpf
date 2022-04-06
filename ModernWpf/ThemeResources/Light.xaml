@@ -7,8 +7,17 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <CornerRadius x:Key="ControlCornerRadius">2,2,2,2</CornerRadius>
-    <CornerRadius x:Key="OverlayCornerRadius">4,4,4,4</CornerRadius>
+    <sys:Double x:Key="ControlContentThemeFontSize">14</sys:Double>
+    
+    <CornerRadius x:Key="ControlCornerRadius">4,4,4,4</CornerRadius>
+    <CornerRadius x:Key="OverlayCornerRadius">8,8,8,8</CornerRadius>
+
+    <KeySpline x:Key="ControlFastOutSlowInKeySpline">0,0,0,1</KeySpline>
+
+    <KeyTime x:Key="ControlNormalAnimationDuration">00:00:00.250</KeyTime>
+    <KeyTime x:Key="ControlFastAnimationDuration">00:00:00.167</KeyTime>
+    <KeyTime x:Key="ControlFastAnimationAfterDuration">00:00:00.168</KeyTime>
+    <KeyTime x:Key="ControlFasterAnimationDuration">00:00:00.083</KeyTime>
 
     <SolidColorBrush x:Key="SystemAccentColorDark1Brush" Color="{m:DynamicColor SystemAccentColorDark1}" />
     <SolidColorBrush x:Key="SystemAccentColorDark2Brush" Color="{m:DynamicColor SystemAccentColorDark2}" />
@@ -631,32 +640,86 @@
     <m:StaticResource x:Key="CalendarDatePickerLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
 
     <!-- Resources for CalendarView -->
-    <m:StaticResource x:Key="CalendarViewFocusBorderBrush" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CalendarViewSelectedHoverBorderBrush" ResourceKey="SystemControlHighlightListAccentMediumBrush" />
-    <m:StaticResource x:Key="CalendarViewSelectedPressedBorderBrush" ResourceKey="SystemControlHighlightListAccentHighBrush" />
-    <m:StaticResource x:Key="CalendarViewSelectedBorderBrush" ResourceKey="SystemControlHighlightAccentBrush" />
-    <m:StaticResource x:Key="CalendarViewHoverBorderBrush" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CalendarViewPressedBorderBrush" ResourceKey="SystemControlHighlightBaseMediumBrush" />
-    <m:StaticResource x:Key="CalendarViewTodayForeground" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
-    <m:StaticResource x:Key="CalendarViewBlackoutForeground" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CalendarViewSelectedForeground" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="CalendarViewPressedForeground" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="CalendarViewOutOfScopeForeground" ResourceKey="SystemControlHyperlinkBaseHighBrush" />
-    <m:StaticResource x:Key="CalendarViewCalendarItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CalendarViewOutOfScopeBackground" ResourceKey="SystemControlDisabledChromeMediumLowBrush" />
-    <m:StaticResource x:Key="CalendarViewCalendarItemBackground" ResourceKey="SystemControlBackgroundAltHighBrush" />
-    <m:StaticResource x:Key="CalendarViewForeground" ResourceKey="SystemControlHyperlinkBaseMediumHighBrush" />
-    <m:StaticResource x:Key="CalendarViewBackground" ResourceKey="SystemControlBackgroundAltHighBrush" />
-    <m:StaticResource x:Key="CalendarViewBorderBrush" ResourceKey="SystemControlForegroundChromeMediumBrush" />
-    <m:StaticResource x:Key="CalendarViewWeekDayForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CalendarViewNavigationButtonBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundPointerOver" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundPressed" ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="CalendarViewFocusVisualPrimaryBrush" ResourceKey="FocusStrokeColorOuterBrush" />
+    <m:StaticResource x:Key="CalendarViewFocusVisualSecondaryBrush" ResourceKey="FocusStrokeColorInnerBrush" />
+    <m:StaticResource x:Key="CalendarViewFocusBorderBrush" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CalendarViewBlackoutStrikethroughBrush" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="CalendarViewSelectedHoverBorderBrush" ResourceKey="AccentFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CalendarViewSelectedPressedBorderBrush" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CalendarViewSelectedDisabledBorderBrush" ResourceKey="AccentFillColorDisabledBrush" />
+    <m:StaticResource x:Key="CalendarViewSelectedBorderBrush" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="CalendarViewHoverBorderBrush" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CalendarViewPressedBorderBrush" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CalendarViewTodaySelectedInnerBorderBrush" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CalendarViewTodayForeground" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CalendarViewDisabledForeground" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="CalendarViewBlackoutForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CalendarViewSelectedForeground" ResourceKey="AccentTextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CalendarViewSelectedHoverForeground" ResourceKey="AccentTextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CalendarViewSelectedPressedForeground" ResourceKey="AccentTextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CalendarViewSelectedDisabledForeground" ResourceKey="AccentTextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="CalendarViewPressedForeground" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CalendarViewOutOfScopeForeground" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CalendarViewOutOfScopeHoverForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CalendarViewOutOfScopePressedForeground" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CalendarViewCalendarItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CalendarViewCalendarItemHoverBackground" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CalendarViewCalendarItemPressedBackground" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CalendarViewCalendarItemDisabledBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CalendarViewCalendarItemBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CalendarViewCalendarItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CalendarViewTodayBackground" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="CalendarViewTodayBlackoutBackground" ResourceKey="AccentFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CalendarViewTodayBlackoutForeground" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CalendarViewTodayHoverBackground" ResourceKey="AccentFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CalendarViewTodayPressedBackground" ResourceKey="AccentFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CalendarViewTodayDisabledBackground" ResourceKey="AccentFillColorDisabledBrush" />
+    <m:StaticResource x:Key="CalendarViewBlackoutBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CalendarViewOutOfScopeBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CalendarViewForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CalendarViewBackground" ResourceKey="ControlFillColorInputActiveBrush" />
+    <m:StaticResource x:Key="CalendarViewBorderBrush" ResourceKey="ControlStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="CalendarViewWeekDayForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="CalendarViewNavigationButtonBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CalendarViewNavigationButtonBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CalendarViewNavigationButtonBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CalendarViewNavigationButtonForeground" ResourceKey="ControlStrongFillColorDefaultBrush" />
+    <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundPointerOver" ResourceKey="ControlStrongFillColorDefaultBrush" />
+    <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundPressed" ResourceKey="ControlStrongFillColorDefaultBrush" />
+    <m:StaticResource x:Key="CalendarViewNavigationButtonForegroundDisabled" ResourceKey="ControlStrongFillColorDisabledBrush" />
+    <m:StaticResource x:Key="CalendarViewHeaderNavigationButtonForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CalendarViewHeaderNavigationButtonForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CalendarViewHeaderNavigationButtonForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CalendarViewHeaderNavigationButtonForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="CalendarViewNavigationButtonBorderBrushPointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CalendarViewNavigationButtonBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+
+    <m:StaticResource x:Key="CalendarViewDayItemFontSize" ResourceKey="ControlContentThemeFontSize" />
+    <m:StaticResource x:Key="CalendarViewMonthYearItemFontSize" ResourceKey="ControlContentThemeFontSize" />
+
+    <sys:Boolean x:Key="CalendarViewBaseItemRoundedChromeEnabled">True</sys:Boolean>
+    <sys:Double x:Key="CalendarViewFirstOfMonthLabelFontSize">8</sys:Double>
+    <sys:Double x:Key="CalendarViewFirstOfYearDecadeLabelFontSize">8</sys:Double>
+    <sys:Double x:Key="CalendarViewHeaderNavigationButtonFontSize">14</sys:Double>
+    <sys:Double x:Key="CalendarViewNavigationButtonFontSize">8</sys:Double>
+    <Thickness x:Key="CalendarViewDayItemMargin">0,3,0,0</Thickness>
+    <Thickness x:Key="CalendarViewWeekDayMargin">1,13,1,13</Thickness>
+    <Thickness x:Key="CalendarViewWeekDayPadding">0</Thickness>
+    <Thickness x:Key="CalendarViewMonthYearItemMargin">0</Thickness>
+    <Thickness x:Key="CalendarViewFirstOfMonthLabelMargin">0,2,0,0</Thickness>
+    <Thickness x:Key="CalendarViewFirstOfYearDecadeLabelMargin">0,9,0,0</Thickness>
+    <Thickness x:Key="CalendarViewHeaderNavigationButtonPadding">8,7,8,8</Thickness>
+    <Thickness x:Key="CalendarViewNavigationButtonPadding">12,11.5,12,11.5</Thickness>
+    <Thickness x:Key="CalendarViewHeaderNavigationButtonMargin">7,6,3,7</Thickness>
+    <Thickness x:Key="CalendarViewNavigationPreviousButtonMargin">3,6,3,7</Thickness>
+    <Thickness x:Key="CalendarViewNavigationNextButtonMargin">3,6,7,7</Thickness>
+    <Thickness x:Key="CalendarViewNavigationButtonFocusVisualMargin">-2</Thickness>
+    <FontWeight x:Key="CalendarViewHeaderNavigationFontWeight">SemiBold</FontWeight>
+    <FontWeight x:Key="CalendarViewWeekDayFontWeight">SemiBold</FontWeight>
+    <FontWeight x:Key="CalendarViewTodayFontWeight">Normal</FontWeight>
+
     <m:StaticResource x:Key="CalendarViewCalendarItemRevealBackground" ResourceKey="SystemControlTransparentRevealBackgroundBrush" />
     <m:StaticResource x:Key="CalendarViewCalendarItemRevealBorderBrush" ResourceKey="SystemControlTransparentRevealBorderBrush" />
-    <m:StaticResource x:Key="CalendarViewNavigationButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
-    <m:StaticResource x:Key="CalendarViewNavigationButtonBorderBrush" ResourceKey="SystemControlTransparentBrush" />
 
     <!-- Resources for CheckBox -->
     <m:StaticResource x:Key="CheckBoxForegroundUnchecked" ResourceKey="TextFillColorPrimaryBrush" />
