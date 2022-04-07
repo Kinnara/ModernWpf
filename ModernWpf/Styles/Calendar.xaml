@@ -815,7 +815,7 @@
     <Style BasedOn="{StaticResource DefaultCalendarStyle}" TargetType="Calendar" />
 
     <Style x:Key="DatePickerCalendarStyle" BasedOn="{StaticResource DefaultCalendarStyle}" TargetType="Calendar">
-        <Setter Property="Background" Value="{DynamicResource FlyoutPresenterBackground}"/>
+        <Setter Property="Background" Value="{DynamicResource FlyoutPresenterBackground}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Calendar">

@@ -15,7 +15,11 @@
     <StackPanel
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
-        <DatePicker IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}" />
+        <DatePicker
+            ui:ControlHelper.PlaceholderText="Test"
+            ui:ControlHelper.Description="Test"
+            ui:ControlHelper.Header="Test"
+            IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}" />
         <CheckBox
             x:Name="IsEnable"
             Content="IsEnable" />
