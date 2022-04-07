@@ -312,7 +312,12 @@
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0.200" Value="0" />
                                                 <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="0:0:0.500" Value="1" />
                                             </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimation Storyboard.TargetName="PART_HeaderButton" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.167" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="PART_HeaderButton"
+                                                Storyboard.TargetProperty="Opacity"
+                                                From="0"
+                                                To="1"
+                                                Duration="0:0:0.167" />
                                         </Storyboard>
                                     </VisualTransition>
                                     <VisualTransition From="Year" To="Month">
@@ -358,7 +363,12 @@
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0.200" Value="0" />
                                                 <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="0:0:0.500" Value="1" />
                                             </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimation Storyboard.TargetName="PART_HeaderButton" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.167" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="PART_HeaderButton"
+                                                Storyboard.TargetProperty="Opacity"
+                                                From="0"
+                                                To="1"
+                                                Duration="0:0:0.167" />
                                         </Storyboard>
                                     </VisualTransition>
                                     <VisualTransition From="Year" To="Decade">
@@ -398,7 +408,12 @@
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0.200" Value="0" />
                                                 <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="0:0:0.500" Value="1" />
                                             </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimation Storyboard.TargetName="PART_HeaderButton" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.167" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="PART_HeaderButton"
+                                                Storyboard.TargetProperty="Opacity"
+                                                From="0"
+                                                To="1"
+                                                Duration="0:0:0.167" />
                                         </Storyboard>
                                     </VisualTransition>
                                     <VisualTransition From="Decade" To="Year">
@@ -430,7 +445,12 @@
                                                 <LinearDoubleKeyFrame KeyTime="0:0:0.200" Value="0" />
                                                 <SplineDoubleKeyFrame KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" KeyTime="0:0:0.500" Value="1" />
                                             </DoubleAnimationUsingKeyFrames>
-                                            <DoubleAnimation Storyboard.TargetName="PART_HeaderButton" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.167" />
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="PART_HeaderButton"
+                                                Storyboard.TargetProperty="Opacity"
+                                                From="0"
+                                                To="1"
+                                                Duration="0:0:0.167" />
                                         </Storyboard>
                                     </VisualTransition>
                                 </VisualStateGroup.Transitions>
@@ -795,6 +815,7 @@
     <Style BasedOn="{StaticResource DefaultCalendarStyle}" TargetType="Calendar" />
 
     <Style x:Key="DatePickerCalendarStyle" BasedOn="{StaticResource DefaultCalendarStyle}" TargetType="Calendar">
+        <Setter Property="Background" Value="{DynamicResource FlyoutPresenterBackground}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Calendar">

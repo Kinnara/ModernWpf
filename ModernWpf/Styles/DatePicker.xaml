@@ -110,86 +110,101 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="DatePicker">
-                    <ControlTemplate.Resources>
-                        <StreamGeometry x:Key="Calendar">F1 M 7.5 7.5 L 8.75 7.5 L 8.75 8.75 L 7.5 8.75 Z M 11.25 15 L 12.5 15 L 12.5 16.25 L 11.25 16.25 Z M 15 7.5 L 16.25 7.5 L 16.25 8.75 L 15 8.75 Z M 11.25 7.5 L 12.5 7.5 L 12.5 8.75 L 11.25 8.75 Z M 7.5 10 L 8.75 10 L 8.75 11.25 L 7.5 11.25 Z M 3.75 10 L 5 10 L 5 11.25 L 3.75 11.25 Z M 15 10 L 16.25 10 L 16.25 11.25 L 15 11.25 Z M 11.25 10 L 12.5 10 L 12.5 11.25 L 11.25 11.25 Z M 7.5 12.5 L 8.75 12.5 L 8.75 13.75 L 7.5 13.75 Z M 3.75 12.5 L 5 12.5 L 5 13.75 L 3.75 13.75 Z M 15 12.5 L 16.25 12.5 L 16.25 13.75 L 15 13.75 Z M 11.25 12.5 L 12.5 12.5 L 12.5 13.75 L 11.25 13.75 Z M 7.5 15 L 8.75 15 L 8.75 16.25 L 7.5 16.25 Z M 3.75 15 L 5 15 L 5 16.25 L 3.75 16.25 Z M 20 1.25 L 20 18.75 L 0 18.75 L 0 1.25 L 3.75 1.25 L 3.75 0 L 5 0 L 5 1.25 L 15 1.25 L 15 0 L 16.25 0 L 16.25 1.25 Z M 1.25 2.5 L 1.25 5 L 18.75 5 L 18.75 2.5 L 16.25 2.5 L 16.25 3.75 L 15 3.75 L 15 2.5 L 5 2.5 L 5 3.75 L 3.75 3.75 L 3.75 2.5 Z M 18.75 17.5 L 18.75 6.25 L 1.25 6.25 L 1.25 17.5 Z</StreamGeometry>
-                    </ControlTemplate.Resources>
-                    <Grid SnapsToDevicePixels="True">
+                    <Grid
+                        x:Name="PART_Root"
+                        SnapsToDevicePixels="True">
+                        <Grid.Resources>
+                            <ControlTemplate x:Key="DropDownButtonTemplate" TargetType="Button">
+                                <local:FontIcon
+                                    x:Name="CalendarGlyph"
+                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Glyph="{TemplateBinding Content}" />
+                            </ControlTemplate>
+                        </Grid.Resources>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="32" />
+                        </Grid.ColumnDefinitions>
                         <local:ContentPresenterEx
                             x:Name="HeaderContentPresenter"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
                             Margin="{StaticResource CalendarDatePickerTopHeaderMargin}"
+                            VerticalAlignment="Top"
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             TextWrapping="Wrap"
                             Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}" />
-                        <Grid
-                            x:Name="PART_Root"
-                            Grid.Row="1">
-                            <Grid.Resources>
-                                <ControlTemplate x:Key="DropDownButtonTemplate" TargetType="Button">
-                                    <Grid>
-                                        <Rectangle
-                                            Margin="{TemplateBinding Padding}"
-                                            Fill="{TemplateBinding Background}" />
-                                        <local:FontIconFallback
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Data="{StaticResource Calendar}"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            FontSize="12"
-                                            Foreground="{TemplateBinding Foreground}" />
-                                    </Grid>
-                                </ControlTemplate>
-                            </Grid.Resources>
-                            <Border
-                                x:Name="Background"
-                                MinHeight="{DynamicResource ComboBoxMinHeight}"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
-                            <DatePickerTextBox
-                                x:Name="PART_TextBox"
-                                Padding="{DynamicResource ComboBoxEditableTextPadding}"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Focusable="{TemplateBinding Focusable}" />
-                            <Button
-                                x:Name="PART_Button"
-                                Width="30"
-                                Padding="0,1,1,1"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch"
-                                Background="Transparent"
-                                Focusable="False"
-                                Foreground="{TemplateBinding Foreground}"
-                                Template="{StaticResource DropDownButtonTemplate}" />
-                            <Popup
-                                x:Name="PART_Popup"
-                                AllowsTransparency="True"
-                                Placement="Bottom"
-                                StaysOpen="False">
-                                <Popup.PlacementRectangle>
-                                    <MultiBinding>
-                                        <MultiBinding.Converter>
-                                            <primitives:PlacementRectangleConverter Margin="0,-4" />
-                                        </MultiBinding.Converter>
-                                        <Binding ElementName="PART_Root" Path="ActualWidth" />
-                                        <Binding ElementName="PART_Root" Path="ActualHeight" />
-                                    </MultiBinding>
-                                </Popup.PlacementRectangle>
-                            </Popup>
-                        </Grid>
+                        <Border
+                            x:Name="Background"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            MinHeight="32"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
+                        <DatePickerTextBox
+                            x:Name="PART_TextBox"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            Padding="{DynamicResource ComboBoxEditableTextPadding}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Focusable="{TemplateBinding Focusable}" />
+                        <Button
+                            x:Name="PART_Button"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            Content="&#xFD1E;"
+                            Focusable="False"
+                            FontFamily="{DynamicResource FluentSystemIcons}"
+                            FontSize="12"
+                            Foreground="{DynamicResource CalendarDatePickerCalendarGlyphForeground}"
+                            Template="{StaticResource DropDownButtonTemplate}" />
+                        <Popup
+                            x:Name="PART_Popup"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            AllowsTransparency="True"
+                            Placement="Bottom"
+                            StaysOpen="False">
+                            <Popup.PlacementRectangle>
+                                <MultiBinding>
+                                    <MultiBinding.Converter>
+                                        <primitives:PlacementRectangleConverter Margin="0,-4" />
+                                    </MultiBinding.Converter>
+                                    <Binding ElementName="PART_Root" Path="ActualWidth" />
+                                    <Binding ElementName="PART_Root" Path="ActualHeight" />
+                                </MultiBinding>
+                            </Popup.PlacementRectangle>
+                        </Popup>
                         <ContentPresenter
                             x:Name="DescriptionPresenter"
                             Grid.Row="2"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
                             Content="{TemplateBinding primitives:ControlHelper.Description}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
@@ -199,6 +214,7 @@
                         <Trigger SourceName="PART_Root" Property="IsMouseOver" Value="True">
                             <Setter TargetName="Background" Property="Background" Value="{DynamicResource CalendarDatePickerBackgroundPointerOver}" />
                             <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource CalendarDatePickerBorderBrushPointerOver}" />
+                            <Setter TargetName="PART_Button" Property="Foreground" Value="{DynamicResource CalendarDatePickerCalendarGlyphForegroundPointerOver}" />
                         </Trigger>
 
                         <!-- TextBoxFocused -->

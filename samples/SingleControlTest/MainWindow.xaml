@@ -15,7 +15,7 @@
     <StackPanel
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
-        <Calendar IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}" />
+        <DatePicker IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}" />
         <CheckBox
             x:Name="IsEnable"
             Content="IsEnable" />
