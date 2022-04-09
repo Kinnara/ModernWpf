@@ -162,13 +162,14 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             Grid.ColumnSpan="2"
+                            Margin="0,0,0,0"
                             Padding="{DynamicResource ComboBoxEditableTextPadding}"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
                             HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="Transparent"
                             Focusable="{TemplateBinding Focusable}" />
                         <Button
                             x:Name="PART_Button"

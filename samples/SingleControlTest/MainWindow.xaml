@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:SingleControlTest"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=netstandard"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="MainWindow"
     Width="800"
@@ -15,10 +16,11 @@
     <StackPanel
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
-        <DatePicker
-            ui:ControlHelper.PlaceholderText="Test"
+        <ComboBox
             ui:ControlHelper.Description="Test"
             ui:ControlHelper.Header="Test"
+            ui:ControlHelper.PlaceholderText="Test"
+            IsEditable="True"
             IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}" />
         <CheckBox
             x:Name="IsEnable"

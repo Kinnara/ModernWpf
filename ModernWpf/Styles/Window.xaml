@@ -90,7 +90,9 @@
                                 <AdornerDecorator
                                     x:Name="AdornerDecorator"
                                     Grid.Row="1">
-                                    <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    <local:ContentPresenterEx
+                                        Foreground="{TemplateBinding Foreground}"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                 </AdornerDecorator>
 
                                 <ResizeGrip

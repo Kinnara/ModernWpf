@@ -341,7 +341,7 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        #region DescriptionVisibility
+        #region VisualState
 
         public static readonly DependencyProperty VisualStateProperty =
             DependencyProperty.RegisterAttached(

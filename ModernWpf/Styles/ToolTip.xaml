@@ -40,8 +40,6 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                             <local:ContentPresenterEx
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                 TextWrapping="Wrap" />
                         </Border>

@@ -70,7 +70,6 @@
                                                         x:Name="Text"
                                                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                        Content="{TemplateBinding Content}"
                                                         Foreground="{TemplateBinding Foreground}" />
                                                 </Border>
                                             </Border>

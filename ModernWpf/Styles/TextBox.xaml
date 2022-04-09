@@ -205,14 +205,14 @@
                             IsTabStop="False"
                             Style="{StaticResource DeleteButtonStyle}"
                             Visibility="Collapsed" />
-                        <ContentPresenter
+                        <local:ContentPresenterEx
                             x:Name="DescriptionPresenter"
                             Grid.Row="2"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
                             Content="{TemplateBinding primitives:ControlHelper.Description}"
+                            Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                            TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
                             Visibility="{TemplateBinding primitives:ControlHelper.DescriptionVisibility}" />
                     </Grid>
                     <ControlTemplate.Triggers>
