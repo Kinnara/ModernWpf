@@ -58,6 +58,23 @@
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
     </Style>
 
+    <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="IsTabStop" Value="false" />
+        <Setter Property="Focusable" Value="false" />
+        <Setter Property="ClickMode" Value="Release" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        SnapsToDevicePixels="True" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="DefaultComboBoxItemStyle" TargetType="ComboBoxItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -77,6 +94,7 @@
                     <Border
                         x:Name="LayoutRoot"
                         Margin="5,2,5,2"
+                        primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
@@ -87,9 +105,10 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Opacity="0"
+                                RenderTransformOrigin="0.5,0.5"
                                 Style="{StaticResource ComboBoxItemPill}">
                                 <Rectangle.RenderTransform>
-                                    <TranslateTransform x:Name="PillTransform" Y="1" />
+                                    <ScaleTransform x:Name="PillTransform" ScaleY="1" />
                                 </Rectangle.RenderTransform>
                             </Rectangle>
                             <local:ContentPresenterEx
@@ -101,6 +120,16 @@
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </Grid>
                         <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
+                                            <SplineDoubleKeyFrame KeySpline="0,0,0,1" KeyTime="{StaticResource ComboBoxItemScaleAnimationDuration}" Value="{StaticResource ComboBoxItemPillMinScale}" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
                             <VisualStateGroup x:Name="InputModeStates">
                                 <VisualState x:Name="InputModeDefault" />
                                 <VisualState x:Name="TouchInputMode">
@@ -191,23 +220,6 @@
 
     <Style BasedOn="{StaticResource DefaultComboBoxItemStyle}" TargetType="ComboBoxItem" />
 
-    <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
-        <Setter Property="OverridesDefaultStyle" Value="true" />
-        <Setter Property="IsTabStop" Value="false" />
-        <Setter Property="Focusable" Value="false" />
-        <Setter Property="ClickMode" Value="Release" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ToggleButton">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                        SnapsToDevicePixels="True" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style x:Key="ComboBoxTextBoxStyle" BasedOn="{StaticResource DefaultTextBoxStyle}" TargetType="TextBox">
         <Setter Property="Template">
             <Setter.Value>
@@ -215,6 +227,7 @@
                     <Grid SnapsToDevicePixels="True">
                         <Border
                             x:Name="BorderElement"
+                            primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -373,6 +386,7 @@
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
                             MinWidth="{DynamicResource ComboBoxThemeMinWidth}"
+                            primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
                             primitives:ValidationHelper.IsTemplateValidationAdornerSite="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"

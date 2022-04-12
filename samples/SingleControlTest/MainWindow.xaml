@@ -16,14 +16,15 @@
     <StackPanel
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
-        <ComboBox
+        <Slider
             ui:ControlHelper.Description="Test"
             ui:ControlHelper.Header="Test"
             ui:ControlHelper.PlaceholderText="Test"
-            IsEditable="True"
-            IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}" />
+            IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}"
+            TickPlacement="Both" />
         <CheckBox
             x:Name="IsEnable"
-            Content="IsEnable" />
+            Content="IsEnable"
+            IsChecked="True" />
     </StackPanel>
 </Window>

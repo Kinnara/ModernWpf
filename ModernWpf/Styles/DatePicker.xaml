@@ -153,6 +153,7 @@
                             Grid.Column="1"
                             Grid.ColumnSpan="2"
                             MinHeight="32"
+                            primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"

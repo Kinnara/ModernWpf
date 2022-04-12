@@ -157,6 +157,7 @@
                             Grid.ColumnSpan="2"
                             MinWidth="{TemplateBinding MinWidth}"
                             MinHeight="{TemplateBinding MinHeight}"
+                            primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
                             primitives:ValidationHelper.IsTemplateValidationAdornerSite="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
