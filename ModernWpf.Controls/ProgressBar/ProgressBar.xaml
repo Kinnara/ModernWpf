@@ -2,13 +2,11 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:animation="clr-namespace:ModernWpf.Media.Animation"
     xmlns:local="clr-namespace:ModernWpf.Controls"
-    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
-    xmlns:root="clr-namespace:ModernWpf">
+    xmlns:ui="http://schemas.modernwpf.com/2019">
 
-    <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
-    <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
+    <ui:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
+    <ui:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
 
     <Style TargetType="local:ProgressBar">
         <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
@@ -28,7 +26,7 @@
                         x:Name="LayoutRoot"
                         SnapsToDevicePixels="True">
                         <Grid.Resources>
-                            <primitives:BindingProxy
+                            <ui:BindingProxy
                                 x:Key="SystemControlErrorTextForegroundBrushProxy"
                                 Value="{DynamicResource SystemControlErrorTextForegroundBrush}" />
                             <Storyboard x:Key="UpdatingToDeterminateStoryboard">
@@ -64,7 +62,7 @@
                                     Storyboard.TargetProperty="Opacity"
                                     To="1"
                                     Duration="0" />
-                                <animation:FadeOutThemeAnimation TargetName="DeterminateProgressBarIndicator" />
+                                <ui:FadeOutThemeAnimation TargetName="DeterminateProgressBarIndicator" />
                             </Storyboard>
                             <Storyboard x:Key="IndeterminateErrorStoryboard">
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateProgressBarIndicator" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
@@ -106,7 +104,7 @@
                                         KeyTime="0:0:3"
                                         Value="{DynamicResource SystemControlErrorBackgroundColor}" />
                                 </ColorAnimationUsingKeyFrames>
-                                <animation:FadeOutThemeAnimation TargetName="DeterminateProgressBarIndicator" />
+                                <ui:FadeOutThemeAnimation TargetName="DeterminateProgressBarIndicator" />
                             </Storyboard>
                             <Storyboard x:Key="ErrorStoryboard">
                                 <ColorAnimation
@@ -151,7 +149,7 @@
                                         KeyTime="0:0:2.75"
                                         Value="{DynamicResource SystemBaseMediumLowColor}" />
                                 </ColorAnimationUsingKeyFrames>
-                                <animation:FadeOutThemeAnimation TargetName="DeterminateProgressBarIndicator" />
+                                <ui:FadeOutThemeAnimation TargetName="DeterminateProgressBarIndicator" />
                             </Storyboard>
                             <Storyboard x:Key="PausedStoryboard">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeterminateProgressBarIndicator" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
@@ -166,7 +164,7 @@
                         </Grid.Resources>
 
                         <VisualStateManager.CustomVisualStateManager>
-                            <root:SimpleVisualStateManager />
+                            <ui:SimpleVisualStateManager />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -189,8 +187,8 @@
                                     <VisualTransition From="Indeterminate" To="Determinate">
                                         <Storyboard>
                                             <Storyboard>
-                                                <animation:FadeInThemeAnimation TargetName="IndeterminateProgressBarIndicator" />
-                                                <animation:FadeInThemeAnimation TargetName="IndeterminateProgressBarIndicator2" />
+                                                <ui:FadeInThemeAnimation TargetName="IndeterminateProgressBarIndicator" />
+                                                <ui:FadeInThemeAnimation TargetName="IndeterminateProgressBarIndicator2" />
                                             </Storyboard>
                                         </Storyboard>
                                     </VisualTransition>

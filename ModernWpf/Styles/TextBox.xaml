@@ -5,12 +5,15 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary>
+            <primitives:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
+        </ResourceDictionary>
+    </ResourceDictionary.MergedDictionaries>
 
     <Thickness x:Key="TextBoxTopHeaderMargin">0,0,0,8</Thickness>
     <Thickness x:Key="TextBoxInnerButtonMargin">0,4,4,4</Thickness>
     <sys:Double x:Key="TextBoxIconFontSize">12</sys:Double>
-
-    <primitives:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
 
     <Style x:Key="DefaultTextBoxStyle" TargetType="TextBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />

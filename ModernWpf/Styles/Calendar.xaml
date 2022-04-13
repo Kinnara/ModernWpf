@@ -97,7 +97,7 @@
                                 <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
                                 <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
                                 <Setter Property="FontFamily" Value="{DynamicResource FluentSystemIconsFilled}" />
-                                <Setter Property="FontSize" Value="{DynamicResource CalendarViewHeaderNavigationButtonFontSize}" />
+                                <Setter Property="FontSize" Value="{DynamicResource CalendarViewNavigationButtonFontSize}" />
                                 <Setter Property="Background" Value="{DynamicResource CalendarViewNavigationButtonBackground}" />
                                 <Setter Property="Foreground" Value="{DynamicResource CalendarViewNavigationButtonForeground}" />
                                 <Setter Property="Padding" Value="{DynamicResource CalendarViewNavigationButtonPadding}" />

@@ -8,6 +8,10 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="ToolTip.xaml" />
+        <ResourceDictionary>
+            <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
+            <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
+        </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
     <Thickness x:Key="SliderTopHeaderMargin">0,0,0,4</Thickness>
@@ -23,9 +27,6 @@
     <sys:Double x:Key="SliderVerticalThumbHeight">18</sys:Double>
     <sys:Double x:Key="SliderInnerThumbWidth">12</sys:Double>
     <sys:Double x:Key="SliderInnerThumbHeight">12</sys:Double>
-
-    <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
-    <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
 
     <Style x:Key="RepeatButtonTransparent" TargetType="RepeatButton">
         <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -351,8 +352,8 @@
                         x:Name="VerticalDecreaseRect"
                         Grid.RowSpan="3"
                         Grid.Column="1"
-                        VerticalAlignment="Bottom"
                         Height="{Binding ActualHeight, ElementName=VerticalDecrease}"
+                        VerticalAlignment="Bottom"
                         Fill="{TemplateBinding Foreground}"
                         RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
                         RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
