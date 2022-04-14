@@ -16,12 +16,19 @@
     <StackPanel
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
-        <ui:ProgressBar
-            Value="50"
+        <TreeView
             ui:ControlHelper.Description="Test"
             ui:ControlHelper.Header="Test"
             ui:ControlHelper.PlaceholderText="Test"
-            IsIndeterminate="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}" />
+            IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}" >
+            <TreeViewItem Header="Test"/>
+            <TreeViewItem Header="Test"/>
+            <TreeViewItem Header="Test">
+                <TreeViewItem Header="Test"/>
+                <TreeViewItem Header="Test"/>
+                <TreeViewItem Header="Test"/>
+            </TreeViewItem>
+        </TreeView>
         <CheckBox
             x:Name="IsEnable"
             Content="IsEnable"

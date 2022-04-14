@@ -91,7 +91,7 @@ namespace ModernWpf.Controls.Primitives
                 "CollapsedGlyph",
                 typeof(string),
                 typeof(TreeViewItemHelper),
-                new PropertyMetadata("\uE76C"));
+                new PropertyMetadata("\uF2B0"));
 
         #endregion
 
@@ -131,7 +131,7 @@ namespace ModernWpf.Controls.Primitives
                 "ExpandedGlyph",
                 typeof(string),
                 typeof(TreeViewItemHelper),
-                new PropertyMetadata("\uE70D"));
+                new PropertyMetadata("\uF2A3"));
 
         #endregion
 

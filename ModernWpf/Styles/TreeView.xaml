@@ -6,8 +6,6 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <sys:Double x:Key="TreeViewItemMinHeight">32</sys:Double>
-
     <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Focusable" Value="False" />
@@ -39,12 +37,11 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="MinWidth" Value="{DynamicResource ListViewItemMinWidth}" />
         <Setter Property="MinHeight" Value="{DynamicResource TreeViewItemMinHeight}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:TreeViewItemHelper.IsEnabled" Value="True" />
         <Setter Property="primitives:TreeViewItemHelper.GlyphBrush" Value="{DynamicResource TreeViewItemForeground}" />
-        <Setter Property="primitives:TreeViewItemHelper.CollapsedPath" Value="M 5.029297 19.091797 L 14.111328 10 L 5.029297 0.908203 L 5.908203 0.029297 L 15.888672 10 L 5.908203 19.970703 Z" />
-        <Setter Property="primitives:TreeViewItemHelper.ExpandedPath" Value="M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TreeViewItem">
@@ -53,11 +50,10 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
-
                         <Border
                             x:Name="ContentPresenterGrid"
-                            MinHeight="{TemplateBinding MinHeight}"
-                            Padding="{TemplateBinding primitives:TreeViewItemHelper.Indentation}"
+                            Margin="{DynamicResource TreeViewItemPresenterMargin}"
+                            Padding="{DynamicResource TreeViewItemPresenterPadding}"
                             primitives:PressHelper.IsEnabled="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
@@ -65,57 +61,110 @@
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                             SnapsToDevicePixels="true">
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-
-                                <ToggleButton
-                                    x:Name="ExpandCollapseChevron"
-                                    Grid.Column="0"
-                                    Width="Auto"
-                                    Padding="12,0,12,0"
-                                    Background="Transparent"
-                                    IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
-                                    Opacity="{TemplateBinding primitives:TreeViewItemHelper.GlyphOpacity}"
-                                    Style="{StaticResource ExpandCollapseToggleStyle}">
+                                <Rectangle
+                                    x:Name="SelectionIndicator"
+                                    Width="3"
+                                    Height="16"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Fill="{DynamicResource TreeViewItemSelectionIndicatorForeground}"
+                                    Opacity="0"
+                                    RadiusX="2"
+                                    RadiusY="2" />
+                                <Border
+                                    x:Name="MultiSelectGrid"
+                                    Margin="{DynamicResource TreeViewItemMultiSelectSelectedItemBorderMargin}"
+                                    Padding="{TemplateBinding primitives:TreeViewItemHelper.Indentation}"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="{DynamicResource TreeViewItemBorderThemeThickness}"
+                                    CornerRadius="{DynamicResource ControlCornerRadius}">
                                     <Grid>
-                                        <local:FontIconFallback
-                                            x:Name="CollapsedGlyph"
-                                            Width="12"
-                                            Height="12"
-                                            VerticalAlignment="Center"
-                                            Data="{TemplateBinding primitives:TreeViewItemHelper.CollapsedPath}"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
-                                            Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
-                                            IsHitTestVisible="False"
-                                            Visibility="Collapsed" />
-                                        <local:FontIconFallback
-                                            x:Name="ExpandedGlyph"
-                                            Width="12"
-                                            Height="12"
-                                            VerticalAlignment="Center"
-                                            Data="{TemplateBinding primitives:TreeViewItemHelper.ExpandedPath}"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
-                                            Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
-                                            IsHitTestVisible="False"
-                                            Visibility="Collapsed" />
-                                    </Grid>
-                                </ToggleButton>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid Grid.Column="0">
+                                            <CheckBox
+                                                x:Name="MultiSelectCheckBox"
+                                                Width="32"
+                                                MinWidth="32"
+                                                MinHeight="{DynamicResource TreeViewItemMultiSelectCheckBoxMinHeight}"
+                                                Margin="10,0,0,0"
+                                                VerticalAlignment="Center"
+                                                IsTabStop="False"
+                                                Visibility="Collapsed" />
+                                            <Border
+                                                x:Name="MultiArrangeOverlayTextBorder"
+                                                Height="20"
+                                                MinWidth="20"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Background="{DynamicResource SystemControlBackgroundAccentBrush}"
+                                                BorderBrush="{DynamicResource SystemControlBackgroundChromeWhiteBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="{DynamicResource ControlCornerRadius}"
+                                                IsHitTestVisible="False"
+                                                Visibility="Collapsed">
+                                                <TextBlock
+                                                    x:Name="MultiArrangeOverlayText"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="{DynamicResource SystemControlForegroundChromeWhiteBrush}"
+                                                    IsHitTestVisible="False"
+                                                    Style="{DynamicResource CaptionTextBlockStyle}" />
+                                            </Border>
+                                        </Grid>
 
-                                <ContentPresenter
-                                    x:Name="PART_Header"
-                                    Grid.Column="1"
-                                    Margin="{TemplateBinding Padding}"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    ContentSource="Header"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                        <ToggleButton
+                                            x:Name="ExpandCollapseChevron"
+                                            Grid.Column="1"
+                                            Width="Auto"
+                                            Padding="14,0"
+                                            Background="Transparent"
+                                            IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                            Opacity="{TemplateBinding primitives:TreeViewItemHelper.GlyphOpacity}"
+                                            Style="{StaticResource ExpandCollapseToggleStyle}">
+                                            <Grid>
+                                                <local:FontIcon
+                                                    x:Name="CollapsedGlyph"
+                                                    Width="12"
+                                                    Height="12"
+                                                    Margin="2"
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="{DynamicResource FluentSystemIcons}"
+                                                    FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
+                                                    Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
+                                                    Glyph="{TemplateBinding primitives:TreeViewItemHelper.CollapsedGlyph}"
+                                                    IsHitTestVisible="False"
+                                                    Visibility="Collapsed" />
+                                                <local:FontIcon
+                                                    x:Name="ExpandedGlyph"
+                                                    Width="12"
+                                                    Height="12"
+                                                    Margin="2"
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="{DynamicResource FluentSystemIcons}"
+                                                    FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
+                                                    Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
+                                                    Glyph="{TemplateBinding primitives:TreeViewItemHelper.ExpandedGlyph}"
+                                                    IsHitTestVisible="False"
+                                                    Visibility="Collapsed" />
+                                            </Grid>
+                                        </ToggleButton>
+                                        <local:ContentPresenterEx
+                                            x:Name="PART_Header"
+                                            Grid.Column="2"
+                                            MinHeight="{DynamicResource TreeViewItemContentHeight}"
+                                            Margin="{TemplateBinding Padding}"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            ContentSource="Header"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </Grid>
+                                </Border>
                             </Grid>
                         </Border>
-
                         <ItemsPresenter
                             x:Name="ItemsHost"
                             Grid.Row="1" />
@@ -134,23 +183,36 @@
                         </Trigger>
                         <Trigger SourceName="ContentPresenterGrid" Property="IsMouseOver" Value="True">
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
+                            <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundPointerOver}" />
+                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
+                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushPointerOver}" />
                         </Trigger>
                         <Trigger SourceName="ContentPresenterGrid" Property="primitives:PressHelper.IsPressed" Value="True">
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundPressed}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
+                            <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundPressed}" />
+                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
+                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushPressed}" />
                         </Trigger>
                         <!-- Selected -->
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelected}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
+                            <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForeground}" />
+                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
+                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelected}" />
+                            <Setter TargetName="SelectionIndicator" Property="Opacity" Value="1" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundDisabled}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
+                            <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundDisabled}" />
+                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
+                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushDisabled}" />
                         </Trigger>
                         <!-- PointerOverSelected -->
@@ -160,7 +222,10 @@
                                 <Condition Property="IsSelected" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelectedPointerOver}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
+                            <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundPointerOver}" />
+                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
+                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedPointerOver}" />
                         </MultiTrigger>
                         <!-- PressedSelected -->
@@ -170,7 +235,10 @@
                                 <Condition Property="IsSelected" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelectedPressed}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
+                            <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundPressed}" />
+                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
+                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedPressed}" />
                         </MultiTrigger>
                         <!-- SelectedDisabled -->
@@ -180,7 +248,10 @@
                                 <Condition Property="IsEnabled" Value="False" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelectedDisabled}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
+                            <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundDisabled}" />
+                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
+                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedDisabled}" />
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
