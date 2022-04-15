@@ -7,13 +7,10 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:root="clr-namespace:ModernWpf"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary>
-
             <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter8x" Filter="TopLeftValue" Scale="8" />
             <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter8x" Filter="BottomRightValue" Scale="8" />
-
             <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter2x" Filter="TopLeftValue" Scale="2" />
             <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter2x" Filter="BottomRightValue" Scale="2" />
         </ResourceDictionary>
@@ -531,7 +528,6 @@
                         <Thumb
                             x:Name="VerticalThumb"
                             Width="{StaticResource ScrollBarVerticalThumbMinWidth}"
-                            MinHeight="{StaticResource ScrollBarVerticalThumbMinHeight}"
                             HorizontalAlignment="Center"
                             primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                             Background="{DynamicResource ScrollBarPanningThumbBackground}"
@@ -736,7 +732,6 @@
                         <Thumb
                             x:Name="HorizontalThumb"
                             Height="{StaticResource ScrollBarHorizontalThumbMinHeight}"
-                            MinWidth="{StaticResource ScrollBarHorizontalThumbMinWidth}"
                             VerticalAlignment="Center"
                             primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                             Background="{DynamicResource ScrollBarPanningThumbBackground}"

@@ -7,7 +7,6 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:root="clr-namespace:ModernWpf"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary>
             <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />

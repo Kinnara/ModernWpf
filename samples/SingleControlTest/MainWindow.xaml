@@ -14,24 +14,50 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     mc:Ignorable="d">
     <StackPanel
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center">
-        <TreeView
-            ui:ControlHelper.Description="Test"
-            ui:ControlHelper.Header="Test"
-            ui:ControlHelper.PlaceholderText="Test"
-            IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}" >
-            <TreeViewItem Header="Test"/>
-            <TreeViewItem Header="Test"/>
-            <TreeViewItem Header="Test">
-                <TreeViewItem Header="Test"/>
-                <TreeViewItem Header="Test"/>
-                <TreeViewItem Header="Test"/>
-            </TreeViewItem>
-        </TreeView>
+        Margin="4"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Top">
         <CheckBox
             x:Name="IsEnable"
             Content="IsEnable"
             IsChecked="True" />
+        <TabControl
+            ui:ControlHelper.Description="Test"
+            ui:ControlHelper.Header="Test"
+            ui:ControlHelper.PlaceholderText="Test"
+            ui:PivotHelper.Title="Test"
+            IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}"
+            Style="{DynamicResource TabControlPivotStyle}">
+            <TabItem
+                Content="Test"
+                Header="Test" />
+            <TabItem
+                Content="Test"
+                Header="Test" />
+            <TabItem
+                Content="Test"
+                Header="Test" />
+            <TabItem
+                Content="Test"
+                Header="Test" />
+            <TabItem
+                Content="Test"
+                Header="Test" />
+            <TabItem
+                Content="Test"
+                Header="Test" />
+            <TabItem
+                Content="Test"
+                Header="Test" />
+            <TabItem
+                Content="Test"
+                Header="Test" />
+            <TabItem
+                Content="Test"
+                Header="Test" />
+            <TabItem
+                Content="Test"
+                Header="Test" />
+        </TabControl>
     </StackPanel>
 </Window>

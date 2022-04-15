@@ -37,7 +37,7 @@ namespace ModernWpf.Controls.Primitives
                 BackdropType.Auto => OSVersionHelper.OSVersion >= new Version(10, 0, 22523), // Insider with new API                
                 BackdropType.Tabbed => OSVersionHelper.OSVersion >= new Version(10, 0, 22523),
                 BackdropType.Mica => OSVersionHelper.OSVersion >= new Version(10, 0, 22000),
-                BackdropType.Acrylic => (OSVersionHelper.OSVersion >= new Version(6, 0) && OSVersionHelper.OSVersion < new Version(6, 3)) || (OSVersionHelper.OSVersion >= new Version(10, 0) && OSVersionHelper.OSVersion < new Version(10, 0, 22000)) || OSVersionHelper.OSVersion >= new Version(10, 0, 22523),
+                BackdropType.Acrylic => (OSVersionHelper.OSVersion >= new Version(6, 0) && OSVersionHelper.OSVersion < new Version(6, 3)) || OSVersionHelper.OSVersion >= new Version(10, 0),
                 _ => false
             };
         }

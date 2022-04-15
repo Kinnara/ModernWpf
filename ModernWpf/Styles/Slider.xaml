@@ -5,7 +5,6 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="ToolTip.xaml" />
         <ResourceDictionary>

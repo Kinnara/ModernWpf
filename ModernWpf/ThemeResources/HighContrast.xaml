@@ -1349,17 +1349,6 @@
     <sys:Double x:Key="PersonPictureEllipseBadgeStrokeThickness">2</sys:Double>
 
     <!-- Resources for Pivot -->
-    <sys:Double x:Key="PivotHeaderItemFontSize">24</sys:Double>
-    <sys:Double x:Key="PivotHeaderItemLockedTranslation">40</sys:Double>
-    <sys:Double x:Key="PivotTitleFontSize">14</sys:Double>
-    <sys:Int32 x:Key="PivotHeaderItemCharacterSpacing">-25</sys:Int32>
-    <Thickness x:Key="PivotHeaderItemMargin">12,0,12,0</Thickness>
-    <Thickness x:Key="PivotItemMargin">12,0,12,0</Thickness>
-    <Thickness x:Key="PivotNavButtonBorderThemeThickness">1</Thickness>
-    <Thickness x:Key="PivotNavButtonMargin">0,6,0,0</Thickness>
-    <Thickness x:Key="PivotPortraitThemePadding">12,14,0,13</Thickness>
-    <FontWeight x:Key="PivotHeaderItemThemeFontWeight">350</FontWeight>
-    <FontWeight x:Key="PivotTitleThemeFontWeight">Bold</FontWeight>
     <m:StaticResource x:Key="PivotBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="PivotHeaderBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="PivotNextButtonBackground" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
@@ -1397,6 +1386,34 @@
     <m:StaticResource x:Key="PivotHeaderItemForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
     <m:StaticResource x:Key="PivotHeaderItemFocusPipeFill" ResourceKey="SystemControlHighlightAltAccentBrush" />
     <m:StaticResource x:Key="PivotHeaderItemSelectedPipeFill" ResourceKey="SystemControlHighlightAltAccentBrush" />
+    <m:StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
+    <m:StaticResource x:Key="PivotTitleFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
+    <sys:Double x:Key="PivotHeaderItemFontSize">24</sys:Double>
+    <sys:Double x:Key="PivotTitleFontSize">14</sys:Double>
+    <sys:Double x:Key="PivotHeaderItemLockedTranslation">40</sys:Double>
+    <sys:Int32 x:Key="PivotHeaderItemCharacterSpacing">-25</sys:Int32>
+    <Thickness x:Key="PivotHeaderItemMargin">12,0,12,0</Thickness>
+    <Thickness x:Key="PivotItemMargin">12,0,12,0</Thickness>
+    <Thickness x:Key="PivotLandscapeThemePadding">12,14,0,13</Thickness>
+    <Thickness x:Key="PivotNavButtonBorderThemeThickness">1</Thickness>
+    <Thickness x:Key="PivotNavButtonMargin">0,6,0,0</Thickness>
+    <Thickness x:Key="PivotPortraitThemePadding">12,14,0,13</Thickness>
+    <FontWeight x:Key="PivotHeaderItemThemeFontWeight">350</FontWeight>
+    <FontWeight x:Key="PivotTitleThemeFontWeight">Bold</FontWeight>
+    <SolidColorBrush x:Key="PivotForegroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="PivotHeaderBackgroundSelectedBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="PivotHeaderBackgroundUnselectedBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="PivotHeaderForegroundSelectedBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="PivotHeaderForegroundUnselectedBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="PivotNavButtonBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="PivotNavButtonBorderThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="PivotNavButtonForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="PivotNavButtonPointerOverBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="PivotNavButtonPointerOverBorderThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="PivotNavButtonPointerOverForegroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="PivotNavButtonPressedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="PivotNavButtonPressedBorderThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="PivotNavButtonPressedForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
 
     <!-- Resources for ProgressBar -->
     <Thickness x:Key="ProgressBarBorderThemeThickness">1</Thickness>
@@ -1891,41 +1908,41 @@
     <m:StaticResource x:Key="ToolTipBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
 
     <!-- Resources for TreeView -->
-    <StaticResource x:Key="TreeViewItemBackground" ResourceKey="SystemColorWindowColorBrush" />
-    <StaticResource x:Key="TreeViewItemBackgroundPointerOver" ResourceKey="SystemColorWindowColorBrush" />
-    <StaticResource x:Key="TreeViewItemBackgroundPressed" ResourceKey="SystemColorWindowColorBrush" />
-    <StaticResource x:Key="TreeViewItemBackgroundDisabled" ResourceKey="SystemColorWindowColorBrush" />
-    <StaticResource x:Key="TreeViewItemBackgroundSelected" ResourceKey="SystemColorWindowColorBrush" />
-    <StaticResource x:Key="TreeViewItemBackgroundSelectedPointerOver" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <StaticResource x:Key="TreeViewItemBackgroundSelectedPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <StaticResource x:Key="TreeViewItemBackgroundSelectedDisabled" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBackgroundPointerOver" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBackgroundPressed" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBackgroundDisabled" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBackgroundSelected" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBackgroundSelectedPointerOver" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBackgroundSelectedPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBackgroundSelectedDisabled" ResourceKey="SystemColorWindowColorBrush" />
 
-    <StaticResource x:Key="TreeViewItemForeground" ResourceKey="SystemColorButtonTextColorBrush" />
-    <StaticResource x:Key="TreeViewItemForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
-    <StaticResource x:Key="TreeViewItemForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
-    <StaticResource x:Key="TreeViewItemForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
-    <StaticResource x:Key="TreeViewItemForegroundSelected" ResourceKey="SystemColorHighlightColorBrush" />
-    <StaticResource x:Key="TreeViewItemForegroundSelectedPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
-    <StaticResource x:Key="TreeViewItemForegroundSelectedPressed" ResourceKey="SystemColorButtonTextColorBrush" />
-    <StaticResource x:Key="TreeViewItemForegroundSelectedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemForegroundSelected" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemForegroundSelectedPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemForegroundSelectedPressed" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemForegroundSelectedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
 
-    <StaticResource x:Key="TreeViewItemBorderBrush" ResourceKey="SystemColorWindowColorBrush" />
-    <StaticResource x:Key="TreeViewItemBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
-    <StaticResource x:Key="TreeViewItemBorderBrushPressed" ResourceKey="SystemColorWindowColorBrush" />
-    <StaticResource x:Key="TreeViewItemBorderBrushDisabled" ResourceKey="SystemColorWindowColorBrush" />
-    <StaticResource x:Key="TreeViewItemBorderBrushSelected" ResourceKey="SystemColorHighlightColorBrush" />
-    <StaticResource x:Key="TreeViewItemBorderBrushSelectedPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
-    <StaticResource x:Key="TreeViewItemBorderBrushSelectedPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <StaticResource x:Key="TreeViewItemBorderBrushSelectedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBorderBrush" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBorderBrushPressed" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBorderBrushDisabled" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBorderBrushSelected" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBorderBrushSelectedPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBorderBrushSelectedPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemBorderBrushSelectedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
 
-    <StaticResource x:Key="TreeViewItemMultiSelectBorderBrushSelected" ResourceKey="SystemColorButtonTextColorBrush" />
-    <StaticResource x:Key="TreeViewItemCheckBoxBackgroundSelected" ResourceKey="SystemColorWindowColorBrush" />
-    <StaticResource x:Key="TreeViewItemCheckBoxBorderSelected" ResourceKey="SystemColorButtonTextColorBrush" />
-    <StaticResource x:Key="TreeViewItemCheckGlyphSelected" ResourceKey="SystemColorWindowTextColorBrush" />
-    <StaticResource x:Key="TreeViewItemSelectionIndicatorForeground" ResourceKey="SystemColorHighlightColorBrush" />
-    <StaticResource x:Key="TreeViewItemSelectionIndicatorForegroundPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
-    <StaticResource x:Key="TreeViewItemSelectionIndicatorForegroundPressed" ResourceKey="SystemColorButtonTextColorBrush" />
-    <StaticResource x:Key="TreeViewItemSelectionIndicatorForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemMultiSelectBorderBrushSelected" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemCheckBoxBackgroundSelected" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemCheckBoxBorderSelected" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemCheckGlyphSelected" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemSelectionIndicatorForeground" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemSelectionIndicatorForegroundPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemSelectionIndicatorForegroundPressed" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TreeViewItemSelectionIndicatorForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
 
     <Thickness x:Key="TreeViewItemBorderThemeThickness">1</Thickness>
     <Thickness x:Key="TreeViewItemPresenterMargin">4,2</Thickness>

@@ -8,9 +8,9 @@ using Frame = ModernWpf.Controls.Frame;
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class TabControlPage
+    public partial class TabViewPage
     {
-        public TabControlPage()
+        public TabViewPage()
         {
             InitializeComponent();
 

@@ -6,6 +6,9 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <sys:Double x:Key="TreeViewItemPillMinScale">0.625</sys:Double>
+    <KeyTime x:Key="TreeViewItemScaleAnimationDuration">00:00:00.167</KeyTime>
+
     <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Focusable" Value="False" />
@@ -45,7 +48,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TreeViewItem">
-                    <Grid>
+                    <Grid x:Name="Root">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition />
@@ -70,7 +73,12 @@
                                     Fill="{DynamicResource TreeViewItemSelectionIndicatorForeground}"
                                     Opacity="0"
                                     RadiusX="2"
-                                    RadiusY="2" />
+                                    RadiusY="2"
+                                    RenderTransformOrigin="0.5,0.5">
+                                    <Rectangle.RenderTransform>
+                                        <ScaleTransform x:Name="IndicatorTransform" ScaleY="1" />
+                                    </Rectangle.RenderTransform>
+                                </Rectangle>
                                 <Border
                                     x:Name="MultiSelectGrid"
                                     Margin="{DynamicResource TreeViewItemMultiSelectSelectedItemBorderMargin}"
@@ -127,7 +135,7 @@
                                             Style="{StaticResource ExpandCollapseToggleStyle}">
                                             <Grid>
                                                 <local:FontIcon
-                                                    x:Name="CollapsedGlyph"
+                                                    x:Name="ExpandCollapseGlyph"
                                                     Width="12"
                                                     Height="12"
                                                     Margin="2"
@@ -137,19 +145,11 @@
                                                     Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
                                                     Glyph="{TemplateBinding primitives:TreeViewItemHelper.CollapsedGlyph}"
                                                     IsHitTestVisible="False"
-                                                    Visibility="Collapsed" />
-                                                <local:FontIcon
-                                                    x:Name="ExpandedGlyph"
-                                                    Width="12"
-                                                    Height="12"
-                                                    Margin="2"
-                                                    VerticalAlignment="Center"
-                                                    FontFamily="{DynamicResource FluentSystemIcons}"
-                                                    FontSize="{TemplateBinding primitives:TreeViewItemHelper.GlyphSize}"
-                                                    Foreground="{TemplateBinding primitives:TreeViewItemHelper.GlyphBrush}"
-                                                    Glyph="{TemplateBinding primitives:TreeViewItemHelper.ExpandedGlyph}"
-                                                    IsHitTestVisible="False"
-                                                    Visibility="Collapsed" />
+                                                    RenderTransformOrigin="0.5, 0.5">
+                                                    <local:FontIcon.RenderTransform>
+                                                        <RotateTransform x:Name="ExpandCollapseGlyphRotateTransform" Angle="0" />
+                                                    </local:FontIcon.RenderTransform>
+                                                </local:FontIcon>
                                             </Grid>
                                         </ToggleButton>
                                         <local:ContentPresenterEx
@@ -168,14 +168,66 @@
                         <ItemsPresenter
                             x:Name="ItemsHost"
                             Grid.Row="1" />
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndicatorTransform" Storyboard.TargetProperty="ScaleY">
+                                            <SplineDoubleKeyFrame KeySpline="1,0,0,0" KeyTime="{StaticResource TreeViewItemScaleAnimationDuration}" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndicatorTransform" Storyboard.TargetProperty="ScaleY">
+                                            <SplineDoubleKeyFrame KeySpline="0,0,0,1" KeyTime="{StaticResource TreeViewItemScaleAnimationDuration}" Value="{StaticResource TreeViewItemPillMinScale}" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Expanded">
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="ExpandCollapseGlyphRotateTransform"
+                                            Storyboard.TargetProperty="Angle"
+                                            To="90.0"
+                                            Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Collapsed">
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="ExpandCollapseGlyphRotateTransform"
+                                            Storyboard.TargetProperty="Angle"
+                                            To="0.0"
+                                            Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectionStates">
+                                <VisualState x:Name="Selected">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndicatorTransform" Storyboard.TargetProperty="ScaleY">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{StaticResource TreeViewItemPillMinScale}" />
+                                            <SplineDoubleKeyFrame KeySpline="0,0,0,1" KeyTime="{StaticResource TreeViewItemScaleAnimationDuration}" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Unselected" />
+                                <VisualState x:Name="SelectedInactive" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsExpanded" Value="False">
-                            <Setter TargetName="CollapsedGlyph" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+                        <Trigger SourceName="ContentPresenterGrid" Property="primitives:PressHelper.IsPressed" Value="True">
+                            <Setter TargetName="Root" Property="primitives:ControlHelper.VisualState" Value="Pressed" />
                         </Trigger>
-                        <Trigger Property="IsExpanded" Value="True">
-                            <Setter TargetName="ExpandedGlyph" Property="Visibility" Value="Visible" />
+                        <Trigger SourceName="ContentPresenterGrid" Property="primitives:PressHelper.IsPressed" Value="False">
+                            <Setter TargetName="Root" Property="primitives:ControlHelper.VisualState" Value="Normal" />
+                        </Trigger>
+                        <Trigger Property="IsExpanded" Value="False">
+                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="HasItems" Value="False">
                             <Setter TargetName="ExpandCollapseChevron" Property="Visibility" Value="Hidden" />
@@ -185,16 +237,14 @@
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundPointerOver}" />
                             <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
                             <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundPointerOver}" />
-                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
-                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
+                            <Setter TargetName="ExpandCollapseGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushPointerOver}" />
                         </Trigger>
                         <Trigger SourceName="ContentPresenterGrid" Property="primitives:PressHelper.IsPressed" Value="True">
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundPressed}" />
                             <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
                             <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundPressed}" />
-                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
-                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
+                            <Setter TargetName="ExpandCollapseGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushPressed}" />
                         </Trigger>
                         <!-- Selected -->
@@ -202,8 +252,7 @@
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelected}" />
                             <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
                             <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForeground}" />
-                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
-                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
+                            <Setter TargetName="ExpandCollapseGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelected}" />
                             <Setter TargetName="SelectionIndicator" Property="Opacity" Value="1" />
                         </Trigger>
@@ -211,8 +260,7 @@
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundDisabled}" />
                             <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
                             <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundDisabled}" />
-                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
-                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
+                            <Setter TargetName="ExpandCollapseGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushDisabled}" />
                         </Trigger>
                         <!-- PointerOverSelected -->
@@ -224,8 +272,7 @@
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelectedPointerOver}" />
                             <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
                             <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundPointerOver}" />
-                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
-                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
+                            <Setter TargetName="ExpandCollapseGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedPointerOver}" />
                         </MultiTrigger>
                         <!-- PressedSelected -->
@@ -237,8 +284,7 @@
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelectedPressed}" />
                             <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
                             <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundPressed}" />
-                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
-                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
+                            <Setter TargetName="ExpandCollapseGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedPressed}" />
                         </MultiTrigger>
                         <!-- SelectedDisabled -->
@@ -250,8 +296,7 @@
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelectedDisabled}" />
                             <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
                             <Setter TargetName="SelectionIndicator" Property="Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundDisabled}" />
-                            <Setter TargetName="CollapsedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
-                            <Setter TargetName="ExpandedGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
+                            <Setter TargetName="ExpandCollapseGlyph" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedDisabled}" />
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
