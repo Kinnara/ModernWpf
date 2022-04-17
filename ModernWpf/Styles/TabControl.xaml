@@ -2,16 +2,24 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <primitives:CornerRadiusFilterConverter x:Key="TopCornerRadiusFilterConverter" Filter="Top" />
+            <primitives:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
+            <primitives:CornerRadiusFilterConverter x:Key="BottomCornerRadiusFilterConverter" Filter="Bottom" />
+            <primitives:CornerRadiusFilterConverter x:Key="LeftCornerRadiusFilterConverter" Filter="Left" />
+        </ResourceDictionary>
+    </ResourceDictionary.MergedDictionaries>
 
-    <Thickness x:Key="TabViewTopHeaderPadding">8,8,0,0</Thickness>
-    <Thickness x:Key="TabViewBottomHeaderPadding">8,0,0,8</Thickness>
-    <Thickness x:Key="TabViewLeftHeaderPadding">8,8,0,8</Thickness>
-    <Thickness x:Key="TabViewRightHeaderPadding">0,8,8,8</Thickness>
-    <Thickness x:Key="TabViewHeaderPadding">8,8,0,0</Thickness>
-    <Thickness x:Key="TabViewItemHeaderPadding">12,8,10,8</Thickness>
+    <Thickness x:Key="TabViewHeaderPadding">0,8,0,0</Thickness>
+    <Thickness x:Key="TabViewItemHeaderPadding">8,3,4,3</Thickness>
+    <Thickness x:Key="TabViewSelectedItemHeaderPadding">9,3,5,4</Thickness>
 
+    <sys:Double x:Key="TabViewItemMinHeight">32</sys:Double>
     <sys:Double x:Key="TabViewItemMaxWidth">240</sys:Double>
     <sys:Double x:Key="TabViewItemMinWidth">100</sys:Double>
 
@@ -19,269 +27,895 @@
     <sys:Double x:Key="TabViewItemHeaderIconSize">16</sys:Double>
     <Thickness x:Key="TabViewItemHeaderIconMargin">0,0,10,0</Thickness>
 
+
+    <sys:Double x:Key="TabViewItemHeaderCloseButtonHeight">24</sys:Double>
+    <sys:Double x:Key="TabViewItemHeaderCloseButtonWidth">32</sys:Double>
+
     <sys:Double x:Key="TabViewItemHeaderCloseButtonSize">16</sys:Double>
     <sys:Double x:Key="TabViewItemHeaderCloseFontSize">12</sys:Double>
-    <Thickness x:Key="TabViewItemHeaderCloseMargin">10,0,0,0</Thickness>
+    <Thickness x:Key="TabViewItemHeaderCloseMargin">4,0,0,0</Thickness>
 
-    <sys:Double x:Key="TabViewItemScrollButtonWidth">29</sys:Double>
-    <sys:Double x:Key="TabViewItemScrollButtonHeight">29</sys:Double>
-    <Thickness x:Key="TabViewItemScrollButtonPadding">6,4,10,5</Thickness>
+    <sys:Double x:Key="TabViewItemScrollButtonWidth">32</sys:Double>
+    <sys:Double x:Key="TabViewItemScrollButtonHeight">24</sys:Double>
+    <sys:Double x:Key="TabViewItemScrollButonFontSize">15</sys:Double>
+    <Thickness x:Key="TabViewItemScrollButtonPadding">7,3,7,3</Thickness>
+    <Thickness x:Key="TabViewItemLeftScrollButtonContainerPadding">8,0,3,3</Thickness>
+    <Thickness x:Key="TabViewItemRightScrollButtonContainerPadding">3,0,8,3</Thickness>
+
+    <sys:Double x:Key="TabViewItemAddButtonWidth">32</sys:Double>
+    <sys:Double x:Key="TabViewItemAddButtonHeight">24</sys:Double>
+    <sys:Double x:Key="TabViewItemAddButtonFontSize">12</sys:Double>
+    <Thickness x:Key="TabViewItemAddButtonContainerPadding">3,0,0,3</Thickness>
 
     <sys:Double x:Key="TabViewShadowDepth">16</sys:Double>
 
-    <Thickness x:Key="TabViewItemSeparatorMargin">0,6,0,6</Thickness>
+    <Thickness x:Key="TabViewItemSeparatorMargin">0,8,0,8</Thickness>
 
-    <primitives:CornerRadiusFilterConverter x:Key="TopCornerRadiusFilterConverter" Filter="Top" />
-    <primitives:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
-    <primitives:CornerRadiusFilterConverter x:Key="BottomCornerRadiusFilterConverter" Filter="Bottom" />
-    <primitives:CornerRadiusFilterConverter x:Key="LeftCornerRadiusFilterConverter" Filter="Left" />
+    <Thickness x:Key="TabViewItemBorderThickness">1</Thickness>
 
-    <Style x:Key="DefaultTabItemStyle" TargetType="TabItem">
+    <Thickness x:Key="TabViewSelectedItemBorderThickness">1,1,1,0</Thickness>
+
+    <Thickness x:Key="TabViewSelectedItemHeaderMargin">-1,0,-1,0</Thickness>
+
+    <Thickness x:Key="TabViewTopHeaderPadding">8,8,0,0</Thickness>
+    <Thickness x:Key="TabViewBottomHeaderPadding">8,0,0,8</Thickness>
+    <Thickness x:Key="TabViewLeftHeaderPadding">8,8,0,8</Thickness>
+    <Thickness x:Key="TabViewRightHeaderPadding">0,8,8,8</Thickness>
+
+    <Style x:Key="TabViewButtonStyle" TargetType="Button">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="{DynamicResource TabViewButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource TabViewButtonForeground}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="FontSize" Value="{DynamicResource TabViewItemAddButtonFontSize}" />
+        <Setter Property="FontFamily" Value="{DynamicResource FluentSystemIcons}" />
+        <Setter Property="Width" Value="{DynamicResource TabViewItemAddButtonWidth}" />
+        <Setter Property="Height" Value="{DynamicResource TabViewItemAddButtonHeight}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="TabItem">
-                    <!-- This item will cover the separator on its left side. -->
-                    <primitives:ThemeShadowChrome
-                        x:Name="Shadow"
-                        CornerRadius="{Binding ElementName=TabContainer, Path=CornerRadius}"
-                        Depth="{DynamicResource TabViewShadowDepth}"
-                        IsShadowEnabled="False">
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="Background"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        SnapsToDevicePixels="True">
                         <Border
-                            x:Name="LayoutRoot"
-                            Margin="-1,0,0,0"
+                            x:Name="Border"
                             Padding="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="True">
-                            <Grid>
-
-                                <Border
-                                    x:Name="TabSeparator"
-                                    Width="1"
-                                    Margin="{DynamicResource TabViewItemSeparatorMargin}"
-                                    HorizontalAlignment="Right"
-                                    BorderBrush="{DynamicResource TabViewItemSeparator}"
-                                    BorderThickness="1" />
-
-                                <Border
-                                    x:Name="TabContainer"
-                                    Grid.Column="1"
-                                    Padding="{DynamicResource TabViewItemHeaderPadding}"
-                                    primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
-                                    Background="{DynamicResource TabViewItemHeaderBackground}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}">
-                                    <Grid>
-
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <Viewbox
-                                            x:Name="IconBox"
-                                            MaxWidth="{DynamicResource TabViewItemHeaderIconSize}"
-                                            MaxHeight="{DynamicResource TabViewItemHeaderIconSize}"
-                                            Margin="{DynamicResource TabViewItemHeaderIconMargin}">
-                                            <ContentControl
-                                                x:Name="IconControl"
-                                                Content="{TemplateBinding primitives:TabItemHelper.Icon}"
-                                                Foreground="{DynamicResource TabViewItemIconForeground}"
-                                                IsTabStop="False" />
-                                        </Viewbox>
-
-                                        <ContentPresenter
-                                            x:Name="ContentPresenter"
-                                            Grid.Column="1"
-                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                            ContentSource="Header"
-                                            Focusable="False"
-                                            RecognizesAccessKey="True"
-                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                            TextElement.FontSize="{DynamicResource TabViewItemHeaderFontSize}"
-                                            TextElement.FontWeight="{TemplateBinding FontWeight}"
-                                            TextElement.Foreground="{DynamicResource TabViewItemHeaderForeground}" />
-
-                                    </Grid>
-                                </Border>
-                            </Grid>
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                            <local:ContentPresenterEx
+                                x:Name="ContentPresenter"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}" />
                         </Border>
-                    </primitives:ThemeShadowChrome>
-
+                    </Border>
                     <ControlTemplate.Triggers>
-                        <!-- PointerOver -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
-                            <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundPointerOver}" />
+                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource TabViewButtonBackgroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewButtonForegroundPointerOver}" />
                         </Trigger>
-                        <!-- Selected -->
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Shadow" Property="IsShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
-                            <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundSelected}" />
-                            <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundSelected}" />
-                            <Setter Property="Panel.ZIndex" Value="1" />
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource TabViewButtonBackgroundPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewButtonForegroundPressed}" />
                         </Trigger>
-                        <!-- PointerOverSelected -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsMouseOver" Value="True" />
-                                <Condition Property="IsSelected" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
-                            <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundPointerOver}" />
-                            <Setter Property="Panel.ZIndex" Value="1" />
-                        </MultiTrigger>
-                        <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewButtonForegroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
+                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource TabViewButtonBackgroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewButtonForegroundDisabled}" />
                         </Trigger>
-                        <!-- NoIcon -->
-                        <Trigger Property="primitives:TabItemHelper.Icon" Value="{x:Null}">
-                            <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
-                        <DataTrigger Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Bottom">
-                            <Setter TargetName="TabContainer" Property="CornerRadius" Value="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Left">
-                            <Setter TargetName="TabSeparator" Property="BorderBrush" Value="{x:Null}" />
-                            <Setter TargetName="TabContainer" Property="CornerRadius" Value="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Right">
-                            <Setter TargetName="TabSeparator" Property="BorderBrush" Value="{x:Null}" />
-                            <Setter TargetName="TabContainer" Property="CornerRadius" Value="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource RightCornerRadiusFilterConverter}}" />
-                        </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style BasedOn="{StaticResource DefaultTabItemStyle}" TargetType="TabItem" />
-
-    <Style x:Key="DefaultTabControlStyle" TargetType="TabControl">
+    <Style x:Key="TabViewCloseButtonStyle" TargetType="Button">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Background" Value="{DynamicResource TabViewBackground}" />
-        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{DynamicResource FluentSystemIcons}" />
+        <Setter Property="FontSize" Value="{DynamicResource TabViewItemHeaderCloseFontSize}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="Width" Value="{DynamicResource TabViewItemHeaderCloseButtonWidth}" />
+        <Setter Property="Height" Value="{DynamicResource TabViewItemHeaderCloseButtonHeight}" />
+        <Setter Property="Background" Value="{DynamicResource TabViewItemHeaderCloseButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource TabViewItemHeaderCloseButtonForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TabViewItemHeaderCloseButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource TabViewItemHeaderCloseButtonBorderThickness}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="TabControl">
-                    <Grid
-                        x:Name="templateRoot"
-                        ClipToBounds="true"
-                        KeyboardNavigation.TabNavigation="Local"
-                        SnapsToDevicePixels="true">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition x:Name="ColumnDefinition0" />
-                            <ColumnDefinition x:Name="ColumnDefinition1" Width="0" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition x:Name="RowDefinition0" Height="Auto" />
-                            <RowDefinition x:Name="RowDefinition1" Height="*" />
-                        </Grid.RowDefinitions>
-                        <DockPanel
-                            x:Name="headerPanel"
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Panel.ZIndex="1"
-                            Background="{TemplateBinding Background}"
-                            ClipToBounds="True">
-
-                            <ContentPresenter
-                                x:Name="HeaderContentPresenter"
-                                Content="{TemplateBinding primitives:TabControlHelper.TabStripHeader}"
-                                ContentTemplate="{TemplateBinding primitives:TabControlHelper.TabStripHeaderTemplate}"
-                                DockPanel.Dock="Left"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-
-                            <TabPanel
-                                x:Name="TabPanel"
-                                Margin="{DynamicResource TabViewTopHeaderPadding}"
-                                Background="Transparent"
-                                DockPanel.Dock="Left"
-                                IsItemsHost="true" />
-
-                            <ContentPresenter
-                                x:Name="FooterContentPresenter"
-                                HorizontalAlignment="Stretch"
-                                Content="{TemplateBinding primitives:TabControlHelper.TabStripFooter}"
-                                ContentTemplate="{TemplateBinding primitives:TabControlHelper.TabStripFooterTemplate}"
-                                DockPanel.Dock="Right"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-
-                        </DockPanel>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="Background"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        SnapsToDevicePixels="True">
                         <Border
-                            x:Name="contentPanel"
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            KeyboardNavigation.DirectionalNavigation="Contained"
-                            KeyboardNavigation.TabNavigation="Local">
-                            <ContentPresenter
-                                x:Name="PART_SelectedContentHost"
-                                Margin="{TemplateBinding Padding}"
-                                ContentSource="SelectedContent"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            x:Name="Border"
+                            Padding="{TemplateBinding Padding}"
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                            <local:ContentPresenterEx
+                                x:Name="ContentPresenter"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Border>
-                    </Grid>
+                    </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="TabStripPlacement" Value="Top">
-                            <Setter TargetName="TabPanel" Property="VerticalAlignment" Value="Bottom" />
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource TabViewItemHeaderCloseButtonBackgroundPointerOver}" />
+                            <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource TabViewItemHeaderCloseButtonBorderBrushPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderCloseButtonForegroundPointerOver}" />
                         </Trigger>
-                        <Trigger Property="TabStripPlacement" Value="Bottom">
-                            <Setter TargetName="headerPanel" Property="Grid.Row" Value="1" />
-                            <Setter TargetName="contentPanel" Property="Grid.Row" Value="0" />
-                            <Setter TargetName="RowDefinition0" Property="Height" Value="*" />
-                            <Setter TargetName="RowDefinition1" Property="Height" Value="Auto" />
-                            <Setter TargetName="TabPanel" Property="VerticalAlignment" Value="Top" />
-                            <Setter TargetName="TabPanel" Property="Margin" Value="{DynamicResource TabViewBottomHeaderPadding}" />
-                        </Trigger>
-                        <Trigger Property="TabStripPlacement" Value="Left">
-                            <Setter TargetName="headerPanel" Property="Grid.Row" Value="0" />
-                            <Setter TargetName="contentPanel" Property="Grid.Row" Value="0" />
-                            <Setter TargetName="headerPanel" Property="Grid.Column" Value="0" />
-                            <Setter TargetName="contentPanel" Property="Grid.Column" Value="1" />
-                            <Setter TargetName="ColumnDefinition0" Property="Width" Value="Auto" />
-                            <Setter TargetName="ColumnDefinition1" Property="Width" Value="*" />
-                            <Setter TargetName="RowDefinition0" Property="Height" Value="*" />
-                            <Setter TargetName="RowDefinition1" Property="Height" Value="0" />
-                            <Setter TargetName="HeaderContentPresenter" Property="DockPanel.Dock" Value="Top" />
-                            <Setter TargetName="TabPanel" Property="DockPanel.Dock" Value="Top" />
-                            <Setter TargetName="TabPanel" Property="HorizontalAlignment" Value="Right" />
-                            <Setter TargetName="TabPanel" Property="Margin" Value="{DynamicResource TabViewLeftHeaderPadding}" />
-                            <Setter TargetName="FooterContentPresenter" Property="DockPanel.Dock" Value="Bottom" />
-                        </Trigger>
-                        <Trigger Property="TabStripPlacement" Value="Right">
-                            <Setter TargetName="headerPanel" Property="Grid.Row" Value="0" />
-                            <Setter TargetName="contentPanel" Property="Grid.Row" Value="0" />
-                            <Setter TargetName="headerPanel" Property="Grid.Column" Value="1" />
-                            <Setter TargetName="contentPanel" Property="Grid.Column" Value="0" />
-                            <Setter TargetName="ColumnDefinition0" Property="Width" Value="*" />
-                            <Setter TargetName="ColumnDefinition1" Property="Width" Value="Auto" />
-                            <Setter TargetName="RowDefinition0" Property="Height" Value="*" />
-                            <Setter TargetName="RowDefinition1" Property="Height" Value="0" />
-                            <Setter TargetName="HeaderContentPresenter" Property="DockPanel.Dock" Value="Top" />
-                            <Setter TargetName="TabPanel" Property="DockPanel.Dock" Value="Top" />
-                            <Setter TargetName="TabPanel" Property="HorizontalAlignment" Value="Left" />
-                            <Setter TargetName="TabPanel" Property="Margin" Value="{DynamicResource TabViewRightHeaderPadding}" />
-                            <Setter TargetName="FooterContentPresenter" Property="DockPanel.Dock" Value="Bottom" />
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource TabViewItemHeaderCloseButtonBackgroundPressed}" />
+                            <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource TabViewItemHeaderCloseButtonBorderBrushPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderCloseButtonForegroundPressed}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="TabViewScrollButtonStyle" TargetType="RepeatButton">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Background" Value="{DynamicResource TabViewScrollButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource TabViewScrollButtonForeground}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="FontSize" Value="{DynamicResource TabViewItemScrollButonFontSize}" />
+        <Setter Property="FontFamily" Value="{DynamicResource FluentSystemIconsFilled}" />
+        <Setter Property="Width" Value="{DynamicResource TabViewItemScrollButtonWidth}" />
+        <Setter Property="Height" Value="{DynamicResource TabViewItemScrollButtonHeight}" />
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border
+                        x:Name="Background"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <Border
+                            x:Name="Border"
+                            Padding="{TemplateBinding Padding}"
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                            <local:ContentPresenterEx
+                                x:Name="ContentPresenter"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}" />
+                        </Border>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource TabViewScrollButtonBackgroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewScrollButtonForegroundPointerOver}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource TabViewScrollButtonBackgroundPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewScrollButtonForegroundPressed}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource TabViewScrollButtonBackgroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewScrollButtonForegroundDisabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="HorizontalTabItemStyle" TargetType="TabItem">
+        <Border
+            x:Name="LayoutRoot"
+            Padding="{TemplateBinding Padding}"
+            primitives:PressHelper.IsEnabled="True"
+            SnapsToDevicePixels="True">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="LeftColumn" Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition x:Name="RightColumn" Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Border
+                    x:Name="BottomBorderLine"
+                    Grid.ColumnSpan="3"
+                    Height="1"
+                    VerticalAlignment="Bottom"
+                    BorderBrush="{DynamicResource TabViewBorderBrush}"
+                    BorderThickness="1" />
+                <Path
+                    x:Name="LeftRadiusRenderArc"
+                    Width="4"
+                    Height="4"
+                    Margin="-4,0,0,0"
+                    VerticalAlignment="Bottom"
+                    Data="M4 0C4 1.19469 3.47624 2.26706 2.64582 3H0C1.65685 3 3 1.65685 3 0H4Z"
+                    Fill="{DynamicResource TabViewBorderBrush}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Visibility="Collapsed" />
+                <Path
+                    x:Name="RightRadiusRenderArc"
+                    Grid.Column="2"
+                    Width="4"
+                    Height="4"
+                    Margin="0,0,-4,0"
+                    VerticalAlignment="Bottom"
+                    Data="M0 0C0 1.19469 0.523755 2.26706 1.35418 3H4C2.34315 3 1 1.65685 1 0H0Z"
+                    Fill="{DynamicResource TabViewBorderBrush}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Visibility="Collapsed" />
+                <Path
+                    x:Name="SelectedBackgroundPath"
+                    Grid.ColumnSpan="3"
+                    Margin="-4,0,-4,0"
+                    VerticalAlignment="Bottom"
+                    Data="{TemplateBinding primitives:TabItemHelper.TabGeometry}"
+                    Fill="{DynamicResource TabViewItemHeaderBackgroundSelected}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Visibility="Collapsed" />
+                <Border
+                    x:Name="TabSeparator"
+                    Grid.Column="1"
+                    Width="1"
+                    Margin="{DynamicResource TabViewItemSeparatorMargin}"
+                    HorizontalAlignment="Right"
+                    BorderBrush="{DynamicResource TabViewItemSeparator}"
+                    BorderThickness="1" />
+                <Border
+                    x:Name="TabContainer"
+                    Grid.Column="1"
+                    Padding="{DynamicResource TabViewItemHeaderPadding}"
+                    primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="IconColumn" Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Viewbox
+                            x:Name="IconBox"
+                            MaxWidth="{DynamicResource TabViewItemHeaderIconSize}"
+                            MaxHeight="{DynamicResource TabViewItemHeaderIconSize}"
+                            Margin="{DynamicResource TabViewItemHeaderIconMargin}">
+                            <ContentControl
+                                x:Name="IconControl"
+                                Content="{TemplateBinding primitives:TabItemHelper.Icon}"
+                                Foreground="{DynamicResource TabViewItemIconForeground}"
+                                IsTabStop="False" />
+                        </Viewbox>
+                        <local:ContentPresenterEx
+                            x:Name="ContentPresenter"
+                            Grid.Column="1"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center"
+                            ContentSource="Header"
+                            Focusable="False"
+                            FontSize="{DynamicResource TabViewItemHeaderFontSize}"
+                            FontWeight="{TemplateBinding FontWeight}"
+                            Foreground="{DynamicResource TabViewItemHeaderForeground}"
+                            RecognizesAccessKey="True"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Button
+                            x:Name="CloseButton"
+                            Grid.Column="2"
+                            Margin="{DynamicResource TabViewItemHeaderCloseMargin}"
+                            Command="{TemplateBinding primitives:TabItemHelper.CloseTabButtonCommand}"
+                            Content="&#xF36B;"
+                            IsTabStop="False"
+                            Style="{StaticResource TabViewCloseButtonStyle}"
+                            Visibility="Collapsed">
+                            <Button.InputBindings>
+                                <KeyBinding
+                                    Key="F4"
+                                    Command="{TemplateBinding primitives:TabItemHelper.CloseTabButtonCommand}"
+                                    Modifiers="Ctrl" />
+                            </Button.InputBindings>
+                        </Button>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+
+        <ControlTemplate.Triggers>
+            <!-- PointerOver -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundPointerOver}" />
+                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
+                <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundPointerOver}" />
+                <Setter TargetName="CloseButton" Property="Background" Value="{DynamicResource TabViewItemHeaderPointerOverCloseButtonBackground}" />
+                <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderPointerOverCloseButtonForeground}" />
+                <Setter TargetName="TabSeparator" Property="Opacity" Value="0" />
+            </Trigger>
+            <!-- Pressed -->
+            <Trigger SourceName="LayoutRoot" Property="primitives:PressHelper.IsPressed" Value="True">
+                <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundPressed}" />
+                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPressed}" />
+                <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundPressed}" />
+                <Setter TargetName="CloseButton" Property="Background" Value="{DynamicResource TabViewItemHeaderPressedCloseButtonBackground}" />
+                <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderPressedCloseButtonForeground}" />
+                <Setter TargetName="TabSeparator" Property="Opacity" Value="0" />
+            </Trigger>
+            <!-- Selected -->
+            <Trigger Property="IsSelected" Value="True">
+                <Setter TargetName="BottomBorderLine" Property="Visibility" Value="Collapsed" />
+                <Setter TargetName="RightRadiusRenderArc" Property="Visibility" Value="Visible" />
+                <Setter TargetName="LeftRadiusRenderArc" Property="Visibility" Value="Visible" />
+                <Setter TargetName="SelectedBackgroundPath" Property="Visibility" Value="Visible" />
+                <Setter TargetName="SelectedBackgroundPath" Property="Fill" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
+                <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
+                <Setter TargetName="TabContainer" Property="Margin" Value="{DynamicResource TabViewSelectedItemHeaderMargin}" />
+                <Setter TargetName="TabContainer" Property="BorderBrush" Value="{DynamicResource TabViewSelectedItemBorderBrush}" />
+                <Setter TargetName="TabContainer" Property="BorderThickness" Value="{DynamicResource TabViewSelectedItemBorderThickness}" />
+                <Setter TargetName="TabContainer" Property="Padding" Value="{DynamicResource TabViewSelectedItemHeaderPadding}" />
+                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundSelected}" />
+                <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundSelected}" />
+                <Setter TargetName="CloseButton" Property="Background" Value="{DynamicResource TabViewItemHeaderSelectedCloseButtonBackground}" />
+                <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderSelectedCloseButtonForeground}" />
+                <Setter TargetName="LayoutRoot" Property="Background" Value="Transparent" />
+                <Setter TargetName="ContentPresenter" Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Panel.ZIndex" Value="1" />
+            </Trigger>
+            <!-- Disabled -->
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundDisabled}" />
+                <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
+                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
+                <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewButtonForegroundDisabled}" />
+                <Setter TargetName="CloseButton" Property="Background" Value="{DynamicResource TabViewItemHeaderDisabledCloseButtonBackground}" />
+                <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderSelectedCloseButtonForeground}" />
+                <Setter TargetName="CloseButton" Property="BorderBrush" Value="{DynamicResource TabViewItemHeaderCloseButtonBorderBrushDisabled}" />
+            </Trigger>
+            <!-- NoIcon -->
+            <Trigger Property="primitives:TabItemHelper.Icon" Value="{x:Null}">
+                <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="primitives:TabItemHelper.IsAddTabButtonVisible" Value="True" />
+                    <Condition Property="primitives:TabItemHelper.CloseButtonOverlayMode" Value="Auto" />
+                </MultiTrigger.Conditions>
+                <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="primitives:TabItemHelper.IsAddTabButtonVisible" Value="True" />
+                    <Condition Property="primitives:TabItemHelper.CloseButtonOverlayMode" Value="Always" />
+                </MultiTrigger.Conditions>
+                <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True" />
+                    <Condition Property="primitives:TabItemHelper.IsAddTabButtonVisible" Value="True" />
+                    <Condition Property="primitives:TabItemHelper.CloseButtonOverlayMode" Value="OnPointerOver" />
+                </MultiTrigger.Conditions>
+                <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsSelected" Value="True" />
+                    <Condition Property="primitives:TabItemHelper.IsAddTabButtonVisible" Value="True" />
+                    <Condition Property="primitives:TabItemHelper.CloseButtonOverlayMode" Value="OnPointerOver" />
+                </MultiTrigger.Conditions>
+                <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+            </MultiTrigger>
+            <DataTrigger Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Bottom">
+                <Setter TargetName="LeftRadiusRenderArc" Property="RenderTransform">
+                    <Setter.Value>
+                        <ScaleTransform ScaleY="-1" />
+                    </Setter.Value>
+                </Setter>
+                <Setter TargetName="RightRadiusRenderArc" Property="RenderTransform">
+                    <Setter.Value>
+                        <ScaleTransform ScaleY="-1" />
+                    </Setter.Value>
+                </Setter>
+                <Setter TargetName="SelectedBackgroundPath" Property="RenderTransform">
+                    <Setter.Value>
+                        <ScaleTransform ScaleY="-1" />
+                    </Setter.Value>
+                </Setter>
+                <Setter TargetName="BottomBorderLine" Property="VerticalAlignment" Value="Top" />
+                <Setter TargetName="TabContainer" Property="CornerRadius" Value="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
+            </DataTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="VerticalTabItemStyle" TargetType="TabItem">
+        <Border
+            x:Name="LayoutRoot"
+            Padding="{TemplateBinding Padding}"
+            primitives:PressHelper.IsEnabled="True"
+            SnapsToDevicePixels="True">
+            <Border
+                x:Name="TabContainer"
+                Grid.Column="1"
+                Padding="{DynamicResource TabViewItemHeaderPadding}"
+                primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
+                Background="{TemplateBinding Background}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition x:Name="IconColumn" Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Viewbox
+                        x:Name="IconBox"
+                        MaxWidth="{DynamicResource TabViewItemHeaderIconSize}"
+                        MaxHeight="{DynamicResource TabViewItemHeaderIconSize}"
+                        Margin="{DynamicResource TabViewItemHeaderIconMargin}">
+                        <ContentControl
+                            x:Name="IconControl"
+                            Content="{TemplateBinding primitives:TabItemHelper.Icon}"
+                            Foreground="{DynamicResource TabViewItemIconForeground}"
+                            IsTabStop="False" />
+                    </Viewbox>
+                    <local:ContentPresenterEx
+                        x:Name="ContentPresenter"
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        ContentSource="Header"
+                        Focusable="False"
+                        FontSize="{DynamicResource TabViewItemHeaderFontSize}"
+                        FontWeight="{TemplateBinding FontWeight}"
+                        Foreground="{DynamicResource TabViewItemHeaderForeground}"
+                        RecognizesAccessKey="True"
+                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    <Button
+                        x:Name="CloseButton"
+                        Grid.Column="2"
+                        Margin="{DynamicResource TabViewItemHeaderCloseMargin}"
+                        Command="{TemplateBinding primitives:TabItemHelper.CloseTabButtonCommand}"
+                        Content="&#xF36B;"
+                        IsTabStop="False"
+                        Style="{StaticResource TabViewCloseButtonStyle}"
+                        Visibility="Collapsed">
+                        <Button.InputBindings>
+                            <KeyBinding
+                                Key="F4"
+                                Command="{TemplateBinding primitives:TabItemHelper.CloseTabButtonCommand}"
+                                Modifiers="Ctrl" />
+                        </Button.InputBindings>
+                    </Button>
+                </Grid>
+            </Border>
+        </Border>
+
+        <ControlTemplate.Triggers>
+            <!-- PointerOver -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundPointerOver}" />
+                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
+                <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundPointerOver}" />
+                <Setter TargetName="CloseButton" Property="Background" Value="{DynamicResource TabViewItemHeaderPointerOverCloseButtonBackground}" />
+                <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderPointerOverCloseButtonForeground}" />
+            </Trigger>
+            <!-- Pressed -->
+            <Trigger SourceName="LayoutRoot" Property="primitives:PressHelper.IsPressed" Value="True">
+                <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundPressed}" />
+                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPressed}" />
+                <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundPressed}" />
+                <Setter TargetName="CloseButton" Property="Background" Value="{DynamicResource TabViewItemHeaderPressedCloseButtonBackground}" />
+                <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderPressedCloseButtonForeground}" />
+            </Trigger>
+            <!-- Selected -->
+            <Trigger Property="IsSelected" Value="True">
+                <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
+                <Setter TargetName="TabContainer" Property="Margin" Value="{DynamicResource TabViewSelectedItemHeaderMargin}" />
+                <Setter TargetName="TabContainer" Property="BorderBrush" Value="{DynamicResource TabViewSelectedItemBorderBrush}" />
+                <Setter TargetName="TabContainer" Property="BorderThickness" Value="{DynamicResource TabViewSelectedItemBorderThickness}" />
+                <Setter TargetName="TabContainer" Property="Padding" Value="{DynamicResource TabViewSelectedItemHeaderPadding}" />
+                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundSelected}" />
+                <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundSelected}" />
+                <Setter TargetName="CloseButton" Property="Background" Value="{DynamicResource TabViewItemHeaderSelectedCloseButtonBackground}" />
+                <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderSelectedCloseButtonForeground}" />
+                <Setter TargetName="LayoutRoot" Property="Background" Value="Transparent" />
+                <Setter TargetName="ContentPresenter" Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Panel.ZIndex" Value="1" />
+            </Trigger>
+            <!-- Disabled -->
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundDisabled}" />
+                <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
+                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
+                <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewButtonForegroundDisabled}" />
+                <Setter TargetName="CloseButton" Property="Background" Value="{DynamicResource TabViewItemHeaderDisabledCloseButtonBackground}" />
+                <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderSelectedCloseButtonForeground}" />
+                <Setter TargetName="CloseButton" Property="BorderBrush" Value="{DynamicResource TabViewItemHeaderCloseButtonBorderBrushDisabled}" />
+            </Trigger>
+            <!-- NoIcon -->
+            <Trigger Property="primitives:TabItemHelper.Icon" Value="{x:Null}">
+                <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="primitives:TabItemHelper.IsAddTabButtonVisible" Value="True" />
+                    <Condition Property="primitives:TabItemHelper.CloseButtonOverlayMode" Value="Auto" />
+                </MultiTrigger.Conditions>
+                <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="primitives:TabItemHelper.IsAddTabButtonVisible" Value="True" />
+                    <Condition Property="primitives:TabItemHelper.CloseButtonOverlayMode" Value="Always" />
+                </MultiTrigger.Conditions>
+                <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True" />
+                    <Condition Property="primitives:TabItemHelper.IsAddTabButtonVisible" Value="True" />
+                    <Condition Property="primitives:TabItemHelper.CloseButtonOverlayMode" Value="OnPointerOver" />
+                </MultiTrigger.Conditions>
+                <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsSelected" Value="True" />
+                    <Condition Property="primitives:TabItemHelper.IsAddTabButtonVisible" Value="True" />
+                    <Condition Property="primitives:TabItemHelper.CloseButtonOverlayMode" Value="OnPointerOver" />
+                </MultiTrigger.Conditions>
+                <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+            </MultiTrigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style x:Key="DefaultTabItemStyle" TargetType="TabItem">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="primitives:TabItemHelper.IsEnabled" Value="True" />
+        <Setter Property="MinWidth" Value="{DynamicResource TabViewItemMinWidth}" />
+        <Setter Property="MaxWidth" Value="{DynamicResource TabViewItemMaxWidth}" />
+        <Setter Property="MinHeight" Value="{DynamicResource TabViewItemMinHeight}" />
+        <Setter Property="Background" Value="{DynamicResource TabViewItemHeaderBackground}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource TabViewItemBorderThickness}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TabViewItemBorderBrush}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+        <Setter Property="Template" Value="{StaticResource HorizontalTabItemStyle}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Left">
+                <Setter Property="Template" Value="{StaticResource VerticalTabItemStyle}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Right">
+                <Setter Property="Template" Value="{StaticResource VerticalTabItemStyle}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultTabItemStyle}" TargetType="TabItem" />
+
+    <ControlTemplate x:Key="HorizontalTabControlStyle" TargetType="TabControl">
+        <Grid
+            x:Name="TemplateRoot"
+            ClipToBounds="true"
+            SnapsToDevicePixels="true">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="TopHeight" Height="Auto" />
+                <RowDefinition x:Name="BottomHeight" Height="*" />
+            </Grid.RowDefinitions>
+            <Grid
+                x:Name="TabContainerGrid"
+                Background="{TemplateBinding Background}"
+                KeyboardNavigation.TabNavigation="Local">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="LeftContentColumn" Width="Auto" MinWidth="2" />
+                    <ColumnDefinition x:Name="TabColumn" Width="*" />
+                    <ColumnDefinition x:Name="RightContentColumn" Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ContentPresenter
+                    x:Name="LeftContentPresenter"
+                    Grid.Column="0"
+                    Content="{TemplateBinding primitives:TabControlHelper.TabStripHeader}"
+                    ContentTemplate="{TemplateBinding primitives:TabControlHelper.TabStripHeaderTemplate}"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                <Border
+                    x:Name="LeftBottomBorderLine"
+                    Height="1"
+                    VerticalAlignment="Bottom"
+                    BorderBrush="{DynamicResource TabViewBorderBrush}"
+                    BorderThickness="1" />
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" MinWidth="2" />
+                        <ColumnDefinition x:Name="ScrollViewerWidth" Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition x:Name="AddButtonColumn" Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Border
+                        x:Name="InnerLeftBottomBorderLine"
+                        Height="1"
+                        VerticalAlignment="Bottom"
+                        BorderBrush="{DynamicResource TabViewBorderBrush}"
+                        BorderThickness="1" />
+                    <Border
+                        x:Name="ScrollDecreaseButtonContainer"
+                        Padding="{DynamicResource TabViewItemLeftScrollButtonContainerPadding}"
+                        VerticalAlignment="Bottom"
+                        Visibility="Collapsed">
+                        <RepeatButton
+                            x:Name="ScrollDecreaseButton"
+                            Command="{x:Static ScrollBar.LineLeftCommand}"
+                            CommandTarget="{Binding ElementName=ScrollViewer}"
+                            Content="&#xF264;"
+                            Delay="50"
+                            IsEnabled="False"
+                            Style="{StaticResource TabViewScrollButtonStyle}" />
+                    </Border>
+                    <primitives:PivotHeaderScrollViewer
+                        x:Name="ScrollViewer"
+                        Grid.Column="1"
+                        Padding="1,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalContentAlignment="Stretch"
+                        HorizontalScrollBarVisibility="Hidden"
+                        Style="{DynamicResource {x:Type ScrollViewer}}"
+                        Template="{DynamicResource ScrollViewerScrollBarlessTemplate}"
+                        VerticalScrollBarVisibility="Disabled">
+                        <Border Padding="{TemplateBinding Padding}">
+                            <StackPanel
+                                Panel.ZIndex="1"
+                                IsItemsHost="true"
+                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                KeyboardNavigation.TabIndex="1"
+                                KeyboardNavigation.TabNavigation="Once"
+                                Orientation="Horizontal" />
+                        </Border>
+                    </primitives:PivotHeaderScrollViewer>
+                    <Border
+                        x:Name="ScrollIncreaseButtonContainer"
+                        Grid.Column="2"
+                        Padding="{DynamicResource TabViewItemRightScrollButtonContainerPadding}"
+                        VerticalAlignment="Bottom"
+                        Visibility="Collapsed">
+                        <RepeatButton
+                            x:Name="ScrollIncreaseButton"
+                            Command="{x:Static ScrollBar.LineRightCommand}"
+                            CommandTarget="{Binding ElementName=ScrollViewer}"
+                            Content="&#xF268;"
+                            Delay="50"
+                            IsEnabled="False"
+                            Style="{StaticResource TabViewScrollButtonStyle}" />
+                    </Border>
+                    <Border
+                        x:Name="InnerRightBottomBorderLine"
+                        Grid.Column="2"
+                        Height="1"
+                        VerticalAlignment="Bottom"
+                        BorderBrush="{DynamicResource TabViewBorderBrush}"
+                        BorderThickness="1" />
+                    <Border
+                        Grid.Column="3"
+                        Padding="{DynamicResource TabViewItemAddButtonContainerPadding}"
+                        VerticalAlignment="Bottom"
+                        Visibility="{TemplateBinding primitives:TabControlHelper.IsAddTabButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Button
+                            x:Name="AddButton"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Command="{TemplateBinding primitives:TabControlHelper.AddTabButtonCommand}"
+                            CommandParameter="{TemplateBinding primitives:TabControlHelper.AddTabButtonCommandParameter}"
+                            Content="&#xF10A;"
+                            Style="{StaticResource TabViewButtonStyle}" />
+                    </Border>
+                </Grid>
+                <Border
+                    x:Name="RightBottomBorderLine"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    Height="1"
+                    VerticalAlignment="Bottom"
+                    BorderBrush="{DynamicResource TabViewBorderBrush}"
+                    BorderThickness="1" />
+                <ContentPresenter
+                    x:Name="RightContentPresenter"
+                    Grid.Column="2"
+                    HorizontalAlignment="Stretch"
+                    Content="{TemplateBinding primitives:TabControlHelper.TabStripFooter}"
+                    ContentTemplate="{TemplateBinding primitives:TabControlHelper.TabStripFooterTemplate}"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+            </Grid>
+            <Border
+                x:Name="ContentPanel"
+                Grid.Row="1"
+                Background="{TemplateBinding primitives:TabControlHelper.ContentBackground}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                KeyboardNavigation.DirectionalNavigation="Contained"
+                KeyboardNavigation.TabNavigation="Local">
+                <ContentPresenter
+                    x:Name="PART_SelectedContentHost"
+                    ContentSource="SelectedContent"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+            </Border>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger SourceName="ScrollViewer" Property="CanScrollHorizontally" Value="False">
+                <Setter TargetName="ScrollViewerWidth" Property="MaxWidth" Value="{Binding ActualWidth, ElementName=ScrollViewer}" />
+            </Trigger>
+            <Trigger SourceName="ScrollViewer" Property="CanScrollHorizontally" Value="True">
+                <Setter TargetName="ScrollDecreaseButtonContainer" Property="Visibility" Value="Visible" />
+                <Setter TargetName="ScrollIncreaseButtonContainer" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition SourceName="ScrollViewer" Property="CanScrollLeft" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter TargetName="ScrollDecreaseButton" Property="IsEnabled" Value="True" />
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition SourceName="ScrollViewer" Property="CanScrollRight" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter TargetName="ScrollIncreaseButton" Property="IsEnabled" Value="True" />
+            </MultiTrigger>
+            <Trigger Property="TabStripPlacement" Value="Bottom">
+                <Setter TargetName="TopHeight" Property="Height" Value="*" />
+                <Setter TargetName="BottomHeight" Property="Height" Value="Auto" />
+                <Setter TargetName="TabContainerGrid" Property="Grid.Row" Value="1" />
+                <Setter TargetName="ContentPanel" Property="Grid.Row" Value="0" />
+                <Setter TargetName="LeftBottomBorderLine" Property="VerticalAlignment" Value="Top" />
+                <Setter TargetName="RightBottomBorderLine" Property="VerticalAlignment" Value="Top" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="VerticalTabControlStyle" TargetType="TabControl">
+        <Grid
+            x:Name="TemplateRoot"
+            ClipToBounds="true"
+            SnapsToDevicePixels="true">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="LeftHeight" Width="Auto" />
+                <ColumnDefinition x:Name="RightHeight" Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid
+                x:Name="TabContainerGrid"
+                Background="{TemplateBinding Background}"
+                KeyboardNavigation.TabNavigation="Local">
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="TopRowDefinition" Height="Auto" MinHeight="2" />
+                    <RowDefinition x:Name="TabRow" Height="*" />
+                    <RowDefinition x:Name="BottomRowDefinition" Height="Auto" />
+                </Grid.RowDefinitions>
+                <ContentPresenter
+                    x:Name="TopContentPresenter"
+                    Grid.Row="0"
+                    Content="{TemplateBinding primitives:TabControlHelper.TabStripHeader}"
+                    ContentTemplate="{TemplateBinding primitives:TabControlHelper.TabStripHeaderTemplate}"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" MinHeight="2" />
+                        <RowDefinition x:Name="ScrollViewerHeight" Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition x:Name="AddButtonColumn" Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <primitives:PivotHeaderScrollViewer
+                        x:Name="ScrollViewer"
+                        Grid.Row="1"
+                        Padding="10,1"
+                        VerticalAlignment="Top"
+                        HorizontalContentAlignment="Stretch"
+                        HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Hidden">
+                        <Border Padding="{TemplateBinding Padding}">
+                            <StackPanel
+                                Panel.ZIndex="1"
+                                IsItemsHost="true"
+                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                KeyboardNavigation.TabIndex="1"
+                                KeyboardNavigation.TabNavigation="Once"
+                                Orientation="Vertical" />
+                        </Border>
+                    </primitives:PivotHeaderScrollViewer>
+                    <Border
+                        x:Name="TabSeparator"
+                        Grid.Row="2"
+                        Height="1"
+                        Margin="8,4"
+                        VerticalAlignment="Top"
+                        BorderBrush="{DynamicResource TabViewItemSeparator}"
+                        BorderThickness="1" />
+                    <Border
+                        Grid.Row="3"
+                        Padding="{DynamicResource TabViewItemAddButtonContainerPadding}"
+                        HorizontalAlignment="Center"
+                        Visibility="{TemplateBinding primitives:TabControlHelper.IsAddTabButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Button
+                            x:Name="AddButton"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Command="{TemplateBinding primitives:TabControlHelper.AddTabButtonCommand}"
+                            CommandParameter="{TemplateBinding primitives:TabControlHelper.AddTabButtonCommandParameter}"
+                            Content="&#xF10A;"
+                            Style="{StaticResource TabViewButtonStyle}" />
+                    </Border>
+                </Grid>
+                <ContentPresenter
+                    x:Name="BottomContentPresenter"
+                    Grid.Row="2"
+                    VerticalAlignment="Stretch"
+                    Content="{TemplateBinding primitives:TabControlHelper.TabStripFooter}"
+                    ContentTemplate="{TemplateBinding primitives:TabControlHelper.TabStripFooterTemplate}"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+            </Grid>
+            <Border
+                x:Name="ContentPanel"
+                Grid.Column="1"
+                Background="{TemplateBinding primitives:TabControlHelper.ContentBackground}"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                KeyboardNavigation.DirectionalNavigation="Contained"
+                KeyboardNavigation.TabNavigation="Local">
+                <ContentPresenter
+                    x:Name="PART_SelectedContentHost"
+                    ContentSource="SelectedContent"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+            </Border>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger SourceName="ScrollViewer" Property="CanScrollVertically" Value="False">
+                <Setter TargetName="ScrollViewerHeight" Property="MaxHeight" Value="{Binding ActualHeight, ElementName=ScrollViewer}" />
+            </Trigger>
+            <Trigger Property="TabStripPlacement" Value="Right">
+                <Setter TargetName="LeftHeight" Property="Width" Value="*" />
+                <Setter TargetName="RightHeight" Property="Width" Value="Auto" />
+                <Setter TargetName="TabContainerGrid" Property="Grid.Column" Value="1" />
+                <Setter TargetName="ContentPanel" Property="Grid.Column" Value="0" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style x:Key="DefaultTabControlStyle" TargetType="TabControl">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="primitives:TabControlHelper.IsEnabled" Value="True" />
+        <Setter Property="Background" Value="{DynamicResource TabViewBackground}" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="primitives:TabControlHelper.ContentBackground" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
+        <Setter Property="Template" Value="{StaticResource HorizontalTabControlStyle}" />
+        <Style.Triggers>
+            <Trigger Property="TabStripPlacement" Value="Left">
+                <Setter Property="Template" Value="{StaticResource VerticalTabControlStyle}" />
+            </Trigger>
+            <Trigger Property="TabStripPlacement" Value="Right">
+                <Setter Property="Template" Value="{StaticResource VerticalTabControlStyle}" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style BasedOn="{StaticResource DefaultTabControlStyle}" TargetType="TabControl" />

@@ -12,40 +12,27 @@
     Height="450"
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseModernWindowStyle="True"
+    Loaded="Window_Loaded"
     mc:Ignorable="d">
     <StackPanel
         Margin="4"
-        HorizontalAlignment="Left"
-        VerticalAlignment="Top">
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
         <CheckBox
             x:Name="IsEnable"
             Content="IsEnable"
             IsChecked="True" />
         <TabControl
+            x:Name="TabControl"
             ui:ControlHelper.Description="Test"
             ui:ControlHelper.Header="Test"
             ui:ControlHelper.PlaceholderText="Test"
             ui:PivotHelper.Title="Test"
-            IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}"
-            Style="{DynamicResource TabControlPivotStyle}">
-            <TabItem
-                Content="Test"
-                Header="Test" />
-            <TabItem
-                Content="Test"
-                Header="Test" />
-            <TabItem
-                Content="Test"
-                Header="Test" />
-            <TabItem
-                Content="Test"
-                Header="Test" />
-            <TabItem
-                Content="Test"
-                Header="Test" />
-            <TabItem
-                Content="Test"
-                Header="Test" />
+            ui:TabControlHelper.CloseButtonOverlayMode="OnPointerOver"
+            IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}">
+            <TabItem Header="Test">
+                <Button Content="Test" />
+            </TabItem>
             <TabItem
                 Content="Test"
                 Header="Test" />

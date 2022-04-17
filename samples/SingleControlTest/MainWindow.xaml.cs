@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModernWpf.Controls.Primitives;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +28,12 @@ namespace SingleControlTest
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            TabControlHelper.GetTabControlHelperEvents(TabControl).AddTabButtonClick += OnAddTabButtonClick;
+        }
 
+        private void OnAddTabButtonClick(TabControl sender, object args)
+        {
+            TabControl.Items.Add(new TabItem { Header = $"Test {TabControl.Items.Count + 1}", Content = "Test" });
         }
     }
 }

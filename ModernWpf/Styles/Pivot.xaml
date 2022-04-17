@@ -290,8 +290,8 @@
                                 </ControlTemplate>
                             </Grid.Resources>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition x:Name="TopHeight" Height="Auto" />
+                                <RowDefinition x:Name="BottomHeight" Height="*" />
                             </Grid.RowDefinitions>
                             <Grid
                                 x:Name="HeaderPanel"
@@ -409,6 +409,12 @@
                             <Setter TargetName="NextButton" Property="Opacity" Value="1" />
                             <Setter TargetName="NextButton" Property="IsEnabled" Value="True" />
                         </MultiTrigger>
+                        <Trigger Property="TabStripPlacement" Value="Bottom">
+                            <Setter TargetName="TopHeight" Property="Height" Value="*" />
+                            <Setter TargetName="BottomHeight" Property="Height" Value="Auto" />
+                            <Setter TargetName="HeaderPanel" Property="Grid.Row" Value="1" />
+                            <Setter TargetName="ContentPanel" Property="Grid.Row" Value="0" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
