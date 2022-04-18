@@ -1197,51 +1197,121 @@
     <m:StaticResource x:Key="LoopingSelectorItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
 
     <!-- Resources for MenuBar -->
-    <m:StaticResource x:Key="MenuBarBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="MenuBarItemBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="MenuBarItemBackgroundPointerOver" ResourceKey="SystemControlBackgroundListLowBrush" />
-    <m:StaticResource x:Key="MenuBarItemBackgroundPressed" ResourceKey="SystemControlBackgroundListMediumBrush" />
-    <m:StaticResource x:Key="MenuBarItemBackgroundSelected" ResourceKey="SystemControlBackgroundListMediumBrush" />
+    <m:StaticResource x:Key="MenuBarBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+
+    <m:StaticResource x:Key="MenuBarItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="MenuBarItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="MenuBarItemBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="MenuBarItemBackgroundSelected" ResourceKey="SubtleFillColorTertiaryBrush" />
+
     <Thickness x:Key="MenuBarItemBorderThickness">0</Thickness>
-    <m:StaticResource x:Key="MenuBarItemBorderBrush" ResourceKey="SystemControlForegroundBaseMediumLowBrush" />
-    <m:StaticResource x:Key="MenuBarItemBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumBrush" />
-    <m:StaticResource x:Key="MenuBarItemBorderBrushPressed" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
-    <m:StaticResource x:Key="MenuBarItemBorderBrushSelected" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
+
+    <m:StaticResource x:Key="MenuBarItemBorderBrush" ResourceKey="ControlAltFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="MenuBarItemBorderBrushPointerOver" ResourceKey="ControlStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="MenuBarItemBorderBrushPressed" ResourceKey="ControlStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="MenuBarItemBorderBrushSelected" ResourceKey="ControlStrokeColorDefaultBrush" />
 
     <!-- Resources for MenuFlyout -->
+    <m:StaticResource x:Key="MenuFlyoutSeparatorBackground" ResourceKey="DividerStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemBackgroundDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemBackgroundBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemForegroundPressed" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+
+    <m:StaticResource x:Key="MenuFlyoutSubItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundSubMenuOpened" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemForegroundPressed" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemForegroundSubMenuOpened" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemChevron" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemChevronPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemChevronPressed" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemChevronSubMenuOpened" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemChevronDisabled" ResourceKey="TextFillColorDisabledBrush" />
+
+    <m:StaticResource x:Key="MenuFlyoutItemKeyboardAcceleratorTextForeground" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+
+    <m:StaticResource x:Key="MenuFlyoutPresenterBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="MenuFlyoutPresenterBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
+    <m:StaticResource x:Key="ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <Thickness x:Key="MenuFlyoutPresenterBorderThemeThickness">1</Thickness>
+
+    <TextTrimming x:Key="MenuFlyoutItemTextTrimming">WordEllipsis</TextTrimming>
+    <Thickness x:Key="MenuFlyoutItemBorderThickness">0</Thickness>
+    <Thickness x:Key="MenuFlyoutSubItemBorderThickness">0</Thickness>
+
+    <Thickness x:Key="MenuFlyoutItemPlaceholderThemeThickness">28,0,0,0</Thickness>
+    <Thickness x:Key="MenuFlyoutItemDoublePlaceholderThemeThickness">56,0,0,0</Thickness>
+
+    <!-- Legacy resources -->
+    <Thickness x:Key="MenuFlyoutItemRevealBorderThickness">1</Thickness>
+    <Thickness x:Key="ToggleMenuFlyoutItemRevealBorderThickness">1</Thickness>
+    <Thickness x:Key="MenuFlyoutSubItemRevealBorderThickness">1</Thickness>
+    <!-- Legacy brushes -->
+    <SolidColorBrush x:Key="MenuFlyoutItemFocusedBackgroundThemeBrush" Color="#FFE5E5E5" />
+    <SolidColorBrush x:Key="MenuFlyoutItemFocusedForegroundThemeBrush" Color="#FF000000" />
+    <SolidColorBrush x:Key="MenuFlyoutItemDisabledForegroundThemeBrush" Color="#66000000" />
+    <SolidColorBrush x:Key="MenuFlyoutItemPointerOverBackgroundThemeBrush" Color="#FFE5E5E5" />
+    <SolidColorBrush x:Key="MenuFlyoutItemPointerOverForegroundThemeBrush" Color="#FF000000" />
+    <SolidColorBrush x:Key="MenuFlyoutItemPressedBackgroundThemeBrush" Color="#FF000000" />
+    <SolidColorBrush x:Key="MenuFlyoutItemPressedForegroundThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="MenuFlyoutSeparatorThemeBrush" Color="#FF7A7A7A" />
+    <m:StaticResource x:Key="MenuFlyoutLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
+    <!-- Legacy reveal resources  for Windows.UI.Xaml.Controls.MenuFlyoutItem -->
+    <m:StaticResource x:Key="MenuFlyoutItemRevealBackground" ResourceKey="SystemControlTransparentRevealBackgroundBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemRevealBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowRevealBackgroundBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemRevealBackgroundPressed" ResourceKey="SystemControlHighlightListMediumRevealBackgroundBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemRevealBackgroundDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemRevealBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemRevealBorderBrushPressed" ResourceKey="SystemControlTransparentRevealBorderBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemRevealBorderBrushPointerOver" ResourceKey="SystemControlTransparentRevealBorderBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemRevealBorderBrushDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <!-- Legacy reveal resources for Windows.UI.Xaml.Controls.ToggleMenuFlyoutItem -->
+    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBackground" ResourceKey="SystemControlTransparentRevealBackgroundBrush" />
+    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowRevealBackgroundBrush" />
+    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBackgroundPressed" ResourceKey="SystemControlHighlightListMediumRevealBackgroundBrush" />
+    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBackgroundDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBorderBrushPressed" ResourceKey="SystemControlTransparentRevealBorderBrush" />
+    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBorderBrushPointerOver" ResourceKey="SystemControlTransparentRevealBorderBrush" />
+    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBorderBrushDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <!-- Legacy reveal resources for Windows.UI.Xaml.Controls.MenuFlyoutSubItem -->
+    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBackground" ResourceKey="SystemControlTransparentRevealBackgroundBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowRevealBackgroundBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBackgroundPressed" ResourceKey="SystemControlHighlightAccentRevealBackgroundBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBackgroundSubMenuOpened" ResourceKey="SystemControlHighlightListLowRevealBackgroundBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBackgroundDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushPressed" ResourceKey="SystemControlTransparentRevealBorderBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushPointerOver" ResourceKey="SystemControlTransparentRevealBorderBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushSubMenuOpened" ResourceKey="SystemControlTransparentRevealBorderBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+
     <sys:Double x:Key="MenuFlyoutSeparatorThemeHeight">1</sys:Double>
     <sys:Double x:Key="MenuFlyoutThemeMinHeight">32</sys:Double>
-    <Thickness x:Key="MenuFlyoutPresenterBorderThemeThickness">1</Thickness>
     <Thickness x:Key="MenuFlyoutPresenterThemePadding">0,0</Thickness>
     <Thickness x:Key="MenuFlyoutItemChevronMargin">24,0,0,0</Thickness>
     <Thickness x:Key="MenuFlyoutItemThemePadding">11,9,11,10</Thickness>
     <Thickness x:Key="MenuFlyoutItemThemePaddingNarrow">11,4,11,7</Thickness>
-    <Thickness x:Key="MenuFlyoutItemPlaceholderThemeThickness">28,0,0,0</Thickness>
-    <Thickness x:Key="MenuFlyoutItemDoublePlaceholderThemeThickness">56,0,0,0</Thickness>
     <Thickness x:Key="MenuFlyoutSeparatorThemePadding">12,4,12,4</Thickness>
-    <m:StaticResource x:Key="MenuFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
-    <m:StaticResource x:Key="MenuFlyoutPresenterBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
-    <!-- Resources for Windows.UI.Xaml.Controls.MenuFlyoutItem -->
-    <m:StaticResource x:Key="MenuFlyoutItemBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemKeyboardAcceleratorTextForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemRevealBackground" ResourceKey="SystemControlTransparentRevealBackgroundBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemRevealBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowRevealBackgroundBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemRevealBackgroundPressed" ResourceKey="SystemControlHighlightListMediumRevealBackgroundBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemRevealBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemRevealBorderBrush" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemRevealBorderBrushPressed" ResourceKey="SystemControlTransparentRevealBorderBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemRevealBorderBrushPointerOver" ResourceKey="SystemControlTransparentRevealBorderBrush" />
-    <m:StaticResource x:Key="MenuFlyoutItemRevealBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
+
     <!-- Resources for Windows.UI.Xaml.Controls.ToggleMenuFlyoutItem -->
     <m:StaticResource x:Key="ToggleMenuFlyoutItemBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="ToggleMenuFlyoutItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
@@ -1251,48 +1321,10 @@
     <m:StaticResource x:Key="ToggleMenuFlyoutItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="ToggleMenuFlyoutItemForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="ToggleMenuFlyoutItemForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
-    <m:StaticResource x:Key="ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
-    <m:StaticResource x:Key="ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
     <m:StaticResource x:Key="ToggleMenuFlyoutItemCheckGlyphForeground" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
     <m:StaticResource x:Key="ToggleMenuFlyoutItemCheckGlyphForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="ToggleMenuFlyoutItemCheckGlyphForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="ToggleMenuFlyoutItemCheckGlyphForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBackground" ResourceKey="SystemControlTransparentRevealBackgroundBrush" />
-    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowRevealBackgroundBrush" />
-    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBackgroundPressed" ResourceKey="SystemControlHighlightListMediumRevealBackgroundBrush" />
-    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBorderBrush" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBorderBrushPressed" ResourceKey="SystemControlTransparentRevealBorderBrush" />
-    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBorderBrushPointerOver" ResourceKey="SystemControlTransparentRevealBorderBrush" />
-    <m:StaticResource x:Key="ToggleMenuFlyoutItemRevealBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <!-- Resources for Windows.UI.Xaml.Controls.MenuFlyoutSubItem -->
-    <m:StaticResource x:Key="MenuFlyoutSubItemBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundPressed" ResourceKey="SystemControlHighlightListAccentHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundSubMenuOpened" ResourceKey="SystemControlHighlightListLowBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemForegroundSubMenuOpened" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemChevron" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemChevronPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemChevronPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemChevronSubMenuOpened" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemChevronDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBackground" ResourceKey="SystemControlTransparentRevealBackgroundBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowRevealBackgroundBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBackgroundPressed" ResourceKey="SystemControlHighlightAccentRevealBackgroundBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBackgroundSubMenuOpened" ResourceKey="SystemControlHighlightListLowBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrush" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushPressed" ResourceKey="SystemControlTransparentRevealBorderBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushPointerOver" ResourceKey="SystemControlTransparentRevealBorderBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushSubMenuOpened" ResourceKey="SystemControlTransparentRevealBorderBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
 
     <!-- Resources for NavigationView -->
     <m:StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />

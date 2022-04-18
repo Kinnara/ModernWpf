@@ -22,29 +22,26 @@
             x:Name="IsEnable"
             Content="IsEnable"
             IsChecked="True" />
-        <TabControl
+        <Menu
             x:Name="TabControl"
             ui:ControlHelper.Description="Test"
             ui:ControlHelper.Header="Test"
             ui:ControlHelper.PlaceholderText="Test"
-            ui:PivotHelper.Title="Test"
-            ui:TabControlHelper.CloseButtonOverlayMode="OnPointerOver"
             IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}">
-            <TabItem Header="Test">
-                <Button Content="Test" />
-            </TabItem>
-            <TabItem
-                Content="Test"
-                Header="Test" />
-            <TabItem
-                Content="Test"
-                Header="Test" />
-            <TabItem
-                Content="Test"
-                Header="Test" />
-            <TabItem
-                Content="Test"
-                Header="Test" />
-        </TabControl>
+            <MenuItem Header="Test">
+                <MenuItem Header="Test">
+                    <MenuItem Header="Test" />
+                </MenuItem>
+                <MenuItem Header="Test" InputGestureText="T"/>
+                <MenuItem Header="Test" IsCheckable="True" />
+            </MenuItem>
+            <MenuItem Header="Test">
+                <MenuItem Header="Test" />
+            </MenuItem>
+            <MenuItem Header="Test" />
+            <MenuItem Header="Test" />
+            <MenuItem Header="Test" />
+            <MenuItem Header="Test" />
+        </Menu>
     </StackPanel>
 </Window>

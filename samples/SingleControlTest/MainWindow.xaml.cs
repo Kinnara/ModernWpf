@@ -25,15 +25,5 @@ namespace SingleControlTest
         {
             InitializeComponent();
         }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            TabControlHelper.GetTabControlHelperEvents(TabControl).AddTabButtonClick += OnAddTabButtonClick;
-        }
-
-        private void OnAddTabButtonClick(TabControl sender, object args)
-        {
-            TabControl.Items.Add(new TabItem { Header = $"Test {TabControl.Items.Count + 1}", Content = "Test" });
-        }
     }
 }

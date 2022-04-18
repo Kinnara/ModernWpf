@@ -35,27 +35,23 @@
                         IsShadowEnabled="{TemplateBinding HasDropShadow}"
                         SnapsToDevicePixels="True">
                         <Border
+                            MinHeight="{DynamicResource MenuFlyoutThemeMinHeight}"
                             Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
-                            <Grid>
-                                <ScrollViewer
-                                    x:Name="ContextMenuScrollViewer"
-                                    MinWidth="{DynamicResource FlyoutThemeMinWidth}"
-                                    Margin="{TemplateBinding Padding}"
-                                    Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
-                                                                                  TypeInTargetAssembly={x:Type FrameworkElement}}}">
-                                    <ItemsPresenter
-                                        Margin="{StaticResource MenuFlyoutScrollerMargin}"
-                                        KeyboardNavigation.DirectionalNavigation="Cycle"
-                                        RenderOptions.ClearTypeHint="Enabled"
-                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                </ScrollViewer>
-                                <Border
-                                    x:Name="ContextMenuBorder"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
-                            </Grid>
+                            <ScrollViewer
+                                x:Name="ContextMenuScrollViewer"
+                                MinWidth="{DynamicResource FlyoutThemeMinWidth}"
+                                Margin="{TemplateBinding Padding}"
+                                Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
+                                                                              TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                                <ItemsPresenter
+                                    Margin="{StaticResource MenuFlyoutScrollerMargin}"
+                                    KeyboardNavigation.DirectionalNavigation="Cycle"
+                                    RenderOptions.ClearTypeHint="Enabled"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </ScrollViewer>
                         </Border>
                     </primitives:ThemeShadowChrome>
                 </ControlTemplate>
