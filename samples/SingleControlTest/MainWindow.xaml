@@ -12,7 +12,6 @@
     Height="450"
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseModernWindowStyle="True"
-    Loaded="Window_Loaded"
     mc:Ignorable="d">
     <StackPanel
         Margin="4"
@@ -22,26 +21,19 @@
             x:Name="IsEnable"
             Content="IsEnable"
             IsChecked="True" />
-        <Menu
+        <ListView
             x:Name="TabControl"
             ui:ControlHelper.Description="Test"
             ui:ControlHelper.Header="Test"
             ui:ControlHelper.PlaceholderText="Test"
+            ui:ListViewHelper.Header="TestHeader"
             IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}">
-            <MenuItem Header="Test">
-                <MenuItem Header="Test">
-                    <MenuItem Header="Test" />
-                </MenuItem>
-                <MenuItem Header="Test" InputGestureText="T"/>
-                <MenuItem Header="Test" IsCheckable="True" />
-            </MenuItem>
-            <MenuItem Header="Test">
-                <MenuItem Header="Test" />
-            </MenuItem>
-            <MenuItem Header="Test" />
-            <MenuItem Header="Test" />
-            <MenuItem Header="Test" />
-            <MenuItem Header="Test" />
-        </Menu>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+        </ListView>
     </StackPanel>
 </Window>

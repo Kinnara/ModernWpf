@@ -222,9 +222,29 @@
                             IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                             KeyboardNavigation.TabNavigation="{TemplateBinding KeyboardNavigation.TabNavigation}"
                             VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
-                            <ItemsPresenter
-                                Margin="{TemplateBinding Padding}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ContentPresenter
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Content="{TemplateBinding ui:ListViewHelper.Header}"
+                                    ContentTemplate="{TemplateBinding ui:ListViewHelper.HeaderTemplate}" />
+                                <ItemsPresenter
+                                    Grid.Row="1"
+                                    Margin="{TemplateBinding Padding}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                <ContentPresenter
+                                    Grid.Row="2"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Content="{TemplateBinding ui:ListViewHelper.Footer}"
+                                    ContentTemplate="{TemplateBinding ui:ListViewHelper.FooterTemplate}" />
+                            </Grid>
                         </ui:ScrollViewerEx>
                     </Border>
                     <ControlTemplate.Triggers>

@@ -24,7 +24,7 @@
                             <Thickness x:Key="SearchBoxBorderThickness">0</Thickness>
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Red" />
                             <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FFF1F1F1" />
-                            <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="Black" />
+                            <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="Black"/>
                             <Thickness x:Key="ControlExampleDisplayBorderThickness">0</Thickness>
                             <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="Transparent" />
                             <SolidColorBrush x:Key="HomePageBackgroundBrush" Color="Transparent" />
@@ -147,8 +147,8 @@
 
             <LinearGradientBrush x:Key="HeroImageGradientBrush" StartPoint="0.5,0" EndPoint="0.5,1.5">
                 <GradientStop Offset="0" Color="Transparent" />
-                <GradientStop Offset="0.5" Color="{DynamicResource LayerFillColorDefaultBrush}" />
-                <GradientStop Offset="1" Color="{DynamicResource LayerFillColorDefaultBrush}" />
+                <GradientStop Offset="0.5" Color="{DynamicResource LayerFillColorDefault}" />
+                <GradientStop Offset="1" Color="{DynamicResource LayerFillColorDefault}" />
             </LinearGradientBrush>
 
             <!-- Application-specific resources -->

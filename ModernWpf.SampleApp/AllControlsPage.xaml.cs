@@ -30,7 +30,7 @@ namespace ModernWpf.SampleApp
         {
             var menuItem = NavigationRootPage.Current.NavigationView.MenuItems.Cast<NavigationViewItem>().ElementAt(1);
             menuItem.IsSelected = true;
-            NavigationRootPage.Current.NavigationView.Header = pageHeader.Title;
+            NavigationRootPage.Current.NavigationView.Header = string.Empty;
 
             Items = ControlInfoDataSource.Instance.Groups.SelectMany(g => g.Items).OrderBy(i => i.Title).ToList();
             DataContext = Items;

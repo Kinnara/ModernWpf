@@ -24,6 +24,7 @@
                         x:Name="LayoutRoot"
                         primitives:PressHelper.IsEnabled="True"
                         Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         SnapsToDevicePixels="True">
                         <Grid>
@@ -135,7 +136,28 @@
                             Focusable="False"
                             HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                             VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
-                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ContentPresenter
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Content="{TemplateBinding primitives:ListViewHelper.Header}"
+                                    ContentTemplate="{TemplateBinding primitives:ListViewHelper.HeaderTemplate}" />
+                                <ItemsPresenter
+                                    Grid.Row="1"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                <ContentPresenter
+                                    Grid.Row="2"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Content="{TemplateBinding primitives:ListViewHelper.Footer}"
+                                    ContentTemplate="{TemplateBinding primitives:ListViewHelper.FooterTemplate}" />
+                            </Grid>
                         </ScrollViewer>
                     </Border>
                     <ControlTemplate.Triggers>

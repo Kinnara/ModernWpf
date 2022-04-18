@@ -293,7 +293,7 @@ namespace ModernWpf.SampleApp
             if (rootFrame.SourcePageType == typeof(AllControlsPage) ||
                 rootFrame.SourcePageType == typeof(NewControlsPage))
             {
-                //NavigationViewControl.AlwaysShowHeader = false;
+                NavigationViewControl.AlwaysShowHeader = false;
             }
             else
             {

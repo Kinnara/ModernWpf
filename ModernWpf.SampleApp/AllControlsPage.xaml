@@ -29,18 +29,33 @@
             KeyDown="OnItemGridViewKeyDown"
             Loaded="OnItemGridViewLoaded"
             SizeChanged="OnItemGridViewSizeChanged"
-            IsSelectionEnabled="False" />
-
-        <local:PageHeader
-            x:Name="pageHeader"
-            Title="{StaticResource ControlsName}"
-            VerticalAlignment="Top"
-            Foreground="{DynamicResource PageHeaderForegroundBrush}"
-            Background="{DynamicResource HomePageBackgroundBrush}"
-            FontSize="28"
-            Visibility="Collapsed"
-            Padding="{DynamicResource NavigationViewHeaderMargin}"
-            IsHitTestVisible="False"
-            ShadowOpacity="0" />
+            IsSelectionEnabled="False" >
+            <ui:ListViewHelper.Header>
+                <Grid
+                    Height="230"
+                    Margin="-40,0,0,-60">
+                    <Image
+                        x:Name="headerImage"
+                        Height="250"
+                        HorizontalAlignment="Stretch"
+                        Source="/Assets/MainPage_Banner.png"
+                        Stretch="UniformToFill" />
+                    <Rectangle
+                        Height="60"
+                        VerticalAlignment="Bottom"
+                        Fill="{DynamicResource HeroImageGradientBrush}" />
+                    <local:PageHeader
+                        x:Name="pageHeader"
+                        Title="{StaticResource ControlsName}"
+                        Padding="{DynamicResource NavigationViewHeaderMargin}"
+                        VerticalAlignment="Top"
+                        Background="{DynamicResource HomePageBackgroundBrush}"
+                        FontSize="28"
+                        Foreground="{DynamicResource PageHeaderForegroundBrush}"
+                        IsHitTestVisible="False"
+                        ShadowOpacity="0" />
+                </Grid>
+            </ui:ListViewHelper.Header>
+        </ui:GridView>
     </Grid>
 </local:ItemsPageBase>
