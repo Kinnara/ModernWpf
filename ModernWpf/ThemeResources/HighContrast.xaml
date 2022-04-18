@@ -1087,6 +1087,11 @@
     <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemControlPageBackgroundChromeMediumLowBrush" />
     <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemControlTransientBorderBrush" />
 
+    <!-- Resources for Hyperlink -->
+    <SolidColorBrush x:Key="HyperlinkForeground" Color="{m:ThemeResource SystemColorHotlightColor}"/>
+    <SolidColorBrush x:Key="HyperlinkForegroundPointerOver" Color="{m:ThemeResource SystemColorWindowTextColor}"/>
+    <SolidColorBrush x:Key="HyperlinkForegroundPressed" Color="{m:ThemeResource SystemColorHighlightColor}"/>
+
     <!-- Resources for HyperlinkButton -->
     <Thickness x:Key="HyperlinkButtonBorderThemeThickness">0</Thickness>
     <m:StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="SystemControlHyperlinkTextBrush" />
@@ -1104,6 +1109,33 @@
 
     <!-- Resources for ListBox -->
     <Thickness x:Key="ListBoxBorderThemeThickness">2</Thickness>
+    <m:StaticResource x:Key="ListBoxForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="ListBoxBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
+    <m:StaticResource x:Key="ListBoxBorder" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <SolidColorBrush x:Key="ListBoxBackgroundThemeBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="ListBoxBorderThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ListBoxDisabledForegroundThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ListBoxFocusBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ListBoxForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+
+    <!-- Resources for ListBoxItem -->
+    <m:StaticResource x:Key="ListBoxItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="ListBoxItemForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="ListBoxItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+    <m:StaticResource x:Key="ListBoxItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+    <m:StaticResource x:Key="ListBoxItemBackgroundSelected" ResourceKey="SystemControlHighlightListAccentMediumLowBrush" />
+    <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPointerOver" ResourceKey="SystemControlHighlightListAccentLowBrush" />
+    <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPressed" ResourceKey="SystemControlHighlightListAccentVeryHighBrush" />
+    <SolidColorBrush x:Key="ListBoxItemDisabledForegroundThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ListBoxItemPointerOverBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ListBoxItemPointerOverForegroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="ListBoxItemPressedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ListBoxItemPressedForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedDisabledBackgroundThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedDisabledForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedForegroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedPointerOverBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
 
     <!-- Resources for ListViewHeaderItem -->
     <sys:Double x:Key="ListViewHeaderItemMinHeight">44</sys:Double>

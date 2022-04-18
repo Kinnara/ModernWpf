@@ -1128,6 +1128,11 @@
     <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
     <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemControlForegroundChromeHighBrush" />
 
+    <!-- Resources for Hyperlink -->
+    <m:StaticResource x:Key="HyperlinkForeground" ResourceKey="AccentTextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="HyperlinkForegroundPointerOver" ResourceKey="AccentTextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="HyperlinkForegroundPressed" ResourceKey="AccentTextFillColorTertiaryBrush" />
+
     <!-- Resources for HyperlinkButton -->
     <Thickness x:Key="HyperlinkButtonBorderThemeThickness">0</Thickness>
     <m:StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="SystemControlHyperlinkTextBrush" />
@@ -1145,6 +1150,33 @@
 
     <!-- Resources for ListBox -->
     <Thickness x:Key="ListBoxBorderThemeThickness">0</Thickness>
+    <m:StaticResource x:Key="ListBoxForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ListBoxBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
+    <m:StaticResource x:Key="ListBoxBorder" ResourceKey="TextFillColorPrimaryBrush" />
+    <SolidColorBrush x:Key="ListBoxBackgroundThemeBrush" Color="#CCFFFFFF" />
+    <SolidColorBrush x:Key="ListBoxBorderThemeBrush" Color="#45000000" />
+    <SolidColorBrush x:Key="ListBoxDisabledForegroundThemeBrush" Color="#66000000" />
+    <SolidColorBrush x:Key="ListBoxFocusBackgroundThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ListBoxForegroundThemeBrush" Color="#FF000000" />
+
+    <!-- Resources for ListBoxItem -->
+    <m:StaticResource x:Key="ListBoxItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ListBoxItemForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="ListBoxItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ListBoxItemBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ListBoxItemBackgroundSelected" ResourceKey="SystemControlHighlightListAccentLowBrush"/>
+    <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPointerOver" ResourceKey="SystemControlHighlightListAccentMediumBrush" />
+    <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPressed" ResourceKey="SystemControlHighlightListAccentHighBrush" />
+    <SolidColorBrush x:Key="ListBoxItemDisabledForegroundThemeBrush" Color="#66000000" />
+    <SolidColorBrush x:Key="ListBoxItemPointerOverBackgroundThemeBrush" Color="#21000000" />
+    <SolidColorBrush x:Key="ListBoxItemPointerOverForegroundThemeBrush" Color="#FF000000" />
+    <SolidColorBrush x:Key="ListBoxItemPressedBackgroundThemeBrush" Color="#FFD3D3D3" />
+    <SolidColorBrush x:Key="ListBoxItemPressedForegroundThemeBrush" Color="#FF000000" />
+    <m:StaticResource x:Key="ListBoxItemSelectedBackgroundThemeBrush" ResourceKey="SystemControlHighlightListAccentLowBrush" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedDisabledBackgroundThemeBrush" Color="#8C000000" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedDisabledForegroundThemeBrush" Color="#99FFFFFF" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedForegroundThemeBrush" Color="White" />
+    <SolidColorBrush x:Key="ListBoxItemSelectedPointerOverBackgroundThemeBrush" Color="#FF5F37BE" />
 
     <!-- Resources for ListViewHeaderItem -->
     <sys:Double x:Key="ListViewHeaderItemMinHeight">44</sys:Double>
