@@ -24,7 +24,7 @@
                             <Thickness x:Key="SearchBoxBorderThickness">0</Thickness>
                             <SolidColorBrush x:Key="CustomThemeBrush" Color="Red" />
                             <SolidColorBrush x:Key="AppBackgroundBrush" Color="#FFF1F1F1" />
-                            <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="Black"/>
+                            <SolidColorBrush x:Key="PageHeaderForegroundBrush" Color="Black" />
                             <Thickness x:Key="ControlExampleDisplayBorderThickness">0</Thickness>
                             <SolidColorBrush x:Key="SearchBoxBorderBrush" Color="Transparent" />
                             <SolidColorBrush x:Key="HomePageBackgroundBrush" Color="Transparent" />

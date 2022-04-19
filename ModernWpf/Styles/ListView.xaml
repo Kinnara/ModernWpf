@@ -47,7 +47,7 @@
                         <Grid>
                             <Rectangle
                                 x:Name="PressedBackground"
-                                Width="3"
+                                Width="3.5"
                                 Margin="0,8"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Stretch"
@@ -127,6 +127,8 @@
                         <!-- Selected -->
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="PressedBackground" Property="Opacity" Value="1" />
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource ListViewItemBackgroundSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelected}" />
                         </Trigger>
                         <!-- SelectedPointerOver -->
                         <MultiTrigger>
@@ -409,10 +411,10 @@
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Background" Value="{DynamicResource ListViewItemBackground}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutSeparatorBackground}" />
         <Setter Property="BorderThickness" Value="0,0,1,1" />
         <Setter Property="Padding" Value="12,0,12,0" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="GridViewColumnHeader">
@@ -494,40 +496,125 @@
     </Style>
 
     <Style x:Key="{x:Static GridView.GridViewItemContainerStyleKey}" BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
-        <Setter Property="Padding" Value="6,0,6,0" />
-        <Setter Property="MinHeight" Value="{DynamicResource GridViewItemContainerMinHeight}" />
+        <Setter Property="Padding" Value="6,0" />
+        <Setter Property="Background" Value="{DynamicResource GridViewItemBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource GridViewItemForeground}" />
+        <Setter Property="MinWidth" Value="{DynamicResource GridViewItemMinWidth}" />
+        <Setter Property="MinHeight" Value="{DynamicResource GridViewItemMinHeight}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListViewItem">
                     <Border
-                        x:Name="Bd"
-                        Padding="{TemplateBinding Padding}"
+                        x:Name="LayoutRoot"
+                        Margin="0,4"
+                        primitives:PressHelper.IsEnabled="True"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="true">
-                        <!-- remove the HorizontalAlignment due to HeaderRowPresenter does not have the ability to align to center or right -->
-                        <GridViewRowPresenter
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Grid>
+                            <Rectangle
+                                x:Name="PressedBackground"
+                                Width="3.5"
+                                Margin="0,10"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Stretch"
+                                Fill="{DynamicResource GridViewItemSelectedBorderBrush}"
+                                Opacity="0"
+                                RadiusX="{Binding Source={StaticResource ListViewItemSelectionIndicatorCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                RadiusY="{Binding Source={StaticResource ListViewItemSelectionIndicatorCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+                                RenderTransformOrigin="0.5,0.5">
+                                <Rectangle.RenderTransform>
+                                    <ScaleTransform x:Name="PillTransform" ScaleY="1" />
+                                </Rectangle.RenderTransform>
+                            </Rectangle>
+                            <GridViewRowPresenter
+                                x:Name="ContentPresenter"
+                                Margin="{TemplateBinding Padding}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
+                                            <SplineDoubleKeyFrame KeySpline="1,0,0,0" KeyTime="{StaticResource ListViewItemScaleAnimationDuration}" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
+                                            <SplineDoubleKeyFrame KeySpline="0,0,0,1" KeyTime="{StaticResource ListViewItemScaleAnimationDuration}" Value="{StaticResource ListViewItemPillMinScale}" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectionStates">
+                                <VisualState x:Name="Selected">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{StaticResource ListViewItemPillMinScale}" />
+                                            <SplineDoubleKeyFrame KeySpline="0,0,0,1" KeyTime="{StaticResource ListViewItemScaleAnimationDuration}" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Unselected" />
+                                <VisualState x:Name="SelectedInactive" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="LayoutRoot" Property="Opacity" Value="{DynamicResource ListViewItemDisabledThemeOpacity}" />
+                        </Trigger>
+                        <Trigger SourceName="LayoutRoot" Property="primitives:PressHelper.IsPressed" Value="True">
+                            <Setter TargetName="LayoutRoot" Property="primitives:ControlHelper.VisualState" Value="Pressed" />
+                        </Trigger>
+                        <Trigger SourceName="LayoutRoot" Property="primitives:PressHelper.IsPressed" Value="False">
+                            <Setter TargetName="LayoutRoot" Property="primitives:ControlHelper.VisualState" Value="Normal" />
+                        </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ListViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource GridViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource GridViewItemForegroundPointerOver}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ListViewItemBackgroundSelected}" />
+                            <Setter TargetName="PressedBackground" Property="Opacity" Value="1" />
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource GridViewItemBackgroundSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource GridViewItemForegroundSelected}" />
                         </Trigger>
+                        <Trigger SourceName="LayoutRoot" Property="primitives:PressHelper.IsPressed" Value="True">
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource GridViewItemBackgroundPressed}" />
+                        </Trigger>
+                        <!-- SelectedPointerOver -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ListViewItemBackgroundSelectedPointerOver}" />
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource GridViewItemBackgroundSelectedPointerOver}" />
+                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource GridViewItemSelectedPointerOverBorderBrush}" />
                         </MultiTrigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Bd" Property="Opacity" Value="{DynamicResource ListViewItemDisabledThemeOpacity}" />
-                        </Trigger>
+                        <!-- SelectedPressed -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition SourceName="LayoutRoot" Property="primitives:PressHelper.IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource GridViewItemBackgroundSelectedPressed}" />
+                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource GridViewItemSelectedPressedBorderBrush}" />
+                        </MultiTrigger>
+                        <!-- SelectedDisabled -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="IsEnabled" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource GridViewItemBackgroundSelectedDisabled}" />
+                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource GridViewItemSelectedDisabledBorderBrush}" />
+                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

@@ -14,6 +14,7 @@
     ui:WindowHelper.UseModernWindowStyle="True"
     mc:Ignorable="d">
     <StackPanel
+        Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
         Margin="4"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch">
@@ -28,6 +29,49 @@
             ui:ControlHelper.PlaceholderText="Test"
             ui:ListViewHelper.Header="TestHeader"
             IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn
+                        Width="100"
+                        DisplayMemberBinding="{Binding}">
+                        <GridViewColumnHeader>
+                            Test1
+                        </GridViewColumnHeader>
+                    </GridViewColumn>
+                    <GridViewColumn
+                        Width="100"
+                        DisplayMemberBinding="{Binding}">
+                        <GridViewColumnHeader>
+                            Test2
+                        </GridViewColumnHeader>
+                    </GridViewColumn>
+                    <GridViewColumn
+                        Width="100"
+                        DisplayMemberBinding="{Binding}">
+                        <GridViewColumnHeader>
+                            Test3
+                        </GridViewColumnHeader>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
             <sys:String>Test</sys:String>
             <sys:String>Test</sys:String>
             <sys:String>Test</sys:String>

@@ -192,6 +192,9 @@
                         <!-- Selected -->
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Pill" Property="Opacity" Value="1" />
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource ComboBoxItemBackgroundSelected}" />
+                            <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource ComboBoxItemBorderBrushSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ComboBoxItemForegroundSelected}" />
                         </Trigger>
                         <!-- SelectedFocused -->
                         <MultiTrigger>
@@ -417,7 +420,6 @@
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
                             MinWidth="{DynamicResource ComboBoxThemeMinWidth}"
-                            primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
                             primitives:ValidationHelper.IsTemplateValidationAdornerSite="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"

@@ -1087,6 +1087,44 @@
     <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemControlPageBackgroundChromeMediumLowBrush" />
     <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemControlTransientBorderBrush" />
 
+    <!-- Resources for GridViewItem -->
+    <CornerRadius x:Key='GridViewItemCornerRadius'>4</CornerRadius>
+    <CornerRadius x:Key='GridViewItemCheckBoxCornerRadius'>3</CornerRadius>
+    <Thickness x:Key='GridViewItemSelectedBorderThickness'>2</Thickness>
+    <SolidColorBrush x:Key="GridViewItemBackground" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewItemForeground" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="GridViewItemPointerOverBorderBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="GridViewItemSelectedBorderBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="GridViewItemSelectedPointerOverBorderBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="GridViewItemSelectedPressedBorderBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="GridViewItemSelectedDisabledBorderBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="GridViewItemSelectedInnerBorderBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckPressedBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckDisabledBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBoxBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBoxPointerOverBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBoxPressedBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBoxDisabledBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBoxSelectedBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBoxSelectedPointerOverBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBoxSelectedPressedBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBoxSelectedDisabledBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBoxBorderBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBoxPointerOverBorderBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBoxPressedBorderBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="GridViewItemCheckBoxDisabledBorderBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="GridViewItemFocusVisualPrimaryBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="GridViewItemFocusVisualSecondaryBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewItemBackgroundPointerOver" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewItemForegroundPointerOver" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="GridViewItemBackgroundSelected" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewItemForegroundSelected" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="GridViewItemBackgroundSelectedPointerOver" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewItemBackgroundPressed" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewItemBackgroundSelectedPressed" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="GridViewItemBackgroundSelectedDisabled" Color="{m:ThemeResource SystemColorWindowColor}" />
+
     <!-- Resources for Hyperlink -->
     <SolidColorBrush x:Key="HyperlinkForeground" Color="{m:ThemeResource SystemColorHotlightColor}" />
     <SolidColorBrush x:Key="HyperlinkForegroundPointerOver" Color="{m:ThemeResource SystemColorWindowTextColor}" />
