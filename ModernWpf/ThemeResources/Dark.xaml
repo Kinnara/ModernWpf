@@ -1125,9 +1125,9 @@
     <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemControlForegroundChromeHighBrush" />
 
     <!-- Resources for GridViewItem -->
-    <CornerRadius x:Key='GridViewItemCornerRadius'>4</CornerRadius>
-    <CornerRadius x:Key='GridViewItemCheckBoxCornerRadius'>3</CornerRadius>
-    <Thickness x:Key='GridViewItemSelectedBorderThickness'>2</Thickness>
+    <CornerRadius x:Key="GridViewItemCornerRadius">4</CornerRadius>
+    <CornerRadius x:Key="GridViewItemCheckBoxCornerRadius">3</CornerRadius>
+    <Thickness x:Key="GridViewItemSelectedBorderThickness">2</Thickness>
     <m:StaticResource x:Key="GridViewItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="GridViewItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="GridViewItemPointerOverBorderBrush" ResourceKey="ControlStrokeColorOnAccentTertiaryBrush" />
@@ -1198,7 +1198,7 @@
     <m:StaticResource x:Key="ListBoxItemForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="ListBoxItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ListBoxItemBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="ListBoxItemBackgroundSelected" ResourceKey="SystemControlHighlightListAccentLowBrush"/>
+    <m:StaticResource x:Key="ListBoxItemBackgroundSelected" ResourceKey="SystemControlHighlightListAccentLowBrush" />
     <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPointerOver" ResourceKey="SystemControlHighlightListAccentMediumBrush" />
     <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPressed" ResourceKey="SystemControlHighlightListAccentHighBrush" />
     <SolidColorBrush x:Key="ListBoxItemDisabledForegroundThemeBrush" Color="#66FFFFFF" />
@@ -1223,7 +1223,7 @@
     <m:StaticResource x:Key="GridViewHeaderItemDividerStroke" ResourceKey="SystemControlForegroundBaseLowBrush" />
 
     <!-- Resources for ListViewItem -->
-    <sys:Boolean x:Key='ListViewItemSelectionIndicatorVisualEnabled'>True</sys:Boolean>
+    <sys:Boolean x:Key="ListViewItemSelectionIndicatorVisualEnabled">True</sys:Boolean>
     <sys:Double x:Key="ListViewItemContentOffsetX">-40.5</sys:Double>
     <sys:Double x:Key="ListViewItemDisabledThemeOpacity">0.3</sys:Double>
     <sys:Double x:Key="ListViewItemDragThemeOpacity">0.80</sys:Double>
@@ -1298,10 +1298,10 @@
     <m:StaticResource x:Key="ListViewItemSelectionIndicatorPointerOverBrush" ResourceKey="AccentFillColorDefaultBrush" />
     <m:StaticResource x:Key="ListViewItemSelectionIndicatorPressedBrush" ResourceKey="AccentFillColorDefaultBrush" />
     <m:StaticResource x:Key="ListViewItemSelectionIndicatorDisabledBrush" ResourceKey="AccentFillColorDisabledBrush" />
-    
+
     <!-- Resources for LoopingSelector -->
     <m:StaticResource x:Key="LoopingSelectorButtonBackground" ResourceKey="SystemControlBackgroundChromeMediumBrush" />
-    
+
     <!-- Resources for LoopingSelectorItem -->
     <m:StaticResource x:Key="LoopingSelectorItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <m:StaticResource x:Key="LoopingSelectorItemForegroundSelected" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
@@ -2151,6 +2151,20 @@
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnPointerOver" ResourceKey="SystemControlHighlightChromeWhiteBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnPressed" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnDisabled" ResourceKey="SystemControlPageBackgroundBaseLowBrush" />
+
+    <!-- Resources for ToolBar -->
+    <Thickness x:Key="ToolBarButtonBorderThemeThickness">1</Thickness>
+    <m:StaticResource x:Key="ToolBarButtonBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBackgroundSelected" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrushPointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrushPressed" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrushSelected" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrushSelectedPointerOver" ResourceKey="AccentFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrushSelectedPressed" ResourceKey="AccentFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrushSelectedDisabled" ResourceKey="AccentFillColorDisabledBrush" />
 
     <!-- Resources for ToolTip -->
     <sys:Double x:Key="ToolTipContentThemeFontSize">12</sys:Double>

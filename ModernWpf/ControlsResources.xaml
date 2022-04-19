@@ -43,6 +43,7 @@
         <ResourceDictionary Source="Styles/TabControl.xaml" />
         <ResourceDictionary Source="Styles/TimePicker.xaml" />
         <ResourceDictionary Source="Styles/ToggleButton.xaml" />
+        <ResourceDictionary Source="Styles/ToolBar.xaml" />
         <ResourceDictionary Source="Styles/TreeView.xaml" />
         <ResourceDictionary Source="Styles/Window.xaml" />
     </ResourceDictionary.MergedDictionaries>

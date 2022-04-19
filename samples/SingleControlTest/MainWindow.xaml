@@ -22,62 +22,26 @@
             x:Name="IsEnable"
             Content="IsEnable"
             IsChecked="True" />
-        <ListView
-            x:Name="TabControl"
-            ui:ControlHelper.Description="Test"
-            ui:ControlHelper.Header="Test"
-            ui:ControlHelper.PlaceholderText="Test"
-            ui:ListViewHelper.Header="TestHeader"
-            IsEnabled="{Binding IsChecked, ElementName=IsEnable, Mode=TwoWay}">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn
-                        Width="100"
-                        DisplayMemberBinding="{Binding}">
-                        <GridViewColumnHeader>
-                            Test1
-                        </GridViewColumnHeader>
-                    </GridViewColumn>
-                    <GridViewColumn
-                        Width="100"
-                        DisplayMemberBinding="{Binding}">
-                        <GridViewColumnHeader>
-                            Test2
-                        </GridViewColumnHeader>
-                    </GridViewColumn>
-                    <GridViewColumn
-                        Width="100"
-                        DisplayMemberBinding="{Binding}">
-                        <GridViewColumnHeader>
-                            Test3
-                        </GridViewColumnHeader>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-            <sys:String>Test</sys:String>
-        </ListView>
+        <ToolBarTray>
+            <ToolBar>
+                <Button Content="Test" />
+                <ToggleButton Content="Test" />
+                <Separator />
+                <CheckBox Content="Test" />
+                <RadioButton Content="Test" />
+            </ToolBar>
+            <ToolBar>
+                <TextBox Text="Test" />
+            </ToolBar>
+        </ToolBarTray>
+        <PasswordBox />
+        <StatusBar>
+            <StatusBarItem>
+                <Button Content="Test" />
+            </StatusBarItem>
+            <StatusBarItem>
+                <Button Content="Test" />
+            </StatusBarItem>
+        </StatusBar>
     </StackPanel>
 </Window>

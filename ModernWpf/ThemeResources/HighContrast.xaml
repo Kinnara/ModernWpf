@@ -1088,9 +1088,9 @@
     <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemControlTransientBorderBrush" />
 
     <!-- Resources for GridViewItem -->
-    <CornerRadius x:Key='GridViewItemCornerRadius'>4</CornerRadius>
-    <CornerRadius x:Key='GridViewItemCheckBoxCornerRadius'>3</CornerRadius>
-    <Thickness x:Key='GridViewItemSelectedBorderThickness'>2</Thickness>
+    <CornerRadius x:Key="GridViewItemCornerRadius">4</CornerRadius>
+    <CornerRadius x:Key="GridViewItemCheckBoxCornerRadius">3</CornerRadius>
+    <Thickness x:Key="GridViewItemSelectedBorderThickness">2</Thickness>
     <SolidColorBrush x:Key="GridViewItemBackground" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="GridViewItemForeground" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="GridViewItemPointerOverBorderBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
@@ -2090,6 +2090,20 @@
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnPointerOver" ResourceKey="SystemControlHighlightChromeWhiteBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnPressed" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnDisabled" ResourceKey="SystemControlPageBackgroundBaseLowBrush" />
+
+    <!-- Resources for ToolBar -->
+    <sys:Double x:Key="ToolBarButtonBorderThemeThickness">1</sys:Double>
+    <m:StaticResource x:Key="ToolBarButtonBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBackgroundPointerOver" ResourceKey="SystemControlBackgroundListLowBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBackgroundPressed" ResourceKey="SystemControlBackgroundListMediumBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBackgroundSelected" ResourceKey="SystemControlBackgroundListMediumBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrush" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrushPressed" ResourceKey="SystemControlTransparentBrush" />
+    <SolidColorBrush x:Key="ToolBarButtonBorderBrushSelected" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ToolBarButtonBorderBrushSelectedPointerOver" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ToolBarButtonBorderBrushSelectedPressed" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ToolBarButtonBorderBrushSelectedDisabled" Color="{m:ThemeResource SystemColorWindowTextColor}" />
 
     <!-- Resources for ToolTip -->
     <sys:Double x:Key="ToolTipContentThemeFontSize">12</sys:Double>
