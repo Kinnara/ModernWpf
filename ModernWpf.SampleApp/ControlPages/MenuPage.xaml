@@ -70,7 +70,7 @@
                     </MenuItem>
                 </Menu>
             </sc:ControlExample>
-            <sc:ControlExample HeaderText="Menu with submenus, seperators, and radio items">
+            <sc:ControlExample HeaderText="Menu with submenus, separators, and radio items">
                 <Menu>
                     <MenuItem Header="File">
                         <MenuItem Header="New">

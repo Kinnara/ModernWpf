@@ -212,6 +212,7 @@
 
                             <ContentPresenter
                                 Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 RecognizesAccessKey="True"
