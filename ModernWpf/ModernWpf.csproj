@@ -5,6 +5,7 @@
     <UseWPF>true</UseWPF>
     <NeutralLanguage>en-US</NeutralLanguage>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>1701;1702;1573;1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
