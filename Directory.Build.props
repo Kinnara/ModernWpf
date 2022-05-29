@@ -1,0 +1,8 @@
+﻿<Project>
+  <PropertyGroup>
+    <Version>0.9.4</Version>
+    <Authors>Yimeng Wu</Authors>
+    <Product>ModernWPF UI Library</Product>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+</Project>

@@ -1,13 +1,58 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;net462;netcoreapp3.0;net5.0-windows10.0.18362.0</TargetFrameworks>
+    <TargetFrameworks>net45;net462;netcoreapp3.0;net5.0-windows7.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <NeutralLanguage>en-US</NeutralLanguage>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <LangVersion>latest</LangVersion>
-    <UseWinRT>true</UseWinRT>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <CsWinRTEmbedded>true</CsWinRTEmbedded>
+    <CsWinRTWindowsMetadata>10.0.18362.0</CsWinRTWindowsMetadata>
+    <CsWinRTIncludes>
+      Windows.Foundation;
+      Windows.UI.Color;
+      Windows.UI.IColors;
+      Windows.UI.ViewManagement.HandPreference;
+      Windows.UI.ViewManagement.IUISettings;
+      Windows.UI.ViewManagement.UIColorType;
+      Windows.UI.ViewManagement.UIElementType;
+      Windows.UI.ViewManagement.UISettings;
+    </CsWinRTIncludes>
+    <CsWinRTExcludes>
+      Windows.Foundation.Diagnostics;
+      Windows.Foundation.PropertyType;
+    </CsWinRTExcludes>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '5.0'))">
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="1.6.4" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '3.0')) and $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '5.0')) or
+                        '$(TargetFrameworkIdentifier)' == '.NETFramework' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '4.6.1'))">
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.18362.2005" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' and $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '4.6.1'))">
+    <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.6.0" />
+    <Reference Include="Windows">
+      <HintPath>$(SolutionDir)WinMD\Windows.WinMD</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Windows.Foundation.FoundationContract">
+      <HintPath>$(SolutionDir)WinMD\Windows.Foundation.FoundationContract.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Windows.Foundation.UniversalApiContract">
+      <HintPath>$(SolutionDir)WinMD\Windows.Foundation.UniversalApiContract.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
 
   <ItemGroup Condition="!$(DefineConstants.Contains('NET47_OR_NEWER'))">
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
