@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <UseWPF>true</UseWPF>
-    <LangVersion>8.0</LangVersion>
     <RootNamespace>System.Windows</RootNamespace>
   </PropertyGroup>
 
