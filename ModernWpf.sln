@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29215.179
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModernWpf.SampleApp", "ModernWpf.SampleApp\ModernWpf.SampleApp.csproj", "{4AB31DB2-4024-49E6-A522-F5418371A264}"
 EndProject
@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModernWpf.Controls", "Moder
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1387DCAB-42A4-4F47-9E85-16998E2D9C71}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
 		Settings.XamlStyler = Settings.XamlStyler
 	EndProjectSection
@@ -45,13 +47,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiThreadingSample", "sam
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{07337569-6CA9-4BB0-9C8F-962D981CB5F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinUIResourcesConverter", "tools\WinUIResourcesConverter\WinUIResourcesConverter.csproj", "{35EF6F6B-3E8C-4A9E-BCD2-16CA5C2C2ADC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinUIResourcesConverter", "tools\WinUIResourcesConverter\WinUIResourcesConverter.csproj", "{35EF6F6B-3E8C-4A9E-BCD2-16CA5C2C2ADC}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		test\NavigationView_TestUI\NavigationView_TestUI.projitems*{02ca89c3-68d7-4c80-9278-9a0f53fbe199}*SharedItemsImports = 13
-		test\NavigationView_TestUI\NavigationView_TestUI.projitems*{bb64399b-330b-45ba-be71-5ffa6ce841a8}*SharedItemsImports = 5
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM = Debug|ARM
@@ -385,5 +383,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6251E140-0FAA-4DE9-B245-1C5BE188E578}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		test\NavigationView_TestUI\NavigationView_TestUI.projitems*{02ca89c3-68d7-4c80-9278-9a0f53fbe199}*SharedItemsImports = 13
+		test\NavigationView_TestUI\NavigationView_TestUI.projitems*{bb64399b-330b-45ba-be71-5ffa6ce841a8}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
