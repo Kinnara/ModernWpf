@@ -334,7 +334,7 @@ namespace ModernWpf.Controls
             if (m_delayTimer.Tag is AutoSuggestionBoxTextChangeReason reason)
             {
                 m_delayTimer.Tag = null;
-                TextChanged?.Invoke(this, new AutoSuggestBoxTextChangedEventArgs(this, Text) { Reason = reason });
+                TextChanged?.Invoke(this, new AutoSuggestBoxTextChangedEventArgs(this, Text, reason));
             }
         }
 

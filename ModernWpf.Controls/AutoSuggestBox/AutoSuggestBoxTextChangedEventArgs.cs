@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows;
 
 namespace ModernWpf.Controls
 {
@@ -10,35 +9,21 @@ namespace ModernWpf.Controls
         SuggestionChosen = 2
     }
 
-    public sealed class AutoSuggestBoxTextChangedEventArgs : DependencyObject
+    public sealed class AutoSuggestBoxTextChangedEventArgs : EventArgs
     {
         public AutoSuggestBoxTextChangedEventArgs()
         {
         }
 
-        internal AutoSuggestBoxTextChangedEventArgs(AutoSuggestBox source, string value)
+        internal AutoSuggestBoxTextChangedEventArgs(AutoSuggestBox source, string value, AutoSuggestionBoxTextChangeReason reason)
         {
             m_source = new WeakReference<AutoSuggestBox>(source);
             m_value = value;
+            Reason = reason;
         }
-
-        #region Reason
-
-        public static readonly DependencyProperty ReasonProperty =
-            DependencyProperty.Register(
-                nameof(Reason),
-                typeof(AutoSuggestionBoxTextChangeReason),
-                typeof(AutoSuggestBoxTextChangedEventArgs),
-                new PropertyMetadata(AutoSuggestionBoxTextChangeReason.ProgrammaticChange));
-
-        public AutoSuggestionBoxTextChangeReason Reason
-        {
-            get => (AutoSuggestionBoxTextChangeReason)GetValue(ReasonProperty);
-            set => SetValue(ReasonProperty, value);
-        }
-
-        #endregion
-
+        
+        public AutoSuggestionBoxTextChangeReason Reason { get; }
+        
         public bool CheckCurrent()
         {
             return m_source != null &&
