@@ -1228,19 +1228,19 @@
     <m:StaticResource x:Key="HyperlinkForegroundPressed" ResourceKey="AccentTextFillColorTertiaryBrush" />
 
     <!--  Resources for HyperlinkButton  -->
-    <Thickness x:Key="HyperlinkButtonBorderThemeThickness">0</Thickness>
-    <m:StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="SystemControlHyperlinkTextBrush" />
-    <m:StaticResource x:Key="HyperlinkButtonForegroundPointerOver" ResourceKey="SystemControlPageTextBaseMediumBrush" />
-    <m:StaticResource x:Key="HyperlinkButtonForegroundPressed" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
-    <m:StaticResource x:Key="HyperlinkButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="HyperlinkButtonBackground" ResourceKey="SystemControlPageBackgroundTransparentBrush" />
-    <m:StaticResource x:Key="HyperlinkButtonBackgroundPointerOver" ResourceKey="SystemControlPageBackgroundTransparentBrush" />
-    <m:StaticResource x:Key="HyperlinkButtonBackgroundPressed" ResourceKey="SystemControlPageBackgroundTransparentBrush" />
-    <m:StaticResource x:Key="HyperlinkButtonBackgroundDisabled" ResourceKey="SystemControlPageBackgroundTransparentBrush" />
-    <m:StaticResource x:Key="HyperlinkButtonBorderBrush" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="HyperlinkButtonBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="HyperlinkButtonBorderBrushPressed" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="HyperlinkButtonBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="AccentTextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="HyperlinkButtonForegroundPointerOver" ResourceKey="AccentTextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="HyperlinkButtonForegroundPressed" ResourceKey="AccentTextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="HyperlinkButtonForegroundDisabled" ResourceKey="AccentTextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="HyperlinkButtonBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="HyperlinkButtonBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="HyperlinkButtonBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="HyperlinkButtonBackgroundDisabled" ResourceKey="SubtleFillColorDisabledBrush" />
+    <m:StaticResource x:Key="HyperlinkButtonBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="HyperlinkButtonBorderBrushPointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="HyperlinkButtonBorderBrushPressed" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="HyperlinkButtonBorderBrushDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <Thickness x:Key="HyperlinkButtonBorderThemeThickness">1</Thickness>
 
     <!--  Resources for ListBox  -->
     <Thickness x:Key="ListBoxBorderThemeThickness">0</Thickness>

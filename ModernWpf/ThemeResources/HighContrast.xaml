@@ -1139,7 +1139,6 @@
     <SolidColorBrush x:Key="HyperlinkForegroundPressed" Color="{m:ThemeResource SystemColorHighlightColor}" />
 
     <!-- Resources for HyperlinkButton -->
-    <Thickness x:Key="HyperlinkButtonBorderThemeThickness">0</Thickness>
     <m:StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="SystemControlHyperlinkTextBrush" />
     <m:StaticResource x:Key="HyperlinkButtonForegroundPointerOver" ResourceKey="SystemControlPageTextBaseMediumBrush" />
     <m:StaticResource x:Key="HyperlinkButtonForegroundPressed" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
@@ -1152,6 +1151,7 @@
     <m:StaticResource x:Key="HyperlinkButtonBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="HyperlinkButtonBorderBrushPressed" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="HyperlinkButtonBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
+    <Thickness x:Key="HyperlinkButtonBorderThemeThickness">1</Thickness>
 
     <!-- Resources for ListBox -->
     <Thickness x:Key="ListBoxBorderThemeThickness">2</Thickness>
