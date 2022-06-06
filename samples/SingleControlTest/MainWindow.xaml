@@ -18,15 +18,15 @@
         Margin="4"
         HorizontalAlignment="Center"
         VerticalAlignment="Stretch">
-        <CheckBox
+        <ui:ToggleSwitch
             x:Name="IsEnable"
-            Content="IsEnable"
-            IsChecked="True"/>
+            Header="IsEnable"
+            IsOn="True"/>
         <Button
             Content="Test"
             Click="Button_Click"
-            IsEnabled="{Binding IsChecked, ElementName=IsEnable}"
+            IsEnabled="{Binding IsOn, ElementName=IsEnable}"
             Style="{DynamicResource AccentButtonStyle}" />
-        <Calendar IsEnabled="{Binding IsChecked, ElementName=IsEnable}" />
+        <Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />
     </StackPanel>
 </Window>

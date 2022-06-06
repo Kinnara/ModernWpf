@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -24,7 +25,8 @@ namespace ModernWpf.Controls
     [TemplateVisualState(GroupName = VisualStates.GroupCommon, Name = VisualStates.StateDisabled)]
     [TemplateVisualState(GroupName = ContentStatesGroup, Name = OffContentState)]
     [TemplateVisualState(GroupName = ContentStatesGroup, Name = OnContentState)]
-    [TemplateVisualState(GroupName = ToggleStatesGroup, Name = DraggingState)]
+    [TemplateVisualState(GroupName = ToggleStatesGroup, Name = DraggingOnState)]
+    [TemplateVisualState(GroupName = ToggleStatesGroup, Name = DraggingOffState)]
     [TemplateVisualState(GroupName = ToggleStatesGroup, Name = OffState)]
     [TemplateVisualState(GroupName = ToggleStatesGroup, Name = OnState)]
     public class ToggleSwitch : Control
@@ -33,7 +35,8 @@ namespace ModernWpf.Controls
         private const string OffContentState = "OffContent";
         private const string OnContentState = "OnContent";
         private const string ToggleStatesGroup = "ToggleStates";
-        private const string DraggingState = "Dragging";
+        private const string DraggingOnState = "DraggingOn";
+        private const string DraggingOffState = "DraggingOff";
         private const string OffState = "Off";
         private const string OnState = "On";
 
@@ -408,6 +411,7 @@ namespace ModernWpf.Controls
                 double dragTranslation = _startTranslation + e.HorizontalChange;
                 KnobTranslateTransform.X = Math.Max(_offTranslation, Math.Min(_onTranslation, dragTranslation));
             }
+            UpdateVisualStates(true);
         }
 
         private void OnSwitchThumbDragCompleted(object sender, DragCompletedEventArgs e)
@@ -416,8 +420,8 @@ namespace ModernWpf.Controls
             bool click = false;
             if (_wasDragged)
             {
-                double edge = IsOn ? _onTranslation : _offTranslation;
-                if (KnobTranslateTransform.X != edge)
+                double edge = (_onTranslation + _offTranslation) / 2;
+                if ((IsOn && KnobTranslateTransform.X <= edge) || (!IsOn && KnobTranslateTransform.X >= edge))
                 {
                     click = true;
                 }
@@ -432,6 +436,7 @@ namespace ModernWpf.Controls
             }
 
             _wasDragged = false;
+            UpdateVisualStates(true);
         }
 
         private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -456,6 +461,10 @@ namespace ModernWpf.Controls
             {
                 stateName = VisualStates.StateDisabled;
             }
+            else if (SwitchThumb != null && SwitchThumb.IsDragging)
+            {
+                stateName = VisualStates.StatePressed;
+            }
             else if (IsMouseOver)
             {
                 stateName = VisualStates.StateMouseOver;
@@ -468,7 +477,7 @@ namespace ModernWpf.Controls
 
             if (SwitchThumb != null && SwitchThumb.IsDragging)
             {
-                stateName = DraggingState;
+                stateName = IsOn ? DraggingOnState : DraggingOffState;
             }
             else
             {

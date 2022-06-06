@@ -2066,39 +2066,74 @@
     <!-- Resources for ToggleSwitch -->
     <sys:Double x:Key="ToggleSwitchOnStrokeThickness">1</sys:Double>
     <sys:Double x:Key="ToggleSwitchOuterBorderStrokeThickness">1</sys:Double>
-    <m:StaticResource x:Key="ToggleSwitchContentForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="ToggleSwitchContentForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="ToggleSwitchHeaderForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="ToggleSwitchHeaderForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+
+    <!-- ColorAnimation requires TargetProperty to be Color thus some resources point to the colour instead of brush-->
+    <m:StaticResource x:Key="ToggleSwitchContentForeground" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchContentForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchHeaderForeground" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchHeaderForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
     <m:StaticResource x:Key="ToggleSwitchContainerBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="ToggleSwitchContainerBackgroundPointerOver" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="ToggleSwitchContainerBackgroundPressed" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="ToggleSwitchContainerBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="ToggleSwitchFillOff" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="ToggleSwitchFillOffPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="ToggleSwitchFillOffPressed" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
-    <m:StaticResource x:Key="ToggleSwitchFillOffDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="ToggleSwitchStrokeOff" ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="ToggleSwitchStrokeOffPointerOver" ResourceKey="SystemControlHighlightBaseMediumHighBrush" />
-    <m:StaticResource x:Key="ToggleSwitchStrokeOffPressed" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="ToggleSwitchStrokeOffDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="ToggleSwitchFillOn" ResourceKey="SystemControlHighlightAccentBrush" />
-    <m:StaticResource x:Key="ToggleSwitchFillOnPointerOver" ResourceKey="SystemControlHighlightAltListAccentHighBrush" />
-    <m:StaticResource x:Key="ToggleSwitchFillOnPressed" ResourceKey="SystemControlHighlightBaseMediumBrush" />
-    <m:StaticResource x:Key="ToggleSwitchFillOnDisabled" ResourceKey="SystemControlDisabledBaseLowBrush" />
-    <m:StaticResource x:Key="ToggleSwitchStrokeOn" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="ToggleSwitchStrokeOnPointerOver" ResourceKey="SystemControlHighlightListAccentHighBrush" />
-    <m:StaticResource x:Key="ToggleSwitchStrokeOnPressed" ResourceKey="SystemControlHighlightBaseMediumBrush" />
-    <m:StaticResource x:Key="ToggleSwitchStrokeOnDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="ToggleSwitchKnobFillOff" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="ToggleSwitchKnobFillOffPointerOver" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="ToggleSwitchKnobFillOffPressed" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="ToggleSwitchKnobFillOffDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="ToggleSwitchKnobFillOn" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
-    <m:StaticResource x:Key="ToggleSwitchKnobFillOnPointerOver" ResourceKey="SystemControlHighlightChromeWhiteBrush" />
-    <m:StaticResource x:Key="ToggleSwitchKnobFillOnPressed" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
-    <m:StaticResource x:Key="ToggleSwitchKnobFillOnDisabled" ResourceKey="SystemControlPageBackgroundBaseLowBrush" />
 
+    <m:StaticResource x:Key="ToggleSwitchFillOff" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchFillOffPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchFillOffPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchFillOffDisabled" ResourceKey="SystemColorWindowColorBrush" />
+
+    <m:StaticResource x:Key="ToggleSwitchStrokeOff" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchStrokeOffPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchStrokeOffPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchStrokeOffDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="ToggleSwitchKnobFillOff" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchKnobFillOffPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchKnobFillOffPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchKnobFillOffDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="ToggleSwitchFillOn" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchFillOnPointerOver" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchFillOnPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchFillOnDisabled" ResourceKey="SystemColorWindowColorBrush" />
+
+    <m:StaticResource x:Key="ToggleSwitchStrokeOn" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchStrokeOnPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchStrokeOnPressed" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchStrokeOnDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="ToggleSwitchKnobFillOn" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchKnobFillOnPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchKnobFillOnPressed" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchKnobFillOnDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="ToggleSwitchKnobStrokeOn" ResourceKey="SystemControlTransparentBrush" />
+
+    <!-- Legacy Brushes -->
+    <SolidColorBrush x:Key="ToggleSwitchCurtainBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchCurtainDisabledBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchCurtainPointerOverBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchCurtainPressedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchDisabledForegroundThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchHeaderDisabledForegroundThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchHeaderForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchOuterBorderBorderThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchOuterBorderDisabledBorderThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbBorderThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbDisabledBackgroundThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbDisabledBorderThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbPointerOverBackgroundThemeBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbPointerOverBorderThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbPressedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchThumbPressedForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackBorderThemeBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackDisabledBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackPointerOverBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ToggleSwitchTrackPressedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    
     <!-- Resources for ToolBar -->
     <sys:Double x:Key="ToolBarButtonBorderThemeThickness">1</sys:Double>
     <m:StaticResource x:Key="ToolBarButtonBackground" ResourceKey="SystemControlTransparentBrush" />
