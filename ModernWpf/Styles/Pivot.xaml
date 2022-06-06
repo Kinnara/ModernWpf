@@ -55,8 +55,10 @@
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Bottom"
                                 Fill="{DynamicResource PivotHeaderItemSelectedPipeFill}"
-                                RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+                                RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                          Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                          Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
                                 RenderTransformOrigin="0.5,0.5">
                                 <Rectangle.RenderTransform>
                                     <ScaleTransform x:Name="SelectedPipeTransform" ScaleX="1" />
@@ -68,14 +70,20 @@
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectedPipeTransform" Storyboard.TargetProperty="ScaleX">
-                                            <SplineDoubleKeyFrame KeySpline="1,0,0,0" KeyTime="{StaticResource PivotHeaderItemScaleAnimationDuration}" Value="1" />
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="1,0,0,0"
+                                                KeyTime="{StaticResource PivotHeaderItemScaleAnimationDuration}"
+                                                Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectedPipeTransform" Storyboard.TargetProperty="ScaleX">
-                                            <SplineDoubleKeyFrame KeySpline="0,0,0,1" KeyTime="{StaticResource PivotHeaderItemScaleAnimationDuration}" Value="{StaticResource PivotHeaderItemSelectedPipeMinScale}" />
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="0,0,0,1"
+                                                KeyTime="{StaticResource PivotHeaderItemScaleAnimationDuration}"
+                                                Value="{StaticResource PivotHeaderItemSelectedPipeMinScale}" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -85,7 +93,10 @@
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectedPipeTransform" Storyboard.TargetProperty="ScaleX">
                                             <DiscreteDoubleKeyFrame KeyTime="0" Value="{StaticResource PivotHeaderItemSelectedPipeMinScale}" />
-                                            <SplineDoubleKeyFrame KeySpline="0,0,0,1" KeyTime="{StaticResource PivotHeaderItemScaleAnimationDuration}" Value="1" />
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="0,0,0,1"
+                                                KeyTime="{StaticResource PivotHeaderItemScaleAnimationDuration}"
+                                                Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -100,11 +111,11 @@
                         <Trigger SourceName="Border" Property="primitives:PressHelper.IsPressed" Value="False">
                             <Setter TargetName="Border" Property="primitives:ControlHelper.VisualState" Value="Normal" />
                         </Trigger>
-                        <!-- Unselected -->
+                        <!--  Unselected  -->
                         <Trigger Property="IsSelected" Value="False">
                             <Setter TargetName="SelectedPipe" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <!-- Selected -->
+                        <!--  Selected  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
@@ -114,7 +125,7 @@
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource PivotHeaderItemForegroundSelected}" />
                             <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundSelected}" />
                         </MultiTrigger>
-                        <!-- UnselectedPointerOver -->
+                        <!--  UnselectedPointerOver  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="False" />
@@ -123,7 +134,7 @@
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource PivotHeaderItemForegroundUnselectedPointerOver}" />
                             <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundUnselectedPointerOver}" />
                         </MultiTrigger>
-                        <!-- SelectedPointerOver -->
+                        <!--  SelectedPointerOver  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
@@ -138,7 +149,7 @@
                             <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundDisabled}" />
                             <Setter TargetName="SelectedPipe" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <!-- UnselectedPressed -->
+                        <!--  UnselectedPressed  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="False" />
@@ -147,7 +158,7 @@
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource PivotHeaderItemForegroundUnselectedPressed}" />
                             <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundUnselectedPressed}" />
                         </MultiTrigger>
-                        <!-- SelectedPressed -->
+                        <!--  SelectedPressed  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
@@ -206,7 +217,10 @@
                                     </Setter.Value>
                                 </Setter>
                             </Style>
-                            <Style x:Key="TitleContentControlStyle" BasedOn="{StaticResource BaseContentControlStyle}" TargetType="ContentControl">
+                            <Style
+                                x:Key="TitleContentControlStyle"
+                                BasedOn="{StaticResource BaseContentControlStyle}"
+                                TargetType="ContentControl">
                                 <Setter Property="FontFamily" Value="{DynamicResource PivotTitleFontFamily}" />
                                 <Setter Property="FontWeight" Value="{DynamicResource PivotTitleThemeFontWeight}" />
                                 <Setter Property="FontSize" Value="{DynamicResource PivotTitleFontSize}" />
@@ -226,9 +240,7 @@
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             Style="{StaticResource TitleContentControlStyle}"
                             Visibility="Collapsed" />
-                        <Grid
-                            Grid.Row="1"
-                            Margin="{TemplateBinding Padding}">
+                        <Grid Grid.Row="1" Margin="{TemplateBinding Padding}">
                             <Grid.Resources>
                                 <ControlTemplate x:Key="NextTemplate" TargetType="ButtonBase">
                                     <Border
@@ -389,7 +401,7 @@
                         <Trigger SourceName="TitleContentControl" Property="HasContent" Value="True">
                             <Setter TargetName="TitleContentControl" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <!-- PreviousButtonVisible -->
+                        <!--  PreviousButtonVisible  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition SourceName="HeaderPanel" Property="IsMouseOver" Value="True" />
@@ -399,7 +411,7 @@
                             <Setter TargetName="PreviousButton" Property="Opacity" Value="1" />
                             <Setter TargetName="PreviousButton" Property="IsEnabled" Value="True" />
                         </MultiTrigger>
-                        <!-- NextButtonVisible -->
+                        <!--  NextButtonVisible  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition SourceName="HeaderPanel" Property="IsMouseOver" Value="True" />

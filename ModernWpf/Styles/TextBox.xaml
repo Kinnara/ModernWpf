@@ -1,4 +1,4 @@
-﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+﻿<!--  Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information.  -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -117,18 +117,6 @@
                         </Style>
                     </ControlTemplate.Resources>
                     <Grid SnapsToDevicePixels="True">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="ButtonStates">
-                                <VisualState x:Name="ButtonVisible">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="ButtonCollapsed" />
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
@@ -218,6 +206,18 @@
                             Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             Visibility="{TemplateBinding primitives:ControlHelper.DescriptionVisibility}" />
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ButtonStates">
+                                <VisualState x:Name="ButtonVisible">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ButtonCollapsed" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="primitives:ControlHelper.PlaceholderForeground" Value="{x:Null}">
@@ -264,7 +264,10 @@
 
     <Style BasedOn="{StaticResource DefaultTextBoxStyle}" TargetType="TextBox" />
 
-    <Style x:Key="DataGridTextBoxStyle" BasedOn="{StaticResource DefaultTextBoxStyle}" TargetType="TextBox">
+    <Style
+        x:Key="DataGridTextBoxStyle"
+        BasedOn="{StaticResource DefaultTextBoxStyle}"
+        TargetType="TextBox">
         <Setter Property="MinWidth" Value="0" />
         <Setter Property="Padding" Value="11,0,6,0" />
         <Setter Property="VerticalAlignment" Value="Stretch" />

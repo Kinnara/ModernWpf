@@ -42,9 +42,7 @@
                             Fill="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
                             Visibility="Collapsed" />
 
-                        <StackPanel
-                            x:Name="PART_LeftSystemOverlay"
-                            Orientation="Horizontal">
+                        <StackPanel x:Name="PART_LeftSystemOverlay" Orientation="Horizontal">
                             <primitives:TitleBarButton
                                 x:Name="PART_BackButton"
                                 Height="{TemplateBinding Height}"

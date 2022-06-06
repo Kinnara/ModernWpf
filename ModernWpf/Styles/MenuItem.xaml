@@ -1,4 +1,4 @@
-﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+﻿<!--  Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information.  -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -53,9 +53,12 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" BasedOn="{StaticResource DefaultMenuItemSeparatorStyle}" TargetType="Separator" />
+    <Style
+        x:Key="{x:Static MenuItem.SeparatorStyleKey}"
+        BasedOn="{StaticResource DefaultMenuItemSeparatorStyle}"
+        TargetType="Separator" />
 
-    <!-- MenuBarItem -->
+    <!--  MenuBarItem  -->
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=TopLevelItemTemplateKey}" TargetType="MenuItem">
         <Border
             x:Name="ContentRoot"
@@ -91,7 +94,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <!-- MenuBarItem -->
+    <!--  MenuBarItem  -->
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=TopLevelHeaderTemplateKey}" TargetType="MenuItem">
         <Border
             x:Name="ContentRoot"
@@ -121,9 +124,7 @@
                     IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                     Placement="Bottom"
                     PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
-                    <primitives:ThemeShadowChrome
-                        CornerRadius="{DynamicResource OverlayCornerRadius}"
-                        IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
+                    <primitives:ThemeShadowChrome CornerRadius="{DynamicResource OverlayCornerRadius}" IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
                         <Border
                             x:Name="SubMenuRoot"
                             MinHeight="{DynamicResource MenuFlyoutThemeMinHeight}"
@@ -160,7 +161,7 @@
                 <Setter TargetName="Background" Property="Background" Value="{DynamicResource MenuBarItemBackgroundPointerOver}" />
                 <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource MenuBarItemBorderBrushPointerOver}" />
             </Trigger>
-            <!-- Selected -->
+            <!--  Selected  -->
             <Trigger Property="IsSubmenuOpen" Value="True">
                 <Setter TargetName="Background" Property="Background" Value="{DynamicResource MenuBarItemBackgroundSelected}" />
                 <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource MenuBarItemBorderBrushSelected}" />
@@ -172,7 +173,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <!-- MenuFlyoutItem -->
+    <!--  MenuFlyoutItem  -->
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuItemTemplateKey}" TargetType="MenuItem">
         <Border
             x:Name="LayoutRoot"
@@ -273,7 +274,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <!-- MenuFlyoutSubItem -->
+    <!--  MenuFlyoutSubItem  -->
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuHeaderTemplateKey}" TargetType="MenuItem">
         <Border
             x:Name="LayoutRoot"
@@ -338,9 +339,7 @@
                             <Binding ElementName="LayoutRoot" Path="ActualHeight" />
                         </MultiBinding>
                     </Popup.PlacementRectangle>
-                    <primitives:ThemeShadowChrome
-                        CornerRadius="{DynamicResource OverlayCornerRadius}"
-                        IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
+                    <primitives:ThemeShadowChrome CornerRadius="{DynamicResource OverlayCornerRadius}" IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
                         <Border
                             x:Name="SubMenuRoot"
                             MinHeight="{DynamicResource MenuFlyoutThemeMinHeight}"

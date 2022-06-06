@@ -14,9 +14,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="GroupBox">
-                    <Grid
-                        Background="{TemplateBinding Background}"
-                        SnapsToDevicePixels="true">
+                    <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />

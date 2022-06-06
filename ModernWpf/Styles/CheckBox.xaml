@@ -1,4 +1,4 @@
-﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+﻿<!--  Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information.  -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -66,8 +66,10 @@
                                     Width="{DynamicResource CheckBoxSize}"
                                     Height="{DynamicResource CheckBoxSize}"
                                     Fill="{DynamicResource CheckBoxCheckBackgroundFillUnchecked}"
-                                    RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                    RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+                                    RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                              Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                    RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                              Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
                                     Stroke="{DynamicResource CheckBoxCheckBackgroundStrokeUnchecked}"
                                     StrokeThickness="{DynamicResource CheckBoxBorderThemeThickness}"
                                     UseLayoutRounding="False" />
@@ -92,7 +94,7 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <!-- UncheckedNormal -->
+                        <!--  UncheckedNormal  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsChecked" Value="False" />
@@ -107,7 +109,7 @@
                             <Setter TargetName="NormalRectangle" Property="Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillUnchecked}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundUnchecked}" />
                         </MultiTrigger>
-                        <!-- UncheckedPointerOver -->
+                        <!--  UncheckedPointerOver  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsChecked" Value="False" />
@@ -120,7 +122,7 @@
                             <Setter TargetName="NormalRectangle" Property="Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillUncheckedPointerOver}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundUncheckedPointerOver}" />
                         </MultiTrigger>
-                        <!-- UncheckedPressed -->
+                        <!--  UncheckedPressed  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsChecked" Value="False" />
@@ -133,7 +135,7 @@
                             <Setter TargetName="NormalRectangle" Property="Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillUncheckedPressed}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundUncheckedPressed}" />
                         </MultiTrigger>
-                        <!-- UncheckedDisabled -->
+                        <!--  UncheckedDisabled  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsChecked" Value="False" />
@@ -146,7 +148,7 @@
                             <Setter TargetName="NormalRectangle" Property="Fill" Value="{DynamicResource CheckBoxCheckBackgroundFillUncheckedDisabled}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundUncheckedDisabled}" />
                         </MultiTrigger>
-                        <!-- CheckedNormal -->
+                        <!--  CheckedNormal  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsChecked" Value="True" />
@@ -163,7 +165,7 @@
                             <Setter TargetName="NormalRectangle" Property="StrokeThickness" Value="{DynamicResource CheckBoxCheckedStrokeThickness}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
-                        <!-- CheckedPointerOver -->
+                        <!--  CheckedPointerOver  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsChecked" Value="True" />
@@ -177,7 +179,7 @@
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundCheckedPointerOver}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
-                        <!-- CheckedPressed -->
+                        <!--  CheckedPressed  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsChecked" Value="True" />
@@ -191,7 +193,7 @@
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundCheckedPressed}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
-                        <!-- CheckedDisabled -->
+                        <!--  CheckedDisabled  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsChecked" Value="True" />
@@ -205,7 +207,7 @@
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource CheckBoxCheckGlyphForegroundCheckedDisabled}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
-                        <!-- IndeterminateNormal -->
+                        <!--  IndeterminateNormal  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsChecked" Value="{x:Null}" />
@@ -222,7 +224,7 @@
                             <Setter TargetName="CheckGlyph" Property="Glyph" Value="{DynamicResource CheckBoxIndeterminateGlyph}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
-                        <!-- IndeterminatePointerOver -->
+                        <!--  IndeterminatePointerOver  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsChecked" Value="{x:Null}" />
@@ -237,7 +239,7 @@
                             <Setter TargetName="CheckGlyph" Property="Glyph" Value="{DynamicResource CheckBoxIndeterminateGlyph}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
-                        <!-- IndeterminatePressed -->
+                        <!--  IndeterminatePressed  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsChecked" Value="{x:Null}" />
@@ -252,7 +254,7 @@
                             <Setter TargetName="CheckGlyph" Property="Glyph" Value="{DynamicResource CheckBoxIndeterminateGlyph}" />
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </MultiTrigger>
-                        <!-- IndeterminateDisabled -->
+                        <!--  IndeterminateDisabled  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsChecked" Value="{x:Null}" />
@@ -275,14 +277,20 @@
 
     <Style BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox" />
 
-    <Style x:Key="DataGridCheckBoxStyle" BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox">
+    <Style
+        x:Key="DataGridCheckBoxStyle"
+        BasedOn="{StaticResource DefaultCheckBoxStyle}"
+        TargetType="CheckBox">
         <Setter Property="MinWidth" Value="0" />
         <Setter Property="MinHeight" Value="0" />
         <Setter Property="Margin" Value="12,0" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
     </Style>
 
-    <Style x:Key="DataGridReadOnlyCheckBoxStyle" BasedOn="{StaticResource DataGridCheckBoxStyle}" TargetType="CheckBox">
+    <Style
+        x:Key="DataGridReadOnlyCheckBoxStyle"
+        BasedOn="{StaticResource DataGridCheckBoxStyle}"
+        TargetType="CheckBox">
         <Setter Property="IsHitTestVisible" Value="False" />
         <Setter Property="Focusable" Value="False" />
     </Style>

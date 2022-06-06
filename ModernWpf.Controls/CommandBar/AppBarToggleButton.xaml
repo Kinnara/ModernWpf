@@ -30,60 +30,17 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="ApplicationViewStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="FullSize" />
-                                <VisualState x:Name="Compact" />
-                                <VisualState x:Name="LabelOnRight" />
-                                <VisualState x:Name="LabelCollapsed" />
-                                <VisualState x:Name="Overflow" />
-                                <VisualState x:Name="OverflowWithMenuIcons" />
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" />
-                                <VisualState x:Name="Pressed" />
-                                <VisualState x:Name="Disabled" />
-                                <VisualState x:Name="Checked" />
-                                <VisualState x:Name="CheckedPointerOver" />
-                                <VisualState x:Name="CheckedPressed" />
-                                <VisualState x:Name="CheckedDisabled" />
-                                <VisualState x:Name="OverflowNormal" />
-                                <VisualState x:Name="OverflowPointerOver" />
-                                <VisualState x:Name="OverflowPressed" />
-                                <VisualState x:Name="OverflowChecked" />
-                                <VisualState x:Name="OverflowCheckedPointerOver" />
-                                <VisualState x:Name="OverflowCheckedPressed" />
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
-                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <Rectangle
                                 x:Name="CheckedHighlightBackground"
                                 Fill="{DynamicResource AppBarToggleButtonBackgroundChecked}"
                                 Opacity="0" />
-                            <Rectangle
-                                x:Name="AccentOverlayBackground"
-                                Fill="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlay}" />
+                            <Rectangle x:Name="AccentOverlayBackground" Fill="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlay}" />
                             <Rectangle
                                 x:Name="AppBarToggleButtonInnerBorder"
                                 Stroke="{TemplateBinding BorderBrush}"
                                 StrokeThickness="1" />
-                            <Grid
-                                x:Name="ContentRoot"
-                                MinHeight="{DynamicResource AppBarThemeMinHeight}">
+                            <Grid x:Name="ContentRoot" MinHeight="{DynamicResource AppBarThemeMinHeight}">
 
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -154,14 +111,53 @@
 
                             </Grid>
                         </Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ApplicationViewStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="FullSize" />
+                                <VisualState x:Name="Compact" />
+                                <VisualState x:Name="LabelOnRight" />
+                                <VisualState x:Name="LabelCollapsed" />
+                                <VisualState x:Name="Overflow" />
+                                <VisualState x:Name="OverflowWithMenuIcons" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Disabled" />
+                                <VisualState x:Name="Checked" />
+                                <VisualState x:Name="CheckedPointerOver" />
+                                <VisualState x:Name="CheckedPressed" />
+                                <VisualState x:Name="CheckedDisabled" />
+                                <VisualState x:Name="OverflowNormal" />
+                                <VisualState x:Name="OverflowPointerOver" />
+                                <VisualState x:Name="OverflowPressed" />
+                                <VisualState x:Name="OverflowChecked" />
+                                <VisualState x:Name="OverflowCheckedPointerOver" />
+                                <VisualState x:Name="OverflowCheckedPressed" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
+                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Border>
                     <ControlTemplate.Triggers>
                         <!--#region ApplicationViewStates-->
-                        <!-- Compact -->
+                        <!--  Compact  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Compact">
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <!-- LabelOnRight -->
+                        <!--  LabelOnRight  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="LabelOnRight">
                             <Setter TargetName="ContentViewbox" Property="Margin" Value="{DynamicResource AppBarButtonContentViewboxMargin}" />
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="{DynamicResource AppBarThemeCompactHeight}" />
@@ -171,12 +167,12 @@
                             <Setter TargetName="TextLabel" Property="Margin" Value="{DynamicResource AppBarToggleButtonTextLabelOnRightMargin}" />
                             <Setter Property="Width" Value="NaN" />
                         </Trigger>
-                        <!-- LabelCollapsed -->
+                        <!--  LabelCollapsed  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="LabelCollapsed">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="{DynamicResource AppBarThemeCompactHeight}" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <!-- Overflow -->
+                        <!--  Overflow  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
@@ -185,7 +181,7 @@
                             <Setter TargetName="OverflowCheckGlyph" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <!-- OverflowWithMenuIcons -->
+                        <!--  OverflowWithMenuIcons  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Visible" />
@@ -202,7 +198,7 @@
                         </Trigger>
                         <!--#endregion-->
                         <!--#region CommonStates-->
-                        <!-- PointerOver -->
+                        <!--  PointerOver  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOver">
                             <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayPointerOver}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushPointerOver}" />
@@ -213,7 +209,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundPointerOver}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver}" />
                         </Trigger>
-                        <!-- Pressed -->
+                        <!--  Pressed  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Pressed">
                             <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayPressed}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushPressed}" />
@@ -224,7 +220,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundPressed}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed}" />
                         </Trigger>
-                        <!-- Disabled -->
+                        <!--  Disabled  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundDisabled}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushDisabled}" />
@@ -235,7 +231,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundDisabled}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled}" />
                         </Trigger>
-                        <!-- Checked -->
+                        <!--  Checked  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Checked">
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
                             <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
@@ -246,7 +242,7 @@
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!-- CheckedPointerOver -->
+                        <!--  CheckedPointerOver  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPointerOver">
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPointerOver}" />
                             <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPointerOver}" />
@@ -260,7 +256,7 @@
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!-- CheckedPressed -->
+                        <!--  CheckedPressed  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPressed">
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
                             <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
@@ -274,7 +270,7 @@
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!-- CheckedDisabled -->
+                        <!--  CheckedDisabled  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedDisabled">
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedDisabled}" />
                             <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedDisabled}" />
@@ -287,7 +283,7 @@
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!-- OverflowPointerOver -->
+                        <!--  OverflowPointerOver  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPointerOver">
                             <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayPointerOver}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushPointerOver}" />
@@ -298,7 +294,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundPointerOver}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver}" />
                         </Trigger>
-                        <!-- OverflowPressed -->
+                        <!--  OverflowPressed  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPressed">
                             <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayPressed}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushPressed}" />
@@ -309,7 +305,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundPressed}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed}" />
                         </Trigger>
-                        <!-- OverflowChecked -->
+                        <!--  OverflowChecked  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowChecked">
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
                             <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
@@ -319,7 +315,7 @@
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!-- OverflowCheckedPointerOver -->
+                        <!--  OverflowCheckedPointerOver  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowCheckedPointerOver">
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPointerOver}" />
                             <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPointerOver}" />
@@ -333,7 +329,7 @@
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!-- OverflowCheckedPressed -->
+                        <!--  OverflowCheckedPressed  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowCheckedPressed">
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
                             <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
@@ -348,7 +344,7 @@
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <!--#endregion-->
-                        <!-- KeyboardAcceleratorTextVisible -->
+                        <!--  KeyboardAcceleratorTextVisible  -->
                         <Trigger SourceName="KeyboardAcceleratorTextVisibilityListener" Property="CurrentStateName" Value="KeyboardAcceleratorTextVisible">
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>

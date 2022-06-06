@@ -1,4 +1,5 @@
-﻿using ModernWpf.Controls.Primitives;
+﻿using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,20 @@ namespace SingleControlTest
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ContentDialog dialog = new ContentDialog
+            {
+                Title = "Title",
+                Content = "Content",
+                PrimaryButtonText = "Primary",
+                SecondaryButtonText = "Secondary",
+                CloseButtonText = "Close",
+                DefaultButton = ContentDialogButton.Primary
+            };
+            _ = dialog.ShowAsync();
         }
     }
 }

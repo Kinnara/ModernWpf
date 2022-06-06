@@ -19,15 +19,14 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
                         <Grid>
-                            <!-- Color tint overlay -->
+                            <!--  Color tint overlay  -->
                             <Rectangle
                                 x:Name="tintColorLayer"
-                                Fill="{TemplateBinding local:AcrylicElement.TintColor, Converter={StaticResource ColorToSolidColorBrushConverter}}"
+                                Fill="{TemplateBinding local:AcrylicElement.TintColor,
+                                                       Converter={StaticResource ColorToSolidColorBrushConverter}}"
                                 Opacity="{TemplateBinding local:AcrylicElement.TintOpacity}" />
-                            <!-- Tiled noise texture -->
-                            <Rectangle
-                                x:Name="noiseLayer"
-                                Opacity="{TemplateBinding local:AcrylicElement.NoiseOpacity}">
+                            <!--  Tiled noise texture  -->
+                            <Rectangle x:Name="noiseLayer" Opacity="{TemplateBinding local:AcrylicElement.NoiseOpacity}">
                                 <!--<Rectangle.Fill>
                                     <ImageBrush ImageSource="/FluentWPF;component/Assets/Images/noise.png" TileMode="Tile" Stretch="None" ViewportUnits="Absolute" Viewport="0,0,128,128" />
                                 </Rectangle.Fill>-->
@@ -51,7 +50,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:AcrylicPanel">
                     <Grid ClipToBounds="True">
-                        <!-- background -->
+                        <!--  background  -->
                         <Rectangle>
                             <Rectangle.Fill>
                                 <PriorityBinding>
@@ -60,7 +59,7 @@
                                 </PriorityBinding>
                             </Rectangle.Fill>
                         </Rectangle>
-                        <!-- main -->
+                        <!--  main  -->
                         <Canvas>
                             <ContentControl>
                                 <ContentControl.CacheMode>
@@ -94,9 +93,7 @@
                         </Canvas>
 
                         <ContentControl Style="{StaticResource AcrylicContentControlStyle}">
-                            <ContentPresenter
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </ContentControl>
                     </Grid>
                 </ControlTemplate>

@@ -1,4 +1,4 @@
-﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+﻿<!--  Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information.  -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -292,7 +292,8 @@
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}">
+                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                   Converter={StaticResource TopCornerRadiusFilterConverter}}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition x:Name="IconColumn" Width="Auto" />
@@ -344,7 +345,7 @@
         </Border>
 
         <ControlTemplate.Triggers>
-            <!-- PointerOver -->
+            <!--  PointerOver  -->
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundPointerOver}" />
                 <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
@@ -353,7 +354,7 @@
                 <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderPointerOverCloseButtonForeground}" />
                 <Setter TargetName="TabSeparator" Property="Opacity" Value="0" />
             </Trigger>
-            <!-- Pressed -->
+            <!--  Pressed  -->
             <Trigger SourceName="LayoutRoot" Property="primitives:PressHelper.IsPressed" Value="True">
                 <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundPressed}" />
                 <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPressed}" />
@@ -362,7 +363,7 @@
                 <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderPressedCloseButtonForeground}" />
                 <Setter TargetName="TabSeparator" Property="Opacity" Value="0" />
             </Trigger>
-            <!-- Selected -->
+            <!--  Selected  -->
             <Trigger Property="IsSelected" Value="True">
                 <Setter TargetName="BottomBorderLine" Property="Visibility" Value="Collapsed" />
                 <Setter TargetName="RightRadiusRenderArc" Property="Visibility" Value="Visible" />
@@ -382,7 +383,7 @@
                 <Setter TargetName="ContentPresenter" Property="FontWeight" Value="SemiBold" />
                 <Setter Property="Panel.ZIndex" Value="1" />
             </Trigger>
-            <!-- Disabled -->
+            <!--  Disabled  -->
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundDisabled}" />
                 <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
@@ -392,7 +393,7 @@
                 <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderSelectedCloseButtonForeground}" />
                 <Setter TargetName="CloseButton" Property="BorderBrush" Value="{DynamicResource TabViewItemHeaderCloseButtonBorderBrushDisabled}" />
             </Trigger>
-            <!-- NoIcon -->
+            <!--  NoIcon  -->
             <Trigger Property="primitives:TabItemHelper.Icon" Value="{x:Null}">
                 <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
             </Trigger>
@@ -513,7 +514,7 @@
         </Border>
 
         <ControlTemplate.Triggers>
-            <!-- PointerOver -->
+            <!--  PointerOver  -->
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundPointerOver}" />
                 <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
@@ -521,7 +522,7 @@
                 <Setter TargetName="CloseButton" Property="Background" Value="{DynamicResource TabViewItemHeaderPointerOverCloseButtonBackground}" />
                 <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderPointerOverCloseButtonForeground}" />
             </Trigger>
-            <!-- Pressed -->
+            <!--  Pressed  -->
             <Trigger SourceName="LayoutRoot" Property="primitives:PressHelper.IsPressed" Value="True">
                 <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundPressed}" />
                 <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPressed}" />
@@ -529,7 +530,7 @@
                 <Setter TargetName="CloseButton" Property="Background" Value="{DynamicResource TabViewItemHeaderPressedCloseButtonBackground}" />
                 <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderPressedCloseButtonForeground}" />
             </Trigger>
-            <!-- Selected -->
+            <!--  Selected  -->
             <Trigger Property="IsSelected" Value="True">
                 <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
                 <Setter TargetName="TabContainer" Property="Margin" Value="{DynamicResource TabViewSelectedItemHeaderMargin}" />
@@ -544,7 +545,7 @@
                 <Setter TargetName="ContentPresenter" Property="FontWeight" Value="SemiBold" />
                 <Setter Property="Panel.ZIndex" Value="1" />
             </Trigger>
-            <!-- Disabled -->
+            <!--  Disabled  -->
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundDisabled}" />
                 <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
@@ -554,7 +555,7 @@
                 <Setter TargetName="CloseButton" Property="Foreground" Value="{DynamicResource TabViewItemHeaderSelectedCloseButtonForeground}" />
                 <Setter TargetName="CloseButton" Property="BorderBrush" Value="{DynamicResource TabViewItemHeaderCloseButtonBorderBrushDisabled}" />
             </Trigger>
-            <!-- NoIcon -->
+            <!--  NoIcon  -->
             <Trigger Property="primitives:TabItemHelper.Icon" Value="{x:Null}">
                 <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
             </Trigger>
@@ -632,7 +633,10 @@
                 Background="{TemplateBinding Background}"
                 KeyboardNavigation.TabNavigation="Local">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="LeftContentColumn" Width="Auto" MinWidth="2" />
+                    <ColumnDefinition
+                        x:Name="LeftContentColumn"
+                        Width="Auto"
+                        MinWidth="2" />
                     <ColumnDefinition x:Name="TabColumn" Width="*" />
                     <ColumnDefinition x:Name="RightContentColumn" Width="Auto" />
                 </Grid.ColumnDefinitions>
@@ -721,7 +725,8 @@
                         Grid.Column="3"
                         Padding="{DynamicResource TabViewItemAddButtonContainerPadding}"
                         VerticalAlignment="Bottom"
-                        Visibility="{TemplateBinding primitives:TabControlHelper.IsAddTabButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{TemplateBinding primitives:TabControlHelper.IsAddTabButtonVisible,
+                                                     Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Button
                             x:Name="AddButton"
                             HorizontalAlignment="Center"
@@ -807,7 +812,10 @@
                 Background="{TemplateBinding Background}"
                 KeyboardNavigation.TabNavigation="Local">
                 <Grid.RowDefinitions>
-                    <RowDefinition x:Name="TopRowDefinition" Height="Auto" MinHeight="2" />
+                    <RowDefinition
+                        x:Name="TopRowDefinition"
+                        Height="Auto"
+                        MinHeight="2" />
                     <RowDefinition x:Name="TabRow" Height="*" />
                     <RowDefinition x:Name="BottomRowDefinition" Height="Auto" />
                 </Grid.RowDefinitions>
@@ -854,7 +862,8 @@
                         Grid.Row="3"
                         Padding="{DynamicResource TabViewItemAddButtonContainerPadding}"
                         HorizontalAlignment="Center"
-                        Visibility="{TemplateBinding primitives:TabControlHelper.IsAddTabButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{TemplateBinding primitives:TabControlHelper.IsAddTabButtonVisible,
+                                                     Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Button
                             x:Name="AddButton"
                             HorizontalAlignment="Center"

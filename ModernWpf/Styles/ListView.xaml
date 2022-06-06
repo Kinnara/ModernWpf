@@ -1,4 +1,4 @@
-﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+﻿<!--  Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information.  -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -72,14 +72,20 @@
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
-                                            <SplineDoubleKeyFrame KeySpline="1,0,0,0" KeyTime="{StaticResource ListViewItemScaleAnimationDuration}" Value="1" />
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="1,0,0,0"
+                                                KeyTime="{StaticResource ListViewItemScaleAnimationDuration}"
+                                                Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
-                                            <SplineDoubleKeyFrame KeySpline="0,0,0,1" KeyTime="{StaticResource ListViewItemScaleAnimationDuration}" Value="{StaticResource ListViewItemPillMinScale}" />
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="0,0,0,1"
+                                                KeyTime="{StaticResource ListViewItemScaleAnimationDuration}"
+                                                Value="{StaticResource ListViewItemPillMinScale}" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -89,7 +95,10 @@
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
                                             <DiscreteDoubleKeyFrame KeyTime="0" Value="{StaticResource ListViewItemPillMinScale}" />
-                                            <SplineDoubleKeyFrame KeySpline="0,0,0,1" KeyTime="{StaticResource ListViewItemScaleAnimationDuration}" Value="1" />
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="0,0,0,1"
+                                                KeyTime="{StaticResource ListViewItemScaleAnimationDuration}"
+                                                Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -124,13 +133,13 @@
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource ListViewItemBackgroundPressed}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ListViewItemForegroundPointerOver}" />
                         </MultiTrigger>
-                        <!-- Selected -->
+                        <!--  Selected  -->
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="PressedBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource ListViewItemBackgroundSelected}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelected}" />
                         </Trigger>
-                        <!-- SelectedPointerOver -->
+                        <!--  SelectedPointerOver  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
@@ -140,7 +149,7 @@
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelectedPointerOver}" />
                             <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource ListViewItemSelectionIndicatorPointerOverBrush}" />
                         </MultiTrigger>
-                        <!-- SelectedPressed -->
+                        <!--  SelectedPressed  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
@@ -150,7 +159,7 @@
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ListViewItemForegroundSelectedPressed}" />
                             <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource ListViewItemSelectionIndicatorPressedBrush}" />
                         </MultiTrigger>
-                        <!-- SelectedDisabled -->
+                        <!--  SelectedDisabled  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
@@ -190,9 +199,7 @@
                         VerticalAlignment="Stretch"
                         Content="{TemplateBinding primitives:ListViewHelper.Header}"
                         ContentTemplate="{TemplateBinding primitives:ListViewHelper.HeaderTemplate}" />
-                    <ItemsPresenter
-                        Grid.Row="1"
-                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    <ItemsPresenter Grid.Row="1" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     <ContentPresenter
                         Grid.Row="2"
                         HorizontalAlignment="Stretch"
@@ -250,9 +257,7 @@
                                     VerticalAlignment="Stretch"
                                     Content="{TemplateBinding primitives:ListViewHelper.Header}"
                                     ContentTemplate="{TemplateBinding primitives:ListViewHelper.HeaderTemplate}" />
-                                <ItemsPresenter
-                                    Grid.Row="1"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                <ItemsPresenter Grid.Row="1" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                 <ContentPresenter
                                     Grid.Row="2"
                                     HorizontalAlignment="Stretch"
@@ -276,7 +281,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="DefaultListViewStyle" BasedOn="{StaticResource BaseListViewStyle}" TargetType="ListView">
+    <Style
+        x:Key="DefaultListViewStyle"
+        BasedOn="{StaticResource BaseListViewStyle}"
+        TargetType="ListView">
         <Style.Resources>
             <primitives:IsGridViewConverter x:Key="IsGridViewConverter" />
         </Style.Resources>
@@ -290,15 +298,13 @@
 
     <Style BasedOn="{StaticResource DefaultListViewStyle}" TargetType="ListView" />
 
-    <!-- GridView ScrollViewer Style -->
+    <!--  GridView ScrollViewer Style  -->
     <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" TargetType="ScrollViewer">
         <Setter Property="Focusable" Value="false" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollViewer">
-                    <Grid
-                        Background="{TemplateBinding Background}"
-                        SnapsToDevicePixels="true">
+                    <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -307,12 +313,12 @@
                             <RowDefinition Height="*" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <!-- Grid.Column="0" Grid.Row="0" -->
+                        <!--  Grid.Column="0" Grid.Row="0"  -->
                         <DockPanel
                             Grid.RowSpan="2"
                             Grid.ColumnSpan="2"
                             Margin="{TemplateBinding Padding}">
-                            <!-- Column Headers Scroll Viewer -->
+                            <!--  Column Headers Scroll Viewer  -->
                             <ScrollViewer
                                 DockPanel.Dock="Top"
                                 Focusable="false"
@@ -329,7 +335,7 @@
                                     Columns="{Binding Path=TemplatedParent.View.Columns, RelativeSource={RelativeSource TemplatedParent}}"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             </ScrollViewer>
-                            <!-- Items Scroll Viewer -->
+                            <!--  Items Scroll Viewer  -->
                             <ScrollContentPresenter
                                 Name="PART_ScrollContentPresenter"
                                 CanContentScroll="{TemplateBinding CanContentScroll}"
@@ -338,7 +344,7 @@
                                 KeyboardNavigation.DirectionalNavigation="Local"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </DockPanel>
-                        <!-- Horizontal Scroll Bar -->
+                        <!--  Horizontal Scroll Bar  -->
                         <ScrollBar
                             Name="PART_HorizontalScrollBar"
                             Grid.Row="1"
@@ -349,7 +355,7 @@
                             ViewportSize="{TemplateBinding ViewportWidth}"
                             Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
                             Value="{TemplateBinding HorizontalOffset}" />
-                        <!-- Vertical Scroll Bar -->
+                        <!--  Vertical Scroll Bar  -->
                         <ScrollBar
                             Name="PART_VerticalScrollBar"
                             Grid.Column="1"
@@ -360,7 +366,7 @@
                             ViewportSize="{TemplateBinding ViewportHeight}"
                             Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
                             Value="{TemplateBinding VerticalOffset}" />
-                        <!-- Right Bottom Corner -->
+                        <!--  Right Bottom Corner  -->
                         <DockPanel
                             Grid.Row="1"
                             Grid.Column="1"
@@ -392,9 +398,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Border
-                        Padding="{TemplateBinding Padding}"
-                        Background="Transparent">
+                    <Border Padding="{TemplateBinding Padding}" Background="Transparent">
                         <Rectangle
                             Width="1"
                             HorizontalAlignment="Center"
@@ -419,7 +423,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="GridViewColumnHeader">
                     <Grid SnapsToDevicePixels="true">
-                        <!-- GridViewColumnHeader Content -->
+                        <!--  GridViewColumnHeader Content  -->
                         <Border
                             x:Name="ContentContainer"
                             Background="{TemplateBinding Background}"
@@ -461,7 +465,7 @@
                 <Setter Property="BorderThickness" Value="0,0,0,1" />
                 <Setter Property="Template">
                     <Setter.Value>
-                        <!-- The same as normal header, just no gripper. -->
+                        <!--  The same as normal header, just no gripper.  -->
                         <ControlTemplate TargetType="GridViewColumnHeader">
                             <Border
                                 Background="{TemplateBinding Background}"
@@ -495,7 +499,10 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="{x:Static GridView.GridViewItemContainerStyleKey}" BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
+    <Style
+        x:Key="{x:Static GridView.GridViewItemContainerStyleKey}"
+        BasedOn="{StaticResource DefaultListViewItemStyle}"
+        TargetType="ListViewItem">
         <Setter Property="Padding" Value="6,0" />
         <Setter Property="Background" Value="{DynamicResource GridViewItemBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource GridViewItemForeground}" />
@@ -540,14 +547,20 @@
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
-                                            <SplineDoubleKeyFrame KeySpline="1,0,0,0" KeyTime="{StaticResource ListViewItemScaleAnimationDuration}" Value="1" />
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="1,0,0,0"
+                                                KeyTime="{StaticResource ListViewItemScaleAnimationDuration}"
+                                                Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
-                                            <SplineDoubleKeyFrame KeySpline="0,0,0,1" KeyTime="{StaticResource ListViewItemScaleAnimationDuration}" Value="{StaticResource ListViewItemPillMinScale}" />
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="0,0,0,1"
+                                                KeyTime="{StaticResource ListViewItemScaleAnimationDuration}"
+                                                Value="{StaticResource ListViewItemPillMinScale}" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -557,7 +570,10 @@
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
                                             <DiscreteDoubleKeyFrame KeyTime="0" Value="{StaticResource ListViewItemPillMinScale}" />
-                                            <SplineDoubleKeyFrame KeySpline="0,0,0,1" KeyTime="{StaticResource ListViewItemScaleAnimationDuration}" Value="1" />
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="0,0,0,1"
+                                                KeyTime="{StaticResource ListViewItemScaleAnimationDuration}"
+                                                Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -588,7 +604,7 @@
                         <Trigger SourceName="LayoutRoot" Property="primitives:PressHelper.IsPressed" Value="True">
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource GridViewItemBackgroundPressed}" />
                         </Trigger>
-                        <!-- SelectedPointerOver -->
+                        <!--  SelectedPointerOver  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
@@ -597,7 +613,7 @@
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource GridViewItemBackgroundSelectedPointerOver}" />
                             <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource GridViewItemSelectedPointerOverBorderBrush}" />
                         </MultiTrigger>
-                        <!-- SelectedPressed -->
+                        <!--  SelectedPressed  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
@@ -606,7 +622,7 @@
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource GridViewItemBackgroundSelectedPressed}" />
                             <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource GridViewItemSelectedPressedBorderBrush}" />
                         </MultiTrigger>
-                        <!-- SelectedDisabled -->
+                        <!--  SelectedDisabled  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="True" />
@@ -621,7 +637,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Static GridView.GridViewStyleKey}" BasedOn="{StaticResource BaseListViewStyle}" TargetType="ListView">
+    <Style
+        x:Key="{x:Static GridView.GridViewStyleKey}"
+        BasedOn="{StaticResource BaseListViewStyle}"
+        TargetType="ListView">
         <Setter Property="ItemContainerStyle" Value="{DynamicResource {x:Static GridView.GridViewItemContainerStyleKey}}" />
         <Setter Property="Template" Value="{StaticResource GridViewTemplate}" />
     </Style>

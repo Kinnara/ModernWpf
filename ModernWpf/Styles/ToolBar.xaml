@@ -15,7 +15,10 @@
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
-    <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+    <Style
+        x:Key="{x:Static ToolBar.ButtonStyleKey}"
+        BasedOn="{StaticResource DefaultButtonStyle}"
+        TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource ToolBarButtonBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ToolBarButtonBorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ToolBarButtonBorderThemeThickness}" />
@@ -30,8 +33,10 @@
                         <Grid>
                             <Rectangle
                                 x:Name="Border"
-                                RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+                                RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                          Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                          Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
                                 Stroke="{TemplateBinding BorderBrush}"
                                 StrokeThickness="{TemplateBinding BorderThickness}" />
                             <local:ContentPresenterEx
@@ -63,7 +68,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Static ToolBar.ToggleButtonStyleKey}" BasedOn="{StaticResource DefaultToggleButtonStyle}" TargetType="ToggleButton">
+    <Style
+        x:Key="{x:Static ToolBar.ToggleButtonStyleKey}"
+        BasedOn="{StaticResource DefaultToggleButtonStyle}"
+        TargetType="ToggleButton">
         <Setter Property="Background" Value="{DynamicResource ToolBarButtonBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ToolBarButtonBorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ToolBarButtonBorderThemeThickness}" />
@@ -78,8 +86,10 @@
                         <Grid>
                             <Rectangle
                                 x:Name="Border"
-                                RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+                                RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                          Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                          Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
                                 Stroke="{TemplateBinding BorderBrush}"
                                 StrokeThickness="{TemplateBinding BorderThickness}" />
                             <local:ContentPresenterEx
@@ -136,7 +146,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Static ToolBar.CheckBoxStyleKey}" BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox">
+    <Style
+        x:Key="{x:Static ToolBar.CheckBoxStyleKey}"
+        BasedOn="{StaticResource DefaultCheckBoxStyle}"
+        TargetType="CheckBox">
         <Setter Property="MinWidth" Value="0" />
         <Setter Property="MinHeight" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Left" />
@@ -159,8 +172,10 @@
                         <Grid>
                             <Rectangle
                                 x:Name="Border"
-                                RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+                                RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                          Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                          Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
                                 Stroke="{TemplateBinding BorderBrush}"
                                 StrokeThickness="{TemplateBinding BorderThickness}" />
                             <local:ContentPresenterEx
@@ -217,7 +232,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Static ToolBar.RadioButtonStyleKey}" BasedOn="{StaticResource DefaultRadioButtonStyle}" TargetType="RadioButton">
+    <Style
+        x:Key="{x:Static ToolBar.RadioButtonStyleKey}"
+        BasedOn="{StaticResource DefaultRadioButtonStyle}"
+        TargetType="RadioButton">
         <Setter Property="MinWidth" Value="0" />
         <Setter Property="MinHeight" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Left" />
@@ -240,8 +258,10 @@
                         <Grid>
                             <Rectangle
                                 x:Name="Border"
-                                RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+                                RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                          Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                          Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
                                 Stroke="{TemplateBinding BorderBrush}"
                                 StrokeThickness="{TemplateBinding BorderThickness}" />
                             <local:ContentPresenterEx
@@ -298,7 +318,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="{x:Static ToolBar.TextBoxStyleKey}" BasedOn="{StaticResource DefaultTextBoxStyle}" TargetType="{x:Type TextBox}" />
+    <Style
+        x:Key="{x:Static ToolBar.TextBoxStyleKey}"
+        BasedOn="{StaticResource DefaultTextBoxStyle}"
+        TargetType="{x:Type TextBox}" />
 
     <Style x:Key="ToolBarThumbStyle" TargetType="Thumb">
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -307,9 +330,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Border
-                        Background="Transparent"
-                        SnapsToDevicePixels="True">
+                    <Border Background="Transparent" SnapsToDevicePixels="True">
                         <Rectangle Margin="0,2">
                             <Rectangle.Fill>
                                 <DrawingBrush
@@ -320,9 +341,7 @@
                                     ViewportUnits="Absolute">
                                     <DrawingBrush.Drawing>
                                         <DrawingGroup>
-                                            <GeometryDrawing
-                                                Brush="#AAA"
-                                                Geometry="M 4 4 L 4 8 L 8 8 L 8 4 z" />
+                                            <GeometryDrawing Brush="#AAA" Geometry="M 4 4 L 4 8 L 8 8 L 8 4 z" />
                                         </DrawingGroup>
                                     </DrawingBrush.Drawing>
                                 </DrawingBrush>
@@ -334,7 +353,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ToolBarOverflowButtonStyle" BasedOn="{StaticResource DefaultToggleButtonStyle}" TargetType="ToggleButton">
+    <Style
+        x:Key="ToolBarOverflowButtonStyle"
+        BasedOn="{StaticResource DefaultToggleButtonStyle}"
+        TargetType="ToggleButton">
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -352,8 +374,10 @@
                         <Grid>
                             <Rectangle
                                 x:Name="Border"
-                                RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+                                RadiusX="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                          Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                RadiusY="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                          Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
                                 Stroke="{TemplateBinding BorderBrush}"
                                 StrokeThickness="{TemplateBinding BorderThickness}" />
                             <Grid VerticalAlignment="Bottom">

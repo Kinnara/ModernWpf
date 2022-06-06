@@ -1,4 +1,4 @@
-﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+﻿<!--  Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information.  -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -33,41 +33,6 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="ApplicationViewStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="FullSize" />
-                                <VisualState x:Name="Compact" />
-                                <VisualState x:Name="LabelOnRight" />
-                                <VisualState x:Name="LabelCollapsed" />
-                                <VisualState x:Name="Overflow" />
-                                <VisualState x:Name="OverflowWithToggleButtons" />
-                                <VisualState x:Name="OverflowWithMenuIcons" />
-                                <VisualState x:Name="OverflowWithToggleButtonsAndMenuIcons" />
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" />
-                                <VisualState x:Name="Pressed" />
-                                <VisualState x:Name="Disabled" />
-                                <VisualState x:Name="OverflowNormal" />
-                                <VisualState x:Name="OverflowPointerOver" />
-                                <VisualState x:Name="OverflowPressed" />
-                                <!--<VisualState x:Name="OverflowSubMenuOpened" />-->
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
-                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="ContentRoot">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -118,23 +83,58 @@
                                 VerticalAlignment="Center"
                                 Visibility="Collapsed" />-->
                         </Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ApplicationViewStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="FullSize" />
+                                <VisualState x:Name="Compact" />
+                                <VisualState x:Name="LabelOnRight" />
+                                <VisualState x:Name="LabelCollapsed" />
+                                <VisualState x:Name="Overflow" />
+                                <VisualState x:Name="OverflowWithToggleButtons" />
+                                <VisualState x:Name="OverflowWithMenuIcons" />
+                                <VisualState x:Name="OverflowWithToggleButtonsAndMenuIcons" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Disabled" />
+                                <VisualState x:Name="OverflowNormal" />
+                                <VisualState x:Name="OverflowPointerOver" />
+                                <VisualState x:Name="OverflowPressed" />
+                                <!--<VisualState x:Name="OverflowSubMenuOpened" />-->
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
+                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Border>
                     <ControlTemplate.Triggers>
                         <!--#region ApplicationViewStates-->
-                        <!-- Overflow -->
+                        <!--  Overflow  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <!-- OverflowWithToggleButtons -->
+                        <!--  OverflowWithToggleButtons  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
                         </Trigger>
-                        <!-- OverflowWithMenuIcons -->
+                        <!--  OverflowWithMenuIcons  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
@@ -145,7 +145,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
                         </Trigger>
-                        <!-- OverflowWithToggleButtonsAndMenuIcons -->
+                        <!--  OverflowWithToggleButtonsAndMenuIcons  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtonsAndMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
@@ -158,38 +158,38 @@
                         </Trigger>
                         <!--#endregion-->
                         <!--#region CommonStates-->
-                        <!-- PointerOver -->
+                        <!--  PointerOver  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOver">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
                         </Trigger>
-                        <!-- Pressed -->
+                        <!--  Pressed  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Pressed">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
                         </Trigger>
-                        <!-- Disabled -->
+                        <!--  Disabled  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                         </Trigger>
-                        <!-- OverflowPointerOver -->
+                        <!--  OverflowPointerOver  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPointerOver">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}" />
                         </Trigger>
-                        <!-- OverflowPressed -->
+                        <!--  OverflowPressed  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPressed">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}" />
                         </Trigger>
-                        <!-- OverflowSubMenuOpened -->
+                        <!--  OverflowSubMenuOpened  -->
                         <!--<Trigger>
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
                         </Trigger>-->
                         <!--#endregion-->
-                        <!-- KeyboardAcceleratorTextVisible -->
+                        <!--  KeyboardAcceleratorTextVisible  -->
                         <Trigger SourceName="KeyboardAcceleratorTextVisibilityListener" Property="CurrentStateName" Value="KeyboardAcceleratorTextVisible">
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <!-- HasFlyout -->
+                        <!--  HasFlyout  -->
                         <!--<Trigger>
                             <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
                         </Trigger>-->
@@ -207,7 +207,10 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="CommandBarFlyoutAppBarButtonStyle" BasedOn="{StaticResource CommandBarFlyoutAppBarButtonStyleBase}" TargetType="local:AppBarButton" />
+    <Style
+        x:Key="CommandBarFlyoutAppBarButtonStyle"
+        BasedOn="{StaticResource CommandBarFlyoutAppBarButtonStyleBase}"
+        TargetType="local:AppBarButton" />
 
     <Style x:Key="CommandBarFlyoutAppBarToggleButtonStyleBase" TargetType="local:AppBarToggleButton">
         <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutButtonBackground}" />
@@ -235,45 +238,6 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="ApplicationViewStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="FullSize" />
-                                <VisualState x:Name="Compact" />
-                                <VisualState x:Name="LabelOnRight" />
-                                <VisualState x:Name="LabelCollapsed" />
-                                <VisualState x:Name="Overflow" />
-                                <VisualState x:Name="OverflowWithMenuIcons" />
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" />
-                                <VisualState x:Name="Pressed" />
-                                <VisualState x:Name="Disabled" />
-                                <VisualState x:Name="Checked" />
-                                <VisualState x:Name="CheckedPointerOver" />
-                                <VisualState x:Name="CheckedPressed" />
-                                <VisualState x:Name="CheckedDisabled" />
-                                <VisualState x:Name="OverflowNormal" />
-                                <VisualState x:Name="OverflowPointerOver" />
-                                <VisualState x:Name="OverflowPressed" />
-                                <VisualState x:Name="OverflowChecked" />
-                                <VisualState x:Name="OverflowCheckedPointerOver" />
-                                <VisualState x:Name="OverflowCheckedPressed" />
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
-                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <Rectangle
                                 x:Name="CheckedHighlightBackground"
@@ -330,10 +294,49 @@
                                     Visibility="Collapsed" />
                             </Grid>
                         </Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ApplicationViewStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="FullSize" />
+                                <VisualState x:Name="Compact" />
+                                <VisualState x:Name="LabelOnRight" />
+                                <VisualState x:Name="LabelCollapsed" />
+                                <VisualState x:Name="Overflow" />
+                                <VisualState x:Name="OverflowWithMenuIcons" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Disabled" />
+                                <VisualState x:Name="Checked" />
+                                <VisualState x:Name="CheckedPointerOver" />
+                                <VisualState x:Name="CheckedPressed" />
+                                <VisualState x:Name="CheckedDisabled" />
+                                <VisualState x:Name="OverflowNormal" />
+                                <VisualState x:Name="OverflowPointerOver" />
+                                <VisualState x:Name="OverflowPressed" />
+                                <VisualState x:Name="OverflowChecked" />
+                                <VisualState x:Name="OverflowCheckedPointerOver" />
+                                <VisualState x:Name="OverflowCheckedPressed" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
+                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Border>
                     <ControlTemplate.Triggers>
                         <!--#region ApplicationViewStates-->
-                        <!-- Overflow -->
+                        <!--  Overflow  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
@@ -341,7 +344,7 @@
                             <Setter TargetName="OverflowCheckGlyph" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <!-- OverflowWithMenuIcons -->
+                        <!--  OverflowWithMenuIcons  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Visible" />
@@ -357,39 +360,39 @@
                         </Trigger>
                         <!--#endregion-->
                         <!--#region CommonStates-->
-                        <!-- PointerOver -->
+                        <!--  PointerOver  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOver">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
                         </Trigger>
-                        <!-- Pressed -->
+                        <!--  Pressed  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Pressed">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
                         </Trigger>
-                        <!-- Disabled -->
+                        <!--  Disabled  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                         </Trigger>
-                        <!-- Checked -->
+                        <!--  Checked  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Checked">
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!-- CheckedPointerOver -->
+                        <!--  CheckedPointerOver  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPointerOver">
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!-- CheckedPressed -->
+                        <!--  CheckedPressed  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPressed">
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!-- CheckedDisabled -->
+                        <!--  CheckedDisabled  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedDisabled">
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
@@ -399,33 +402,33 @@
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!-- OverflowPointerOver -->
+                        <!--  OverflowPointerOver  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPointerOver">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}" />
                         </Trigger>
-                        <!-- OverflowPressed -->
+                        <!--  OverflowPressed  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPressed">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}" />
                         </Trigger>
-                        <!-- OverflowChecked -->
+                        <!--  OverflowChecked  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowChecked">
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!-- OverflowCheckedPointerOver -->
+                        <!--  OverflowCheckedPointerOver  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowCheckedPointerOver">
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
-                        <!-- OverflowCheckedPressed -->
+                        <!--  OverflowCheckedPressed  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowCheckedPressed">
                             <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <!--#endregion-->
-                        <!-- KeyboardAcceleratorTextVisible -->
+                        <!--  KeyboardAcceleratorTextVisible  -->
                         <Trigger SourceName="KeyboardAcceleratorTextVisibilityListener" Property="CurrentStateName" Value="KeyboardAcceleratorTextVisible">
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
@@ -443,7 +446,10 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="CommandBarFlyoutAppBarToggleButtonStyle" BasedOn="{StaticResource CommandBarFlyoutAppBarToggleButtonStyleBase}" TargetType="local:AppBarToggleButton" />
+    <Style
+        x:Key="CommandBarFlyoutAppBarToggleButtonStyle"
+        BasedOn="{StaticResource CommandBarFlyoutAppBarToggleButtonStyleBase}"
+        TargetType="local:AppBarToggleButton" />
 
     <Style x:Key="CommandBarFlyoutCommandBarOverflowPresenterStyle" TargetType="primitives:CommandBarOverflowPresenter">
         <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutButtonBackground}" />
@@ -463,13 +469,6 @@
                         Background="{TemplateBinding Background}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="DisplayModeStates">
-                                <VisualState x:Name="DisplayModeDefault" />
-                                <VisualState x:Name="FullWidthOpenDown" />
-                                <VisualState x:Name="FullWidthOpenUp" />
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <Border
                                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -483,6 +482,13 @@
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                 VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" />
                         </Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="DisplayModeStates">
+                                <VisualState x:Name="DisplayModeDefault" />
+                                <VisualState x:Name="FullWidthOpenDown" />
+                                <VisualState x:Name="FullWidthOpenUp" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -501,19 +507,23 @@
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Border.Resources>
-                            <primitives:CommandBarFlyoutCommandBarTemplateSettingsProxy
-                                x:Key="TemplateSettingsProxy"
-                                FlyoutTemplateSettings="{Binding FlyoutTemplateSettings, RelativeSource={RelativeSource TemplatedParent}, Mode=OneTime}" />
+                            <primitives:CommandBarFlyoutCommandBarTemplateSettingsProxy x:Key="TemplateSettingsProxy" FlyoutTemplateSettings="{Binding FlyoutTemplateSettings, RelativeSource={RelativeSource TemplatedParent}, Mode=OneTime}" />
                             <Style BasedOn="{StaticResource CommandBarFlyoutAppBarButtonStyle}" TargetType="local:AppBarButton" />
                             <Style BasedOn="{StaticResource CommandBarFlyoutAppBarToggleButtonStyle}" TargetType="local:AppBarToggleButton" />
                             <Storyboard x:Key="OpeningStoryboard" FillBehavior="Stop">
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterContentRootClipTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OpenAnimationStartPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.1,0.9 0.2,1" KeyTime="0:0:0.300" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OpenAnimationEndPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.1,0.9 0.2,1"
+                                        KeyTime="0:0:0.300"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OpenAnimationEndPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterOverflowContentRootClipTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OpenAnimationStartPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.1,0.9 0.2,1" KeyTime="0:0:0.300" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OpenAnimationEndPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.1,0.9 0.2,1"
+                                        KeyTime="0:0:0.300"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OpenAnimationEndPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                             <!--
@@ -525,12 +535,18 @@
                             <Storyboard x:Key="ClosingStoryboard">
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterContentRootClipTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OpenAnimationEndPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.7,0 1,0.5" KeyTime="0:0:0.150" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OpenAnimationStartPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.7,0 1,0.5"
+                                        KeyTime="0:0:0.150"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OpenAnimationStartPosition}" />
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0.151" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.CloseAnimationEndPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterOverflowContentRootClipTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OpenAnimationEndPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.7,0 1,0.5" KeyTime="0:0:0.150" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OpenAnimationStartPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.7,0 1,0.5"
+                                        KeyTime="0:0:0.150"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OpenAnimationStartPosition}" />
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0.151" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.CloseAnimationEndPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
@@ -545,19 +561,31 @@
                                 </ObjectAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MoreButtonTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionMoreButtonAnimationStartPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.1,0.9 0.2,1" KeyTime="0:0:0.300" Value="0" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.1,0.9 0.2,1"
+                                        KeyTime="0:0:0.300"
+                                        Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentRootClipTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationStartPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.1,0.9 0.2,1" KeyTime="0:0:0.300" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationEndPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.1,0.9 0.2,1"
+                                        KeyTime="0:0:0.300"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationEndPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRootClipTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationStartPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.1,0.9 0.2,1" KeyTime="0:0:0.300" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationEndPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.1,0.9 0.2,1"
+                                        KeyTime="0:0:0.300"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationEndPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRootClipTransform" Storyboard.TargetProperty="Y">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandUpAnimationStartPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.1,0.9 0.2,1" KeyTime="0:0:0.300" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandUpAnimationEndPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.1,0.9 0.2,1"
+                                        KeyTime="0:0:0.300"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandUpAnimationEndPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="CornerRadius">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
@@ -582,22 +610,34 @@
                                 </ObjectAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MoreButtonTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
-                                    <SplineDoubleKeyFrame KeySpline="0.7,0 1,0.5" KeyTime="0:0:0.150" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionMoreButtonAnimationStartPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.7,0 1,0.5"
+                                        KeyTime="0:0:0.150"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionMoreButtonAnimationStartPosition}" />
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0.151" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionMoreButtonAnimationEndPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentRootClipTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationEndPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.7,0 1,0.5" KeyTime="0:0:0.150" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationStartPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.7,0 1,0.5"
+                                        KeyTime="0:0:0.150"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationStartPosition}" />
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0.151" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRootClipTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationEndPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.7,0 1,0.5" KeyTime="0:0:0.150" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationStartPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.7,0 1,0.5"
+                                        KeyTime="0:0:0.150"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationStartPosition}" />
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0.151" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRootClipTransform" Storyboard.TargetProperty="Y">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandUpAnimationEndPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.7,0 1,0.5" KeyTime="0:0:0.150" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandUpAnimationStartPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.7,0 1,0.5"
+                                        KeyTime="0:0:0.150"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandUpAnimationStartPosition}" />
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0.151" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandUpAnimationHoldPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
@@ -612,19 +652,31 @@
                                 </ObjectAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MoreButtonTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionMoreButtonAnimationStartPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.1,0.9 0.2,1" KeyTime="0:0:0.300" Value="0" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.1,0.9 0.2,1"
+                                        KeyTime="0:0:0.300"
+                                        Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentRootClipTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationStartPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.1,0.9 0.2,1" KeyTime="0:0:0.300" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationEndPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.1,0.9 0.2,1"
+                                        KeyTime="0:0:0.300"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationEndPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRootClipTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationStartPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.1,0.9 0.2,1" KeyTime="0:0:0.300" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationEndPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.1,0.9 0.2,1"
+                                        KeyTime="0:0:0.300"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationEndPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRootClipTransform" Storyboard.TargetProperty="Y">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandDownAnimationStartPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.1,0.9 0.2,1" KeyTime="0:0:0.300" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandDownAnimationEndPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.1,0.9 0.2,1"
+                                        KeyTime="0:0:0.300"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandDownAnimationEndPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="CornerRadius">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
@@ -649,22 +701,34 @@
                                 </ObjectAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MoreButtonTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
-                                    <SplineDoubleKeyFrame KeySpline="0.7,0 1,0.5" KeyTime="0:0:0.150" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionMoreButtonAnimationStartPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.7,0 1,0.5"
+                                        KeyTime="0:0:0.150"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionMoreButtonAnimationStartPosition}" />
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0.151" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionMoreButtonAnimationEndPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentRootClipTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationEndPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.7,0 1,0.5" KeyTime="0:0:0.150" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationStartPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.7,0 1,0.5"
+                                        KeyTime="0:0:0.150"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationStartPosition}" />
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0.151" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRootClipTransform" Storyboard.TargetProperty="X">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationEndPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.7,0 1,0.5" KeyTime="0:0:0.150" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationStartPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.7,0 1,0.5"
+                                        KeyTime="0:0:0.150"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionAnimationStartPosition}" />
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0.151" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRootClipTransform" Storyboard.TargetProperty="Y">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandDownAnimationEndPosition}" />
-                                    <SplineDoubleKeyFrame KeySpline="0.7,0 1,0.5" KeyTime="0:0:0.150" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandDownAnimationStartPosition}" />
+                                    <SplineDoubleKeyFrame
+                                        KeySpline="0.7,0 1,0.5"
+                                        KeyTime="0:0:0.150"
+                                        Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandDownAnimationStartPosition}" />
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0.151" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandDownAnimationHoldPosition}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
@@ -704,45 +768,6 @@
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:SimpleVisualStateManager />
                         </VisualStateManager.CustomVisualStateManager>
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="ExpansionStates">
-                                <VisualStateGroup.Transitions>
-                                    <VisualTransition Storyboard="{StaticResource CollapsedToExpandedUpStoryboard}" From="Collapsed" To="ExpandedUp" />
-                                    <VisualTransition Storyboard="{StaticResource ExpandedUpToCollapsedStoryboard}" From="ExpandedUp" To="Collapsed" />
-                                    <VisualTransition Storyboard="{StaticResource CollapsedToExpandedDownStoryboard}" From="Collapsed" To="ExpandedDown" />
-                                    <VisualTransition Storyboard="{StaticResource ExpandedDownToCollapsedStoryboard}" From="ExpandedDown" To="Collapsed" />
-                                </VisualStateGroup.Transitions>
-                                <VisualState x:Name="Collapsed">
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="OuterOverflowContentRoot"
-                                            Storyboard.TargetProperty="Opacity"
-                                            To="0"
-                                            Duration="0" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="ExpandedUp" Storyboard="{StaticResource ExpandedUpStoryboard}" />
-                                <VisualState x:Name="ExpandedDown" Storyboard="{StaticResource ExpandedDownStoryboard}" />
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="AvailableCommandsStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="AvailableCommandsStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="BothCommands" />
-                                <VisualState x:Name="PrimaryCommandsOnly" />
-                                <VisualState x:Name="SecondaryCommandsOnly" />
-                            </VisualStateGroup>
-                            <VisualStateGroup>
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="CombinedStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="Default" />
-                                <VisualState x:Name="ExpandedUpWithPrimaryCommands" />
-                                <VisualState x:Name="ExpandedDownWithPrimaryCommands" />
-                                <VisualState x:Name="ExpandedUpWithoutPrimaryCommands" />
-                                <VisualState x:Name="ExpandedDownWithoutPrimaryCommands" />
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
                         <Border
                             x:Name="OuterContentRoot"
                             Height="{TemplateBinding Height}"
@@ -751,21 +776,15 @@
                             VerticalAlignment="Top"
                             CornerRadius="{Binding ElementName=LayoutRoot, Path=CornerRadius}">
                             <Border.Clip>
-                                <RectangleGeometry
-                                    x:Name="OuterContentRootClip"
-                                    Rect="{Binding Source={StaticResource TemplateSettingsProxy}, Path=FlyoutTemplateSettings.ContentClipRect}">
+                                <RectangleGeometry x:Name="OuterContentRootClip" Rect="{Binding Source={StaticResource TemplateSettingsProxy}, Path=FlyoutTemplateSettings.ContentClipRect}">
                                     <RectangleGeometry.Transform>
                                         <TranslateTransform x:Name="OuterContentRootClipTransform" />
                                     </RectangleGeometry.Transform>
                                 </RectangleGeometry>
                             </Border.Clip>
-                            <Grid
-                                x:Name="ContentRoot"
-                                Background="{TemplateBinding Background}">
+                            <Grid x:Name="ContentRoot" Background="{TemplateBinding Background}">
                                 <Grid.Clip>
-                                    <RectangleGeometry
-                                        x:Name="ContentRootClip"
-                                        Rect="{Binding Source={StaticResource TemplateSettingsProxy}, Path=FlyoutTemplateSettings.ContentClipRect}">
+                                    <RectangleGeometry x:Name="ContentRootClip" Rect="{Binding Source={StaticResource TemplateSettingsProxy}, Path=FlyoutTemplateSettings.ContentClipRect}">
                                         <RectangleGeometry.Transform>
                                             <!--
                                                 If you have a value set by a binding and then animate that value,
@@ -829,13 +848,9 @@
                                     Placement="Bottom"
                                     PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
                                     StaysOpen="false">
-                                    <Border
-                                        x:Name="OuterOverflowContentRoot"
-                                        Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandedWidth}">
+                                    <Border x:Name="OuterOverflowContentRoot" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandedWidth}">
                                         <Border.Clip>
-                                            <RectangleGeometry
-                                                x:Name="OuterOverflowContentRootClip"
-                                                Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OverflowContentClipRect}">
+                                            <RectangleGeometry x:Name="OuterOverflowContentRootClip" Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OverflowContentClipRect}">
                                                 <RectangleGeometry.Transform>
                                                     <TranslateTransform x:Name="OuterOverflowContentRootClipTransform" />
                                                 </RectangleGeometry.Transform>
@@ -847,9 +862,7 @@
                                             Background="{TemplateBinding Background}"
                                             CornerRadius="{Binding ElementName=OuterOverflowContentRoot, Path=CornerRadius}">
                                             <Border.Clip>
-                                                <RectangleGeometry
-                                                    x:Name="OverflowContentRootClip"
-                                                    Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OverflowContentClipRect}">
+                                                <RectangleGeometry x:Name="OverflowContentRootClip" Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OverflowContentClipRect}">
                                                     <RectangleGeometry.Transform>
                                                         <!--
                                                             If you have a value set by a binding and then animate that value,
@@ -891,23 +904,74 @@
                                 </ui:PopupEx>
                             </Grid>
                         </Border>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ExpansionStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition
+                                        Storyboard="{StaticResource CollapsedToExpandedUpStoryboard}"
+                                        From="Collapsed"
+                                        To="ExpandedUp" />
+                                    <VisualTransition
+                                        Storyboard="{StaticResource ExpandedUpToCollapsedStoryboard}"
+                                        From="ExpandedUp"
+                                        To="Collapsed" />
+                                    <VisualTransition
+                                        Storyboard="{StaticResource CollapsedToExpandedDownStoryboard}"
+                                        From="Collapsed"
+                                        To="ExpandedDown" />
+                                    <VisualTransition
+                                        Storyboard="{StaticResource ExpandedDownToCollapsedStoryboard}"
+                                        From="ExpandedDown"
+                                        To="Collapsed" />
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="Collapsed">
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="OuterOverflowContentRoot"
+                                            Storyboard.TargetProperty="Opacity"
+                                            To="0"
+                                            Duration="0" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ExpandedUp" Storyboard="{StaticResource ExpandedUpStoryboard}" />
+                                <VisualState x:Name="ExpandedDown" Storyboard="{StaticResource ExpandedDownStoryboard}" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="AvailableCommandsStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="AvailableCommandsStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="BothCommands" />
+                                <VisualState x:Name="PrimaryCommandsOnly" />
+                                <VisualState x:Name="SecondaryCommandsOnly" />
+                            </VisualStateGroup>
+                            <VisualStateGroup>
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CombinedStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="Default" />
+                                <VisualState x:Name="ExpandedUpWithPrimaryCommands" />
+                                <VisualState x:Name="ExpandedDownWithPrimaryCommands" />
+                                <VisualState x:Name="ExpandedUpWithoutPrimaryCommands" />
+                                <VisualState x:Name="ExpandedDownWithoutPrimaryCommands" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <!-- Disabled -->
+                        <!--  Disabled  -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="EllipsisIcon" Property="Foreground" Value="{DynamicResource CommandBarEllipsisIconForegroundDisabled}" />
                         </Trigger>
-                        <!-- PrimaryCommandsOnly -->
+                        <!--  PrimaryCommandsOnly  -->
                         <Trigger SourceName="AvailableCommandsStatesListener" Property="CurrentStateName" Value="PrimaryCommandsOnly">
                             <Setter TargetName="OverflowContentRoot" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <!-- SecondaryCommandsOnly -->
+                        <!--  SecondaryCommandsOnly  -->
                         <Trigger SourceName="AvailableCommandsStatesListener" Property="CurrentStateName" Value="SecondaryCommandsOnly">
                             <Setter TargetName="PrimaryItemsRoot" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowPopup" Property="Placement" Value="{x:Static PlacementMode.Relative}" />
                             <Setter TargetName="PART_ToolBarOverflowPanel" Property="Focusable" Value="True" />
                         </Trigger>
-                        <!-- ExpandedUpWithPrimaryCommands -->
+                        <!--  ExpandedUpWithPrimaryCommands  -->
                         <Trigger SourceName="CombinedStatesListener" Property="CurrentStateName" Value="ExpandedUpWithPrimaryCommands">
                             <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderUpThemeThickness}" />
                             <Setter TargetName="LayoutRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
@@ -915,7 +979,7 @@
                             <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
                             <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
                         </Trigger>
-                        <!-- ExpandedDownWithPrimaryCommands -->
+                        <!--  ExpandedDownWithPrimaryCommands  -->
                         <Trigger SourceName="CombinedStatesListener" Property="CurrentStateName" Value="ExpandedDownWithPrimaryCommands">
                             <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderDownThemeThickness}" />
                             <Setter TargetName="LayoutRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
@@ -923,7 +987,7 @@
                             <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
                             <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
                         </Trigger>
-                        <!-- ExpandedUpWithoutPrimaryCommands -->
+                        <!--  ExpandedUpWithoutPrimaryCommands  -->
                         <Trigger SourceName="CombinedStatesListener" Property="CurrentStateName" Value="ExpandedUpWithoutPrimaryCommands">
                             <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderThemeThickness}" />
                             <Setter TargetName="LayoutRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
@@ -931,7 +995,7 @@
                             <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                             <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Trigger>
-                        <!-- ExpandedDownWithoutPrimaryCommands -->
+                        <!--  ExpandedDownWithoutPrimaryCommands  -->
                         <Trigger SourceName="CombinedStatesListener" Property="CurrentStateName" Value="ExpandedDownWithoutPrimaryCommands">
                             <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderThemeThickness}" />
                             <Setter TargetName="LayoutRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />

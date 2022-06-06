@@ -87,12 +87,8 @@
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                     Style="{TemplateBinding local:TitleBar.Style}" />
 
-                                <AdornerDecorator
-                                    x:Name="AdornerDecorator"
-                                    Grid.Row="1">
-                                    <local:ContentPresenterEx
-                                        Foreground="{TemplateBinding Foreground}"
-                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                <AdornerDecorator x:Name="AdornerDecorator" Grid.Row="1">
+                                    <local:ContentPresenterEx Foreground="{TemplateBinding Foreground}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                 </AdornerDecorator>
 
                                 <ResizeGrip
@@ -152,7 +148,10 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="DefaultWindowStyle" BasedOn="{StaticResource BaseWindowStyle}" TargetType="Window">
+    <Style
+        x:Key="DefaultWindowStyle"
+        BasedOn="{StaticResource BaseWindowStyle}"
+        TargetType="Window">
         <Setter Property="OverridesDefaultStyle" Value="True" />
     </Style>
 

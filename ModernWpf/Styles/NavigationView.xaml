@@ -53,7 +53,7 @@
     <Thickness x:Key="TopNavigationViewItemOnOverflowExpandChevronMargin">-4,0,6,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemOnOverflowExpandChevronPadding">12,0,12,0</Thickness>
 
-    <!-- The two resources below must be defined at the app level in order to take effect. -->
+    <!--  The two resources below must be defined at the app level in order to take effect.  -->
     <Thickness x:Key="TopNavigationViewOverflowMenuPadding">0,8</Thickness>
     <Thickness x:Key="NavigationViewItemChildrenMenuFlyoutPadding">0,8</Thickness>
 
@@ -65,7 +65,10 @@
     <sys:String x:Key="NavigationViewItemExpandedGlyph">&#xE70D;</sys:String>
     <StreamGeometry x:Key="NavigationViewItemExpandedPath">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
 
-    <Style x:Key="PaneToggleButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+    <Style
+        x:Key="PaneToggleButtonStyle"
+        BasedOn="{StaticResource DefaultButtonStyle}"
+        TargetType="Button">
         <Setter Property="FontSize" Value="16" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="MinHeight" Value="{StaticResource PaneToggleButtonHeight}" />
@@ -147,7 +150,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="NavigationViewPaneSearchButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+    <Style
+        x:Key="NavigationViewPaneSearchButtonStyle"
+        BasedOn="{StaticResource DefaultButtonStyle}"
+        TargetType="Button">
         <Setter Property="MinHeight" Value="40" />
         <Setter Property="ContentTemplate">
             <Setter.Value>
@@ -162,7 +168,10 @@
         <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
     </Style>
 
-    <Style x:Key="NavigationViewItemHeaderTextStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
+    <Style
+        x:Key="NavigationViewItemHeaderTextStyle"
+        BasedOn="{StaticResource BaseTextBlockStyle}"
+        TargetType="TextBlock">
         <Setter Property="FontWeight" Value="SemiBold" />
         <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
         <Setter Property="TextWrapping" Value="NoWrap" />

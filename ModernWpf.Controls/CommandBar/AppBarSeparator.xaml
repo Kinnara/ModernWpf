@@ -30,7 +30,7 @@
                         </VisualStateManager.VisualStateGroups>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <!-- Overflow -->
+                        <!--  Overflow  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="SeparatorRectangle" Property="Width" Value="NaN" />
                             <Setter TargetName="SeparatorRectangle" Property="HorizontalAlignment" Value="Stretch" />

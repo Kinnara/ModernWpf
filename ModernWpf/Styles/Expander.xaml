@@ -1,4 +1,4 @@
-﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+﻿<!--  Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information.  -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -14,10 +14,10 @@
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
-    <!-- Shared header/content -->
+    <!--  Shared header/content  -->
     <sys:Double x:Key="ExpanderMinHeight">48</sys:Double>
 
-    <!-- Header -->
+    <!--  Header  -->
     <HorizontalAlignment x:Key="ExpanderHeaderHorizontalContentAlignment">Stretch</HorizontalAlignment>
     <VerticalAlignment x:Key="ExpanderHeaderVerticalContentAlignment">Center</VerticalAlignment>
     <Thickness x:Key="ExpanderHeaderHorizontalPadding">16,0,0,0</Thickness>
@@ -27,13 +27,13 @@
     <sys:Double x:Key="ExpanderChevronButtonSize">32</sys:Double>
     <sys:Double x:Key="ExpanderChevronGlyphSize">12</sys:Double>
 
-    <!-- Icons -->
+    <!--  Icons  -->
     <sys:String x:Key="ExpanderChevronUpGlyph">&#xF2B6;</sys:String>
     <sys:String x:Key="ExpanderChevronDownGlyph">&#xF2A3;</sys:String>
     <sys:String x:Key="ExpanderChevronChevronLeftGlyph">&#xF2AA;</sys:String>
     <sys:String x:Key="ExpanderChevronChevronRightGlyph">&#xF2B0;</sys:String>
 
-    <!-- Content -->
+    <!--  Content  -->
     <Thickness x:Key="ExpanderContentPadding">16</Thickness>
     <Thickness x:Key="ExpanderContentDownBorderThickness">1,0,1,1</Thickness>
     <Thickness x:Key="ExpanderContentUpBorderThickness">1,1,1,0</Thickness>
@@ -69,7 +69,6 @@
                             </Grid.ColumnDefinitions>
                             <local:ContentPresenterEx
                                 x:Name="ContentPresenter"
-                                Margin="8,0,0,0"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Foreground="{TemplateBinding Foreground}"
@@ -191,7 +190,6 @@
                             </Grid.ColumnDefinitions>
                             <local:ContentPresenterEx
                                 x:Name="ContentPresenter"
-                                Margin="8,0,0,0"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Foreground="{TemplateBinding Foreground}"
@@ -313,7 +311,6 @@
                             </Grid.RowDefinitions>
                             <local:ContentPresenterEx
                                 x:Name="ContentPresenter"
-                                Margin="0,8,0,0"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Foreground="{TemplateBinding Foreground}"
@@ -445,7 +442,6 @@
                             </Grid.RowDefinitions>
                             <local:ContentPresenterEx
                                 x:Name="ContentPresenter"
-                                Margin="0,8,0,0"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Foreground="{TemplateBinding Foreground}"
@@ -565,9 +561,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Expander">
-                    <DockPanel
-                        MinWidth="{TemplateBinding MinWidth}"
-                        MaxWidth="{TemplateBinding MaxWidth}">
+                    <DockPanel MinWidth="{TemplateBinding MinWidth}" MaxWidth="{TemplateBinding MaxWidth}">
                         <ToggleButton
                             x:Name="ExpanderHeader"
                             MinHeight="{TemplateBinding MinHeight}"
@@ -588,10 +582,8 @@
                             IsEnabled="{TemplateBinding IsEnabled}"
                             Style="{DynamicResource ExpanderHeaderDownStyle}"
                             Tag="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
-                        <!-- The clip is a composition clip applied in code -->
-                        <Border
-                            x:Name="ExpanderContentClip"
-                            DockPanel.Dock="Bottom">
+                        <!--  The clip is a composition clip applied in code  -->
+                        <Border x:Name="ExpanderContentClip" DockPanel.Dock="Bottom">
                             <Border
                                 x:Name="ExpanderContent"
                                 MinHeight="{TemplateBinding MinHeight}"
@@ -601,7 +593,8 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{StaticResource ExpanderContentDownBorderThickness}"
-                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource BottomCornerRadiusFilterConverter}}"
+                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius,
+                                                               Converter={StaticResource BottomCornerRadiusFilterConverter}}"
                                 Visibility="Collapsed">
                                 <ContentPresenter
                                     x:Name="ExpandSite"

@@ -30,7 +30,10 @@
     <Thickness x:Key="AppBarToggleButtonTextLabelOnRightMargin">8,11,12,13</Thickness>
     <Thickness x:Key="AppBarToggleButtonOverflowTextLabelPadding">0,5,0,8</Thickness>
 
-    <Style x:Key="EllipsisButton" BasedOn="{StaticResource DefaultToggleButtonStyle}" TargetType="ToggleButton">
+    <Style
+        x:Key="EllipsisButton"
+        BasedOn="{StaticResource DefaultToggleButtonStyle}"
+        TargetType="ToggleButton">
         <Setter Property="Background" Value="{DynamicResource AppBarEllipsisButtonBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource AppBarEllipsisButtonForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource AppBarEllipsisButtonBorderBrush}" />
@@ -85,7 +88,10 @@
         </Setter>
     </Style>
 
-    <Style x:Key="CommandBarFlyoutEllipsisButtonStyle" BasedOn="{StaticResource EllipsisButton}" TargetType="ToggleButton">
+    <Style
+        x:Key="CommandBarFlyoutEllipsisButtonStyle"
+        BasedOn="{StaticResource EllipsisButton}"
+        TargetType="ToggleButton">
         <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutButtonBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource SystemControlTransparentBrush}" />

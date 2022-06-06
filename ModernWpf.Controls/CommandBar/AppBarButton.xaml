@@ -30,56 +30,12 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="ApplicationViewStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="FullSize" />
-                                <VisualState x:Name="Compact" />
-                                <VisualState x:Name="LabelOnRight" />
-                                <VisualState x:Name="LabelCollapsed" />
-                                <VisualState x:Name="Overflow" />
-                                <VisualState x:Name="OverflowWithToggleButtons" />
-                                <VisualState x:Name="OverflowWithMenuIcons" />
-                                <VisualState x:Name="OverflowWithToggleButtonsAndMenuIcons" />
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" />
-                                <VisualState x:Name="Pressed" />
-                                <VisualState x:Name="Disabled" />
-                                <VisualState x:Name="OverflowNormal" />
-                                <VisualState x:Name="OverflowPointerOver" />
-                                <VisualState x:Name="OverflowPressed" />
-                                <!--<VisualState x:Name="OverflowSubMenuOpened" />-->
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
-                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="FlyoutStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="FlyoutStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="NoFlyout" />
-                                <VisualState x:Name="HasFlyout" />
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <Rectangle
                                 x:Name="AppBarButtonInnerBorder"
                                 Stroke="{TemplateBinding BorderBrush}"
                                 StrokeThickness="1" />
-                            <Grid
-                                x:Name="ContentRoot"
-                                MinHeight="{DynamicResource AppBarThemeMinHeight}">
+                            <Grid x:Name="ContentRoot" MinHeight="{DynamicResource AppBarThemeMinHeight}">
 
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -147,14 +103,56 @@
 
                             </Grid>
                         </Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ApplicationViewStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="FullSize" />
+                                <VisualState x:Name="Compact" />
+                                <VisualState x:Name="LabelOnRight" />
+                                <VisualState x:Name="LabelCollapsed" />
+                                <VisualState x:Name="Overflow" />
+                                <VisualState x:Name="OverflowWithToggleButtons" />
+                                <VisualState x:Name="OverflowWithMenuIcons" />
+                                <VisualState x:Name="OverflowWithToggleButtonsAndMenuIcons" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Disabled" />
+                                <VisualState x:Name="OverflowNormal" />
+                                <VisualState x:Name="OverflowPointerOver" />
+                                <VisualState x:Name="OverflowPressed" />
+                                <!--<VisualState x:Name="OverflowSubMenuOpened" />-->
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
+                                <VisualState x:Name="KeyboardAcceleratorTextVisible" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="FlyoutStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="FlyoutStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="NoFlyout" />
+                                <VisualState x:Name="HasFlyout" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Border>
                     <ControlTemplate.Triggers>
                         <!--#region ApplicationViewStates-->
-                        <!-- Compact -->
+                        <!--  Compact  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Compact">
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <!-- LabelOnRight -->
+                        <!--  LabelOnRight  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="LabelOnRight">
                             <Setter TargetName="ContentViewbox" Property="Margin" Value="{DynamicResource AppBarButtonContentViewboxMargin}" />
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="{DynamicResource AppBarThemeCompactHeight}" />
@@ -164,19 +162,19 @@
                             <Setter TargetName="TextLabel" Property="Margin" Value="{DynamicResource AppBarButtonTextLabelOnRightMargin}" />
                             <Setter Property="Width" Value="NaN" />
                         </Trigger>
-                        <!-- LabelCollapsed -->
+                        <!--  LabelCollapsed  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="LabelCollapsed">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="{DynamicResource AppBarThemeCompactHeight}" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <!-- Overflow -->
+                        <!--  Overflow  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <!-- OverflowWithToggleButtons -->
+                        <!--  OverflowWithToggleButtons  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
@@ -184,7 +182,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
                         </Trigger>
-                        <!-- OverflowWithMenuIcons -->
+                        <!--  OverflowWithMenuIcons  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
@@ -196,7 +194,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
                         </Trigger>
-                        <!-- OverflowWithToggleButtonsAndMenuIcons -->
+                        <!--  OverflowWithToggleButtonsAndMenuIcons  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtonsAndMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
@@ -210,7 +208,7 @@
                         </Trigger>
                         <!--#endregion-->
                         <!--#region CommonStates-->
-                        <!-- PointerOver -->
+                        <!--  PointerOver  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOver">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
@@ -220,7 +218,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />
                         </Trigger>
-                        <!-- Pressed -->
+                        <!--  Pressed  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Pressed">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
@@ -230,7 +228,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />
                         </Trigger>
-                        <!-- Disabled -->
+                        <!--  Disabled  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundDisabled}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushDisabled}" />
@@ -240,7 +238,7 @@
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundDisabled}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundDisabled}" />
                         </Trigger>
-                        <!-- OverflowPointerOver -->
+                        <!--  OverflowPointerOver  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPointerOver">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
@@ -251,7 +249,7 @@
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />
                             <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPointerOver}" />
                         </Trigger>
-                        <!-- OverflowPressed -->
+                        <!--  OverflowPressed  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPressed">
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
@@ -262,7 +260,7 @@
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />
                             <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPressed}" />
                         </Trigger>
-                        <!-- OverflowSubMenuOpened -->
+                        <!--  OverflowSubMenuOpened  -->
                         <!--<Trigger>
                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarButtonBackgroundSubMenuOpened}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushSubMenuOpened}" />
@@ -274,11 +272,11 @@
                             <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundSubMenuOpened}" />
                         </Trigger>-->
                         <!--#endregion-->
-                        <!-- KeyboardAcceleratorTextVisible -->
+                        <!--  KeyboardAcceleratorTextVisible  -->
                         <Trigger SourceName="KeyboardAcceleratorTextVisibilityListener" Property="CurrentStateName" Value="KeyboardAcceleratorTextVisible">
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
-                        <!-- HasFlyout -->
+                        <!--  HasFlyout  -->
                         <Trigger SourceName="FlyoutStatesListener" Property="CurrentStateName" Value="HasFlyout">
                             <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
                         </Trigger>

@@ -4,7 +4,7 @@
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
     <DataTemplate x:Key="BackgroundGlyphDefaultTemplate">
-        <!-- -8, -8 are to compensate for the default scale down, plus factoring in margins -->
+        <!--  -8, -8 are to compensate for the default scale down, plus factoring in margins  -->
         <TextBlock
             Margin="-8,-8,0,0"
             FontFamily="{DynamicResource SymbolThemeFontFamily}"
@@ -14,7 +14,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="ForegroundGlyphDefaultTemplate">
-        <!-- -8, -8 are to compensate for the default scale down, plus factoring in margins -->
+        <!--  -8, -8 are to compensate for the default scale down, plus factoring in margins  -->
         <TextBlock
             Margin="-8,-8,0,0"
             FontFamily="{DynamicResource SymbolThemeFontFamily}"

@@ -19,28 +19,7 @@
                     <ControlTemplate.Resources>
                         <StreamGeometry x:Key="More">M 2.5 8.75 C 2.675781 8.75 2.838542 8.782553 2.988281 8.847656 C 3.138021 8.912761 3.269857 9 3.383789 9.116211 C 3.497721 9.230144 3.58724 9.361979 3.652344 9.511719 C 3.717448 9.661459 3.75 9.824219 3.75 10 C 3.75 10.175781 3.717448 10.338542 3.652344 10.488281 C 3.58724 10.638021 3.497721 10.769857 3.383789 10.883789 C 3.269857 11 3.138021 11.08724 2.988281 11.152344 C 2.838542 11.217448 2.675781 11.25 2.5 11.25 C 2.324219 11.25 2.161458 11.217448 2.011719 11.152344 C 1.861979 11.08724 1.730143 11 1.616211 10.883789 C 1.502279 10.769857 1.41276 10.638021 1.347656 10.488281 C 1.282552 10.338542 1.25 10.175781 1.25 10 C 1.25 9.824219 1.282552 9.661459 1.347656 9.511719 C 1.41276 9.361979 1.502279 9.230144 1.616211 9.116211 C 1.730143 9 1.861979 8.912761 2.011719 8.847656 C 2.161458 8.782553 2.324219 8.75 2.5 8.75 Z M 10 8.75 C 10.175781 8.75 10.338541 8.782553 10.488281 8.847656 C 10.638021 8.912761 10.769856 9 10.883789 9.116211 C 11 9.230144 11.087239 9.361979 11.152344 9.511719 C 11.217447 9.661459 11.25 9.824219 11.25 10 C 11.25 10.175781 11.217447 10.338542 11.152344 10.488281 C 11.087239 10.638021 11 10.769857 10.883789 10.883789 C 10.769856 11 10.638021 11.08724 10.488281 11.152344 C 10.338541 11.217448 10.175781 11.25 10 11.25 C 9.824219 11.25 9.661458 11.217448 9.511719 11.152344 C 9.361979 11.08724 9.230143 11 9.116211 10.883789 C 9 10.769857 8.91276 10.638021 8.847656 10.488281 C 8.782552 10.338542 8.75 10.175781 8.75 10 C 8.75 9.824219 8.782552 9.661459 8.847656 9.511719 C 8.91276 9.361979 9 9.230144 9.116211 9.116211 C 9.230143 9 9.361979 8.912761 9.511719 8.847656 C 9.661458 8.782553 9.824219 8.75 10 8.75 Z M 17.5 8.75 C 17.675781 8.75 17.838541 8.782553 17.988281 8.847656 C 18.13802 8.912761 18.269855 9 18.383789 9.116211 C 18.497721 9.230144 18.587238 9.361979 18.652344 9.511719 C 18.717447 9.661459 18.75 9.824219 18.75 10 C 18.75 10.175781 18.717447 10.338542 18.652344 10.488281 C 18.587238 10.638021 18.497721 10.769857 18.383789 10.883789 C 18.269855 11 18.13802 11.08724 17.988281 11.152344 C 17.838541 11.217448 17.675781 11.25 17.5 11.25 C 17.324219 11.25 17.161457 11.217448 17.011719 11.152344 C 16.861979 11.08724 16.730143 11 16.616211 10.883789 C 16.502277 10.769857 16.41276 10.638021 16.347656 10.488281 C 16.282551 10.338542 16.25 10.175781 16.25 10 C 16.25 9.824219 16.282551 9.661459 16.347656 9.511719 C 16.41276 9.361979 16.502277 9.230144 16.616211 9.116211 C 16.730143 9 16.861979 8.912761 17.011719 8.847656 C 17.161457 8.782553 17.324219 8.75 17.5 8.75 Z</StreamGeometry>
                     </ControlTemplate.Resources>
-                    <Grid
-                        x:Name="LayoutRoot"
-                        SnapsToDevicePixels="True">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="AvailableCommandsStates">
-                                <VisualState x:Name="BothCommands" />
-                                <VisualState x:Name="PrimaryCommandsOnly">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRoot" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="SecondaryCommandsOnly">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_ToolBarPanel" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Hidden}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
+                    <Grid x:Name="LayoutRoot" SnapsToDevicePixels="True">
                         <Grid
                             x:Name="ContentRoot"
                             Height="{TemplateBinding Height}"
@@ -139,16 +118,35 @@
                                 StrokeThickness="1"
                                 Visibility="Collapsed" />
                         </Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="AvailableCommandsStates">
+                                <VisualState x:Name="BothCommands" />
+                                <VisualState x:Name="PrimaryCommandsOnly">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentRoot" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="SecondaryCommandsOnly">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_ToolBarPanel" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Hidden}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <!-- Disabled -->
+                        <!--  Disabled  -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="EllipsisIcon" Property="Foreground" Value="{DynamicResource CommandBarEllipsisIconForegroundDisabled}" />
                         </Trigger>
                         <Trigger Property="DefaultLabelPosition" Value="Bottom">
                             <Setter TargetName="MoreButton" Property="VerticalAlignment" Value="Stretch" />
                         </Trigger>
-                        <!-- DynamicOverflowEnabled -->
+                        <!--  DynamicOverflowEnabled  -->
                         <Trigger Property="IsDynamicOverflowEnabled" Value="True">
                             <Setter TargetName="ContentControlColumnDefinition" Property="Width" Value="Auto" />
                             <Setter TargetName="PrimaryItemsControlColumnDefinition" Property="Width" Value="*" />
@@ -200,12 +198,12 @@
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <!-- FullWidthOpenDown -->
+                        <!--  FullWidthOpenDown  -->
                         <!--<Trigger SourceName="DisplayModeStatesListener" Property="CurrentStateName" Value="FullWidthOpenDown">
                             <Setter TargetName="LayoutRoot" Property="Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderDownPadding}" />
                             <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="{DynamicResource CommandBarOverflowPresenterBorderDownThickness}" />
                         </Trigger>-->
-                        <!-- FullWidthOpenUp -->
+                        <!--  FullWidthOpenUp  -->
                         <!--<Trigger SourceName="DisplayModeStatesListener" Property="CurrentStateName" Value="FullWidthOpenUp">
                             <Setter TargetName="LayoutRoot" Property="Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderUpPadding}" />
                             <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="{DynamicResource CommandBarOverflowPresenterBorderUpThickness}" />

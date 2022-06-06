@@ -35,30 +35,6 @@
                         <VisualStateManager.CustomVisualStateManager>
                             <ui:SimpleVisualStateManager />
                         </VisualStateManager.CustomVisualStateManager>
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="MultiSelectStates">
-                                <VisualStateGroup.Transitions>
-                                    <VisualTransition From="MultiSelectEnabled" To="MultiSelectDisabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.333" Value="{x:Static Visibility.Collapsed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ui:FadeOutThemeAnimation TargetName="MultiSelectSquare" />
-                                        </Storyboard>
-                                    </VisualTransition>
-                                </VisualStateGroup.Transitions>
-                                <VisualState x:Name="MultiSelectDisabled" />
-                                <VisualState x:Name="MultiSelectEnabled">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ui:FadeInThemeAnimation TargetName="MultiSelectSquare" />
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <ContentPresenter
                                 x:Name="ContentPresenter"
@@ -90,13 +66,37 @@
                                     Opacity="0" />
                             </Border>
                         </Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="MultiSelectStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="MultiSelectEnabled" To="MultiSelectDisabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.333" Value="{x:Static Visibility.Collapsed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ui:FadeOutThemeAnimation TargetName="MultiSelectSquare" />
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="MultiSelectDisabled" />
+                                <VisualState x:Name="MultiSelectEnabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MultiSelectSquare" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ui:FadeInThemeAnimation TargetName="MultiSelectSquare" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <!-- Focused -->
+                        <!--  Focused  -->
                         <Trigger Property="ui:FocusVisualHelper.ShowFocusVisual" Value="True">
                             <Setter TargetName="BorderRectangle" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <!-- PointerOver -->
+                        <!--  PointerOver  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="True" />
@@ -108,7 +108,7 @@
                             <Setter Property="ui:FocusVisualHelper.FocusVisualSecondaryBrush" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
                             <Setter Property="ui:FocusVisualHelper.FocusVisualSecondaryThickness" Value="2" />
                         </MultiTrigger>
-                        <!-- Selected -->
+                        <!--  Selected  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="False" />
@@ -122,7 +122,7 @@
                             <Setter Property="ui:FocusVisualHelper.FocusVisualSecondaryThickness" Value="2" />
                             <Setter TargetName="MultiSelectSquare" Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
                         </MultiTrigger>
-                        <!-- PointerOverSelected -->
+                        <!--  PointerOverSelected  -->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="True" />
@@ -136,7 +136,7 @@
                             <Setter Property="ui:FocusVisualHelper.FocusVisualSecondaryThickness" Value="2" />
                             <Setter TargetName="MultiSelectSquare" Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
                         </MultiTrigger>
-                        <!-- Disabled -->
+                        <!--  Disabled  -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ContentBorder" Property="Opacity" Value="{DynamicResource ListViewItemDisabledThemeOpacity}" />
                         </Trigger>
