@@ -12,11 +12,6 @@
   <ItemGroup Condition="!$(DefineConstants.Contains('NET47_OR_NEWER'))">
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
- 
-  <ItemGroup>
-    <PackageReference Update="System.Runtime.WindowsRuntime" Version="4.7.0" />
-    <PackageReference Update="Microsoft.Windows.SDK.Contracts" Version="10.0.22000.196" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Fonts\FluentSystemIcons-Filled.ttf" />

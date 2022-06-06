@@ -75,11 +75,23 @@ namespace ModernWpf.Controls.Primitives
                     else
                     {
                         window.Loaded += (sender, e) => window.RemoveTitleBar();
+                        ThemeManager.Current.ActualApplicationThemeChanged += (sender, e) =>
+                        {
+                            if (sender.ApplicationTheme == ApplicationTheme.Light)
+                            {
+                                window.RemoveDarkMode();
+                            }
+                            else
+                            {
+                                window.ApplyDarkMode();
+                            }
+                        };
                     }
                 }
                 else
                 {
                     window.ClearValue(FrameworkElement.StyleProperty);
+                    window.RemoveDarkMode();
                 }
             }
         }

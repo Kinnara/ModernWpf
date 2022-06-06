@@ -46,12 +46,12 @@
         <When Condition="$(DefineConstants.Contains('NET5_0_OR_NEWER'))" />
         <When Condition="$(DefineConstants.Contains('NET461_OR_NEWER'))">
           <ItemGroup>
-            <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.18362.2005" />
+            <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.22000.196" />
           </ItemGroup>
         </When>
         <Otherwise>
           <ItemGroup>
-            <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.6.0" />
+            <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.7.0" />
             <Reference Include="Windows">
               <HintPath>$(MSBuildThisFileDirectory)WinMD\Windows.WinMD</HintPath>
               <IsWinMDFile>true</IsWinMDFile>

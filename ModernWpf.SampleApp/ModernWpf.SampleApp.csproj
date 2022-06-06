@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net4.8</TargetFrameworks>
+    <TargetFrameworks>net4.6.2</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
     <LangVersion>latest</LangVersion>

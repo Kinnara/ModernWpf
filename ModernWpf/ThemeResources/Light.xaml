@@ -1129,9 +1129,9 @@
     <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemControlForegroundChromeHighBrush" />
 
     <!-- Resources for GridViewItem -->
-    <CornerRadius x:Key='GridViewItemCornerRadius'>4</CornerRadius>
-    <CornerRadius x:Key='GridViewItemCheckBoxCornerRadius'>3</CornerRadius>
-    <Thickness x:Key='GridViewItemSelectedBorderThickness'>2</Thickness>
+    <CornerRadius x:Key="GridViewItemCornerRadius">4</CornerRadius>
+    <CornerRadius x:Key="GridViewItemCheckBoxCornerRadius">3</CornerRadius>
+    <Thickness x:Key="GridViewItemSelectedBorderThickness">2</Thickness>
     <m:StaticResource x:Key="GridViewItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="GridViewItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="GridViewItemPointerOverBorderBrush" ResourceKey="ControlStrokeColorOnAccentTertiaryBrush" />
@@ -1202,7 +1202,7 @@
     <m:StaticResource x:Key="ListBoxItemForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="ListBoxItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ListBoxItemBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="ListBoxItemBackgroundSelected" ResourceKey="SystemControlHighlightListAccentLowBrush"/>
+    <m:StaticResource x:Key="ListBoxItemBackgroundSelected" ResourceKey="SystemControlHighlightListAccentLowBrush" />
     <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPointerOver" ResourceKey="SystemControlHighlightListAccentMediumBrush" />
     <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPressed" ResourceKey="SystemControlHighlightListAccentHighBrush" />
     <SolidColorBrush x:Key="ListBoxItemDisabledForegroundThemeBrush" Color="#66000000" />
@@ -1227,7 +1227,7 @@
     <m:StaticResource x:Key="GridViewHeaderItemDividerStroke" ResourceKey="SystemControlForegroundBaseLowBrush" />
 
     <!-- Resources for ListViewItem -->
-    <sys:Boolean x:Key='ListViewItemSelectionIndicatorVisualEnabled'>True</sys:Boolean>
+    <sys:Boolean x:Key="ListViewItemSelectionIndicatorVisualEnabled">True</sys:Boolean>
     <sys:Double x:Key="ListViewItemContentOffsetX">-40.5</sys:Double>
     <sys:Double x:Key="ListViewItemDisabledThemeOpacity">0.3</sys:Double>
     <sys:Double x:Key="ListViewItemDragThemeOpacity">0.80</sys:Double>
@@ -1304,7 +1304,7 @@
 
     <!-- Resources for LoopingSelector -->
     <m:StaticResource x:Key="LoopingSelectorButtonBackground" ResourceKey="SystemControlBackgroundChromeMediumBrush" />
-    
+
     <!-- Resources for LoopingSelectorItem -->
     <m:StaticResource x:Key="LoopingSelectorItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <m:StaticResource x:Key="LoopingSelectorItemForegroundSelected" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
@@ -2157,7 +2157,7 @@
 
     <!-- Resources for ToolBar -->
     <sys:Double x:Key="ToolBarButtonBorderThemeThickness">1</sys:Double>
-    <m:StaticResource x:Key="ToolBarButtonBackground" ResourceKey="SubtleFillColorTransparentBrush"/>
+    <m:StaticResource x:Key="ToolBarButtonBackground" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="ToolBarButtonBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ToolBarButtonBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
     <m:StaticResource x:Key="ToolBarButtonBackgroundSelected" ResourceKey="SubtleFillColorTertiaryBrush" />
@@ -2168,7 +2168,7 @@
     <m:StaticResource x:Key="ToolBarButtonBorderBrushSelectedPointerOver" ResourceKey="AccentFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ToolBarButtonBorderBrushSelectedPressed" ResourceKey="AccentFillColorTertiaryBrush" />
     <m:StaticResource x:Key="ToolBarButtonBorderBrushSelectedDisabled" ResourceKey="AccentFillColorDisabledBrush" />
-    
+
     <!-- Resources for ToolTip -->
     <sys:Double x:Key="ToolTipContentThemeFontSize">12</sys:Double>
     <Thickness x:Key="ToolTipBorderThemeThickness">1</Thickness>

@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
     <UseWPF>true</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>

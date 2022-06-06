@@ -16,32 +16,12 @@
     <StackPanel
         Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
         Margin="4"
-        HorizontalAlignment="Stretch"
+        HorizontalAlignment="Center"
         VerticalAlignment="Stretch">
         <CheckBox
             x:Name="IsEnable"
             Content="IsEnable"
             IsChecked="True" />
-        <ToolBarTray>
-            <ToolBar>
-                <Button Content="Test" />
-                <ToggleButton Content="Test" />
-                <Separator />
-                <CheckBox Content="Test" />
-                <RadioButton Content="Test" />
-            </ToolBar>
-            <ToolBar>
-                <TextBox Text="Test" />
-            </ToolBar>
-        </ToolBarTray>
-        <PasswordBox />
-        <StatusBar>
-            <StatusBarItem>
-                <Button Content="Test" />
-            </StatusBarItem>
-            <StatusBarItem>
-                <Button Content="Test" />
-            </StatusBarItem>
-        </StatusBar>
+        <Calendar IsEnabled="{Binding IsChecked, ElementName=IsEnable}"/>
     </StackPanel>
 </Window>
