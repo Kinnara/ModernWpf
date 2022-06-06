@@ -4,6 +4,7 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:ui="http://schemas.modernwpf.com/2019">
 
+    <Thickness x:Key="ButtonPadding">11,5,11,5</Thickness>
     <Thickness x:Key="HyperlinkButtonPadding">0,6,0,7</Thickness>
 
     <Style TargetType="local:HyperlinkButton">

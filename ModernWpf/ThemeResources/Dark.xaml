@@ -1121,16 +1121,17 @@
     <m:StaticResource x:Key="FlipViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
 
     <!-- Resources for FlyoutPresenter -->
+    <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
+    <Thickness x:Key="FlyoutBorderThemeThickness">1</Thickness>
+    
     <sys:Double x:Key="FlyoutThemeMaxHeight">758</sys:Double>
     <sys:Double x:Key="FlyoutThemeMaxWidth">456</sys:Double>
     <sys:Double x:Key="FlyoutThemeMinHeight">40</sys:Double>
     <sys:Double x:Key="FlyoutThemeMinWidth">96</sys:Double>
     <sys:Double x:Key="FlyoutThemeTouchMinWidth">240</sys:Double>
-    <Thickness x:Key="FlyoutBorderThemeThickness">1</Thickness>
     <Thickness x:Key="FlyoutBorderThemePadding">0</Thickness>
     <Thickness x:Key="FlyoutContentThemePadding">12,11,12,12</Thickness>
-    <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
-    <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemControlForegroundChromeHighBrush" />
 
     <!-- Resources for GridViewItem -->
     <CornerRadius x:Key="GridViewItemCornerRadius">4</CornerRadius>
