@@ -1,8 +1,8 @@
 ﻿namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class ProgressPage
+    public partial class ProgressBarPage
     {
-        public ProgressPage()
+        public ProgressBarPage()
         {
             InitializeComponent();
         }

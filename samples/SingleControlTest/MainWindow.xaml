@@ -34,6 +34,10 @@
             <ui:ProgressRing
                 IsIndeterminate="{Binding IsOn, ElementName=IsEnable}"
                 Value="{Binding Value, ElementName=Value}" />
+            <ui:ProgressBar
+                Width="100"
+                IsIndeterminate="{Binding IsOn, ElementName=IsEnable}"
+                Value="{Binding Value, ElementName=Value}" />
         </ui:SimpleStackPanel>
         <Slider
             x:Name="Value"

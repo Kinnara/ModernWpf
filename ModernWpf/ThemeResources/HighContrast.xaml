@@ -957,7 +957,7 @@
     <!-- Resources for ContentDialog -->
     <m:StaticResource x:Key="ContentDialogForeground" ResourceKey="SystemColorWindowTextColorBrush" />
     <m:StaticResource x:Key="ContentDialogBackground" ResourceKey="SystemColorWindowColorBrush" />
-    <SolidColorBrush x:Key="ContentDialogSmokeFill" Color="{m:ThemeResource SystemColorWindowColor}" Opacity="0.8"/>
+    <SolidColorBrush x:Key="ContentDialogSmokeFill" Opacity="0.8" Color="{m:ThemeResource SystemColorWindowColor}" />
     <m:StaticResource x:Key="ContentDialogTopOverlay" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
     <m:StaticResource x:Key="ContentDialogSeparatorBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
@@ -972,7 +972,7 @@
     <Thickness x:Key="ContentDialogTitleMargin">0,0,0,12</Thickness>
     <Thickness x:Key="ContentDialogPadding">24</Thickness>
     <Thickness x:Key="ContentDialogSeparatorThickness">0,0,0,1</Thickness>
-    
+
     <sys:Double x:Key="ContentDialogButtonMinWidth">130</sys:Double>
     <sys:Double x:Key="ContentDialogButtonMaxWidth">202</sys:Double>
     <sys:Double x:Key="ContentDialogButtonMinHeight">32</sys:Double>
@@ -1087,7 +1087,7 @@
     <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemColorWindowTextColorBrush" />
     <Thickness x:Key="FlyoutBorderThemeThickness">2</Thickness>
-    
+
     <sys:Double x:Key="FlyoutThemeMaxHeight">758</sys:Double>
     <sys:Double x:Key="FlyoutThemeMaxWidth">456</sys:Double>
     <sys:Double x:Key="FlyoutThemeMinHeight">40</sys:Double>
@@ -1579,8 +1579,8 @@
     <m:StaticResource x:Key="ProgressBarForeground" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="ProgressBarBackground" ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="ProgressBarBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
-    <m:StaticResource x:Key="ProgressBarPausedForegroundColor" ResourceKey="SystemColorWindowTextColorBrush" />
-    <m:StaticResource x:Key="ProgressBarErrorForegroundColor" ResourceKey="SystemColorHotlightColorBrush" />
+    <Color x:Key="ProgressBarPausedForegroundColor">#FF000000</Color>
+    <Color x:Key="ProgressBarErrorForegroundColor">#FF0066CC</Color>
 
     <sys:Double x:Key="ProgressBarIndicatorPauseOpacity">1</sys:Double>
     <sys:Double x:Key="ProgressBarThemeMinHeight">4</sys:Double>
@@ -2068,7 +2068,7 @@
     <sys:Double x:Key="ToggleSwitchOnStrokeThickness">1</sys:Double>
     <sys:Double x:Key="ToggleSwitchOuterBorderStrokeThickness">1</sys:Double>
 
-    <!-- ColorAnimation requires TargetProperty to be Color thus some resources point to the colour instead of brush-->
+    <!-- ColorAnimation requires TargetProperty to be Color thus some resources point to the colour instead of brush -->
     <m:StaticResource x:Key="ToggleSwitchContentForeground" ResourceKey="SystemColorWindowTextColorBrush" />
     <m:StaticResource x:Key="ToggleSwitchContentForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
     <m:StaticResource x:Key="ToggleSwitchHeaderForeground" ResourceKey="SystemColorWindowTextColorBrush" />
@@ -2134,7 +2134,7 @@
     <SolidColorBrush x:Key="ToggleSwitchTrackDisabledBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
     <SolidColorBrush x:Key="ToggleSwitchTrackPointerOverBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
     <SolidColorBrush x:Key="ToggleSwitchTrackPressedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
-    
+
     <!-- Resources for ToolBar -->
     <sys:Double x:Key="ToolBarButtonBorderThemeThickness">1</sys:Double>
     <m:StaticResource x:Key="ToolBarButtonBackground" ResourceKey="SystemControlTransparentBrush" />

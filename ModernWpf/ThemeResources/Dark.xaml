@@ -1616,8 +1616,8 @@
     <m:StaticResource x:Key="ProgressBarForeground" ResourceKey="AccentFillColorDefaultBrush" />
     <m:StaticResource x:Key="ProgressBarBackground" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="ProgressBarBorderBrush" ResourceKey="ControlStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="ProgressBarPausedForegroundColor" ResourceKey="SystemFillColorCautionBrush" />
-    <m:StaticResource x:Key="ProgressBarErrorForegroundColor" ResourceKey="SystemFillColorCriticalBrush" />
+    <m:StaticResource x:Key="ProgressBarPausedForegroundColor" ResourceKey="SystemFillColorCaution" />
+    <m:StaticResource x:Key="ProgressBarErrorForegroundColor" ResourceKey="SystemFillColorCritical" />
 
     <sys:Double x:Key="ProgressBarIndicatorPauseOpacity">0.6</sys:Double>
     <sys:Double x:Key="ProgressBarThemeMinHeight">4</sys:Double>
