@@ -18,15 +18,26 @@
         Margin="4"
         HorizontalAlignment="Center"
         VerticalAlignment="Stretch">
-        <ui:ToggleSwitch
-            x:Name="IsEnable"
-            Header="IsEnable"
-            IsOn="True"/>
-        <Button
-            Content="Test"
-            Click="Button_Click"
-            IsEnabled="{Binding IsOn, ElementName=IsEnable}"
-            Style="{DynamicResource AccentButtonStyle}" />
+        <ui:SimpleStackPanel
+            Orientation="Horizontal"
+            Spacing="16">
+            <ui:ToggleSwitch
+                x:Name="IsEnable"
+                MinWidth="0"
+                Header="IsEnable"
+                IsOn="True" />
+            <Button
+                Click="Button_Click"
+                Content="Test"
+                IsEnabled="{Binding IsOn, ElementName=IsEnable}"
+                Style="{DynamicResource AccentButtonStyle}" />
+            <ui:ProgressRing
+                IsIndeterminate="{Binding IsOn, ElementName=IsEnable}"
+                Value="{Binding Value, ElementName=Value}" />
+        </ui:SimpleStackPanel>
+        <Slider
+            x:Name="Value"
+            Maximum="100" />
         <Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />
     </StackPanel>
 </Window>

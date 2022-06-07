@@ -1176,7 +1176,7 @@
     <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
     <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
     <Thickness x:Key="FlyoutBorderThemeThickness">1</Thickness>
-    
+
     <sys:Double x:Key="FlyoutThemeMaxHeight">758</sys:Double>
     <sys:Double x:Key="FlyoutThemeMaxWidth">456</sys:Double>
     <sys:Double x:Key="FlyoutThemeMinHeight">40</sys:Double>
@@ -1676,8 +1676,8 @@
     <Color x:Key="SystemControlErrorBackgroundColor">#29C50500</Color>
 
     <!--  Resources for ProgressRing  -->
-    <m:StaticResource x:Key="ProgressRingForegroundThemeBrush" ResourceKey="SystemControlHighlightAccentBrush" />
-    <m:StaticResource x:Key="ProgressRingBackgroundThemeBrush" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="ProgressRingForegroundThemeBrush" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ProgressRingBackgroundThemeBrush" ResourceKey="ControlFillColorTransparentBrush" />
 
     <!--  Resources for RadioButton  -->
     <sys:Double x:Key="RadioButtonBorderThemeThickness">1</sys:Double>
@@ -2194,7 +2194,7 @@
     <m:StaticResource x:Key="ToggleSwitchContainerBackgroundPressed" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="ToggleSwitchContainerBackgroundDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
 
-    <!-- ColorAnimation requires TargetProperty to be Color thus some resources point to the colour instead of brush-->
+    <!--  ColorAnimation requires TargetProperty to be Color thus some resources point to the colour instead of brush  -->
     <m:StaticResource x:Key="ToggleSwitchFillOff" ResourceKey="ControlAltFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ToggleSwitchFillOffPointerOver" ResourceKey="ControlAltFillColorTertiaryBrush" />
     <m:StaticResource x:Key="ToggleSwitchFillOffPressed" ResourceKey="ControlAltFillColorQuarternaryBrush" />
@@ -2226,7 +2226,7 @@
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnDisabled" ResourceKey="TextOnAccentFillColorDisabledBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobStrokeOn" ResourceKey="CircleElevationBorderBrush" />
 
-    <!-- Legacy Brushes -->
+    <!--  Legacy Brushes  -->
     <SolidColorBrush x:Key="ToggleSwitchCurtainBackgroundThemeBrush" Color="#FF4617B4" />
     <SolidColorBrush x:Key="ToggleSwitchCurtainDisabledBackgroundThemeBrush" Color="Transparent" />
     <SolidColorBrush x:Key="ToggleSwitchCurtainPointerOverBackgroundThemeBrush" Color="#FF5F37BE" />
