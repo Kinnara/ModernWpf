@@ -273,6 +273,7 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsEnabled" Value="False" />
                             </MultiTrigger.Conditions>
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource ListViewItemBackgroundSelectedDisabled}" />
                             <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource ListViewItemSelectionIndicatorDisabledBrush}" />
                             <Setter TargetName="MultiSelectSquare" Property="BorderBrush" Value="{DynamicResource ListViewItemCheckBoxSelectedDisabledBrush}" />
                             <Setter TargetName="MultiSelectSquare" Property="Background" Value="{DynamicResource ListViewItemCheckBoxSelectedDisabledBrush}" />
