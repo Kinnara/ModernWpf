@@ -196,7 +196,8 @@
                                 Height="36"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
-                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius,
+                                                                                Converter={StaticResource RightCornerRadiusFilterConverter}}"
                                 FocusVisualStyle="{x:Null}"
                                 IsTabStop="False"
                                 Template="{StaticResource HorizontalPreviousTemplate}"
@@ -207,7 +208,8 @@
                                 Height="36"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}"
+                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius,
+                                                                                Converter={StaticResource LeftCornerRadiusFilterConverter}}"
                                 FocusVisualStyle="{x:Null}"
                                 IsTabStop="False"
                                 Template="{StaticResource HorizontalNextTemplate}"
@@ -218,7 +220,8 @@
                                 Height="20"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
-                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource BottomCornerRadiusFilterConverter}}"
+                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius,
+                                                                                Converter={StaticResource BottomCornerRadiusFilterConverter}}"
                                 FocusVisualStyle="{x:Null}"
                                 IsTabStop="False"
                                 Template="{StaticResource VerticalPreviousTemplate}"
@@ -229,7 +232,8 @@
                                 Height="20"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Bottom"
-                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}"
+                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius,
+                                                                                Converter={StaticResource TopCornerRadiusFilterConverter}}"
                                 FocusVisualStyle="{x:Null}"
                                 IsTabStop="False"
                                 Template="{StaticResource VerticalNextTemplate}"

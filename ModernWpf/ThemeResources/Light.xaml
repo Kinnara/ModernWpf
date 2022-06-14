@@ -1129,6 +1129,11 @@
     <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
 
+    <!--  Resources for DropDownButton  -->
+    <m:StaticResource x:Key="DropDownButtonForegroundSecondary" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="DropDownButtonForegroundSecondaryPointerOver" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="DropDownButtonForegroundSecondaryPressed" ResourceKey="TextFillColorTertiaryBrush" />
+
     <!--  Resources for Expander  -->
 
     <!--  Header  -->

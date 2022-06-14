@@ -18,14 +18,13 @@
             <ui:Flyout.FlyoutPresenterStyle>
                 <Style TargetType="ui:FlyoutPresenter">
                     <Setter Property="Width" Value="296" />
-                    <Setter Property="Height" Value="64" />
                     <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
                     <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
                 </Style>
             </ui:Flyout.FlyoutPresenterStyle>
             <TextBlock
                 Text="This is a flyout with placeholder text that wraps to a second line."
-                Style="{StaticResource BodyTextBlockStyle}" />
+                Style="{DynamicResource BodyTextBlockStyle}" />
         </ui:Flyout>
     </Page.Resources>
 
