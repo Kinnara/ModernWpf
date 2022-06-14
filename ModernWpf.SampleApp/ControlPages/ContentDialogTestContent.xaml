@@ -14,22 +14,12 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             Spacing="12">
-            <Button
-                Click="ShowDialog"
-                Content="Show ContentDialog" />
-            <Button
-                Click="ShowParentedDialogPopup"
-                Content="Show parented ContentDialog (Popup)" />
-            <Button
-                Click="ShowParentedDialogInPlace"
-                Content="Show parented ContentDialog (InPlace)" />
-            <Button
-                Click="OpenNewWindow"
-                Content="Open a new window" />
+            <Button Click="ShowDialog" Content="Show ContentDialog" />
+            <Button Click="ShowParentedDialogPopup" Content="Show parented ContentDialog (Popup)" />
+            <Button Click="ShowParentedDialogInPlace" Content="Show parented ContentDialog (InPlace)" />
+            <Button Click="OpenNewWindow" Content="Open a new window" />
         </ui:SimpleStackPanel>
 
-        <local:TestContentDialog
-            x:Name="ParentedDialog"
-            PrimaryButtonText="Toggle theme" />
+        <local:TestContentDialog x:Name="ParentedDialog" PrimaryButtonText="Toggle theme" />
     </Grid>
 </UserControl>

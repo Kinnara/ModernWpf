@@ -14,9 +14,7 @@
     Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
     mc:Ignorable="d">
     <Grid>
-        <Rectangle
-            x:Name="NarrowBackground"
-            Visibility="Collapsed" />
+        <Rectangle x:Name="NarrowBackground" Visibility="Collapsed" />
 
         <Rectangle
             x:Name="WideBackground"
@@ -24,9 +22,7 @@
             Opacity="{Binding ElementName=headerControl, Path=BackgroundColorOpacity}" />
 
         <Border Padding="{Binding ElementName=headerControl, Path=Padding}">
-            <Grid
-                x:Name="headerRoot"
-                VerticalAlignment="Top">
+            <Grid x:Name="headerRoot" VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -36,9 +32,7 @@
                     Height="44"
                     VerticalAlignment="Top"
                     Background="Transparent">
-                    <Canvas
-                        x:Name="ShadowHost"
-                        Opacity="{Binding ShadowOpacity, ElementName=headerControl, Mode=OneWay}" />
+                    <Canvas x:Name="ShadowHost" Opacity="{Binding ShadowOpacity, ElementName=headerControl, Mode=OneWay}" />
                     <TextBlock
                         x:Name="TitleTextBlock"
                         VerticalAlignment="Center"
@@ -69,11 +63,12 @@
                                     Symbol="Link" />
                             </ui:AppBarButton.Icon>
                         </ui:AppBarButton>
-                        <ui:AppBarButton x:Name="ThemeButton" Click="OnThemeButtonClick" Label="Toggle Theme">
+                        <ui:AppBarButton
+                            x:Name="ThemeButton"
+                            Click="OnThemeButtonClick"
+                            Label="Toggle Theme">
                             <ui:AppBarButton.Icon>
-                                <ui:FontIcon
-                                    Margin="0,-2,0,0"
-                                    Glyph="&#xE771;" />
+                                <ui:FontIcon Margin="0,-2,0,0" Glyph="&#xE771;" />
                             </ui:AppBarButton.Icon>
                         </ui:AppBarButton>
                     </ui:CommandBar>

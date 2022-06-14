@@ -24,21 +24,11 @@
                 x:Name="HeaderBlock"
                 FontSize="18"
                 Text="Compact Size" />
-            <TextBox
-                x:Name="firstName"
-                ui:ControlHelper.Header="First Name:" />
-            <TextBox
-                x:Name="lastName"
-                ui:ControlHelper.Header="Last Name:" />
-            <PasswordBox
-                x:Name="password"
-                ui:ControlHelper.Header="Password:" />
-            <PasswordBox
-                x:Name="confirmPassword"
-                ui:ControlHelper.Header="Confirm Password:" />
-            <DatePicker
-                x:Name="chosenDate"
-                ui:ControlHelper.Header="Pick a date" />
+            <TextBox x:Name="firstName" ui:ControlHelper.Header="First Name:" />
+            <TextBox x:Name="lastName" ui:ControlHelper.Header="Last Name:" />
+            <PasswordBox x:Name="password" ui:ControlHelper.Header="Password:" />
+            <PasswordBox x:Name="confirmPassword" ui:ControlHelper.Header="Confirm Password:" />
+            <DatePicker x:Name="chosenDate" ui:ControlHelper.Header="Pick a date" />
         </ui:SimpleStackPanel>
     </Grid>
 </ui:Page>

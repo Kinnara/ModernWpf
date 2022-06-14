@@ -34,39 +34,21 @@
             <sc:ControlExample HeaderText="Menu with input gesture texts">
                 <Menu>
                     <MenuItem Header="File">
-                        <MenuItem
-                            Header="New"
-                            InputGestureText="Ctrl+N" />
-                        <MenuItem
-                            Header="Open..."
-                            InputGestureText="Ctrl+O" />
-                        <MenuItem
-                            Header="Save"
-                            InputGestureText="Ctrl+S" />
-                        <MenuItem
-                            Header="Exit"
-                            InputGestureText="Ctrl+E" />
+                        <MenuItem Header="New" InputGestureText="Ctrl+N" />
+                        <MenuItem Header="Open..." InputGestureText="Ctrl+O" />
+                        <MenuItem Header="Save" InputGestureText="Ctrl+S" />
+                        <MenuItem Header="Exit" InputGestureText="Ctrl+E" />
                     </MenuItem>
 
                     <MenuItem Header="Edit">
-                        <MenuItem
-                            Header="Undo"
-                            InputGestureText="Ctrl+Z" />
-                        <MenuItem
-                            Header="Cut"
-                            InputGestureText="Ctrl+X" />
-                        <MenuItem
-                            Header="Copy"
-                            InputGestureText="Ctrl+C" />
-                        <MenuItem
-                            Header="Paste"
-                            InputGestureText="Ctrl+V" />
+                        <MenuItem Header="Undo" InputGestureText="Ctrl+Z" />
+                        <MenuItem Header="Cut" InputGestureText="Ctrl+X" />
+                        <MenuItem Header="Copy" InputGestureText="Ctrl+C" />
+                        <MenuItem Header="Paste" InputGestureText="Ctrl+V" />
                     </MenuItem>
 
                     <MenuItem Header="Help">
-                        <MenuItem
-                            Header="About"
-                            InputGestureText="Ctrl+I" />
+                        <MenuItem Header="About" InputGestureText="Ctrl+I" />
                     </MenuItem>
                 </Menu>
             </sc:ControlExample>
@@ -94,24 +76,18 @@
                     <MenuItem Header="View">
                         <MenuItem Header="Output" />
                         <Separator />
-                        <ui:RadioMenuItem
-                            GroupName="OrientationGroup"
-                            Header="Landscape" />
+                        <ui:RadioMenuItem GroupName="OrientationGroup" Header="Landscape" />
                         <ui:RadioMenuItem
                             GroupName="OrientationGroup"
                             Header="Portrait"
                             IsChecked="True" />
                         <Separator />
-                        <ui:RadioMenuItem
-                            GroupName="SizeGroup"
-                            Header="Small icons" />
+                        <ui:RadioMenuItem GroupName="SizeGroup" Header="Small icons" />
                         <ui:RadioMenuItem
                             GroupName="SizeGroup"
                             Header="Medium icons"
                             IsChecked="True" />
-                        <ui:RadioMenuItem
-                            GroupName="SizeGroup"
-                            Header="Large icons" />
+                        <ui:RadioMenuItem GroupName="SizeGroup" Header="Large icons" />
                     </MenuItem>
 
                     <MenuItem Header="Help">

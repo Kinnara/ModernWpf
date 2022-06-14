@@ -1,0 +1,82 @@
+﻿<UserControl
+    x:Class="ModernWpf.SampleApp.Controls.HeaderTile"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}"
+    mc:Ignorable="d">
+
+    <Grid Margin="0,0,12,12">
+        <Grid.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ui:ThemeResources CanBeAccessedAcrossThreads="{x:Static local:App.IsMultiThreaded}">
+                        <ui:ThemeResources.ThemeDictionaries>
+                            <ResourceDictionary x:Key="Light" ui:ThemeDictionary.Key="Light">
+                                <SolidColorBrush x:Key="HyperlinkButtonBorderBrush" Color="{DynamicResource ControlStrokeColorDefault}" />
+                                <SolidColorBrush x:Key="HyperlinkButtonBorderBrushPointerOver" Color="{DynamicResource ControlStrokeColorSecondary}" />
+                                <SolidColorBrush x:Key="HyperlinkButtonBorderBrushPressed" Color="{DynamicResource ControlStrokeColorDefault}" />
+                                <SolidColorBrush x:Key="HyperlinkButtonBorderBrushDisabled" Color="{DynamicResource ControlStrokeColorDefault}" />
+                            </ResourceDictionary>
+                            <ResourceDictionary x:Key="Dark" ui:ThemeDictionary.Key="Dark">
+                                <SolidColorBrush x:Key="HyperlinkButtonBorderBrush" Color="{DynamicResource ControlStrokeColorDefault}" />
+                                <SolidColorBrush x:Key="HyperlinkButtonBorderBrushPointerOver" Color="{DynamicResource ControlStrokeColorSecondary}" />
+                                <SolidColorBrush x:Key="HyperlinkButtonBorderBrushPressed" Color="{DynamicResource ControlStrokeColorDefault}" />
+                                <SolidColorBrush x:Key="HyperlinkButtonBorderBrushDisabled" Color="{DynamicResource ControlStrokeColorDefault}" />
+                            </ResourceDictionary>
+                            <ResourceDictionary x:Key="HighContrast" ui:ThemeDictionary.Key="HighContrast">
+                                <SolidColorBrush x:Key="HyperlinkButtonBorderBrush" Color="{DynamicResource SystemColorButtonTextColor}" />
+                                <SolidColorBrush x:Key="HyperlinkButtonBorderBrushPointerOver" Color="{DynamicResource SystemColorButtonTextColor}" />
+                                <SolidColorBrush x:Key="HyperlinkButtonBorderBrushPressed" Color="{DynamicResource SystemColorButtonTextColor}" />
+                                <SolidColorBrush x:Key="HyperlinkButtonBorderBrushDisabled" Color="{DynamicResource SystemColorButtonTextColor}" />
+                            </ResourceDictionary>
+                        </ui:ThemeResources.ThemeDictionaries>
+                    </ui:ThemeResources>
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Grid.Resources>
+
+        <ui:HyperlinkButton
+            Height="150"
+            Padding="-1"
+            NavigateUri="{Binding Link, Mode=OneWay}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="102" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Image
+                    HorizontalAlignment="Center"
+                    Source="{Binding Source, Mode=OneWay}"
+                    Stretch="UniformToFill" />
+
+                <Grid
+                    Grid.Row="1"
+                    Height="48"
+                    HorizontalAlignment="Stretch"
+                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    Opacity="1">
+                    <TextBlock
+                        Margin="16,0"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                        Style="{DynamicResource BodyStrongTextBlockStyle}"
+                        Text="{Binding Title, Mode=OneWay}"
+                        TextWrapping="Wrap" />
+                    <ui:FontIcon
+                        Margin="12"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        FontSize="16"
+                        Glyph="&#xE8A7;" />
+                </Grid>
+            </Grid>
+        </ui:HyperlinkButton>
+    </Grid>
+</UserControl>

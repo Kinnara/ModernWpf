@@ -33,9 +33,7 @@
 
     <StackPanel Margin="24,20,24,20">
 
-        <Border
-            Height="40"
-            Margin="0,0,0,20">
+        <Border Height="40" Margin="0,0,0,20">
             <TextBlock
                 VerticalAlignment="Center"
                 FontWeight="SemiBold"
@@ -46,19 +44,11 @@
 
         <HeaderedContentControl Header="Buttons">
             <ui:SimpleStackPanel>
-                <Button
-                    x:Name="Button"
-                    Content="Enabled button" />
-                <Button
-                    Content="Disabled button"
-                    IsEnabled="False" />
+                <Button x:Name="Button" Content="Enabled button" />
+                <Button Content="Disabled button" IsEnabled="False" />
                 <ToggleButton Content="Toggle button" />
-                <ToggleButton
-                    Content="Toggled button"
-                    IsChecked="True" />
-                <Button
-                    Content="Enabled accent button"
-                    Style="{DynamicResource AccentButtonStyle}" />
+                <ToggleButton Content="Toggled button" IsChecked="True" />
+                <Button Content="Enabled accent button" Style="{DynamicResource AccentButtonStyle}" />
                 <Button
                     Content="Disabled accent button"
                     IsEnabled="False"
@@ -69,9 +59,7 @@
         <HeaderedContentControl Header="Checkbox">
             <ui:SimpleStackPanel>
                 <CheckBox Content="Unchecked" />
-                <CheckBox
-                    Content="Checked"
-                    IsChecked="True" />
+                <CheckBox Content="Checked" IsChecked="True" />
                 <CheckBox
                     Content="Third state"
                     IsChecked="{x:Null}"
@@ -106,18 +94,12 @@
         <HeaderedContentControl Header="Combo box">
             <ui:SimpleStackPanel>
                 <ComboBox Width="200">
-                    <ComboBoxItem
-                        Content="Item 1"
-                        IsSelected="True" />
+                    <ComboBoxItem Content="Item 1" IsSelected="True" />
                     <ComboBoxItem Content="Item 2" />
                     <ComboBoxItem Content="Item 3" />
                 </ComboBox>
-                <ComboBox
-                    Width="200"
-                    IsEditable="True">
-                    <ComboBoxItem
-                        Content="Editable item 1"
-                        IsSelected="True" />
+                <ComboBox Width="200" IsEditable="True">
+                    <ComboBoxItem Content="Editable item 1" IsSelected="True" />
                     <ComboBoxItem Content="Editable item 2" />
                     <ComboBoxItem Content="Editable item 3" />
                 </ComboBox>
@@ -148,12 +130,8 @@
         <HeaderedContentControl Header="List view">
             <ListView HorizontalAlignment="Stretch">
                 <ListView.Items>
-                    <ListViewItem
-                        Content="Howdy! (disabled)"
-                        IsEnabled="False" />
-                    <ListViewItem
-                        Content="Aloha! (selected)"
-                        IsSelected="True" />
+                    <ListViewItem Content="Howdy! (disabled)" IsEnabled="False" />
+                    <ListViewItem Content="Aloha! (selected)" IsSelected="True" />
                     <ListViewItem Content="Hello!" />
                     <ListViewItem Content="Hola!" />
                 </ListView.Items>

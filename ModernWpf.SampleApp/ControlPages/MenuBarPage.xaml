@@ -11,13 +11,9 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            HeaderText="A simple MenuBar"
-            XamlSource="MenuBar\MenuBarSample1.txt">
+        <local:ControlExample HeaderText="A simple MenuBar" XamlSource="MenuBar\MenuBarSample1.txt">
             <StackPanel>
-                <TextBlock
-                    x:Name="SelectedOptionText"
-                    Text="" />
+                <TextBlock x:Name="SelectedOptionText" Text="" />
                 <Menu x:Name="Example1">
                     <MenuItem Header="File">
                         <MenuItem
@@ -67,60 +63,34 @@
             </StackPanel>
         </local:ControlExample>
 
-        <local:ControlExample
-            HeaderText="MenuBar with keyboard accelerators"
-            XamlSource="Menubar\MenuBarSample3.txt">
+        <local:ControlExample HeaderText="MenuBar with keyboard accelerators" XamlSource="Menubar\MenuBarSample3.txt">
             <StackPanel>
-                <TextBlock
-                    x:Name="SelectedOptionText1"
-                    Text="" />
+                <TextBlock x:Name="SelectedOptionText1" Text="" />
                 <Menu x:Name="Example2">
                     <MenuItem Header="File">
-                        <MenuItem
-                            Header="New"
-                            InputGestureText="Ctrl+N" />
-                        <MenuItem
-                            Header="Open..."
-                            InputGestureText="Ctrl+O" />
-                        <MenuItem
-                            Header="Save"
-                            InputGestureText="Ctrl+S" />
-                        <MenuItem
-                            Header="Exit"
-                            InputGestureText="Ctrl+E" />
+                        <MenuItem Header="New" InputGestureText="Ctrl+N" />
+                        <MenuItem Header="Open..." InputGestureText="Ctrl+O" />
+                        <MenuItem Header="Save" InputGestureText="Ctrl+S" />
+                        <MenuItem Header="Exit" InputGestureText="Ctrl+E" />
                     </MenuItem>
 
                     <MenuItem Header="Edit">
-                        <MenuItem
-                            Header="Undo"
-                            InputGestureText="Ctrl+Z" />
-                        <MenuItem
-                            Header="Cut"
-                            InputGestureText="Ctrl+X" />
-                        <MenuItem
-                            Header="Copy"
-                            InputGestureText="Ctrl+C" />
-                        <MenuItem
-                            Header="Paste"
-                            InputGestureText="Ctrl+V" />
+                        <MenuItem Header="Undo" InputGestureText="Ctrl+Z" />
+                        <MenuItem Header="Cut" InputGestureText="Ctrl+X" />
+                        <MenuItem Header="Copy" InputGestureText="Ctrl+C" />
+                        <MenuItem Header="Paste" InputGestureText="Ctrl+V" />
                     </MenuItem>
 
                     <MenuItem Header="Help">
-                        <MenuItem
-                            Header="About"
-                            InputGestureText="Ctrl+I" />
+                        <MenuItem Header="About" InputGestureText="Ctrl+I" />
                     </MenuItem>
                 </Menu>
             </StackPanel>
         </local:ControlExample>
 
-        <local:ControlExample
-            HeaderText="MenuBar with submenus, separators, and radio items"
-            XamlSource="MenuBar\MenuBarSample2.txt">
+        <local:ControlExample HeaderText="MenuBar with submenus, separators, and radio items" XamlSource="MenuBar\MenuBarSample2.txt">
             <StackPanel>
-                <TextBlock
-                    x:Name="SelectedOptionText2"
-                    Text="" />
+                <TextBlock x:Name="SelectedOptionText2" Text="" />
                 <Menu x:Name="Example3">
                     <MenuItem Header="File">
                         <MenuItem Header="New">

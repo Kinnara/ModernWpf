@@ -4,7 +4,6 @@
     xmlns:ui="http://schemas.modernwpf.com/2019">
     <ResourceDictionary.MergedDictionaries>
         <ui:ColorPaletteResources
-            TargetTheme="Light"
             Accent="#FFCC4D11"
             AltHigh="#FFFFFFFF"
             AltLow="#FFFFFFFF"
@@ -30,7 +29,8 @@
             ChromeMediumLow="#FFC1E9FE"
             ChromeWhite="#FFFFFFFF"
             ListLow="#FFB3E0F8"
-            ListMedium="#FF7CBEE0" />
+            ListMedium="#FF7CBEE0"
+            TargetTheme="Light" />
         <ResourceDictionary>
             <Color x:Key="SystemChromeAltMediumHighColor">#CCCFEAFF</Color>
             <Color x:Key="SystemChromeAltHighColor">#FFCFEAFF</Color>

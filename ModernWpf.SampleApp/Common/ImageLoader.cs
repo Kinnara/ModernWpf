@@ -33,7 +33,7 @@ namespace ModernWpf.SampleApp.Common
                 var item = await ControlInfoDataSource.Instance.GetItemAsync(e.NewValue?.ToString());
                 if (item?.ImagePath != null)
                 {
-                    Uri imageUri = new Uri(item.ImagePath, UriKind.Absolute);
+                    Uri imageUri = new Uri(item.ImagePath, UriKind.Relative);
                     BitmapImage imageBitmap = new BitmapImage(imageUri);
                     image.Source = imageBitmap;
                 }

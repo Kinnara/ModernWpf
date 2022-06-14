@@ -79,23 +79,17 @@
             <Button Content="Edit Options">
                 <Button.ContextMenu>
                     <ContextMenu>
-                        <MenuItem
-                            Header="Share"
-                            InputGestureText="Ctrl+S">
+                        <MenuItem Header="Share" InputGestureText="Ctrl+S">
                             <MenuItem.Icon>
                                 <ui:FontIcon Glyph="&#xE72D;" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem
-                            Header="Copy"
-                            InputGestureText="Ctrl+C">
+                        <MenuItem Header="Copy" InputGestureText="Ctrl+C">
                             <MenuItem.Icon>
                                 <ui:FontIcon Glyph="&#xE16F;" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem
-                            Header="Delete"
-                            InputGestureText="Delete">
+                        <MenuItem Header="Delete" InputGestureText="Delete">
                             <MenuItem.Icon>
                                 <ui:FontIcon Glyph="&#xE107;" />
                             </MenuItem.Icon>
@@ -112,23 +106,17 @@
             <Button Content="Edit Options">
                 <ui:ContextFlyoutService.ContextFlyout>
                     <ui:MenuFlyout>
-                        <MenuItem
-                            Header="Share"
-                            InputGestureText="Ctrl+S">
+                        <MenuItem Header="Share" InputGestureText="Ctrl+S">
                             <MenuItem.Icon>
                                 <ui:FontIcon Glyph="&#xE72D;" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem
-                            Header="Copy"
-                            InputGestureText="Ctrl+C">
+                        <MenuItem Header="Copy" InputGestureText="Ctrl+C">
                             <MenuItem.Icon>
                                 <ui:FontIcon Glyph="&#xE16F;" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem
-                            Header="Delete"
-                            InputGestureText="Delete">
+                        <MenuItem Header="Delete" InputGestureText="Delete">
                             <MenuItem.Icon>
                                 <ui:FontIcon Glyph="&#xE107;" />
                             </MenuItem.Icon>
@@ -142,9 +130,7 @@
         </local:ControlExample>
 
         <local:ControlExample HeaderText="Text control ContextMenu.">
-            <TextBox
-                MinWidth="150"
-                Text="Some text" />
+            <TextBox MinWidth="150" Text="Some text" />
         </local:ControlExample>
     </ui:SimpleStackPanel>
 </ui:Page>

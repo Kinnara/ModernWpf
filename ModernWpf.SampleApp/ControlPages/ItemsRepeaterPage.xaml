@@ -87,9 +87,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="StringDataTemplate">
-            <Grid
-                Margin="10"
-                Background="{DynamicResource SystemControlBackgroundAccentBrush}">
+            <Grid Margin="10" Background="{DynamicResource SystemControlBackgroundAccentBrush}">
                 <TextBlock
                     Padding="10"
                     HorizontalAlignment="Center"
@@ -101,9 +99,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="IntDataTemplate">
-            <Grid
-                Margin="10"
-                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+            <Grid Margin="10" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
                 <TextBlock
                     Padding="10"
                     HorizontalAlignment="Center"
@@ -199,9 +195,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <TabControl
-        x:Name="tabControl"
-        Style="{StaticResource TabControlPivotStyle}">
+    <TabControl x:Name="tabControl" Style="{StaticResource TabControlPivotStyle}">
         <TabControl.Resources>
             <Thickness x:Key="PivotItemMargin">12,0,12,20</Thickness>
         </TabControl.Resources>
@@ -254,9 +248,7 @@
                     </local:ControlExample.Options>
                 </local:ControlExample>
 
-                <local:ControlExample
-                    HorizontalContentAlignment="Stretch"
-                    HeaderText="Virtualizing, scrollable list of items laid out by ItemsRepeater">
+                <local:ControlExample HorizontalContentAlignment="Stretch" HeaderText="Virtualizing, scrollable list of items laid out by ItemsRepeater">
 
                     <!--
                         ItemsRepeaterScrollHost enables ItemsRepeater to coordinate with ScrollViewer down-level.
@@ -297,9 +289,7 @@
 
                 <local:ControlExample HeaderText="ItemsRepeater with mixed-type collection">
                     <StackPanel>
-                        <TextBlock
-                            Text="This is an ItemsRepeater that displays both integer and string items. It uses a DataTemplateSelector to choose the correct layout for each of its items."
-                            TextWrapping="Wrap" />
+                        <TextBlock Text="This is an ItemsRepeater that displays both integer and string items. It uses a DataTemplateSelector to choose the correct layout for each of its items." TextWrapping="Wrap" />
                         <ui:ItemsRepeater
                             x:Name="MixedTypeRepeater"
                             Margin="0,0,12,0"
@@ -307,9 +297,7 @@
                             ItemTemplate="{StaticResource StringOrIntTemplateSelector}">
 
                             <ui:ItemsRepeater.Layout>
-                                <ui:UniformGridLayout
-                                    MinItemHeight="200"
-                                    MinItemWidth="200" />
+                                <ui:UniformGridLayout MinItemHeight="200" MinItemWidth="200" />
                             </ui:ItemsRepeater.Layout>
                         </ui:ItemsRepeater>
                     </StackPanel>
@@ -349,9 +337,7 @@
 
                 <local:ControlExample.Options>
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <ui:NumberBox
-                            Header="Spacing"
-                            Value="{Binding Source={StaticResource stackLayout}, Path=Spacing, Converter={StaticResource SpacingConverter}}" />
+                        <ui:NumberBox Header="Spacing" Value="{Binding Source={StaticResource stackLayout}, Path=Spacing, Converter={StaticResource SpacingConverter}}" />
                         <Button
                             x:Name="changeFirstItemButton"
                             Click="ChangeFirstItemButton_Click"
@@ -398,21 +384,11 @@
 
                 <local:ControlExample.Options>
                     <ScrollViewer Margin="-16">
-                        <ui:SimpleStackPanel
-                            Margin="16"
-                            Style="{StaticResource OptionsPanelStyle}">
-                            <ui:NumberBox
-                                Header="MinItemWidth"
-                                Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinItemWidth}" />
-                            <ui:NumberBox
-                                Header="MinItemHeight"
-                                Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinItemHeight}" />
-                            <ui:NumberBox
-                                Header="MinRowSpacing"
-                                Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinRowSpacing}" />
-                            <ui:NumberBox
-                                Header="MinColumnSpacing"
-                                Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinColumnSpacing}" />
+                        <ui:SimpleStackPanel Margin="16" Style="{StaticResource OptionsPanelStyle}">
+                            <ui:NumberBox Header="MinItemWidth" Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinItemWidth}" />
+                            <ui:NumberBox Header="MinItemHeight" Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinItemHeight}" />
+                            <ui:NumberBox Header="MinRowSpacing" Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinRowSpacing}" />
+                            <ui:NumberBox Header="MinColumnSpacing" Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinColumnSpacing}" />
                             <ui:NumberBox
                                 Header="MaximumRowsOrColumns"
                                 Minimum="-1"
@@ -438,9 +414,7 @@
         <TabItem Header="FlowLayout">
             <local:ControlExample HeaderText="FlowLayout">
                 <local:ControlExample.Resources>
-                    <ui:FlowLayout
-                        x:Key="flowLayout"
-                        MinRowSpacing="24" />
+                    <ui:FlowLayout x:Key="flowLayout" MinRowSpacing="24" />
                 </local:ControlExample.Resources>
 
                 <ui:ItemsRepeaterScrollHost>
@@ -466,19 +440,13 @@
 
                 <local:ControlExample.Options>
                     <ScrollViewer Margin="-16">
-                        <ui:SimpleStackPanel
-                            Margin="16"
-                            Style="{StaticResource OptionsPanelStyle}">
+                        <ui:SimpleStackPanel Margin="16" Style="{StaticResource OptionsPanelStyle}">
                             <ui:RadioButtons
                                 Header="Orientation"
                                 ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
                                 SelectedItem="{Binding Source={StaticResource flowLayout}, Path=Orientation}" />
-                            <ui:NumberBox
-                                ui:ControlHelper.Header="MinRowSpacing"
-                                Value="{Binding Source={StaticResource flowLayout}, Path=MinRowSpacing}" />
-                            <ui:NumberBox
-                                ui:ControlHelper.Header="MinColumnSpacing"
-                                Value="{Binding Source={StaticResource flowLayout}, Path=MinColumnSpacing}" />
+                            <ui:NumberBox ui:ControlHelper.Header="MinRowSpacing" Value="{Binding Source={StaticResource flowLayout}, Path=MinRowSpacing}" />
+                            <ui:NumberBox ui:ControlHelper.Header="MinColumnSpacing" Value="{Binding Source={StaticResource flowLayout}, Path=MinColumnSpacing}" />
                             <ui:RadioButtons
                                 Header="LineAlignment"
                                 ItemsSource="{Binding Source={x:Type ui:FlowLayoutLineAlignment}, Converter={StaticResource EnumValuesConverter}}"

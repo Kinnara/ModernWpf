@@ -2,43 +2,33 @@
     x:Class="ModernWpf.SampleApp.ControlPages.ThreadedUIPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:threaded="clr-namespace:ModernWpf.SampleApp.ThreadedUI"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
 
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
             <sc:ControlExample
                 x:Name="ProgressBarExample"
-                HeaderText="A threaded progress control."
-                VerticalContentAlignment="Center">
+                VerticalContentAlignment="Center"
+                HeaderText="A threaded progress control.">
                 <threaded:ThreadedVisualHost
                     x:Name="ProgressControlHost"
-                    Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    ChildChanged="ProgressControlHost_ChildChanged"
                     ChildType="{x:Type threaded:ThreadedProgressBar}"
-                    ChildChanged="ProgressControlHost_ChildChanged" />
+                    Visibility="{Binding IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <sc:ControlExample.Options>
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <CheckBox
-                            Content="IsBusy"
-                            IsChecked="{Binding IsBusy}" />
-                        <CheckBox
-                            Content="IsVisible"
-                            IsChecked="{Binding IsVisible}" />
-                        <Button
-                            Content="Unload"
-                            Click="LoadOrUnload" />
-                        <Button
-                            Content="Toggle ChildType"
-                            Click="ToggleChildType" />
-                        <Button
-                            Content="Block main thread"
-                            Click="BlockMainThread" />
+                        <CheckBox Content="IsBusy" IsChecked="{Binding IsBusy}" />
+                        <CheckBox Content="IsVisible" IsChecked="{Binding IsVisible}" />
+                        <Button Click="LoadOrUnload" Content="Unload" />
+                        <Button Click="ToggleChildType" Content="Toggle ChildType" />
+                        <Button Click="BlockMainThread" Content="Block main thread" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>

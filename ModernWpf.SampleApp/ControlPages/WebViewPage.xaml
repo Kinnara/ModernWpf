@@ -1,40 +1,38 @@
 ﻿<ui:Page
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     x:Class="ModernWpf.SampleApp.ControlPages.WebViewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    mc:Ignorable="d"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="WebViewPage"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Title="WebViewPage">
+    mc:Ignorable="d">
     <!--
         URLs on this page have a en-us as localization since having them not have a fixed locale results in the page having the language used by the user,
         which may be a different language than the app is using. This was quite confusing to see and was not intuitive.
     -->
     <local:ControlExample
-        HeaderText="A simple WebView "
         HorizontalAlignment="Stretch"
-        HorizontalContentAlignment="Stretch">
+        HorizontalContentAlignment="Stretch"
+        HeaderText="A simple WebView ">
         <local:ControlExample.Example>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <TextBlock
-                    TextWrapping="Wrap"
-                    Margin="0,0,0,12">
-                    WebView is powered by the Internet Explorer engine. See <Hyperlink NavigateUri="https://go.microsoft.com/fwlink/p/?LinkId=722922">Full Sample</Hyperlink>
+                <TextBlock Margin="0,0,0,12" TextWrapping="Wrap">
+                    WebView is powered by the Internet Explorer engine. See<Hyperlink NavigateUri="https://go.microsoft.com/fwlink/p/?LinkId=722922">Full Sample</Hyperlink>
                     in the Documentation section for a complete sample.</TextBlock>
                 <WebBrowser
-                    Source="https://docs.microsoft.com/en-us/windows/uwp/design/controls-and-patterns/web-view"
+                    Grid.Row="1"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    Grid.Row="1" />
+                    Source="https://docs.microsoft.com/en-us/windows/uwp/design/controls-and-patterns/web-view" />
             </Grid>
         </local:ControlExample.Example>
         <local:ControlExample.Xaml>

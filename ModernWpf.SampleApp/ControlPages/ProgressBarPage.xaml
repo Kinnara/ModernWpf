@@ -1,11 +1,11 @@
 ﻿<ui:Page
     x:Class="ModernWpf.SampleApp.ControlPages.ProgressBarPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
 
     <ScrollViewer>
@@ -13,27 +13,27 @@
             <sc:ControlExample HeaderText="An indeterminate progress bar.">
                 <ui:ProgressBar
                     Width="130"
-                    IsIndeterminate="True"
-                    VerticalAlignment="Top"
                     Margin="10,10,0,0"
-                    ShowPaused="{Binding IsChecked, ElementName=PausedRB}"
-                    ShowError="{Binding IsChecked, ElementName=ErrorRB}" />
+                    VerticalAlignment="Top"
+                    IsIndeterminate="True"
+                    ShowError="{Binding IsChecked, ElementName=ErrorRB}"
+                    ShowPaused="{Binding IsChecked, ElementName=PausedRB}" />
 
                 <sc:ControlExample.Options>
                     <StackPanel>
                         <RadioButton
                             x:Name="RunningRB"
-                            GroupName="ProgressState"
                             Content="Running"
+                            GroupName="ProgressState"
                             IsChecked="True" />
                         <RadioButton
                             x:Name="PausedRB"
-                            GroupName="ProgressState"
-                            Content="Paused" />
+                            Content="Paused"
+                            GroupName="ProgressState" />
                         <RadioButton
                             x:Name="ErrorRB"
-                            GroupName="ProgressState"
-                            Content="Error" />
+                            Content="Error"
+                            GroupName="ProgressState" />
                     </StackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
@@ -46,39 +46,37 @@
                         Value="{Binding ElementName=ProgressValue, Path=Value, Mode=OneWay}" />
                     <TextBlock
                         x:Name="Control2Output"
-                        Style="{StaticResource OutputTextBlockStyle}"
                         Width="60"
+                        Style="{StaticResource OutputTextBlockStyle}"
                         TextAlignment="Center" />
                     <TextBlock
                         x:Name="ProgresLabel"
-                        Text="Progress"
+                        Margin="0,0,10,0"
                         VerticalAlignment="Center"
-                        Margin="0,0,10,0" />
+                        Text="Progress" />
                     <ui:NumberBox
                         x:Name="ProgressValue"
                         AutomationProperties.LabeledBy="{Binding ElementName=ProgresLabel}"
-                        Minimum="0"
                         Maximum="100"
-                        Value="0"
-                        SpinButtonPlacementMode="Inline" />
+                        Minimum="0"
+                        SpinButtonPlacementMode="Inline"
+                        Value="0" />
                 </StackPanel>
             </sc:ControlExample>
 
-            <sc:ControlExample
-                HeaderText="An indeterminate progress ring."
-                VerticalContentAlignment="Center">
+            <sc:ControlExample VerticalContentAlignment="Center" HeaderText="An indeterminate progress ring.">
                 <ui:ProgressRing
-                    IsActive="{Binding IsOn, ElementName=ProgressToggle}"
+                    Width="60"
                     Height="60"
-                    Width="60" />
+                    IsActive="{Binding IsOn, ElementName=ProgressToggle}" />
 
                 <sc:ControlExample.Options>
                     <ui:ToggleSwitch
                         x:Name="ProgressToggle"
                         Header="Toggle work"
+                        IsOn="True"
                         OffContent="Do work"
-                        OnContent="Working"
-                        IsOn="True" />
+                        OnContent="Working" />
                 </sc:ControlExample.Options>
             </sc:ControlExample>
         </ui:SimpleStackPanel>

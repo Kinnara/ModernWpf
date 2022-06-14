@@ -14,9 +14,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
     <Page.Resources>
-        <sys:String
-            x:Key="MultipleButtonsSecondaryCommands"
-            xml:space="preserve">
+        <sys:String x:Key="MultipleButtonsSecondaryCommands" xml:space="preserve">
         &lt;AppBarButton Icon=&quot;Add&quot; Label=&quot;Button 1&quot;/&gt;
         &lt;AppBarButton Icon=&quot;Delete&quot; Label=&quot;Button 2&quot;/&gt;
         &lt;AppBarSeparator /&gt;
@@ -24,25 +22,37 @@
         &lt;AppBarButton Icon=&quot;FontIncrease&quot; Label=&quot;Button 4&quot;/&gt;</sys:String>
     </Page.Resources>
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example3"
-            HeaderText="A command bar with labels on the side free floating in a page">
+        <local:ControlExample x:Name="Example3" HeaderText="A command bar with labels on the side free floating in a page">
             <local:ControlExample.Example>
                 <StackPanel>
                     <ui:CommandBar
                         x:Name="PrimaryCommandBar"
                         DefaultLabelPosition="Right"
                         IsOpen="False">
-                        <ui:AppBarButton x:Name="AddButton" Click="OnElementClicked" Icon="Add" Label="Add" />
-                        <ui:AppBarButton x:Name="EditButton" Click="OnElementClicked" Icon="Edit" Label="Edit" />
-                        <ui:AppBarButton x:Name="ShareButton" Click="OnElementClicked" Icon="Share" Label="Share" />
+                        <ui:AppBarButton
+                            x:Name="AddButton"
+                            Click="OnElementClicked"
+                            Icon="Add"
+                            Label="Add" />
+                        <ui:AppBarButton
+                            x:Name="EditButton"
+                            Click="OnElementClicked"
+                            Icon="Edit"
+                            Label="Edit" />
+                        <ui:AppBarButton
+                            x:Name="ShareButton"
+                            Click="OnElementClicked"
+                            Icon="Share"
+                            Label="Share" />
                         <ui:CommandBar.SecondaryCommands>
-                            <ui:AppBarButton x:Name="SettingsButton" Click="OnElementClicked" Icon="Setting" Label="Settings" />
+                            <ui:AppBarButton
+                                x:Name="SettingsButton"
+                                Click="OnElementClicked"
+                                Icon="Setting"
+                                Label="Settings" />
                         </ui:CommandBar.SecondaryCommands>
                     </ui:CommandBar>
-                    <TextBlock
-                        x:Name="SelectedOptionText"
-                        Padding="0,8,0,0" />
+                    <TextBlock x:Name="SelectedOptionText" Padding="0,8,0,0" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Options>
@@ -56,9 +66,7 @@
                         Margin="0,12,0,0"
                         Click="CloseButton_Click"
                         Content="Close command bar" />
-                    <TextBlock
-                        Margin="0,16,0,0"
-                        Text="Modify content" />
+                    <TextBlock Margin="0,16,0,0" Text="Modify content" />
                     <Button
                         Margin="0,12,0,0"
                         Click="AddSecondaryCommands_Click"

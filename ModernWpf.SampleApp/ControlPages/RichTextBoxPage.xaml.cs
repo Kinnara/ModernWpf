@@ -2,9 +2,9 @@
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class RichTextBoxPage
+    public partial class RichTextBlockPage
     {
-        public RichTextBoxPage()
+        public RichTextBlockPage()
         {
             InitializeComponent();
         }

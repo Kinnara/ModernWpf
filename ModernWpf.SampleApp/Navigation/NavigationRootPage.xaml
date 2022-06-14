@@ -94,9 +94,7 @@
                     TextChanged="OnControlsSearchBoxTextChanged" />
             </ui:NavigationView.AutoSuggestBox>
 
-            <ui:Frame
-                x:Name="rootFrame"
-                Navigated="OnRootFrameNavigated" />
+            <ui:Frame x:Name="rootFrame" Navigated="OnRootFrameNavigated" />
         </ui:NavigationView>
     </Grid>
 </ui:Page>

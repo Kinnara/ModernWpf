@@ -13,9 +13,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example1"
-            HeaderText="A simple Button with text content.">
+        <local:ControlExample x:Name="Example1" HeaderText="A simple Button with text content.">
             <local:ControlExample.Example>
                 <Button
                     x:Name="Button1"
@@ -24,15 +22,11 @@
                     IsEnabled="{Binding IsChecked, ElementName=DisableButton1, Converter={StaticResource BoolNegationConverter}}" />
             </local:ControlExample.Example>
             <local:ControlExample.Output>
-                <TextBlock
-                    x:Name="Control1Output"
-                    FontFamily="Global User Interface" />
+                <TextBlock x:Name="Control1Output" FontFamily="Global User Interface" />
             </local:ControlExample.Output>
             <local:ControlExample.Options>
                 <StackPanel>
-                    <CheckBox
-                        x:Name="DisableButton1"
-                        Content="Disable button" />
+                    <CheckBox x:Name="DisableButton1" Content="Disable button" />
                 </StackPanel>
             </local:ControlExample.Options>
             <local:ControlExample.Xaml>
@@ -42,9 +36,7 @@
             </local:ControlExample.Xaml>
         </local:ControlExample>
 
-        <local:ControlExample
-            x:Name="Example2"
-            HeaderText="A Button with graphical content.">
+        <local:ControlExample x:Name="Example2" HeaderText="A Button with graphical content.">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <Button
@@ -53,9 +45,7 @@
                         Height="50"
                         AutomationProperties.Name="Pie"
                         Click="Button_Click">
-                        <Image
-                            AutomationProperties.Name="Slice"
-                            Source="/Assets/Slices.png" />
+                        <Image AutomationProperties.Name="Slice" Source="/Assets/Slices.png" />
                     </Button>
                 </StackPanel>
             </local:ControlExample.Example>
@@ -82,30 +72,18 @@
                         Margin="0,0,0,8"
                         Text="One option to mitigate clipped content is to place Buttons underneath each other, allowing for more space to grow horizontally:"
                         TextWrapping="Wrap" />
-                    <Button
-                        Margin="0,0,0,5"
-                        HorizontalAlignment="Stretch">
+                    <Button Margin="0,0,0,5" HorizontalAlignment="Stretch">
                         This is some text that is too long and will get cut off
                     </Button>
                     <Button HorizontalAlignment="Stretch">This is another text that would result in being cut off</Button>
 
-                    <TextBlock
-                        Margin="0,8,0,8"
-                        Text="Another option is to explicitly wrap the Button's content" />
-                    <StackPanel
-                        HorizontalAlignment="Center"
-                        Orientation="Horizontal">
-                        <Button
-                            MaxWidth="240"
-                            Margin="0,0,8,0">
-                            <TextBlock
-                                Text="This is some text that is too long and will get cut off"
-                                TextWrapping="Wrap" />
+                    <TextBlock Margin="0,8,0,8" Text="Another option is to explicitly wrap the Button's content" />
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <Button MaxWidth="240" Margin="0,0,8,0">
+                            <TextBlock Text="This is some text that is too long and will get cut off" TextWrapping="Wrap" />
                         </Button>
                         <Button MaxWidth="240">
-                            <TextBlock
-                                Text="This is another text that would result in being cut off"
-                                TextWrapping="Wrap" />
+                            <TextBlock Text="This is another text that would result in being cut off" TextWrapping="Wrap" />
                         </Button>
                     </StackPanel>
                 </StackPanel>
@@ -134,9 +112,7 @@
 
         <local:ControlExample HeaderText="Accent style applied to Button.">
             <local:ControlExample.Example>
-                <Button
-                    Content="Accent style button"
-                    Style="{DynamicResource AccentButtonStyle}" />
+                <Button Content="Accent style button" Style="{DynamicResource AccentButtonStyle}" />
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
                 <sys:String>

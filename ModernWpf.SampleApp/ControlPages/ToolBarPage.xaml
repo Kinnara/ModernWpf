@@ -2,18 +2,16 @@
     x:Class="ModernWpf.SampleApp.ControlPages.ToolBarPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp.ControlPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    mc:Ignorable="d"
-    Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+    Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+    mc:Ignorable="d">
 
     <Grid>
         <ToolBarTray VerticalAlignment="Top">
-            <ToolBar
-                Band="1"
-                BandIndex="1">
+            <ToolBar Band="1" BandIndex="1">
                 <Button>
                     <ui:FontIcon Glyph="&#xE8C6;" />
                 </Button>
@@ -24,9 +22,7 @@
                     <ui:FontIcon Glyph="&#xE77F;" />
                 </Button>
             </ToolBar>
-            <ToolBar
-                Band="1"
-                BandIndex="2">
+            <ToolBar Band="1" BandIndex="2">
                 <Button>
                     <ui:FontIcon Glyph="&#xE7A7;" />
                 </Button>
@@ -34,9 +30,7 @@
                     <ui:FontIcon Glyph="&#xE7A6;" />
                 </Button>
             </ToolBar>
-            <ToolBar
-                Band="1"
-                BandIndex="3">
+            <ToolBar Band="1" BandIndex="3">
                 <Button>
                     <ui:FontIcon Glyph="&#xEC87;" />
                 </Button>
@@ -51,12 +45,8 @@
                     <ui:FontIcon Glyph="&#xE8E5;" />
                 </Button>
             </ToolBar>
-            <ToolBar
-                Band="1"
-                BandIndex="4">
-                <ComboBox
-                    IsEditable="True"
-                    Text="ComboBox" />
+            <ToolBar Band="1" BandIndex="4">
+                <ComboBox IsEditable="True" Text="ComboBox" />
                 <RadioButton Content="RadioButton" />
                 <CheckBox Content="CheckBox" />
                 <ToggleButton Content="ToggleButton" />

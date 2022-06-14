@@ -13,9 +13,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="ExampleAccessories"
-            HeaderText="A basic calendar view.">
+        <local:ControlExample x:Name="ExampleAccessories" HeaderText="A basic calendar view.">
 
             <local:ControlExample.Example>
                 <Calendar

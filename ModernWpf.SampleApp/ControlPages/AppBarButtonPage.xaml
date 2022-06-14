@@ -12,13 +12,15 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example1"
-            HeaderText="An AppBarButton with a symbol icon.">
+        <local:ControlExample x:Name="Example1" HeaderText="An AppBarButton with a symbol icon.">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <!-- App bar button with symbol icon. -->
-                    <ui:AppBarButton x:Name="Button1" Click="AppBarButton_Click" Icon="Like" Label="SymbolIcon" />
+                    <!--  App bar button with symbol icon.  -->
+                    <ui:AppBarButton
+                        x:Name="Button1"
+                        Click="AppBarButton_Click"
+                        Icon="Like"
+                        Label="SymbolIcon" />
                     <TextBlock
                         x:Name="Control1Output"
                         Margin="8,0,0,0"
@@ -31,13 +33,14 @@
                 </sys:String>
             </local:ControlExample.Xaml>
         </local:ControlExample>
-        <local:ControlExample
-            x:Name="Example2"
-            HeaderText="An AppBarButton with a bitmap icon.">
+        <local:ControlExample x:Name="Example2" HeaderText="An AppBarButton with a bitmap icon.">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <!-- App bar button with bitmap icon. -->
-                    <ui:AppBarButton x:Name="Button2" Click="AppBarButton_Click" Label="BitmapIcon">
+                    <!--  App bar button with bitmap icon.  -->
+                    <ui:AppBarButton
+                        x:Name="Button2"
+                        Click="AppBarButton_Click"
+                        Label="BitmapIcon">
                         <ui:AppBarButton.Icon>
                             <ui:BitmapIcon UriSource="/Assets/Slices2.png" />
                         </ui:AppBarButton.Icon>
@@ -58,23 +61,22 @@
                 </sys:String>
             </local:ControlExample.Xaml>
         </local:ControlExample>
-        <local:ControlExample
-            x:Name="Example3"
-            HeaderText="An AppBarButton with a font icon.">
+        <local:ControlExample x:Name="Example3" HeaderText="An AppBarButton with a font icon.">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <!-- App bar button with font icon. -->
-                    <ui:AppBarButton x:Name="Button3" Click="AppBarButton_Click" Label="FontIcon">
+                    <!--  App bar button with font icon.  -->
+                    <ui:AppBarButton
+                        x:Name="Button3"
+                        Click="AppBarButton_Click"
+                        Label="FontIcon">
                         <ui:AppBarButton.Icon>
-                            <ui:FontIcon
-                                FontFamily="Candara"
-                                Glyph="&#x03A3;" />
+                            <ui:FontIcon FontFamily="Candara" Glyph="&#x03A3;" />
                         </ui:AppBarButton.Icon>
                     </ui:AppBarButton>
                     <TextBlock
                         x:Name="Control3Output"
                         Margin="8,0,0,0"
-                        VerticalAlignment="Center"/>
+                        VerticalAlignment="Center" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
@@ -87,13 +89,14 @@
                 </sys:String>
             </local:ControlExample.Xaml>
         </local:ControlExample>
-        <local:ControlExample
-            x:Name="Example4"
-            HeaderText="An AppBarButton with a path icon.">
+        <local:ControlExample x:Name="Example4" HeaderText="An AppBarButton with a path icon.">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <!-- App bar button with path icon. -->
-                    <ui:AppBarButton x:Name="Button4" Click="AppBarButton_Click" Label="PathIcon">
+                    <!--  App bar button with path icon.  -->
+                    <ui:AppBarButton
+                        x:Name="Button4"
+                        Click="AppBarButton_Click"
+                        Label="PathIcon">
                         <ui:AppBarButton.Icon>
                             <ui:PathIcon Data="F1 M 20,20L 24,10L 24,24L 5,24" />
                         </ui:AppBarButton.Icon>
@@ -115,12 +118,15 @@
             </local:ControlExample.Xaml>
         </local:ControlExample>
 
-        <local:ControlExample
-            x:Name="Example5"
-            HeaderText="An AppBarButton with an InputGesture">
+        <local:ControlExample x:Name="Example5" HeaderText="An AppBarButton with an InputGesture">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <ui:AppBarButton x:Name="Button5" Click="AppBarButton_Click" Command="Save" Icon="Save" Label="Save">
+                    <ui:AppBarButton
+                        x:Name="Button5"
+                        Click="AppBarButton_Click"
+                        Command="Save"
+                        Icon="Save"
+                        Label="Save">
                         <ui:AppBarButton.CommandBindings>
                             <CommandBinding CanExecute="Save_CanExecute" Command="Save" />
                         </ui:AppBarButton.CommandBindings>

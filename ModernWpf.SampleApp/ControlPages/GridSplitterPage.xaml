@@ -9,9 +9,7 @@
     mc:Ignorable="d">
 
     <ui:SimpleStackPanel>
-        <local:ControlExample
-            HorizontalContentAlignment="Stretch"
-            HeaderText="A simple GridSplitter.">
+        <local:ControlExample HorizontalContentAlignment="Stretch" HeaderText="A simple GridSplitter.">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -37,9 +35,7 @@
             </Grid>
             <local:ControlExample.Options>
                 <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                    <CheckBox
-                        Content="ShowsPreview"
-                        IsChecked="{Binding ElementName=ColumnGridSplitter, Path=ShowsPreview}" />
+                    <CheckBox Content="ShowsPreview" IsChecked="{Binding ElementName=ColumnGridSplitter, Path=ShowsPreview}" />
                 </ui:SimpleStackPanel>
             </local:ControlExample.Options>
         </local:ControlExample>

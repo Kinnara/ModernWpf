@@ -13,16 +13,19 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example1"
-            HeaderText="A BitmapIcon with a multicolor bitmap image">
+        <local:ControlExample x:Name="Example1" HeaderText="A BitmapIcon with a multicolor bitmap image">
             <local:ControlExample.Example>
                 <StackPanel>
                     <TextBlock
                         Margin="0,0,0,12"
                         Style="{DynamicResource BodyTextBlockStyle}"
                         Text="The ShowAsMonochrome property (true by default) will result in a solid block of the foreground color if the property is set to true and the icon is more than one color. This behavior can be ignored by setting the ShowAsMonochrome property to false." />
-                    <ui:BitmapIcon x:Name="SlicesIcon" Width="50" HorizontalAlignment="Left" ShowAsMonochrome="False" UriSource="/Assets/slices.png" />
+                    <ui:BitmapIcon
+                        x:Name="SlicesIcon"
+                        Width="50"
+                        HorizontalAlignment="Left"
+                        ShowAsMonochrome="False"
+                        UriSource="/Assets/slices.png" />
                 </StackPanel>
             </local:ControlExample.Example>
             <local:ControlExample.Options>
@@ -48,9 +51,7 @@
                         Style="{DynamicResource BodyTextBlockStyle}"
                         Text="Use FontIcon as the icon for a control if you want to specify a Glyph value from a FontFamily. Windows 10 uses the Segoe MDL2 Assets FontFamily and that is what this example is showing." />
                     <Button Name="ExampleButton1">
-                        <ui:FontIcon
-                            FontFamily="Segoe MDL2 Assets"
-                            Glyph="&#xE790;" />
+                        <ui:FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE790;" />
                     </Button>
                 </StackPanel>
             </local:ControlExample.Example>
@@ -65,9 +66,7 @@
                         Margin="0,0,0,12"
                         Style="{DynamicResource BodyTextBlockStyle}"
                         Text="To use an ImageIcon as the icon for a control, you can set image that has a file format supported by the Image class. The two examples here show a PNG and SVG image as the icon." />
-                    <Button
-                        Name="ImageExample1"
-                        Width="100">
+                    <Button Name="ImageExample1" Width="100">
                         <Image Source="/Assets/slices.png" />
                     </Button>
                 </StackPanel>
@@ -79,9 +78,7 @@
             XamlSource="Icons/ImageIconSample2_xaml.txt">
             <local:ControlExample.Example>
                 <Button Name="ImageExample2">
-                    <Image
-                        Width="50"
-                        Source="https://raw.githubusercontent.com/DiemenDesign/LibreICONS/master/svg-color/libre-camera-panorama.svg" />
+                    <Image Width="50" Source="https://raw.githubusercontent.com/DiemenDesign/LibreICONS/master/svg-color/libre-camera-panorama.svg" />
                 </Button>
             </local:ControlExample.Example>
         </local:ControlExample>
@@ -96,9 +93,7 @@
                         Style="{DynamicResource BodyTextBlockStyle}"
                         Text="To use a PathIcon as the icon for a control, you specify the path data of the image you are trying to display. The path data draws a series of connected lines and curves." />
                     <Button Name="Example1Button">
-                        <ui:PathIcon
-                            HorizontalAlignment="Center"
-                            Data="F1 M 16,12 20,2L 20,16 1,16" />
+                        <ui:PathIcon HorizontalAlignment="Center" Data="F1 M 16,12 20,2L 20,16 1,16" />
                     </Button>
                 </StackPanel>
             </local:ControlExample.Example>

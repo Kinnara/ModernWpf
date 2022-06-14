@@ -22,6 +22,9 @@ using System.Windows.Automation;
 using System.Diagnostics;
 using Windows.Devices.Input;
 using ModernWpf.SampleApp.Helper;
+using System.Windows.Controls;
+using Page = ModernWpf.Controls.Page;
+using Frame = ModernWpf.Controls.Frame;
 
 namespace ModernWpf.SampleApp
 {
@@ -140,21 +143,21 @@ namespace ModernWpf.SampleApp
         {
             foreach (var group in ControlInfoDataSource.Instance.Groups.OrderBy(i => i.Title))
             {
-                var itemGroup = new NavigationViewItem() { Content = group.Title, Tag = group.UniqueId, DataContext = group, Icon = GetIcon(group.ImagePath) };
+                var itemGroup = new NavigationViewItem() { Content = group.Title, Tag = group.UniqueId, DataContext = group, Icon = GetIcon(group.ImageIconPath) };
 
-                //var groupMenuFlyoutItem = new MenuFlyoutItem() { Text = $"Copy Link to {group.Title} Samples", Icon = new FontIcon() { Glyph = "\uE8C8" }, Tag = group };
-                //groupMenuFlyoutItem.Click += this.OnMenuFlyoutItemClick;
-                //itemGroup.ContextFlyout = new MenuFlyout() { Items = { groupMenuFlyoutItem } };
+                var groupMenuFlyoutItem = new MenuItem() { Header = $"Copy Link to {group.Title} Samples", Icon = new FontIcon() { Glyph = "\uE8C8" }, Tag = group };
+                groupMenuFlyoutItem.Click += this.OnMenuFlyoutItemClick;
+                itemGroup.ContextMenu = new ContextMenu() { Items = { groupMenuFlyoutItem } };
 
                 AutomationProperties.SetName(itemGroup, group.Title);
 
                 foreach (var item in group.Items)
                 {
-                    var itemInGroup = new NavigationViewItem() { Content = item.Title, Tag = item.UniqueId, DataContext = item, Icon = GetIcon(item.ImagePath) };
+                    var itemInGroup = new NavigationViewItem() { IsEnabled = item.IncludedInBuild, Content = item.Title, Tag = item.UniqueId, DataContext = item, Icon = GetIcon(item.ImageIconPath) };
 
-                    //var itemInGroupMenuFlyoutItem = new MenuFlyoutItem() { Text = $"Copy Link to {item.Title} Sample", Icon = new FontIcon() { Glyph = "\uE8C8" }, Tag = item };
-                    //itemInGroupMenuFlyoutItem.Click += this.OnMenuFlyoutItemClick;
-                    //itemInGroup.ContextFlyout = new MenuFlyout() { Items = { itemInGroupMenuFlyoutItem } };
+                    var itemInGroupMenuFlyoutItem = new MenuItem() { Header = $"Copy Link to {item.Title} Sample", Icon = new FontIcon() { Glyph = "\uE8C8" }, Tag = item };
+                    itemInGroupMenuFlyoutItem.Click += this.OnMenuFlyoutItemClick;
+                    itemInGroup.ContextMenu = new ContextMenu() { Items = { itemInGroupMenuFlyoutItem } };
 
                     itemGroup.MenuItems.Add(itemInGroup);
                     AutomationProperties.SetName(itemInGroup, item.Title);
@@ -187,15 +190,15 @@ namespace ModernWpf.SampleApp
 
         private void OnMenuFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            //switch ((sender as MenuFlyoutItem).Tag)
-            //{
-            //    case ControlInfoDataItem item:
-            //        ProtocolActivationClipboardHelper.Copy(item);
-            //        return;
-            //    case ControlInfoDataGroup group:
-            //        ProtocolActivationClipboardHelper.Copy(group);
-            //        return;
-            //}
+            switch ((sender as MenuItem).Tag)
+            {
+                case ControlInfoDataItem item:
+                    //ProtocolActivationClipboardHelper.Copy(item);
+                    return;
+                case ControlInfoDataGroup group:
+                    //ProtocolActivationClipboardHelper.Copy(group);
+                    return;
+            }
         }
 
         private static IconElement GetIcon(string imagePath)

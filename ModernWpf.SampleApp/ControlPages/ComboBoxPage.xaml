@@ -74,9 +74,7 @@
             </local:ControlExample.Xaml>
         </local:ControlExample>
 
-        <local:ControlExample
-            HeaderText="An editable ComboBox."
-            MinimumUniversalAPIContract="7">
+        <local:ControlExample HeaderText="An editable ComboBox." MinimumUniversalAPIContract="7">
             <local:ControlExample.Example>
                 <StackPanel>
                     <ComboBox

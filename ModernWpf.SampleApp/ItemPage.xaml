@@ -21,10 +21,8 @@
         * Row 1 contains the rest of the page layout
     -->
     <Grid x:Name="rootPanel">
-        <!-- Content Region -->
-        <ScrollViewer
-            x:Name="svPanel"
-            VerticalScrollBarVisibility="Auto">
+        <!--  Content Region  -->
+        <ScrollViewer x:Name="svPanel" VerticalScrollBarVisibility="Auto">
             <Border
                 x:Name="contentRoot"
                 Padding="56,0,12,36"
@@ -49,9 +47,7 @@
                         Style="{DynamicResource BodyTextBlockStyle}"
                         Text="{Binding Description}" />
 
-                    <ui:Frame
-                        x:Name="contentFrame"
-                        Grid.Row="1" />
+                    <ui:Frame x:Name="contentFrame" Grid.Row="1" />
 
                     <Grid
                         x:Name="seeAlsoPanel"
@@ -84,14 +80,10 @@
                                 Margin="0,0,0,12"
                                 Style="{DynamicResource SubtitleTextBlockStyle}"
                                 Text="View page code on GitHub" />
-                            <ui:HyperlinkButton
-                                x:Name="PageMarkupGitHubLink"
-                                ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri}">
+                            <ui:HyperlinkButton x:Name="PageMarkupGitHubLink" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri}">
                                 <TextBlock Text="XAML source code" />
                             </ui:HyperlinkButton>
-                            <ui:HyperlinkButton
-                                x:Name="PageCodeGitHubLink"
-                                ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri}">
+                            <ui:HyperlinkButton x:Name="PageCodeGitHubLink" ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=NavigateUri}">
                                 <TextBlock Text="C# source code" />
                             </ui:HyperlinkButton>
                         </ui:SimpleStackPanel>
@@ -117,9 +109,7 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <ui:HyperlinkButton
-                                            NavigateUri="{Binding Uri}"
-                                            ToolTipService.ToolTip="{Binding Uri}">
+                                        <ui:HyperlinkButton NavigateUri="{Binding Uri}" ToolTipService.ToolTip="{Binding Uri}">
                                             <TextBlock Text="{Binding Title}" />
                                         </ui:HyperlinkButton>
                                     </DataTemplate>
@@ -157,9 +147,7 @@
                                             name. So bind the accessible name to the same data that provides the text shown
                                             visually on the contained TextBlock.
                                         -->
-                                        <ui:HyperlinkButton
-                                            AutomationProperties.Name="{Binding}"
-                                            Click="OnRelatedControlClick">
+                                        <ui:HyperlinkButton AutomationProperties.Name="{Binding}" Click="OnRelatedControlClick">
                                             <ui:SimpleStackPanel Orientation="Horizontal">
                                                 <!--
                                                     Now that the HyperlinkButton has a helpful accessible name, it serves no
@@ -196,9 +184,7 @@
                                 Margin="0,0,0,12"
                                 Style="{StaticResource SubtitleTextBlockStyle}"
                                 Text="{x:Static str:Resources.FeedbackHeader_Text}" />
-                            <ui:HyperlinkButton
-                                NavigateUri="https://github.com/microsoft/Xaml-Controls-Gallery/issues/new/choose"
-                                ToolTipService.ToolTip="https://github.com/microsoft/Xaml-Controls-Gallery/issues/new/choose">
+                            <ui:HyperlinkButton NavigateUri="https://github.com/microsoft/Xaml-Controls-Gallery/issues/new/choose" ToolTipService.ToolTip="https://github.com/microsoft/Xaml-Controls-Gallery/issues/new/choose">
                                 <TextBlock Text="{x:Static str:Resources.FeedbackLink_Text}" />
                             </ui:HyperlinkButton>
                         </StackPanel>

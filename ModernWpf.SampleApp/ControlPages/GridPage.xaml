@@ -13,9 +13,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example1"
-            HeaderText="A 3x3 Grid control.">
+        <local:ControlExample x:Name="Example1" HeaderText="A 3x3 Grid control.">
             <Grid
                 x:Name="Control1"
                 Width="240"
@@ -44,12 +42,8 @@
                     Width="50"
                     Height="50"
                     Fill="Red" />
-                <Rectangle
-                    Grid.Row="1"
-                    Fill="Blue" />
-                <Rectangle
-                    Grid.Column="1"
-                    Fill="Green" />
+                <Rectangle Grid.Row="1" Fill="Blue" />
+                <Rectangle Grid.Column="1" Fill="Green" />
                 <Rectangle
                     Grid.Row="1"
                     Grid.Column="1"
@@ -69,9 +63,7 @@
                         Orientation="Vertical"
                         TickFrequency="1">
                         <ui:ControlHelper.Header>
-                            <TextBlock
-                                Margin="0,0,0,10"
-                                Text="Grid.Row" />
+                            <TextBlock Margin="0,0,0,10" Text="Grid.Row" />
                         </ui:ControlHelper.Header>
                     </Slider>
                     <Slider

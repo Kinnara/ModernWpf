@@ -1,27 +1,25 @@
 ﻿<ui:Page
     x:Class="ModernWpf.SampleApp.ControlPages.StatusBarPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
 
     <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
         <sc:ControlExample HeaderText="A StatusBar.">
-            <StatusBar
-                x:Name="statusBar"
-                VerticalAlignment="Bottom">
+            <StatusBar x:Name="statusBar" VerticalAlignment="Bottom">
                 <StatusBarItem>
                     <TextBlock>Downloading File</TextBlock>
                 </StatusBarItem>
 
                 <StatusBarItem>
                     <ProgressBar
+                        x:Name="progressBar1"
                         Width="100"
-                        Height="20"
-                        x:Name="progressBar1">
+                        Height="20">
                         <ProgressBar.Triggers>
                             <EventTrigger RoutedEvent="Loaded">
                                 <BeginStoryboard>
@@ -45,16 +43,12 @@
                 </StatusBarItem>
 
                 <StatusBarItem HorizontalAlignment="Right">
-                    <ui:FontIcon
-                        FontSize="12"
-                        Glyph="&#xE897;" />
+                    <ui:FontIcon FontSize="12" Glyph="&#xE897;" />
                 </StatusBarItem>
             </StatusBar>
 
             <sc:ControlExample.Options>
-                <CheckBox
-                    Content="IsEnabled"
-                    IsChecked="{Binding ElementName=statusBar, Path=IsEnabled}" />
+                <CheckBox Content="IsEnabled" IsChecked="{Binding ElementName=statusBar, Path=IsEnabled}" />
             </sc:ControlExample.Options>
         </sc:ControlExample>
     </ui:SimpleStackPanel>

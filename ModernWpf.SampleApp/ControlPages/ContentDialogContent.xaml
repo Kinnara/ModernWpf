@@ -7,13 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
-    <StackPanel
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch">
-        <!-- Content body -->
-        <TextBlock
-            Text="Lorem ipsum dolor sit amet, adipisicing elit."
-            TextWrapping="Wrap" />
+    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <!--  Content body  -->
+        <TextBlock Text="Lorem ipsum dolor sit amet, adipisicing elit." TextWrapping="Wrap" />
         <CheckBox Content="Upload your content to the cloud." />
     </StackPanel>
 </UserControl>

@@ -11,28 +11,16 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <Grid Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
-        <ui:SimpleStackPanel
-            x:Name="CompactPanel"
-            Spacing="16">
+        <ui:SimpleStackPanel x:Name="CompactPanel" Spacing="16">
             <TextBlock
                 x:Name="HeaderBlock"
                 FontSize="18"
                 Text="Standard Size" />
-            <TextBox
-                x:Name="firstName"
-                ui:ControlHelper.Header="First Name:" />
-            <TextBox
-                x:Name="lastName"
-                ui:ControlHelper.Header="Last Name:" />
-            <PasswordBox
-                x:Name="password"
-                ui:ControlHelper.Header="Password:" />
-            <PasswordBox
-                x:Name="confirmPassword"
-                ui:ControlHelper.Header="Confirm Password:" />
-            <DatePicker
-                x:Name="chosenDate"
-                ui:ControlHelper.Header="Pick a date" />
+            <TextBox x:Name="firstName" ui:ControlHelper.Header="First Name:" />
+            <TextBox x:Name="lastName" ui:ControlHelper.Header="Last Name:" />
+            <PasswordBox x:Name="password" ui:ControlHelper.Header="Password:" />
+            <PasswordBox x:Name="confirmPassword" ui:ControlHelper.Header="Confirm Password:" />
+            <DatePicker x:Name="chosenDate" ui:ControlHelper.Header="Pick a date" />
         </ui:SimpleStackPanel>
     </Grid>
 </ui:Page>

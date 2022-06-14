@@ -43,9 +43,7 @@
                             Header="TabStripPlacement"
                             ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement}" />
-                        <CheckBox
-                            x:Name="ShowHeaderAndFooterCheckBox"
-                            Content="Show header and footer" />
+                        <CheckBox x:Name="ShowHeaderAndFooterCheckBox" Content="Show header and footer" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
             </sc:ControlExample>
@@ -119,9 +117,7 @@
             </sc:ControlExample>
 
             <sc:ControlExample HeaderText="A TabControl with accent colored TabStrip background">
-                <TabControl
-                    x:Name="tabControl3"
-                    ui:ThemeManager.HasThemeResources="True">
+                <TabControl x:Name="tabControl3" ui:ThemeManager.HasThemeResources="True">
                     <TabControl.Resources>
                         <ui:ResourceDictionaryEx>
                             <ui:ResourceDictionaryEx.ThemeDictionaries>

@@ -16,12 +16,8 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Spacing="12">
-            <Button
-                Click="ShowDialogInThisWindow"
-                Content="Show content dialog in this window" />
-            <Button
-                Click="ShowDialogInMainWindow"
-                Content="Show content dialog in main window" />
+            <Button Click="ShowDialogInThisWindow" Content="Show content dialog in this window" />
+            <Button Click="ShowDialogInMainWindow" Content="Show content dialog in main window" />
         </ui:SimpleStackPanel>
     </Grid>
 </Window>

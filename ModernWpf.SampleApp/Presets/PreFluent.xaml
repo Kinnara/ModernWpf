@@ -2,10 +2,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    <!-- Override system shape defaults -->
+    <!--  Override system shape defaults  -->
     <CornerRadius x:Key="ControlCornerRadius">0,0,0,0</CornerRadius>
     <CornerRadius x:Key="OverlayCornerRadius">0,0,0,0</CornerRadius>
-    <!-- Override system borders -->
+    <!--  Override system borders  -->
     <sys:Double x:Key="CheckBoxBorderThemeThickness">2</sys:Double>
     <sys:Double x:Key="RadioButtonBorderThemeThickness">2</sys:Double>
     <Thickness x:Key="ButtonBorderThemeThickness">2</Thickness>

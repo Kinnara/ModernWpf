@@ -13,12 +13,10 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example1"
-            HeaderText="A 2-state CheckBox.">
+        <local:ControlExample x:Name="Example1" HeaderText="A 2-state CheckBox.">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <!-- A two-state CheckBox. -->
+                    <!--  A two-state CheckBox.  -->
                     <CheckBox
                         Checked="Control1_Checked"
                         Content="Two-state CheckBox"
@@ -36,9 +34,7 @@
                 </sys:String>
             </local:ControlExample.Xaml>
         </local:ControlExample>
-        <local:ControlExample
-            x:Name="Example2"
-            HeaderText="A 3-state CheckBox.">
+        <local:ControlExample x:Name="Example2" HeaderText="A 3-state CheckBox.">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <CheckBox
@@ -62,9 +58,7 @@
                 </sys:String>
             </local:ControlExample.Xaml>
         </local:ControlExample>
-        <local:ControlExample
-            x:Name="Example3"
-            HeaderText="Using a 3-state CheckBox.">
+        <local:ControlExample x:Name="Example3" HeaderText="Using a 3-state CheckBox.">
             <local:ControlExample.Example>
                 <StackPanel>
                     <CheckBox

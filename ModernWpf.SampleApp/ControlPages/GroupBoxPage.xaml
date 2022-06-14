@@ -9,7 +9,10 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style x:Key="ComboBoxHeaderStyle" BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
+        <Style
+            x:Key="ComboBoxHeaderStyle"
+            BasedOn="{StaticResource BodyTextBlockStyle}"
+            TargetType="TextBlock">
             <Setter Property="Margin" Value="0,0,0,4" />
         </Style>
         <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="ComboBox">
@@ -29,16 +32,12 @@
             Text="Power &amp; Sleep" />
         <GroupBox Header="Screen">
             <StackPanel>
-                <TextBlock
-                    Style="{StaticResource ComboBoxHeaderStyle}"
-                    Text="On battery power, turn off after" />
+                <TextBlock Style="{StaticResource ComboBoxHeaderStyle}" Text="On battery power, turn off after" />
                 <ComboBox>
                     <ComboBoxItem IsSelected="True">5 minutes</ComboBoxItem>
                 </ComboBox>
 
-                <TextBlock
-                    Style="{StaticResource ComboBoxHeaderStyle}"
-                    Text="When plugged in, turn off after" />
+                <TextBlock Style="{StaticResource ComboBoxHeaderStyle}" Text="When plugged in, turn off after" />
                 <ComboBox>
                     <ComboBoxItem IsSelected="True">10 minutes</ComboBoxItem>
                 </ComboBox>
@@ -46,16 +45,12 @@
         </GroupBox>
         <GroupBox Header="Sleep">
             <StackPanel>
-                <TextBlock
-                    Style="{StaticResource ComboBoxHeaderStyle}"
-                    Text="On battery power, PC goes to sleep after" />
+                <TextBlock Style="{StaticResource ComboBoxHeaderStyle}" Text="On battery power, PC goes to sleep after" />
                 <ComboBox>
                     <ComboBoxItem IsSelected="True">5 minutes</ComboBoxItem>
                 </ComboBox>
 
-                <TextBlock
-                    Style="{StaticResource ComboBoxHeaderStyle}"
-                    Text="When plugged in, PC goes to sleep after" />
+                <TextBlock Style="{StaticResource ComboBoxHeaderStyle}" Text="When plugged in, PC goes to sleep after" />
                 <ComboBox>
                     <ComboBoxItem IsSelected="True">10 minutes</ComboBoxItem>
                 </ComboBox>
@@ -63,9 +58,7 @@
         </GroupBox>
         <GroupBox Header="Network connection">
             <StackPanel>
-                <TextBlock
-                    Style="{StaticResource ComboBoxHeaderStyle}"
-                    Text="When my PC is asleep and on battery power, disconnect from the network" />
+                <TextBlock Style="{StaticResource ComboBoxHeaderStyle}" Text="When my PC is asleep and on battery power, disconnect from the network" />
                 <ComboBox>
                     <ComboBoxItem IsSelected="True">Never</ComboBoxItem>
                 </ComboBox>

@@ -14,9 +14,7 @@
     <StackPanel>
         <local:ControlExample HeaderText="AppBarButtons separated by AppBarSeparators.">
             <local:ControlExample.Example>
-                <ScrollViewer
-                    HorizontalScrollBarVisibility="Hidden"
-                    VerticalScrollBarVisibility="Hidden">
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
                     <ui:CommandBar x:Name="Control1">
                         <ui:CommandBar.PrimaryCommands>
                             <ui:AppBarButton Icon="AttachCamera" Label="Attach Camera" />

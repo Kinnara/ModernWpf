@@ -1,17 +1,15 @@
 ﻿<ui:Page
-    x:Class="ModernWpf.SampleApp.ControlPages.SimpleStackPanelPage"
+    x:Class="ModernWpf.SampleApp.ControlPages.StackPanelPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
-            <sc:ControlExample
-                x:Name="Example1"
-                HeaderText="A SimpleStackPanel control.">
+            <sc:ControlExample x:Name="Example1" HeaderText="A SimpleStackPanel control.">
 
                 <ui:SimpleStackPanel
                     x:Name="Control1"
@@ -31,14 +29,12 @@
 
                 <sc:ControlExample.Options>
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <ui:RadioButtons
-                            ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=Control1, Path=Orientation}" />
+                        <ui:RadioButtons ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}" SelectedItem="{Binding ElementName=Control1, Path=Orientation}" />
                         <ui:NumberBox
                             Header="Spacing"
                             Minimum="0"
-                            Value="{Binding ElementName=Control1, Path=Spacing}"
-                            SpinButtonPlacementMode="Inline" />
+                            SpinButtonPlacementMode="Inline"
+                            Value="{Binding ElementName=Control1, Path=Spacing}" />
                     </ui:SimpleStackPanel>
                 </sc:ControlExample.Options>
 

@@ -17,7 +17,7 @@
             Text="To start the Narrator app, press Windows logo key + Ctrl + Enter. To navigate through text, press Caps + Left/Right arrow"
             TextWrapping="Wrap" />
 
-        <!-- AutomationProperties.Name sample -->
+        <!--  AutomationProperties.Name sample  -->
         <local:ControlExample HeaderText="Enabling alternate text for controls">
             <local:ControlExample.Example>
                 <StackPanel>
@@ -37,13 +37,13 @@
             </local:ControlExample.Xaml>
         </local:ControlExample>
 
-        <!-- AutomationProperties.LabeledBy sample -->
+        <!--  AutomationProperties.LabeledBy sample  -->
         <local:ControlExample HeaderText="Providing a label for another control">
             <local:ControlExample.Example>
                 <StackPanel>
                     <TextBlock
-                        Margin="0,8,0,8"
                         x:Name="FontSizeChangingTextBlock"
+                        Margin="0,8,0,8"
                         TextWrapping="Wrap">
                         Cat ipsum dolor sit amet, incidunt. Ratione.
                         Ipsa omnis dolor rem or vel. Ipsa elit quaerat sequi, nequeporro nisi qui. Vel autem.
@@ -51,15 +51,15 @@
                     </TextBlock>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock
+                            x:Name="FontSizeLabel"
                             Margin="0,0,8,0"
                             VerticalAlignment="Center"
                             FontSize="16"
-                            x:Name="FontSizeLabel"
                             Text="Font size of text" />
                         <ui:NumberBox
+                            x:Name="FontSizeNumberBox"
                             Maximum="32"
                             Minimum="10"
-                            x:Name="FontSizeNumberBox"
                             ValueChanged="FontSizeNumberBox_ValueChanged"
                             Value="14" />
                     </StackPanel>

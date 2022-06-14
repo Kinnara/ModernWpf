@@ -15,13 +15,9 @@
     <Page.Resources>
         <controlpages:ContactGroupKeyConverter x:Key="ContactGroupKeyConverter" />
 
-        <CollectionViewSource
-            x:Key="ContactsCVS"
-            Source="{Binding}">
+        <CollectionViewSource x:Key="ContactsCVS" Source="{Binding}">
             <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription
-                    Converter="{StaticResource ContactGroupKeyConverter}"
-                    PropertyName="LastName" />
+                <PropertyGroupDescription Converter="{StaticResource ContactGroupKeyConverter}" PropertyName="LastName" />
             </CollectionViewSource.GroupDescriptions>
             <CollectionViewSource.SortDescriptions>
                 <cm:SortDescription PropertyName="LastName" />
@@ -67,9 +63,7 @@
         </Style>
     </Page.Resources>
 
-    <TabControl
-        x:Name="tabControl"
-        Style="{StaticResource TabControlPivotStyle}">
+    <TabControl x:Name="tabControl" Style="{StaticResource TabControlPivotStyle}">
         <TabControl.Resources>
             <Thickness x:Key="PivotItemMargin">12,0,12,20</Thickness>
         </TabControl.Resources>
@@ -89,9 +83,7 @@
                             Header="SelectionMode"
                             ItemsSource="{Binding Source={x:Type SelectionMode}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding Source={x:Reference listView1}, Path=SelectionMode}" />
-                        <CheckBox
-                            Content="IsEnabled"
-                            IsChecked="{Binding Source={x:Reference listView1}, Path=IsEnabled}" />
+                        <CheckBox Content="IsEnabled" IsChecked="{Binding Source={x:Reference listView1}, Path=IsEnabled}" />
                     </ui:SimpleStackPanel>
                 </local:ControlExample.Options>
             </local:ControlExample>
@@ -109,9 +101,7 @@
                         <GroupStyle>
                             <GroupStyle.HeaderTemplate>
                                 <DataTemplate>
-                                    <TextBlock
-                                        Style="{DynamicResource TitleTextBlockStyle}"
-                                        Text="{Binding Name, Mode=OneTime}" />
+                                    <TextBlock Style="{DynamicResource TitleTextBlockStyle}" Text="{Binding Name, Mode=OneTime}" />
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
                         </GroupStyle>
@@ -125,9 +115,7 @@
                                 Header="SelectionMode"
                                 ItemsSource="{Binding Source={x:Type SelectionMode}, Converter={StaticResource EnumValuesConverter}}"
                                 SelectedItem="{Binding Source={x:Reference listView2}, Path=SelectionMode}" />-->
-                        <CheckBox
-                            Content="IsEnabled"
-                            IsChecked="{Binding Source={x:Reference listView2}, Path=IsEnabled}" />
+                        <CheckBox Content="IsEnabled" IsChecked="{Binding Source={x:Reference listView2}, Path=IsEnabled}" />
                     </ui:SimpleStackPanel>
                 </local:ControlExample.Options>
             </local:ControlExample>
@@ -140,18 +128,14 @@
                     ItemsSource="{Binding}"
                     VirtualizingPanel.VirtualizationMode="Recycling">
                     <ListView.View>
-                        <GridView
-                            x:Name="gridView"
-                            ColumnHeaderToolTip="Employee Information">
+                        <GridView x:Name="gridView" ColumnHeaderToolTip="Employee Information">
 
                             <GridViewColumn
                                 Width="120"
                                 DisplayMemberBinding="{Binding FirstName, Mode=OneTime}"
                                 Header="First Name" />
 
-                            <GridViewColumn
-                                Width="120"
-                                DisplayMemberBinding="{Binding LastName, Mode=OneTime}">
+                            <GridViewColumn Width="120" DisplayMemberBinding="{Binding LastName, Mode=OneTime}">
                                 <GridViewColumnHeader>
                                     Last Name
                                     <GridViewColumnHeader.ContextMenu>
@@ -173,17 +157,13 @@
 
                 <local:ControlExample.Options>
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <CheckBox
-                            Content="AllowsColumnReorder"
-                            IsChecked="{Binding Source={x:Reference gridView}, Path=AllowsColumnReorder}" />
+                        <CheckBox Content="AllowsColumnReorder" IsChecked="{Binding Source={x:Reference gridView}, Path=AllowsColumnReorder}" />
                         <sc:LayoutDensitySelector TargetElement="{Binding Source={x:Reference listView3}}" />
                         <!--<ui:RadioButtons
                                 Header="SelectionMode"
                                 ItemsSource="{Binding Source={x:Type SelectionMode}, Converter={StaticResource EnumValuesConverter}}"
                                 SelectedItem="{Binding Source={x:Reference listView3}, Path=SelectionMode}" />-->
-                        <CheckBox
-                            Content="IsEnabled"
-                            IsChecked="{Binding Source={x:Reference listView3}, Path=IsEnabled}" />
+                        <CheckBox Content="IsEnabled" IsChecked="{Binding Source={x:Reference listView3}, Path=IsEnabled}" />
                     </ui:SimpleStackPanel>
                 </local:ControlExample.Options>
             </local:ControlExample>

@@ -50,9 +50,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ImageTextTemplate">
-            <Grid
-                Width="280"
-                AutomationProperties.Name="{Binding Title}">
+            <Grid Width="280" AutomationProperties.Name="{Binding Title}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -62,37 +60,25 @@
                     VerticalAlignment="Top"
                     Source="{Binding ImageLocation}"
                     Stretch="Fill" />
-                <StackPanel
-                    Grid.Column="1"
-                    Margin="8,0,0,8">
+                <StackPanel Grid.Column="1" Margin="8,0,0,8">
                     <TextBlock
                         Margin="0,0,0,8"
                         Style="{DynamicResource SubtitleTextBlockStyle}"
                         Text="{Binding Title}" />
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock
-                            Style="{DynamicResource CaptionTextBlockStyle}"
-                            Text="{Binding Views}" />
-                        <TextBlock
-                            Style="{DynamicResource CaptionTextBlockStyle}"
-                            Text=" Views " />
+                        <TextBlock Style="{DynamicResource CaptionTextBlockStyle}" Text="{Binding Views}" />
+                        <TextBlock Style="{DynamicResource CaptionTextBlockStyle}" Text=" Views " />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock
-                            Style="{DynamicResource CaptionTextBlockStyle}"
-                            Text="{Binding Likes}" />
-                        <TextBlock
-                            Style="{DynamicResource CaptionTextBlockStyle}"
-                            Text=" Likes" />
+                        <TextBlock Style="{DynamicResource CaptionTextBlockStyle}" Text="{Binding Likes}" />
+                        <TextBlock Style="{DynamicResource CaptionTextBlockStyle}" Text=" Likes" />
                     </StackPanel>
                 </StackPanel>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="TextTemplate">
-            <StackPanel
-                Width="240"
-                Orientation="Horizontal">
+            <StackPanel Width="240" Orientation="Horizontal">
                 <TextBlock
                     Margin="8,0,0,0"
                     Style="{DynamicResource TitleTextBlockStyle}"
@@ -101,12 +87,8 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ImageOverlayTemplate">
-            <Grid
-                Width="100"
-                AutomationProperties.Name="{Binding Title}">
-                <Image
-                    Source="{Binding ImageLocation}"
-                    Stretch="UniformToFill" />
+            <Grid Width="100" AutomationProperties.Name="{Binding Title}">
+                <Image Source="{Binding ImageLocation}" Stretch="UniformToFill" />
                 <Border
                     Height="40"
                     Padding="5,1,5,1"
@@ -114,9 +96,7 @@
                     Background="{DynamicResource SystemControlBackgroundBaseMediumBrush}"
                     Opacity=".75">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock
-                            Foreground="{DynamicResource SystemControlForegroundAltHighBrush}"
-                            Text="{Binding Title}" />
+                        <TextBlock Foreground="{DynamicResource SystemControlForegroundAltHighBrush}" Text="{Binding Title}" />
                         <StackPanel Orientation="Horizontal">
                             <TextBlock
                                 Foreground="{DynamicResource SystemControlForegroundAltHighBrush}"
@@ -148,24 +128,16 @@
                     ItemClick="BasicGridView_ItemClick"
                     ItemTemplate="{StaticResource ImageTemplate}"
                     SelectionMode="Single" />
-                <TextBlock
-                    x:Name="ClickOutput0"
-                    Style="{DynamicResource OutputTextBlockStyle}" />
+                <TextBlock x:Name="ClickOutput0" Style="{DynamicResource OutputTextBlockStyle}" />
             </StackPanel>
         </local:ControlExample>
 
-        <local:ControlExample
-            HeaderText="GridView with Layout Customization"
-            Loaded="ControlExample_Loaded">
+        <local:ControlExample HeaderText="GridView with Layout Customization" Loaded="ControlExample_Loaded">
             <StackPanel>
-                <TextBlock
-                    Margin="0,0,0,15"
-                    TextWrapping="Wrap">
+                <TextBlock Margin="0,0,0,15" TextWrapping="Wrap">
                     Use the options on the right to control different layout customizations to the GridView below.
                 </TextBlock>
-                <ui:GridView
-                    x:Name="StyledGrid"
-                    ItemTemplate="{StaticResource ImageOverlayTemplate}">
+                <ui:GridView x:Name="StyledGrid" ItemTemplate="{StaticResource ImageOverlayTemplate}">
                     <ui:GridView.ItemContainerStyle>
                         <Style TargetType="ui:GridViewItem">
                             <Setter Property="Margin" Value="5" />
@@ -267,9 +239,7 @@ The data template is defined to display a CustomDataObject object (same type as 
             </local:ControlExample.Xaml>
         </local:ControlExample>
 
-        <local:ControlExample
-            HeaderText="Content inside of a GridView."
-            Loaded="ControlExample2_Loaded">
+        <local:ControlExample HeaderText="Content inside of a GridView." Loaded="ControlExample2_Loaded">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -287,12 +257,8 @@ The data template is defined to display a CustomDataObject object (same type as 
                     SelectionChanged="ContentGridView_SelectionChanged" />
 
                 <StackPanel Grid.Row="1">
-                    <TextBlock
-                        x:Name="ClickOutput"
-                        Style="{StaticResource OutputTextBlockStyle}" />
-                    <TextBlock
-                        x:Name="SelectionOutput"
-                        Style="{StaticResource OutputTextBlockStyle}" />
+                    <TextBlock x:Name="ClickOutput" Style="{StaticResource OutputTextBlockStyle}" />
+                    <TextBlock x:Name="SelectionOutput" Style="{StaticResource OutputTextBlockStyle}" />
                 </StackPanel>
 
             </Grid>
@@ -326,9 +292,7 @@ The data template is defined to display a CustomDataObject object (same type as 
                             Margin="0,8,0,0"
                             Click="FlowDirectionCheckBox_Click"
                             Content="Reverse FlowDirection" />
-                        <TextBlock
-                            Margin="0,18,0,10"
-                            Text="GridView Properties" />
+                        <TextBlock Margin="0,18,0,10" Text="GridView Properties" />
                         <TextBlock
                             MaxWidth="150"
                             FontSize="13"
@@ -339,16 +303,12 @@ The data template is defined to display a CustomDataObject object (same type as 
                             FontSize="13"
                             TextWrapping="Wrap">
                             Turning on IsItemClickEnabled will allow the user to click on an item (and print output below the GridView), regardless of selection mode.<LineBreak /></TextBlock>
-                        <CheckBox
-                            x:Name="DropCheckBox"
-                            Content="AllowDrop" />
+                        <CheckBox x:Name="DropCheckBox" Content="AllowDrop" />
                         <CheckBox
                             x:Name="ItemClickCheckBox"
                             Click="ItemClickCheckBox_Click"
                             Content="IsItemClickEnabled" />
-                        <CheckBox
-                            x:Name="MultiSelectCheckBoxCheckBox"
-                            Content="IsMultiSelectCheckBoxEnabled" />
+                        <CheckBox x:Name="MultiSelectCheckBoxCheckBox" Content="IsMultiSelectCheckBoxEnabled" />
                         <ComboBox
                             Margin="0,12,0,0"
                             ui:ControlHelper.Header="SelectionMode"

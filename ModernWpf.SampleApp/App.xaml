@@ -14,9 +14,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemeResources CanBeAccessedAcrossThreads="{x:Static local:App.IsMultiThreaded}">
                     <ui:ThemeResources.ThemeDictionaries>
-                        <ResourceDictionary
-                            x:Key="Light"
-                            ui:ThemeDictionary.Key="Light">
+                        <ResourceDictionary x:Key="Light" ui:ThemeDictionary.Key="Light">
                             <ResourceDictionary.MergedDictionaries>
                                 <presets:ColorPresetResources TargetTheme="Light" />
                                 <presets:ShapePresetResources />
@@ -33,9 +31,7 @@
                             <StaticResource x:Key="ControlExampleDisplayBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
                         </ResourceDictionary>
 
-                        <ResourceDictionary
-                            x:Key="Dark"
-                            ui:ThemeDictionary.Key="Dark">
+                        <ResourceDictionary x:Key="Dark" ui:ThemeDictionary.Key="Dark">
                             <ResourceDictionary.MergedDictionaries>
                                 <presets:ColorPresetResources TargetTheme="Dark" />
                                 <presets:ShapePresetResources />
@@ -52,9 +48,7 @@
                             <StaticResource x:Key="ControlExampleDisplayBrush" ResourceKey="SolidBackgroundFillColorBaseBrush" />
                         </ResourceDictionary>
 
-                        <ResourceDictionary
-                            x:Key="HighContrast"
-                            ui:ThemeDictionary.Key="HighContrast">
+                        <ResourceDictionary x:Key="HighContrast" ui:ThemeDictionary.Key="HighContrast">
                             <ResourceDictionary.MergedDictionaries>
                                 <ResourceDictionary Source="HighContrast.xaml" />
                             </ResourceDictionary.MergedDictionaries>
@@ -71,7 +65,7 @@
 
                 <ui:XamlControlsResources />
 
-                <!-- Font Overrides -->
+                <!--  Font Overrides  -->
                 <!--<sc:FontOverrides FontFamily="Comic Sans MS" />-->
                 <!--<ResourceDictionary>
                     <FontFamily x:Key="DefaultFontFamily">Comic Sans MS</FontFamily>
@@ -124,7 +118,10 @@
                 <Setter Property="MaxContentWidth" Value="{x:Static sys:Double.PositiveInfinity}" />
             </Style>
 
-            <Style x:Key="RichTextBlockStyle" BasedOn="{StaticResource DefaultRichTextBoxStyle}" TargetType="RichTextBox">
+            <Style
+                x:Key="RichTextBlockStyle"
+                BasedOn="{StaticResource DefaultRichTextBoxStyle}"
+                TargetType="RichTextBox">
                 <Setter Property="Padding" Value="0" />
                 <Setter Property="IsReadOnly" Value="True" />
                 <Setter Property="IsTabStop" Value="False" />
@@ -142,7 +139,6 @@
                 </Style.Resources>
             </Style>
 
-
             <CornerRadius x:Key="ControlCornerRadius">4</CornerRadius>
 
             <LinearGradientBrush x:Key="HeroImageGradientBrush" StartPoint="0.5,0" EndPoint="0.5,1.5">
@@ -151,7 +147,7 @@
                 <GradientStop Offset="1" Color="{DynamicResource LayerFillColorDefault}" />
             </LinearGradientBrush>
 
-            <!-- Application-specific resources -->
+            <!--  Application-specific resources  -->
             <common:NullToVisibilityConverter x:Key="nullToVisibilityConverter" />
             <common:NullToVisibilityConverter
                 x:Key="inverseNullToVisibilityConverter"
@@ -167,7 +163,7 @@
             <common:RelativeToAbsoluteConverter x:Key="RelativeToAbsoluteConverter" />
             <common:CornerRadiusToDoubleConverter x:Key="CornerRadiusToDoubleConverter" />
 
-            <!-- Breakpoints -->
+            <!--  Breakpoints  -->
             <sys:Double x:Key="Breakpoint640Plus">641</sys:Double>
 
             <Thickness x:Key="PageHeaderDefaultPadding">0</Thickness>
@@ -175,7 +171,7 @@
 
             <Thickness x:Key="ControlElementScreenshotModePadding">67</Thickness>
 
-            <!-- L-Pattern Overwriting resources -->
+            <!--  L-Pattern Overwriting resources  -->
             <Thickness x:Key="NavigationViewContentMargin">0,48,0,0</Thickness>
             <Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>
             <CornerRadius x:Key="NavigationViewContentGridCornerRadius">8,0,0,0</CornerRadius>
@@ -184,9 +180,15 @@
             <SolidColorBrush x:Key="GridViewHeaderItemDividerStroke" Color="Transparent" />
 
             <sys:String x:Key="ControlsName">All controls</sys:String>
+            <sys:String x:Key="AppTitleName">ModernWPF Gallery</sys:String>
+            <sys:String x:Key="WinUIVersion">SDK 0.9.5</sys:String>
+
             <sys:String x:Key="NewControlsName">What's New</sys:String>
 
-            <Style x:Key="OutputTextBlockStyle" BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
+            <Style
+                x:Key="OutputTextBlockStyle"
+                BasedOn="{StaticResource BodyTextBlockStyle}"
+                TargetType="TextBlock">
                 <Setter Property="Margin" Value="8,8,0,0" />
             </Style>
 

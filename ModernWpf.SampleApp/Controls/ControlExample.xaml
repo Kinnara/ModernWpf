@@ -16,49 +16,6 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:ControlExample">
                     <Grid x:Name="RootGrid">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup>
-                                <VisualState x:Name="NormalMode" />
-                                <VisualState x:Name="ScreenshotMode">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CodeScrollViewer" Storyboard.TargetProperty="Visibility" Duration="0:0:0">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ControlPresenter" Storyboard.TargetProperty="Padding" Duration="0:0:0">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{DynamicResource ControlElementScreenshotModePadding}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ControlPresenter" Storyboard.TargetProperty="HorizontalAlignment" Duration="0:0:0">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static HorizontalAlignment.Center}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ScreenshotControls" Storyboard.TargetProperty="Visibility" Duration="0:0:0">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExampleContainer" Storyboard.TargetProperty="Background" Duration="0:0:0">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{DynamicResource SystemControlPageBackgroundBaseLowBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-
-                            <VisualStateGroup x:Name="SampleCodeSeparatorStates">
-                                <VisualState x:Name="SeparatorCollapsed" />
-                                <VisualState x:Name="SeparatorVisible">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SampleCodeSeparator" Storyboard.TargetProperty="Visibility" Duration="0:0:0">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="ExpanderCollapsed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CodeExpander" Storyboard.TargetProperty="Visibility" Duration="0:0:0">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -82,9 +39,7 @@
                             <Hyperlink NavigateUri="https://docs.microsoft.com/windows/uwp/debug-test-perf/version-adaptive-apps">https://docs.microsoft.com/windows/uwp/debug-test-perf/version-adaptive-apps</Hyperlink>
                         </TextBlock>
 
-                        <Border
-                            Grid.Row="2"
-                            CornerRadius="8">
+                        <Border Grid.Row="2" CornerRadius="8">
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
@@ -109,7 +64,7 @@
                                             <ColumnDefinition Width="Auto" MaxWidth="320" />
                                         </Grid.ColumnDefinitions>
 
-                                        <!-- Example Display -->
+                                        <!--  Example Display  -->
                                         <Border
                                             Padding="12"
                                             HorizontalAlignment="Stretch"
@@ -118,12 +73,10 @@
                                             BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                                             BorderThickness="{DynamicResource ControlExampleDisplayBorderThickness}"
                                             CornerRadius="8,8,0,0">
-                                            <ui:ContentPresenterEx
-                                                x:Name="ControlPresenter"
-                                                Content="{TemplateBinding Example}" />
+                                            <ui:ContentPresenterEx x:Name="ControlPresenter" Content="{TemplateBinding Example}" />
                                         </Border>
 
-                                        <!-- Output Display -->
+                                        <!--  Output Display  -->
                                         <Border
                                             Grid.Column="1"
                                             Margin="0,12,12,12"
@@ -132,16 +85,15 @@
                                             VerticalAlignment="Stretch"
                                             Background="{DynamicResource ControlExampleDisplayBrush}"
                                             CornerRadius="8"
-                                            Visibility="{TemplateBinding Output, Converter={StaticResource NullToVisibilityConverter}}">
+                                            Visibility="{TemplateBinding Output,
+                                                                         Converter={StaticResource NullToVisibilityConverter}}">
                                             <StackPanel Orientation="Vertical">
                                                 <TextBlock Text="Output:" />
-                                                <ContentPresenter
-                                                    x:Name="OutputPresenter"
-                                                    Content="{TemplateBinding Output}" />
+                                                <ContentPresenter x:Name="OutputPresenter" Content="{TemplateBinding Output}" />
                                             </StackPanel>
                                         </Border>
 
-                                        <!-- Options Display -->
+                                        <!--  Options Display  -->
                                         <Border
                                             x:Name="OptionsPresenterBorder"
                                             Grid.Column="2"
@@ -151,15 +103,14 @@
                                             VerticalAlignment="Stretch"
                                             Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                                             CornerRadius="8"
-                                            Visibility="{TemplateBinding Options, Converter={StaticResource NullToVisibilityConverter}}">
-                                            <ContentPresenter
-                                                x:Name="OptionsPresenter"
-                                                Content="{TemplateBinding Options}" />
+                                            Visibility="{TemplateBinding Options,
+                                                                         Converter={StaticResource NullToVisibilityConverter}}">
+                                            <ContentPresenter x:Name="OptionsPresenter" Content="{TemplateBinding Options}" />
                                         </Border>
                                     </Grid>
                                 </Border>
 
-                                <!-- Sample code display -->
+                                <!--  Sample code display  -->
                                 <Expander
                                     x:Name="CodeExpander"
                                     Grid.Row="1"
@@ -227,6 +178,69 @@
                                 </ui:SimpleStackPanel>
                             </Grid>
                         </Border>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="NormalMode" />
+                                <VisualState x:Name="ScreenshotMode">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames
+                                            Storyboard.TargetName="CodeScrollViewer"
+                                            Storyboard.TargetProperty="Visibility"
+                                            Duration="0:0:0">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames
+                                            Storyboard.TargetName="ControlPresenter"
+                                            Storyboard.TargetProperty="Padding"
+                                            Duration="0:0:0">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{DynamicResource ControlElementScreenshotModePadding}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames
+                                            Storyboard.TargetName="ControlPresenter"
+                                            Storyboard.TargetProperty="HorizontalAlignment"
+                                            Duration="0:0:0">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static HorizontalAlignment.Center}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames
+                                            Storyboard.TargetName="ScreenshotControls"
+                                            Storyboard.TargetProperty="Visibility"
+                                            Duration="0:0:0">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames
+                                            Storyboard.TargetName="ExampleContainer"
+                                            Storyboard.TargetProperty="Background"
+                                            Duration="0:0:0">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{DynamicResource SystemControlPageBackgroundBaseLowBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="SampleCodeSeparatorStates">
+                                <VisualState x:Name="SeparatorCollapsed" />
+                                <VisualState x:Name="SeparatorVisible">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames
+                                            Storyboard.TargetName="SampleCodeSeparator"
+                                            Storyboard.TargetProperty="Visibility"
+                                            Duration="0:0:0">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ExpanderCollapsed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames
+                                            Storyboard.TargetName="CodeExpander"
+                                            Storyboard.TargetProperty="Visibility"
+                                            Duration="0:0:0">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

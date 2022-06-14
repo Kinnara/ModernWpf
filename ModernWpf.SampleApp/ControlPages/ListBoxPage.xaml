@@ -13,9 +13,7 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example1"
-            HeaderText="A ListBox with items defined inline and its width set.">
+        <local:ControlExample x:Name="Example1" HeaderText="A ListBox with items defined inline and its width set.">
             <local:ControlExample.Example>
                 <StackPanel HorizontalAlignment="Left">
                     <ListBox
@@ -45,9 +43,7 @@
                 </sys:String>
             </local:ControlExample.Xaml>
         </local:ControlExample>
-        <local:ControlExample
-            x:Name="Example2"
-            HeaderText="A ListBox with its ItemsSource and Height set.">
+        <local:ControlExample x:Name="Example2" HeaderText="A ListBox with its ItemsSource and Height set.">
             <local:ControlExample.Example>
                 <StackPanel>
                     <ListBox

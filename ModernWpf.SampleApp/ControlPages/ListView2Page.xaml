@@ -28,16 +28,14 @@
         -->
         <CollectionViewSource x:Key="ContactsCVS">
             <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription
-                    Converter="{StaticResource ContactGroupKeyConverter}"
-                    PropertyName="LastName" />
+                <PropertyGroupDescription Converter="{StaticResource ContactGroupKeyConverter}" PropertyName="LastName" />
             </CollectionViewSource.GroupDescriptions>
             <CollectionViewSource.SortDescriptions>
                 <cm:SortDescription PropertyName="LastName" />
             </CollectionViewSource.SortDescriptions>
         </CollectionViewSource>
 
-        <!-- When using x:Bind, you need to set x:DataType -->
+        <!--  When using x:Bind, you need to set x:DataType  -->
         <DataTemplate x:Key="ContactListViewTemplate">
             <Grid>
                 <Grid.RowDefinitions>
@@ -72,9 +70,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="BasicListViewTemplate">
-            <TextBlock
-                Margin="0,5,0,5"
-                Text="{Binding Name, Mode=OneTime}" />
+            <TextBlock Margin="0,5,0,5" Text="{Binding Name, Mode=OneTime}" />
         </DataTemplate>
     </Page.Resources>
     <ui:SimpleStackPanel>
@@ -97,9 +93,7 @@
 
         <local:ControlExample HeaderText="ListView with Selection Support">
             <StackPanel>
-                <RichTextBox
-                    Margin="0,0,0,15"
-                    Style="{StaticResource RichTextBlockStyle}">
+                <RichTextBox Margin="0,0,0,15" Style="{StaticResource RichTextBlockStyle}">
                     <local1:NoPaddingFlowDocument>
                         <Paragraph>You can enable four different selection modes on the right.</Paragraph>
                         <Paragraph>
@@ -160,9 +154,7 @@
                             <GroupStyle.HeaderTemplate>
                                 <DataTemplate>
                                     <Border AutomationProperties.Name="{Binding Name, Mode=OneTime}">
-                                        <TextBlock
-                                            Style="{DynamicResource TitleTextBlockStyle}"
-                                            Text="{Binding Name, Mode=OneTime}" />
+                                        <TextBlock Style="{DynamicResource TitleTextBlockStyle}" Text="{Binding Name, Mode=OneTime}" />
                                     </Border>
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
@@ -184,9 +176,7 @@
 
             <local:ControlExample.Options>
                 <StackPanel Width="200">
-                    <TextBlock
-                        Margin="8,8,8,4"
-                        Style="{DynamicResource BaseTextBlockStyle}">
+                    <TextBlock Margin="8,8,8,4" Style="{DynamicResource BaseTextBlockStyle}">
                         Filter by...
                     </TextBlock>
                     <TextBox
@@ -223,9 +213,7 @@
                 VirtualizingPanel.ScrollUnit="Pixel">
                 <ui:ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid
-                            Margin="0,12,0,12"
-                            AutomationProperties.Name="{Binding Title, Mode=OneTime}">
+                        <Grid Margin="0,12,0,12" AutomationProperties.Name="{Binding Title, Mode=OneTime}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" MinWidth="150" />
                                 <ColumnDefinition Width="*" />
@@ -235,9 +223,7 @@
                                 Source="{Binding ImageLocation, Mode=OneTime}"
                                 Stretch="Fill" />
 
-                            <StackPanel
-                                Grid.Column="1"
-                                Margin="12,0,0,0">
+                            <StackPanel Grid.Column="1" Margin="12,0,0,0">
                                 <TextBlock
                                     Margin="0,0,0,6"
                                     HorizontalAlignment="Left"
@@ -259,9 +245,7 @@
                                         Margin="0"
                                         Style="{DynamicResource CaptionTextBlockStyle}"
                                         Text="{Binding Views, Mode=OneTime}" />
-                                    <TextBlock
-                                        Style="{DynamicResource CaptionTextBlockStyle}"
-                                        Text=" Views " />
+                                    <TextBlock Style="{DynamicResource CaptionTextBlockStyle}" Text=" Views " />
                                     <TextBlock
                                         FontFamily="Segoe UI"
                                         FontSize="12"
@@ -271,9 +255,7 @@
                                         Margin="5,0,0,0"
                                         Style="{DynamicResource CaptionTextBlockStyle}"
                                         Text="{Binding Likes, Mode=OneTime}" />
-                                    <TextBlock
-                                        Style="{DynamicResource CaptionTextBlockStyle}"
-                                        Text=" Likes" />
+                                    <TextBlock Style="{DynamicResource CaptionTextBlockStyle}" Text=" Likes" />
                                 </StackPanel>
                             </StackPanel>
                         </Grid>

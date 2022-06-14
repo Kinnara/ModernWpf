@@ -8,13 +8,9 @@
     DefaultButton="Primary"
     PrimaryButtonText="Save"
     SecondaryButtonText="Don't Save">
-    <StackPanel
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch">
-        <!-- Content body -->
-        <TextBlock
-            Text="Lorem ipsum dolor sit amet, adipisicing elit."
-            TextWrapping="Wrap" />
+    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <!--  Content body  -->
+        <TextBlock Text="Lorem ipsum dolor sit amet, adipisicing elit." TextWrapping="Wrap" />
         <CheckBox Content="Upload your content to the cloud." />
     </StackPanel>
 </ui:ContentDialog>

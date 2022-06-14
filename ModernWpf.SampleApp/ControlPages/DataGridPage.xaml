@@ -11,16 +11,12 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <CollectionViewSource
-            x:Key="cvs"
-            Source="{Binding}" />
+        <CollectionViewSource x:Key="cvs" Source="{Binding}" />
 
         <common:ItemCountConverter x:Key="ItemCountConverter" />
 
         <DataTemplate x:Key="RowGroupHeaderTemplate">
-            <StackPanel
-                VerticalAlignment="Center"
-                Orientation="Horizontal">
+            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                 <TextBlock
                     Margin="4,0,0,0"
                     Style="{StaticResource BodyTextBlockStyle}"
@@ -34,9 +30,7 @@
 
         <DataTemplate x:Key="RowDetailsTemplate">
             <StackPanel>
-                <TextBlock
-                    Margin="20"
-                    Text="Here are the details for the selected mountain:" />
+                <TextBlock Margin="20" Text="Here are the details for the selected mountain:" />
                 <Grid Margin="25,15">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -141,30 +135,20 @@
                             Visibility="{Binding Source={x:Reference HyperlinkColumnVisibilityToggle}, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </DataGrid.Columns>
                     <DataGrid.GroupStyle>
-                        <GroupStyle
-                            ContainerStyle="{StaticResource DataGridRowGroupContainerStyle}"
-                            HeaderTemplate="{StaticResource RowGroupHeaderTemplate}" />
+                        <GroupStyle ContainerStyle="{StaticResource DataGridRowGroupContainerStyle}" HeaderTemplate="{StaticResource RowGroupHeaderTemplate}" />
                     </DataGrid.GroupStyle>
                 </DataGrid>
             </local:ControlExample.Example>
             <local:ControlExample.Options>
-                <ScrollViewer
-                    Width="300"
-                    Margin="-16">
-                    <ui:SimpleStackPanel
-                        Margin="16"
-                        Style="{StaticResource OptionsPanelStyle}">
+                <ScrollViewer Width="300" Margin="-16">
+                    <ui:SimpleStackPanel Margin="16" Style="{StaticResource OptionsPanelStyle}">
                         <TextBlock
                             x:Name="LoadTimeTextBlock"
                             MouseLeftButtonUp="LoadTimeTextBlock_MouseLeftButtonUp"
                             Style="{StaticResource BodyTextBlockStyle}" />
                         <sc:LayoutDensitySelector TargetElement="{Binding ElementName=dataGrid}" />
-                        <CheckBox
-                            x:Name="CheckBoxColumnVisibilityToggle"
-                            Content="Show CheckBox Column" />
-                        <CheckBox
-                            x:Name="HyperlinkColumnVisibilityToggle"
-                            Content="Show Hyperlink Column" />
+                        <CheckBox x:Name="CheckBoxColumnVisibilityToggle" Content="Show CheckBox Column" />
+                        <CheckBox x:Name="HyperlinkColumnVisibilityToggle" Content="Show Hyperlink Column" />
                         <CheckBox
                             x:Name="GroupingToggle"
                             Checked="GroupingToggle_Checked"
@@ -178,76 +162,40 @@
                             ui:ControlHelper.Header="HorizontalScrollBarVisibility"
                             ItemsSource="{Binding Source={x:Type ScrollBarVisibility}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=dataGrid, Path=HorizontalScrollBarVisibility}" />
-                        <CheckBox
-                            Content="CanUserAddRows"
-                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserAddRows}" />
-                        <CheckBox
-                            Content="CanUserDeleteRows"
-                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserDeleteRows}" />
+                        <CheckBox Content="CanUserAddRows" IsChecked="{Binding ElementName=dataGrid, Path=CanUserAddRows}" />
+                        <CheckBox Content="CanUserDeleteRows" IsChecked="{Binding ElementName=dataGrid, Path=CanUserDeleteRows}" />
                         <ComboBox
                             ui:ControlHelper.Header="RowDetailsVisibilityMode"
                             ItemsSource="{Binding Source={x:Type DataGridRowDetailsVisibilityMode}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=dataGrid, Path=RowDetailsVisibilityMode}" />
-                        <CheckBox
-                            Content="IsReadOnly"
-                            IsChecked="{Binding ElementName=dataGrid, Path=IsReadOnly}" />
+                        <CheckBox Content="IsReadOnly" IsChecked="{Binding ElementName=dataGrid, Path=IsReadOnly}" />
                         <ComboBox
                             ui:ControlHelper.Header="HeadersVisibility"
                             ItemsSource="{Binding Source={x:Type DataGridHeadersVisibility}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=dataGrid, Path=HeadersVisibility}" />
-                        <CheckBox
-                            Content="AreRowDetailsFrozen"
-                            IsChecked="{Binding ElementName=dataGrid, Path=AreRowDetailsFrozen}" />
+                        <CheckBox Content="AreRowDetailsFrozen" IsChecked="{Binding ElementName=dataGrid, Path=AreRowDetailsFrozen}" />
                         <ComboBox
                             ui:ControlHelper.Header="GridLinesVisibility"
                             ItemsSource="{Binding Source={x:Type DataGridGridLinesVisibility}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=dataGrid, Path=GridLinesVisibility}" />
-                        <TextBox
-                            ui:ControlHelper.Header="MaxColumnWidth"
-                            Text="{Binding ElementName=dataGrid, Path=MaxColumnWidth}" />
-                        <TextBox
-                            ui:ControlHelper.Header="MinColumnWidth"
-                            Text="{Binding ElementName=dataGrid, Path=MinColumnWidth}" />
-                        <CheckBox
-                            Content="CanUserResizeColumns"
-                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserResizeColumns}" />
-                        <TextBox
-                            ui:ControlHelper.Header="RowHeaderWidth"
-                            Text="{Binding ElementName=dataGrid, Path=RowHeaderWidth}" />
-                        <TextBox
-                            ui:ControlHelper.Header="ColumnHeaderHeight"
-                            Text="{Binding ElementName=dataGrid, Path=ColumnHeaderHeight}" />
-                        <TextBox
-                            ui:ControlHelper.Header="MinRowHeight"
-                            Text="{Binding ElementName=dataGrid, Path=MinRowHeight}" />
-                        <CheckBox
-                            Content="CanUserResizeRows"
-                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserResizeRows}" />
-                        <TextBox
-                            ui:ControlHelper.Header="RowHeight"
-                            Text="{Binding ElementName=dataGrid, Path=RowHeight}" />
+                        <TextBox ui:ControlHelper.Header="MaxColumnWidth" Text="{Binding ElementName=dataGrid, Path=MaxColumnWidth}" />
+                        <TextBox ui:ControlHelper.Header="MinColumnWidth" Text="{Binding ElementName=dataGrid, Path=MinColumnWidth}" />
+                        <CheckBox Content="CanUserResizeColumns" IsChecked="{Binding ElementName=dataGrid, Path=CanUserResizeColumns}" />
+                        <TextBox ui:ControlHelper.Header="RowHeaderWidth" Text="{Binding ElementName=dataGrid, Path=RowHeaderWidth}" />
+                        <TextBox ui:ControlHelper.Header="ColumnHeaderHeight" Text="{Binding ElementName=dataGrid, Path=ColumnHeaderHeight}" />
+                        <TextBox ui:ControlHelper.Header="MinRowHeight" Text="{Binding ElementName=dataGrid, Path=MinRowHeight}" />
+                        <CheckBox Content="CanUserResizeRows" IsChecked="{Binding ElementName=dataGrid, Path=CanUserResizeRows}" />
+                        <TextBox ui:ControlHelper.Header="RowHeight" Text="{Binding ElementName=dataGrid, Path=RowHeight}" />
                         <ComboBox
                             ui:ControlHelper.Header="ClipboardCopyMode"
                             ItemsSource="{Binding Source={x:Type DataGridClipboardCopyMode}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=dataGrid, Path=ClipboardCopyMode}" />
-                        <CheckBox
-                            Content="CanUserReorderColumns"
-                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserReorderColumns}" />
-                        <CheckBox
-                            Content="EnableColumnVirtualization"
-                            IsChecked="{Binding ElementName=dataGrid, Path=EnableColumnVirtualization}" />
-                        <CheckBox
-                            Content="EnableRowVirtualization"
-                            IsChecked="{Binding ElementName=dataGrid, Path=EnableRowVirtualization}" />
-                        <TextBox
-                            ui:ControlHelper.Header="FrozenColumnCount"
-                            Text="{Binding ElementName=dataGrid, Path=FrozenColumnCount}" />
-                        <CheckBox
-                            Content="AutoGenerateColumns"
-                            IsChecked="{Binding ElementName=dataGrid, Path=AutoGenerateColumns}" />
-                        <CheckBox
-                            Content="CanUserSortColumns"
-                            IsChecked="{Binding ElementName=dataGrid, Path=CanUserSortColumns}" />
+                        <CheckBox Content="CanUserReorderColumns" IsChecked="{Binding ElementName=dataGrid, Path=CanUserReorderColumns}" />
+                        <CheckBox Content="EnableColumnVirtualization" IsChecked="{Binding ElementName=dataGrid, Path=EnableColumnVirtualization}" />
+                        <CheckBox Content="EnableRowVirtualization" IsChecked="{Binding ElementName=dataGrid, Path=EnableRowVirtualization}" />
+                        <TextBox ui:ControlHelper.Header="FrozenColumnCount" Text="{Binding ElementName=dataGrid, Path=FrozenColumnCount}" />
+                        <CheckBox Content="AutoGenerateColumns" IsChecked="{Binding ElementName=dataGrid, Path=AutoGenerateColumns}" />
+                        <CheckBox Content="CanUserSortColumns" IsChecked="{Binding ElementName=dataGrid, Path=CanUserSortColumns}" />
                         <ComboBox
                             ui:ControlHelper.Header="SelectionUnit"
                             ItemsSource="{Binding Source={x:Type DataGridSelectionUnit}, Converter={StaticResource EnumValuesConverter}}"

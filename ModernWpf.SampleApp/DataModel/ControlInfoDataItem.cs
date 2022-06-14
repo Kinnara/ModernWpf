@@ -16,13 +16,14 @@ namespace ModernWpf.SampleApp.DataModel
     /// </summary>
     public class ControlInfoDataItem
     {
-        public ControlInfoDataItem(string uniqueId, string title, string subtitle, string imagePath, string badgeString, string description, string content, bool isNew, bool isUpdated, bool isPreview)
+        public ControlInfoDataItem(string uniqueId, string title, string subtitle, string imagePath, string imageIconPath, string badgeString, string description, string content, bool isNew, bool isUpdated, bool isPreview)
         {
             this.UniqueId = uniqueId;
             this.Title = title;
             this.Subtitle = subtitle;
             this.Description = description;
-            this.ImagePath = imagePath.Replace("ms-appx:///", AppDomain.CurrentDomain.BaseDirectory).Replace("/", @"\");
+            this.ImagePath = imagePath.Replace("ms-appx://", string.Empty);
+            this.ImageIconPath = imageIconPath.Replace("ms-appx://", string.Empty);
             this.BadgeString = badgeString;
             this.Content = content;
             this.IsNew = isNew;
@@ -37,6 +38,7 @@ namespace ModernWpf.SampleApp.DataModel
         public string Subtitle { get; private set; }
         public string Description { get; private set; }
         public string ImagePath { get; private set; }
+        public string ImageIconPath { get; private set; }
         public string BadgeString { get; private set; }
         public string Content { get; private set; }
         public bool IsNew { get; private set; }
@@ -44,6 +46,8 @@ namespace ModernWpf.SampleApp.DataModel
         public bool IsPreview { get; private set; }
         public ObservableCollection<ControlInfoDocLink> Docs { get; private set; }
         public ObservableCollection<string> RelatedControls { get; private set; }
+
+        public bool IncludedInBuild { get; set; }
 
         public override string ToString()
         {
@@ -68,13 +72,14 @@ namespace ModernWpf.SampleApp.DataModel
     /// </summary>
     public class ControlInfoDataGroup
     {
-        public ControlInfoDataGroup(string uniqueId, string title, string subtitle, string imagePath, string description)
+        public ControlInfoDataGroup(string uniqueId, string title, string subtitle, string imagePath, string imageIconPath, string description)
         {
             this.UniqueId = uniqueId;
             this.Title = title;
             this.Subtitle = subtitle;
             this.Description = description;
-            this.ImagePath = imagePath;
+            this.ImagePath = imagePath.Replace("ms-appx://", string.Empty);
+            this.ImageIconPath = imageIconPath.Replace("ms-appx://", string.Empty);
             this.Items = new ObservableCollection<ControlInfoDataItem>();
         }
 
@@ -83,6 +88,7 @@ namespace ModernWpf.SampleApp.DataModel
         public string Subtitle { get; private set; }
         public string Description { get; private set; }
         public string ImagePath { get; private set; }
+        public string ImageIconPath { get; private set; }
         public ObservableCollection<ControlInfoDataItem> Items { get; private set; }
 
         public override string ToString()
@@ -186,13 +192,17 @@ namespace ModernWpf.SampleApp.DataModel
 
             lock (_lock)
             {
+                string pageRoot = "ModernWpf.SampleApp.ControlPages.";
                 foreach (JsonValue groupValue in jsonArray)
                 {
+
                     JsonObject groupObject = groupValue.GetObject();
+
                     ControlInfoDataGroup group = new ControlInfoDataGroup(groupObject["UniqueId"].GetString(),
                                                                           groupObject["Title"].GetString(),
                                                                           groupObject["Subtitle"].GetString(),
                                                                           groupObject["ImagePath"].GetString(),
+                                                                          groupObject["ImageIconPath"].GetString(),
                                                                           groupObject["Description"].GetString());
 
                     foreach (JsonValue itemValue in groupObject["Items"].GetArray())
@@ -222,12 +232,19 @@ namespace ModernWpf.SampleApp.DataModel
                                                                 itemObject["Title"].GetString(),
                                                                 itemObject["Subtitle"].GetString(),
                                                                 itemObject["ImagePath"].GetString(),
+                                                                itemObject["ImageIconPath"].GetString(),
                                                                 badgeString,
                                                                 itemObject["Description"].GetString(),
                                                                 itemObject["Content"].GetString(),
                                                                 isNew,
                                                                 isUpdated,
                                                                 isPreview);
+
+                        {
+                            string pageString = pageRoot + item.UniqueId + "Page";
+                            Type pageType = Type.GetType(pageString);
+                            item.IncludedInBuild = pageType != null;
+                        }
 
                         if (itemObject.ContainsKey("Docs"))
                         {
@@ -248,7 +265,6 @@ namespace ModernWpf.SampleApp.DataModel
 
                         group.Items.Add(item);
                     }
-
                     if (!Groups.Any(g => g.Title == group.Title))
                     {
                         Groups.Add(group);

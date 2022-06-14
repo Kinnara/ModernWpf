@@ -47,7 +47,6 @@
                                 Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
                                                                               TypeInTargetAssembly={x:Type FrameworkElement}}}">
                                 <ItemsPresenter
-                                    Margin="{StaticResource MenuFlyoutScrollerMargin}"
                                     KeyboardNavigation.DirectionalNavigation="Cycle"
                                     RenderOptions.ClearTypeHint="Enabled"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />

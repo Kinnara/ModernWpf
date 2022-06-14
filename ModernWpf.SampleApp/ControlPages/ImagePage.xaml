@@ -13,9 +13,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example1"
-            HeaderText="A basic image from a local file.">
+        <local:ControlExample x:Name="Example1" HeaderText="A basic image from a local file.">
 
             <Image
                 Height="100"
@@ -29,17 +27,11 @@
             </local:ControlExample.Xaml>
         </local:ControlExample>
 
-        <local:ControlExample
-            x:Name="Example2"
-            HeaderText="An image decoded to the rendering size">
+        <local:ControlExample x:Name="Example2" HeaderText="An image decoded to the rendering size">
 
-            <Image
-                Height="100"
-                HorizontalAlignment="Left">
+            <Image Height="100" HorizontalAlignment="Left">
                 <Image.Source>
-                    <BitmapImage
-                        DecodePixelHeight="100"
-                        UriSource="/Assets/SampleMedia/treetops.jpg" />
+                    <BitmapImage DecodePixelHeight="100" UriSource="/Assets/SampleMedia/treetops.jpg" />
                 </Image.Source>
             </Image>
 
@@ -55,9 +47,7 @@
             </local:ControlExample.Xaml>
         </local:ControlExample>
 
-        <local:ControlExample
-            x:Name="Example3"
-            HeaderText="Image stretching.">
+        <local:ControlExample x:Name="Example3" HeaderText="Image stretching.">
 
             <Image
                 x:Name="StretchImage"

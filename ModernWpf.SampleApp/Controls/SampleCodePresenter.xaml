@@ -18,19 +18,6 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="ConfirmDialogGroups">
-                <VisualState x:Name="ConfirmationDialogHidden" />
-                <VisualState x:Name="ConfirmationDialogVisible">
-                    <Storyboard>
-                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="CopyCodeButton" Storyboard.TargetProperty="IsEnabled" Duration="0:0:0">
-                            <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="False" />
-                        </BooleanAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-
         <TextBlock x:Name="SampleHeader" />
         <ScrollViewer
             x:Name="CodeScrollViewer"
@@ -38,9 +25,7 @@
             Padding="0,4,0,10"
             HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Disabled">
-            <ContentPresenter
-                x:Name="CodePresenter"
-                Loaded="CodePresenter_Loaded" />
+            <ContentPresenter x:Name="CodePresenter" Loaded="CodePresenter_Loaded" />
         </ScrollViewer>
         <Button
             x:Name="CopyCodeButton"
@@ -51,9 +36,23 @@
             AutomationProperties.Name="Copy sample code"
             Click="CopyCodeButton_Click"
             ToolTipService.ToolTip="Copy sample code">
-            <ui:FontIcon
-                FontSize="16"
-                Glyph="&#xE8C8;" />
+            <ui:FontIcon FontSize="16" Glyph="&#xE8C8;" />
         </Button>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ConfirmDialogGroups">
+                <VisualState x:Name="ConfirmationDialogHidden" />
+                <VisualState x:Name="ConfirmationDialogVisible">
+                    <Storyboard>
+                        <BooleanAnimationUsingKeyFrames
+                            Storyboard.TargetName="CopyCodeButton"
+                            Storyboard.TargetProperty="IsEnabled"
+                            Duration="0:0:0">
+                            <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="False" />
+                        </BooleanAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </UserControl>

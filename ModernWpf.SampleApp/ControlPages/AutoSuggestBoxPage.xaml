@@ -12,9 +12,7 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example1"
-            HeaderText="A basic autosuggest box.">
+        <local:ControlExample x:Name="Example1" HeaderText="A basic autosuggest box.">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
                     <ui:AutoSuggestBox
@@ -83,9 +81,7 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
                 </sys:String>
             </local:ControlExample.CSharp>
         </local:ControlExample>
-        <local:ControlExample
-            x:Name="Example2"
-            HeaderText="An AutoSuggestBox that provides a SearchBox experience">
+        <local:ControlExample x:Name="Example2" HeaderText="An AutoSuggestBox that provides a SearchBox experience">
             <local:ControlExample.Example>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -108,9 +104,7 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
                         HorizontalAlignment="Left"
                         Orientation="Horizontal"
                         Visibility="Collapsed">
-                        <Image
-                            x:Name="ControlImage"
-                            Height="110" />
+                        <Image x:Name="ControlImage" Height="110" />
                         <StackPanel>
                             <TextBlock
                                 x:Name="ControlTitle"

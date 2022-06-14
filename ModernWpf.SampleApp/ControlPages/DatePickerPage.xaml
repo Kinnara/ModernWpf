@@ -20,41 +20,23 @@
             </local:ControlExample.Example>
             <local:ControlExample.Options>
                 <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                    <TextBox
-                        ui:ControlHelper.Header="Header"
-                        Text="{Binding ElementName=datePicker, Path=(ui:ControlHelper.Header), UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox ui:ControlHelper.Header="Header" Text="{Binding ElementName=datePicker, Path=(ui:ControlHelper.Header), UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBox
-                        ui:ControlHelper.Header="PlaceholderText"
-                        Text="{Binding ElementName=datePicker, Path=(ui:ControlHelper.PlaceholderText), UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox ui:ControlHelper.Header="PlaceholderText" Text="{Binding ElementName=datePicker, Path=(ui:ControlHelper.PlaceholderText), UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBox
-                        ui:ControlHelper.Header="Description"
-                        Text="{Binding ElementName=datePicker, Path=(ui:ControlHelper.Description), UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox ui:ControlHelper.Header="Description" Text="{Binding ElementName=datePicker, Path=(ui:ControlHelper.Description), UpdateSourceTrigger=PropertyChanged}" />
 
-                    <DatePicker
-                        ui:ControlHelper.Header="DisplayDateStart"
-                        SelectedDate="{Binding ElementName=datePicker, Path=DisplayDateStart}" />
+                    <DatePicker ui:ControlHelper.Header="DisplayDateStart" SelectedDate="{Binding ElementName=datePicker, Path=DisplayDateStart}" />
 
-                    <DatePicker
-                        ui:ControlHelper.Header="DisplayDateEnd"
-                        SelectedDate="{Binding ElementName=datePicker, Path=DisplayDateEnd}" />
+                    <DatePicker ui:ControlHelper.Header="DisplayDateEnd" SelectedDate="{Binding ElementName=datePicker, Path=DisplayDateEnd}" />
 
-                    <CheckBox
-                        Content="IsTodayHighlighted"
-                        IsChecked="{Binding ElementName=datePicker, Path=IsTodayHighlighted}" />
+                    <CheckBox Content="IsTodayHighlighted" IsChecked="{Binding ElementName=datePicker, Path=IsTodayHighlighted}" />
 
-                    <CheckBox
-                        Content="IsDropDownOpen"
-                        IsChecked="{Binding ElementName=datePicker, Path=IsDropDownOpen}" />
+                    <CheckBox Content="IsDropDownOpen" IsChecked="{Binding ElementName=datePicker, Path=IsDropDownOpen}" />
 
-                    <Button
-                        Click="BlackoutDatesInPast"
-                        Content="Blackout dates in the past" />
+                    <Button Click="BlackoutDatesInPast" Content="Blackout dates in the past" />
 
-                    <CheckBox
-                        Content="IsEnabled"
-                        IsChecked="{Binding ElementName=datePicker, Path=IsEnabled}" />
+                    <CheckBox Content="IsEnabled" IsChecked="{Binding ElementName=datePicker, Path=IsEnabled}" />
                 </ui:SimpleStackPanel>
             </local:ControlExample.Options>
         </local:ControlExample>

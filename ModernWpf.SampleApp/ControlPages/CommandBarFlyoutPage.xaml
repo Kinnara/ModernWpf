@@ -12,12 +12,22 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <Page.Resources>
-        <ui:CommandBarFlyout
-            x:Key="CommandBarFlyout1"
-            Placement="RightEdgeAlignedTop">
-            <ui:AppBarButton Click="OnElementClicked" Icon="Share" Label="Share" ToolTipService.ToolTip="Share" />
-            <ui:AppBarButton Click="OnElementClicked" Icon="Save" Label="Save" ToolTipService.ToolTip="Save" />
-            <ui:AppBarButton Click="OnElementClicked" Icon="Delete" Label="Delete" ToolTipService.ToolTip="Delete" />
+        <ui:CommandBarFlyout x:Key="CommandBarFlyout1" Placement="RightEdgeAlignedTop">
+            <ui:AppBarButton
+                Click="OnElementClicked"
+                Icon="Share"
+                Label="Share"
+                ToolTipService.ToolTip="Share" />
+            <ui:AppBarButton
+                Click="OnElementClicked"
+                Icon="Save"
+                Label="Save"
+                ToolTipService.ToolTip="Save" />
+            <ui:AppBarButton
+                Click="OnElementClicked"
+                Icon="Delete"
+                Label="Delete"
+                ToolTipService.ToolTip="Delete" />
             <ui:CommandBarFlyout.SecondaryCommands>
                 <ui:AppBarButton Click="OnElementClicked" Label="Resize" />
                 <ui:AppBarButton Click="OnElementClicked" Label="Move" />
@@ -45,9 +55,7 @@
                             Height="300"
                             Source="/Assets/SampleMedia/rainier.jpg" />
                     </Button>
-                    <TextBlock
-                        x:Name="SelectedOptionText"
-                        Text="" />
+                    <TextBlock x:Name="SelectedOptionText" Text="" />
                 </StackPanel>
             </local:ControlExample.Example>
         </local:ControlExample>

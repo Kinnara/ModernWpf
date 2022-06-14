@@ -24,9 +24,7 @@
                         x:Name="ShowDialog"
                         Click="ShowDialog_Click"
                         Content="Show dialog" />
-                    <TextBlock
-                        x:Name="DialogResult"
-                        Style="{StaticResource OutputTextBlockStyle}" />
+                    <TextBlock x:Name="DialogResult" Style="{StaticResource OutputTextBlockStyle}" />
                 </StackPanel>
             </local:ControlExample.Example>
         </local:ControlExample>

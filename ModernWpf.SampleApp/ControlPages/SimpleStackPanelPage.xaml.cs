@@ -2,9 +2,9 @@
 
 namespace ModernWpf.SampleApp.ControlPages
 {
-    public partial class SimpleStackPanelPage
+    public partial class StackPanelPage
     {
-        public SimpleStackPanelPage()
+        public StackPanelPage()
         {
             InitializeComponent();
         }

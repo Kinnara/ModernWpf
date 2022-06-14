@@ -1,59 +1,57 @@
 ﻿<local:ItemsPageBase
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     x:Class="ModernWpf.SampleApp.AllControlsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
-    mc:Ignorable="d"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="All Controls"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Title="All Controls">
+    mc:Ignorable="d">
     <local:ItemsPageBase.Resources>
         <ResourceDictionary Source="ItemTemplates.xaml" />
     </local:ItemsPageBase.Resources>
 
-    <!-- This grid acts as a root panel for the page. -->
+    <!--  This grid acts as a root panel for the page.  -->
     <Grid Background="{DynamicResource HomePageBackgroundBrush}">
         <ui:GridView
             x:Name="itemGridView"
-            Padding="40,0,0,36"
+            Margin="31,0,0,0"
             AutomationProperties.AutomationId="ItemGridView"
             AutomationProperties.Name="Items In Group"
             IsItemClickEnabled="True"
+            IsSelectionEnabled="False"
             ItemClick="OnItemGridViewItemClick"
             ItemContainerStyle="{StaticResource IndentedGridViewItemStyle}"
             ItemTemplate="{StaticResource ControlItemTemplate}"
             ItemsSource="{Binding}"
             KeyDown="OnItemGridViewKeyDown"
             Loaded="OnItemGridViewLoaded"
-            SizeChanged="OnItemGridViewSizeChanged"
-            IsSelectionEnabled="False" >
+            SizeChanged="OnItemGridViewSizeChanged">
             <ui:ListViewHelper.Header>
-                <Grid
-                    Height="230"
-                    Margin="-40,0,0,-60">
-                    <Image
-                        x:Name="headerImage"
-                        Height="250"
-                        HorizontalAlignment="Stretch"
-                        Source="/Assets/MainPage_Banner.png"
-                        Stretch="UniformToFill" />
-                    <Rectangle
-                        Height="60"
-                        VerticalAlignment="Bottom"
-                        Fill="{DynamicResource HeroImageGradientBrush}" />
-                    <local:PageHeader
-                        x:Name="pageHeader"
-                        Title="{StaticResource ControlsName}"
-                        Padding="{DynamicResource NavigationViewHeaderMargin}"
+                <Grid x:Name="HeaderGrid" Margin="12,39,43,30">
+                    <Border
+                        x:Name="headerImageView"
+                        Height="200"
                         VerticalAlignment="Top"
-                        Background="{DynamicResource HomePageBackgroundBrush}"
-                        FontSize="28"
-                        Foreground="{DynamicResource PageHeaderForegroundBrush}"
-                        IsHitTestVisible="False"
-                        ShadowOpacity="0" />
+                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <Image
+                            x:Name="headerImage"
+                            HorizontalAlignment="Center"
+                            ui:ClipHelper.CornerRadius="{DynamicResource ControlCornerRadius}"
+                            Source="Assets/MainPage_Banner.png"
+                            Stretch="UniformToFill" />
+                    </Border>
+                    <TextBlock AutomationProperties.AutomationId="__ClickableAreaTextBlock" />
+                    <TextBlock
+                        x:Name="smallHeaderText"
+                        Margin="50,50,0,20"
+                        Foreground="Black"
+                        Style="{DynamicResource TitleTextBlockStyle}"
+                        Text="{DynamicResource ControlsName}"
+                        Visibility="Visible" />
                 </Grid>
             </ui:ListViewHelper.Header>
         </ui:GridView>

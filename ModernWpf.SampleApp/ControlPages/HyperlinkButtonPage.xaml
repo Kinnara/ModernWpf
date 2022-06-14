@@ -13,9 +13,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example1"
-            HeaderText="A hyperlink button that navigates to a URI.">
+        <local:ControlExample x:Name="Example1" HeaderText="A hyperlink button that navigates to a URI.">
             <local:ControlExample.Example>
                 <ui:HyperlinkButton
                     x:Name="Control1"
@@ -25,9 +23,7 @@
             </local:ControlExample.Example>
             <local:ControlExample.Options>
                 <StackPanel>
-                    <CheckBox
-                        x:Name="DisableControl1"
-                        Content="Disable hyperlink button" />
+                    <CheckBox x:Name="DisableControl1" Content="Disable hyperlink button" />
                 </StackPanel>
             </local:ControlExample.Options>
             <local:ControlExample.Xaml>

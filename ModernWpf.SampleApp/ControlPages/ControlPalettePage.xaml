@@ -9,9 +9,7 @@
     Background="{DynamicResource AppBackgroundBrush}"
     mc:Ignorable="d">
 
-    <Grid
-        Margin="12"
-        Background="{DynamicResource AppContentBackgroundBrush}">
+    <Grid Margin="12" Background="{DynamicResource AppContentBackgroundBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition />
@@ -49,18 +47,14 @@
                     Grid.Column="0"
                     VerticalAlignment="Top"
                     ui:ThemeManager.RequestedTheme="Light">
-                    <local:ControlPaletteTestContent
-                        Title="Light theme"
-                        VerticalAlignment="Top" />
+                    <local:ControlPaletteTestContent Title="Light theme" VerticalAlignment="Top" />
                 </Border>
 
                 <Border
                     Grid.Column="1"
                     VerticalAlignment="Top"
                     ui:ThemeManager.RequestedTheme="Dark">
-                    <local:ControlPaletteTestContent
-                        Title="Dark theme"
-                        VerticalAlignment="Top" />
+                    <local:ControlPaletteTestContent Title="Dark theme" VerticalAlignment="Top" />
                 </Border>
             </Grid>
         </ScrollViewer>

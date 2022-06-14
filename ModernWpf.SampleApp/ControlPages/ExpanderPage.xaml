@@ -13,9 +13,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example1"
-            HeaderText="An Expander with text in the header and content areas">
+        <local:ControlExample x:Name="Example1" HeaderText="An Expander with text in the header and content areas">
             <local:ControlExample.Example>
                 <Expander
                     x:Name="Expander1"
@@ -53,9 +51,7 @@
             </local:ControlExample.Xaml>
         </local:ControlExample>
 
-        <local:ControlExample
-            x:Name="Example2"
-            HeaderText="An Expander with other controls in the header and content">
+        <local:ControlExample x:Name="Example2" HeaderText="An Expander with other controls in the header and content">
             <local:ControlExample.Example>
                 <Expander x:Name="Expander2">
                     <Expander.Header>
@@ -63,9 +59,7 @@
                     </Expander.Header>
                     <Expander.Content>
                         <Grid>
-                            <Button
-                                Margin="15"
-                                Content="This is a Button in the content" />
+                            <Button Margin="15" Content="This is a Button in the content" />
                         </Grid>
                     </Expander.Content>
                 </Expander>
@@ -93,14 +87,10 @@
                     Padding="0"
                     HorizontalContentAlignment="Left">
                     <Expander.Header>
-                        <ToggleButton
-                            HorizontalAlignment="Center"
-                            Content="This ToggleButton is centered" />
+                        <ToggleButton HorizontalAlignment="Center" Content="This ToggleButton is centered" />
                     </Expander.Header>
                     <Expander.Content>
-                        <Button
-                            Margin="4"
-                            Content="This Button is left aligned" />
+                        <Button Margin="4" Content="This Button is left aligned" />
                     </Expander.Content>
                 </Expander>
             </local:ControlExample.Example>

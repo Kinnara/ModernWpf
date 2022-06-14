@@ -27,9 +27,7 @@
                                 Margin="0,0,0,12"
                                 Style="{DynamicResource BaseTextBlockStyle}"
                                 Text="All items will be removed. Do you want to continue?" />
-                            <Button
-                                Click="DeleteConfirmation_Click"
-                                Content="Yes, empty my cart" />
+                            <Button Click="DeleteConfirmation_Click" Content="Yes, empty my cart" />
                         </StackPanel>
                     </ui:Flyout>
                 </ui:FlyoutService.Flyout>

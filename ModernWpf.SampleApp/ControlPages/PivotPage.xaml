@@ -10,9 +10,7 @@
 
     <ScrollViewer>
         <ui:SimpleStackPanel Margin="{StaticResource ControlPageContentMargin}">
-            <sc:ControlExample
-                Margin="0,0,24,0"
-                HeaderText="A basic pivot.">
+            <sc:ControlExample Margin="0,0,24,0" HeaderText="A basic pivot.">
                 <TabControl
                     MinHeight="400"
                     ui:PivotHelper.Title="EMAIL"

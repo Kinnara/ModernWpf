@@ -41,10 +41,14 @@
                             <Grid x:Name="ExampleContainer">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
-                                    <ColumnDefinition x:Name="OptionsColumn" Width="Auto" MinWidth="200" MaxWidth="320" />
+                                    <ColumnDefinition
+                                        x:Name="OptionsColumn"
+                                        Width="Auto"
+                                        MinWidth="200"
+                                        MaxWidth="320" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Example Display -->
+                                <!--  Example Display  -->
                                 <ContentPresenter
                                     x:Name="ControlPresenter"
                                     Margin="12"
@@ -53,7 +57,7 @@
                                     Content="{TemplateBinding Example}"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
-                                <!-- Options Display -->
+                                <!--  Options Display  -->
                                 <Border
                                     x:Name="OptionsRoot"
                                     Grid.Column="1"

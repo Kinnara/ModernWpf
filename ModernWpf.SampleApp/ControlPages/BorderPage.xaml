@@ -13,9 +13,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example1"
-            HeaderText="A Border around a TextBlock.">
+        <local:ControlExample x:Name="Example1" HeaderText="A Border around a TextBlock.">
             <local:ControlExample.Example>
                 <Border
                     x:Name="Control1"
@@ -73,9 +71,7 @@
                                 IsChecked="True" />
                         </ui:RadioButtons>
 
-                        <ui:RadioButtons
-                            Grid.Column="1"
-                            Header="BorderBrush">
+                        <ui:RadioButtons Grid.Column="1" Header="BorderBrush">
 
                             <RadioButton
                                 Checked="RadioButton_Checked"

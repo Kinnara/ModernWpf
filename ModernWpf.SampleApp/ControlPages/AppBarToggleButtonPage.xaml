@@ -12,13 +12,15 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <StackPanel>
-        <local:ControlExample
-            x:Name="Example1"
-            HeaderText="An AppBarToggleButton with a symbol icon.">
+        <local:ControlExample x:Name="Example1" HeaderText="An AppBarToggleButton with a symbol icon.">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <!-- App bar button with symbol icon. -->
-                    <ui:AppBarToggleButton x:Name="Button1" Click="AppBarButton_Click" Icon="Shuffle" Label="SymbolIcon" />
+                    <!--  App bar button with symbol icon.  -->
+                    <ui:AppBarToggleButton
+                        x:Name="Button1"
+                        Click="AppBarButton_Click"
+                        Icon="Shuffle"
+                        Label="SymbolIcon" />
                     <TextBlock
                         x:Name="Control1Output"
                         Margin="8,0,0,0"
@@ -31,13 +33,14 @@
                 </sys:String>
             </local:ControlExample.Xaml>
         </local:ControlExample>
-        <local:ControlExample
-            x:Name="Example2"
-            HeaderText="An AppBarToggleButton with a bitmap icon.">
+        <local:ControlExample x:Name="Example2" HeaderText="An AppBarToggleButton with a bitmap icon.">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <!-- App bar button with bitmap icon. -->
-                    <ui:AppBarToggleButton x:Name="Button2" Click="AppBarButton_Click" Label="BitmapIcon">
+                    <!--  App bar button with bitmap icon.  -->
+                    <ui:AppBarToggleButton
+                        x:Name="Button2"
+                        Click="AppBarButton_Click"
+                        Label="BitmapIcon">
                         <ui:AppBarToggleButton.Icon>
                             <ui:BitmapIcon UriSource="/Assets/Slices2.png" />
                         </ui:AppBarToggleButton.Icon>
@@ -58,17 +61,16 @@
                 </sys:String>
             </local:ControlExample.Xaml>
         </local:ControlExample>
-        <local:ControlExample
-            x:Name="Example3"
-            HeaderText="An AppBarToggleButton with a font icon.">
+        <local:ControlExample x:Name="Example3" HeaderText="An AppBarToggleButton with a font icon.">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <!-- App bar button with font icon. -->
-                    <ui:AppBarToggleButton x:Name="Button3" Click="AppBarButton_Click" Label="FontIcon">
+                    <!--  App bar button with font icon.  -->
+                    <ui:AppBarToggleButton
+                        x:Name="Button3"
+                        Click="AppBarButton_Click"
+                        Label="FontIcon">
                         <ui:AppBarToggleButton.Icon>
-                            <ui:FontIcon
-                                FontFamily="Candara"
-                                Glyph="&#x03A3;" />
+                            <ui:FontIcon FontFamily="Candara" Glyph="&#x03A3;" />
                         </ui:AppBarToggleButton.Icon>
                     </ui:AppBarToggleButton>
                     <TextBlock
@@ -88,13 +90,15 @@
             </local:ControlExample.Xaml>
         </local:ControlExample>
 
-        <local:ControlExample
-            x:Name="Example4"
-            HeaderText="A three-state AppBarToggleButton with a path icon.">
+        <local:ControlExample x:Name="Example4" HeaderText="A three-state AppBarToggleButton with a path icon.">
             <local:ControlExample.Example>
                 <StackPanel Orientation="Horizontal">
-                    <!-- App bar button with path icon. -->
-                    <ui:AppBarToggleButton x:Name="Button4" Click="AppBarButton_Click" IsThreeState="True" Label="PathIcon">
+                    <!--  App bar button with path icon.  -->
+                    <ui:AppBarToggleButton
+                        x:Name="Button4"
+                        Click="AppBarButton_Click"
+                        IsThreeState="True"
+                        Label="PathIcon">
                         <ui:AppBarToggleButton.Icon>
                             <ui:PathIcon Data="F1 M 20,20L 24,10L 24,24L 5,24" />
                         </ui:AppBarToggleButton.Icon>

@@ -10,24 +10,16 @@
 
     <ui:SimpleStackPanel>
         <local:ControlExample HeaderText="A basic calendar.">
-            <Calendar
-                x:Name="calendar"
-                VerticalAlignment="Top" />
+            <Calendar x:Name="calendar" VerticalAlignment="Top" />
             <local:ControlExample.Options>
                 <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                    <CheckBox
-                        Content="IsTodayHighlighted"
-                        IsChecked="{Binding ElementName=calendar, Path=IsTodayHighlighted}" />
-                    <CheckBox
-                        Content="IsEnabled"
-                        IsChecked="{Binding ElementName=calendar, Path=IsEnabled}" />
+                    <CheckBox Content="IsTodayHighlighted" IsChecked="{Binding ElementName=calendar, Path=IsTodayHighlighted}" />
+                    <CheckBox Content="IsEnabled" IsChecked="{Binding ElementName=calendar, Path=IsEnabled}" />
                     <ComboBox
                         ui:ControlHelper.Header="SelectionMode"
                         ItemsSource="{Binding Source={x:Type CalendarSelectionMode}, Converter={StaticResource EnumValuesConverter}}"
                         SelectedItem="{Binding ElementName=calendar, Path=SelectionMode}" />
-                    <Button
-                        Click="AddDatesInPastToBlackoutDates"
-                        Content="Make past dates not selectable" />
+                    <Button Click="AddDatesInPastToBlackoutDates" Content="Make past dates not selectable" />
                 </ui:SimpleStackPanel>
             </local:ControlExample.Options>
         </local:ControlExample>
