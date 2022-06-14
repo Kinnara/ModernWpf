@@ -29,16 +29,8 @@ namespace SingleControlTest
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ContentDialog dialog = new ContentDialog
-            {
-                Title = "Title",
-                Content = "Content",
-                PrimaryButtonText = "Primary",
-                SecondaryButtonText = "Secondary",
-                CloseButtonText = "Close",
-                DefaultButton = ContentDialogButton.Primary
-            };
-            _ = dialog.ShowAsync();
+            ListView.SelectionMode = ListView.SelectionMode == SelectionMode.Multiple ?
+                SelectionMode.Single : SelectionMode.Multiple;
         }
     }
 }

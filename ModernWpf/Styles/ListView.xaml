@@ -45,21 +45,28 @@
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="true">
                         <Grid>
-                            <Rectangle
-                                x:Name="PressedBackground"
-                                Width="3.5"
-                                Margin="0,8"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Stretch"
-                                Fill="{DynamicResource ListViewItemSelectionIndicatorBrush}"
-                                Opacity="0"
-                                RadiusX="{Binding Source={StaticResource ListViewItemSelectionIndicatorCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                RadiusY="{Binding Source={StaticResource ListViewItemSelectionIndicatorCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
-                                RenderTransformOrigin="0.5,0.5">
-                                <Rectangle.RenderTransform>
-                                    <ScaleTransform x:Name="PillTransform" ScaleY="1" />
-                                </Rectangle.RenderTransform>
-                            </Rectangle>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="0.5*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="0.5*" />
+                                </Grid.RowDefinitions>
+                                <Rectangle
+                                    x:Name="PressedBackground"
+                                    Grid.Row="1"
+                                    Width="3.5"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Stretch"
+                                    Fill="{DynamicResource ListViewItemSelectionIndicatorBrush}"
+                                    Opacity="0"
+                                    RadiusX="{Binding Source={StaticResource ListViewItemSelectionIndicatorCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                    RadiusY="{Binding Source={StaticResource ListViewItemSelectionIndicatorCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+                                    RenderTransformOrigin="0.5,0.5">
+                                    <Rectangle.RenderTransform>
+                                        <ScaleTransform x:Name="PillTransform" ScaleY="1" />
+                                    </Rectangle.RenderTransform>
+                                </Rectangle>
+                            </Grid>
                             <local:ContentPresenterEx
                                 x:Name="ContentPresenter"
                                 Margin="{TemplateBinding Padding}"

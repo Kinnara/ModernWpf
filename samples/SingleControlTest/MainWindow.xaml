@@ -16,32 +16,26 @@
     <StackPanel
         Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
         Margin="4"
-        HorizontalAlignment="Center"
+        HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch">
-        <ui:SimpleStackPanel
-            Orientation="Horizontal"
-            Spacing="16">
+        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
             <ui:ToggleSwitch
                 x:Name="IsEnable"
                 MinWidth="0"
                 Header="IsEnable"
                 IsOn="True" />
-            <Button
-                Click="Button_Click"
-                Content="Test"
-                IsEnabled="{Binding IsOn, ElementName=IsEnable}"
-                Style="{DynamicResource AccentButtonStyle}" />
-            <ui:ProgressRing
-                IsIndeterminate="{Binding IsOn, ElementName=IsEnable}"
-                Value="{Binding Value, ElementName=Value}" />
-            <ui:ProgressBar
-                Width="100"
-                IsIndeterminate="{Binding IsOn, ElementName=IsEnable}"
-                Value="{Binding Value, ElementName=Value}" />
+            <Button Click="Button_Click" Content="Test" />
         </ui:SimpleStackPanel>
-        <Slider
-            x:Name="Value"
-            Maximum="100" />
-        <Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />
+        <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />-->
+        <ui:ListView
+            x:Name="ListView"
+            IsEnabled="{Binding IsOn, ElementName=IsEnable}"
+            SelectionMode="Multiple">
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+            <sys:String>Test</sys:String>
+        </ui:ListView>
     </StackPanel>
 </Window>

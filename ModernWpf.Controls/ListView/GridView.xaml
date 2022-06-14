@@ -232,8 +232,8 @@
                                     Grid.Row="0"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
-                                    Content="{TemplateBinding ui:ListViewHelper.Header}"
-                                    ContentTemplate="{TemplateBinding ui:ListViewHelper.HeaderTemplate}" />
+                                    Content="{TemplateBinding Header}"
+                                    ContentTemplate="{TemplateBinding HeaderTemplate}" />
                                 <ItemsPresenter
                                     Grid.Row="1"
                                     Margin="{TemplateBinding Padding}"
@@ -242,8 +242,8 @@
                                     Grid.Row="2"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
-                                    Content="{TemplateBinding ui:ListViewHelper.Footer}"
-                                    ContentTemplate="{TemplateBinding ui:ListViewHelper.FooterTemplate}" />
+                                    Content="{TemplateBinding Footer}"
+                                    ContentTemplate="{TemplateBinding FooterTemplate}" />
                             </Grid>
                         </ui:ScrollViewerEx>
                     </Border>

@@ -90,9 +90,16 @@ namespace ModernWpf.Controls
 
         #region UseSystemFocusVisuals
 
+        /// <summary>
+        /// Identifies the UseSystemFocusVisuals dependency property.
+        /// </summary>
         public static readonly DependencyProperty UseSystemFocusVisualsProperty =
             FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(ListViewBase));
 
+        /// <summary>
+        /// Gets or sets a value that indicates whether the control uses focus visuals that
+        /// are drawn by the system or those defined in the control template.
+        /// </summary>
         public bool UseSystemFocusVisuals
         {
             get => (bool)GetValue(UseSystemFocusVisualsProperty);
@@ -103,9 +110,15 @@ namespace ModernWpf.Controls
 
         #region FocusVisualMargin
 
+        /// <summary>
+        /// Identifies the FocusVisualMargin dependency property.
+        /// </summary>
         public static readonly DependencyProperty FocusVisualMarginProperty =
             FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(ListViewBase));
 
+        /// <summary>
+        /// Gets or sets the outer margin of the focus visual for a FrameworkElement.
+        /// </summary>
         public Thickness FocusVisualMargin
         {
             get => (Thickness)GetValue(FocusVisualMarginProperty);
@@ -116,13 +129,97 @@ namespace ModernWpf.Controls
 
         #region CornerRadius
 
+        /// <summary>
+        /// Identifies the CornerRadius dependency property.
+        /// </summary>
         public static readonly DependencyProperty CornerRadiusProperty =
             ControlHelper.CornerRadiusProperty.AddOwner(typeof(ListViewBase));
 
+        /// <summary>
+        /// Gets or sets the radius for the corners of the control's border.
+        /// </summary>
         public CornerRadius CornerRadius
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
             set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
+
+        #region Header
+
+        /// <summary>
+        /// Identifies the Header dependency property.
+        /// </summary>
+        public static readonly DependencyProperty HeaderProperty =
+            ListViewHelper.HeaderProperty.AddOwner(typeof(ListViewBase));
+
+        /// <summary>
+        /// Gets or sets the content for the list header.
+        /// </summary>
+        public object Header
+        {
+            get => GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
+        }
+
+        #endregion
+
+        #region HeaderTemplate
+
+        /// <summary>
+        /// Identifies the HeaderTemplate dependency property.
+        /// </summary>
+        public static readonly DependencyProperty HeaderTemplateProperty =
+            ListViewHelper.HeaderTemplateProperty.AddOwner(typeof(ListViewBase));
+
+        /// <summary>
+        /// Gets the DataTemplate used to display the content of the view header.
+        /// </summary>
+        public DataTemplate HeaderTemplate
+        {
+            get => (DataTemplate)GetValue(HeaderTemplateProperty);
+            set => SetValue(HeaderTemplateProperty, value);
+        }
+
+        #endregion
+
+        #region Footer
+
+        /// <summary>
+        /// Identifies the Footer dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FooterProperty =
+            ListViewHelper.FooterProperty.AddOwner(typeof(ListViewBase));
+
+        /// <summary>
+        /// Gets or sets the content for the list footer.
+        /// </summary>
+        /// <param name="listbox">The element from which to read the property value.</param>
+        /// <returns>The content of the list footer. The default value is null.</returns>
+        public object Footer
+        {
+            get => GetValue(FooterProperty);
+            set => SetValue(FooterProperty, value);
+        }
+
+        #endregion
+
+        #region FooterTemplate
+
+        /// <summary>
+        /// Identifies the FooterTemplate dependency property.
+        /// </summary>
+        public static readonly DependencyProperty FooterTemplateProperty =
+            ListViewHelper.FooterTemplateProperty.AddOwner(typeof(ListViewBase));
+
+        /// <summary>
+        /// Gets or sets the DataTemplate used to display the content of the view footer.
+        /// </summary>
+        public DataTemplate FooterTemplate
+        {
+            get => (DataTemplate)GetValue(FooterTemplateProperty);
+            set => SetValue(FooterTemplateProperty, value);
         }
 
         #endregion
