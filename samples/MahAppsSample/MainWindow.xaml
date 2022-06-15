@@ -1,36 +1,36 @@
 ﻿<Window
-    x:Name="Window"
     x:Class="MahAppsSample.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controlpages="clr-namespace:MahAppsSample.ControlPages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:samplepages="clr-namespace:SamplesCommon.SamplePages;assembly=SamplesCommon"
-    xmlns:controlpages="clr-namespace:MahAppsSample.ControlPages"
-    mc:Ignorable="d"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    x:Name="Window"
     Title="MahApps.Metro Integration"
     Width="1366"
     Height="768"
     MinWidth="500"
     MinHeight="500"
-    WindowStartupLocation="CenterScreen"
+    ui:TitleBar.ExtendViewIntoTitleBar="True"
     ui:WindowHelper.UseModernWindowStyle="True"
-    ui:TitleBar.ExtendViewIntoTitleBar="True">
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         <DataTemplate x:Key="NavigationViewHeaderTemplate">
-            <TextBlock Text="{Binding}" Margin="12,32,0,0" />
+            <TextBlock Margin="12,32,0,0" Text="{Binding}" />
         </DataTemplate>
     </Window.Resources>
 
     <Grid>
         <Grid
             x:Name="AppTitleBar"
-            VerticalAlignment="Top"
             Height="{Binding ElementName=NavView, Path=CompactPaneLength}"
+            VerticalAlignment="Top"
             Canvas.ZIndex="1"
             Visibility="{Binding ElementName=Window, Path=(ui:TitleBar.ExtendViewIntoTitleBar), Converter={StaticResource BooleanToVisibilityConverter}}">
             <Grid.ColumnDefinitions>
@@ -39,26 +39,26 @@
             </Grid.ColumnDefinitions>
             <TextBlock
                 x:Name="AppTitle"
-                Text="{Binding ElementName=Window, Path=Title}"
                 VerticalAlignment="Center"
-                Style="{StaticResource CaptionTextBlockStyle}" />
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Text="{Binding ElementName=Window, Path=Title}" />
         </Grid>
 
         <ui:NavigationView
             x:Name="NavView"
             AlwaysShowHeader="True"
+            BackRequested="NavView_BackRequested"
+            DisplayModeChanged="NavView_DisplayModeChanged"
             Header="{Binding SelectedItem.Content, RelativeSource={RelativeSource Self}, FallbackValue=' '}"
             HeaderTemplate="{StaticResource NavigationViewHeaderTemplate}"
             IsBackButtonVisible="Visible"
-            IsTitleBarAutoPaddingEnabled="False"
-            IsPaneOpen="True"
-            OpenPaneLength="240"
             IsBackEnabled="{Binding ElementName=ContentFrame, Path=CanGoBack}"
-            BackRequested="NavView_BackRequested"
+            IsPaneOpen="True"
+            IsTitleBarAutoPaddingEnabled="False"
             ItemInvoked="NavView_ItemInvoked"
-            PaneOpening="NavView_PaneOpening"
+            OpenPaneLength="240"
             PaneClosing="NavView_PaneClosing"
-            DisplayModeChanged="NavView_DisplayModeChanged">
+            PaneOpening="NavView_PaneOpening">
             <ui:NavigationView.AutoSuggestBox>
                 <ui:AutoSuggestBox PlaceholderText="Hint text" QueryIcon="Find" />
             </ui:NavigationView.AutoSuggestBox>
@@ -80,21 +80,33 @@
 
                 <ui:NavigationViewItem Content="FlipView" Tag="{x:Type controlpages:FlipViewPage}">
                     <ui:NavigationViewItem.Icon>
-                        <ui:BitmapIcon UriSource="/Assets/FlipView.png" ShowAsMonochrome="False" />
+                        <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/FlipView.png" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
                 <ui:NavigationViewItem Content="SimpleTimePicker" Tag="{x:Type controlpages:SimpleTimePickerPage}">
                     <ui:NavigationViewItem.Icon>
-                        <ui:BitmapIcon UriSource="/Assets/TimePicker.png" ShowAsMonochrome="False" />
+                        <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/TimePicker.png" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
                 <ui:NavigationViewItemHeader Content="Sample Pages" />
-                <ui:NavigationViewItem Content="Sample Page 1" Tag="{x:Type samplepages:SamplePage1}" Icon="Home"/>
-                <ui:NavigationViewItem Content="Sample Page 2" Tag="{x:Type samplepages:SamplePage2}" Icon="Keyboard"/>
-                <ui:NavigationViewItem Content="Sample Page 3" Tag="{x:Type samplepages:SamplePage3}" Icon="Library"/>
-                <ui:NavigationViewItem Content="Sample Page 4" Tag="{x:Type samplepages:SamplePage4}" Icon="Mail"/>
+                <ui:NavigationViewItem
+                    Content="Sample Page 1"
+                    Icon="Home"
+                    Tag="{x:Type samplepages:SamplePage1}" />
+                <ui:NavigationViewItem
+                    Content="Sample Page 2"
+                    Icon="Keyboard"
+                    Tag="{x:Type samplepages:SamplePage2}" />
+                <ui:NavigationViewItem
+                    Content="Sample Page 3"
+                    Icon="Library"
+                    Tag="{x:Type samplepages:SamplePage3}" />
+                <ui:NavigationViewItem
+                    Content="Sample Page 4"
+                    Icon="Mail"
+                    Tag="{x:Type samplepages:SamplePage4}" />
             </ui:NavigationView.MenuItems>
 
             <ui:Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />

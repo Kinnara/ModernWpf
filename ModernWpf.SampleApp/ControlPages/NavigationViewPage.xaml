@@ -8,31 +8,24 @@
     xmlns:local1="clr-namespace:ModernWpf.SampleApp.ControlPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="http://schemas.modernwpf.com/2019"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="NavigationView Page"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
     mc:Ignorable="d">
-
-    <Page.Template>
-        <ControlTemplate TargetType="Page">
-            <ScrollViewer Background="{TemplateBinding Background}">
-                <ContentPresenter Margin="{StaticResource ControlPageContentMargin}" Content="{TemplateBinding Content}" />
-            </ScrollViewer>
-        </ControlTemplate>
-    </Page.Template>
-
-    <Page.Resources>
+    <ui:Page.Resources>
         <converters:MenuItemTemplateSelector x:Key="selector">
             <converters:MenuItemTemplateSelector.ItemTemplate>
                 <DataTemplate>
-                    <muxc:NavigationViewItem Content="{Binding Name, Mode=OneTime}" ToolTipService.ToolTip="{Binding Tooltip, Mode=OneTime}">
-                        <muxc:NavigationViewItem.Icon>
+                    <ui:NavigationViewItem Content="{Binding Name, Mode=OneTime}" ToolTipService.ToolTip="{Binding Tooltip, Mode=OneTime}">
+                        <ui:NavigationViewItem.Icon>
                             <ui:SymbolIcon Symbol="{Binding Glyph, Mode=OneTime}" />
-                        </muxc:NavigationViewItem.Icon>
-                    </muxc:NavigationViewItem>
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
                 </DataTemplate>
             </converters:MenuItemTemplateSelector.ItemTemplate>
         </converters:MenuItemTemplateSelector>
-    </Page.Resources>
+    </ui:Page.Resources>
 
     <StackPanel ui:ThemeManager.HasThemeResources="True">
         <!--  For the top nav collapsing to left hamburger sample  -->
@@ -77,10 +70,12 @@
             </ui:ResourceDictionaryEx>
         </StackPanel.Resources>
 
-        <sc:ControlExample
+        <local:ControlExample
             VerticalAlignment="Top"
             HorizontalContentAlignment="Stretch"
-            HeaderText="NavigationView with default PaneDisplayMode">
+            HeaderText="NavigationView with default PaneDisplayMode"
+            WebViewHeight="250"
+            XamlSource="NavigationView\NavigationViewSample1.txt">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -121,12 +116,14 @@
                     <ui:Frame x:Name="contentFrame5" Margin="0,0,0,0" />
                 </muxc:NavigationView>
             </Grid>
-        </sc:ControlExample>
+        </local:ControlExample>
 
-        <sc:ControlExample
+        <local:ControlExample
             VerticalAlignment="Top"
             HorizontalContentAlignment="Stretch"
-            HeaderText="NavigationView with PaneDisplayMode set to Top">
+            HeaderText="NavigationView with PaneDisplayMode set to Top"
+            WebViewHeight="200"
+            XamlSource="NavigationView\NavigationViewSample2.txt">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -156,12 +153,14 @@
                     <ui:Frame x:Name="contentFrame6" />
                 </muxc:NavigationView>
             </Grid>
-        </sc:ControlExample>
+        </local:ControlExample>
 
-        <sc:ControlExample
+        <local:ControlExample
             VerticalAlignment="Top"
             HorizontalContentAlignment="Stretch"
-            HeaderText="NavigationView that switches pane orientation based on window width">
+            HeaderText="NavigationView that switches pane orientation based on window width"
+            WebViewHeight="450"
+            XamlSource="NavigationView\NavigationViewSample3.txt">
             <Grid x:Name="InnerGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -192,12 +191,15 @@
                     </muxc:NavigationView.Content>
                 </muxc:NavigationView>
             </Grid>
-        </sc:ControlExample>
+        </local:ControlExample>
 
-        <sc:ControlExample
+        <local:ControlExample
             VerticalAlignment="Top"
             HorizontalContentAlignment="Stretch"
-            HeaderText="Tying selection and focus - Tabs">
+            CSharpSource="NavigationView\NavigationViewSample4_cs.txt"
+            HeaderText="Tying selection and focus - Tabs"
+            WebViewHeight="800"
+            XamlSource="NavigationView\NavigationViewSample4_xaml.txt">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -227,12 +229,15 @@
                     <ui:Frame x:Name="contentFrame7" />
                 </muxc:NavigationView>
             </Grid>
-        </sc:ControlExample>
+        </local:ControlExample>
 
-        <sc:ControlExample
+        <local:ControlExample
             VerticalAlignment="Top"
             HorizontalContentAlignment="Stretch"
-            HeaderText="Data binding">
+            CSharpSource="NavigationView\NavigationViewSample5_cs.txt"
+            HeaderText="Data binding"
+            WebViewHeight="950"
+            XamlSource="NavigationView\NavigationViewSample5_xaml.txt">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -257,13 +262,14 @@
                     </StackPanel>
                 </muxc:NavigationView>
             </Grid>
-        </sc:ControlExample>
+        </local:ControlExample>
 
-        <sc:ControlExample
+        <local:ControlExample
             VerticalAlignment="Top"
             HorizontalContentAlignment="Stretch"
-            HeaderText="Hierarchical NavigationView">
-            <sc:ControlExample.Options>
+            HeaderText="Hierarchical NavigationView"
+            XamlSource="NavigationView\NavigationViewSample9_xaml.txt">
+            <local:ControlExample.Options>
                 <StackPanel>
                     <TextBlock Margin="0,12,0,0" Text="PanePosition:" />
                     <RadioButton
@@ -283,7 +289,7 @@
                         Content="LeftCompact mode"
                         GroupName="hierachicalGroup" />
                 </StackPanel>
-            </sc:ControlExample.Options>
+            </local:ControlExample.Options>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -363,13 +369,14 @@
                     <ui:Frame x:Name="contentFrame8" />
                 </muxc:NavigationView>
             </Grid>
-        </sc:ControlExample>
+        </local:ControlExample>
 
-        <sc:ControlExample
+        <local:ControlExample
             VerticalAlignment="Top"
             HorizontalContentAlignment="Stretch"
-            HeaderText="API in action">
-            <sc:ControlExample.Options>
+            HeaderText="API in action"
+            WebViewHeight="250">
+            <local:ControlExample.Options>
                 <StackPanel>
                     <CheckBox
                         x:Name="settingsCheck"
@@ -443,7 +450,7 @@
 
                 </StackPanel>
 
-            </sc:ControlExample.Options>
+            </local:ControlExample.Options>
             <muxc:NavigationView
                 x:Name="nvSample"
                 Height="540"
@@ -507,6 +514,6 @@
 
                 <ui:Frame x:Name="contentFrame" />
             </muxc:NavigationView>
-        </sc:ControlExample>
+        </local:ControlExample>
     </StackPanel>
 </ui:Page>

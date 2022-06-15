@@ -1466,6 +1466,7 @@ namespace ModernWpf.Controls
             UpdateBackAndCloseButtonsVisibility();
             UpdatePaneLayout();
             UpdatePaneOverlayGroup();
+            UpdatePaneButtonsWidths();
         }
 
         void OnItemsContainerSizeChanged(object sender, SizeChangedEventArgs e)

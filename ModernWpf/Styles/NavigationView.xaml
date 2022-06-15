@@ -91,8 +91,6 @@
 
     <sys:Double x:Key="PaneToggleButtonSize">40</sys:Double>
 
-    <StreamGeometry x:Key="NavigationViewItemExpandedPath">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
-
     <Style
         x:Key="PaneToggleButtonStyle"
         BasedOn="{StaticResource DefaultButtonStyle}"
@@ -188,6 +186,123 @@
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-4,0" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+    </Style>
+
+    <Style
+        x:Key="NavigationViewOverflowButtonStyleWhenPaneOnTop"
+        BasedOn="{StaticResource DefaultButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource NavigationViewItemBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource NavigationViewItemBorderThickness}" />
+        <Setter Property="Height" Value="{DynamicResource TopNavigationViewOverflowButtonHeight}" />
+        <Setter Property="Width" Value="{DynamicResource TopNavigationViewOverflowButtonWidth}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="True" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid
+                        x:Name="RootGrid"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
+                        Background="{TemplateBinding Background}">
+                        <Rectangle
+                            x:Name="PointerRectangle"
+                            Fill="Transparent"
+                            Visibility="Collapsed" />
+                        <local:FontIcon
+                            x:Name="Icon"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Glyph="&#xFC2D;"
+                            FontFamily="{DynamicResource FluentSystemIcons}"
+                            FontSize="16"
+                            Foreground="{TemplateBinding Foreground}"
+                            IsHitTestVisible="False" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!--  PointerOver  -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
+                        </Trigger>
+                        <!--  Pressed  -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPressed}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
+                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
+                        </Trigger>
+                        <!--  Disabled  -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="NavigationViewOverflowButtonNoLabelStyleWhenPaneOnTop"
+        BasedOn="{StaticResource DefaultButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource NavigationViewItemBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource NavigationViewItemBorderThickness}" />
+        <Setter Property="Height" Value="{DynamicResource TopNavigationViewOverflowButtonHeight}" />
+        <Setter Property="Width" Value="{DynamicResource TopNavigationViewOverflowButtonWidth}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="True" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid
+                        x:Name="RootGrid"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
+                        Background="{TemplateBinding Background}">
+                        <Rectangle x:Name="PointerRectangle" Fill="Transparent" />
+                        <local:FontIcon
+                            x:Name="Icon"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Glyph="&#xFC2D;"
+                            FontFamily="{DynamicResource FluentSystemIcons}"
+                            FontSize="20"
+                            Foreground="{TemplateBinding Foreground}"
+                            IsHitTestVisible="False" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!--  PointerOver  -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
+                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
+                        </Trigger>
+                        <!--  Pressed  -->
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPressed}" />
+                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
+                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
+                        </Trigger>
+                        <!--  Disabled  -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style
