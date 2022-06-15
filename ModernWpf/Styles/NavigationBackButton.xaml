@@ -11,44 +11,45 @@
     </ResourceDictionary.MergedDictionaries>
 
     <sys:Double x:Key="NavigationBackButtonWidth">40</sys:Double>
-    <sys:Double x:Key="NavigationBackButtonHeight">40</sys:Double>
+    <sys:Double x:Key="NavigationBackButtonHeight">36</sys:Double>
 
     <Style
         x:Key="NavigationBackButtonNormalStyle"
         BasedOn="{StaticResource DefaultButtonStyle}"
         TargetType="Button">
         <Setter Property="Background" Value="{DynamicResource NavigationViewBackButtonBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
+        <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
+        <Setter Property="FontFamily" Value="{DynamicResource FluentSystemIcons}" />
         <Setter Property="FontSize" Value="16" />
         <Setter Property="Height" Value="{DynamicResource NavigationBackButtonHeight}" />
         <Setter Property="Width" Value="{DynamicResource NavigationBackButtonWidth}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Margin" Value="4,2" />
+        <Setter Property="Content" Value="&#xF15C;" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="0" />
-        <Setter Property="Content">
-            <Setter.Value>
-                <StreamGeometry>M 20 10.625 L 2.441406 10.625 L 10.126953 18.310547 L 9.248047 19.189453 L 0.058594 10 L 9.248047 0.810547 L 10.126953 1.689453 L 2.441406 9.375 L 20 9.375 Z</StreamGeometry>
-            </Setter.Value>
-        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid
+                    <Border
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <local:FontIconFallback
+                        <local:FontIcon
                             x:Name="Content"
+                            Width="16"
+                            Height="16"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Data="{TemplateBinding Content}"
                             FontFamily="{TemplateBinding FontFamily}"
                             FontSize="{TemplateBinding FontSize}"
-                            Foreground="{TemplateBinding Foreground}" />
-                    </Grid>
+                            Foreground="{TemplateBinding Foreground}"
+                            Glyph="{TemplateBinding Content}" />
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource NavigationViewButtonBackgroundPointerOver}" />
@@ -66,13 +67,12 @@
             </Setter.Value>
         </Setter>
     </Style>
+
     <Style
         x:Key="NavigationBackButtonSmallStyle"
         BasedOn="{StaticResource NavigationBackButtonNormalStyle}"
         TargetType="Button">
-        <Setter Property="FontSize" Value="20" />
-        <Setter Property="Height" Value="32" />
-        <Setter Property="Width" Value="32" />
+        <Setter Property="Margin" Value="4,2,0,2" />
     </Style>
 
 </ResourceDictionary>

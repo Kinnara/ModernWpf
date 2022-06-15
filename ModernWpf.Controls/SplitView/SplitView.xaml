@@ -590,35 +590,39 @@
                             <ui:SimpleVisualStateManager />
                         </VisualStateManager.CustomVisualStateManager>
                         <!--  Pane Content Area  -->
-                        <Grid
+                        <Border
                             x:Name="PaneRoot"
                             Grid.ColumnSpan="2"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLength}"
                             HorizontalAlignment="Left"
                             Background="{TemplateBinding PaneBackground}"
                             Canvas.ZIndex="1"
+                            CornerRadius="{TemplateBinding CornerRadius}"
                             KeyboardNavigation.TabIndex="0"
                             KeyboardNavigation.TabNavigation="Local"
                             Visibility="Collapsed">
-                            <Grid.Clip>
+                            <Border.Clip>
                                 <RectangleGeometry x:Name="PaneClipRectangle">
                                     <RectangleGeometry.Transform>
                                         <TranslateTransform x:Name="PaneClipRectangleTransform" />
                                     </RectangleGeometry.Transform>
                                 </RectangleGeometry>
-                            </Grid.Clip>
-                            <Grid.RenderTransform>
+                            </Border.Clip>
+                            <Border.RenderTransform>
                                 <TranslateTransform x:Name="PaneTransform" />
-                            </Grid.RenderTransform>
-                            <Border ui:BorderHelper.Child="{TemplateBinding Pane}" />
-                            <Rectangle
-                                x:Name="HCPaneBorder"
-                                Width="1"
-                                HorizontalAlignment="Right"
-                                Fill="{DynamicResource SystemControlForegroundTransparentBrush}"
-                                Visibility="Collapsed" />
-
-                        </Grid>
+                            </Border.RenderTransform>
+                            <Grid>
+                                <Border ui:BorderHelper.Child="{TemplateBinding Pane}" />
+                                <Rectangle
+                                    x:Name="HCPaneBorder"
+                                    Width="1"
+                                    HorizontalAlignment="Right"
+                                    Fill="{DynamicResource SystemControlForegroundTransparentBrush}"
+                                    Visibility="Collapsed" />
+                            </Grid>
+                        </Border>
                         <!--  Content Area  -->
                         <Grid x:Name="ContentRoot" Grid.ColumnSpan="2">
                             <Grid.RenderTransform>

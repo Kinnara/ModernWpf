@@ -44,7 +44,7 @@ namespace ModernWpf.Controls.Primitives
                 "CornerRadius",
                 typeof(CornerRadius),
                 typeof(ClipHelper),
-                new FrameworkPropertyMetadata(OnCornerRadiusChanged));
+                new PropertyMetadata(OnCornerRadiusChanged));
 
         private static void OnCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

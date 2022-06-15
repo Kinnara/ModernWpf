@@ -150,5 +150,66 @@ namespace ModernWpf.Controls
         }
 
         #endregion
+
+        #region OpenPaneWidth
+
+        private static readonly DependencyPropertyKey OpenPaneWidthPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(OpenPaneWidth),
+                typeof(double),
+                typeof(NavigationViewTemplateSettings),
+                null);
+
+        public static readonly DependencyProperty OpenPaneWidthProperty =
+            OpenPaneWidthPropertyKey.DependencyProperty;
+
+        public double OpenPaneWidth
+        {
+            get => (double)GetValue(OpenPaneWidthProperty);
+            internal set => SetValue(OpenPaneWidthPropertyKey, value);
+        }
+
+        #endregion
+
+        #region PaneToggleButtonWidth
+
+        private static readonly DependencyPropertyKey PaneToggleButtonWidthPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(PaneToggleButtonWidth),
+                typeof(double),
+                typeof(NavigationViewTemplateSettings),
+                null);
+
+        public static readonly DependencyProperty PaneToggleButtonWidthProperty =
+            PaneToggleButtonWidthPropertyKey.DependencyProperty;
+
+        public double PaneToggleButtonWidth
+        {
+            get => (double)GetValue(PaneToggleButtonWidthProperty);
+            internal set => SetValue(PaneToggleButtonWidthPropertyKey, value);
+        }
+
+        #endregion
+
+        #region SmallerPaneToggleButtonWidth
+
+        private static readonly DependencyPropertyKey SmallerPaneToggleButtonWidthPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(SmallerPaneToggleButtonWidth),
+                typeof(double),
+                typeof(NavigationViewTemplateSettings),
+                null);
+
+        public static readonly DependencyProperty SmallerPaneToggleButtonWidthProperty =
+            SmallerPaneToggleButtonWidthPropertyKey.DependencyProperty;
+
+        public double SmallerPaneToggleButtonWidth
+        {
+            get => (double)GetValue(SmallerPaneToggleButtonWidthProperty);
+            internal set => SetValue(SmallerPaneToggleButtonWidthPropertyKey, value);
+        }
+
+        #endregion
+
     }
 }

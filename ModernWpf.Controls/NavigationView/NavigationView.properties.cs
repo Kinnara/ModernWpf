@@ -4,11 +4,31 @@
 using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
     partial class NavigationView
     {
+        #region CornerRadius
+
+        /// <summary>
+        /// Identifies the CornerRadius dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(NavigationView));
+
+        /// <summary>
+        /// Gets or sets the radius for the corners of the control's border.
+        /// </summary>
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
+
         #region IsPaneOpen
 
         public static readonly DependencyProperty IsPaneOpenProperty =

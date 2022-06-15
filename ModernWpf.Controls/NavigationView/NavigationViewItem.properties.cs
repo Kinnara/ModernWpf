@@ -32,6 +32,29 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region InfoBadge
+
+        public static readonly DependencyProperty InfoBadgeProperty =
+            DependencyProperty.Register(
+                nameof(InfoBadge),
+                typeof(UIElement),
+                typeof(NavigationViewItem),
+                new PropertyMetadata(OnInfoBadgePropertyChanged));
+
+        public UIElement InfoBadge
+        {
+            get => (UIElement)GetValue(InfoBadgeProperty);
+            set => SetValue(InfoBadgeProperty, value);
+        }
+
+        private static void OnInfoBadgePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            var owner = (NavigationViewItem)sender;
+            owner.OnInfoBadgePropertyChanged(args);
+        }
+
+        #endregion
+
         #region CompactPaneLength
 
         private static readonly DependencyPropertyKey CompactPaneLengthPropertyKey =

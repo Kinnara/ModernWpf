@@ -50,6 +50,25 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region CornerRadius
+
+        /// <summary>
+        /// Identifies the CornerRadius dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(SplitView));
+
+        /// <summary>
+        /// Gets or sets the radius for the corners of the control's border.
+        /// </summary>
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
+
         #region DisplayMode
 
         public static readonly DependencyProperty DisplayModeProperty =

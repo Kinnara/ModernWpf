@@ -754,6 +754,7 @@ namespace ModernWpf.Controls
             UpdateVisualState();
             UpdatePaneTitleMargins();
             UpdatePaneLayout();
+            UpdatePaneOverlayGroup();
         }
 
         void UpdateRepeaterItemsSource(bool forceSelectionModelUpdate)
@@ -1459,15 +1460,28 @@ namespace ModernWpf.Controls
         void OnSizeChanged(object sender, SizeChangedEventArgs args)
         {
             var width = args.NewSize.Width;
+            UpdateOpenPaneWidth(width);
             UpdateAdaptiveLayout(width);
             UpdateTitleBarPadding();
             UpdateBackAndCloseButtonsVisibility();
             UpdatePaneLayout();
+            UpdatePaneOverlayGroup();
         }
 
         void OnItemsContainerSizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdatePaneLayout();
+        }
+
+        void UpdateOpenPaneWidth(double width)
+        {
+            if (!IsTopNavigationView() && m_rootSplitView != null)
+            {
+                var m_openPaneWidth = Math.Max(0.0, Math.Min(width, OpenPaneLength));
+
+                var templateSettings = GetTemplateSettings();
+                templateSettings.OpenPaneWidth = m_openPaneWidth;
+            }
         }
 
         // forceSetDisplayMode: On first call to SetDisplayMode, force setting to initial values
@@ -1847,6 +1861,8 @@ namespace ModernWpf.Controls
 
         void UpdatePaneButtonsWidths()
         {
+            var templateSettings = GetTemplateSettings();
+
             double newButtonWidths;
             {
                 double init()
@@ -1860,18 +1876,21 @@ namespace ModernWpf.Controls
                 newButtonWidths = init();
             }
 
-            if (m_backButton is { } backButton)
-            {
-                backButton.Width = newButtonWidths;
-            }
-            if (m_paneToggleButton is { } paneToggleButton)
-            {
-                paneToggleButton.MinWidth = newButtonWidths;
-                if (paneToggleButton.GetTemplateChild<ColumnDefinition>(c_paneToggleButtonIconGridColumnName) is { } paneToggleButtonIconColumn)
-                {
-                    paneToggleButtonIconColumn.Width = new GridLength(newButtonWidths);
-                }
-            }
+            templateSettings.PaneToggleButtonWidth = newButtonWidths;
+            templateSettings.SmallerPaneToggleButtonWidth = Math.Max(0, newButtonWidths-8);
+
+            //if (m_backButton is { } backButton)
+            //{
+            //    backButton.Width = newButtonWidths;
+            //}
+            //if (m_paneToggleButton is { } paneToggleButton)
+            //{
+            //    paneToggleButton.MinWidth = newButtonWidths;
+            //    if (paneToggleButton.GetTemplateChild<ColumnDefinition>(c_paneToggleButtonIconGridColumnName) is { } paneToggleButtonIconColumn)
+            //    {
+            //        paneToggleButtonIconColumn.Width = new GridLength(newButtonWidths);
+            //    }
+            //}
         }
 
         void OnBackButtonClicked(object sender, RoutedEventArgs args)
@@ -3515,6 +3534,22 @@ namespace ModernWpf.Controls
             }
         }
 
+        void UpdatePaneOverlayGroup()
+        {
+            var splitView = m_rootSplitView;
+            if (splitView != null)
+            {
+                if (IsPaneOpen && (splitView.DisplayMode == SplitViewDisplayMode.CompactOverlay || splitView.DisplayMode == SplitViewDisplayMode.Overlay))
+                {
+                    VisualStateManager.GoToState(this, "PaneOverlaying", true /*useTransitions*/);
+                }
+                else
+                {
+                    VisualStateManager.GoToState(this, "PaneNotOverlaying", true /*useTransitions*/);
+                }
+            }
+        }
+
         void UpdateVisualState(bool useTransitions = false)
         {
             if (m_appliedTemplate)
@@ -4280,6 +4315,7 @@ namespace ModernWpf.Controls
             UpdatePaneTabFocusNavigation();
             UpdateSettingsItemToolTip();
             UpdatePaneTitleFrameworkElementParents();
+            UpdatePaneOverlayGroup();
 
             if (SharedHelpers.IsThemeShadowAvailable())
             {

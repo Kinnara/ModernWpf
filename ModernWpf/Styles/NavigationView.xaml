@@ -10,48 +10,73 @@
         <ResourceDictionary Source="TextStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Thickness x:Key="NavigationViewAutoSuggestBoxMargin">10,0,16,0</Thickness>
-    <Thickness x:Key="TopNavigationViewAutoSuggestBoxMargin">12,0,12,0</Thickness>
-    <sys:Double x:Key="PaneToggleButtonSize">40</sys:Double>
-    <sys:Double x:Key="PaneToggleButtonHeight">40</sys:Double>
+    <Thickness x:Key="NavigationViewAutoSuggestBoxMargin">16,0</Thickness>
+    <Thickness x:Key="TopNavigationViewAutoSuggestBoxMargin">4,0</Thickness>
+    <sys:Double x:Key="PaneToggleButtonHeight">36</sys:Double>
     <sys:Double x:Key="PaneToggleButtonWidth">40</sys:Double>
-    <sys:Double x:Key="NavigationViewCompactPaneLength">40</sys:Double>
-    <sys:Double x:Key="NavigationViewTopPaneHeight">40</sys:Double>
-    <sys:Double x:Key="TopNavigationViewPaneCustomContentMinWidth">40</sys:Double>
-    <sys:Double x:Key="TopNavigationViewOverflowButtonWidth">48</sys:Double>
+    <sys:Double x:Key="NavigationViewCompactPaneLength">48</sys:Double>
+    <sys:Double x:Key="NavigationViewIconBoxWidth">40</sys:Double>
+    <sys:Double x:Key="NavigationViewTopPaneHeight">48</sys:Double>
+    <sys:Double x:Key="NavigationViewAutoSuggestAreaHeight">40</sys:Double>
+    <sys:Double x:Key="TopNavigationViewPaneCustomContentMinWidth">48</sys:Double>
+    <sys:Double x:Key="TopNavigationViewOverflowButtonWidth">40</sys:Double>
     <sys:Double x:Key="TopNavigationViewOverflowButtonHeight">40</sys:Double>
+    <sys:Double x:Key="TopNavigationViewSettingsButtonWidth">40</sys:Double>
+    <sys:Double x:Key="TopNavigationViewSettingsButtonHeight">40</sys:Double>
 
-    <sys:Double x:Key="NavigationViewItemOnLeftMinHeight">40</sys:Double>
-    <sys:Double x:Key="NavigationViewPaneHeaderRowMinHeight">4</sys:Double>
+    <sys:Double x:Key="NavigationViewItemOnLeftMinHeight">36</sys:Double>
+    <sys:Double x:Key="NavigationViewPaneHeaderRowMinHeight">40</sys:Double>
+    <sys:Double x:Key="NavigationViewItemOnLeftIconBoxHeight">16</sys:Double>
+    <sys:Double x:Key="NavigationViewSelectionIndicatorWidth">3</sys:Double>
+    <sys:Double x:Key="NavigationViewSelectionIndicatorHeight">16</sys:Double>
+    <sys:Double x:Key="NavigationViewSelectionIndicatorRadius">2</sys:Double>
 
     <sys:Double x:Key="NavigationViewItemSeparatorHeight">1</sys:Double>
     <sys:Double x:Key="TopNavigationViewItemSeparatorWidth">1</sys:Double>
 
-    <Thickness x:Key="NavigationViewToggleBorderThickness">1</Thickness>
+    <Thickness x:Key="NavigationViewToggleBorderThickness">0</Thickness>
     <Thickness x:Key="NavigationViewItemBorderThickness">1</Thickness>
-    <Thickness x:Key="NavigationViewItemOnLeftIconBoxMargin">12,0,12,0</Thickness>
-    <Thickness x:Key="NavigationViewItemInnerHeaderMargin">10,0,0,0</Thickness>
-    <Thickness x:Key="NavigationViewMinimalHeaderMargin">8,5,0,0</Thickness>
-    <Thickness x:Key="NavigationViewHeaderMargin">12,5,0,11</Thickness>
+    <Thickness x:Key="NavigationViewItemOnLeftIconBoxMargin">0</Thickness>
+    <Thickness x:Key="NavigationViewItemButtonMargin">4,2</Thickness>
+    <Thickness x:Key="NavigationViewItemButtonNormalMargin">0,2</Thickness>
+    <Thickness x:Key="NavigationViewItemInnerHeaderMargin">16,0</Thickness>
+    <Thickness x:Key="TopNavigationViewItemInnerHeaderMargin">12,0</Thickness>
+    <Thickness x:Key="NavigationViewMinimalHeaderMargin">-24,44,0,0</Thickness>
+    <Thickness x:Key="NavigationViewButtonHolderGridMargin">0,4</Thickness>
+    <Thickness x:Key="NavigationViewPaneContentGridMargin">-1,3</Thickness>
+    <Thickness x:Key="NavigationViewContentGridBorderThickness">1,1,0,0</Thickness>
+    <Thickness x:Key="NavigationViewMinimalContentGridBorderThickness">0,1,0,0</Thickness>
+    <Thickness x:Key="TopNavigationViewContentGridBorderThickness">0,1,0,0</Thickness>
+    <Thickness x:Key="TopNavigationViewTopNavGridMargin">4,0</Thickness>
+    <Thickness x:Key="NavigationViewBorderThickness">1</Thickness>
+    <Thickness x:Key="NavigationViewHeaderMargin">56,44,0,0</Thickness>
+    <Thickness x:Key="NavigationViewContentPresenterMargin">0</Thickness>
+    <Thickness x:Key="NavigationViewContentMargin">0</Thickness>
+    <Thickness x:Key="NavigationViewMinimalContentMargin">0</Thickness>
+    <Thickness x:Key="TopNavigationViewContentMargin">0</Thickness>
     <Thickness x:Key="NavigationViewPaneTitlePresenterMargin">8,4,0,0</Thickness>
     <Thickness x:Key="NavigationViewItemMargin">0</Thickness>
     <Thickness x:Key="TopNavigationViewItemMargin">0</Thickness>
-    <Thickness x:Key="NavigationViewItemSeparatorMargin">16,10</Thickness>
-    <Thickness x:Key="NavigationViewCompactItemSeparatorMargin">16,10</Thickness>
-    <Thickness x:Key="TopNavigationViewItemSeparatorMargin">10,0</Thickness>
+    <Thickness x:Key="NavigationViewItemSeparatorMargin">0,3,0,4</Thickness>
+    <Thickness x:Key="NavigationViewCompactItemSeparatorMargin">0,3,0,4</Thickness>
+    <Thickness x:Key="TopNavigationViewItemSeparatorMargin">3,0,4,0</Thickness>
     <Thickness x:Key="TopNavigationViewOverflowButtonMargin">0</Thickness>
-    <Thickness x:Key="NavigationViewItemContentPresenterMargin">0,0,20,0</Thickness>
+    <Thickness x:Key="NavigationViewItemContentPresenterMargin">4,-1,8,-1</Thickness>
     <Thickness x:Key="NavigationViewCompactItemContentPresenterMargin">0,0,0,0</Thickness>
-    <Thickness x:Key="TopNavigationViewItemContentPresenterMargin">8,0,16,0</Thickness>
+    <Thickness x:Key="TopNavigationViewItemContentPresenterMargin">8,-1,12,-1</Thickness>
     <Thickness x:Key="TopNavigationViewItemContentOnlyContentPresenterMargin">12,0</Thickness>
-    <Thickness x:Key="NavigationViewItemExpandChevronMargin">-20,0,6,0</Thickness>
+    <Thickness x:Key="NavigationViewItemExpandChevronMargin">0,0,-14,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemExpandChevronMargin">-16,0,0,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemIconOnlyExpandChevronMargin">0,0,0,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemContentOnlyExpandChevronMargin">-12,0,0,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemOnOverflowContentPresenterMargin">12,0,20,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemOnOverflowNoIconContentPresenterMargin">16,0,20,0</Thickness>
-    <Thickness x:Key="TopNavigationViewItemOnOverflowExpandChevronMargin">-4,0,6,0</Thickness>
+    <Thickness x:Key="TopNavigationViewItemOnOverflowExpandChevronMargin">-4,0,-8,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemOnOverflowExpandChevronPadding">12,0,12,0</Thickness>
+
+    <CornerRadius x:Key="NavigationViewContentGridCornerRadius">8,0,0,0</CornerRadius>
+    <CornerRadius x:Key="TopNavigationViewContentGridCornerRadius">0</CornerRadius>
+    <CornerRadius x:Key="NavigationViewMinimalContentGridCornerRadius">0</CornerRadius>
 
     <!--  The two resources below must be defined at the app level in order to take effect.  -->
     <Thickness x:Key="TopNavigationViewOverflowMenuPadding">0,8</Thickness>
@@ -61,8 +86,11 @@
         The resource below must be defined at the app level in order to affect the expand/collapse chevron font size
         used in the Top NavigationView's Overflow menu.
     -->
-    <sys:Double x:Key="NavigationViewItemExpandedGlyphFontSize">12.0</sys:Double>
-    <sys:String x:Key="NavigationViewItemExpandedGlyph">&#xE70D;</sys:String>
+    <sys:Double x:Key="NavigationViewItemExpandedGlyphFontSize">12</sys:Double>
+    <sys:String x:Key="NavigationViewItemExpandedGlyph">&#xF2A3;</sys:String>
+
+    <sys:Double x:Key="PaneToggleButtonSize">40</sys:Double>
+
     <StreamGeometry x:Key="NavigationViewItemExpandedPath">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
 
     <Style
@@ -70,79 +98,76 @@
         BasedOn="{StaticResource DefaultButtonStyle}"
         TargetType="Button">
         <Setter Property="FontSize" Value="16" />
-        <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
+        <Setter Property="FontFamily" Value="{DynamicResource FluentSystemIcons}" />
         <Setter Property="MinHeight" Value="{StaticResource PaneToggleButtonHeight}" />
         <Setter Property="MinWidth" Value="{StaticResource PaneToggleButtonWidth}" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
-        <Setter Property="BorderThickness" Value="{DynamicResource NavigationViewToggleBorderThickness}" />
+        <Setter Property="BorderThickness" Value="{StaticResource NavigationViewToggleBorderThickness}" />
+        <Setter Property="Padding" Value="{StaticResource NavigationViewItemButtonMargin}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid
+                    <Border
                         x:Name="LayoutRoot"
                         Height="{TemplateBinding MinHeight}"
-                        MinWidth="{TemplateBinding MinWidth}"
                         Margin="{TemplateBinding Padding}"
                         HorizontalAlignment="Stretch"
                         Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition primitives:ColumnDefinitionHelper.PixelWidth="{TemplateBinding MinWidth}" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition primitives:RowDefinitionHelper.PixelHeight="{DynamicResource PaneToggleButtonHeight}" />
-                        </Grid.RowDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition primitives:RowDefinitionHelper.PixelHeight="{DynamicResource PaneToggleButtonHeight}" />
+                            </Grid.RowDefinitions>
 
-                        <Viewbox
-                            x:Name="IconHost"
-                            Width="16"
-                            Height="16"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <Border Width="{TemplateBinding MinWidth}">
+                                <local:FontIcon
+                                    x:Name="Icon"
+                                    Width="16"
+                                    Height="16"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Glyph="&#xF4E1;" />
+                            </Border>
 
-                            <local:FontIconFallback
-                                x:Name="Icon"
-                                Data="M 20 6.25 L 0 6.25 L 0 5 L 20 5 L 20 6.25 Z M 20 16.25 L 0 16.25 L 0 15 L 20 15 L 20 16.25 Z M 20 11.25 L 0 11.25 L 0 10 L 20 10 L 20 11.25 Z"
+                            <local:ContentPresenterEx
+                                x:Name="ContentPresenter"
+                                Grid.Column="1"
+                                Margin="4,0,0,0"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}"
                                 FontSize="{TemplateBinding FontSize}" />
-
-                        </Viewbox>
-
-                        <ContentPresenter
-                            x:Name="ContentPresenter"
-                            Grid.Column="1"
-                            VerticalAlignment="Center"
-                            Content="{TemplateBinding Content}"
-                            TextElement.FontSize="{TemplateBinding FontSize}" />
-
-                        <Border
-                            x:Name="RevealBorder"
-                            Grid.ColumnSpan="2"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}" />
-                    </Grid>
+                        </Grid>
+                    </Border>
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewButtonBackgroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource NavigationViewButtonForegroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewButtonForegroundPointerOver}" />
                             <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewButtonForegroundPointerOver}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewButtonBackgroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource NavigationViewButtonForegroundPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewButtonForegroundPressed}" />
                             <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewButtonForegroundPressed}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewButtonBackgroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource NavigationViewButtonForegroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewButtonForegroundDisabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -154,35 +179,33 @@
         x:Key="NavigationViewPaneSearchButtonStyle"
         BasedOn="{StaticResource DefaultButtonStyle}"
         TargetType="Button">
-        <Setter Property="MinHeight" Value="40" />
-        <Setter Property="ContentTemplate">
-            <Setter.Value>
-                <DataTemplate>
-                    <local:FontIconFallback Data="M 13.125 0 C 13.75651 0 14.365234 0.081381 14.951172 0.244141 C 15.537109 0.406902 16.083984 0.638021 16.591797 0.9375 C 17.099609 1.23698 17.563477 1.59668 17.983398 2.016602 C 18.40332 2.436523 18.76302 2.900391 19.0625 3.408203 C 19.361979 3.916016 19.593098 4.462891 19.755859 5.048828 C 19.918619 5.634766 20 6.24349 20 6.875 C 20 7.506511 19.918619 8.115234 19.755859 8.701172 C 19.593098 9.287109 19.361979 9.833984 19.0625 10.341797 C 18.76302 10.849609 18.40332 11.313477 17.983398 11.733398 C 17.563477 12.15332 17.099609 12.513021 16.591797 12.8125 C 16.083984 13.111979 15.537109 13.3431 14.951172 13.505859 C 14.365234 13.66862 13.75651 13.75 13.125 13.75 C 12.311197 13.75 11.531575 13.613281 10.786133 13.339844 C 10.040689 13.066406 9.355469 12.672526 8.730469 12.158203 L 1.064453 19.814453 C 0.940755 19.93815 0.794271 20 0.625 20 C 0.455729 20 0.309245 19.93815 0.185547 19.814453 C 0.061849 19.690756 0 19.544271 0 19.375 C 0 19.205729 0.061849 19.059244 0.185547 18.935547 L 7.841797 11.269531 C 7.327474 10.644531 6.933594 9.959311 6.660156 9.213867 C 6.386719 8.468425 6.25 7.688803 6.25 6.875 C 6.25 6.24349 6.33138 5.634766 6.494141 5.048828 C 6.6569 4.462891 6.888021 3.916016 7.1875 3.408203 C 7.486979 2.900391 7.84668 2.436523 8.266602 2.016602 C 8.686523 1.59668 9.150391 1.23698 9.658203 0.9375 C 10.166016 0.638021 10.712891 0.406902 11.298828 0.244141 C 11.884766 0.081381 12.493489 0 13.125 0 Z M 13.125 12.5 C 13.899739 12.5 14.628906 12.351889 15.3125 12.055664 C 16 11.75944 16.591797 11.357422 17.099609 10.849609 C 17.607422 10.341797 18.009439 9.746094 18.305664 9.0625 C 18.601887 8.378906 18.75 7.64974 18.75 6.875 C 18.75 6.100261 18.601887 5.371094 18.305664 4.6875 C 18.009439 4 17.607422 3.408203 17.099609 2.900391 C 16.591797 2.392578 16 1.990561 15.3125 1.694336 C 14.628906 1.398113 13.899739 1.25 13.125 1.25 C 12.35026 1.25 11.621094 1.398113 10.9375 1.694336 C 10.253906 1.990561 9.658203 2.392578 9.150391 2.900391 C 8.642578 3.408203 8.24056 4 7.944336 4.6875 C 7.648111 5.371094 7.5 6.100261 7.5 6.875 C 7.5 7.64974 7.648111 8.378906 7.944336 9.0625 C 8.24056 9.746094 8.642578 10.341797 9.150391 10.849609 C 9.658203 11.357422 10.253906 11.75944 10.9375 12.055664 C 11.621094 12.351889 12.35026 12.5 13.125 12.5 Z" />
-                </DataTemplate>
-            </Setter.Value>
-        </Setter>
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="BorderThickness" Value="{DynamicResource NavigationViewToggleBorderThickness}" />
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
+        <Setter Property="Content" Value="&#xE11A;" />
+        <Setter Property="MinHeight" Value="36" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-4,0" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
     </Style>
 
     <Style
         x:Key="NavigationViewItemHeaderTextStyle"
         BasedOn="{StaticResource BaseTextBlockStyle}"
         TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
-        <Setter Property="TextWrapping" Value="NoWrap" />
+        <Setter Property="TextWrapping" Value="NoWrap"/>
     </Style>
 
     <Style x:Key="NavigationViewTitleHeaderContentControlTextStyle" TargetType="ContentControl">
-        <Setter Property="FontWeight" Value="350" />
-        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="28" />
         <!--<Setter Property="FontFamily" Value="XamlAutoFontFamily" />-->
-        <Setter Property="Margin" Value="{DynamicResource NavigationViewHeaderMargin}" />
-        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Margin" Value="{DynamicResource NavigationViewHeaderMargin}"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
     </Style>
 
 </ResourceDictionary>

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -54,6 +55,23 @@ namespace ModernWpf.Controls.Primitives
         {
             get => (IconElement)GetValue(IconProperty);
             set => SetValue(IconProperty, value);
+        }
+
+        #endregion
+
+        #region InfoBadge
+
+        public static readonly DependencyProperty InfoBadgeProperty =
+            DependencyProperty.Register(
+                nameof(InfoBadge),
+                typeof(UIElement),
+                typeof(NavigationViewItemPresenter),
+                null);
+
+        public UIElement InfoBadge
+        {
+            get => (UIElement)GetValue(InfoBadgeProperty);
+            set => SetValue(InfoBadgeProperty, value);
         }
 
         #endregion
@@ -218,7 +236,8 @@ namespace ModernWpf.Controls.Primitives
             {
                 if (GetTemplateChildT<ColumnDefinition>(c_iconBoxColumnDefinitionName, this) is { } iconGridColumn)
                 {
-                    ColumnDefinitionHelper.SetPixelWidth(iconGridColumn, compactPaneLength);
+                    var gridLength = compactPaneLength;
+                    ColumnDefinitionHelper.SetPixelWidth(iconGridColumn, Math.Max(0.0, gridLength - 8));
                 }
             }
         }
