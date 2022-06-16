@@ -593,11 +593,11 @@
                         <Border
                             x:Name="PaneRoot"
                             Grid.ColumnSpan="2"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
                             Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLength}"
                             HorizontalAlignment="Left"
                             Background="{TemplateBinding PaneBackground}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             Canvas.ZIndex="1"
                             CornerRadius="{TemplateBinding CornerRadius}"
                             KeyboardNavigation.TabIndex="0"

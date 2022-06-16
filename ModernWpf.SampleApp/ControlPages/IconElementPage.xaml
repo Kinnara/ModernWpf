@@ -67,7 +67,7 @@
                         Style="{DynamicResource BodyTextBlockStyle}"
                         Text="To use an ImageIcon as the icon for a control, you can set image that has a file format supported by the Image class. The two examples here show a PNG and SVG image as the icon." />
                     <Button Name="ImageExample1" Width="100">
-                        <Image Source="/Assets/slices.png" />
+                        <ui:ImageIcon Source="/Assets/slices.png" />
                     </Button>
                 </StackPanel>
             </local:ControlExample.Example>
@@ -78,7 +78,7 @@
             XamlSource="Icons/ImageIconSample2_xaml.txt">
             <local:ControlExample.Example>
                 <Button Name="ImageExample2">
-                    <Image Width="50" Source="https://raw.githubusercontent.com/DiemenDesign/LibreICONS/master/svg-color/libre-camera-panorama.svg" />
+                    <ui:ImageIcon Width="50" Source="https://raw.githubusercontent.com/DiemenDesign/LibreICONS/master/svg-color/libre-camera-panorama.svg" />
                 </Button>
             </local:ControlExample.Example>
         </local:ControlExample>

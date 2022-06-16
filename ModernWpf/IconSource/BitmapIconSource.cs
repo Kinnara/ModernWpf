@@ -8,7 +8,7 @@ using System.Windows.Media.Imaging;
 namespace ModernWpf.Controls
 {
     /// <summary>
-    /// Represents an icon source that uses a bitmap as its content.
+    /// Represents an icon source that uses an Image as its content.
     /// </summary>
     public class BitmapIconSource : IconSource
     {
