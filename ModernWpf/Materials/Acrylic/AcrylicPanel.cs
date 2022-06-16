@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ModernWpf.Controls.Primitives;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -18,62 +19,172 @@ namespace ModernWpf.Media
 {
     public class AcrylicPanel : ContentControl
     {
+        private bool _isChanged = false;
+
+        #region Target
+
+        /// <summary>
+        /// Identifies the <see cref="Target"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty TargetProperty =
+            DependencyProperty.Register(
+                nameof(Target),
+                typeof(FrameworkElement),
+                typeof(AcrylicPanel),
+                null);
+
         public FrameworkElement Target
         {
             get { return (FrameworkElement)GetValue(TargetProperty); }
             set { SetValue(TargetProperty, value); }
         }
-        // Using a DependencyProperty as the backing store for Target.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TargetProperty =
-            DependencyProperty.Register("Target", typeof(FrameworkElement), typeof(AcrylicPanel), new PropertyMetadata(null));
+
+        #endregion
+
+        #region Source
+
+        /// <summary>
+        /// Identifies the <see cref="Source"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register(
+                nameof(Source),
+                typeof(FrameworkElement),
+                typeof(AcrylicPanel),
+                null);
 
         public FrameworkElement Source
         {
             get { return (FrameworkElement)GetValue(SourceProperty); }
             set { SetValue(SourceProperty, value); }
         }
-        // Using a DependencyProperty as the backing store for Source.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(FrameworkElement), typeof(AcrylicPanel), new PropertyMetadata(null));
 
+        #endregion
+
+        #region Amount
+
+        /// <summary>
+        /// Identifies the <see cref="Amount"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty AmountProperty =
+            AcrylicElement.AmountProperty.AddOwner(typeof(AcrylicPanel));
+
+        /// <summary>
+        /// Gets or sets the amount of gaussian blur to apply to the background.
+        /// </summary>
+        public double Amount
+        {
+            get { return (double)GetValue(AmountProperty); }
+            set { SetValue(AmountProperty, value); }
+        }
+
+        /// <summary>
+        /// Gets the amount of gaussian blur to apply to the background.
+        /// </summary>
+        /// <param name="obj">The element on which to set the attached property.</param>
+        /// <returns>The amount of gaussian blur to apply to the background.</returns>
+        public static double GetAmount(DependencyObject obj)
+        {
+            return (double)obj.GetValue(AcrylicElement.AmountProperty);
+        }
+
+        /// <summary>
+        /// Sets the amount of gaussian blur to apply to the background.
+        /// </summary>
+        /// <param name="obj">The element on which to set the attached property.</param>
+        /// <param name="value">The property value to set.</param>
+        public static void SetAmount(DependencyObject obj, double value)
+        {
+            obj.SetValue(AcrylicElement.AmountProperty, value);
+        }
+
+        #endregion
+
+        #region TintColor
+
+        /// <summary>
+        /// Identifies the <see cref="TintColor"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty TintColorProperty =
+            AcrylicElement.TintColorProperty.AddOwner(typeof(AcrylicPanel));
+
+        /// <summary>
+        /// Gets or sets the tint for the panel
+        /// </summary>
         public Color TintColor
         {
             get { return (Color)GetValue(TintColorProperty); }
             set { SetValue(TintColorProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for TintColor.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TintColorProperty;
+        /// <summary>
+        /// Gets the tint for the panel
+        /// </summary>
+        /// <param name="obj">The element on which to set the attached property.</param>
+        /// <returns>The tint for the panel</returns>
         public static Color GetTintColor(DependencyObject obj)
         {
             return (Color)obj.GetValue(AcrylicElement.TintColorProperty);
         }
 
+        /// <summary>
+        /// Sets the tint for the panel
+        /// </summary>
+        /// <param name="obj">The element on which to set the attached property.</param>
+        /// <param name="value">The property value to set.</param>
         public static void SetTintColor(DependencyObject obj, Color value)
         {
             obj.SetValue(AcrylicElement.TintColorProperty, value);
         }
 
+        #endregion
 
+        #region TintOpacity
+
+        /// <summary>
+        /// Identifies the <see cref="TintOpacity"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty TintOpacityProperty =
+            AcrylicElement.TintOpacityProperty.AddOwner(typeof(AcrylicPanel));
+
+        /// <summary>
+        /// Gets or sets the tint opacity factor for the effect (default is 0.8, must be in the [0, 1] range)
+        /// </summary>
         public double TintOpacity
         {
             get { return (double)GetValue(TintOpacityProperty); }
             set { SetValue(TintOpacityProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for TintOpacity.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TintOpacityProperty;
+        /// <summary>
+        /// Gets the tint opacity factor for the effect (default is 0.8, must be in the [0, 1] range)
+        /// </summary>
+        /// <param name="obj">The element on which to set the attached property.</param>
+        /// <returns>The tint opacity factor for the effect</returns>
         public static double GetTintOpacity(DependencyObject obj)
         {
             return (double)obj.GetValue(AcrylicElement.TintOpacityProperty);
         }
 
+        /// <summary>
+        /// Sets the tint opacity factor for the effect (default is 0.8, must be in the [0, 1] range)
+        /// </summary>
+        /// <param name="obj">The element on which to set the attached property.</param>
+        /// <param name="value">The property value to set.</param>
         public static void SetTintOpacity(DependencyObject obj, double value)
         {
             obj.SetValue(AcrylicElement.TintOpacityProperty, value);
         }
 
+        #endregion
 
+        #region NoiseOpacity
+
+        /// <summary>
+        /// Identifies the <see cref="NoiseOpacity"/> dependency property.
+        /// </summary>
+        public static readonly DependencyProperty NoiseOpacityProperty =
+            AcrylicElement.NoiseOpacityProperty.AddOwner(typeof(AcrylicPanel));
 
         public double NoiseOpacity
         {
@@ -81,8 +192,6 @@ namespace ModernWpf.Media
             set { SetValue(NoiseOpacityProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for NoiseOpacity.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty NoiseOpacityProperty;
         public static double GetNoiseOpacity(DependencyObject obj)
         {
             return (double)obj.GetValue(AcrylicElement.NoiseOpacityProperty);
@@ -93,40 +202,35 @@ namespace ModernWpf.Media
             obj.SetValue(AcrylicElement.NoiseOpacityProperty, value);
         }
 
+        #endregion
 
         static AcrylicPanel()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(AcrylicPanel), new FrameworkPropertyMetadata(typeof(AcrylicPanel)));
-
-            TintColorProperty = AcrylicElement.TintColorProperty.AddOwner(typeof(AcrylicPanel), new FrameworkPropertyMetadata(Colors.White, FrameworkPropertyMetadataOptions.Inherits));
-            TintOpacityProperty = AcrylicElement.TintOpacityProperty.AddOwner(typeof(AcrylicPanel), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.Inherits));
-            NoiseOpacityProperty = AcrylicElement.NoiseOpacityProperty.AddOwner(typeof(AcrylicPanel), new FrameworkPropertyMetadata(0.03, FrameworkPropertyMetadataOptions.Inherits));
         }
-
 
         public AcrylicPanel()
         {
-            this.Source = this;
+            Target ??= this;
+            Source ??= this;
         }
 
-        bool _isChanged = false;
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 
-            var rect = this.GetTemplateChild("rect") as Rectangle;
-            if (rect != null)
+            if (GetTemplateChild("Rect") is Rectangle rect)
             {
                 rect.LayoutUpdated += (_, __) =>
                 {
-                    if (!this._isChanged)
+                    if (!_isChanged)
                     {
-                        this._isChanged = true;
-                        BindingOperations.GetBindingExpressionBase(rect, Rectangle.RenderTransformProperty)?.UpdateTarget();
+                        _isChanged = true;
+                        BindingOperations.GetBindingExpressionBase(rect, RenderTransformProperty)?.UpdateTarget();
 
                         Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            this._isChanged = false;
+                            _isChanged = false;
                         }), System.Windows.Threading.DispatcherPriority.DataBind);
                     }
                 };

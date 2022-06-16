@@ -123,6 +123,9 @@
     <None Remove="ControlPagesSampleCode\NumberBox\NumberBoxSample3_xaml.txt" />
     <None Remove="ControlPagesSampleCode\StandardUICommand\StandardUICommandSample1_cs.txt" />
     <None Remove="ControlPagesSampleCode\StandardUICommand\StandardUICommandSample1_xaml.txt" />
+    <None Remove="ControlPagesSampleCode\SystemBackdrops\SystemBackdropsEnsureSystemDQC.txt" />
+    <None Remove="ControlPagesSampleCode\SystemBackdrops\SystemBackdropsSample1.txt" />
+    <None Remove="ControlPagesSampleCode\SystemBackdrops\SystemBackdropsSample2.txt" />
     <None Remove="ControlPagesSampleCode\TabView\TabViewBasicSample_cs.txt" />
     <None Remove="ControlPagesSampleCode\TabView\TabViewKeyboardAcceleratorSample_cs.txt" />
     <None Remove="ControlPagesSampleCode\TeachingTip\TeachingTipSample1_cs.txt" />
@@ -219,6 +222,9 @@
     <Resource Include="ControlPagesSampleCode\NumberBox\NumberBoxSample3_xaml.txt" />
     <Resource Include="ControlPagesSampleCode\StandardUICommand\StandardUICommandSample1_cs.txt" />
     <Resource Include="ControlPagesSampleCode\StandardUICommand\StandardUICommandSample1_xaml.txt" />
+    <Resource Include="ControlPagesSampleCode\SystemBackdrops\SystemBackdropsEnsureSystemDQC.txt" />
+    <Resource Include="ControlPagesSampleCode\SystemBackdrops\SystemBackdropsSample1.txt" />
+    <Resource Include="ControlPagesSampleCode\SystemBackdrops\SystemBackdropsSample2.txt" />
     <Resource Include="ControlPagesSampleCode\TabView\TabViewBasicSample_cs.txt" />
     <Resource Include="ControlPagesSampleCode\TabView\TabViewKeyboardAcceleratorSample_cs.txt" />
     <Resource Include="ControlPagesSampleCode\TeachingTip\TeachingTipSample1_cs.txt" />

@@ -1,0 +1,31 @@
+﻿<Window
+    x:Class="ModernWpf.SampleApp.SamplePages.SampleSystemBackdropsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp.SamplePages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="System Backdrops Window"
+    Width="800"
+    Height="450"
+    ui:WindowHelper.SystemBackdropType="Mica"
+    ui:WindowHelper.UseModernWindowStyle="True"
+    mc:Ignorable="d">
+    <Grid>
+        <StackPanel>
+            <ui:SimpleStackPanel Margin="20" Spacing="10">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Current backdrop: " />
+                    <TextBlock x:Name="tbCurrentBackdrop" />
+                </StackPanel>
+                <Button
+                    x:Name="btnChangeBackdrop"
+                    AutomationProperties.Name="ChangeBackdropButton"
+                    Click="ChangeBackdropButton_Click"
+                    Content="Change Backdrop" />
+                <TextBlock x:Name="tbChangeStatus" />
+            </ui:SimpleStackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

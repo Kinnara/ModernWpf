@@ -136,8 +136,8 @@
                                     Height="16"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    FontSize="{TemplateBinding FontSize}"
                                     FontFamily="{TemplateBinding FontFamily}"
+                                    FontSize="{TemplateBinding FontSize}"
                                     Foreground="{TemplateBinding Foreground}"
                                     Glyph="&#xF4E1;" />
                             </Border>
@@ -219,10 +219,10 @@
                             x:Name="Icon"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Glyph="&#xFC2D;"
                             FontFamily="{DynamicResource FluentSystemIcons}"
                             FontSize="16"
                             Foreground="{TemplateBinding Foreground}"
+                            Glyph="&#xFC2D;"
                             IsHitTestVisible="False" />
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -276,10 +276,10 @@
                             x:Name="Icon"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Glyph="&#xFC2D;"
                             FontFamily="{DynamicResource FluentSystemIcons}"
                             FontSize="20"
                             Foreground="{TemplateBinding Foreground}"
+                            Glyph="&#xFC2D;"
                             IsHitTestVisible="False" />
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -312,15 +312,15 @@
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
-        <Setter Property="TextWrapping" Value="NoWrap"/>
+        <Setter Property="TextWrapping" Value="NoWrap" />
     </Style>
 
     <Style x:Key="NavigationViewTitleHeaderContentControlTextStyle" TargetType="ContentControl">
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="FontSize" Value="28" />
         <!--<Setter Property="FontFamily" Value="XamlAutoFontFamily" />-->
-        <Setter Property="Margin" Value="{DynamicResource NavigationViewHeaderMargin}"/>
-        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="Margin" Value="{DynamicResource NavigationViewHeaderMargin}" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
     </Style>
 
 </ResourceDictionary>

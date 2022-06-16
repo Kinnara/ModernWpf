@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:SingleControlTest"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="clr-namespace:ModernWpf.Media;assembly=ModernWpf"
     xmlns:sys="clr-namespace:System;assembly=netstandard"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="MainWindow"
@@ -13,7 +14,7 @@
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseModernWindowStyle="True"
     mc:Ignorable="d">
-    <StackPanel
+    <!--<StackPanel
         Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
         Margin="4"
         HorizontalAlignment="Stretch"
@@ -26,7 +27,9 @@
                 IsOn="True" />
             <Button Click="Button_Click" Content="Test" />
         </ui:SimpleStackPanel>
-        <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />-->
+    -->
+    <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />-->
+    <!--
         <ui:ListView
             x:Name="ListView"
             IsEnabled="{Binding IsOn, ElementName=IsEnable}"
@@ -37,5 +40,108 @@
             <sys:String>Test</sys:String>
             <sys:String>Test</sys:String>
         </ui:ListView>
-    </StackPanel>
+    </StackPanel>-->
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+        <Grid x:Name="grid" Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Button
+                    Width="75"
+                    Margin="5"
+                    Content="Button" />
+                <Button
+                    Width="75"
+                    Margin="5"
+                    Content="Button" />
+                <Button
+                    Width="75"
+                    Margin="5"
+                    Content="Button" />
+            </StackPanel>
+            <Image
+                Grid.Row="1"
+                Margin="5"
+                Source="Assets/Images/1.jpg" />
+        </Grid>
+
+        <media:AcrylicPanel
+            x:Name="acrylicPanel"
+            Width="200"
+            Height="200"
+            HorizontalAlignment="Right"
+            Target="{Binding ElementName=grid}"
+            Visibility="{Binding IsChecked, ElementName=chkShowAcrylicLayer, Converter={StaticResource booleanToVisibilityConverter}}">
+            <media:AcrylicPanel.Style>
+                <Style TargetType="{x:Type media:AcrylicPanel}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsChecked, ElementName=btnWhite}" Value="True">
+                            <Setter Property="TintColor" Value="White" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsChecked, ElementName=btnRed}" Value="True">
+                            <Setter Property="TintColor" Value="Red" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsChecked, ElementName=btnGreen}" Value="True">
+                            <Setter Property="TintColor" Value="Green" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsChecked, ElementName=btnBlue}" Value="True">
+                            <Setter Property="TintColor" Value="Blue" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </media:AcrylicPanel.Style>
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="TextBlock" />
+        </media:AcrylicPanel>
+        <GroupBox
+            Grid.Column="1"
+            Margin="20"
+            Header="Parameters">
+            <ScrollViewer>
+                <StackPanel Margin="5">
+                    <CheckBox
+                        x:Name="chkShowAcrylicLayer"
+                        HorizontalAlignment="Left"
+                        Content="Show Acrylic Rect"
+                        IsChecked="True" />
+                    <TextBlock Margin="0,10,0,0" Text="TintColor:" />
+                    <ui:RadioButtons>
+                        <RadioButton x:Name="btnWhite" Content="White" />
+                        <RadioButton x:Name="btnRed" Content="Red" />
+                        <RadioButton x:Name="btnGreen" Content="Green" />
+                        <RadioButton x:Name="btnBlue" Content="Blue" />
+                    </ui:RadioButtons>
+                    <TextBlock Margin="0,10,0,0" Text="TintOpacity:" />
+                    <Slider
+                        x:Name="sldTintOpacity"
+                        Maximum="1"
+                        Minimum="0"
+                        TickFrequency="0.01"
+                        Value="{Binding TintOpacity, ElementName=acrylicPanel, Mode=TwoWay}" />
+                    <TextBlock Margin="0,10,0,0" Text="NoiseOpacity:" />
+                    <Slider
+                        x:Name="sldNoiseOpacity"
+                        Maximum="1"
+                        Minimum="0"
+                        TickFrequency="0.01"
+                        Value="{Binding NoiseOpacity, ElementName=acrylicPanel, Mode=TwoWay}" />
+                    <ui:NumberBox
+                        x:Name="sldAmount"
+                        SpinButtonPlacementMode="Compact"
+                        Value="{Binding Amount, ElementName=acrylicPanel, Mode=TwoWay}" />
+                </StackPanel>
+            </ScrollViewer>
+        </GroupBox>
+    </Grid>
 </Window>

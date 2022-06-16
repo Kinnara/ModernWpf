@@ -27,9 +27,14 @@
                                 Opacity="{TemplateBinding local:AcrylicElement.TintOpacity}" />
                             <!--  Tiled noise texture  -->
                             <Rectangle x:Name="noiseLayer" Opacity="{TemplateBinding local:AcrylicElement.NoiseOpacity}">
-                                <!--<Rectangle.Fill>
-                                    <ImageBrush ImageSource="/FluentWPF;component/Assets/Images/noise.png" TileMode="Tile" Stretch="None" ViewportUnits="Absolute" Viewport="0,0,128,128" />
-                                </Rectangle.Fill>-->
+                                <Rectangle.Fill>
+                                    <ImageBrush
+                                        ImageSource="noise.png"
+                                        Stretch="None"
+                                        TileMode="Tile"
+                                        Viewport="0,0,128,128"
+                                        ViewportUnits="Absolute" />
+                                </Rectangle.Fill>
                             </Rectangle>
                             <ContentPresenter />
                         </Grid>
@@ -39,10 +44,9 @@
         </Setter>
     </Style>
 
+
     <Style TargetType="local:AcrylicPanel">
-        <Setter Property="TintColor" Value="White" />
-        <Setter Property="TintOpacity" Value="0.0" />
-        <Setter Property="NoiseOpacity" Value="0.03" />
+        <Setter Property="TintColor" Value="{DynamicResource SolidBackgroundFillColorQuarternary}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="ClipToBounds" Value="False" />
@@ -54,8 +58,8 @@
                         <Rectangle>
                             <Rectangle.Fill>
                                 <PriorityBinding>
-                                    <Binding Path="Target.Background" RelativeSource="{RelativeSource TemplatedParent}" />
-                                    <Binding Path="Target.Fill" RelativeSource="{RelativeSource TemplatedParent}" />
+                                    <Binding Path="Target.Background" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                                    <Binding Path="Target.Fill" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
                                 </PriorityBinding>
                             </Rectangle.Fill>
                         </Rectangle>
@@ -66,9 +70,9 @@
                                     <BitmapCache RenderAtScale="0.2" />
                                 </ContentControl.CacheMode>
                                 <Rectangle
-                                    x:Name="rect"
-                                    Width="{Binding Target.ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
-                                    Height="{Binding Target.ActualHeight, RelativeSource={RelativeSource TemplatedParent}}"
+                                    x:Name="Rect"
+                                    Width="{Binding Target.ActualWidth, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    Height="{Binding Target.ActualHeight, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                     ClipToBounds="False"
                                     IsHitTestVisible="False">
                                     <Rectangle.Fill>
@@ -77,16 +81,16 @@
                                             AlignmentY="Top"
                                             Stretch="None"
                                             ViewboxUnits="Absolute"
-                                            Visual="{Binding Target, RelativeSource={RelativeSource TemplatedParent}}" />
+                                            Visual="{Binding Target, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     </Rectangle.Fill>
                                     <Rectangle.RenderTransform>
                                         <MultiBinding Converter="{StaticResource BrushTranslationConverter}">
-                                            <Binding Path="Target" RelativeSource="{RelativeSource TemplatedParent}" />
-                                            <Binding Path="Source" RelativeSource="{RelativeSource TemplatedParent}" />
+                                            <Binding Path="Target" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+                                            <Binding Path="Source" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
                                         </MultiBinding>
                                     </Rectangle.RenderTransform>
                                     <Rectangle.Effect>
-                                        <BlurEffect Radius="100" />
+                                        <BlurEffect Radius="{Binding Amount, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     </Rectangle.Effect>
                                 </Rectangle>
                             </ContentControl>
@@ -100,4 +104,5 @@
             </Setter.Value>
         </Setter>
     </Style>
+
 </ResourceDictionary>

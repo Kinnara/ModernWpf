@@ -36,7 +36,7 @@ namespace ModernWpf.SampleApp
             menuItem.IsSelected = true;
             NavigationRootPage.Current.NavigationView.Header = menuItem.Content;
 
-            Items = group.Items.OrderBy(i => i.Title).ToList();
+            Items = group?.Items?.OrderBy(i => i.Title).ToList();
             DataContext = Items;
         }
     }

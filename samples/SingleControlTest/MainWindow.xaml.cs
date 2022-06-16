@@ -29,8 +29,8 @@ namespace SingleControlTest
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ListView.SelectionMode = ListView.SelectionMode == SelectionMode.Multiple ?
-                SelectionMode.Single : SelectionMode.Multiple;
+            //ListView.SelectionMode = ListView.SelectionMode == SelectionMode.Multiple ?
+            //    SelectionMode.Single : SelectionMode.Multiple;
         }
     }
 }
