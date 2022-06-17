@@ -1,0 +1,64 @@
+﻿<ui:Page
+    x:Class="ModernWpf.SampleApp.ControlPages.ProgressRingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    mc:Ignorable="d">
+    <StackPanel>
+        <local:ControlExample HeaderText="An indeterminate progress ring.">
+            <ui:ProgressRing
+                Width="60"
+                Height="60"
+                Margin="10,10,0,0"
+                VerticalAlignment="Top"
+                AutomationProperties.Name="Progress image"
+                IsActive="{Binding IsOn, ElementName=ProgressToggle, Mode=OneWay}" />
+            <local:ControlExample.Options>
+                <StackPanel>
+                    <ui:ToggleSwitch
+                        x:Name="ProgressToggle"
+                        AutomationProperties.Name="Progress options"
+                        Header="Toggle work"
+                        IsOn="True"
+                        OffContent="Do work"
+                        OnContent="Working" />
+                </StackPanel>
+            </local:ControlExample.Options>
+            <local:ControlExample.Xaml>
+                <sys:String>
+                    &lt;ProgressRing IsActive=&quot;$(IsActive)&quot; /&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+        <local:ControlExample HeaderText="A determinate progress ring.">
+            <StackPanel x:Name="Control2" Orientation="Horizontal">
+                <ui:ProgressRing
+                    x:Name="ProgressRing2"
+                    Width="60"
+                    Height="60"
+                    Margin="0,0,60,0"
+                    AutomationProperties.Name="Progress image"
+                    IsIndeterminate="False" />
+                <ui:NumberBox
+                    x:Name="ProgressValue"
+                    MinWidth="120"
+                    VerticalAlignment="Center"
+                    AutomationProperties.Name="Progress amount"
+                    Header="Progress"
+                    Maximum="100"
+                    Minimum="0"
+                    SpinButtonPlacementMode="Inline"
+                    Value="{Binding Value, ElementName=ProgressRing2, Mode=TwoWay}" />
+            </StackPanel>
+            <local:ControlExample.Xaml>
+                <sys:String>
+                    &lt;ProgressRing Width=&quot;60&quot; Height=&quot;60&quot; Value=&quot;$(DeterminateProgressValue)&quot; IsIndeterminate=&quot;False&quot;/&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+    </StackPanel>
+</ui:Page>

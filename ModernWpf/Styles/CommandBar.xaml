@@ -3,25 +3,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="ToggleButton.xaml" />
     </ResourceDictionary.MergedDictionaries>
+
+    <sys:Double x:Key="AppBarThemeMinHeight">64</sys:Double>
+    <sys:Double x:Key="AppBarThemeCompactHeight">48</sys:Double>
+    <Thickness x:Key="AppBarEllipsisButtonInnerBorderMargin">2,6,6,6</Thickness>
+    <sys:Double x:Key="AppBarMoreButtonColumnMinWidth">6</sys:Double>
 
     <Thickness x:Key="CommandBarOverflowPresenterMargin">0,4,0,4</Thickness>
 
     <Thickness x:Key="CommandBarMoreButtonMargin">14,19,14,0</Thickness>
     <sys:Double x:Key="AppBarButtonContentHeight">16</sys:Double>
-    <sys:Double x:Key="AppBarThemeMinHeight">56</sys:Double>
-    <sys:Double x:Key="AppBarThemeCompactHeight">40</sys:Double>
-
-    <Thickness x:Key="AppBarButtonContentViewboxMargin">12,10,0,10</Thickness>
-    <Thickness x:Key="AppBarButtonContentViewboxCompactMargin">0,12,0,12</Thickness>
-    <Thickness x:Key="AppBarButtonContentViewboxCollapsedMargin">0,12,0,4</Thickness>
-    <Thickness x:Key="AppBarButtonOverflowTextTouchMargin">0,9,0,12</Thickness>
-    <Thickness x:Key="AppBarButtonOverflowTextLabelPadding">0,5,0,8</Thickness>
-    <Thickness x:Key="AppBarButtonTextLabelMargin">2,0,2,8</Thickness>
-    <Thickness x:Key="AppBarButtonTextLabelOnRightMargin">8,11,12,13</Thickness>
 
     <Thickness x:Key="AppBarToggleButtonOverflowTextTouchMargin">0,9,0,12</Thickness>
     <Thickness x:Key="AppBarToggleButtonOverflowCheckTouchMargin">12,10,12,10</Thickness>

@@ -12,6 +12,7 @@ namespace ModernWpf.Controls
     public class ProgressRing : Control
     {
         const string s_ActiveStateName = "Active";
+        const string s_DeterminateActiveStateName = "DeterminateActive";
         const string s_InactiveStateName = "Inactive";
         const string s_SmallStateName = "Small";
         const string s_LargeStateName = "Large";
@@ -63,7 +64,7 @@ namespace ModernWpf.Controls
                 nameof(IsIndeterminate),
                 typeof(bool),
                 typeof(ProgressRing),
-                new PropertyMetadata(true));
+                new PropertyMetadata(true, OnIsActivePropertyChanged));
 
         #endregion
 
@@ -165,12 +166,7 @@ namespace ModernWpf.Controls
                 nameof(StrokeThickness),
                 typeof(double),
                 typeof(ProgressRing),
-                new FrameworkPropertyMetadata(OnStrokeThicknessPropertyChanged));
-
-        private static void OnStrokeThicknessPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((ProgressRing)sender).OnStrokeThicknessPropertyChanged(args);
-        }
+                null);
 
         #endregion
 
@@ -179,119 +175,9 @@ namespace ModernWpf.Controls
             return new ProgressRingAutomationPeer(this);
         }
 
-        public override void OnApplyTemplate()
-        {
-            ApplyTemplateSettings();
-
-            base.OnApplyTemplate();
-        }
-
-        void ApplyTemplateSettings()
-        {
-            // TemplateSetting properties from WUXC for backwards compatibility.
-            var templateSettings = TemplateSettings;
-
-            ArcSegment OutlineArcPart = new ArcSegment
-            {
-                IsLargeArc = true,
-                SweepDirection = SweepDirection.Clockwise
-            };
-
-            BindingOperations.SetBinding(OutlineArcPart, ArcSegment.PointProperty, new Binding
-            {
-                Source = templateSettings,
-                Path = new PropertyPath(nameof(TemplateSettings.OutlineArcPoint))
-            });
-
-            BindingOperations.SetBinding(OutlineArcPart, ArcSegment.SizeProperty, new Binding
-            {
-                Source = templateSettings,
-                Path = new PropertyPath(nameof(TemplateSettings.OutlineArcSize))
-            });
-
-            PathFigure OutlineFigurePart = new PathFigure
-            {
-                Segments = new PathSegmentCollection
-                {
-                    OutlineArcPart
-                }
-            };
-
-            BindingOperations.SetBinding(OutlineFigurePart, PathFigure.StartPointProperty, new Binding
-            {
-                Source = templateSettings,
-                Path = new PropertyPath(nameof(TemplateSettings.OutlineFigureStartPoint))
-            });
-
-            PathGeometry OutlinePath = new PathGeometry
-            {
-                Figures = new PathFigureCollection
-                {
-                    OutlineFigurePart
-                }
-            };
-
-            templateSettings.OutlinePath = OutlinePath;
-
-            ArcSegment RingArcPart = new ArcSegment
-            {
-                IsLargeArc = true,
-                SweepDirection = SweepDirection.Clockwise
-            };
-
-            BindingOperations.SetBinding(RingArcPart, ArcSegment.IsLargeArcProperty, new Binding
-            {
-                Source = templateSettings,
-                Path = new PropertyPath(nameof(TemplateSettings.RingArcIsLargeArc))
-            });
-
-            BindingOperations.SetBinding(RingArcPart, ArcSegment.PointProperty, new Binding
-            {
-                Source = templateSettings,
-                Path = new PropertyPath(nameof(TemplateSettings.RingArcPoint))
-            });
-
-            BindingOperations.SetBinding(RingArcPart, ArcSegment.SizeProperty, new Binding
-            {
-                Source = templateSettings,
-                Path = new PropertyPath(nameof(TemplateSettings.RingArcSize))
-            });
-
-            PathFigure RingFigurePart = new PathFigure
-            {
-                Segments = new PathSegmentCollection
-                {
-                    RingArcPart
-                }
-            };
-
-            BindingOperations.SetBinding(RingFigurePart, PathFigure.StartPointProperty, new Binding
-            {
-                Source = templateSettings,
-                Path = new PropertyPath(nameof(TemplateSettings.RingFigureStartPoint))
-            });
-
-            PathGeometry RingPath = new PathGeometry
-            {
-                Figures = new PathFigureCollection
-                {
-                    RingFigurePart
-                }
-            };
-
-            templateSettings.RingPath = RingPath;
-        }
-
         void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdateSize();
             ChangeVisualState();
-            UpdateRing();
-        }
-
-        void OnRangeBasePropertyChanged(DependencyPropertyChangedEventArgs args)
-        {
-            UpdateSegment();
         }
 
         void OnIsActivePropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -299,119 +185,29 @@ namespace ModernWpf.Controls
             ChangeVisualState();
         }
 
-        void OnStrokeThicknessPropertyChanged(DependencyPropertyChangedEventArgs args)
+        void OnRangeBasePropertyChanged(DependencyPropertyChangedEventArgs args)
         {
-            UpdateRing();
+            UpdateRange();
         }
 
-        Size ComputeEllipseSize(double thickness, double actualWidth, double actualHeight)
+        void UpdateRange()
         {
-            double safeThickness = Math.Max(thickness, (double)0.0);
-            double width = Math.Max((actualWidth - safeThickness) / 2.0, 0.0);
-            double height = Math.Max((actualHeight - safeThickness) / 2.0, 0.0);
+            var templateSettings = TemplateSettings;
 
-            return new Size(width, height);
+            double minimum = Minimum;
+            double range = Maximum - minimum;
+            double delta = Value - minimum;
+
+            double normalizedRange = (range == 0.0) ? 0.0 : (delta / range);
+
+            templateSettings.NormalizedRange = normalizedRange;
         }
 
         void ChangeVisualState()
         {
-            VisualStateManager.GoToState(this, IsActive ? s_ActiveStateName : s_InactiveStateName, true);
+            VisualStateManager.GoToState(this, IsActive ? (IsIndeterminate ? s_ActiveStateName : s_DeterminateActiveStateName) : s_InactiveStateName, true);
             VisualStateManager.GoToState(this, TemplateSettings.MaxSideLength < 60 ? s_SmallStateName : s_LargeStateName, true);
         }
 
-        void UpdateSize()
-        {
-            // TemplateSetting properties from WUXC for backwards compatibility.
-            var templateSettings = TemplateSettings;
-
-            var (width, diameterValue, anchorPoint) = calcSettings();
-            (double, double, double) calcSettings()
-            {
-                if (ActualWidth != 0)
-                {
-                    double width = Math.Min(ActualWidth, ActualHeight);
-
-                    double diameterAdditive;
-                    {
-                        double init()
-                        {
-                            if (width <= 40.0)
-                            {
-                                return 1.0;
-                            }
-                            return 0.0;
-                        }
-                        diameterAdditive = init();
-                    }
-
-                    double diamaterValue = (width * 0.1) + diameterAdditive;
-                    double anchorPoint = (width * 0.5) - diamaterValue;
-                    return (width, diamaterValue, anchorPoint);
-                }
-
-                return (0.0, 0.0, 0.0);
-            };
-
-            templateSettings.EllipseDiameter = diameterValue;
-
-            Thickness thicknessEllipseOffset = new Thickness(0, anchorPoint, 0, 0);
-
-            templateSettings.EllipseOffset = thicknessEllipseOffset;
-            templateSettings.MaxSideLength = width;
-        }
-
-        void UpdateSegment()
-        {
-            var templateSettings = TemplateSettings;
-
-            double angle()
-            {
-                double normalizedRange()
-                {
-                    double minimum = Minimum;
-                    double range = Maximum - minimum;
-                    double delta = Value - minimum;
-
-                    double normalizedRange = (range == 0.0) ? 0.0 : (delta / range);
-                    // normalizedRange offsets calculation to display a full ring when value = 100%
-                    // std::nextafter is set as a float as winrt::Point takes floats
-                    return Math.Min(normalizedRange, 0.999999940395355224609375);
-                }
-
-                return 2 * Math.PI * normalizedRange();
-            }
-
-            double thickness = StrokeThickness;
-            var size = ComputeEllipseSize(thickness, ActualWidth, ActualHeight);
-            double translationFactor = Math.Max(thickness / 2.0, 0.0);
-
-            double x = (Math.Sin(angle()) * size.Width) + size.Width + translationFactor;
-            double y = (((Math.Cos(angle()) * size.Height) - size.Height) * -1) + translationFactor;
-
-            templateSettings.RingArcIsLargeArc = angle() >= Math.PI;
-            templateSettings.RingArcPoint = new Point(x, y);
-        }
-
-        void UpdateRing()
-        {
-            var templateSettings = TemplateSettings;
-
-            double thickness = StrokeThickness;
-            var size = ComputeEllipseSize(thickness, ActualWidth, ActualHeight);
-
-            double segmentWidth = size.Width;
-            double translationFactor = Math.Max(thickness / 2.0, 0.0);
-
-            templateSettings.OutlineFigureStartPoint = new Point(segmentWidth + translationFactor, translationFactor);
-
-            templateSettings.RingFigureStartPoint = new Point(segmentWidth + translationFactor, translationFactor);
-
-            templateSettings.OutlineArcSize = new Size(segmentWidth, size.Height);
-            templateSettings.OutlineArcPoint = new Point(segmentWidth + translationFactor - 0.05d, translationFactor);
-
-            templateSettings.RingArcSize = new Size(segmentWidth, size.Height);
-
-            UpdateSegment();
-        }
     }
 }

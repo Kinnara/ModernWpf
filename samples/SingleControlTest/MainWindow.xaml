@@ -25,13 +25,56 @@
                 MinWidth="0"
                 Header="IsEnable"
                 IsOn="True" />
+            <ui:ToggleSwitch
+                x:Name="IsActive"
+                MinWidth="0"
+                Header="IsActive"
+                IsOn="True" />
+            <ui:ToggleSwitch
+                x:Name="IsIndeterminate"
+                MinWidth="0"
+                Header="IsIndeterminate"
+                IsOn="True" />
             <Button Click="Button_Click" Content="Test" />
         </ui:SimpleStackPanel>
 
+        <Slider
+            x:Name="Value"
+            Maximum="100"
+            Minimum="0" />
+
         <ui:ProgressRing
-            Width="100"
-            Height="100"
-            IsActive="True" />
+            IsActive="{Binding IsOn, ElementName=IsActive}"
+            IsEnabled="{Binding IsOn, ElementName=IsEnable}"
+            IsIndeterminate="{Binding IsOn, ElementName=IsIndeterminate}"
+            Value="{Binding Value, ElementName=Value}" />
+
+        <ui:AppBarButton Icon="Add" Label="Add" />
+
+        <ui:AppBarButton
+            Icon="Sort"
+            IsCompact="True"
+            Label="Sort">
+            <ui:AppBarButton.Flyout>
+                <ui:MenuFlyout>
+                    <MenuItem Header="By rating" Tag="rating" />
+                    <MenuItem Header="By match" Tag="match" />
+                    <MenuItem Header="By distance" Tag="distance" />
+                </ui:MenuFlyout>
+            </ui:AppBarButton.Flyout>
+        </ui:AppBarButton>
+
+        <ui:CommandBar
+            Background="Transparent"
+            DefaultLabelPosition="Right"
+            IsOpen="False">
+            <ui:AppBarButton Icon="Add" Label="Add" />
+            <ui:AppBarButton Icon="Edit" Label="Edit" />
+            <ui:AppBarButton Icon="Share" Label="Share" />
+            <ui:CommandBar.SecondaryCommands>
+                <ui:AppBarButton Icon="Setting" Label="Settings" />
+            </ui:CommandBar.SecondaryCommands>
+        </ui:CommandBar>
 
         <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />
 

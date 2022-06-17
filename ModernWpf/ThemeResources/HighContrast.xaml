@@ -455,10 +455,6 @@
     <SolidColorBrush x:Key="ControlAAStrokeColorDisabledBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
 
     <!--  Resources for AppBarButton  -->
-    <sys:Double x:Key="AppBarExpandButtonThemeHeight">24</sys:Double>
-    <sys:Double x:Key="AppBarExpandButtonThemeWidth">48</sys:Double>
-    <sys:Double x:Key="AppBarExpandButtonCircleDiameter">3</sys:Double>
-
     <m:StaticResource x:Key="AppBarButtonBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="AppBarButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
     <m:StaticResource x:Key="AppBarButtonBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
@@ -484,6 +480,18 @@
     <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundSubMenuOpened" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <Visibility x:Key="AppBarButtonHasFlyoutChevronVisibility">Visible</Visibility>
+    <sys:String x:Key="AppBarButtonFlyoutGlyph">&#xF2B0;</sys:String>
+    <sys:String x:Key="AppBarButtonOverflowFlyoutGlyph">&#xF2B0;</sys:String>
+    <sys:Double x:Key="AppBarButtonSubItemChevronFontSize">8</sys:Double>
+    <sys:Double x:Key="AppBarButtonSecondarySubItemChevronFontSize">12</sys:Double>
+    <Thickness x:Key="AppBarButtonSubItemChevronMargin">-23,20,12,0</Thickness>
+    <Thickness x:Key="AppBarButtonSubItemChevronLabelOnRightMargin">-7,20,12,0</Thickness>
+    <Thickness x:Key="AppBarButtonSecondarySubItemChevronMargin">0,0,16,0</Thickness>
+
+    <sys:Double x:Key="AppBarExpandButtonThemeHeight">24</sys:Double>
+    <sys:Double x:Key="AppBarExpandButtonThemeWidth">48</sys:Double>
+    <sys:Double x:Key="AppBarExpandButtonCircleDiameter">3</sys:Double>
 
     <!--  Resources for AppBarToggleButton  -->
     <m:StaticResource x:Key="AppBarToggleButtonBackground" ResourceKey="SystemControlTransparentBrush" />
@@ -1468,7 +1476,7 @@
     <m:StaticResource x:Key="NavigationViewItemBorderBrushSelectedDisabled" ResourceKey="SystemControlTransparentBrush" />
 
     <m:StaticResource x:Key="NavigationViewItemSeparatorForeground" ResourceKey="SystemControlForegroundBaseLowBrush" />
-    <m:StaticResource x:Key="NavigationViewItemHeaderForeground" ResourceKey="SystemControlForegroundBaseHighBrush"/>
+    <m:StaticResource x:Key="NavigationViewItemHeaderForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
 
     <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
 

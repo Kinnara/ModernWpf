@@ -539,35 +539,43 @@
     <SolidColorBrush x:Key="ControlAAStrokeColorDisabledBrush" Color="{m:StaticColor ControlAAStrokeColorDisabled}" />
 
     <!--  Resources for AppBarButton  -->
+    <m:StaticResource x:Key="AppBarButtonBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonBackgroundDisabled" ResourceKey="SubtleFillColorDisabledBrush" />
+    <m:StaticResource x:Key="AppBarButtonForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="AppBarButtonBorderBrush" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonBorderBrushPointerOver" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonBorderBrushPressed" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonBorderBrushDisabled" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForeground" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForegroundPressed" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="AppBarButtonBackgroundSubMenuOpened" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonForegroundSubMenuOpened" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonBorderBrushSubMenuOpened" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarButtonSubItemChevronForeground" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundPressed" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundSubMenuOpened" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <Visibility x:Key="AppBarButtonHasFlyoutChevronVisibility">Visible</Visibility>
+    <sys:String x:Key="AppBarButtonFlyoutGlyph">&#xF2B0;</sys:String>
+    <sys:String x:Key="AppBarButtonOverflowFlyoutGlyph">&#xF2B0;</sys:String>
+    <sys:Double x:Key="AppBarButtonSubItemChevronFontSize">8</sys:Double>
+    <sys:Double x:Key="AppBarButtonSecondarySubItemChevronFontSize">12</sys:Double>
+    <Thickness x:Key="AppBarButtonSubItemChevronMargin">-23,20,12,0</Thickness>
+    <Thickness x:Key="AppBarButtonSubItemChevronLabelOnRightMargin">-7,20,12,0</Thickness>
+    <Thickness x:Key="AppBarButtonSecondarySubItemChevronMargin">0,0,16,0</Thickness>
+
     <sys:Double x:Key="AppBarExpandButtonThemeHeight">24</sys:Double>
     <sys:Double x:Key="AppBarExpandButtonThemeWidth">48</sys:Double>
     <sys:Double x:Key="AppBarExpandButtonCircleDiameter">3</sys:Double>
-
-    <m:StaticResource x:Key="AppBarButtonBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
-    <m:StaticResource x:Key="AppBarButtonBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
-    <m:StaticResource x:Key="AppBarButtonBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="AppBarButtonBorderBrush" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarButtonBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarButtonBorderBrushPressed" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarButtonBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
-    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForegroundPressed" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
-    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="AppBarButtonBackgroundSubMenuOpened" ResourceKey="SystemControlHighlightListAccentLowBrush" />
-    <m:StaticResource x:Key="AppBarButtonForegroundSubMenuOpened" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
-    <m:StaticResource x:Key="AppBarButtonBorderBrushSubMenuOpened" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarButtonSubItemChevronForeground" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-    <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundSubMenuOpened" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarButtonSubItemChevronForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
 
     <!--  Resources for AppBarToggleButton  -->
     <m:StaticResource x:Key="AppBarToggleButtonBackground" ResourceKey="SystemControlTransparentBrush" />

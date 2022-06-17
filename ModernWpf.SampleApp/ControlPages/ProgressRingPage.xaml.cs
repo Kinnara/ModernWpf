@@ -17,18 +17,13 @@ using System.Windows.Shapes;
 namespace ModernWpf.SampleApp.ControlPages
 {
     /// <summary>
-    /// Interaction logic for ProgressRingPerfPage.xaml
+    /// Interaction logic for ProgressRingPage.xaml
     /// </summary>
-    public partial class ProgressRingPerfPage
+    public partial class ProgressRingPage
     {
-        public ProgressRingPerfPage()
+        public ProgressRingPage()
         {
             InitializeComponent();
-
-            for (int i = 0; i < 300; i++)
-            {
-                panel.Children.Add(new ProgressRing { Width = 60, Height = 60, IsActive = true });
-            }
         }
     }
 }
