@@ -8,10 +8,12 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static Windows.Win32.PInvoke;
 
 namespace ModernWpf.Controls.Primitives
 {
     [TemplatePart(Name = BackButtonName, Type = typeof(Button))]
+    [TemplatePart(Name = MaximizeRestoreButtonName, Type = typeof(TitleBarButton))]
     [TemplatePart(Name = LeftSystemOverlayName, Type = typeof(FrameworkElement))]
     [TemplatePart(Name = RightSystemOverlayName, Type = typeof(FrameworkElement))]
     [StyleTypedProperty(Property = nameof(ButtonStyle), StyleTargetType = typeof(TitleBarButton))]
@@ -19,6 +21,7 @@ namespace ModernWpf.Controls.Primitives
     public class TitleBarControl : Control
     {
         private const string BackButtonName = "PART_BackButton";
+        private const string MaximizeRestoreButtonName = "PART_MaximizeRestoreButton";
         private const string LeftSystemOverlayName = "PART_LeftSystemOverlay";
         private const string RightSystemOverlayName = "PART_RightSystemOverlay";
 
@@ -319,6 +322,8 @@ namespace ModernWpf.Controls.Primitives
 
         private Button BackButton { get; set; }
 
+        private TitleBarButton MaximizeRestoreButton { get; set; }
+
         private FrameworkElement LeftSystemOverlay { get; set; }
 
         private FrameworkElement RightSystemOverlay { get; set; }
@@ -343,12 +348,18 @@ namespace ModernWpf.Controls.Primitives
             base.OnApplyTemplate();
 
             BackButton = GetTemplateChild(BackButtonName) as Button;
+            MaximizeRestoreButton = GetTemplateChild(MaximizeRestoreButtonName) as TitleBarButton;
             LeftSystemOverlay = GetTemplateChild(LeftSystemOverlayName) as FrameworkElement;
             RightSystemOverlay = GetTemplateChild(RightSystemOverlayName) as FrameworkElement;
 
             if (BackButton != null)
             {
                 BackButton.Click += OnBackButtonClick;
+            }
+
+            if (MaximizeRestoreButton != null)
+            {
+                MaximizeRestoreButton.HitTestCode = HTMAXBUTTON;
             }
 
             if (LeftSystemOverlay != null)
@@ -473,10 +484,25 @@ namespace ModernWpf.Controls.Primitives
 
         private void InvokeBack()
         {
-            if (BackButton != null && BackButton.IsEnabled)
+            InvokeButton(BackButton);
+        }
+
+        private static void InvokeButton(Button button)
+        {
+            if (button != null && button.IsEnabled)
             {
-                var peer = UIElementAutomationPeer.CreatePeerForElement(BackButton);
-                (peer?.GetPattern(PatternInterface.Invoke) as IInvokeProvider)?.Invoke();
+                if (button is TitleBarButton titleBarButton)
+                {
+                    titleBarButton.DoClick();
+                }
+                else
+                {
+                    if (UIElementAutomationPeer.CreatePeerForElement(button) is { } peer
+                        && peer.GetPattern(PatternInterface.Invoke) is IInvokeProvider invokeProvider)
+                    {
+                        invokeProvider.Invoke();
+                    }
+                }
             }
         }
 
