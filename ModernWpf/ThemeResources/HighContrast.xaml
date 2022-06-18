@@ -1025,10 +1025,39 @@
     <Thickness x:Key="CommandBarOverflowPresenterBorderUpPadding">0</Thickness>
 
     <!--  Resources for CommandBarFlyout  -->
+    <m:StaticResource x:Key="CommandBarFlyoutBackground" ResourceKey="SystemControlBackgroundBaseLowBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutForeground" ResourceKey="SystemControlForegroundBaseHighBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush"/>
+    <SolidColorBrush x:Key="CommandBarFlyoutAppBarButtonBackground" Opacity="0" Color="{m:ThemeResource SystemColorHighlightColor}"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground" ResourceKey="SystemControlForegroundBaseHighBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonSubItemChevronForeground" ResourceKey="SystemControlForegroundBaseHighBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonSubItemChevronPointerOverForeground" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonSubItemChevronPressedForeground" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonSubItemChevronSubMenuOpenedForeground" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonSubItemChevronDisabledForeground" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundChecked" ResourceKey="SystemControlHighlightAccentBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundCheckedPointerOver" ResourceKey="SystemControlHighlightAccentBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundCheckedPressed" ResourceKey="SystemControlHighlightBaseMediumLowBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundCheckedDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundChecked" ResourceKey="SystemControlHighlightAltChromeWhiteBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltChromeWhiteBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltChromeWhiteBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush"/>
+
     <Thickness x:Key="CommandBarFlyoutBorderThemeThickness">1</Thickness>
     <Thickness x:Key="CommandBarFlyoutBorderUpThemeThickness">1,1,1,0</Thickness>
     <Thickness x:Key="CommandBarFlyoutBorderDownThemeThickness">1,0,1,1</Thickness>
-    <SolidColorBrush x:Key="CommandBarFlyoutButtonBackground" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <m:StaticResource x:Key="CommandBarFlyoutButtonBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
 
     <!--  Resources for ContentDialog  -->
     <m:StaticResource x:Key="ContentDialogForeground" ResourceKey="SystemColorWindowTextColorBrush" />

@@ -32,5 +32,10 @@ namespace SingleControlTest
             //ListView.SelectionMode = ListView.SelectionMode == SelectionMode.Multiple ?
             //    SelectionMode.Single : SelectionMode.Multiple;
         }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            AppBarButton button = sender as AppBarButton;
+        }
     }
 }

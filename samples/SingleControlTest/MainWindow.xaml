@@ -65,9 +65,9 @@
         </ui:AppBarButton>
 
         <ui:CommandBar
+            HorizontalAlignment="Left"
             Background="Transparent"
             DefaultLabelPosition="Right"
-            HorizontalAlignment="Left"
             IsOpen="False">
             <ui:AppBarButton Icon="Add" Label="Add" />
             <ui:AppBarButton Icon="Edit" Label="Edit" />
@@ -75,6 +75,10 @@
             <ui:AppBarButton Icon="Share" Label="Share" />
             <ui:CommandBar.SecondaryCommands>
                 <ui:AppBarButton Icon="Setting" Label="Settings" />
+                <ui:AppBarButton Icon="Setting" Label="Settings" />
+                <ui:AppBarSeparator />
+                <ui:AppBarToggleButton Icon="Setting" Label="Settings" />
+                <ui:AppBarToggleButton Icon="Setting" Label="Settings" />
             </ui:CommandBar.SecondaryCommands>
         </ui:CommandBar>
 

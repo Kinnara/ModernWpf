@@ -317,6 +317,10 @@
                         <Trigger SourceName="FlyoutStatesListener" Property="CurrentStateName" Value="HasFlyout">
                             <Setter TargetName="SubItemChevronPanel" Property="Visibility" Value="{DynamicResource AppBarButtonHasFlyoutChevronVisibility}" />
                         </Trigger>
+                        <!--  Overflow  -->
+                        <Trigger Property="ToolBar.IsOverflowItem" Value="True">
+                            <Setter TargetName="ContentRoot" Property="VerticalAlignment" Value="Center" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -324,6 +328,7 @@
         <Style.Triggers>
             <Trigger Property="ToolBar.IsOverflowItem" Value="True">
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="MinHeight" Value="{DynamicResource MenuFlyoutThemeMinHeight}" />
                 <Setter Property="Width" Value="NaN" />
             </Trigger>
         </Style.Triggers>
@@ -334,6 +339,7 @@
         BasedOn="{StaticResource DefaultAppBarButtonStyle}"
         TargetType="local:AppBarButton">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="MinHeight" Value="{DynamicResource MenuFlyoutThemeMinHeight}" />
         <Setter Property="Width" Value="NaN" />
     </Style>
 

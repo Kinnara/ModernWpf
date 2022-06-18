@@ -320,9 +320,9 @@
                         <!--  OverflowChecked  -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowChecked">
                             <Setter TargetName="AppBarToggleButtonInnerBackground" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
-                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
-                            <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundChecked}" />
+                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForeground}" />
+                            <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForeground}" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForeground}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <!--  OverflowCheckedPointerOver  -->
@@ -351,6 +351,10 @@
                         <Trigger SourceName="KeyboardAcceleratorTextVisibilityListener" Property="CurrentStateName" Value="KeyboardAcceleratorTextVisible">
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
+                        <!--  Overflow  -->
+                        <Trigger Property="ToolBar.IsOverflowItem" Value="True">
+                            <Setter TargetName="ContentRoot" Property="VerticalAlignment" Value="Center" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -358,6 +362,7 @@
         <Style.Triggers>
             <Trigger Property="ToolBar.IsOverflowItem" Value="True">
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="MinHeight" Value="{DynamicResource MenuFlyoutThemeMinHeight}" />
                 <Setter Property="Width" Value="NaN" />
             </Trigger>
         </Style.Triggers>
@@ -368,6 +373,7 @@
         BasedOn="{StaticResource DefaultAppBarToggleButtonStyle}"
         TargetType="local:AppBarToggleButton">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="MinHeight" Value="{DynamicResource MenuFlyoutThemeMinHeight}" />
         <Setter Property="Width" Value="NaN" />
     </Style>
 

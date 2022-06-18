@@ -16,6 +16,8 @@
 
     <Thickness x:Key="CommandBarMoreButtonMargin">14,19,14,0</Thickness>
     <sys:Double x:Key="AppBarButtonContentHeight">16</sys:Double>
+    
+    <Thickness x:Key="CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin">2,2,6,2</Thickness>
 
     <Style
         x:Key="EllipsisButton"
@@ -82,13 +84,49 @@
         x:Key="CommandBarFlyoutEllipsisButtonStyle"
         BasedOn="{StaticResource EllipsisButton}"
         TargetType="ToggleButton">
-        <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutButtonBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlTransparentBrush}" />
+        <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CommandBarFlyoutAppBarButtonBorderBrush}" />
         <Setter Property="Padding" Value="0" />
-        <Setter Property="Width" Value="40" />
+        <Setter Property="Width" Value="44" />
         <Setter Property="Height" Value="40" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border
+                        x:Name="Border"
+                        Margin="{StaticResource CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin}"
+                        Padding="0"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <ContentPresenter
+                            x:Name="ContentPresenter"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 </ResourceDictionary>
