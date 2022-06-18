@@ -16,7 +16,7 @@
 
     <Thickness x:Key="CommandBarMoreButtonMargin">14,19,14,0</Thickness>
     <sys:Double x:Key="AppBarButtonContentHeight">16</sys:Double>
-    
+
     <Thickness x:Key="CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin">2,2,6,2</Thickness>
 
     <Style

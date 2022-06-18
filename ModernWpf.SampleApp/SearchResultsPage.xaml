@@ -1,0 +1,54 @@
+﻿<local:ItemsPageBase
+    x:Class="ModernWpf.SampleApp.SearchResultsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="Search Results Page"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+    mc:Ignorable="d">
+    <local:ItemsPageBase.Resources>
+        <ResourceDictionary Source="ItemTemplates.xaml" />
+    </local:ItemsPageBase.Resources>
+
+    <Grid Background="{DynamicResource HomePageBackgroundBrush}">
+        <ui:NavigationView
+            x:Name="resultsNavView"
+            Margin="12,0,0,0"
+            IsSettingsVisible="False"
+            Loaded="OnResultsNavViewLoaded"
+            MenuItemsSource="{Binding Filters, Mode=OneWay}"
+            PaneDisplayMode="Top"
+            SelectionChanged="OnResultsNavViewSelectionChanged">
+            <UserControl>
+                <ui:GridView
+                    x:Name="resultsGridView"
+                    Margin="12,24,0,0"
+                    Padding="0,0,0,36"
+                    AutomationProperties.AutomationId="ResultsGridView"
+                    AutomationProperties.Name="Search Results"
+                    IsItemClickEnabled="True"
+                    IsSelectionEnabled="False"
+                    ItemClick="OnItemGridViewItemClick"
+                    ItemContainerStyle="{StaticResource GridViewItemStyle}"
+                    ItemTemplate="{StaticResource ControlItemTemplate}"
+                    ItemsSource="{Binding SelectedItem.Items, ElementName=resultsNavView, Mode=OneWay}"
+                    KeyDown="OnItemGridViewKeyDown"
+                    Loaded="OnItemGridViewLoaded"
+                    SizeChanged="OnItemGridViewSizeChanged"
+                    TabIndex="1" />
+            </UserControl>
+        </ui:NavigationView>
+
+        <TextBlock
+            x:Name="noResultsTextBlock"
+            Margin="24,24,0,0"
+            Style="{DynamicResource TitleTextBlockStyle}"
+            Text="No results match your search."
+            Visibility="Collapsed" />
+    </Grid>
+</local:ItemsPageBase>

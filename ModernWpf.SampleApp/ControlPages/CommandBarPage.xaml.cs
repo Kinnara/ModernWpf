@@ -1,6 +1,7 @@
 ﻿using ModernWpf.Controls;
 using SamplesCommon;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -149,7 +150,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 Source = this,
                 Path = new PropertyPath("MultipleButtons"),
             });
-            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2 };
+            ObservableCollection<ControlExampleSubstitution> Substitutions = new ObservableCollection<ControlExampleSubstitution>() { Substitution1, Substitution2 };
             Example3.Substitutions = Substitutions;
         }
     }

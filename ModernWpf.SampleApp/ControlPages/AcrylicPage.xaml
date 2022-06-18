@@ -34,8 +34,9 @@
             <local:ControlExample.Example>
                 <Grid
                     x:Name="Example1Grid"
+                    Width="320"
                     Height="200"
-                    MinWidth="320">
+                    HorizontalAlignment="Left">
                     <Grid x:Name="Acrylic1Grid" Background="{DynamicResource ControlExampleDisplayBrush}">
                         <Rectangle
                             Width="100"
@@ -72,8 +73,9 @@
             <local:ControlExample.Example>
                 <Grid
                     x:Name="Example3Grid"
+                    Width="320"
                     Height="200"
-                    MinWidth="320">
+                    HorizontalAlignment="Left">
                     <Grid x:Name="Acrylic3Grid" Background="{DynamicResource ControlExampleDisplayBrush}">
                         <Rectangle
                             Width="100"
@@ -142,8 +144,9 @@
             <local:ControlExample.Example>
                 <Grid
                     x:Name="Example4Grid"
+                    Width="320"
                     Height="200"
-                    MinWidth="320">
+                    HorizontalAlignment="Left">
                     <Grid x:Name="Acrylic4Grid" Background="{DynamicResource ControlExampleDisplayBrush}">
                         <Rectangle
                             Width="100"

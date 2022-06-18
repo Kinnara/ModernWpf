@@ -1,6 +1,7 @@
 ﻿using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,7 +49,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 Source = StretchImage,
                 Path = new PropertyPath("Stretch"),
             });
-            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution };
+            ObservableCollection<ControlExampleSubstitution> Substitutions = new ObservableCollection<ControlExampleSubstitution>() { Substitution };
             Example3.Substitutions = Substitutions;
         }
     }

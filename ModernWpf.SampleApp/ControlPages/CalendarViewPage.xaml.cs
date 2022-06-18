@@ -2,6 +2,7 @@
 using ModernWpf.SampleApp.Common;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -70,7 +71,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 Path = new PropertyPath("Language"),
             });
 
-            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2 };
+            ObservableCollection<ControlExampleSubstitution> Substitutions = new ObservableCollection<ControlExampleSubstitution>() { Substitution1, Substitution2 };
             ExampleAccessories.Substitutions = Substitutions;
         }
     }

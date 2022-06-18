@@ -1,14 +1,230 @@
-﻿<Page
+﻿<ui:Page
     x:Class="ModernWpf.SampleApp.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="SettingsPage"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="Settings Page"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
     mc:Ignorable="d">
+    <Grid>
+        <ScrollViewer
+            x:Name="contentSV"
+            Grid.Row="1"
+            Padding="56,0,0,0"
+            ui:FocusVisualHelper.UseSystemFocusVisuals="False"
+            IsTabStop="False"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel HorizontalAlignment="Left">
+                <TextBlock
+                    Margin="0,12,0,0"
+                    Style="{DynamicResource SubtitleTextBlockStyle}"
+                    Text="Theme Mode" />
+                <StackPanel x:Name="ThemePanel" Margin="0,10,0,0">
+                    <RadioButton
+                        Checked="OnThemeRadioButtonChecked"
+                        Content="Light"
+                        KeyDown="OnThemeRadioButtonKeyDown"
+                        Tag="Light" />
+                    <RadioButton
+                        Checked="OnThemeRadioButtonChecked"
+                        Content="Dark"
+                        Tag="Dark" />
+                    <RadioButton
+                        Checked="OnThemeRadioButtonChecked"
+                        Content="Use system setting"
+                        Tag="Default" />
+                </StackPanel>
 
-    <Grid />
-</Page>
+                <TextBlock
+                    Margin="0,40,0,0"
+                    Style="{DynamicResource SubtitleTextBlockStyle}"
+                    Text="Sound" />
+                <StackPanel Margin="0,10,0,0">
+                    <ui:ToggleSwitch
+                        x:Name="soundToggle"
+                        Margin="0,0,0,4"
+                        Header="Controls provide audible feedback"
+                        OffContent="Off"
+                        OnContent="On"
+                        Toggled="soundToggle_Toggled" />
+                    <CheckBox
+                        x:Name="spatialSoundBox"
+                        Checked="spatialSoundBox_Checked"
+                        Content="Spatial Audio"
+                        IsEnabled="False"
+                        Unchecked="spatialSoundBox_Unchecked" />
+                    <TextBlock
+                        Margin="0,8,0,0"
+                        FontStyle="Italic"
+                        Style="{DynamicResource CaptionTextBlockStyle}">
+                        See the<Hyperlink x:Name="soundPageHyperlink" Click="soundPageHyperlink_Click">Sound page</Hyperlink>
+                        for how to enable sound in your app!</TextBlock>
+                </StackPanel>
+
+                <TextBlock
+                    Margin="0,40,0,0"
+                    Style="{DynamicResource SubtitleTextBlockStyle}"
+                    Text="Navigation Style" />
+                <ui:RadioButtons
+                    x:Name="navigationLocation"
+                    Margin="0,10,0,0"
+                    Header="Navigation position"
+                    SelectionChanged="navigationLocation_SelectionChanged">
+                    <RadioButton Content="Left" />
+                    <RadioButton Content="Top" />
+                </ui:RadioButtons>
+
+                <StackPanel x:Name="ScreenshotSettingsGrid">
+                    <TextBlock
+                        Margin="0,40,0,0"
+                        Style="{DynamicResource SubtitleTextBlockStyle}"
+                        Text="Screenshots" />
+                    <StackPanel Margin="0,10,0,0">
+                        <ui:ToggleSwitch
+                            x:Name="screenshotModeToggle"
+                            Margin="0,0,0,4"
+                            Header="Screenshot mode"
+                            OffContent="Off"
+                            OnContent="On"
+                            Toggled="screenshotModeToggle_Toggled" />
+                        <Button
+                            Margin="0,4,0,0"
+                            Click="FolderButton_Click"
+                            Content="Set screenshot folder" />
+
+                        <ui:HyperlinkButton
+                            x:Name="screenshotFolderLink"
+                            Margin="0,4,0,0"
+                            Click="screenshotFolderLink_Click">
+                            <TextBlock x:Name="screenshotFolderLinkContent" TextWrapping="Wrap" />
+                        </ui:HyperlinkButton>
+                    </StackPanel>
+                </StackPanel>
+
+                <TextBlock
+                    Margin="0,40,0,0"
+                    Style="{DynamicResource SubtitleTextBlockStyle}"
+                    Text="Teaching Tips" />
+                <StackPanel Margin="0,10,0,0">
+                    <Button
+                        Margin="0,4,0,0"
+                        Click="OnResetTeachingTipsButtonClick"
+                        Content="Reset the &quot;Generate Link to Page&quot; Teaching Tip" />
+                </StackPanel>
+
+                <TextBlock
+                    Margin="0,40,0,0"
+                    Style="{DynamicResource SubtitleTextBlockStyle}"
+                    Text="About" />
+                <FlowDocumentScrollViewer MaxWidth="840" Margin="0,10,0,0">
+                    <FlowDocument>
+                        <Paragraph>
+                            This app is the interactive companion to the<Hyperlink NavigateUri="https://developer.microsoft.com/windows/apps/design">Fluent Design System web site</Hyperlink>
+                            .</Paragraph>
+                        <Paragraph Margin="0,10,0,0">
+                            Source code:<Hyperlink NavigateUri="https://github.com/microsoft/WinUI-Gallery">GitHub</Hyperlink>
+                        </Paragraph>
+                        <Paragraph Margin="0,10,0,0">
+                            <Run>To clone the source repository:</Run>
+                            <Run FontStyle="Italic">git clone https://github.com/microsoft/WinUI-Gallery</Run>
+                        </Paragraph>
+                    </FlowDocument>
+                </FlowDocumentScrollViewer>
+                <TextBlock Margin="0,10,0,0">
+                    Version:<Run FontWeight="Bold" Text="{Binding Version, Mode=OneWay}" />
+                </TextBlock>
+
+                <TextBlock
+                    Margin="0,40,0,0"
+                    Style="{DynamicResource SubtitleTextBlockStyle}"
+                    Text="Found a bug? Want a new sample?" />
+                <FlowDocumentScrollViewer MaxWidth="840" Margin="0,10,0,0">
+                    <FlowDocument>
+                        <Paragraph>
+                            If you have found a bug within the WinUI 3 Gallery, please file an issue on GitHub:
+                        </Paragraph>
+                        <Paragraph Margin="0,10,0,10">
+                            <Hyperlink NavigateUri="https://github.com/microsoft/WinUI-Gallery/issues/new?template=bug_report.md">New WinUI 3 Gallery Bug Report</Hyperlink>
+                        </Paragraph>
+                        <Paragraph>
+                            If you would like a new sample, request it on GitHub:
+                        </Paragraph>
+                        <Paragraph Margin="0,10,0,10">
+                            <Hyperlink NavigateUri="https://github.com/microsoft/WinUI-Gallery/issues/new?template=sample_request.md">New Sample Request</Hyperlink>
+                        </Paragraph>
+                        <Paragraph>
+                            If you found a bug in your app (not in the WinUI Gallery) and need help, file an issue on the WinUI GitHub:
+                        </Paragraph>
+                        <Paragraph Margin="0,10,0,10">
+                            <Hyperlink NavigateUri="https://github.com/microsoft/microsoft-ui-xaml/issues/new/choose">New WinUI Bug Report</Hyperlink>
+                        </Paragraph>
+                    </FlowDocument>
+                </FlowDocumentScrollViewer>
+
+                <TextBlock
+                    Margin="0,40,0,0"
+                    Style="{DynamicResource SubtitleTextBlockStyle}"
+                    Text="Dependencies and References" />
+                <FlowDocumentScrollViewer MaxWidth="840" Margin="0,10,0,0">
+                    <FlowDocument>
+                        <Paragraph Margin="0,10,0,10">
+                            <Hyperlink NavigateUri="https://aka.ms/winui">Windows UI Library</Hyperlink>
+                        </Paragraph>
+                        <Paragraph Margin="0,10,0,10">
+                            <Hyperlink NavigateUri="https://github.com/WilliamABradley/ColorCode-Universal">ColorCode-Universal</Hyperlink>
+                        </Paragraph>
+                        <Paragraph Margin="0,10,0,10">
+                            <Hyperlink NavigateUri="https://github.com/Microsoft/Win2D">Win2D</Hyperlink>
+                        </Paragraph>
+                        <Paragraph Margin="0,10,0,10">
+                            <Hyperlink NavigateUri="https://github.com/Microsoft/XamlBehaviors">Xaml Behaviors</Hyperlink>
+                        </Paragraph>
+                    </FlowDocument>
+                </FlowDocumentScrollViewer>
+
+                <TextBlock
+                    Margin="0,40,0,0"
+                    Style="{DynamicResource SubtitleTextBlockStyle}"
+                    Text="Companion apps" />
+                <FlowDocumentScrollViewer MaxWidth="840" Margin="0,10,0,0">
+                    <FlowDocument>
+                        <Paragraph>
+                            Check out these great companion apps:
+                        </Paragraph>
+                        <Paragraph Margin="0,10,0,0">
+                            <Hyperlink NavigateUri="https://www.microsoft.com/store/productId/9NBLGGH4TLCQ">Windows Community Toolkit Sample app</Hyperlink>
+                        </Paragraph>
+                        <Paragraph Margin="0,10,0,0">
+                            <Hyperlink NavigateUri="https://www.microsoft.com/store/productId/9N2XD3Q8X57C">Fluent XAML Theme Editor</Hyperlink>
+                        </Paragraph>
+                        <Paragraph Margin="0,10,0,0">
+                            <Hyperlink NavigateUri="https://www.microsoft.com/store/productId/9N1H8CZHBPXB">Windows Composition Samples</Hyperlink>
+                        </Paragraph>
+                    </FlowDocument>
+                </FlowDocumentScrollViewer>
+
+                <TextBlock
+                    Margin="0,40,0,0"
+                    Style="{DynamicResource SubtitleTextBlockStyle}"
+                    Text="Disclaimer" />
+                <FlowDocumentScrollViewer MaxWidth="840" Margin="0,10,0,50">
+                    <FlowDocument>
+                        <Paragraph>THIS CODE AND INFORMATION IS PROVIDED ‘AS IS’ WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.</Paragraph>
+                        <Paragraph>
+                            <LineBreak />
+                            Copyright (c) Microsoft Corporation. All rights reserved.</Paragraph>
+                        <Paragraph Margin="0,10,0,10">
+                            <Hyperlink NavigateUri="https://go.microsoft.com/fwlink/?LinkId=822631">Microsoft Services Agreement</Hyperlink>
+                            ,<Hyperlink NavigateUri="https://go.microsoft.com/fwlink/?LinkId=521839">Microsoft Privacy Statement</Hyperlink>
+                        </Paragraph>
+                    </FlowDocument>
+                </FlowDocumentScrollViewer>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</ui:Page>

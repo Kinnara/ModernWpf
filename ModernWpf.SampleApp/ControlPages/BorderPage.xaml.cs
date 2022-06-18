@@ -1,6 +1,7 @@
 ﻿using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -110,7 +111,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 Path = new PropertyPath("Background"),
             });
 
-            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2, Substitution3 };
+            ObservableCollection<ControlExampleSubstitution> Substitutions = new ObservableCollection<ControlExampleSubstitution>() { Substitution1, Substitution2, Substitution3 };
             Example1.Substitutions = Substitutions;
         }
     }

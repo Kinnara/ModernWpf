@@ -239,7 +239,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 Path = new PropertyPath("Value"),
             });
 
-            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2 };
+            ObservableCollection<ControlExampleSubstitution> Substitutions = new ObservableCollection<ControlExampleSubstitution>() { Substitution1, Substitution2 };
             (sender as ControlExample).Substitutions = Substitutions;
         }
 
@@ -305,7 +305,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 Path = new PropertyPath("AllowDrop"),
             });
 
-            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution1, Substitution2, Substitution3, Substitution4, Substitution5 };
+            ObservableCollection<ControlExampleSubstitution> Substitutions = new ObservableCollection<ControlExampleSubstitution>() { Substitution1, Substitution2, Substitution3, Substitution4, Substitution5 };
             (sender as ControlExample).Substitutions = Substitutions;
         }
     }

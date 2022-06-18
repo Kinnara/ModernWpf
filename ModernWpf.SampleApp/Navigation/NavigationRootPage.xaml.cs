@@ -25,6 +25,7 @@ using ModernWpf.SampleApp.Helper;
 using System.Windows.Controls;
 using Page = ModernWpf.Controls.Page;
 using Frame = ModernWpf.Controls.Frame;
+using ModernWpf.SampleApp.Common;
 
 namespace ModernWpf.SampleApp
 {
@@ -43,6 +44,17 @@ namespace ModernWpf.SampleApp
         private bool _isKeyboardConnected;
         private NavigationViewItem _allControlsMenuItem;
         private NavigationViewItem _newControlsMenuItem;
+
+        public static NavigationRootPage GetForElement(object obj)
+        {
+            UIElement element = (UIElement)obj;
+            Window window = WindowHelper.GetWindowForElement(element);
+            if (window != null)
+            {
+                return (NavigationRootPage)window.Content;
+            }
+            return null;
+        }
 
         public NavigationView NavigationView
         {
@@ -319,7 +331,7 @@ namespace ModernWpf.SampleApp
                             // Idea: check for every word entered (separated by space) if it is in the name, 
                             // e.g. for query "split button" the only result should "SplitButton" since its the only query to contain "split" and "button"
                             // If any of the sub tokens is not in the string, we ignore the item. So the search gets more precise with more words
-                            bool flag = true;
+                            bool flag = item.IncludedInBuild;
                             foreach (string queryToken in querySplit)
                             {
                                 // Check if token is not in string
@@ -353,13 +365,12 @@ namespace ModernWpf.SampleApp
             {
                 var infoDataItem = args.ChosenSuggestion as ControlInfoDataItem;
                 var itemId = infoDataItem.UniqueId;
-                bool changedSelection = false;
                 EnsureItemIsVisibleInNavigation(infoDataItem.Title);
-                //NavigationRootPage.RootFrame.Navigate(typeof(ItemPage), itemId);
+                RootFrame.Navigate(typeof(ItemPage), itemId);
             }
             else if (!string.IsNullOrEmpty(args.QueryText))
             {
-                //NavigationRootPage.RootFrame.Navigate(typeof(SearchResultsPage), args.QueryText);
+                RootFrame.Navigate(typeof(SearchResultsPage), args.QueryText);
             }
         }
 

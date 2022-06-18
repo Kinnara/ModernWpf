@@ -1,6 +1,7 @@
 ﻿using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace ModernWpf.SampleApp.ControlPages
     /// </summary>
     public partial class CanvasPage : Page
     {
-        private List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>();
+        private ObservableCollection<ControlExampleSubstitution> Substitutions = new ObservableCollection<ControlExampleSubstitution>();
 
         public CanvasPage()
         {
@@ -58,7 +59,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 Source = ZSlider,
                 Path = new PropertyPath("Value"),
             });
-            Example1.Substitutions = new List<ControlExampleSubstitution> { Substitution1, Substitution2, Substitution3 };
+            Example1.Substitutions = new ObservableCollection<ControlExampleSubstitution> { Substitution1, Substitution2, Substitution3 };
         }
     }
 }

@@ -16,6 +16,9 @@ using System.Windows.Navigation;
 using Windows.Foundation.Metadata;
 using System.Windows.Markup;
 using ModernWpf.SampleApp.Controls;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Collections;
 
 namespace ModernWpf.SampleApp
 {
@@ -122,6 +125,7 @@ namespace ModernWpf.SampleApp
 
         public ControlExample()
         {
+            Substitutions = new ObservableCollection<ControlExampleSubstitution>();
             Loaded += ControlExample_Loaded;
             SizeChanged += Control_SizeChanged;
         }
@@ -182,11 +186,21 @@ namespace ModernWpf.SampleApp
             set { SetValue(CSharpSourceProperty, value); }
         }
 
-        public static readonly DependencyProperty SubstitutionsProperty = DependencyProperty.Register("Substitutions", typeof(IList<ControlExampleSubstitution>), typeof(ControlExample), new PropertyMetadata(default));
-        public IList<ControlExampleSubstitution> Substitutions
+        public static readonly DependencyProperty SubstitutionsProperty = DependencyProperty.Register("Substitutions", typeof(ObservableCollection<ControlExampleSubstitution>), typeof(ControlExample), new PropertyMetadata(null));
+        public ObservableCollection<ControlExampleSubstitution> Substitutions
         {
-            get { return (IList<ControlExampleSubstitution>)GetValue(SubstitutionsProperty); }
-            set { SetValue(SubstitutionsProperty, value); }
+            get => (ObservableCollection<ControlExampleSubstitution>)GetValue(SubstitutionsProperty);
+            set
+            {
+                if (value == null)
+                {
+                    ClearValue(SubstitutionsProperty);
+                }
+                else
+                {
+                    SetValue(SubstitutionsProperty, value);
+                }
+            }
         }
 
         public static readonly DependencyProperty ExampleHeightProperty = DependencyProperty.Register("ExampleHeight", typeof(GridLength), typeof(ControlExample), new PropertyMetadata(new GridLength(1, GridUnitType.Star)));

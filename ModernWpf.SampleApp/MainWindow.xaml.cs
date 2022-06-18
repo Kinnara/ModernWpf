@@ -1,4 +1,5 @@
 ﻿using ModernWpf.Controls;
+using ModernWpf.SampleApp.Common;
 using ModernWpf.SampleApp.DataModel;
 using ModernWpf.SampleApp.Helpers;
 using ModernWpf.SampleApp.Properties;
@@ -25,6 +26,7 @@ namespace ModernWpf.SampleApp
             Current = this;
             InitializeComponent();
             InitialzeApp();
+            WindowHelper.TrackWindow(this);
         }
 
         private async void InitialzeApp()

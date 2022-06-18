@@ -1,0 +1,127 @@
+﻿<ui:Page
+    x:Class="ModernWpf.SampleApp.ControlPages.RadialGradientBrushPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="RadialGradient Brush Page"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel>
+        <local:ControlExample HeaderText="RadialGradientBrush Sample" XamlSource="Brushes\RadialGradientBrushSample_xaml.txt">
+            <local:ControlExample.Resources>
+                <ui:BindingProxy x:Key="SpreadMethodComboBox" Value="{x:Reference SpreadMethodComboBox}" />
+                <ui:BindingProxy x:Key="MappingModeComboBox" Value="{x:Reference MappingModeComboBox}" />
+                <ui:BindingProxy x:Key="CenterXSlider" Value="{x:Reference CenterXSlider}" />
+                <ui:BindingProxy x:Key="CenterYSlider" Value="{x:Reference CenterYSlider}" />
+                <ui:BindingProxy x:Key="RadiusXSlider" Value="{x:Reference RadiusXSlider}" />
+                <ui:BindingProxy x:Key="RadiusYSlider" Value="{x:Reference RadiusYSlider}" />
+                <ui:BindingProxy x:Key="OriginXSlider" Value="{x:Reference OriginXSlider}" />
+                <ui:BindingProxy x:Key="OriginYSlider" Value="{x:Reference OriginYSlider}" />
+            </local:ControlExample.Resources>
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <Rectangle
+                    x:Name="Rect"
+                    Width="200"
+                    Height="200">
+                    <Rectangle.Fill>
+                        <RadialGradientBrush x:Name="RadialGradientBrushExample" Center="0.25,0.25" GradientOrigin="0.5,.25" MappingMode="RelativeToBoundingBox" RadiusX=".5" RadiusY=".5" SpreadMethod="Pad">
+                            <GradientStop Offset="0.0" Color="Yellow" />
+                            <GradientStop Offset="1" Color="Blue" />
+                        </RadialGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+            </StackPanel>
+            <local:ControlExample.Options>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <ComboBox
+                        x:Name="MappingModeComboBox"
+                        Grid.ColumnSpan="2"
+                        ui:ControlHelper.Header="MappingMode"
+                        SelectedValue="RelativeToBoundingBox">
+                        <sys:String>RelativeToBoundingBox</sys:String>
+                        <sys:String>Absolute</sys:String>
+                    </ComboBox>
+                    <Slider
+                        x:Name="CenterXSlider"
+                        Grid.Row="1"
+                        ui:ControlHelper.Header="Center.X"
+                        SmallChange="0.05"
+                        ValueChanged="OnSliderValueChanged" />
+                    <Slider
+                        x:Name="CenterYSlider"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        ui:ControlHelper.Header="Center.Y"
+                        SmallChange="0.05"
+                        ValueChanged="OnSliderValueChanged" />
+                    <Slider
+                        x:Name="RadiusXSlider"
+                        Grid.Row="2"
+                        ui:ControlHelper.Header="RadiusX"
+                        SmallChange="0.05"
+                        ValueChanged="OnSliderValueChanged" />
+                    <Slider
+                        x:Name="RadiusYSlider"
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        ui:ControlHelper.Header="RadiusY"
+                        SmallChange="0.05"
+                        ValueChanged="OnSliderValueChanged" />
+                    <Slider
+                        x:Name="OriginXSlider"
+                        Grid.Row="3"
+                        ui:ControlHelper.Header="GradientOrigin.X"
+                        SmallChange="0.05"
+                        ValueChanged="OnSliderValueChanged" />
+                    <Slider
+                        x:Name="OriginYSlider"
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        ui:ControlHelper.Header="GradientOrigin.Y"
+                        SmallChange="0.05"
+                        ValueChanged="OnSliderValueChanged" />
+                    <ComboBox
+                        x:Name="SpreadMethodComboBox"
+                        Grid.Row="4"
+                        Grid.ColumnSpan="2"
+                        Margin="0,10,0,0"
+                        ui:ControlHelper.Header="SpreadMethod"
+                        SelectedValue="Pad">
+                        <sys:String>Pad</sys:String>
+                        <sys:String>Reflect</sys:String>
+                        <sys:String>Repeat</sys:String>
+                    </ComboBox>
+                </Grid>
+            </local:ControlExample.Options>
+            <local:ControlExample.Substitutions>
+                <local:ControlExampleSubstitution Key="SpreadMethod" Value="{Binding Value.SelectedValue, Source={StaticResource SpreadMethodComboBox}, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="MappingMode" Value="{Binding Value.SelectedValue, Source={StaticResource MappingModeComboBox}, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="CenterX" Value="{Binding Value.Value, Source={StaticResource CenterXSlider}, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="CenterY" Value="{Binding Value.Value, Source={StaticResource CenterYSlider}, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="RadiusX" Value="{Binding Value.Value, Source={StaticResource RadiusXSlider}, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="RadiusY" Value="{Binding Value.Value, Source={StaticResource RadiusYSlider}, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="OriginX" Value="{Binding Value.Value, Source={StaticResource OriginXSlider}, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="OriginY" Value="{Binding Value.Value, Source={StaticResource OriginYSlider}, Mode=OneWay}" />
+            </local:ControlExample.Substitutions>
+        </local:ControlExample>
+    </StackPanel>
+</ui:Page>

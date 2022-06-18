@@ -53,10 +53,9 @@
                         <Image
                             x:Name="headerImage"
                             HorizontalAlignment="Center"
-                            Source="Assets/MainPage_Banner.png"
                             ui:ClipHelper.CornerRadius="{DynamicResource ControlCornerRadius}"
-                            Stretch="Fill">
-                        </Image>
+                            Source="Assets/MainPage_Banner.png"
+                            Stretch="Fill" />
                     </Border>
                     <TextBlock AutomationProperties.AutomationId="__ClickableAreaTextBlock" />
                     <StackPanel Margin="50,80,0,20" Orientation="Vertical">

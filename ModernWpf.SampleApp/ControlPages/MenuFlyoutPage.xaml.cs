@@ -1,5 +1,6 @@
 ﻿using ModernWpf.Controls;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -55,7 +56,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 Source = ShuffleToggleMenuFlyoutItem,
                 Path = new PropertyPath("IsChecked"),
             });
-            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution> { Substitution1, Substitution2 };
+            ObservableCollection<ControlExampleSubstitution> Substitutions = new ObservableCollection<ControlExampleSubstitution> { Substitution1, Substitution2 };
             Example2.Substitutions = Substitutions;
         }
     }

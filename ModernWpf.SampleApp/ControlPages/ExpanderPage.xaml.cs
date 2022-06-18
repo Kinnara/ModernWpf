@@ -1,5 +1,6 @@
 ﻿using ModernWpf.Controls;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -85,7 +86,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 Path = new PropertyPath("HorizontalAlignment"),
             });
 
-            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution> { Substitution1, Substitution2, Substitution3, Substitution4 };
+            ObservableCollection<ControlExampleSubstitution> Substitutions = new ObservableCollection<ControlExampleSubstitution> { Substitution1, Substitution2, Substitution3, Substitution4 };
             Example1.Substitutions = Substitutions;
         }
     }

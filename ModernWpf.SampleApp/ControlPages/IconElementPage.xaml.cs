@@ -1,6 +1,7 @@
 ﻿using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,7 +37,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 Source = MonochromeButton,
                 Path = new PropertyPath("IsChecked"),
             });
-            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution };
+            ObservableCollection<ControlExampleSubstitution> Substitutions = new ObservableCollection<ControlExampleSubstitution>() { Substitution };
             Example1.Substitutions = Substitutions;
         }
     }

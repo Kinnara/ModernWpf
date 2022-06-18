@@ -2,6 +2,7 @@
 using SamplesCommon;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -45,11 +46,21 @@ namespace ModernWpf.SampleApp.Controls
             set { SetValue(IsCSharpSampleProperty, value); }
         }
 
-        public static readonly DependencyProperty SubstitutionsProperty = DependencyProperty.Register("Substitutions", typeof(IList<ControlExampleSubstitution>), typeof(SampleCodePresenter), new PropertyMetadata(default, OnSubstitutionsPropertyChanged));
-        public IList<ControlExampleSubstitution> Substitutions
+        public static readonly DependencyProperty SubstitutionsProperty = DependencyProperty.Register("Substitutions", typeof(ObservableCollection<ControlExampleSubstitution>), typeof(SampleCodePresenter), new PropertyMetadata(null, OnSubstitutionsPropertyChanged));
+        public ObservableCollection<ControlExampleSubstitution> Substitutions
         {
-            get { return (IList<ControlExampleSubstitution>)GetValue(SubstitutionsProperty); }
-            set { SetValue(SubstitutionsProperty, value); }
+            get => (ObservableCollection<ControlExampleSubstitution>)GetValue(SubstitutionsProperty);
+            set
+            {
+                if (value == null)
+                {
+                    ClearValue(SubstitutionsProperty);
+                }
+                else
+                {
+                    SetValue(SubstitutionsProperty, value);
+                }
+            }
         }
 
         public bool IsEmpty => string.IsNullOrEmpty(Code) && CodeSourceFile == null;

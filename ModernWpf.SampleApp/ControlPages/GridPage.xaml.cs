@@ -1,6 +1,7 @@
 ﻿using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 Source = RowSlider,
                 Path = new PropertyPath("Value"),
             });
-            Example1.Substitutions = new List<ControlExampleSubstitution> { Substitution1, Substitution2 };
+            Example1.Substitutions = new ObservableCollection<ControlExampleSubstitution> { Substitution1, Substitution2 };
         }
     }
 }

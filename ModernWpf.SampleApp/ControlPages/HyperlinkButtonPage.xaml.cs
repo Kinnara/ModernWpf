@@ -1,5 +1,6 @@
 ﻿using SamplesCommon;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Navigation;
@@ -30,7 +31,7 @@ namespace ModernWpf.SampleApp.ControlPages
                 Source = DisableControl1,
                 Path = new PropertyPath("IsChecked"),
             });
-            List<ControlExampleSubstitution> Substitutions = new List<ControlExampleSubstitution>() { Substitution };
+            ObservableCollection<ControlExampleSubstitution> Substitutions = new ObservableCollection<ControlExampleSubstitution>() { Substitution };
             Example1.Substitutions = Substitutions;
         }
     }
