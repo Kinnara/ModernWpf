@@ -37,7 +37,9 @@
     <Color x:Key="SystemBaseMediumColor">#99000000</Color>
     <Color x:Key="SystemBaseMediumHighColor">#CC000000</Color>
     <Color x:Key="SystemBaseMediumLowColor">#66000000</Color>
+    <Color x:Key="SystemChromeAltHighColor">#FFFFFFFF</Color>
     <Color x:Key="SystemChromeAltLowColor">#FF171717</Color>
+    <Color x:Key="SystemChromeAltMediumHighColor">#CCFFFFFF</Color>
     <Color x:Key="SystemChromeBlackHighColor">#FF000000</Color>
     <Color x:Key="SystemChromeBlackLowColor">#33000000</Color>
     <Color x:Key="SystemChromeBlackMediumLowColor">#66000000</Color>
@@ -284,10 +286,6 @@
         x:Key="SystemControlTransientBorderBrush"
         Opacity="0.14"
         Color="#000000" />
-    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
-    <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
-    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="#2B2B2B" />
-    <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
     <SolidColorBrush
         x:Key="SystemControlDefaultBrighteningBrush"
         Opacity="0.5"
@@ -412,8 +410,50 @@
     <SolidColorBrush x:Key="SystemFillColorSolidNeutralBackgroundBrush" Color="{m:StaticColor SystemFillColorSolidNeutralBackground}" />
 
     <!--  Acrylic Brushes  -->
+    <SolidColorBrush x:Key="SystemControlAcrylicWindowBrush" Color="{m:StaticColor SystemChromeMediumColor}" />
     <SolidColorBrush x:Key="SystemControlAcrylicElementBrush" Color="{m:StaticColor SystemChromeMediumColor}" />
+    <SolidColorBrush x:Key="SystemControlAccentAcrylicWindowAccentMediumHighBrush" Color="{m:ThemeResource SystemAccentColor}" />
+    <SolidColorBrush x:Key="SystemControlAccentAcrylicElementAccentMediumHighBrush" Color="{m:ThemeResource SystemAccentColor}" />
+    <SolidColorBrush x:Key="SystemControlAccentDark1AcrylicWindowAccentDark1Brush" Color="{m:ThemeResource SystemAccentColorDark1}" />
+    <SolidColorBrush x:Key="SystemControlAccentDark1AcrylicElementAccentDark1Brush" Color="{m:ThemeResource SystemAccentColorDark1}" />
+    <SolidColorBrush x:Key="SystemControlAccentDark2AcrylicWindowAccentDark2MediumHighBrush" Color="{m:ThemeResource SystemAccentColorDark2}" />
+    <SolidColorBrush x:Key="SystemControlAccentDark2AcrylicElementAccentDark2MediumHighBrush" Color="{m:ThemeResource SystemAccentColorDark2}" />
+    <SolidColorBrush x:Key="SystemControlAcrylicWindowMediumHighBrush" Color="{m:StaticColor SystemChromeMediumColor}" />
+    <SolidColorBrush x:Key="SystemControlAcrylicElementMediumHighBrush" Color="{m:StaticColor SystemChromeMediumColor}" />
+    <SolidColorBrush x:Key="SystemControlChromeMediumLowAcrylicWindowMediumBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
     <SolidColorBrush x:Key="SystemControlChromeMediumLowAcrylicElementMediumBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
+    <SolidColorBrush x:Key="SystemControlBaseHighAcrylicWindowBrush" Color="{m:StaticColor SystemBaseHighColor}" />
+    <SolidColorBrush x:Key="SystemControlBaseHighAcrylicElementBrush" Color="{m:StaticColor SystemBaseHighColor}" />
+    <SolidColorBrush x:Key="SystemControlBaseHighAcrylicWindowMediumHighBrush" Color="{m:StaticColor SystemBaseHighColor}" />
+    <SolidColorBrush x:Key="SystemControlBaseHighAcrylicElementMediumHighBrush" Color="{m:StaticColor SystemBaseHighColor}" />
+    <SolidColorBrush x:Key="SystemControlBaseHighAcrylicWindowMediumBrush" Color="{m:StaticColor SystemBaseHighColor}" />
+    <SolidColorBrush x:Key="SystemControlBaseHighAcrylicElementMediumBrush" Color="{m:StaticColor SystemBaseHighColor}" />
+    <SolidColorBrush x:Key="SystemControlChromeLowAcrylicWindowBrush" Color="{m:StaticColor SystemChromeLowColor}" />
+    <SolidColorBrush x:Key="SystemControlChromeLowAcrylicElementBrush" Color="{m:StaticColor SystemChromeLowColor}" />
+    <SolidColorBrush x:Key="SystemControlChromeMediumAcrylicWindowMediumBrush" Color="{m:StaticColor SystemChromeMediumColor}" />
+    <SolidColorBrush x:Key="SystemControlChromeMediumAcrylicElementMediumBrush" Color="{m:StaticColor SystemChromeMediumColor}" />
+    <SolidColorBrush x:Key="SystemControlChromeHighAcrylicWindowMediumBrush" Color="{m:StaticColor SystemChromeHighColor}" />
+    <SolidColorBrush x:Key="SystemControlChromeHighAcrylicElementMediumBrush" Color="{m:StaticColor SystemChromeHighColor}" />
+    <SolidColorBrush x:Key="SystemControlBaseLowAcrylicWindowBrush" Color="{m:StaticColor SystemBaseLowColor}" />
+    <SolidColorBrush x:Key="SystemControlBaseLowAcrylicElementBrush" Color="{m:StaticColor SystemBaseLowColor}" />
+    <SolidColorBrush x:Key="SystemControlBaseMediumLowAcrylicWindowMediumBrush" Color="{m:StaticColor SystemBaseMediumLowColor}" />
+    <SolidColorBrush x:Key="SystemControlBaseMediumLowAcrylicElementMediumBrush" Color="{m:StaticColor SystemBaseMediumLowColor}" />
+    <SolidColorBrush x:Key="SystemControlAltLowAcrylicWindowBrush" Color="{m:StaticColor SystemAltLowColor}" />
+    <SolidColorBrush x:Key="SystemControlAltLowAcrylicElementBrush" Color="{m:StaticColor SystemAltLowColor}" />
+    <SolidColorBrush x:Key="SystemControlAltMediumLowAcrylicWindowMediumBrush" Color="{m:StaticColor SystemAltMediumLowColor}" />
+    <SolidColorBrush x:Key="SystemControlAltMediumLowAcrylicElementMediumBrush" Color="{m:StaticColor SystemAltMediumLowColor}" />
+    <SolidColorBrush x:Key="SystemControlAltHighAcrylicWindowBrush" Color="{m:StaticColor SystemAltHighColor}" />
+    <SolidColorBrush x:Key="SystemControlAltHighAcrylicElementBrush" Color="{m:StaticColor SystemAltHighColor}" />
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultBrush" Color="#F9F9F9" />
+    <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="#F9F9F9" />
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="#2C2C2C" />
+    <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultInverseBrush" Color="#2C2C2C" />
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="#EEEEEE" />
+    <SolidColorBrush x:Key="AcrylicInAppFillColorBaseBrush" Color="#EEEEEE" />
+    <SolidColorBrush x:Key="AccentAcrylicBackgroundFillColorDefaultBrush" Color="{m:ThemeResource SystemAccentColorLight3}" />
+    <SolidColorBrush x:Key="AccentAcrylicInAppFillColorDefaultBrush" Color="{m:ThemeResource SystemAccentColorLight3}" />
+    <SolidColorBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" Color="{m:ThemeResource SystemAccentColorLight3}" />
+    <SolidColorBrush x:Key="AccentAcrylicInAppFillColorBaseBrush" Color="{m:ThemeResource SystemAccentColorLight3}" />
 
     <!--  Background Brushes  -->
     <SolidColorBrush x:Key="SystemControlBackgroundBaseLowRevealBackgroundBrush" Color="{m:StaticColor SystemBaseLowColor}" />
@@ -578,55 +618,76 @@
     <sys:Double x:Key="AppBarExpandButtonCircleDiameter">3</sys:Double>
 
     <!--  Resources for AppBarToggleButton  -->
-    <m:StaticResource x:Key="AppBarToggleButtonBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBackgroundChecked" ResourceKey="SystemControlHighlightListAccentLowBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBackgroundCheckedPointerOver" ResourceKey="SystemControlHighlightListAccentMediumBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBackgroundCheckedPressed" ResourceKey="SystemControlHighlightListAccentHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBackgroundCheckedDisabled" ResourceKey="SystemControlDisabledAccentBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlay" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlayPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlayPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonForegroundChecked" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonForegroundCheckedDisabled" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBorderBrush" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushPressed" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushChecked" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushCheckedPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushCheckedPressed" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushCheckedDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundChecked" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked" ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltBaseMediumBrush" />
-    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundDisabled" ResourceKey="SubtleFillColorDisabledBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundChecked" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundCheckedPointerOver" ResourceKey="AccentFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundCheckedPressed" ResourceKey="AccentFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundCheckedDisabled" ResourceKey="AccentFillColorDisabledBrush" />
+
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlay" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlayPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlayPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+
+    <m:StaticResource x:Key="AppBarToggleButtonForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundChecked" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundCheckedPointerOver" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundCheckedPressed" ResourceKey="TextOnAccentFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonForegroundCheckedDisabled" ResourceKey="TextOnAccentFillColorDisabled" />
+
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrush" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushPointerOver" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushPressed" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushDisabled" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushChecked" ResourceKey="AccentControlElevationBorderBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushCheckedPointerOver" ResourceKey="AccentControlElevationBorderBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushCheckedPressed" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonBorderBrushCheckedDisabled" ResourceKey="ControlFillColorTransparentBrush" />
+
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundChecked" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedPointerOver" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedPressed" ResourceKey="TextOnAccentFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonCheckGlyphForegroundCheckedDisabled" ResourceKey="TextOnAccentFillColorDisabled" />
+
+    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundCheckedPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonOverflowLabelForegroundCheckedDisabled" ResourceKey="TextFillColorDisabledBrush" />
+
+    <SolidColorBrush x:Key="AppBarToggleButtonCheckedBackgroundThemeBrush" Color="#FF000000" />
+    <SolidColorBrush x:Key="AppBarToggleButtonCheckedBorderThemeBrush" Color="#FF000000" />
+    <SolidColorBrush x:Key="AppBarToggleButtonCheckedDisabledBackgroundThemeBrush" Color="#66000000" />
+    <SolidColorBrush x:Key="AppBarToggleButtonCheckedDisabledBorderThemeBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="AppBarToggleButtonCheckedDisabledForegroundThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="AppBarToggleButtonCheckedPointerOverBackgroundThemeBrush" Color="#99000000" />
+    <SolidColorBrush x:Key="AppBarToggleButtonCheckedPointerOverBorderThemeBrush" Color="#99000000" />
+    <SolidColorBrush x:Key="AppBarToggleButtonCheckedPressedBackgroundThemeBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="AppBarToggleButtonCheckedPressedBorderThemeBrush" Color="#FF000000" />
+    <SolidColorBrush x:Key="AppBarToggleButtonCheckedPressedForegroundThemeBrush" Color="#FF000000" />
+    <SolidColorBrush x:Key="AppBarToggleButtonCheckedForegroundThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="AppBarToggleButtonPointerOverBackgroundThemeBrush" Color="#3D000000" />
+
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForeground" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled" ResourceKey="TextFillColorDisabledBrush" />
 
     <m:StaticResource x:Key="AppBarEllipsisButtonBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="AppBarEllipsisButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
@@ -641,7 +702,8 @@
     <m:StaticResource x:Key="AppBarEllipsisButtonBorderBrushPressed" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="AppBarEllipsisButtonBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
 
-    <m:StaticResource x:Key="AppBarSeparatorForeground" ResourceKey="SystemControlForegroundBaseMediumLowBrush" />
+    <!--  Resources for AppBarSeparator  -->
+    <m:StaticResource x:Key="AppBarSeparatorForeground" ResourceKey="DividerStrokeColorDefaultBrush" />
 
     <!--  Resources for AutoSuggestBox  -->
     <m:StaticResource x:Key="AutoSuggestBoxSuggestionsListBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
@@ -1028,11 +1090,14 @@
     <sys:Double x:Key="CommandBarOverflowTouchMinWidth">240</sys:Double>
     <sys:Double x:Key="CommandBarOverflowMaxWidth">480</sys:Double>
     <sys:Double x:Key="CommandBarOverflowMaxHeight">198</sys:Double>
-    <m:StaticResource x:Key="CommandBarBackground" ResourceKey="SystemControlBackgroundChromeMediumBrush" />
-    <m:StaticResource x:Key="CommandBarForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CommandBarHighContrastBorder" ResourceKey="SystemControlForegroundTransparentBrush" />
-    <m:StaticResource x:Key="CommandBarEllipsisIconForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CommandBarOverflowPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+    <m:StaticResource x:Key="CommandBarBackground" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CommandBarBackgroundOpen" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="CommandBarBorderBrushOpen" ResourceKey="CardStrokeColorDefaultSolidBrush" />
+    <Thickness x:Key="CommandBarBorderThicknessOpen">1</Thickness>
+    <m:StaticResource x:Key="CommandBarForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CommandBarHighContrastBorder" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CommandBarEllipsisIconForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="CommandBarOverflowPresenterBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
     <m:StaticResource x:Key="CommandBarOverflowPresenterBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
     <m:StaticResource x:Key="CommandBarLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
     <Thickness x:Key="CommandBarOverflowPresenterBorderThickness">1</Thickness>

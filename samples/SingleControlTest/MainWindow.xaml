@@ -49,7 +49,7 @@
             IsIndeterminate="{Binding IsOn, ElementName=IsIndeterminate}"
             Value="{Binding Value, ElementName=Value}" />
 
-        <ui:AppBarButton Icon="Add" Label="Add" />
+        <ui:AppBarToggleButton Icon="Add" Label="Add" />
 
         <ui:AppBarButton
             Icon="Sort"
@@ -67,9 +67,11 @@
         <ui:CommandBar
             Background="Transparent"
             DefaultLabelPosition="Right"
+            HorizontalAlignment="Left"
             IsOpen="False">
             <ui:AppBarButton Icon="Add" Label="Add" />
             <ui:AppBarButton Icon="Edit" Label="Edit" />
+            <ui:AppBarSeparator />
             <ui:AppBarButton Icon="Share" Label="Share" />
             <ui:CommandBar.SecondaryCommands>
                 <ui:AppBarButton Icon="Setting" Label="Settings" />

@@ -2,22 +2,31 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.modernwpf.com/2019">
+
+    <Thickness x:Key="AppBarSeparatorMargin">2,8,2,8</Thickness>
+    <Thickness x:Key="AppBarOverflowSeparatorMargin">0,4,0,4</Thickness>
+    <sys:Double x:Key="AppBarSeparatorWidth">1</sys:Double>
+    <sys:Double x:Key="AppBarOverflowSeparatorHeight">1</sys:Double>
+    <sys:Double x:Key="AppBarSeparatorCornerRadius">0.5</sys:Double>
 
     <Style TargetType="local:AppBarSeparator">
         <Setter Property="Foreground" Value="{DynamicResource AppBarSeparatorForeground}" />
+        <Setter Property="Padding" Value="{StaticResource AppBarSeparatorMargin}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarSeparator">
-                    <Grid
-                        x:Name="SeparatorRectangle"
-                        Width="1"
-                        Height="20"
-                        Margin="16,10,15,10"
-                        VerticalAlignment="Top"
-                        Background="{TemplateBinding Foreground}"
-                        SnapsToDevicePixels="True">
+                    <Grid x:Name="RootGrid">
+                        <Rectangle
+                            x:Name="SeparatorRectangle"
+                            Width="{StaticResource AppBarSeparatorWidth}"
+                            Margin="{TemplateBinding Padding}"
+                            VerticalAlignment="Stretch"
+                            Fill="{TemplateBinding Foreground}"
+                            RadiusX="{StaticResource AppBarSeparatorCornerRadius}"
+                            RadiusY="{StaticResource AppBarSeparatorCornerRadius}" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -31,11 +40,15 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <!--  Overflow  -->
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Compact">
+                            <Setter TargetName="RootGrid" Property="Height" Value="{StaticResource AppBarThemeCompactHeight}" />
+                            <Setter TargetName="RootGrid" Property="VerticalAlignment" Value="Top" />
+                        </Trigger>
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
-                            <Setter TargetName="SeparatorRectangle" Property="Width" Value="NaN" />
-                            <Setter TargetName="SeparatorRectangle" Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter TargetName="SeparatorRectangle" Property="Height" Value="1" />
-                            <Setter TargetName="SeparatorRectangle" Property="Margin" Value="12,4,12,4" />
+                            <Setter TargetName="RootGrid" Property="Width" Value="NaN" />
+                            <Setter TargetName="RootGrid" Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter TargetName="SeparatorRectangle" Property="Height" Value="{StaticResource AppBarOverflowSeparatorHeight}" />
+                            <Setter TargetName="SeparatorRectangle" Property="Margin" Value="{StaticResource AppBarOverflowSeparatorMargin}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
