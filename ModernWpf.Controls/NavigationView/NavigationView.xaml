@@ -1274,7 +1274,7 @@
                                                 <RowDefinition x:Name="MenuItemsRow" Height="Auto" MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"/> <!-- MenuItems -->
                                                 <RowDefinition Height="*" MinHeight="21"/> <!-- Fill spacing -->
                                                 <RowDefinition Height="Auto" /> <!-- PaneFooter -->
-                                                <RowDefinition x:Name="FooterItemsRow" Height="Auto" MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"/> <!-- FooterItems -->
+                                                <RowDefinition x:Name="FooterItemsRow" Height="Auto"/> <!-- FooterItems -->
                                             </Grid.RowDefinitions>
 
                                             <!-- MenuItems -->
@@ -1308,7 +1308,7 @@
                                                 <ScrollViewer x:Name="FooterItemsScrollViewer">
                                                     <!-- contract7Present:VerticalAnchorRatio="1" -->
                                                     <local:ItemsRepeater
-                                                        x:Name="FooterMenuItemsHost"/>
+                                                        x:Name="FooterMenuItemsHost" VerticalAlignment="Bottom"/>
                                                 </ScrollViewer>
                                             </local:ItemsRepeaterScrollHost>
                                         </Grid>
