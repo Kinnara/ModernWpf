@@ -29,7 +29,7 @@
         x:Shared="False"
         CaptionHeight="{DynamicResource {x:Static local:TitleBar.HeightKey}}"
         CornerRadius="0"
-        GlassFrameThickness="0,1,0,0"
+        GlassFrameThickness="{x:Static WindowChrome.GlassFrameCompleteThickness}"
         UseAeroCaptionButtons="False" />
 
     <Style x:Key="BaseWindowStyle" TargetType="Window">

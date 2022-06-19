@@ -41,11 +41,11 @@
                             <Setter Property="Background" TargetName="RootGrid" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=InactiveBackground}" />
                             <Setter Property="TextElement.Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=InactiveForeground}" />
                         </Trigger>
-                        <Trigger Property="IsMouseOver" Value="true">
+                        <Trigger Property="IsMouseReallyOver" Value="true">
                             <Setter Property="Background" TargetName="RootGrid" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=HoverBackground}" />
                             <Setter Property="TextElement.Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=HoverForeground}" />
                         </Trigger>
-                        <Trigger Property="IsPressed" Value="true">
+                        <Trigger Property="IsReallyPressed" Value="true">
                             <Setter Property="Background" TargetName="RootGrid" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedBackground}" />
                             <Setter Property="TextElement.Foreground" TargetName="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=PressedForeground}" />
                         </Trigger>

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 
 namespace ModernWpf
@@ -79,6 +81,31 @@ namespace ModernWpf
         public static bool HasLocalValue(this DependencyObject d, DependencyProperty dp)
         {
             return d.ReadLocalValue(dp) != DependencyProperty.UnsetValue;
+        }
+
+        public static DpiScale2 GetDpi(this Window window)
+        {
+            if (window is null)
+            {
+                throw new ArgumentNullException(nameof(window));
+            }
+
+#if NET462_OR_NEWER
+            return new DpiScale2(VisualTreeHelper.GetDpi(window));
+#else
+            var hwnd = new WindowInteropHelper(window).Handle;
+            var hwndSource = HwndSource.FromHwnd(hwnd);
+            if (hwndSource != null)
+            {
+                Matrix transformToDevice = hwndSource.CompositionTarget.TransformToDevice;
+                return new DpiScale2(transformToDevice.M11, transformToDevice.M22);
+            }
+            else
+            {
+                Debug.Fail("Should not reach here");
+                return new DpiScale2(1, 1);
+            }
+#endif
         }
     }
 
