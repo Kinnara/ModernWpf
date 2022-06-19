@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <None Remove="Assets\Images\1.jpg" />
+    <None Remove="Assets\ladybug.wmv" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,6 +20,9 @@
 
   <ItemGroup>
     <Resource Include="Assets\Images\1.jpg" />
+    <Content Include="Assets\ladybug.wmv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

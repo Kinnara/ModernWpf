@@ -4,17 +4,6 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:ui="http://schemas.modernwpf.com/2019">
 
-    <Thickness x:Key="AppBarButtonContentViewboxMargin">12,16,0,10</Thickness>
-    <Thickness x:Key="AppBarButtonContentViewboxCompactMargin">0,12,0,12</Thickness>
-    <Thickness x:Key="AppBarButtonContentViewboxCollapsedMargin">0,16,0,2</Thickness>
-    <Thickness x:Key="AppBarButtonOverflowTextTouchMargin">0,9,0,12</Thickness>
-    <Thickness x:Key="AppBarButtonOverflowTextLabelPadding">0,5,0,8</Thickness>
-    <Thickness x:Key="AppBarButtonTextLabelMargin">2,0,2,8</Thickness>
-    <Thickness x:Key="AppBarButtonTextLabelOnRightMargin">8,16,12,10</Thickness>
-    <Thickness x:Key="AppBarButtonInnerBorderMargin">2,6,2,6</Thickness>
-    <Thickness x:Key="AppBarButtonInnerBorderCompactMargin">2,6,2,22</Thickness>
-    <Thickness x:Key="AppBarButtonInnerBorderOverflowMargin">4,0,4,0</Thickness>
-
     <Style x:Key="DefaultAppBarButtonStyle" TargetType="local:AppBarButton">
         <Setter Property="Background" Value="{DynamicResource AppBarButtonBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource AppBarButtonForeground}" />
@@ -39,7 +28,7 @@
                         SnapsToDevicePixels="True">
                         <Border
                             x:Name="AppBarButtonInnerBorder"
-                            Margin="{StaticResource AppBarButtonInnerBorderMargin}"
+                            Margin="{DynamicResource AppBarButtonInnerBorderMargin}"
                             ui:FocusVisualHelper.IsTemplateFocusTarget="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
@@ -61,7 +50,7 @@
                             <Viewbox
                                 x:Name="ContentViewbox"
                                 Height="{DynamicResource AppBarButtonContentHeight}"
-                                Margin="{StaticResource AppBarButtonContentViewboxCollapsedMargin}"
+                                Margin="{DynamicResource AppBarButtonContentViewboxCollapsedMargin}"
                                 HorizontalAlignment="Stretch">
                                 <ui:ContentPresenterEx
                                     x:Name="Content"
@@ -173,17 +162,17 @@
                         <!--#region ApplicationViewStates-->
                         <!--  Compact  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Compact">
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Margin" Value="{StaticResource AppBarButtonInnerBorderCompactMargin}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Margin" Value="{DynamicResource AppBarButtonInnerBorderCompactMargin}" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <!--  LabelOnRight  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="LabelOnRight">
-                            <Setter TargetName="ContentViewbox" Property="Margin" Value="{StaticResource AppBarButtonContentViewboxMargin}" />
+                            <Setter TargetName="ContentViewbox" Property="Margin" Value="{DynamicResource AppBarButtonContentViewboxMargin}" />
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="{DynamicResource AppBarThemeCompactHeight}" />
                             <Setter TargetName="TextLabel" Property="Grid.Row" Value="0" />
                             <Setter TargetName="TextLabel" Property="Grid.Column" Value="1" />
                             <Setter TargetName="TextLabel" Property="TextAlignment" Value="Left" />
-                            <Setter TargetName="TextLabel" Property="Margin" Value="{StaticResource AppBarButtonTextLabelOnRightMargin}" />
+                            <Setter TargetName="TextLabel" Property="Margin" Value="{DynamicResource AppBarButtonTextLabelOnRightMargin}" />
                             <Setter TargetName="SubItemChevron" Property="Margin" Value="{DynamicResource AppBarButtonSubItemChevronLabelOnRightMargin}" />
                             <Setter Property="Width" Value="NaN" />
                         </Trigger>
@@ -195,7 +184,7 @@
                         <!--  Overflow  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Margin" Value="{StaticResource AppBarButtonInnerBorderOverflowMargin}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Margin" Value="{DynamicResource AppBarButtonInnerBorderOverflowMargin}" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
@@ -203,7 +192,7 @@
                         <!--  OverflowWithToggleButtons  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Margin" Value="{StaticResource AppBarButtonInnerBorderOverflowMargin}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Margin" Value="{DynamicResource AppBarButtonInnerBorderOverflowMargin}" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
@@ -212,7 +201,7 @@
                         <!--  OverflowWithMenuIcons  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Margin" Value="{StaticResource AppBarButtonInnerBorderOverflowMargin}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Margin" Value="{DynamicResource AppBarButtonInnerBorderOverflowMargin}" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
                             <Setter TargetName="ContentViewbox" Property="Width" Value="16" />
@@ -225,7 +214,7 @@
                         <!--  OverflowWithToggleButtonsAndMenuIcons  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtonsAndMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Margin" Value="{StaticResource AppBarButtonInnerBorderOverflowMargin}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Margin" Value="{DynamicResource AppBarButtonInnerBorderOverflowMargin}" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
                             <Setter TargetName="ContentViewbox" Property="Width" Value="16" />

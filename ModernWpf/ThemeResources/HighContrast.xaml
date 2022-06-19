@@ -405,16 +405,16 @@
     <SolidColorBrush x:Key="SystemControlAltMediumLowAcrylicElementMediumBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemControlAltHighAcrylicWindowBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemControlAltHighAcrylicElementBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
-    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
-    <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultInverseBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
-    <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
-    <SolidColorBrush x:Key="AcrylicInAppFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
-    <SolidColorBrush x:Key="AccentAcrylicBackgroundFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
-    <SolidColorBrush x:Key="AccentAcrylicInAppFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
-    <SolidColorBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
-    <SolidColorBrush x:Key="AccentAcrylicInAppFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="AcrylicInAppFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="AccentAcrylicBackgroundFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="AccentAcrylicInAppFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="AccentAcrylicInAppFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
     <!--  Background Brushes  -->
     <SolidColorBrush x:Key="SystemControlBackgroundBaseLowRevealBackgroundBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
@@ -1025,34 +1025,37 @@
     <Thickness x:Key="CommandBarOverflowPresenterBorderUpPadding">0</Thickness>
 
     <!--  Resources for CommandBarFlyout  -->
-    <m:StaticResource x:Key="CommandBarFlyoutBackground" ResourceKey="SystemControlBackgroundBaseLowBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutForeground" ResourceKey="SystemControlForegroundBaseHighBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush"/>
-    <SolidColorBrush x:Key="CommandBarFlyoutAppBarButtonBackground" Opacity="0" Color="{m:ThemeResource SystemColorHighlightColor}"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground" ResourceKey="SystemControlForegroundBaseHighBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonSubItemChevronForeground" ResourceKey="SystemControlForegroundBaseHighBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <SolidColorBrush
+        x:Key="CommandBarFlyoutAppBarButtonBackground"
+        Opacity="0"
+        Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonSubItemChevronForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonSubItemChevronPointerOverForeground" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonSubItemChevronPressedForeground" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonSubItemChevronSubMenuOpenedForeground" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonSubItemChevronDisabledForeground" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundChecked" ResourceKey="SystemControlHighlightAccentBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundCheckedPointerOver" ResourceKey="SystemControlHighlightAccentBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundCheckedPressed" ResourceKey="SystemControlHighlightBaseMediumLowBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundCheckedDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundChecked" ResourceKey="SystemControlHighlightAltChromeWhiteBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltChromeWhiteBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltChromeWhiteBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundChecked" ResourceKey="SystemControlHighlightAccentBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundCheckedPointerOver" ResourceKey="SystemControlHighlightAccentBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundCheckedPressed" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundCheckedDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundChecked" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
 
     <Thickness x:Key="CommandBarFlyoutBorderThemeThickness">1</Thickness>
     <Thickness x:Key="CommandBarFlyoutBorderUpThemeThickness">1,1,1,0</Thickness>
@@ -1394,6 +1397,25 @@
     <m:StaticResource x:Key="LoopingSelectorItemForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="LoopingSelectorItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
     <m:StaticResource x:Key="LoopingSelectorItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+
+    <!--  Resources for MediaTransportControls  -->
+    <Thickness x:Key="MediaTransportControlsTitleSafeBounds">48,0,48,27</Thickness>
+    <m:StaticResource x:Key="MediaTransportControlsPanelBackground" ResourceKey="SystemControlPageBackgroundAltMediumBrush" />
+    <m:StaticResource x:Key="MediaTransportControlsFlyoutBackground" ResourceKey="SystemControlPageBackgroundAltMediumBrush" />
+    <m:StaticResource x:Key="MediaTransportControlsThumbBorderBackground" ResourceKey="SystemControlBackgroundBaseMediumBrush" />
+    <m:StaticResource x:Key="MediaTransportControlsFillTimeElapsedText" ResourceKey="SystemControlPageTextBaseMediumBrush" />
+    <m:StaticResource x:Key="MediaTransportControlsFillMediaText" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="MediaTransportControlsBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
+    <Thickness x:Key="MediaTransportControlsMargin">12</Thickness>
+    <Thickness x:Key="MediaTransportControlsProgressSliderMargin">7,2,7,1</Thickness>
+    <Thickness x:Key="MediaTransportControlsProgressSliderCompactMargin">12,-1,8,1</Thickness>
+    <Thickness x:Key="MediaTransportControlsBorderThickness">1</Thickness>
+    <sys:Double x:Key="MediaTransportControlsAppBarButtonHeight">40</sys:Double>
+    <sys:Double x:Key="MediaTransportControlsAppBarButtonWidth">40</sys:Double>
+    <sys:Double x:Key="MediaTransportControlsSliderHeight">32</sys:Double>
+    <sys:Double x:Key="MediaTransportControlsSliderWidth">190</sys:Double>
+    <sys:Double x:Key="MediaTransportControlsMinWidth">296</sys:Double>
+    <sys:Double x:Key="MediaTransportControlsMaxWidth">720</sys:Double>
 
     <!--  Resources for MenuBar  -->
     <m:StaticResource x:Key="MenuBarBackground" ResourceKey="SystemControlTransparentBrush" />

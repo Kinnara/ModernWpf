@@ -5,15 +5,9 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.modernwpf.com/2019">
 
-    <Thickness x:Key="AppBarSeparatorMargin">2,8,2,8</Thickness>
-    <Thickness x:Key="AppBarOverflowSeparatorMargin">0,4,0,4</Thickness>
-    <sys:Double x:Key="AppBarSeparatorWidth">1</sys:Double>
-    <sys:Double x:Key="AppBarOverflowSeparatorHeight">1</sys:Double>
-    <sys:Double x:Key="AppBarSeparatorCornerRadius">0.5</sys:Double>
-
     <Style x:Key="DefaultAppBarSeparatorStyle" TargetType="local:AppBarSeparator">
         <Setter Property="Foreground" Value="{DynamicResource AppBarSeparatorForeground}" />
-        <Setter Property="Padding" Value="{StaticResource AppBarSeparatorMargin}" />
+        <Setter Property="Padding" Value="{DynamicResource AppBarSeparatorMargin}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
@@ -21,12 +15,12 @@
                     <Grid x:Name="RootGrid">
                         <Rectangle
                             x:Name="SeparatorRectangle"
-                            Width="{StaticResource AppBarSeparatorWidth}"
+                            Width="{DynamicResource AppBarSeparatorWidth}"
                             Margin="{TemplateBinding Padding}"
                             VerticalAlignment="Stretch"
                             Fill="{TemplateBinding Foreground}"
-                            RadiusX="{StaticResource AppBarSeparatorCornerRadius}"
-                            RadiusY="{StaticResource AppBarSeparatorCornerRadius}" />
+                            RadiusX="{DynamicResource AppBarSeparatorCornerRadius}"
+                            RadiusY="{DynamicResource AppBarSeparatorCornerRadius}" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -41,15 +35,15 @@
                     <ControlTemplate.Triggers>
                         <!--  Compact  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Compact">
-                            <Setter TargetName="RootGrid" Property="Height" Value="{StaticResource AppBarThemeCompactHeight}" />
+                            <Setter TargetName="RootGrid" Property="Height" Value="{DynamicResource AppBarThemeCompactHeight}" />
                             <Setter TargetName="RootGrid" Property="VerticalAlignment" Value="Top" />
                         </Trigger>
                         <!--  Overflow  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="RootGrid" Property="Width" Value="NaN" />
                             <Setter TargetName="RootGrid" Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter TargetName="SeparatorRectangle" Property="Height" Value="{StaticResource AppBarOverflowSeparatorHeight}" />
-                            <Setter TargetName="SeparatorRectangle" Property="Margin" Value="{StaticResource AppBarOverflowSeparatorMargin}" />
+                            <Setter TargetName="SeparatorRectangle" Property="Height" Value="{DynamicResource AppBarOverflowSeparatorHeight}" />
+                            <Setter TargetName="SeparatorRectangle" Property="Margin" Value="{DynamicResource AppBarOverflowSeparatorMargin}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -61,19 +55,19 @@
         x:Key="AppBarSeparatorOverflowStyle"
         BasedOn="{StaticResource DefaultAppBarSeparatorStyle}"
         TargetType="local:AppBarSeparator">
-        <Setter Property="Padding" Value="{StaticResource AppBarOverflowSeparatorMargin}" />
+        <Setter Property="Padding" Value="{DynamicResource AppBarOverflowSeparatorMargin}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarSeparator">
                     <Grid x:Name="RootGrid">
                         <Rectangle
                             x:Name="SeparatorRectangle"
-                            Height="{StaticResource AppBarOverflowSeparatorHeight}"
+                            Height="{DynamicResource AppBarOverflowSeparatorHeight}"
                             Margin="{TemplateBinding Padding}"
                             HorizontalAlignment="Stretch"
                             Fill="{TemplateBinding Foreground}"
-                            RadiusX="{StaticResource AppBarSeparatorCornerRadius}"
-                            RadiusY="{StaticResource AppBarSeparatorCornerRadius}" />
+                            RadiusX="{DynamicResource AppBarSeparatorCornerRadius}"
+                            RadiusY="{DynamicResource AppBarSeparatorCornerRadius}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

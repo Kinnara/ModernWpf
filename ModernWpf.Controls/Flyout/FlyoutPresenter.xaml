@@ -6,7 +6,7 @@
 
     <Thickness x:Key="FlyoutContentPadding">16,15,16,17</Thickness>
 
-    <Style TargetType="local:FlyoutPresenter">
+    <Style x:Key="DefaultFlyoutPresenterStyle" TargetType="local:FlyoutPresenter">
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="IsTabStop" Value="False" />
@@ -58,4 +58,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="local:FlyoutPresenter" />
+
 </ResourceDictionary>

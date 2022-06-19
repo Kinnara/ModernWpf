@@ -4,20 +4,6 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:ui="http://schemas.modernwpf.com/2019">
 
-    <Thickness x:Key="AppBarButtonContentViewboxMargin">12,16,0,10</Thickness>
-    <Thickness x:Key="AppBarButtonContentViewboxCollapsedMargin">0,16,0,2</Thickness>
-    <Thickness x:Key="AppBarButtonInnerBorderMargin">2,6,2,6</Thickness>
-    <Thickness x:Key="AppBarButtonInnerBorderCompactMargin">2,6,2,22</Thickness>
-    <Thickness x:Key="AppBarButtonInnerBorderOverflowMargin">4,0,4,0</Thickness>
-
-    <Thickness x:Key="AppBarToggleButtonBorderThemeThickness">1</Thickness>
-    <Thickness x:Key="AppBarToggleButtonOverflowTextTouchMargin">0,9,0,12</Thickness>
-    <Thickness x:Key="AppBarToggleButtonOverflowCheckTouchMargin">12,10,12,10</Thickness>
-    <Thickness x:Key="AppBarToggleButtonOverflowCheckMargin">12,4,12,4</Thickness>
-    <Thickness x:Key="AppBarToggleButtonTextLabelMargin">2,0,2,8</Thickness>
-    <Thickness x:Key="AppBarToggleButtonTextLabelOnRightMargin">8,16,12,10</Thickness>
-    <Thickness x:Key="AppBarToggleButtonOverflowTextLabelPadding">0,5,0,8</Thickness>
-
     <Style x:Key="DefaultAppBarToggleButtonStyle" TargetType="local:AppBarToggleButton">
         <Setter Property="Background" Value="{DynamicResource AppBarToggleButtonBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource AppBarToggleButtonForeground}" />
@@ -45,7 +31,7 @@
                         SnapsToDevicePixels="True">
                         <Border
                             x:Name="AppBarToggleButtonInnerBackground"
-                            Margin="{StaticResource AppBarButtonInnerBorderMargin}"
+                            Margin="{DynamicResource AppBarButtonInnerBorderMargin}"
                             ui:FocusVisualHelper.IsTemplateFocusTarget="True"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
@@ -69,7 +55,7 @@
                                 x:Name="OverflowCheckGlyph"
                                 Width="14"
                                 Height="14"
-                                Margin="{StaticResource AppBarToggleButtonOverflowCheckMargin}"
+                                Margin="{DynamicResource AppBarToggleButtonOverflowCheckMargin}"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 FontFamily="{DynamicResource FluentSystemIconsFilled}"
@@ -81,7 +67,7 @@
                             <Viewbox
                                 x:Name="ContentViewbox"
                                 Height="{DynamicResource AppBarButtonContentHeight}"
-                                Margin="{StaticResource AppBarButtonContentViewboxCollapsedMargin}"
+                                Margin="{DynamicResource AppBarButtonContentViewboxCollapsedMargin}"
                                 HorizontalAlignment="Stretch">
                                 <ui:ContentPresenterEx
                                     x:Name="Content"
@@ -168,17 +154,17 @@
                         <!--#region ApplicationViewStates-->
                         <!--  Compact  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Compact">
-                            <Setter TargetName="AppBarToggleButtonInnerBackground" Property="Margin" Value="{StaticResource AppBarButtonInnerBorderCompactMargin}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBackground" Property="Margin" Value="{DynamicResource AppBarButtonInnerBorderCompactMargin}" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <!--  LabelOnRight  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="LabelOnRight">
-                            <Setter TargetName="ContentViewbox" Property="Margin" Value="{StaticResource AppBarButtonContentViewboxMargin}" />
+                            <Setter TargetName="ContentViewbox" Property="Margin" Value="{DynamicResource AppBarButtonContentViewboxMargin}" />
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="{DynamicResource AppBarThemeCompactHeight}" />
                             <Setter TargetName="TextLabel" Property="Grid.Row" Value="0" />
                             <Setter TargetName="TextLabel" Property="Grid.Column" Value="1" />
                             <Setter TargetName="TextLabel" Property="TextAlignment" Value="Left" />
-                            <Setter TargetName="TextLabel" Property="Margin" Value="{StaticResource AppBarToggleButtonTextLabelOnRightMargin}" />
+                            <Setter TargetName="TextLabel" Property="Margin" Value="{DynamicResource AppBarToggleButtonTextLabelOnRightMargin}" />
                             <Setter Property="Width" Value="NaN" />
                         </Trigger>
                         <!--  LabelCollapsed  -->
@@ -189,7 +175,7 @@
                         <!--  Overflow  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
-                            <Setter TargetName="AppBarToggleButtonInnerBackground" Property="Margin" Value="{StaticResource AppBarButtonInnerBorderOverflowMargin}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBackground" Property="Margin" Value="{DynamicResource AppBarButtonInnerBorderOverflowMargin}" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Visibility" Value="Visible" />
@@ -198,7 +184,7 @@
                         <!--  OverflowWithMenuIcons  -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
-                            <Setter TargetName="AppBarToggleButtonInnerBackground" Property="Margin" Value="{StaticResource AppBarButtonInnerBorderOverflowMargin}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBackground" Property="Margin" Value="{DynamicResource AppBarButtonInnerBorderOverflowMargin}" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Visible" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />

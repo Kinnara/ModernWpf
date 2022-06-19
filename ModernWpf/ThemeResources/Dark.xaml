@@ -1471,6 +1471,25 @@
     <m:StaticResource x:Key="LoopingSelectorItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
     <m:StaticResource x:Key="LoopingSelectorItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
 
+    <!--  Resources for MediaTransportControls  -->
+    <Thickness x:Key="MediaTransportControlsTitleSafeBounds">48,0,48,27</Thickness>
+    <m:StaticResource x:Key="MediaTransportControlsPanelBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="MediaTransportControlsFlyoutBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+    <m:StaticResource x:Key="MediaTransportControlsThumbBorderBackground" ResourceKey="ControlStrongFillColorDefaultBrush" />
+    <m:StaticResource x:Key="MediaTransportControlsFillTimeElapsedText" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="MediaTransportControlsFillMediaText" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="MediaTransportControlsBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
+    <Thickness x:Key="MediaTransportControlsMargin">12</Thickness>
+    <Thickness x:Key="MediaTransportControlsProgressSliderMargin">7,2,7,1</Thickness>
+    <Thickness x:Key="MediaTransportControlsProgressSliderCompactMargin">12,-1,8,1</Thickness>
+    <Thickness x:Key="MediaTransportControlsBorderThickness">1</Thickness>
+    <sys:Double x:Key="MediaTransportControlsAppBarButtonHeight">40</sys:Double>
+    <sys:Double x:Key="MediaTransportControlsAppBarButtonWidth">40</sys:Double>
+    <sys:Double x:Key="MediaTransportControlsSliderHeight">32</sys:Double>
+    <sys:Double x:Key="MediaTransportControlsSliderWidth">190</sys:Double>
+    <sys:Double x:Key="MediaTransportControlsMinWidth">296</sys:Double>
+    <sys:Double x:Key="MediaTransportControlsMaxWidth">720</sys:Double>
+
     <!--  Resources for MenuBar  -->
     <m:StaticResource x:Key="MenuBarBackground" ResourceKey="SubtleFillColorTransparentBrush" />
 

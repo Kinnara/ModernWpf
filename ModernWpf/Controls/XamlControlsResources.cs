@@ -12,6 +12,7 @@ namespace ModernWpf.Controls
         /// </summary>
         public XamlControlsResources()
         {
+            MergedDictionaries.Add(ThemeResources);
             MergedDictionaries.Add(ControlsResources);
             MergedDictionaries.Add(UISettingsResources);
 
@@ -39,6 +40,18 @@ namespace ModernWpf.Controls
                         MergedDictionaries.Remove(CompactResources);
                     };
                 }
+            }
+        }
+
+        internal static ResourceDictionary ThemeResources
+        {
+            get
+            {
+                if (_themeResources == null)
+                {
+                    _themeResources = new ResourceDictionary { Source = PackUriHelper.GetAbsoluteUri("ThemeResources/ThemeResources.xaml") };
+                }
+                return _themeResources;
             }
         }
 
@@ -74,6 +87,7 @@ namespace ModernWpf.Controls
             }
         }
 
+        private static ResourceDictionary _themeResources;
         private static ResourceDictionary _controlsResources;
         private static ResourceDictionary _compactResources;
         private static ResourceDictionary _uiSettingsResources;

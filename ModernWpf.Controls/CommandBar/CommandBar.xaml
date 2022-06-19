@@ -242,7 +242,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:CommandBar">
+    <Style x:Key="DefaultCommandBarStyle" TargetType="local:CommandBar">
         <Setter Property="Background" Value="{DynamicResource CommandBarBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource CommandBarForeground}" />
         <Setter Property="Padding" Value="4,0,0,0" />
@@ -276,5 +276,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultCommandBarStyle}" TargetType="local:CommandBar" />
 
 </ResourceDictionary>

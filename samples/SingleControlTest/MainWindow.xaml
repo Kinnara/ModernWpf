@@ -14,12 +14,25 @@
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseModernWindowStyle="True"
     mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarButton.xaml" />
+                <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarToggleButton.xaml" />
+                <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/CommandBar.xaml" />
+                <ResourceDictionary Source="/ModernWpf.Controls;component/Flyout/FlyoutPresenter.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <ui:RelativeToAbsoluteConverter x:Key="RelativeToAbsoluteConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <ui:DoubleProportionConverter x:Key="DoubleProportionConverter" />
+        </ResourceDictionary>
+    </Window.Resources>
     <StackPanel
         Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
         Margin="4"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch">
-        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
+        <!--<ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
             <ui:ToggleSwitch
                 x:Name="IsEnable"
                 MinWidth="0"
@@ -47,40 +60,18 @@
             IsActive="{Binding IsOn, ElementName=IsActive}"
             IsEnabled="{Binding IsOn, ElementName=IsEnable}"
             IsIndeterminate="{Binding IsOn, ElementName=IsIndeterminate}"
-            Value="{Binding Value, ElementName=Value}" />
+            Value="{Binding Value, ElementName=Value}" />-->
 
-        <ui:AppBarToggleButton Icon="Add" Label="Add" />
 
-        <ui:AppBarButton
-            Icon="Sort"
-            IsCompact="True"
-            Label="Sort">
-            <ui:AppBarButton.Flyout>
-                <ui:MenuFlyout>
-                    <MenuItem Header="By rating" Tag="rating" />
-                    <MenuItem Header="By match" Tag="match" />
-                    <MenuItem Header="By distance" Tag="distance" />
-                </ui:MenuFlyout>
-            </ui:AppBarButton.Flyout>
-        </ui:AppBarButton>
-
-        <ui:CommandBar
-            HorizontalAlignment="Left"
-            Background="Transparent"
-            DefaultLabelPosition="Right"
-            IsOpen="False">
-            <ui:AppBarButton Icon="Add" Label="Add" />
-            <ui:AppBarButton Icon="Edit" Label="Edit" />
-            <ui:AppBarSeparator />
-            <ui:AppBarButton Icon="Share" Label="Share" />
-            <ui:CommandBar.SecondaryCommands>
-                <ui:AppBarButton Icon="Setting" Label="Settings" />
-                <ui:AppBarButton Icon="Setting" Label="Settings" />
-                <ui:AppBarSeparator />
-                <ui:AppBarToggleButton Icon="Setting" Label="Settings" />
-                <ui:AppBarToggleButton Icon="Setting" Label="Settings" />
-            </ui:CommandBar.SecondaryCommands>
-        </ui:CommandBar>
+        <Grid MaxWidth="400">
+            <ui:MediaElementEx
+                x:Name="MediaElementEx"
+                LoadedBehavior="Manual"
+                ScrubbingEnabled="True"
+                Source="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource RelativeToAbsoluteConverter}}"
+                Tag="Assets/ladybug.wmv" />
+            <ui:MediaTransportControls Target="{Binding ElementName=MediaElementEx}" />
+        </Grid>
 
         <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />
 

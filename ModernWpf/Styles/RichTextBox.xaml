@@ -5,7 +5,7 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
-    <Thickness x:Key="RichEditBoxTopHeaderMargin">0,0,0,4</Thickness>
+    <Thickness x:Key="RichEditBoxTopHeaderMargin">0,0,0,8</Thickness>
 
     <Style x:Key="DefaultRichTextBoxStyle" TargetType="RichTextBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -121,11 +121,11 @@
             </Setter.Value>
         </Setter>
         <Style.Resources>
-            <Style x:Key="{x:Type FlowDocument}" TargetType="FlowDocument">
+            <Style x:Key="FlowDocument" TargetType="FlowDocument">
                 <Setter Property="OverridesDefaultStyle" Value="true" />
             </Style>
             <Style
-                x:Key="{x:Type Hyperlink}"
+                x:Key="Hyperlink"
                 BasedOn="{StaticResource {x:Type Hyperlink}}"
                 TargetType="Hyperlink" />
         </Style.Resources>
