@@ -84,7 +84,10 @@
                             BasedOn="{StaticResource DefaultAppBarButtonStyle}"
                             TargetType="local:AppBarButton" />
                     </ControlTemplate.Resources>
-                    <Grid x:Name="RootGrid" Background="Transparent">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="Transparent"
+                        ClipToBounds="True">
                         <Border
                             x:Name="ControlPanelGrid"
                             VerticalAlignment="Bottom"
@@ -366,6 +369,7 @@
                                                 Margin="0,0" />
                                             <local:AppBarToggleButton
                                                 x:Name="RepeatButton"
+                                                IsChecked="{Binding Target.IsRepeat, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay}"
                                                 IsEnabled="{TemplateBinding IsRepeatEnabled}"
                                                 Style="{StaticResource AppBarToggleButtonStyle}"
                                                 Visibility="{TemplateBinding IsRepeatButtonVisible,
@@ -499,7 +503,8 @@
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="HasTarget" Value="True" />
-                                <Condition Property="ShowAndHideAutomatically" Value="True" />
+                                <Condition Property="IsOpening" Value="False" />
+                                <Condition Property="UseAcrylic" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="ControlPanelGrid" Property="Background" Value="{Binding TemplateSettings.AcrylicBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                         </MultiTrigger>

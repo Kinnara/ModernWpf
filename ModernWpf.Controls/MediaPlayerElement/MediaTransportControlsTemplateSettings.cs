@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace ModernWpf.Controls.MediaPlayerElement
+namespace ModernWpf.Controls
 {
     public class MediaTransportControlsTemplateSettings : DependencyObject
     {

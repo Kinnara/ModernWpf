@@ -32,19 +32,22 @@ namespace ModernWpf.Controls
             Loaded += (ss, ee) =>
             {
                 Play();
-                Pause();
-                Position = TimeSpan.FromMilliseconds(1);
+                if (!AutoPlay)
+                {
+                    Pause();
+                    Position = TimeSpan.FromMilliseconds(1);
+                }
             };
 
             Unloaded += (ss, ee) => timer.Stop();
 
             MediaOpened += (ss, ee) =>
             {
-                IsOpening = false;
                 //触发PropertyChanged DurationTime
                 RaisePropertyChangedEvent(nameof(DurationTime));
                 RaisePropertyChangedEvent(nameof(DurationTimeString));
                 timer.Start();
+                IsOpening = false;
             };
 
             //发生错误和视频播放完毕 停止计时器
@@ -69,6 +72,23 @@ namespace ModernWpf.Controls
             };
         }
 
+        #region AutoPlay
+
+        public static readonly DependencyProperty AutoPlayProperty =
+            DependencyProperty.Register(
+                nameof(AutoPlay),
+                typeof(bool),
+                typeof(MediaElementEx),
+                new PropertyMetadata(false));
+
+        public bool AutoPlay
+        {
+            get => (bool)GetValue(AutoPlayProperty);
+            set => SetValue(AutoPlayProperty, value);
+        }
+
+        #endregion
+
         #region IsOpening
 
         public static readonly DependencyProperty IsOpeningProperty =
@@ -76,12 +96,29 @@ namespace ModernWpf.Controls
                 nameof(IsOpening),
                 typeof(bool),
                 typeof(MediaElementEx),
-                new PropertyMetadata(false));
+                new PropertyMetadata(true));
 
         public bool IsOpening
         {
             get => (bool)GetValue(IsOpeningProperty);
             private set => SetValue(IsOpeningProperty, value);
+        }
+
+        #endregion
+
+        #region IsRepeat
+
+        public static readonly DependencyProperty IsRepeatProperty =
+            DependencyProperty.Register(
+                nameof(IsRepeat),
+                typeof(bool),
+                typeof(MediaElementEx),
+                new PropertyMetadata(false));
+
+        public bool IsRepeat
+        {
+            get => (bool)GetValue(IsRepeatProperty);
+            set => SetValue(IsRepeatProperty, value);
         }
 
         #endregion
@@ -190,6 +227,19 @@ namespace ModernWpf.Controls
                     {
                         CurrentState = MediaState.Pause;
                         MediaPause?.Invoke(this, new RoutedEventArgs());
+                        if (IsRepeat)
+                        {
+                            Task.Run(async () =>
+                            {
+                                await Task.Delay(1000 / 60);
+                                this.RunOnUIThread(async () =>
+                                {
+                                    Position = TimeSpan.FromMilliseconds(0);
+                                    await Task.Delay(1000 / 60);
+                                    Play();
+                                });
+                            });
+                        }
                     }
                     var ts = TimeSpan.FromMilliseconds(LeftTime);
                     return string.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
@@ -210,6 +260,15 @@ namespace ModernWpf.Controls
             RaisePropertyChangedEvent(nameof(LeftTimeString));
         }
 
+        public void StartTimer()
+        {
+            if (!timer.IsEnabled)
+            {
+                timer.Start();
+            }
+            UpdateAllProperty();
+        }
+
         public new void Play()
         {
             base.Play();
@@ -219,6 +278,7 @@ namespace ModernWpf.Controls
             {
                 timer.Start();
             }
+            UpdateAllProperty();
         }
 
         public new void Pause()
@@ -230,6 +290,44 @@ namespace ModernWpf.Controls
             {
                 timer.Stop();
             }
+            UpdateAllProperty();
+        }
+
+        public new void Stop()
+        {
+            base.Stop();
+            CurrentState = MediaState.Pause;
+            MediaPause?.Invoke(this, new RoutedEventArgs());
+            if (timer.IsEnabled)
+            {
+                timer.Stop();
+            }
+            UpdateAllProperty();
+        }
+
+        public new void Close()
+        {
+            base.Close();
+            CurrentState = MediaState.Pause;
+            MediaPause?.Invoke(this, new RoutedEventArgs());
+            if (timer.IsEnabled)
+            {
+                timer.Stop();
+            }
+            UpdateAllProperty();
+        }
+
+        private void UpdateAllProperty()
+        {
+            //触发PropertyChanged DurationTime
+            RaisePropertyChangedEvent(nameof(DurationTime));
+            RaisePropertyChangedEvent(nameof(DurationTimeString));
+            //定时触发PropertyChanged CurrentTime
+            RaisePropertyChangedEvent(nameof(CurrentTime));
+            RaisePropertyChangedEvent(nameof(CurrentTimeString));
+            //定时触发PropertyChanged LeftTime
+            RaisePropertyChangedEvent(nameof(LeftTime));
+            RaisePropertyChangedEvent(nameof(LeftTimeString));
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using System.Windows.Threading;
+﻿using System;
+using System.Windows.Threading;
 
 namespace ModernWpf
 {
@@ -19,6 +20,19 @@ namespace ModernWpf
             ((DispatcherFrame)f).Continue = false;
 
             return null;
+        }
+
+        public static void RunOnUIThread(this DispatcherObject d, Action action)
+        {
+            var dispatcher = d.Dispatcher;
+            if (dispatcher.CheckAccess())
+            {
+                action();
+            }
+            else
+            {
+                dispatcher.BeginInvoke(action);
+            }
         }
     }
 }

@@ -190,7 +190,10 @@
                                     Height="1"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="1" />
-                                <Grid x:Name="Views" Grid.Row="2">
+                                <Grid
+                                    x:Name="Views"
+                                    Grid.Row="2"
+                                    ClipToBounds="True">
                                     <Border x:Name="BackgroundLayer" RenderTransformOrigin="0.5,0.5">
                                         <Border.RenderTransform>
                                             <ScaleTransform x:Name="BackgroundTransform" />

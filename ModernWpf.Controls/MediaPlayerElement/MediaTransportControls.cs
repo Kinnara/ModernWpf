@@ -1,5 +1,4 @@
-﻿using ModernWpf.Controls.MediaPlayerElement;
-using ModernWpf.Controls.Primitives;
+﻿using ModernWpf.Controls.Primitives;
 using ModernWpf.Markup;
 using System;
 using System.Collections.Generic;
@@ -20,6 +19,9 @@ using System.Windows.Threading;
 
 namespace ModernWpf.Controls
 {
+    /// <summary>
+    /// Represents the playback controls for a media player element.
+    /// </summary>
     public partial class MediaTransportControls : Control
     {
         private DispatcherTimer _timer;
@@ -27,11 +29,21 @@ namespace ModernWpf.Controls
         private FrameworkElement ControlPanelGrid;
 
         private ButtonBase PlayPauseButtonOnLeft;
-        private ButtonBase PlayPauseButton;
         private ButtonBase AudioMuteButton;
         private ButtonBase VolumeMuteButton;
-        private ButtonBase FullWindowButton;
+        private ButtonBase StopButton;
+        private ButtonBase SkipBackwardButton;
+        private ButtonBase PreviousTrackButton;
+        private ButtonBase RewindButton;
+        private ButtonBase PlayPauseButton;
+        private ButtonBase FastForwardButton;
+        private ButtonBase NextTrackButton;
+        private ButtonBase SkipForwardButton;
+        private ButtonBase PlaybackRateButton;
         private ButtonBase RepeatButton;
+        private ButtonBase ZoomButton;
+        private ButtonBase CompactOverlayButton;
+        private ButtonBase FullWindowButton;
 
         // Visual States
         private const string ControlPanelFadeInStateName = "ControlPanelFadeIn";
@@ -62,13 +74,13 @@ namespace ModernWpf.Controls
             if (_timer.IsEnabled && !(ControlPanelGrid != null && ControlPanelGrid.IsMouseOver))
             {
                 _timer.Stop();
-                VisualStateManager.GoToState(this, ControlPanelFadeOutStateName, true);
+                Hide();
             }
         }
 
         private void UpdateTimer()
         {
-            VisualStateManager.GoToState(this, ControlPanelFadeInStateName, true);
+            Show();
             if (!_timer.IsEnabled)
             {
                 _timer.Start();
@@ -94,41 +106,102 @@ namespace ModernWpf.Controls
 
             base.OnApplyTemplate();
 
-            if (PlayPauseButton != null)
+            if (PlayPauseButtonOnLeft != null)
             {
-                PlayPauseButton.Click -= PlayPause_Click;
-            }
-            if (PlayPauseButton != null)
-            {
-                PlayPauseButton.Click -= PlayPause_Click;
+                PlayPauseButtonOnLeft.Click -= PlayPause_Click;
             }
             if (AudioMuteButton != null)
             {
                 AudioMuteButton.Click -= Mute_Click;
             }
+            if (PlayPauseButton != null)
+            {
+                PlayPauseButton.Click -= PlayPause_Click;
+            }
 
             ControlPanelGrid = (FrameworkElement)GetTemplateChild(nameof(ControlPanelGrid));
+
             PlayPauseButtonOnLeft = (ButtonBase)GetTemplateChild(nameof(PlayPauseButtonOnLeft));
-            PlayPauseButton = (ButtonBase)GetTemplateChild(nameof(PlayPauseButton));
             AudioMuteButton = (ButtonBase)GetTemplateChild(nameof(AudioMuteButton));
             VolumeMuteButton = (ButtonBase)GetTemplateChild(nameof(VolumeMuteButton));
-            FullWindowButton = (ButtonBase)GetTemplateChild(nameof(FullWindowButton));
+            StopButton = (ButtonBase)GetTemplateChild(nameof(StopButton));
+            SkipBackwardButton = (ButtonBase)GetTemplateChild(nameof(SkipBackwardButton));
+            PlayPauseButton = (ButtonBase)GetTemplateChild(nameof(PlayPauseButton));
+            SkipForwardButton = (ButtonBase)GetTemplateChild(nameof(SkipForwardButton));
+            PlaybackRateButton = (ButtonBase)GetTemplateChild(nameof(PlaybackRateButton));
             RepeatButton = (ButtonBase)GetTemplateChild(nameof(RepeatButton));
+            ZoomButton = (ButtonBase)GetTemplateChild(nameof(ZoomButton));
+            CompactOverlayButton = (ButtonBase)GetTemplateChild(nameof(CompactOverlayButton));
+            FullWindowButton = (ButtonBase)GetTemplateChild(nameof(FullWindowButton));
 
             if (PlayPauseButtonOnLeft != null)
             {
                 PlayPauseButtonOnLeft.Click += PlayPause_Click;
             }
-            if (PlayPauseButton != null)
-            {
-                PlayPauseButton.Click += PlayPause_Click;
-            }
             if (AudioMuteButton != null)
             {
                 AudioMuteButton.Click += Mute_Click;
             }
+            if (StopButton != null)
+            {
+                StopButton.Click += Stop_Click;
+            }
+            if (SkipBackwardButton != null)
+            {
+                SkipBackwardButton.Click += SkipBackward_Click;
+            }
+            if (PlayPauseButton != null)
+            {
+                PlayPauseButton.Click += PlayPause_Click;
+            }
+            if (SkipForwardButton != null)
+            {
+                SkipForwardButton.Click += SkipForward_Click;
+            }
+            if (PlaybackRateButton != null)
+            {
+                PlaybackRateButton.Click += PlaybackRate_Click;
+            }
+            if (ZoomButton != null)
+            {
+                ZoomButton.Click += Zoom_Click;
+            }
+            if (ZoomButton != null)
+            {
+                CompactOverlayButton.Click += CompactOverlay_Click;
+            }
 
             VisualStateManager.GoToState(this, ControlPanelFadeInStateName, false);
+        }
+
+        private void Mute_Click(object sender, RoutedEventArgs e)
+        {
+            var mediaElement = Target;
+            if (mediaElement != null)
+            {
+                mediaElement.IsMuted = !mediaElement.IsMuted;
+                UpdateState(true);
+            }
+        }
+
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+            var mediaElement = Target;
+            if (mediaElement != null)
+            {
+                mediaElement.Stop();
+            }
+        }
+
+        private void SkipBackward_Click(object sender, RoutedEventArgs e)
+        {
+            var mediaElement = Target;
+            if (mediaElement != null)
+            {
+                mediaElement.Position = mediaElement.Position - TimeSpan.FromSeconds(10);
+                mediaElement.StartTimer();
+                UpdateState(true);
+            }
         }
 
         private void PlayPause_Click(object sender, RoutedEventArgs e)
@@ -151,14 +224,53 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void Mute_Click(object sender, RoutedEventArgs e)
+        private void SkipForward_Click(object sender, RoutedEventArgs e)
         {
             var mediaElement = Target;
             if (mediaElement != null)
             {
-                mediaElement.IsMuted = !mediaElement.IsMuted;
+                mediaElement.Position = mediaElement.Position + TimeSpan.FromSeconds(30);
                 UpdateState(true);
             }
+        }
+
+        private void PlaybackRate_Click(object sender, RoutedEventArgs e)
+        {
+            var mediaElement = Target;
+            if (mediaElement != null)
+            {
+                mediaElement.Position = TimeSpan.FromSeconds(0);
+                mediaElement.Play();
+            }
+        }
+
+        private void Zoom_Click(object sender, RoutedEventArgs e)
+        {
+            var mediaElement = Target;
+            if (mediaElement != null)
+            {
+                switch(mediaElement.Stretch)
+                {
+                    case Stretch.None:
+                        mediaElement.Stretch = Stretch.Fill;
+                        break;
+                    case Stretch.Fill:
+                        mediaElement.Stretch = Stretch.Uniform;
+                        break;
+                    case Stretch.Uniform:
+                        mediaElement.Stretch = Stretch.UniformToFill;
+                        break;
+                    case Stretch.UniformToFill:
+                    default:
+                        mediaElement.Stretch = Stretch.None;
+                        break;
+                }
+            }
+        }
+
+        private void CompactOverlay_Click(object sender, RoutedEventArgs e)
+        {
+            IsCompact = !IsCompact;
         }
 
         private void UpdateState(bool useTransitions = false)
@@ -204,6 +316,12 @@ namespace ModernWpf.Controls
                 });
 
                 SetBinding(IsBufferingProperty, isOpeningBinding);
+                SetBinding(IsOpeningProperty, new Binding
+                {
+                    Source = mediaElement,
+                    Mode = BindingMode.OneWay,
+                    Path = new PropertyPath(nameof(mediaElement.IsOpening))
+                });
 
                 mediaElement.MediaPlay += (sender, e) => UpdateState(true);
                 mediaElement.MediaPause += (sender, e) => UpdateState(true);
@@ -214,5 +332,15 @@ namespace ModernWpf.Controls
                 UpdateState(false);
             }
         }
+
+        /// <summary>
+        /// Hides the transport controls if they're shown.
+        /// </summary>
+        public void Hide() => VisualStateManager.GoToState(this, ControlPanelFadeOutStateName, true);
+
+        /// <summary>
+        /// Shows the tranport controls if they're hidden.
+        /// </summary>
+        public void Show() => VisualStateManager.GoToState(this, ControlPanelFadeInStateName, true);
     }
 }

@@ -1,0 +1,52 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        </ResourceDictionary>
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style TargetType="local:MediaPlayerElement">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="MediaPlayer">
+            <Setter.Value>
+                <local:MediaElementEx
+                    x:Name="MediaElement"
+                    LoadedBehavior="Manual"
+                    ScrubbingEnabled="True" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="TransportControls">
+            <Setter.Value>
+                <local:MediaTransportControls />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:MediaPlayerElement">
+                    <Grid x:Name="LayoutRoot">
+                        <Border Background="Transparent" />
+                        <Image
+                            x:Name="PosterImage"
+                            Source="{TemplateBinding PosterSource}"
+                            Stretch="{TemplateBinding Stretch}"
+                            Visibility="{TemplateBinding IsOpening,
+                                                         Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <ContentPresenter x:Name="MediaPlayerPresenter" Content="{TemplateBinding MediaPlayer}" />
+                        <ContentPresenter
+                            x:Name="TransportControlsPresenter"
+                            Content="{TemplateBinding TransportControls}"
+                            Visibility="{TemplateBinding AreTransportControlsEnabled,
+                                                         Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <Grid x:Name="TimedTextSourcePresenter" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

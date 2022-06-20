@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Threading;
-using ModernWpf.Controls.MediaPlayerElement;
+﻿using System.Windows;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -534,6 +524,40 @@ namespace ModernWpf.Controls
         {
             get => (bool)GetValue(HasTargetProperty);
             private set => SetValue(HasTargetProperty, value);
+        }
+
+        #endregion
+
+        #region UseAcrylic
+
+        public static readonly DependencyProperty UseAcrylicProperty =
+            DependencyProperty.Register(
+                nameof(UseAcrylic),
+                typeof(bool),
+                typeof(MediaTransportControls),
+                new PropertyMetadata(true));
+
+        public bool UseAcrylic
+        {
+            get => (bool)GetValue(UseAcrylicProperty);
+            set => SetValue(UseAcrylicProperty, value);
+        }
+
+        #endregion
+
+        #region IsOpening
+
+        public static readonly DependencyProperty IsOpeningProperty =
+            DependencyProperty.Register(
+                nameof(IsOpening),
+                typeof(bool),
+                typeof(MediaTransportControls),
+                new PropertyMetadata(true));
+
+        public bool IsOpening
+        {
+            get => (bool)GetValue(IsOpeningProperty);
+            private set => SetValue(IsOpeningProperty, value);
         }
 
         #endregion

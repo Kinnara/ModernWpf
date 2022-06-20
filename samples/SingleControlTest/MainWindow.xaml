@@ -27,8 +27,7 @@
             <ui:DoubleProportionConverter x:Key="DoubleProportionConverter" />
         </ResourceDictionary>
     </Window.Resources>
-    <StackPanel
-        Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"
+    <Grid
         Margin="4"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch">
@@ -62,16 +61,39 @@
             IsIndeterminate="{Binding IsOn, ElementName=IsIndeterminate}"
             Value="{Binding Value, ElementName=Value}" />-->
 
-
-        <Grid MaxWidth="400">
-            <ui:MediaElementEx
-                x:Name="MediaElementEx"
-                LoadedBehavior="Manual"
-                ScrubbingEnabled="True"
-                Source="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource RelativeToAbsoluteConverter}}"
-                Tag="Assets/ladybug.wmv" />
-            <ui:MediaTransportControls Target="{Binding ElementName=MediaElementEx}" />
-        </Grid>
+        <ui:MediaPlayerElement
+            x:Name="MediaElementEx"
+            AreTransportControlsEnabled="True"
+            AutoPlay="True"
+            PosterSource="Assets/Images/1.jpg"
+            Source="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource RelativeToAbsoluteConverter}}"
+            Tag="Assets/ladybug.wmv">
+            <ui:MediaPlayerElement.TransportControls>
+                <ui:MediaTransportControls
+                    IsCompactOverlayButtonVisible="True"
+                    IsCompactOverlayEnabled="True"
+                    IsFastForwardButtonVisible="True"
+                    IsFastForwardEnabled="True"
+                    IsFastRewindButtonVisible="True"
+                    IsFastRewindEnabled="True"
+                    IsNextTrackButtonVisible="True"
+                    IsPlaybackRateButtonVisible="True"
+                    IsPlaybackRateEnabled="True"
+                    IsPreviousTrackButtonVisible="True"
+                    IsRepeatButtonVisible="True"
+                    IsRepeatEnabled="True"
+                    IsSeekBarVisible="True"
+                    IsSeekEnabled="True"
+                    IsSkipBackwardButtonVisible="True"
+                    IsSkipBackwardEnabled="True"
+                    IsSkipForwardButtonVisible="True"
+                    IsSkipForwardEnabled="True"
+                    IsStopButtonVisible="True"
+                    IsStopEnabled="True"
+                    IsZoomButtonVisible="True"
+                    IsZoomEnabled="True"/>
+            </ui:MediaPlayerElement.TransportControls>
+        </ui:MediaPlayerElement>
 
         <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />
 
@@ -85,5 +107,5 @@
             <sys:String>Test</sys:String>
             <sys:String>Test</sys:String>
         </ui:ListView>-->
-    </StackPanel>
+    </Grid>
 </Window>
