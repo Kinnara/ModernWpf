@@ -264,6 +264,7 @@ namespace ModernWpf.Controls.Primitives
             base.PrepareContainerForItemOverride(element, item);
 
             if (element is AppBarButton ||
+                element is AppBarRepeatButton ||
                 element is AppBarToggleButton)
             {
                 var appBarElement = (FrameworkElement)element;
@@ -274,6 +275,7 @@ namespace ModernWpf.Controls.Primitives
         protected override void ClearContainerForItemOverride(DependencyObject element, object item)
         {
             if (element is AppBarButton ||
+                element is AppBarRepeatButton ||
                 element is AppBarToggleButton)
             {
                 element.ClearValue(DefaultLabelPositionProperty);

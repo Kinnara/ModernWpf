@@ -55,6 +55,7 @@ namespace ModernWpf.Controls
                                 var element = (ICommandBarElement)args.NewItems[0];
                                 var oldElement = (ICommandBarElement)args.OldItems[0];
                                 var button = element as AppBarButton;
+                                var repeatButton = element as AppBarRepeatButton;
                                 var toggleButton = element as AppBarToggleButton;
 
                                 RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, oldElement);
@@ -65,6 +66,13 @@ namespace ModernWpf.Controls
                                 {
                                     m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                                         button, ButtonBase.ClickEvent, closeFlyoutFunc);
+                                    RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
+                                    RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
+                                }
+                                else if (repeatButton != null && repeatButton.Flyout == null)
+                                {
+                                    m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
+                                        repeatButton, ButtonBase.ClickEvent, closeFlyoutFunc);
                                     RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
                                     RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
                                 }
@@ -88,12 +96,18 @@ namespace ModernWpf.Controls
                             {
                                 var element = (ICommandBarElement)args.NewItems[0];
                                 var button = element as AppBarButton;
+                                var repeatButton = element as AppBarRepeatButton;
                                 var toggleButton = element as AppBarToggleButton;
 
                                 if (button != null && button.Flyout == null)
                                 {
                                     m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                                         button, ButtonBase.ClickEvent, closeFlyoutFunc);
+                                }
+                                else if (repeatButton != null && repeatButton.Flyout == null)
+                                {
+                                    m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
+                                        repeatButton, ButtonBase.ClickEvent, closeFlyoutFunc);
                                 }
                                 else if (toggleButton != null)
                                 {

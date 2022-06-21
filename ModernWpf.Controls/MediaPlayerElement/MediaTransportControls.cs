@@ -27,6 +27,7 @@ namespace ModernWpf.Controls
         private DispatcherTimer _timer;
 
         private FrameworkElement ControlPanelGrid;
+        private FrameworkElement MediaControlsCommandBar;
 
         private ButtonBase PlayPauseButtonOnLeft;
         private ButtonBase AudioMuteButton;
@@ -67,6 +68,7 @@ namespace ModernWpf.Controls
         public MediaTransportControls()
         {
             TemplateSettings = new MediaTransportControlsTemplateSettings();
+            SizeChanged += OnSizeChanged;
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -90,6 +92,11 @@ namespace ModernWpf.Controls
                 _timer.Stop();
                 _timer.Start();
             }
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateLayouts();
         }
 
         public override void OnApplyTemplate()
@@ -120,13 +127,16 @@ namespace ModernWpf.Controls
             }
 
             ControlPanelGrid = (FrameworkElement)GetTemplateChild(nameof(ControlPanelGrid));
+            MediaControlsCommandBar = (FrameworkElement)GetTemplateChild(nameof(ControlPanelGrid));
 
             PlayPauseButtonOnLeft = (ButtonBase)GetTemplateChild(nameof(PlayPauseButtonOnLeft));
             AudioMuteButton = (ButtonBase)GetTemplateChild(nameof(AudioMuteButton));
             VolumeMuteButton = (ButtonBase)GetTemplateChild(nameof(VolumeMuteButton));
             StopButton = (ButtonBase)GetTemplateChild(nameof(StopButton));
             SkipBackwardButton = (ButtonBase)GetTemplateChild(nameof(SkipBackwardButton));
+            RewindButton = (ButtonBase)GetTemplateChild(nameof(RewindButton));
             PlayPauseButton = (ButtonBase)GetTemplateChild(nameof(PlayPauseButton));
+            FastForwardButton = (ButtonBase)GetTemplateChild(nameof(FastForwardButton));
             SkipForwardButton = (ButtonBase)GetTemplateChild(nameof(SkipForwardButton));
             PlaybackRateButton = (ButtonBase)GetTemplateChild(nameof(PlaybackRateButton));
             RepeatButton = (ButtonBase)GetTemplateChild(nameof(RepeatButton));
@@ -150,9 +160,17 @@ namespace ModernWpf.Controls
             {
                 SkipBackwardButton.Click += SkipBackward_Click;
             }
+            if (RewindButton != null)
+            {
+                RewindButton.Click += Rewind_Click;
+            }
             if (PlayPauseButton != null)
             {
                 PlayPauseButton.Click += PlayPause_Click;
+            }
+            if (FastForwardButton != null)
+            {
+                FastForwardButton.Click += FastForward_Click;
             }
             if (SkipForwardButton != null)
             {
@@ -172,6 +190,8 @@ namespace ModernWpf.Controls
             }
 
             VisualStateManager.GoToState(this, ControlPanelFadeInStateName, false);
+
+            UpdateLayouts();
         }
 
         private void Mute_Click(object sender, RoutedEventArgs e)
@@ -204,6 +224,17 @@ namespace ModernWpf.Controls
             }
         }
 
+        private void Rewind_Click(object sender, RoutedEventArgs e)
+        {
+            var mediaElement = Target;
+            if (mediaElement != null)
+            {
+                mediaElement.Position = mediaElement.Position - TimeSpan.FromSeconds(1);
+                mediaElement.StartTimer();
+                UpdateState(true);
+            }
+        }
+
         private void PlayPause_Click(object sender, RoutedEventArgs e)
         {
             var mediaElement = Target;
@@ -224,12 +255,24 @@ namespace ModernWpf.Controls
             }
         }
 
+        private void FastForward_Click(object sender, RoutedEventArgs e)
+        {
+            var mediaElement = Target;
+            if (mediaElement != null)
+            {
+                mediaElement.Position = mediaElement.Position + TimeSpan.FromSeconds(1);
+                mediaElement.UpdateAllProperty();
+                UpdateState(true);
+            }
+        }
+
         private void SkipForward_Click(object sender, RoutedEventArgs e)
         {
             var mediaElement = Target;
             if (mediaElement != null)
             {
                 mediaElement.Position = mediaElement.Position + TimeSpan.FromSeconds(30);
+                mediaElement.UpdateAllProperty();
                 UpdateState(true);
             }
         }
@@ -249,7 +292,7 @@ namespace ModernWpf.Controls
             var mediaElement = Target;
             if (mediaElement != null)
             {
-                switch(mediaElement.Stretch)
+                switch (mediaElement.Stretch)
                 {
                     case Stretch.None:
                         mediaElement.Stretch = Stretch.Fill;
@@ -330,6 +373,103 @@ namespace ModernWpf.Controls
                 mediaElement.MediaOpened += (sender, e) => UpdateState(true);
 
                 UpdateState(false);
+            }
+        }
+
+        public void UpdateLayouts()
+        {
+            var panelRoot = MediaControlsCommandBar;
+            if (panelRoot != null)
+            {
+                double rootwidth = panelRoot.ActualWidth - 8;
+                var panel = panelRoot.FindDescendant<StackPanel>();
+                if (panel != null)
+                {
+                    var leftlist = new List<FrameworkElement>();
+                    FrameworkElement LeftSeparator = null;
+                    var centerlist = new List<FrameworkElement>();
+                    FrameworkElement RightSeparator = null;
+                    var rightlist = new List<FrameworkElement>();
+                    UIElementCollection children = panel.Children;
+                    int i = 0;
+
+                    foreach (var child in children)
+                    {
+                        if (((FrameworkElement)child).Name == nameof(LeftSeparator))
+                        {
+                            i++;
+                            LeftSeparator = (FrameworkElement)child;
+                            continue;
+                        }
+                        else if (((FrameworkElement)child).Name == nameof(RightSeparator))
+                        {
+                            i++;
+                            RightSeparator = (FrameworkElement)child;
+                            continue;
+                        }
+                        switch (i)
+                        {
+                            case 0:
+                                leftlist.Add((FrameworkElement)child);
+                                break;
+                            case 1:
+                                centerlist.Add((FrameworkElement)child);
+                                break;
+                            case 2:
+                                rightlist.Add((FrameworkElement)child);
+                                break;
+                        }
+                    }
+
+                    double leftSeparatorWidth = 0;
+                    double rightSeparatorWidth = 0;
+
+                    if (!IsCompact)
+                    {
+                        double leftwidth = 0;
+                        foreach (var item in leftlist)
+                        {
+                            leftwidth += item.ActualWidth;
+                        }
+                        double centerwidth = 0;
+                        foreach (var item in centerlist)
+                        {
+                            centerwidth += item.ActualWidth;
+                        }
+                        double rightwidth = 0;
+                        foreach (var item in rightlist)
+                        {
+                            rightwidth += item.ActualWidth;
+                        }
+                        double fullwidth = centerwidth + leftwidth + rightwidth;
+
+                        if (fullwidth < rootwidth)
+                        {
+                            if (rootwidth - Math.Max(leftwidth, rightwidth) * 2 > centerwidth)
+                            {
+                                leftSeparatorWidth = (rootwidth - centerwidth) / 2 - leftwidth;
+                                rightSeparatorWidth = (rootwidth - centerwidth) / 2 - rightwidth;
+                            }
+                            else if (leftwidth <= rightwidth)
+                            {
+                                leftSeparatorWidth = rootwidth - centerwidth - leftwidth - rightwidth;
+                            }
+                            else if (leftwidth > rightwidth)
+                            {
+                                rightSeparatorWidth = rootwidth - centerwidth - leftwidth - rightwidth;
+                            }
+                        }
+                    }
+
+                    if (LeftSeparator != null)
+                    {
+                        LeftSeparator.Width = Math.Max(leftSeparatorWidth, 0);
+                    }
+                    if (RightSeparator != null)
+                    {
+                        RightSeparator.Width = Math.Max(rightSeparatorWidth, 0);
+                    }
+                }
             }
         }
 

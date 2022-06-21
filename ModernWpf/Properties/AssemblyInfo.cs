@@ -21,4 +21,5 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Controls.Primitives")]
 [assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.DesignTime")]
 [assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Markup")]
+[assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Media")]
 [assembly: XmlnsDefinition("http://schemas.modernwpf.com/2019", "ModernWpf.Media.Animation")]

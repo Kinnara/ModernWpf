@@ -227,6 +227,25 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        public override void OnApplyTemplate()
+        {
+            if (MediaPlayer == null)
+            {
+                MediaPlayer = new MediaElementEx
+                {
+                    LoadedBehavior = System.Windows.Controls.MediaState.Manual,
+                    ScrubbingEnabled = true
+                };
+            }
+
+            if (TransportControls == null)
+            {
+                TransportControls = new MediaTransportControls();
+            }
+
+            base.OnApplyTemplate();
+        }
+
         private void UpdateMediaPlayer()
         {
             var mediaPlayer = MediaPlayer;

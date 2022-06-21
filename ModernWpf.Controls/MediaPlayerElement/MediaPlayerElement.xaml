@@ -12,19 +12,6 @@
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="MediaPlayer">
-            <Setter.Value>
-                <local:MediaElementEx
-                    x:Name="MediaElement"
-                    LoadedBehavior="Manual"
-                    ScrubbingEnabled="True" />
-            </Setter.Value>
-        </Setter>
-        <Setter Property="TransportControls">
-            <Setter.Value>
-                <local:MediaTransportControls />
-            </Setter.Value>
-        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:MediaPlayerElement">

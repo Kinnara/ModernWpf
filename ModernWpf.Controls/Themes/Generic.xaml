@@ -4,6 +4,7 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/AutoSuggestBox/AutoSuggestBox.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ContentDialog/ContentDialog.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarButton.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarRepeatButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarToggleButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarSeparator.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarElementContainer.xaml" />

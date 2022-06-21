@@ -7,6 +7,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarSeparator.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarRepeatButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarToggleButton.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
@@ -123,6 +124,7 @@
                                             <primitives:CommandBarOverflowPresenter.Resources>
                                                 <Style BasedOn="{StaticResource AppBarButtonOverflowStyle}" TargetType="local:AppBarButton" />
                                                 <Style BasedOn="{StaticResource AppBarSeparatorOverflowStyle}" TargetType="local:AppBarSeparator" />
+                                                <Style BasedOn="{StaticResource AppBarRepeatButtonOverflowStyle}" TargetType="local:AppBarRepeatButton" />
                                                 <Style BasedOn="{StaticResource AppBarToggleButtonOverflowStyle}" TargetType="local:AppBarToggleButton" />
                                             </primitives:CommandBarOverflowPresenter.Resources>
                                             <primitives:CommandBarOverflowPanel

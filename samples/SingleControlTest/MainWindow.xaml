@@ -64,7 +64,7 @@
         <ui:MediaPlayerElement
             x:Name="MediaElementEx"
             AreTransportControlsEnabled="True"
-            AutoPlay="True"
+            AutoPlay="False"
             PosterSource="Assets/Images/1.jpg"
             Source="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource RelativeToAbsoluteConverter}}"
             Tag="Assets/ladybug.wmv">
@@ -91,7 +91,8 @@
                     IsStopButtonVisible="True"
                     IsStopEnabled="True"
                     IsZoomButtonVisible="True"
-                    IsZoomEnabled="True"/>
+                    IsZoomEnabled="True"
+                    ShowAndHideAutomatically="False" />
             </ui:MediaPlayerElement.TransportControls>
         </ui:MediaPlayerElement>
 

@@ -317,7 +317,7 @@ namespace ModernWpf.Controls
             UpdateAllProperty();
         }
 
-        private void UpdateAllProperty()
+        public void UpdateAllProperty()
         {
             //触发PropertyChanged DurationTime
             RaisePropertyChangedEvent(nameof(DurationTime));

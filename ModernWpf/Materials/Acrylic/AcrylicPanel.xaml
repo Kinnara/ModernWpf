@@ -44,8 +44,7 @@
         </Setter>
     </Style>
 
-
-    <Style TargetType="local:AcrylicPanel">
+    <Style x:Key="DefaultAcrylicPanelStyle" TargetType="local:AcrylicPanel">
         <Setter Property="TintColor" Value="{DynamicResource SolidBackgroundFillColorQuarternary}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
@@ -104,5 +103,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultAcrylicPanelStyle}" TargetType="local:AcrylicPanel" />
 
 </ResourceDictionary>
