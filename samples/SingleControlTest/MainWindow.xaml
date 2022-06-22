@@ -17,10 +17,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarButton.xaml" />
-                <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarToggleButton.xaml" />
-                <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/CommandBar.xaml" />
-                <ResourceDictionary Source="/ModernWpf.Controls;component/Flyout/FlyoutPresenter.xaml" />
+                <ResourceDictionary Source="/ModernWpf.Controls;component/InfoBadge/InfoBadge.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <ui:RelativeToAbsoluteConverter x:Key="RelativeToAbsoluteConverter" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -48,46 +45,23 @@
                 Header="IsIndeterminate"
                 IsOn="True" />
             <Button Click="Button_Click" Content="Test" />
-        </ui:SimpleStackPanel>
+        </ui:SimpleStackPanel>-->
 
-        <Slider
+        <!--<Slider
             x:Name="Value"
             Maximum="100"
-            Minimum="0" />
+            Minimum="-1" />-->
 
-        <ui:ProgressRing
+        <!--<ui:ProgressRing
             IsActive="{Binding IsOn, ElementName=IsActive}"
             IsEnabled="{Binding IsOn, ElementName=IsEnable}"
             IsIndeterminate="{Binding IsOn, ElementName=IsIndeterminate}"
             Value="{Binding Value, ElementName=Value}" />-->
 
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="5" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <TextBlock
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontSize="55"
-                TextWrapping="Wrap">
-                Top
-            </TextBlock>
-            <GridSplitter
-                Grid.Row="1"
-                Height="5"
-                ShowsPreview="True"
-                HorizontalAlignment="Stretch" />
-            <TextBlock
-                Grid.Row="2"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontSize="55"
-                TextWrapping="Wrap">
-                Bottom
-            </TextBlock>
-        </Grid>
+        <ui:InfoBadge
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Style="{DynamicResource CriticalIconInfoBadgeStyle}" />
 
         <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />
 

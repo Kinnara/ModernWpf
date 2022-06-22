@@ -32,5 +32,21 @@ namespace ModernWpf.Controls
             get => (Brush)GetValue(ForegroundProperty);
             set => SetValue(ForegroundProperty, value);
         }
+
+        /// <summary>
+        /// Creates an icon UI element.
+        /// </summary>
+        /// <returns>An icon UI element.</returns>
+        public IconElement CreateIconElement()
+        {
+            var element = CreateIconElementCore();
+            return element;
+        }
+
+        /// <summary>
+        /// Creates an icon UI element.
+        /// </summary>
+        /// <returns>An icon UI element.</returns>
+        public virtual IconElement CreateIconElementCore() => null;
     }
 }

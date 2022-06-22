@@ -710,7 +710,7 @@
     <m:StaticResource x:Key="AutoSuggestBoxSuggestionsListBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
     <m:StaticResource x:Key="AutoSuggestBoxLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
     <sys:Double x:Key="AutoSuggestBoxIconFontSize">12</sys:Double>
-    
+
     <sys:Double x:Key="AutoSuggestListMaxHeight">374</sys:Double>
     <sys:Double x:Key="AutoSuggestListBorderOpacity">0</sys:Double>
     <Thickness x:Key="AutoSuggestListBorderThemeThickness">1</Thickness>
@@ -1309,7 +1309,7 @@
     <SolidColorBrush x:Key="FlipViewButtonPressedBackgroundThemeBrush" Color="#BD292929" />
     <SolidColorBrush x:Key="FlipViewButtonPressedBorderThemeBrush" Color="#BD292929" />
     <SolidColorBrush x:Key="FlipViewButtonPressedForegroundThemeBrush" Color="#FFFFFFFF" />
-    
+
     <!--  Resources for FlyoutPresenter  -->
     <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
     <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
@@ -1386,6 +1386,21 @@
     <m:StaticResource x:Key="HyperlinkButtonBorderBrushPressed" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="HyperlinkButtonBorderBrushDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
     <Thickness x:Key="HyperlinkButtonBorderThemeThickness">1</Thickness>
+
+    <!--  Resources for InfoBadge  -->
+    <m:StaticResource x:Key="InfoBadgeForeground" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="InfoBadgeBackground" ResourceKey="AccentFillColorDefaultBrush" />
+
+    <sys:Double x:Key="InfoBadgeMinHeight">4</sys:Double>
+    <sys:Double x:Key="InfoBadgeMinWidth">4</sys:Double>
+    <sys:Double x:Key="InfoBadgeMaxHeight">16</sys:Double>
+    <sys:Double x:Key="InfoBadgeValueFontSize">11</sys:Double>
+    <sys:Double x:Key="InfoBadgeIconHeight">8</sys:Double>
+    <sys:Double x:Key="InfoBadgeIconWidth">12</sys:Double>
+    <Thickness x:Key="InfoBadgePadding">0,0,0,0</Thickness>
+    <Thickness x:Key="IconInfoBadgeFontIconMargin">4,0,4,2</Thickness>
+    <Thickness x:Key="ValueInfoBadgeTextMargin">4,0,4,2</Thickness>
+    <Thickness x:Key="IconInfoBadgeIconMargin">4,4,4,4</Thickness>
 
     <!--  Resources for ListBox  -->
     <Thickness x:Key="ListBoxBorderThemeThickness">0</Thickness>
@@ -2112,7 +2127,7 @@
     <KeyTime x:Key="SplitViewPaneAnimationOpenPreDuration">00:00:00.19999</KeyTime>
     <KeyTime x:Key="SplitViewPaneAnimationCloseDuration">00:00:00.1</KeyTime>
     <CornerRadius x:Key="SplitViewPaneRootCornerRadius">0</CornerRadius>
-    
+
     <!--  Resources for StatusBar  -->
     <m:StaticResource x:Key="StatusBarBackground" ResourceKey="CardBackgroundFillColorDefaultBrush" />
     <m:StaticResource x:Key="StatusBarForeground" ResourceKey="TextFillColorPrimaryBrush" />
@@ -2295,12 +2310,12 @@
 
     <m:StaticResource x:Key="TimePickerFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
     <m:StaticResource x:Key="TimePickerFlyoutPresenterBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
-    
+
     <m:StaticResource x:Key="TimePickerFlyoutPresenterSpacerFill" ResourceKey="DividerStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="TimePickerFlyoutPresenterHighlightFill" ResourceKey="AccentAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="TimePickerFlyoutPresenterHighlightForegroundColor" ResourceKey="TextOnAccentAAFillColorPrimary" />
     <m:StaticResource x:Key="TimePickerLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
-    <!-- Legacy brushes -->
+    <!--  Legacy brushes  -->
     <SolidColorBrush x:Key="TimePickerForegroundThemeBrush" Color="#FF000000" />
     <SolidColorBrush x:Key="TimePickerHeaderForegroundThemeBrush" Color="#FF000000" />
 
@@ -2311,7 +2326,7 @@
     <Thickness x:Key="TimePickerFirstHostThemeMargin">0,0,20,0</Thickness>
     <Thickness x:Key="TimePickerThirdHostThemeMargin">20,0,0,0</Thickness>
     <FontWeight x:Key="TimePickerHeaderThemeFontWeight">Normal</FontWeight>
-    
+
     <!--  Resources for ToggleButton  -->
     <Thickness x:Key="ToggleButtonBorderThemeThickness">1</Thickness>
     <m:StaticResource x:Key="ToggleButtonBackground" ResourceKey="ControlFillColorDefaultBrush" />

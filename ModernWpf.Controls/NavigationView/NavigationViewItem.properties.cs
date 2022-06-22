@@ -37,13 +37,13 @@ namespace ModernWpf.Controls
         public static readonly DependencyProperty InfoBadgeProperty =
             DependencyProperty.Register(
                 nameof(InfoBadge),
-                typeof(UIElement),
+                typeof(InfoBadge),
                 typeof(NavigationViewItem),
                 new PropertyMetadata(OnInfoBadgePropertyChanged));
 
-        public UIElement InfoBadge
+        public InfoBadge InfoBadge
         {
-            get => (UIElement)GetValue(InfoBadgeProperty);
+            get => (InfoBadge)GetValue(InfoBadgeProperty);
             set => SetValue(InfoBadgeProperty, value);
         }
 

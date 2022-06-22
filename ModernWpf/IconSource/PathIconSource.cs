@@ -38,5 +38,25 @@ namespace ModernWpf.Controls
             get => (Geometry)GetValue(DataProperty);
             set => SetValue(DataProperty, value);
         }
+
+        /// <inheritdoc/>
+        public override IconElement CreateIconElementCore()
+        {
+            PathIcon pathIcon = new PathIcon();
+
+            var data = Data;
+            if (data != null)
+            {
+                pathIcon.Data = data;
+            }
+
+            var newForeground = Foreground;
+            if (newForeground != null)
+            {
+                pathIcon.Foreground=newForeground;
+            }
+
+            return pathIcon;
+        }
     }
 }
