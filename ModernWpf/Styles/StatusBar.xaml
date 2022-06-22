@@ -1,31 +1,63 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
     <Style x:Key="DefaultStatusBarStyle" TargetType="StatusBar">
-        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Background" Value="{DynamicResource StatusBarBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource StatusBarForeground}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="StatusBar">
+                    <Border
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <ItemsPresenter
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            TextElement.Foreground="{TemplateBinding Foreground}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style BasedOn="{StaticResource DefaultStatusBarStyle}" TargetType="StatusBar" />
 
     <Style x:Key="{x:Static StatusBar.SeparatorStyleKey}" TargetType="Separator">
-        <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseMediumLowBrush}" />
-        <Setter Property="MinWidth" Value="1" />
-        <Setter Property="MinHeight" Value="1" />
-        <Setter Property="Margin" Value="2" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Foreground" Value="{DynamicResource StatusBarSeparatorForeground}" />
+        <Setter Property="Padding" Value="{DynamicResource StatusBarSeparatorMargin}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Separator">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        SnapsToDevicePixels="true" />
+                    <Grid x:Name="RootGrid" Background="Transparent">
+                        <Rectangle
+                            x:Name="SeparatorRectangle"
+                            Width="{DynamicResource StatusBarSeparatorWidth}"
+                            Margin="{TemplateBinding Padding}"
+                            VerticalAlignment="Stretch"
+                            Fill="{TemplateBinding Foreground}"
+                            RadiusX="{DynamicResource StatusBarSeparatorCornerRadius}"
+                            RadiusY="{DynamicResource StatusBarSeparatorCornerRadius}" />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style x:Key="DefaultStatusBarItemStyle" TargetType="StatusBarItem">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="StatusBarItem">
@@ -34,15 +66,16 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="true">
-                        <ContentPresenter
+                        <local:ContentPresenterEx
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            Foreground="{TemplateBinding Foreground}" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource StatusBarForegroundDisabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -4,17 +4,6 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <Thickness x:Key="TimePickerTopHeaderMargin">0,0,0,4</Thickness>
-    <sys:Double x:Key="TimePickerFlyoutPresenterHighlightHeight">40</sys:Double>
-    <sys:Double x:Key="TimePickerFlyoutPresenterAcceptDismissHostGridHeight">41</sys:Double>
-    <sys:Double x:Key="TimePickerThemeMinWidth">242</sys:Double>
-    <sys:Double x:Key="TimePickerThemeMaxWidth">456</sys:Double>
-    <sys:Double x:Key="TimePickerFlyoutPresenterItemHeight">40</sys:Double>
-    <sys:Double x:Key="TimePickerPopupVerticalOffset">18.5</sys:Double>
-    <Thickness x:Key="TimePickerFlyoutPresenterItemPadding">0,3,0,6</Thickness>
-
-    <Thickness x:Key="TimePickerHostPadding">0,3,0,6</Thickness>
-
     <Style x:Key="DateTimePickerFlyoutButtonStyle" TargetType="ButtonBase">
         <Setter Property="Background" Value="{DynamicResource DateTimePickerFlyoutButtonBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />

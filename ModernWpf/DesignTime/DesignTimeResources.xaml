@@ -2,6 +2,7 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="SystemColors.xaml" />
         <ResourceDictionary Source="/ThemeResources/Light.xaml" />
+        <ResourceDictionary Source="/ThemeResources/ThemeResources.xaml" />
         <ResourceDictionary Source="/ControlsResources.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

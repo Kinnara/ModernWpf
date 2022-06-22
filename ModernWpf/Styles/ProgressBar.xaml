@@ -11,13 +11,9 @@
         <ResourceDictionary>
             <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
             <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
+            <primitives:BindingProxy x:Key="ProgressBarTrackCornerRadiusProxy" Value="{DynamicResource ProgressBarTrackCornerRadius}" />
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
-
-    <sys:Double x:Key="ProgressBarMinHeight">3</sys:Double>
-    <sys:Double x:Key="ProgressBarTrackHeight">1</sys:Double>
-    <CornerRadius x:Key="ProgressBarCornerRadius">1.5</CornerRadius>
-    <CornerRadius x:Key="ProgressBarTrackCornerRadius">0.5</CornerRadius>
 
     <Style x:Key="DefaultProgressBarStyle" TargetType="ProgressBar">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -47,8 +43,8 @@
                                     Height="{DynamicResource ProgressBarTrackHeight}"
                                     VerticalAlignment="Center"
                                     Fill="{TemplateBinding Background}"
-                                    RadiusX="{Binding Source={StaticResource ProgressBarTrackCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                    RadiusY="{Binding Source={StaticResource ProgressBarTrackCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+                                    RadiusX="{Binding Value, Source={StaticResource ProgressBarTrackCornerRadiusProxy}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                    RadiusY="{Binding Value, Source={StaticResource ProgressBarTrackCornerRadiusProxy}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
                                 <Grid
                                     x:Name="PART_Indicator"
                                     HorizontalAlignment="Left"

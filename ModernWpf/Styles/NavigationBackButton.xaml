@@ -10,9 +10,6 @@
         <ResourceDictionary Source="Button.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <sys:Double x:Key="NavigationBackButtonWidth">40</sys:Double>
-    <sys:Double x:Key="NavigationBackButtonHeight">36</sys:Double>
-
     <Style
         x:Key="NavigationBackButtonNormalStyle"
         BasedOn="{StaticResource DefaultButtonStyle}"

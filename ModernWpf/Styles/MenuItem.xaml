@@ -7,29 +7,10 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="TextStyles.xaml" />
         <ResourceDictionary>
             <primitives:SharedSizeGroupConverter x:Key="SharedSizeGroupConverter" />
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
-
-    <sys:Double x:Key="MenuBarHeight">40</sys:Double>
-    <Thickness x:Key="MenuBarItemButtonPadding">10,4,10,4</Thickness>
-    <Thickness x:Key="MenuBarItemMargin">4,4,4,4</Thickness>
-
-    <sys:Double x:Key="MenuFlyoutSeparatorHeight">1</sys:Double>
-    <Thickness x:Key="MenuFlyoutPresenterThemePadding">0,2,0,2</Thickness>
-    <sys:Double x:Key="MenuFlyoutThemeMinHeight">32</sys:Double>
-    <Thickness x:Key="MenuFlyoutItemChevronMargin">24,0,0,-1</Thickness>
-    <Thickness x:Key="MenuFlyoutSeparatorThemePadding">-4,1,-4,1</Thickness>
-    <Thickness x:Key="MenuFlyoutItemMargin">4,2,4,2</Thickness>
-    <Thickness x:Key="MenuFlyoutItemThemePadding">11,6,11,7</Thickness>
-    <Thickness x:Key="MenuFlyoutItemThemePaddingNarrow">11,4,11,5</Thickness>
-
-    <Thickness x:Key="MenuFlyoutScrollerMargin">0,4,0,4</Thickness>
-    <Thickness x:Key="MenuFlyoutItemRevealBorderThickness">1</Thickness>
-    <Thickness x:Key="ToggleMenuFlyoutItemRevealBorderThickness">1</Thickness>
-    <Thickness x:Key="MenuFlyoutSubItemRevealBorderThickness">1</Thickness>
 
     <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}" TargetType="ScrollViewer">
         <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
@@ -45,7 +26,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Separator">
                     <Rectangle
-                        Height="{StaticResource MenuFlyoutSeparatorHeight}"
+                        Height="{DynamicResource MenuFlyoutSeparatorHeight}"
                         Margin="{TemplateBinding Padding}"
                         Fill="{TemplateBinding Background}" />
                 </ControlTemplate>
@@ -177,7 +158,7 @@
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuItemTemplateKey}" TargetType="MenuItem">
         <Border
             x:Name="LayoutRoot"
-            Margin="{StaticResource MenuFlyoutItemMargin}"
+            Margin="{DynamicResource MenuFlyoutItemMargin}"
             Padding="{TemplateBinding Padding}"
             Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"
@@ -230,7 +211,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
-                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Style="{DynamicResource CaptionTextBlockStyle}"
                     Text="{TemplateBinding InputGestureText}" />
             </Grid>
         </Border>
@@ -278,7 +259,7 @@
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuHeaderTemplateKey}" TargetType="MenuItem">
         <Border
             x:Name="LayoutRoot"
-            Margin="{StaticResource MenuFlyoutItemMargin}"
+            Margin="{DynamicResource MenuFlyoutItemMargin}"
             Padding="{TemplateBinding Padding}"
             Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"

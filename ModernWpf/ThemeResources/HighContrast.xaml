@@ -626,6 +626,7 @@
     <m:StaticResource x:Key="AutoSuggestBoxSuggestionsListBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
     <m:StaticResource x:Key="AutoSuggestBoxLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
     <sys:Double x:Key="AutoSuggestBoxIconFontSize">12</sys:Double>
+
     <sys:Double x:Key="AutoSuggestListMaxHeight">374</sys:Double>
     <sys:Double x:Key="AutoSuggestListBorderOpacity">0</sys:Double>
     <Thickness x:Key="AutoSuggestListBorderThemeThickness">1</Thickness>
@@ -1137,19 +1138,36 @@
     <SolidColorBrush x:Key="DataGridRowSelectedUnfocusedBackground" Color="{DynamicResource SystemAccentColor}" />
     <m:StaticResource x:Key="DataGridRowSelectedForeground" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
 
+    <!--  Resources for DateTimePicker  -->
     <Thickness x:Key="DatePickerHeaderThemeMargin">0,0,0,4</Thickness>
     <Thickness x:Key="DateTimeFlyoutBorderThickness">1</Thickness>
     <Thickness x:Key="DateTimeFlyoutBorderPadding">0</Thickness>
     <Thickness x:Key="DateTimeFlyoutButtonBorderThickness">0</Thickness>
 
-    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
-    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
-    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
-    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
-    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
-    <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <!--  Resources for DateTimePickerFlyout  -->
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBackgroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBackgroundPressed" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonBorderBrushPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+
+    <m:StaticResource x:Key="LoopingSelectorUpDownButtonForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="LoopingSelectorUpDownButtonForegroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="LoopingSelectorUpDownButtonForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="LoopingSelectorUpDownButtonBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="LoopingSelectorUpDownButtonBackgroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="LoopingSelectorUpDownButtonBackgroundPressed" ResourceKey="SystemColorWindowColorBrush" />
+
+    <m:StaticResource x:Key="LoopingSelectorItemForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="LoopingSelectorItemForegroundSelected" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="LoopingSelectorItemForegroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="LoopingSelectorItemForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="LoopingSelectorItemBackgroundSelected" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="LoopingSelectorItemBackgroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="LoopingSelectorItemBackgroundPressed" ResourceKey="SystemColorWindowColorBrush" />
 
     <!--  Resources for DropDownButton  -->
     <m:StaticResource x:Key="DropDownButtonForegroundSecondary" ResourceKey="SystemColorButtonTextColorBrush" />
@@ -1187,17 +1205,30 @@
 
     <!--  Resources for FlipView  -->
     <Thickness x:Key="FlipViewButtonBorderThemeThickness">0</Thickness>
-    <m:StaticResource x:Key="FlipViewBackground" ResourceKey="SystemControlPageBackgroundListLowBrush" />
+    <m:StaticResource x:Key="FlipViewBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+
     <m:StaticResource x:Key="FlipViewNextPreviousButtonBackground" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
     <m:StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightBaseMediumBrush" />
     <m:StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPressed" ResourceKey="SystemControlHighlightBaseMediumHighBrush" />
+
     <m:StaticResource x:Key="FlipViewNextPreviousArrowForeground" ResourceKey="SystemControlForegroundAltMediumHighBrush" />
     <m:StaticResource x:Key="FlipViewNextPreviousArrowForegroundPointerOver" ResourceKey="SystemControlHighlightAltAltMediumHighBrush" />
     <m:StaticResource x:Key="FlipViewNextPreviousArrowForegroundPressed" ResourceKey="SystemControlHighlightAltAltMediumHighBrush" />
+
     <m:StaticResource x:Key="FlipViewNextPreviousButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
     <m:StaticResource x:Key="FlipViewNextPreviousButtonBorderBrushPointerOver" ResourceKey="SystemControlForegroundTransparentBrush" />
     <m:StaticResource x:Key="FlipViewNextPreviousButtonBorderBrushPressed" ResourceKey="SystemControlForegroundTransparentBrush" />
-    <m:StaticResource x:Key="FlipViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
+
+    <m:StaticResource x:Key="FlipViewItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <SolidColorBrush x:Key="FlipViewButtonBackgroundThemeBrush" Color="#59D5D5D5" />
+    <SolidColorBrush x:Key="FlipViewButtonBorderThemeBrush" Color="#59D5D5D5" />
+    <SolidColorBrush x:Key="FlipViewButtonForegroundThemeBrush" Color="#99000000" />
+    <SolidColorBrush x:Key="FlipViewButtonPointerOverBackgroundThemeBrush" Color="#F0D7D7D7" />
+    <SolidColorBrush x:Key="FlipViewButtonPointerOverBorderThemeBrush" Color="#9EC1C1C1" />
+    <SolidColorBrush x:Key="FlipViewButtonPointerOverForegroundThemeBrush" Color="#FF000000" />
+    <SolidColorBrush x:Key="FlipViewButtonPressedBackgroundThemeBrush" Color="#BD292929" />
+    <SolidColorBrush x:Key="FlipViewButtonPressedBorderThemeBrush" Color="#BD292929" />
+    <SolidColorBrush x:Key="FlipViewButtonPressedForegroundThemeBrush" Color="#FFFFFFFF" />
 
     <!--  Resources for FlyoutPresenter  -->
     <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemColorWindowColorBrush" />
@@ -1249,6 +1280,12 @@
     <SolidColorBrush x:Key="GridViewItemBackgroundPressed" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="GridViewItemBackgroundSelectedPressed" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="GridViewItemBackgroundSelectedDisabled" Color="{m:ThemeResource SystemColorWindowColor}" />
+
+    <!--  Resources for GridSplitter  -->
+    <m:StaticResource x:Key="GridSplitterBackground" ResourceKey="SystemControlHighlightChromeHighBrush" />
+    <SolidColorBrush x:Key="GridSplitterPointerOverBackground" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="GridSplitterPressedBackground" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="GridSplitterForeground" Color="{m:ThemeResource SystemBaseHighColor}" />
 
     <!--  Resources for Hyperlink  -->
     <SolidColorBrush x:Key="HyperlinkForeground" Color="{m:ThemeResource SystemColorHotlightColor}" />
@@ -1389,14 +1426,6 @@
 
     <!--  Resources for LoopingSelector  -->
     <m:StaticResource x:Key="LoopingSelectorButtonBackground" ResourceKey="SystemControlBackgroundChromeMediumBrush" />
-
-    <!--  Resources for LoopingSelectorItem  -->
-    <m:StaticResource x:Key="LoopingSelectorItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="LoopingSelectorItemForegroundSelected" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="LoopingSelectorItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="LoopingSelectorItemForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="LoopingSelectorItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
-    <m:StaticResource x:Key="LoopingSelectorItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
 
     <!--  Resources for MediaTransportControls  -->
     <Thickness x:Key="MediaTransportControlsTitleSafeBounds">48,0,48,27</Thickness>
@@ -1958,38 +1987,57 @@
     <SolidColorBrush x:Key="SliderHeaderForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
 
     <!--  Resources for SplitButton  -->
-    <m:StaticResource x:Key="SplitButtonBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="SplitButtonBackgroundPointerOver" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="SplitButtonBackgroundPressed" ResourceKey="SystemControlBackgroundBaseMediumLowBrush" />
-    <m:StaticResource x:Key="SplitButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="SplitButtonBackgroundChecked" ResourceKey="SystemControlHighlightAccentBrush" />
-    <m:StaticResource x:Key="SplitButtonBackgroundCheckedPointerOver" ResourceKey="SystemControlHighlightAccentBrush" />
-    <m:StaticResource x:Key="SplitButtonBackgroundCheckedPressed" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
-    <m:StaticResource x:Key="SplitButtonBackgroundCheckedDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="SplitButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="SplitButtonForegroundPointerOver" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="SplitButtonForegroundPressed" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="SplitButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="SplitButtonForegroundChecked" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
-    <m:StaticResource x:Key="SplitButtonForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
-    <m:StaticResource x:Key="SplitButtonForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
-    <m:StaticResource x:Key="SplitButtonForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="SplitButtonBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBackgroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBackgroundPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBackgroundDisabled" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBackgroundChecked" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBackgroundCheckedPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBackgroundCheckedPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBackgroundCheckedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="SplitButtonForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundChecked" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundCheckedPointerOver" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundCheckedPressed" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundCheckedDisabled" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundSecondary" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundSecondaryPressed" ResourceKey="SystemColorHighlightColorBrush" />
+
     <m:StaticResource x:Key="SplitButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushPressed" ResourceKey="SystemColorButtonTextColorBrush" />
     <m:StaticResource x:Key="SplitButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushChecked" ResourceKey="SystemControlHighlightAltTransparentBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedPressed" ResourceKey="SystemControlHighlightAltTransparentBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushDivider" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushChecked" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedDivider" ResourceKey="SystemColorHighlightTextColorBrush" />
     <Thickness x:Key="SplitButtonBorderThemeThickness">1</Thickness>
 
+    <m:StaticResource x:Key="SplitButtonInAppBarUnfocusedPointerOver" ResourceKey="SystemColorButtonFaceColorBrush" />
+
     <!--  Resources for SplitView  -->
+    <m:StaticResource x:Key="SplitViewLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
     <sys:Double x:Key="SplitViewOpenPaneThemeLength">320</sys:Double>
     <sys:Double x:Key="SplitViewCompactPaneThemeLength">48</sys:Double>
     <Thickness x:Key="SplitViewLeftBorderThemeThickness">0,0,1,0</Thickness>
     <Thickness x:Key="SplitViewRightBorderThemeThickness">1,0,0,0</Thickness>
-    <m:StaticResource x:Key="SplitViewLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
+    <KeyTime x:Key="SplitViewPaneAnimationOpenDuration">00:00:00.2</KeyTime>
+    <KeyTime x:Key="SplitViewPaneAnimationOpenPreDuration">00:00:00.19999</KeyTime>
+    <KeyTime x:Key="SplitViewPaneAnimationCloseDuration">00:00:00.1</KeyTime>
+    <CornerRadius x:Key="SplitViewPaneRootCornerRadius">0</CornerRadius>
+
+    <!--  Resources for StatusBar  -->
+    <m:StaticResource x:Key="StatusBarBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="StatusBarForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="StatusBarForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+
+    <m:StaticResource x:Key="StatusBarSeparatorForeground" ResourceKey="SystemControlForegroundBaseMediumLowBrush" />
 
     <!--  Resources for TabView  -->
     <m:StaticResource x:Key="TabViewBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
@@ -2121,36 +2169,48 @@
     <m:StaticResource x:Key="ThumbBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
 
     <!--  Resources for TimePicker  -->
+    <m:StaticResource x:Key="TimePickerSpacerFill" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerSpacerFillDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerHeaderForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerHeaderForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="TimePickerButtonBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrushPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrushDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="TimePickerButtonBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundPressed" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundDisabled" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundFocused" ResourceKey="SystemColorHighlightTextColorBrush" />
+
+    <m:StaticResource x:Key="TimePickerButtonForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundDefault" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundFocused" ResourceKey="SystemColorHighlightColorBrush" />
+
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterSpacerFill" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterHighlightFill" ResourceKey="SystemColorHighlightColorBrush" />
+    <Color x:Key="TimePickerFlyoutPresenterHighlightForegroundColor">Transparent</Color>
+    <!--  This is a custom brush with opacity so not pointing directly to a system brush  -->
+    <m:StaticResource x:Key="TimePickerLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
+    <!--  Legacy brushes  -->
+    <SolidColorBrush x:Key="TimePickerForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="TimePickerHeaderForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+
     <sys:Double x:Key="TimePickerSelectorThemeMinWidth">80</sys:Double>
+    <Thickness x:Key="TimePickerHeaderThemeMargin">0,0,0,4</Thickness>
     <sys:Double x:Key="TimePickerSpacerThemeWidth">1</sys:Double>
     <Thickness x:Key="TimePickerBorderThemeThickness">1</Thickness>
-    <Thickness x:Key="TimePickerHeaderThemeMargin">0,0,0,4</Thickness>
     <Thickness x:Key="TimePickerFirstHostThemeMargin">0,0,20,0</Thickness>
     <Thickness x:Key="TimePickerThirdHostThemeMargin">20,0,0,0</Thickness>
     <FontWeight x:Key="TimePickerHeaderThemeFontWeight">Normal</FontWeight>
-    <m:StaticResource x:Key="TimePickerSpacerFill" ResourceKey="SystemControlForegroundBaseLowBrush" />
-    <m:StaticResource x:Key="TimePickerSpacerFillDisabled" ResourceKey="SystemControlDisabledBaseLowBrush" />
-    <m:StaticResource x:Key="TimePickerHeaderForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="TimePickerHeaderForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBorderBrush" ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumHighBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBorderBrushPressed" ResourceKey="SystemControlHighlightBaseMediumBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledBaseLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackground" ResourceKey="SystemControlBackgroundAltMediumLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackgroundPointerOver" ResourceKey="SystemControlPageBackgroundAltMediumBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackgroundPressed" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackgroundFocused" ResourceKey="SystemControlHighlightListAccentLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="TimePickerButtonForegroundPointerOver" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="TimePickerButtonForegroundPressed" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="TimePickerButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonForegroundFocused" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="TimePickerFlyoutPresenterBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
-    <m:StaticResource x:Key="TimePickerFlyoutPresenterBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
-    <m:StaticResource x:Key="TimePickerFlyoutPresenterSpacerFill" ResourceKey="SystemControlForegroundBaseLowBrush" />
-    <m:StaticResource x:Key="TimePickerFlyoutPresenterHighlightFill" ResourceKey="SystemControlHighlightListAccentLowBrush" />
-    <m:StaticResource x:Key="TimePickerLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
 
     <!--  Resources for ToggleButton  -->
     <Thickness x:Key="ToggleButtonBorderThemeThickness">1</Thickness>
@@ -2282,18 +2342,38 @@
     <SolidColorBrush x:Key="ToggleSwitchTrackPressedBackgroundThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
 
     <!--  Resources for ToolBar  -->
-    <sys:Double x:Key="ToolBarButtonBorderThemeThickness">1</sys:Double>
+    <m:StaticResource x:Key="ToolBarBackground" ResourceKey="SystemControlBackgroundChromeMediumBrush" />
+    <m:StaticResource x:Key="ToolBarForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="ToolBarOverflowPresenterBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
+    <m:StaticResource x:Key="ToolBarOverflowPresenterBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
+    <Thickness x:Key="ToolBarOverflowPresenterBorderThickness">1</Thickness>
+    <sys:Double x:Key="ToolBarExpandButtonCircleDiameter">3</sys:Double>
+    <sys:Double x:Key="ToolBarOverflowMaxWidth">480</sys:Double>
+
+    <Thickness x:Key="ToolBarButtonBorderThemeThickness">1</Thickness>
     <m:StaticResource x:Key="ToolBarButtonBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="ToolBarButtonBackgroundPointerOver" ResourceKey="SystemControlBackgroundListLowBrush" />
-    <m:StaticResource x:Key="ToolBarButtonBackgroundPressed" ResourceKey="SystemControlBackgroundListMediumBrush" />
-    <m:StaticResource x:Key="ToolBarButtonBackgroundSelected" ResourceKey="SystemControlBackgroundListMediumBrush" />
-    <m:StaticResource x:Key="ToolBarButtonBorderBrush" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="ToolBarButtonBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="ToolBarButtonBorderBrushPressed" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="ToolBarButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="ToolBarButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="ToolBarButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
+
+    <m:StaticResource x:Key="ToolBarButtonBackgroundSelected" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBackgroundSelectedPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBackgroundSelectedPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+    <m:StaticResource x:Key="ToolBarButtonBackgroundSelectedDisabled" ResourceKey="SystemControlTransparentBrush" />
     <SolidColorBrush x:Key="ToolBarButtonBorderBrushSelected" Color="{m:ThemeResource SystemColorHighlightColor}" />
     <SolidColorBrush x:Key="ToolBarButtonBorderBrushSelectedPointerOver" Color="{m:ThemeResource SystemColorHighlightColor}" />
     <SolidColorBrush x:Key="ToolBarButtonBorderBrushSelectedPressed" Color="{m:ThemeResource SystemColorGrayTextColor}" />
     <SolidColorBrush x:Key="ToolBarButtonBorderBrushSelectedDisabled" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+
+    <m:StaticResource x:Key="ToolBarSeparatorForeground" ResourceKey="SystemControlForegroundBaseMediumLowBrush" />
 
     <!--  Resources for ToolTip  -->
     <sys:Double x:Key="ToolTipContentThemeFontSize">12</sys:Double>

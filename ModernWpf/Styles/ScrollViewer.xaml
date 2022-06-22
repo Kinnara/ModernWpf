@@ -6,14 +6,6 @@
     xmlns:root="clr-namespace:ModernWpf"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <Duration x:Key="ScrollViewerSeparatorExpandDuration">00:00:00.1</Duration>
-    <KeyTime x:Key="ScrollViewerSeparatorContractDelay">00:00:02</KeyTime>
-    <Duration x:Key="ScrollViewerSeparatorContractDuration">00:00:00.1</Duration>
-    <KeyTime x:Key="ScrollViewerSeparatorContractKeyTime">00:00:00.1</KeyTime>
-    <KeyTime x:Key="ScrollViewerSeparatorContractFinalKeyframe">00:00:02.1</KeyTime>
-
-    <sys:Boolean x:Key="AutoHideScrollBars">False</sys:Boolean>
-
     <Style x:Key="DefaultScrollViewerStyle" TargetType="ScrollViewer">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Focusable" Value="False" />
@@ -88,14 +80,14 @@
                                     <VisualTransition From="MouseIndicator" To="NoIndicator">
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_HorizontalScrollBar" Storyboard.TargetProperty="(primitives:ScrollBarHelper.IndicatorMode)">
-                                                <DiscreteObjectKeyFrame KeyTime="{StaticResource ScrollViewerSeparatorContractDelay}">
+                                                <DiscreteObjectKeyFrame KeyTime="{DynamicResource ScrollViewerSeparatorContractDelay}">
                                                     <DiscreteObjectKeyFrame.Value>
                                                         <primitives:ScrollingIndicatorMode>None</primitives:ScrollingIndicatorMode>
                                                     </DiscreteObjectKeyFrame.Value>
                                                 </DiscreteObjectKeyFrame>
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_VerticalScrollBar" Storyboard.TargetProperty="(primitives:ScrollBarHelper.IndicatorMode)">
-                                                <DiscreteObjectKeyFrame KeyTime="{StaticResource ScrollViewerSeparatorContractDelay}">
+                                                <DiscreteObjectKeyFrame KeyTime="{DynamicResource ScrollViewerSeparatorContractDelay}">
                                                     <DiscreteObjectKeyFrame.Value>
                                                         <primitives:ScrollingIndicatorMode>None</primitives:ScrollingIndicatorMode>
                                                     </DiscreteObjectKeyFrame.Value>

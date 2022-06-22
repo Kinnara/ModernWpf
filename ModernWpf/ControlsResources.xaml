@@ -5,8 +5,8 @@
     xmlns:m="clr-namespace:ModernWpf.Markup"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Fonts/Fonts.xaml" />
         <ResourceDictionary Source="Styles/AutoSuggestBox.xaml" />
         <ResourceDictionary Source="Styles/Calendar.xaml" />
         <ResourceDictionary Source="Styles/CheckBox.xaml" />
@@ -16,7 +16,6 @@
         <ResourceDictionary Source="Styles/DataGrid.xaml" />
         <ResourceDictionary Source="Styles/DatePicker.xaml" />
         <ResourceDictionary Source="Styles/Expander.xaml" />
-        <ResourceDictionary Source="Styles/Fonts.xaml" />
         <ResourceDictionary Source="Styles/GridSplitter.xaml" />
         <ResourceDictionary Source="Styles/GroupBox.xaml" />
         <ResourceDictionary Source="Styles/GroupItem.xaml" />

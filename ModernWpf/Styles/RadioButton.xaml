@@ -7,10 +7,6 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <sys:Double x:Key="RadioButtonCheckGlyphSize">12</sys:Double>
-    <sys:Double x:Key="RadioButtonCheckGlyphPointerOverSize">14</sys:Double>
-    <sys:Double x:Key="RadioButtonCheckGlyphPressedOverSize">10</sys:Double>
-
     <Style x:Key="DefaultRadioButtonStyle" TargetType="RadioButton">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource RadioButtonBackground}" />
@@ -101,14 +97,14 @@
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame
-                                                KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
-                                                KeyTime="{StaticResource ControlNormalAnimationDuration}"
+                                                KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
+                                                KeyTime="{DynamicResource ControlNormalAnimationDuration}"
                                                 Value="14" />
                                         </DoubleAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Height">
                                             <SplineDoubleKeyFrame
-                                                KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
-                                                KeyTime="{StaticResource ControlNormalAnimationDuration}"
+                                                KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
+                                                KeyTime="{DynamicResource ControlNormalAnimationDuration}"
                                                 Value="14" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -117,26 +113,26 @@
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame
-                                                KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
-                                                KeyTime="{StaticResource ControlNormalAnimationDuration}"
+                                                KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
+                                                KeyTime="{DynamicResource ControlNormalAnimationDuration}"
                                                 Value="10" />
                                         </DoubleAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Height">
                                             <SplineDoubleKeyFrame
-                                                KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
-                                                KeyTime="{StaticResource ControlNormalAnimationDuration}"
+                                                KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
+                                                KeyTime="{DynamicResource ControlNormalAnimationDuration}"
                                                 Value="10" />
                                         </DoubleAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PressedCheckGlyph" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame
-                                                KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
-                                                KeyTime="{StaticResource ControlFastAnimationDuration}"
+                                                KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
+                                                KeyTime="{DynamicResource ControlFastAnimationDuration}"
                                                 Value="10" />
                                         </DoubleAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PressedCheckGlyph" Storyboard.TargetProperty="Height">
                                             <SplineDoubleKeyFrame
-                                                KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
-                                                KeyTime="{StaticResource ControlFastAnimationDuration}"
+                                                KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
+                                                KeyTime="{DynamicResource ControlFastAnimationDuration}"
                                                 Value="10" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -145,14 +141,14 @@
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame
-                                                KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
-                                                KeyTime="{StaticResource ControlFastAnimationDuration}"
+                                                KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
+                                                KeyTime="{DynamicResource ControlFastAnimationDuration}"
                                                 Value="14" />
                                         </DoubleAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Height">
                                             <SplineDoubleKeyFrame
-                                                KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
-                                                KeyTime="{StaticResource ControlFastAnimationDuration}"
+                                                KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
+                                                KeyTime="{DynamicResource ControlFastAnimationDuration}"
                                                 Value="14" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>

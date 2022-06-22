@@ -6,9 +6,6 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <Thickness x:Key="ToolTipBorderPadding">9,6,9,6</Thickness>
-    <sys:Double x:Key="ToolTipMaxWidth">320</sys:Double>
-
     <Style x:Key="DefaultToolTipStyle" TargetType="ToolTip">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Foreground" Value="{DynamicResource ToolTipForegroundBrush}" />
@@ -19,7 +16,7 @@
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="{DynamicResource ToolTipContentThemeFontSize}" />
         <Setter Property="Padding" Value="{DynamicResource ToolTipBorderPadding}" />
-        <Setter Property="MaxWidth" Value="{StaticResource ToolTipMaxWidth}" />
+        <Setter Property="MaxWidth" Value="{DynamicResource ToolTipMaxWidth}" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="HasDropShadow" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
         <Setter Property="RenderOptions.ClearTypeHint" Value="Enabled" />

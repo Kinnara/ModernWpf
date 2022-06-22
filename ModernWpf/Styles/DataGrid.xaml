@@ -6,8 +6,6 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <sys:Double x:Key="DataGridRowMinHeight">32</sys:Double>
-
     <Style x:Key="DefaultDataGridCellStyle" TargetType="DataGridCell">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource DataGridCellBackgroundBrush}" />

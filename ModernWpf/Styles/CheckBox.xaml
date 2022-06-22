@@ -12,16 +12,6 @@
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
-    <sys:Double x:Key="CheckBoxBorderThickness">1</sys:Double>
-    <sys:Double x:Key="CheckBoxSize">20</sys:Double>
-    <sys:Double x:Key="CheckBoxGlyphSize">12</sys:Double>
-    <sys:Double x:Key="CheckBoxHeight">32</sys:Double>
-    <sys:Double x:Key="CheckBoxMinWidth">120</sys:Double>
-    <Thickness x:Key="CheckBoxPadding">8,7,0,0</Thickness>
-    <Thickness x:Key="CheckBoxFocusVisualMargin">-7,-3,-7,-3</Thickness>
-    <sys:String x:Key="CheckBoxCheckedGlyph">&#xF984;</sys:String>
-    <sys:String x:Key="CheckBoxIndeterminateGlyph">&#xFC7D;</sys:String>
-
     <Style x:Key="DefaultCheckBoxStyle" TargetType="CheckBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource CheckBoxBackgroundUnchecked}" />

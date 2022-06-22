@@ -3,10 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <Thickness x:Key="GroupBoxPadding">0,0,0,15</Thickness>
-    <sys:Double x:Key="GroupBoxHeaderFontSize">20</sys:Double>
-    <Thickness x:Key="GroupBoxHeaderMargin">0,4,0,20</Thickness>
-
     <Style x:Key="DefaultGroupBoxStyle" TargetType="GroupBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />

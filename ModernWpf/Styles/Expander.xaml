@@ -14,32 +14,6 @@
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
-    <!--  Shared header/content  -->
-    <sys:Double x:Key="ExpanderMinHeight">48</sys:Double>
-
-    <!--  Header  -->
-    <HorizontalAlignment x:Key="ExpanderHeaderHorizontalContentAlignment">Stretch</HorizontalAlignment>
-    <VerticalAlignment x:Key="ExpanderHeaderVerticalContentAlignment">Center</VerticalAlignment>
-    <Thickness x:Key="ExpanderHeaderHorizontalPadding">16,0,0,0</Thickness>
-    <Thickness x:Key="ExpanderChevronHorizontalMargin">20,0,8,0</Thickness>
-    <Thickness x:Key="ExpanderHeaderVerticalPadding">0,16,0,0</Thickness>
-    <Thickness x:Key="ExpanderChevronVerticalMargin">0,20,0,8</Thickness>
-    <sys:Double x:Key="ExpanderChevronButtonSize">32</sys:Double>
-    <sys:Double x:Key="ExpanderChevronGlyphSize">12</sys:Double>
-
-    <!--  Icons  -->
-    <sys:String x:Key="ExpanderChevronUpGlyph">&#xF2B6;</sys:String>
-    <sys:String x:Key="ExpanderChevronDownGlyph">&#xF2A3;</sys:String>
-    <sys:String x:Key="ExpanderChevronChevronLeftGlyph">&#xF2AA;</sys:String>
-    <sys:String x:Key="ExpanderChevronChevronRightGlyph">&#xF2B0;</sys:String>
-
-    <!--  Content  -->
-    <Thickness x:Key="ExpanderContentPadding">16</Thickness>
-    <Thickness x:Key="ExpanderContentDownBorderThickness">1,0,1,1</Thickness>
-    <Thickness x:Key="ExpanderContentUpBorderThickness">1,1,1,0</Thickness>
-    <Thickness x:Key="ExpanderContentLeftBorderThickness">1,1,0,1</Thickness>
-    <Thickness x:Key="ExpanderContentRightBorderThickness">0,1,1,1</Thickness>
-
     <Style x:Key="ExpanderHeaderDownStyle" TargetType="ToggleButton">
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
@@ -592,7 +566,7 @@
                                 VerticalAlignment="Stretch"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{StaticResource ExpanderContentDownBorderThickness}"
+                                BorderThickness="{DynamicResource ExpanderContentDownBorderThickness}"
                                 CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius,
                                                                Converter={StaticResource BottomCornerRadiusFilterConverter}}"
                                 Visibility="Collapsed">

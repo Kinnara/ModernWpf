@@ -8,52 +8,19 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="TextBox.xaml" />
         <ResourceDictionary>
+            <primitives:BindingProxy x:Key="ComboBoxItemPillCornerRadiusProxy" Value="{DynamicResource ComboBoxItemPillCornerRadius}" />
             <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
             <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
-
-    <sys:Double x:Key="ComboBoxArrowThemeFontSize">21</sys:Double>
-    <sys:Double x:Key="ComboBoxThemeMinWidth">64</sys:Double>
-    <sys:Double x:Key="ComboBoxPopupThemeMinWidth">80</sys:Double>
-    <sys:Double x:Key="ComboBoxPopupThemeTouchMinWidth">240</sys:Double>
-    <sys:Double x:Key="ComboBoxItemPillHeight">16</sys:Double>
-    <sys:Double x:Key="ComboBoxItemPillWidth">3</sys:Double>
-    <sys:Double x:Key="ComboBoxItemPillMinScale">0.625</sys:Double>
-    <sys:Double x:Key="ComboBoxMinHeight">32</sys:Double>
-
-    <sys:Int32 x:Key="ComboBoxPopupMaxNumberOfItems">15</sys:Int32>
-    <sys:Int32 x:Key="ComboBoxPopupMaxNumberOfItemsThatCanBeShownOnOneSide">7</sys:Int32>
-
-    <KeyTime x:Key="ComboBoxItemScaleAnimationDuration">00:00:00.167</KeyTime>
-
-    <Thickness x:Key="ComboBoxBorderThemeThickness">1</Thickness>
-    <Thickness x:Key="ComboBoxDropdownBorderThickness">1</Thickness>
-    <Thickness x:Key="ComboBoxHeaderThemeMargin">0,0,0,4</Thickness>
-    <Thickness x:Key="ComboBoxPopupBorderThemeThickness">2</Thickness>
-    <Thickness x:Key="ComboBoxItemThemePadding">11,5,11,7</Thickness>
-    <Thickness x:Key="ComboBoxItemThemeTouchPadding">11,11,11,13</Thickness>
-    <Thickness x:Key="ComboBoxItemThemeGameControllerPadding">11,11,11,13</Thickness>
-    <Thickness x:Key="ComboBoxBackgroundBorderThicknessFocused">2</Thickness>
-    <Thickness x:Key="ComboBoxDropdownContentMargin">0,4</Thickness>
-    <Thickness x:Key="ComboBoxTopHeaderMargin">0,0,0,8</Thickness>
-    <Thickness x:Key="ComboBoxPadding">12,5,0,7</Thickness>
-    <Thickness x:Key="ComboBoxEditableTextPadding">11,5,38,6</Thickness>
-
-    <CornerRadius x:Key="ComboBoxHiglightBorderCornerRadius">7</CornerRadius>
-    <CornerRadius x:Key="ComboBoxDropDownButtonBackgroundCornerRadius">4</CornerRadius>
-    <CornerRadius x:Key="ComboBoxItemCornerRadius">3</CornerRadius>
-    <CornerRadius x:Key="ComboBoxItemPillCornerRadius">1.5</CornerRadius>
-
-    <FontWeight x:Key="ComboBoxHeaderThemeFontWeight">Normal</FontWeight>
 
     <Style x:Key="ComboBoxItemPill" TargetType="Rectangle">
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="Height" Value="{DynamicResource ComboBoxItemPillHeight}" />
         <Setter Property="Width" Value="{DynamicResource ComboBoxItemPillWidth}" />
         <Setter Property="Fill" Value="{DynamicResource ComboBoxItemPillFillBrush}" />
-        <Setter Property="RadiusX" Value="{Binding Source={StaticResource ComboBoxItemPillCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}" />
-        <Setter Property="RadiusY" Value="{Binding Source={StaticResource ComboBoxItemPillCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
+        <Setter Property="RadiusX" Value="{Binding Value, Source={StaticResource ComboBoxItemPillCornerRadiusProxy}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}" />
+        <Setter Property="RadiusY" Value="{Binding Value, Source={StaticResource ComboBoxItemPillCornerRadiusProxy}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}" />
         <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
     </Style>
 
@@ -126,7 +93,7 @@
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="1,0,0,0"
-                                                KeyTime="{StaticResource ComboBoxItemScaleAnimationDuration}"
+                                                KeyTime="{DynamicResource ComboBoxItemScaleAnimationDuration}"
                                                 Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -136,8 +103,8 @@
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="0,0,0,1"
-                                                KeyTime="{StaticResource ComboBoxItemScaleAnimationDuration}"
-                                                Value="{StaticResource ComboBoxItemPillMinScale}" />
+                                                KeyTime="{DynamicResource ComboBoxItemScaleAnimationDuration}"
+                                                Value="{DynamicResource ComboBoxItemPillMinScale}" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -147,14 +114,14 @@
                                 <VisualState x:Name="TouchInputMode">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Margin">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ComboBoxItemThemeTouchPadding}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource ComboBoxItemThemeTouchPadding}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="GameControllerInputMode">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Margin">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ComboBoxItemThemeGameControllerPadding}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource ComboBoxItemThemeGameControllerPadding}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -374,8 +341,8 @@
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Shdw" Storyboard.TargetProperty="Opacity">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0.0" />
                                     <SplineDoubleKeyFrame
-                                        KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
-                                        KeyTime="{StaticResource ControlNormalAnimationDuration}"
+                                        KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
+                                        KeyTime="{DynamicResource ControlNormalAnimationDuration}"
                                         Value="1.0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
@@ -383,8 +350,8 @@
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Shdw" Storyboard.TargetProperty="Opacity">
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="1.0" />
                                     <SplineDoubleKeyFrame
-                                        KeySpline="{StaticResource ControlFastOutSlowInKeySpline}"
-                                        KeyTime="{StaticResource ControlFastAnimationDuration}"
+                                        KeySpline="{DynamicResource ControlFastOutSlowInKeySpline}"
+                                        KeyTime="{DynamicResource ControlFastAnimationDuration}"
                                         Value="0.0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
@@ -424,7 +391,7 @@
                             Margin="-4"
                             Background="{DynamicResource ComboBoxBackgroundFocused}"
                             BorderBrush="{DynamicResource ComboBoxBackgroundBorderBrushFocused}"
-                            BorderThickness="{StaticResource ComboBoxBackgroundBorderThicknessFocused}"
+                            BorderThickness="{DynamicResource ComboBoxBackgroundBorderThicknessFocused}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                             Opacity="0" />
                         <Border

@@ -3,13 +3,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <sys:Double x:Key="MenuBarHeight">40</sys:Double>
-
     <Style x:Key="DefaultMenuStyle" TargetType="Menu">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource MenuBarBackground}" />
         <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="Height" Value="{StaticResource MenuBarHeight}" />
+        <Setter Property="Height" Value="{DynamicResource MenuBarHeight}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Menu">

@@ -5,8 +5,6 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
-    <Thickness x:Key="CalendarDatePickerTopHeaderMargin">0,0,0,4</Thickness>
-
     <Style x:Key="DefaultDatePickerTextBoxStyle" TargetType="DatePickerTextBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Foreground" Value="{DynamicResource CalendarDatePickerTextForegroundSelected}" />
@@ -138,7 +136,7 @@
                             Grid.Row="0"
                             Grid.Column="1"
                             Grid.ColumnSpan="2"
-                            Margin="{StaticResource CalendarDatePickerTopHeaderMargin}"
+                            Margin="{DynamicResource CalendarDatePickerTopHeaderMargin}"
                             VerticalAlignment="Top"
                             Content="{TemplateBinding primitives:ControlHelper.Header}"
                             ContentTemplate="{TemplateBinding primitives:ControlHelper.HeaderTemplate}"

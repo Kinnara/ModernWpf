@@ -12,10 +12,6 @@
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
-    <sys:Double x:Key="PivotHeaderItemSelectedPipeMinScale">0.625</sys:Double>
-    <KeyTime x:Key="PivotHeaderItemScaleAnimationDuration">00:00:00.167</KeyTime>
-    <CornerRadius x:Key="PivotHeaderItemSelectedPipeCornerRadius">1.5</CornerRadius>
-
     <Style x:Key="TabItemPivotStyle" TargetType="TabItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundUnselected}" />
@@ -72,7 +68,7 @@
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectedPipeTransform" Storyboard.TargetProperty="ScaleX">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="1,0,0,0"
-                                                KeyTime="{StaticResource PivotHeaderItemScaleAnimationDuration}"
+                                                KeyTime="{DynamicResource PivotHeaderItemScaleAnimationDuration}"
                                                 Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -82,8 +78,8 @@
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectedPipeTransform" Storyboard.TargetProperty="ScaleX">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="0,0,0,1"
-                                                KeyTime="{StaticResource PivotHeaderItemScaleAnimationDuration}"
-                                                Value="{StaticResource PivotHeaderItemSelectedPipeMinScale}" />
+                                                KeyTime="{DynamicResource PivotHeaderItemScaleAnimationDuration}"
+                                                Value="{DynamicResource PivotHeaderItemSelectedPipeMinScale}" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -92,10 +88,10 @@
                                 <VisualState x:Name="Selected">
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectedPipeTransform" Storyboard.TargetProperty="ScaleX">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{StaticResource PivotHeaderItemSelectedPipeMinScale}" />
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{DynamicResource PivotHeaderItemSelectedPipeMinScale}" />
                                             <SplineDoubleKeyFrame
                                                 KeySpline="0,0,0,1"
-                                                KeyTime="{StaticResource PivotHeaderItemScaleAnimationDuration}"
+                                                KeyTime="{DynamicResource PivotHeaderItemScaleAnimationDuration}"
                                                 Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>

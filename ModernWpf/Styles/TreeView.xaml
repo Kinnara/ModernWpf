@@ -6,9 +6,6 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <sys:Double x:Key="TreeViewItemPillMinScale">0.625</sys:Double>
-    <KeyTime x:Key="TreeViewItemScaleAnimationDuration">00:00:00.167</KeyTime>
-
     <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Focusable" Value="False" />
@@ -171,7 +168,7 @@
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndicatorTransform" Storyboard.TargetProperty="ScaleY">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="1,0,0,0"
-                                                KeyTime="{StaticResource TreeViewItemScaleAnimationDuration}"
+                                                KeyTime="{DynamicResource TreeViewItemScaleAnimationDuration}"
                                                 Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -181,8 +178,8 @@
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndicatorTransform" Storyboard.TargetProperty="ScaleY">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="0,0,0,1"
-                                                KeyTime="{StaticResource TreeViewItemScaleAnimationDuration}"
-                                                Value="{StaticResource TreeViewItemPillMinScale}" />
+                                                KeyTime="{DynamicResource TreeViewItemScaleAnimationDuration}"
+                                                Value="{DynamicResource TreeViewItemPillMinScale}" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -211,10 +208,10 @@
                                 <VisualState x:Name="Selected">
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndicatorTransform" Storyboard.TargetProperty="ScaleY">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{StaticResource TreeViewItemPillMinScale}" />
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{DynamicResource TreeViewItemPillMinScale}" />
                                             <SplineDoubleKeyFrame
                                                 KeySpline="0,0,0,1"
-                                                KeyTime="{StaticResource TreeViewItemScaleAnimationDuration}"
+                                                KeyTime="{DynamicResource TreeViewItemScaleAnimationDuration}"
                                                 Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>

@@ -61,40 +61,33 @@
             IsIndeterminate="{Binding IsOn, ElementName=IsIndeterminate}"
             Value="{Binding Value, ElementName=Value}" />-->
 
-        <ui:MediaPlayerElement
-            x:Name="MediaElementEx"
-            AreTransportControlsEnabled="True"
-            AutoPlay="False"
-            PosterSource="Assets/Images/1.jpg"
-            Source="{Binding Tag, RelativeSource={RelativeSource Self}, Converter={StaticResource RelativeToAbsoluteConverter}}"
-            Tag="Assets/ladybug.wmv">
-            <ui:MediaPlayerElement.TransportControls>
-                <ui:MediaTransportControls
-                    IsCompactOverlayButtonVisible="True"
-                    IsCompactOverlayEnabled="True"
-                    IsFastForwardButtonVisible="True"
-                    IsFastForwardEnabled="True"
-                    IsFastRewindButtonVisible="True"
-                    IsFastRewindEnabled="True"
-                    IsNextTrackButtonVisible="True"
-                    IsPlaybackRateButtonVisible="True"
-                    IsPlaybackRateEnabled="True"
-                    IsPreviousTrackButtonVisible="True"
-                    IsRepeatButtonVisible="True"
-                    IsRepeatEnabled="True"
-                    IsSeekBarVisible="True"
-                    IsSeekEnabled="True"
-                    IsSkipBackwardButtonVisible="True"
-                    IsSkipBackwardEnabled="True"
-                    IsSkipForwardButtonVisible="True"
-                    IsSkipForwardEnabled="True"
-                    IsStopButtonVisible="True"
-                    IsStopEnabled="True"
-                    IsZoomButtonVisible="True"
-                    IsZoomEnabled="True"
-                    ShowAndHideAutomatically="False" />
-            </ui:MediaPlayerElement.TransportControls>
-        </ui:MediaPlayerElement>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="55"
+                TextWrapping="Wrap">
+                Top
+            </TextBlock>
+            <GridSplitter
+                Grid.Row="1"
+                Height="5"
+                ShowsPreview="True"
+                HorizontalAlignment="Stretch" />
+            <TextBlock
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="55"
+                TextWrapping="Wrap">
+                Bottom
+            </TextBlock>
+        </Grid>
 
         <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />
 

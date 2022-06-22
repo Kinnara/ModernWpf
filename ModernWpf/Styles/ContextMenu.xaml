@@ -6,8 +6,6 @@
     xmlns:m="clr-namespace:ModernWpf.Markup"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
-    <Thickness x:Key="MenuFlyoutScrollerMargin">0,4,0,4</Thickness>
-
     <Style x:Key="ContextMenuStyleBase" TargetType="ContextMenu">
         <Setter Property="Background" Value="{DynamicResource MenuFlyoutPresenterBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutPresenterBorderBrush}" />

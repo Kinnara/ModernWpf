@@ -9,14 +9,9 @@
         <ResourceDictionary>
             <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
             <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
+            <primitives:BindingProxy x:Key="ListViewItemSelectionIndicatorCornerRadiusProxy" Value="{DynamicResource ListViewItemSelectionIndicatorCornerRadius}" />
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
-
-    <sys:Double x:Key="GridViewColumnHeaderMinHeight">33</sys:Double>
-    <sys:Double x:Key="GridViewItemContainerMinHeight">32</sys:Double>
-
-    <sys:Double x:Key="ListViewItemPillMinScale">0.625</sys:Double>
-    <KeyTime x:Key="ListViewItemScaleAnimationDuration">00:00:00.167</KeyTime>
 
     <Style x:Key="DefaultListViewItemStyle" TargetType="ListViewItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -59,8 +54,8 @@
                                     VerticalAlignment="Stretch"
                                     Fill="{DynamicResource ListViewItemSelectionIndicatorBrush}"
                                     Opacity="0"
-                                    RadiusX="{Binding Source={StaticResource ListViewItemSelectionIndicatorCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                    RadiusY="{Binding Source={StaticResource ListViewItemSelectionIndicatorCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+                                    RadiusX="{Binding Value, Source={StaticResource ListViewItemSelectionIndicatorCornerRadiusProxy}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                    RadiusY="{Binding Value, Source={StaticResource ListViewItemSelectionIndicatorCornerRadiusProxy}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
                                     RenderTransformOrigin="0.5,0.5">
                                     <Rectangle.RenderTransform>
                                         <ScaleTransform x:Name="PillTransform" ScaleY="1" />
@@ -81,7 +76,7 @@
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="1,0,0,0"
-                                                KeyTime="{StaticResource ListViewItemScaleAnimationDuration}"
+                                                KeyTime="{DynamicResource ListViewItemScaleAnimationDuration}"
                                                 Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -91,8 +86,8 @@
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="0,0,0,1"
-                                                KeyTime="{StaticResource ListViewItemScaleAnimationDuration}"
-                                                Value="{StaticResource ListViewItemPillMinScale}" />
+                                                KeyTime="{DynamicResource ListViewItemScaleAnimationDuration}"
+                                                Value="{DynamicResource ListViewItemPillMinScale}" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -101,10 +96,10 @@
                                 <VisualState x:Name="Selected">
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{StaticResource ListViewItemPillMinScale}" />
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{DynamicResource ListViewItemPillMinScale}" />
                                             <SplineDoubleKeyFrame
                                                 KeySpline="0,0,0,1"
-                                                KeyTime="{StaticResource ListViewItemScaleAnimationDuration}"
+                                                KeyTime="{DynamicResource ListViewItemScaleAnimationDuration}"
                                                 Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -537,8 +532,8 @@
                                 VerticalAlignment="Stretch"
                                 Fill="{DynamicResource GridViewItemSelectedBorderBrush}"
                                 Opacity="0"
-                                RadiusX="{Binding Source={StaticResource ListViewItemSelectionIndicatorCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                RadiusY="{Binding Source={StaticResource ListViewItemSelectionIndicatorCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+                                RadiusX="{Binding Value, Source={StaticResource ListViewItemSelectionIndicatorCornerRadiusProxy}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                RadiusY="{Binding Value, Source={StaticResource ListViewItemSelectionIndicatorCornerRadiusProxy}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
                                 RenderTransformOrigin="0.5,0.5">
                                 <Rectangle.RenderTransform>
                                     <ScaleTransform x:Name="PillTransform" ScaleY="1" />
@@ -557,7 +552,7 @@
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="1,0,0,0"
-                                                KeyTime="{StaticResource ListViewItemScaleAnimationDuration}"
+                                                KeyTime="{DynamicResource ListViewItemScaleAnimationDuration}"
                                                 Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
@@ -567,8 +562,8 @@
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
                                             <SplineDoubleKeyFrame
                                                 KeySpline="0,0,0,1"
-                                                KeyTime="{StaticResource ListViewItemScaleAnimationDuration}"
-                                                Value="{StaticResource ListViewItemPillMinScale}" />
+                                                KeyTime="{DynamicResource ListViewItemScaleAnimationDuration}"
+                                                Value="{DynamicResource ListViewItemPillMinScale}" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -577,10 +572,10 @@
                                 <VisualState x:Name="Selected">
                                     <Storyboard>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{StaticResource ListViewItemPillMinScale}" />
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{DynamicResource ListViewItemPillMinScale}" />
                                             <SplineDoubleKeyFrame
                                                 KeySpline="0,0,0,1"
-                                                KeyTime="{StaticResource ListViewItemScaleAnimationDuration}"
+                                                KeyTime="{DynamicResource ListViewItemScaleAnimationDuration}"
                                                 Value="1" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>

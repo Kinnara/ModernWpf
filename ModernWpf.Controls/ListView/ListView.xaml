@@ -12,13 +12,6 @@
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
-    <sys:Double x:Key="GridViewColumnHeaderMinHeight">33</sys:Double>
-    <sys:Double x:Key="GridViewItemContainerMinHeight">32</sys:Double>
-
-    <sys:Double x:Key="ListViewItemPillMinScale">0.625</sys:Double>
-
-    <KeyTime x:Key="ListViewItemScaleAnimationDuration">00:00:00.167</KeyTime>
-
     <Style TargetType="local:ListViewItem">
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
