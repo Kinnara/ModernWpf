@@ -41,7 +41,7 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}">
                             <Border Padding="{DynamicResource FlyoutBorderThemePadding}" CornerRadius="{TemplateBinding CornerRadius}">
-                                <ScrollViewer
+                                <ui:ScrollViewerEx
                                     x:Name="ScrollViewer"
                                     HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                     VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
@@ -50,7 +50,7 @@
                                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                </ScrollViewer>
+                                </ui:ScrollViewerEx>
                             </Border>
                         </Border>
                     </ui:ThemeShadowChrome>

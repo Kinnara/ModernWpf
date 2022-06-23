@@ -113,7 +113,7 @@
                             BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
                             BorderThickness="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}"
                             CornerRadius="{DynamicResource OverlayCornerRadius}">
-                            <ScrollViewer
+                            <local:ScrollViewerEx
                                 x:Name="SubMenuScrollViewer"
                                 MinWidth="{DynamicResource FlyoutThemeMinWidth}"
                                 Margin="{DynamicResource MenuFlyoutPresenterThemePadding}"
@@ -125,7 +125,7 @@
                                     KeyboardNavigation.TabNavigation="Cycle"
                                     RenderOptions.ClearTypeHint="Enabled"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                            </ScrollViewer>
+                            </local:ScrollViewerEx>
                         </Border>
                     </primitives:ThemeShadowChrome>
                 </primitives:MenuPopup>
@@ -328,7 +328,7 @@
                             BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
                             BorderThickness="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}"
                             CornerRadius="{DynamicResource OverlayCornerRadius}">
-                            <ScrollViewer
+                            <local:ScrollViewerEx
                                 x:Name="SubMenuScrollViewer"
                                 MinWidth="{DynamicResource FlyoutThemeMinWidth}"
                                 Margin="{DynamicResource MenuFlyoutPresenterThemePadding}"
@@ -340,7 +340,7 @@
                                     KeyboardNavigation.TabNavigation="Cycle"
                                     RenderOptions.ClearTypeHint="Enabled"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                            </ScrollViewer>
+                            </local:ScrollViewerEx>
                         </Border>
                     </primitives:ThemeShadowChrome>
                 </Popup>

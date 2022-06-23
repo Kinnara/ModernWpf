@@ -38,7 +38,7 @@
                             Foreground="{DynamicResource CalendarDatePickerTextForeground}"
                             IsHitTestVisible="False"
                             Opacity="0" />
-                        <ScrollViewer
+                        <local:ScrollViewerEx
                             x:Name="PART_ContentHost"
                             Margin="0"
                             Padding="{TemplateBinding Padding}"

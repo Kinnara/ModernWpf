@@ -759,7 +759,7 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 CornerRadius="{TemplateBinding CornerRadius}" />
-                            <ScrollViewer
+                            <ui:ScrollViewerEx
                                 Margin="{TemplateBinding BorderThickness}"
                                 Padding="0,4,0,4"
                                 Content="{TemplateBinding Content}"

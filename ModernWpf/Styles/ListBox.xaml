@@ -127,7 +127,7 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         SnapsToDevicePixels="true">
-                        <ScrollViewer
+                        <local:ScrollViewerEx
                             x:Name="ScrollViewer"
                             Padding="{TemplateBinding Padding}"
                             primitives:ScrollViewerHelper.AutoHideScrollBars="{TemplateBinding primitives:ScrollViewerHelper.AutoHideScrollBars}"
@@ -154,7 +154,7 @@
                                     Content="{TemplateBinding primitives:ListViewHelper.Footer}"
                                     ContentTemplate="{TemplateBinding primitives:ListViewHelper.FooterTemplate}" />
                             </Grid>
-                        </ScrollViewer>
+                        </local:ScrollViewerEx>
                     </Border>
                     <ControlTemplate.Triggers>
                         <MultiTrigger>

@@ -209,7 +209,7 @@
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Border Padding="{TemplateBinding Padding}" CornerRadius="{TemplateBinding CornerRadius}">
-                            <ScrollViewer
+                            <ui:ScrollViewerEx
                                 Padding="{DynamicResource CommandBarOverflowPresenterMargin}"
                                 Content="{TemplateBinding Content}"
                                 HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"

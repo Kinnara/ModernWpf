@@ -297,7 +297,7 @@
                 FontFamily="{DynamicResource FluentSystemIconsFilled}"
                 FontSize="{DynamicResource ScrollBarButtonArrowIconFontSize}"
                 Foreground="{DynamicResource ScrollBarButtonArrowForeground}"
-                Glyph="&#xF966;"
+                Glyph="&#xE2BC;"
                 RenderTransformOrigin="0.5, 0.5">
                 <local:FontIcon.RenderTransform>
                     <ScaleTransform x:Name="ScaleTransform" ScaleX="1" ScaleY="1" />

@@ -3,74 +3,71 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
+    <ui:SimpleStackPanel>
+        <local:ControlExample x:Name="Example1" HeaderText="Select different looks for the person picture.">
 
-    <ScrollViewer>
-        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
-            <sc:ControlExample x:Name="Example1" HeaderText="Select different looks for the person picture.">
+            <local:ControlExample.Example>
+                <ui:PersonPicture
+                    x:Name="personPicture"
+                    Height="300"
+                    VerticalAlignment="Top"
+                    DisplayName="{Binding IsChecked, ElementName=DisplayNameRadio, Converter={StaticResource booleanToValueConverter}, ConverterParameter='Jane Doe'}"
+                    Initials="{Binding IsChecked, ElementName=InitialsRadio, Converter={StaticResource booleanToValueConverter}, ConverterParameter='SB'}"
+                    ProfilePicture="{Binding IsChecked, ElementName=ProfileImageRadio, Converter={StaticResource booleanToValueConverter}, ConverterParameter='https://docs.microsoft.com/windows/uwp/contacts-and-calendar/images/shoulder-tap-static-payload.png'}" />
+            </local:ControlExample.Example>
 
-                <sc:ControlExample.Example>
-                    <ui:PersonPicture
-                        x:Name="personPicture"
-                        Height="300"
-                        VerticalAlignment="Top"
-                        DisplayName="{Binding IsChecked, ElementName=DisplayNameRadio, Converter={StaticResource booleanToValueConverter}, ConverterParameter='Jane Doe'}"
-                        Initials="{Binding IsChecked, ElementName=InitialsRadio, Converter={StaticResource booleanToValueConverter}, ConverterParameter='SB'}"
-                        ProfilePicture="{Binding IsChecked, ElementName=ProfileImageRadio, Converter={StaticResource booleanToValueConverter}, ConverterParameter='https://docs.microsoft.com/windows/uwp/contacts-and-calendar/images/shoulder-tap-static-payload.png'}" />
-                </sc:ControlExample.Example>
+            <local:ControlExample.Options>
+                <StackPanel>
+                    <RadioButton
+                        x:Name="ProfileImageRadio"
+                        Content="Profile Image"
+                        GroupName="Profile"
+                        IsChecked="True" />
+                    <RadioButton
+                        x:Name="DisplayNameRadio"
+                        Content="Display Name"
+                        GroupName="Profile" />
+                    <RadioButton
+                        x:Name="InitialsRadio"
+                        Content="Initials"
+                        GroupName="Profile" />
+                </StackPanel>
+            </local:ControlExample.Options>
+        </local:ControlExample>
 
-                <sc:ControlExample.Options>
-                    <StackPanel>
-                        <RadioButton
-                            x:Name="ProfileImageRadio"
-                            Content="Profile Image"
-                            GroupName="Profile"
-                            IsChecked="True" />
-                        <RadioButton
-                            x:Name="DisplayNameRadio"
-                            Content="Display Name"
-                            GroupName="Profile" />
-                        <RadioButton
-                            x:Name="InitialsRadio"
-                            Content="Initials"
-                            GroupName="Profile" />
-                    </StackPanel>
-                </sc:ControlExample.Options>
-            </sc:ControlExample>
+        <local:ControlExample x:Name="Example2" HeaderText="API in action.">
 
-            <sc:ControlExample x:Name="Example2" HeaderText="API in action.">
+            <local:ControlExample.Example>
+                <ui:PersonPicture
+                    x:Name="personPicture2"
+                    Height="300"
+                    VerticalAlignment="Top"
+                    DisplayName="Jane Doe"
+                    Initials="SB"
+                    ProfilePicture="{Binding IsChecked, ElementName=ProfileImageCheck, Converter={StaticResource booleanToValueConverter}, ConverterParameter='https://docs.microsoft.com/windows/uwp/contacts-and-calendar/images/shoulder-tap-static-payload.png'}" />
+            </local:ControlExample.Example>
 
-                <sc:ControlExample.Example>
-                    <ui:PersonPicture
-                        x:Name="personPicture2"
-                        Height="300"
-                        VerticalAlignment="Top"
-                        DisplayName="Jane Doe"
-                        Initials="SB"
-                        ProfilePicture="{Binding IsChecked, ElementName=ProfileImageCheck, Converter={StaticResource booleanToValueConverter}, ConverterParameter='https://docs.microsoft.com/windows/uwp/contacts-and-calendar/images/shoulder-tap-static-payload.png'}" />
-                </sc:ControlExample.Example>
-
-                <sc:ControlExample.Options>
-                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <TextBox ui:ControlHelper.Header="BadgeGlyph" Text="{Binding ElementName=personPicture2, Path=BadgeGlyph, UpdateSourceTrigger=PropertyChanged}" />
-                        <ui:NumberBox
-                            Header="BadgeNumber"
-                            Minimum="0"
-                            SpinButtonPlacementMode="Inline"
-                            Value="{Binding ElementName=personPicture2, Path=BadgeNumber}" />
-                        <TextBox ui:ControlHelper.Header="DisplayName" Text="{Binding ElementName=personPicture2, Path=DisplayName, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBox ui:ControlHelper.Header="Initials" Text="{Binding ElementName=personPicture2, Path=Initials, UpdateSourceTrigger=PropertyChanged}" />
-                        <CheckBox Content="IsGroup" IsChecked="{Binding ElementName=personPicture2, Path=IsGroup}" />
-                        <CheckBox
-                            x:Name="ProfileImageCheck"
-                            Content="Profile Image"
-                            IsChecked="True" />
-                    </ui:SimpleStackPanel>
-                </sc:ControlExample.Options>
-            </sc:ControlExample>
-        </ui:SimpleStackPanel>
-    </ScrollViewer>
+            <local:ControlExample.Options>
+                <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                    <TextBox ui:ControlHelper.Header="BadgeGlyph" Text="{Binding ElementName=personPicture2, Path=BadgeGlyph, UpdateSourceTrigger=PropertyChanged}" />
+                    <ui:NumberBox
+                        Header="BadgeNumber"
+                        Minimum="0"
+                        SpinButtonPlacementMode="Inline"
+                        Value="{Binding ElementName=personPicture2, Path=BadgeNumber}" />
+                    <TextBox ui:ControlHelper.Header="DisplayName" Text="{Binding ElementName=personPicture2, Path=DisplayName, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox ui:ControlHelper.Header="Initials" Text="{Binding ElementName=personPicture2, Path=Initials, UpdateSourceTrigger=PropertyChanged}" />
+                    <CheckBox Content="IsGroup" IsChecked="{Binding ElementName=personPicture2, Path=IsGroup}" />
+                    <CheckBox
+                        x:Name="ProfileImageCheck"
+                        Content="Profile Image"
+                        IsChecked="True" />
+                </ui:SimpleStackPanel>
+            </local:ControlExample.Options>
+        </local:ControlExample>
+    </ui:SimpleStackPanel>
 </ui:Page>

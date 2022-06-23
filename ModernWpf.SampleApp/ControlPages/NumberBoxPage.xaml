@@ -3,108 +3,105 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
+    <ui:SimpleStackPanel>
+        <local:ControlExample HeaderText="A NumberBox that evaluates expressions.">
+            <ui:NumberBox
+                AcceptsExpression="True"
+                Header="Enter an expression:"
+                PlaceholderText="1 + 2^2"
+                Value="NaN" />
+        </local:ControlExample>
 
-    <ScrollViewer>
-        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
-            <sc:ControlExample HeaderText="A NumberBox that evaluates expressions.">
-                <ui:NumberBox
-                    AcceptsExpression="True"
-                    Header="Enter an expression:"
-                    PlaceholderText="1 + 2^2"
-                    Value="NaN" />
-            </sc:ControlExample>
+        <local:ControlExample HeaderText="A NumberBox with a spin button.">
+            <ui:NumberBox
+                x:Name="NumberBoxSpinButtonPlacementExample"
+                Header="Enter an integer:"
+                LargeChange="100"
+                SmallChange="10"
+                SpinButtonPlacementMode="Compact"
+                Value="10" />
 
-            <sc:ControlExample HeaderText="A NumberBox with a spin button.">
-                <ui:NumberBox
-                    x:Name="NumberBoxSpinButtonPlacementExample"
-                    Header="Enter an integer:"
-                    LargeChange="100"
-                    SmallChange="10"
-                    SpinButtonPlacementMode="Compact"
-                    Value="10" />
+            <local:ControlExample.Options>
+                <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                    <ui:RadioButtons Header="SpinButton Placement" SelectedItem="{Binding ElementName=NumberBoxSpinButtonPlacementExample, Path=SpinButtonPlacementMode}">
+                        <ui:NumberBoxSpinButtonPlacementMode>Inline</ui:NumberBoxSpinButtonPlacementMode>
+                        <ui:NumberBoxSpinButtonPlacementMode>Compact</ui:NumberBoxSpinButtonPlacementMode>
+                    </ui:RadioButtons>
+                </ui:SimpleStackPanel>
+            </local:ControlExample.Options>
+        </local:ControlExample>
 
-                <sc:ControlExample.Options>
-                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <ui:RadioButtons Header="SpinButton Placement" SelectedItem="{Binding ElementName=NumberBoxSpinButtonPlacementExample, Path=SpinButtonPlacementMode}">
-                            <ui:NumberBoxSpinButtonPlacementMode>Inline</ui:NumberBoxSpinButtonPlacementMode>
-                            <ui:NumberBoxSpinButtonPlacementMode>Compact</ui:NumberBoxSpinButtonPlacementMode>
-                        </ui:RadioButtons>
-                    </ui:SimpleStackPanel>
-                </sc:ControlExample.Options>
-            </sc:ControlExample>
+        <local:ControlExample HeaderText="A formatted NumberBox that rounds to the nearest 0.25.">
+            <ui:NumberBox
+                x:Name="FormattedNumberBox"
+                Header="Enter a dollar amount:"
+                PlaceholderText="0.00"
+                Value="NaN" />
+        </local:ControlExample>
 
-            <sc:ControlExample HeaderText="A formatted NumberBox that rounds to the nearest 0.25.">
-                <ui:NumberBox
-                    x:Name="FormattedNumberBox"
-                    Header="Enter a dollar amount:"
-                    PlaceholderText="0.00"
-                    Value="NaN" />
-            </sc:ControlExample>
+        <local:ControlExample HeaderText="API in action">
+            <ui:NumberBox
+                x:Name="NumberBox1"
+                Width="200"
+                Header="Control header"
+                Maximum="100"
+                Minimum="0"
+                PlaceholderText="A + B"
+                SpinButtonPlacementMode="Compact" />
 
-            <sc:ControlExample HeaderText="API in action">
-                <ui:NumberBox
-                    x:Name="NumberBox1"
-                    Width="200"
-                    Header="Control header"
-                    Maximum="100"
-                    Minimum="0"
-                    PlaceholderText="A + B"
-                    SpinButtonPlacementMode="Compact" />
-
-                <sc:ControlExample.Options>
-                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <ui:NumberBox Header="Minimum" Value="{Binding ElementName=NumberBox1, Path=Minimum}" />
-                        <ui:NumberBox Header="Maximum" Value="{Binding ElementName=NumberBox1, Path=Maximum}" />
-                        <ui:NumberBox
-                            Header="SmallChange"
-                            SpinButtonPlacementMode="Inline"
-                            Value="{Binding ElementName=NumberBox1, Path=SmallChange}" />
-                        <ui:NumberBox
-                            Header="LargeChange"
-                            SpinButtonPlacementMode="Inline"
-                            Value="{Binding ElementName=NumberBox1, Path=LargeChange}" />
-                        <TextBox
-                            ui:ControlHelper.Header="Text"
-                            IsEnabled="False"
-                            Text="{Binding ElementName=NumberBox1, Path=Text, Mode=OneWay}" />
-                        <TextBox ui:ControlHelper.Header="Header" Text="{Binding ElementName=NumberBox1, Path=Header, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBox ui:ControlHelper.Header="PlaceholderText" Text="{Binding ElementName=NumberBox1, Path=PlaceholderText, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBox ui:ControlHelper.Header="Description" Text="{Binding ElementName=NumberBox1, Path=Description, UpdateSourceTrigger=PropertyChanged}" />
-                        <ComboBox
-                            ui:ControlHelper.Header="ValidationMode"
-                            ItemsSource="{Binding Source={x:Type ui:NumberBoxValidationMode}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=NumberBox1, Path=ValidationMode}" />
-                        <ComboBox
-                            ui:ControlHelper.Header="SpinButtonPlacementMode"
-                            ItemsSource="{Binding Source={x:Type ui:NumberBoxSpinButtonPlacementMode}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=NumberBox1, Path=SpinButtonPlacementMode}" />
-                        <CheckBox Content="IsWrapEnabled" IsChecked="{Binding ElementName=NumberBox1, Path=IsWrapEnabled}" />
-                        <CheckBox Content="AcceptsExpression" IsChecked="{Binding ElementName=NumberBox1, Path=AcceptsExpression}" />
-                        <Slider
-                            x:Name="CornerRadiusSlider"
-                            ui:ControlHelper.Header="CornerRadius"
-                            AutoToolTipPlacement="TopLeft"
-                            IsSnapToTickEnabled="True"
-                            Maximum="20"
-                            TickFrequency="1"
-                            Value="{Binding ElementName=NumberBox1, Path=CornerRadius, Converter={StaticResource CornerRadiusToDoubleConverter}}" />
-                        <ui:NumberBox
-                            Header="PopupHorizonalOffset"
-                            SpinButtonPlacementMode="Inline"
-                            ValueChanged="PopupHorizonalOffset_ValueChanged"
-                            Value="{DynamicResource NumberBoxPopupHorizonalOffset}" />
-                        <ui:NumberBox
-                            Header="PopupVerticalOffset"
-                            SpinButtonPlacementMode="Inline"
-                            ValueChanged="PopupVerticalOffset_ValueChanged"
-                            Value="{DynamicResource NumberBoxPopupVerticalOffset}" />
-                    </ui:SimpleStackPanel>
-                </sc:ControlExample.Options>
-            </sc:ControlExample>
-        </ui:SimpleStackPanel>
-    </ScrollViewer>
+            <local:ControlExample.Options>
+                <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                    <ui:NumberBox Header="Minimum" Value="{Binding ElementName=NumberBox1, Path=Minimum}" />
+                    <ui:NumberBox Header="Maximum" Value="{Binding ElementName=NumberBox1, Path=Maximum}" />
+                    <ui:NumberBox
+                        Header="SmallChange"
+                        SpinButtonPlacementMode="Inline"
+                        Value="{Binding ElementName=NumberBox1, Path=SmallChange}" />
+                    <ui:NumberBox
+                        Header="LargeChange"
+                        SpinButtonPlacementMode="Inline"
+                        Value="{Binding ElementName=NumberBox1, Path=LargeChange}" />
+                    <TextBox
+                        ui:ControlHelper.Header="Text"
+                        IsEnabled="False"
+                        Text="{Binding ElementName=NumberBox1, Path=Text, Mode=OneWay}" />
+                    <TextBox ui:ControlHelper.Header="Header" Text="{Binding ElementName=NumberBox1, Path=Header, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox ui:ControlHelper.Header="PlaceholderText" Text="{Binding ElementName=NumberBox1, Path=PlaceholderText, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox ui:ControlHelper.Header="Description" Text="{Binding ElementName=NumberBox1, Path=Description, UpdateSourceTrigger=PropertyChanged}" />
+                    <ComboBox
+                        ui:ControlHelper.Header="ValidationMode"
+                        ItemsSource="{Binding Source={x:Type ui:NumberBoxValidationMode}, Converter={StaticResource EnumValuesConverter}}"
+                        SelectedItem="{Binding ElementName=NumberBox1, Path=ValidationMode}" />
+                    <ComboBox
+                        ui:ControlHelper.Header="SpinButtonPlacementMode"
+                        ItemsSource="{Binding Source={x:Type ui:NumberBoxSpinButtonPlacementMode}, Converter={StaticResource EnumValuesConverter}}"
+                        SelectedItem="{Binding ElementName=NumberBox1, Path=SpinButtonPlacementMode}" />
+                    <CheckBox Content="IsWrapEnabled" IsChecked="{Binding ElementName=NumberBox1, Path=IsWrapEnabled}" />
+                    <CheckBox Content="AcceptsExpression" IsChecked="{Binding ElementName=NumberBox1, Path=AcceptsExpression}" />
+                    <Slider
+                        x:Name="CornerRadiusSlider"
+                        ui:ControlHelper.Header="CornerRadius"
+                        AutoToolTipPlacement="TopLeft"
+                        IsSnapToTickEnabled="True"
+                        Maximum="20"
+                        TickFrequency="1"
+                        Value="{Binding ElementName=NumberBox1, Path=CornerRadius, Converter={StaticResource CornerRadiusToDoubleConverter}}" />
+                    <ui:NumberBox
+                        Header="PopupHorizonalOffset"
+                        SpinButtonPlacementMode="Inline"
+                        ValueChanged="PopupHorizonalOffset_ValueChanged"
+                        Value="{DynamicResource NumberBoxPopupHorizonalOffset}" />
+                    <ui:NumberBox
+                        Header="PopupVerticalOffset"
+                        SpinButtonPlacementMode="Inline"
+                        ValueChanged="PopupVerticalOffset_ValueChanged"
+                        Value="{DynamicResource NumberBoxPopupVerticalOffset}" />
+                </ui:SimpleStackPanel>
+            </local:ControlExample.Options>
+        </local:ControlExample>
+    </ui:SimpleStackPanel>
 </ui:Page>

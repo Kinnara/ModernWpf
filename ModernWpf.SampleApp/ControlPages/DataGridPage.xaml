@@ -140,7 +140,7 @@
                 </DataGrid>
             </local:ControlExample.Example>
             <local:ControlExample.Options>
-                <ScrollViewer Width="300" Margin="-16">
+                <ui:ScrollViewerEx Width="300" Margin="-16">
                     <ui:SimpleStackPanel Margin="16" Style="{StaticResource OptionsPanelStyle}">
                         <TextBlock
                             x:Name="LoadTimeTextBlock"
@@ -205,7 +205,7 @@
                             ItemsSource="{Binding Source={x:Type DataGridSelectionMode}, Converter={StaticResource EnumValuesConverter}}"
                             SelectedItem="{Binding ElementName=dataGrid, Path=SelectionMode}" />
                     </ui:SimpleStackPanel>
-                </ScrollViewer>
+                </ui:ScrollViewerEx>
             </local:ControlExample.Options>
         </local:ControlExample>
     </Grid>

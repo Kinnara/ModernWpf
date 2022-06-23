@@ -14,8 +14,6 @@
             Checked="Standard_Checked"
             Content="Standard"
             IsChecked="True" />
-        <RadioButton
-            Checked="Compact_Checked"
-            Content="Compact" />
+        <RadioButton Checked="Compact_Checked" Content="Compact" />
     </StackPanel>
 </UserControl>

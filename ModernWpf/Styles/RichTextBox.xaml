@@ -61,7 +61,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
-                        <ScrollViewer
+                        <local:ScrollViewerEx
                             x:Name="PART_ContentHost"
                             Grid.Row="1"
                             Margin="{TemplateBinding BorderThickness}"

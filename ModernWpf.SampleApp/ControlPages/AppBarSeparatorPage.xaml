@@ -14,7 +14,7 @@
     <StackPanel>
         <local:ControlExample HeaderText="AppBarButtons separated by AppBarSeparators.">
             <local:ControlExample.Example>
-                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                <ui:ScrollViewerEx HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
                     <ui:CommandBar x:Name="Control1">
                         <ui:CommandBar.PrimaryCommands>
                             <ui:AppBarButton Icon="AttachCamera" Label="Attach Camera" />
@@ -25,7 +25,7 @@
                             <ui:AppBarButton Icon="Orientation" Label="Orientation" />
                         </ui:CommandBar.PrimaryCommands>
                     </ui:CommandBar>
-                </ScrollViewer>
+                </ui:ScrollViewerEx>
             </local:ControlExample.Example>
             <local:ControlExample.Xaml>
                 <sys:String xml:space="preserve">

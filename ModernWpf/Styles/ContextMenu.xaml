@@ -38,7 +38,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
-                            <ScrollViewer
+                            <local:ScrollViewerEx
                                 x:Name="ContextMenuScrollViewer"
                                 MinWidth="{DynamicResource FlyoutThemeMinWidth}"
                                 Margin="{TemplateBinding Padding}"
@@ -48,7 +48,7 @@
                                     KeyboardNavigation.DirectionalNavigation="Cycle"
                                     RenderOptions.ClearTypeHint="Enabled"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                            </ScrollViewer>
+                            </local:ScrollViewerEx>
                         </Border>
                     </primitives:ThemeShadowChrome>
                 </ControlTemplate>

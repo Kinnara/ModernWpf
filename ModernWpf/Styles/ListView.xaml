@@ -322,7 +322,7 @@
                             Grid.ColumnSpan="2"
                             Margin="{TemplateBinding Padding}">
                             <!--  Column Headers Scroll Viewer  -->
-                            <ScrollViewer
+                            <local:ScrollViewerEx
                                 DockPanel.Dock="Top"
                                 Focusable="false"
                                 HorizontalScrollBarVisibility="Hidden"
@@ -337,7 +337,7 @@
                                     ColumnHeaderToolTip="{Binding Path=TemplatedParent.View.ColumnHeaderToolTip, RelativeSource={RelativeSource TemplatedParent}}"
                                     Columns="{Binding Path=TemplatedParent.View.Columns, RelativeSource={RelativeSource TemplatedParent}}"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                            </ScrollViewer>
+                            </local:ScrollViewerEx>
                             <!--  Items Scroll Viewer  -->
                             <ScrollContentPresenter
                                 Name="PART_ScrollContentPresenter"

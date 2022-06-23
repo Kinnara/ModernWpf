@@ -177,7 +177,7 @@
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                             TextWrapping="Wrap"
                             Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}" />
-                        <ScrollViewer
+                        <local:ScrollViewerEx
                             x:Name="PART_ContentHost"
                             Grid.Row="1"
                             Margin="{TemplateBinding BorderThickness}"

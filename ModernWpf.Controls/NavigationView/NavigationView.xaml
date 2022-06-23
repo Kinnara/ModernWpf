@@ -968,13 +968,13 @@
 
                                         <!--  Top nav ItemsRepeater  -->
                                         <local:ItemsRepeaterScrollHost Grid.Column="3">
-                                            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                                            <ui:ScrollViewerEx HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
                                                 <local:ItemsRepeater x:Name="TopNavMenuItemsHost" AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}">
                                                     <local:ItemsRepeater.Layout>
                                                         <local:StackLayout Orientation="Horizontal" />
                                                     </local:ItemsRepeater.Layout>
                                                 </local:ItemsRepeater>
-                                            </ScrollViewer>
+                                            </ui:ScrollViewerEx>
                                         </local:ItemsRepeaterScrollHost>
 
                                         <Button
@@ -995,9 +995,9 @@
                                                         </Style>
                                                     </local:Flyout.FlyoutPresenterStyle>
                                                     <local:ItemsRepeaterScrollHost>
-                                                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                                        <ui:ScrollViewerEx VerticalScrollBarVisibility="Auto">
                                                             <local:ItemsRepeater x:Name="TopNavMenuItemsOverflowHost" />
-                                                        </ScrollViewer>
+                                                        </ui:ScrollViewerEx>
                                                     </local:ItemsRepeaterScrollHost>
                                                 </local:Flyout>
                                             </local:FlyoutService.Flyout>
@@ -1153,13 +1153,13 @@
 
                                                 <!--  MenuItems  -->
                                                 <local:ItemsRepeaterScrollHost HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                                    <ScrollViewer
+                                                    <ui:ScrollViewerEx
                                                         x:Name="MenuItemsScrollViewer"
                                                         KeyboardNavigation.TabNavigation="Local"
                                                         VerticalScrollBarVisibility="Auto">
                                                         <!--  Left nav ItemsRepeater  -->
                                                         <local:ItemsRepeater x:Name="MenuItemsHost" AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}" />
-                                                    </ScrollViewer>
+                                                    </ui:ScrollViewerEx>
                                                 </local:ItemsRepeaterScrollHost>
 
                                                 <local:NavigationViewItemSeparator
@@ -1182,10 +1182,10 @@
 
                                                 <!--  FooterItems  -->
                                                 <local:ItemsRepeaterScrollHost Grid.Row="3">
-                                                    <ScrollViewer x:Name="FooterItemsScrollViewer">
+                                                    <ui:ScrollViewerEx x:Name="FooterItemsScrollViewer">
                                                         <!--  contract7Present:VerticalAnchorRatio="1"  -->
                                                         <local:ItemsRepeater x:Name="FooterMenuItemsHost" />
-                                                    </ScrollViewer>
+                                                    </ui:ScrollViewerEx>
                                                 </local:ItemsRepeaterScrollHost>
                                             </Grid>
 

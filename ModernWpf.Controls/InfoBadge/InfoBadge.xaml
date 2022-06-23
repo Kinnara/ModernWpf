@@ -136,7 +136,7 @@
         TargetType="local:InfoBadge">
         <Setter Property="IconSource">
             <Setter.Value>
-                <ui:SymbolIconSource Symbol="Accept"/>
+                <ui:SymbolIconSource Symbol="Accept" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -159,7 +159,7 @@
         TargetType="local:InfoBadge">
         <Setter Property="IconSource">
             <Setter.Value>
-                <ui:SymbolIconSource Symbol="Important"/>
+                <ui:SymbolIconSource Symbol="Important" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -182,7 +182,7 @@
         TargetType="local:InfoBadge">
         <Setter Property="IconSource">
             <Setter.Value>
-                <ui:SymbolIconSource Symbol="Cancel"/>
+                <ui:SymbolIconSource Symbol="Cancel" />
             </Setter.Value>
         </Setter>
     </Style>

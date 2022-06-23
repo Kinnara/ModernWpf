@@ -204,12 +204,12 @@
             <ui:SimpleStackPanel Spacing="16">
                 <local:ControlExample HeaderText="Basic, non-interactive items laid out by ItemsRepeater">
                     <ui:ItemsRepeaterScrollHost MaxHeight="500">
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                        <ui:ScrollViewerEx HorizontalScrollBarVisibility="Auto">
                             <ui:ItemsRepeater
                                 x:Name="repeater"
                                 ItemTemplate="{StaticResource HorizontalBarTemplate}"
                                 Layout="{StaticResource VerticalStackLayout}" />
-                        </ScrollViewer>
+                        </ui:ScrollViewerEx>
                     </ui:ItemsRepeaterScrollHost>
                     <local:ControlExample.Options>
                         <ui:SimpleStackPanel Spacing="12">
@@ -255,7 +255,7 @@
                         It's not needed on 17700+ builds.
                     -->
                     <ui:ItemsRepeaterScrollHost>
-                        <ScrollViewer
+                        <ui:ScrollViewerEx
                             x:Name="scrollViewer"
                             Height="400"
                             Padding="0,0,16,0">
@@ -267,7 +267,7 @@
                                 ItemTemplate="{StaticResource MyDataTemplateSelector}"
                                 Layout="{StaticResource MyFeedLayout}" />
 
-                        </ScrollViewer>
+                        </ui:ScrollViewerEx>
                     </ui:ItemsRepeaterScrollHost>
 
                     <local:ControlExample.Options>
@@ -327,12 +327,12 @@
                 </local:ControlExample.Resources>
 
                 <ui:ItemsRepeaterScrollHost>
-                    <ScrollViewer>
+                    <ui:ScrollViewerEx>
                         <ui:ItemsRepeater
                             ItemTemplate="{StaticResource ContactListViewTemplate}"
                             ItemsSource="{Binding}"
                             Layout="{StaticResource stackLayout}" />
-                    </ScrollViewer>
+                    </ui:ScrollViewerEx>
                 </ui:ItemsRepeaterScrollHost>
 
                 <local:ControlExample.Options>
@@ -361,7 +361,7 @@
                 </local:ControlExample.Resources>
 
                 <ui:ItemsRepeaterScrollHost>
-                    <ScrollViewer>
+                    <ui:ScrollViewerEx>
                         <ScrollViewer.Style>
                             <Style BasedOn="{StaticResource {x:Type ScrollViewer}}" TargetType="ScrollViewer">
                                 <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
@@ -379,11 +379,11 @@
                             ItemTemplate="{StaticResource ContactListViewTemplate}"
                             ItemsSource="{Binding}"
                             Layout="{StaticResource uniformGridLayout}" />
-                    </ScrollViewer>
+                    </ui:ScrollViewerEx>
                 </ui:ItemsRepeaterScrollHost>
 
                 <local:ControlExample.Options>
-                    <ScrollViewer Margin="-16">
+                    <ui:ScrollViewerEx Margin="-16">
                         <ui:SimpleStackPanel Margin="16" Style="{StaticResource OptionsPanelStyle}">
                             <ui:NumberBox Header="MinItemWidth" Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinItemWidth}" />
                             <ui:NumberBox Header="MinItemHeight" Value="{Binding Source={StaticResource uniformGridLayout}, Path=MinItemHeight}" />
@@ -406,7 +406,7 @@
                                 ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
                                 SelectedItem="{Binding Source={StaticResource uniformGridLayout}, Path=Orientation}" />
                         </ui:SimpleStackPanel>
-                    </ScrollViewer>
+                    </ui:ScrollViewerEx>
                 </local:ControlExample.Options>
             </local:ControlExample>
         </TabItem>
@@ -418,7 +418,7 @@
                 </local:ControlExample.Resources>
 
                 <ui:ItemsRepeaterScrollHost>
-                    <ScrollViewer>
+                    <ui:ScrollViewerEx>
                         <ScrollViewer.Style>
                             <Style BasedOn="{StaticResource {x:Type ScrollViewer}}" TargetType="ScrollViewer">
                                 <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
@@ -435,11 +435,11 @@
                             ItemTemplate="{StaticResource ContactListViewTemplate}"
                             ItemsSource="{Binding}"
                             Layout="{StaticResource flowLayout}" />
-                    </ScrollViewer>
+                    </ui:ScrollViewerEx>
                 </ui:ItemsRepeaterScrollHost>
 
                 <local:ControlExample.Options>
-                    <ScrollViewer Margin="-16">
+                    <ui:ScrollViewerEx Margin="-16">
                         <ui:SimpleStackPanel Margin="16" Style="{StaticResource OptionsPanelStyle}">
                             <ui:RadioButtons
                                 Header="Orientation"
@@ -452,7 +452,7 @@
                                 ItemsSource="{Binding Source={x:Type ui:FlowLayoutLineAlignment}, Converter={StaticResource EnumValuesConverter}}"
                                 SelectedItem="{Binding Source={StaticResource flowLayout}, Path=LineAlignment}" />
                         </ui:SimpleStackPanel>
-                    </ScrollViewer>
+                    </ui:ScrollViewerEx>
                 </local:ControlExample.Options>
             </local:ControlExample>
         </TabItem>

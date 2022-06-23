@@ -22,7 +22,7 @@
     -->
     <Grid x:Name="rootPanel">
         <!--  Content Region  -->
-        <ScrollViewer x:Name="svPanel" VerticalScrollBarVisibility="Auto">
+        <ui:ScrollViewerEx x:Name="svPanel" VerticalScrollBarVisibility="Auto">
             <Border
                 x:Name="contentRoot"
                 Padding="56,0,12,36"
@@ -191,6 +191,6 @@
                     </Grid>
                 </Grid>
             </Border>
-        </ScrollViewer>
+        </ui:ScrollViewerEx>
     </Grid>
 </ui:Page>

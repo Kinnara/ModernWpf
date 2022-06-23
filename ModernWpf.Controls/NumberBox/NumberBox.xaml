@@ -148,7 +148,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}" />
-                        <ScrollViewer
+                        <ui:ScrollViewerEx
                             x:Name="PART_ContentHost"
                             Grid.Row="1"
                             Grid.Column="0"

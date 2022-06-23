@@ -756,11 +756,11 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         SnapsToDevicePixels="True">
-                        <ScrollViewer
+                        <local:ScrollViewerEx
                             x:Name="DG_ScrollViewer"
                             primitives:ScrollViewerHelper.AutoHideScrollBars="False"
                             Focusable="false">
-                            <ScrollViewer.Template>
+                            <local:ScrollViewerEx.Template>
                                 <ControlTemplate TargetType="ScrollViewer">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -833,9 +833,9 @@
                                         </Grid>
                                     </Grid>
                                 </ControlTemplate>
-                            </ScrollViewer.Template>
+                            </local:ScrollViewerEx.Template>
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </ScrollViewer>
+                        </local:ScrollViewerEx>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

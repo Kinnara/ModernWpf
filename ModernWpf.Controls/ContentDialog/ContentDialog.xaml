@@ -69,7 +69,7 @@
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
-                                        <ScrollViewer
+                                        <ui:ScrollViewerEx
                                             x:Name="ContentScrollViewer"
                                             HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                             IsTabStop="False"
@@ -121,7 +121,7 @@
                                                         TextWrapping="Wrap" />
                                                 </Grid>
                                             </Border>
-                                        </ScrollViewer>
+                                        </ui:ScrollViewerEx>
                                         <Border
                                             x:Name="CommandSpace"
                                             Grid.Row="1"

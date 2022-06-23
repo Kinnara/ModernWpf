@@ -128,7 +128,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="RichTextBox">
-                            <ScrollViewer x:Name="PART_ContentHost" />
+                            <ui:ScrollViewerEx x:Name="PART_ContentHost" />
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>

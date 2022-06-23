@@ -33,7 +33,7 @@
             Background="{DynamicResource RegionBrush}"
             CornerRadius="0 2 2 0" />
 
-        <ScrollViewer
+        <ui:ScrollViewerEx
             x:Name="ContentScrollViewer"
             Grid.ColumnSpan="2"
             ui:ThemeManager.RequestedTheme="Dark">
@@ -57,6 +57,6 @@
                     <local:ControlPaletteTestContent Title="Dark theme" VerticalAlignment="Top" />
                 </Border>
             </Grid>
-        </ScrollViewer>
+        </ui:ScrollViewerEx>
     </Grid>
 </ui:Page>

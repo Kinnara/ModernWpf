@@ -242,7 +242,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
-                        <ScrollViewer
+                        <local:ScrollViewerEx
                             x:Name="PART_ContentHost"
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
@@ -536,7 +536,7 @@
                                     BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}"
                                     CornerRadius="{DynamicResource OverlayCornerRadius}">
                                     <Border Padding="{DynamicResource ComboBoxDropdownBorderPadding}" CornerRadius="{Binding ElementName=PopupBorder, Path=CornerRadius}">
-                                        <ScrollViewer
+                                        <local:ScrollViewerEx
                                             x:Name="ScrollViewer"
                                             Foreground="{DynamicResource ComboBoxDropDownForeground}"
                                             HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
@@ -546,7 +546,7 @@
                                                 Margin="{DynamicResource ComboBoxDropdownContentMargin}"
                                                 KeyboardNavigation.DirectionalNavigation="Contained"
                                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                        </ScrollViewer>
+                                        </local:ScrollViewerEx>
                                     </Border>
                                 </Border>
                             </primitives:ThemeShadowChrome>
