@@ -299,6 +299,9 @@
     <Thickness x:Key="ScrollBarVerticalDecreaseMargin">0,4,0,0</Thickness>
     <Thickness x:Key="ScrollBarVerticalIncreaseMargin">0,0,0,4</Thickness>
 
+    <sys:Double x:Key="SmallScrollThumbScale">0.125</sys:Double>
+    <sys:Double x:Key="SmallScrollThumbOffset">-2</sys:Double>
+
     <!--  Resources for ScrollViewer  -->
     <Duration x:Key="ScrollViewerSeparatorExpandDuration">00:00:00.1</Duration>
     <KeyTime x:Key="ScrollViewerSeparatorContractDelay">00:00:02</KeyTime>

@@ -99,18 +99,30 @@
 
     <Style BasedOn="{StaticResource DefaultThumbStyle}" TargetType="Thumb" />
 
-    <sys:Double x:Key="SmallScrollThumbScale">0.125</sys:Double>
-    <sys:Double x:Key="SmallScrollThumbOffset">-2</sys:Double>
-
-    <ControlTemplate x:Key="RepeatButtonTemplate" TargetType="RepeatButton">
-        <Grid x:Name="Root" Background="Transparent">
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup x:Name="CommonStates">
-                    <VisualState x:Name="Normal" />
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
-        </Grid>
-    </ControlTemplate>
+    <Style x:Key="RepeatButtonTransparent" TargetType="RepeatButton">
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Focusable" Value="false" />
+        <Setter Property="IsTabStop" Value="false" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Grid
+                        x:Name="Root"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
+                        Background="{TemplateBinding Background}"
+                        SnapsToDevicePixels="True">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <ControlTemplate x:Key="HorizontalIncrementTemplate" TargetType="RepeatButton">
         <Border
@@ -537,14 +549,14 @@
                             x:Name="VerticalLargeDecrease"
                             Command="{x:Static ScrollBar.PageUpCommand}"
                             Opacity="0"
-                            Template="{StaticResource RepeatButtonTemplate}" />
+                            Style="{StaticResource RepeatButtonTransparent}" />
                     </Track.DecreaseRepeatButton>
                     <Track.IncreaseRepeatButton>
                         <RepeatButton
                             x:Name="VerticalLargeIncrease"
                             Command="{x:Static ScrollBar.PageDownCommand}"
                             Opacity="0"
-                            Template="{StaticResource RepeatButtonTemplate}" />
+                            Style="{StaticResource RepeatButtonTransparent}" />
                     </Track.IncreaseRepeatButton>
                     <Track.Thumb>
                         <Thumb
@@ -768,14 +780,14 @@
                             x:Name="HorizontalLargeDecrease"
                             Command="{x:Static ScrollBar.PageLeftCommand}"
                             Opacity="0"
-                            Template="{StaticResource RepeatButtonTemplate}" />
+                            Style="{StaticResource RepeatButtonTransparent}" />
                     </Track.DecreaseRepeatButton>
                     <Track.IncreaseRepeatButton>
                         <RepeatButton
                             x:Name="HorizontalLargeIncrease"
                             Command="{x:Static ScrollBar.PageRightCommand}"
                             Opacity="0"
-                            Template="{StaticResource RepeatButtonTemplate}" />
+                            Style="{StaticResource RepeatButtonTransparent}" />
                     </Track.IncreaseRepeatButton>
                     <Track.Thumb>
                         <Thumb

@@ -3,8 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
@@ -15,137 +15,135 @@
         </Style>
     </Page.Resources>
 
-    <ScrollViewer>
-        <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
-            <sc:ControlExample HeaderText="A basic TabControl">
-                <TabControl x:Name="tabControl">
-                    <ui:TabControlHelper.TabStripHeader>
-                        <Button
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            ui:FocusVisualHelper.FocusVisualMargin="0"
-                            Content="Header"
-                            Visibility="{Binding IsChecked, ElementName=ShowHeaderAndFooterCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </ui:TabControlHelper.TabStripHeader>
-                    <ui:TabControlHelper.TabStripFooter>
-                        <Button
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            ui:FocusVisualHelper.FocusVisualMargin="0"
-                            Content="Footer"
-                            Visibility="{Binding IsChecked, ElementName=ShowHeaderAndFooterCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </ui:TabControlHelper.TabStripFooter>
-                </TabControl>
+    <ui:SimpleStackPanel>
+        <local:ControlExample HeaderText="A basic TabControl">
+            <TabControl x:Name="tabControl">
+                <ui:TabControlHelper.TabStripHeader>
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        ui:FocusVisualHelper.FocusVisualMargin="0"
+                        Content="Header"
+                        Visibility="{Binding IsChecked, ElementName=ShowHeaderAndFooterCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </ui:TabControlHelper.TabStripHeader>
+                <ui:TabControlHelper.TabStripFooter>
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        ui:FocusVisualHelper.FocusVisualMargin="0"
+                        Content="Footer"
+                        Visibility="{Binding IsChecked, ElementName=ShowHeaderAndFooterCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </ui:TabControlHelper.TabStripFooter>
+            </TabControl>
 
-                <sc:ControlExample.Options>
-                    <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <ui:RadioButtons
-                            Header="TabStripPlacement"
-                            ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
-                            SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement}" />
-                        <CheckBox x:Name="ShowHeaderAndFooterCheckBox" Content="Show header and footer" />
-                    </ui:SimpleStackPanel>
-                </sc:ControlExample.Options>
-            </sc:ControlExample>
+            <local:ControlExample.Options>
+                <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
+                    <ui:RadioButtons
+                        Header="TabStripPlacement"
+                        ItemsSource="{Binding Source={x:Type Dock}, Converter={StaticResource EnumValuesConverter}}"
+                        SelectedItem="{Binding ElementName=tabControl, Path=TabStripPlacement}" />
+                    <CheckBox x:Name="ShowHeaderAndFooterCheckBox" Content="Show header and footer" />
+                </ui:SimpleStackPanel>
+            </local:ControlExample.Options>
+        </local:ControlExample>
 
-            <sc:ControlExample HeaderText="TabControl with color tab icons">
-                <sc:ControlExample.Example>
-                    <StackPanel>
-                        <TextBlock
-                            Margin="0,0,0,12"
-                            Text="Use BitmapIcon.ShowAsMonochrome=&quot;False&quot; to display full color icons in the TabItem"
-                            TextWrapping="Wrap" />
+        <local:ControlExample HeaderText="TabControl with color tab icons">
+            <local:ControlExample.Example>
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,12"
+                        Text="Use BitmapIcon.ShowAsMonochrome=&quot;False&quot; to display full color icons in the TabItem"
+                        TextWrapping="Wrap" />
 
-                        <TabControl
-                            x:Name="TabView4"
-                            MinWidth="490"
-                            MinHeight="0"
-                            SelectedIndex="0">
-                            <TabControl.Items>
-                                <TabItem Header="CMD Prompt">
-                                    <ui:TabItemHelper.Icon>
-                                        <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/TabViewIcons/cmd.png" />
-                                    </ui:TabItemHelper.Icon>
-                                </TabItem>
-                                <TabItem Header="Powershell">
-                                    <ui:TabItemHelper.Icon>
-                                        <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/TabViewIcons/powershell.png" />
-                                    </ui:TabItemHelper.Icon>
-                                </TabItem>
-                                <TabItem Header="Windows Subsystem for Linux">
-                                    <ui:TabItemHelper.Icon>
-                                        <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/TabViewIcons/linux.png" />
-                                    </ui:TabItemHelper.Icon>
-                                </TabItem>
-                            </TabControl.Items>
-                        </TabControl>
-                    </StackPanel>
-                </sc:ControlExample.Example>
-            </sc:ControlExample>
+                    <TabControl
+                        x:Name="TabView4"
+                        MinWidth="490"
+                        MinHeight="0"
+                        SelectedIndex="0">
+                        <TabControl.Items>
+                            <TabItem Header="CMD Prompt">
+                                <ui:TabItemHelper.Icon>
+                                    <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/TabViewIcons/cmd.png" />
+                                </ui:TabItemHelper.Icon>
+                            </TabItem>
+                            <TabItem Header="Powershell">
+                                <ui:TabItemHelper.Icon>
+                                    <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/TabViewIcons/powershell.png" />
+                                </ui:TabItemHelper.Icon>
+                            </TabItem>
+                            <TabItem Header="Windows Subsystem for Linux">
+                                <ui:TabItemHelper.Icon>
+                                    <ui:BitmapIcon ShowAsMonochrome="False" UriSource="/Assets/TabViewIcons/linux.png" />
+                                </ui:TabItemHelper.Icon>
+                            </TabItem>
+                        </TabControl.Items>
+                    </TabControl>
+                </StackPanel>
+            </local:ControlExample.Example>
+        </local:ControlExample>
 
-            <sc:ControlExample HeaderText="You can put custom content in TabStripHeader and TabStripFooter">
-                <sc:ControlExample.Example>
-                    <StackPanel>
-                        <TextBlock
-                            Margin="0,0,0,24"
-                            Text="You can put any content in the TabStripHeader and TabStripFooter areas"
-                            TextWrapping="Wrap" />
+        <local:ControlExample HeaderText="You can put custom content in TabStripHeader and TabStripFooter">
+            <local:ControlExample.Example>
+                <StackPanel>
+                    <TextBlock
+                        Margin="0,0,0,24"
+                        Text="You can put any content in the TabStripHeader and TabStripFooter areas"
+                        TextWrapping="Wrap" />
 
-                        <TabControl
-                            MinHeight="475"
-                            Margin="-12"
-                            Loaded="TabView_Loaded"
-                            SelectedIndex="0">
-                            <ui:TabControlHelper.TabStripHeader>
-                                <TextBlock
-                                    Margin="8,6"
-                                    VerticalAlignment="Center"
-                                    Style="{DynamicResource BaseTextBlockStyle}"
-                                    Text="TabStripHeader Content" />
-                            </ui:TabControlHelper.TabStripHeader>
-                            <ui:TabControlHelper.TabStripFooter>
-                                <TextBlock
-                                    Margin="6"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    Style="{DynamicResource BaseTextBlockStyle}"
-                                    Text="TabStripFooter Content" />
-                            </ui:TabControlHelper.TabStripFooter>
-                        </TabControl>
-                    </StackPanel>
-                </sc:ControlExample.Example>
-            </sc:ControlExample>
+                    <TabControl
+                        MinHeight="475"
+                        Margin="-12"
+                        Loaded="TabView_Loaded"
+                        SelectedIndex="0">
+                        <ui:TabControlHelper.TabStripHeader>
+                            <TextBlock
+                                Margin="8,6"
+                                VerticalAlignment="Center"
+                                Style="{DynamicResource BaseTextBlockStyle}"
+                                Text="TabStripHeader Content" />
+                        </ui:TabControlHelper.TabStripHeader>
+                        <ui:TabControlHelper.TabStripFooter>
+                            <TextBlock
+                                Margin="6"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Style="{DynamicResource BaseTextBlockStyle}"
+                                Text="TabStripFooter Content" />
+                        </ui:TabControlHelper.TabStripFooter>
+                    </TabControl>
+                </StackPanel>
+            </local:ControlExample.Example>
+        </local:ControlExample>
 
-            <sc:ControlExample HeaderText="A TabControl with accent colored TabStrip background">
-                <TabControl x:Name="tabControl3" ui:ThemeManager.HasThemeResources="True">
-                    <TabControl.Resources>
-                        <ui:ResourceDictionaryEx>
-                            <ui:ResourceDictionaryEx.ThemeDictionaries>
-                                <ResourceDictionary x:Key="Light">
-                                    <SolidColorBrush x:Key="TabViewBackground" Color="{DynamicResource SystemAccentColorLight2}" />
-                                </ResourceDictionary>
-                                <ResourceDictionary x:Key="Dark">
-                                    <SolidColorBrush x:Key="TabViewBackground" Color="{DynamicResource SystemAccentColorDark2}" />
-                                </ResourceDictionary>
-                            </ui:ResourceDictionaryEx.ThemeDictionaries>
-                        </ui:ResourceDictionaryEx>
-                    </TabControl.Resources>
-                </TabControl>
-            </sc:ControlExample>
+        <local:ControlExample HeaderText="A TabControl with accent colored TabStrip background">
+            <TabControl x:Name="tabControl3" ui:ThemeManager.HasThemeResources="True">
+                <TabControl.Resources>
+                    <ui:ResourceDictionaryEx>
+                        <ui:ResourceDictionaryEx.ThemeDictionaries>
+                            <ResourceDictionary x:Key="Light">
+                                <SolidColorBrush x:Key="TabViewBackground" Color="{DynamicResource SystemAccentColorLight2}" />
+                            </ResourceDictionary>
+                            <ResourceDictionary x:Key="Dark">
+                                <SolidColorBrush x:Key="TabViewBackground" Color="{DynamicResource SystemAccentColorDark2}" />
+                            </ResourceDictionary>
+                        </ui:ResourceDictionaryEx.ThemeDictionaries>
+                    </ui:ResourceDictionaryEx>
+                </TabControl.Resources>
+            </TabControl>
+        </local:ControlExample>
 
-            <sc:ControlExample HeaderText="A TabControl with customized headers">
-                <TabControl x:Name="tabControl2">
-                    <TabControl.Resources>
-                        <sys:Double x:Key="TabViewItemHeaderFontSize">24</sys:Double>
-                        <sys:Double x:Key="TabViewItemHeaderIconSize">32</sys:Double>
-                    </TabControl.Resources>
-                    <TabControl.ItemContainerStyle>
-                        <Style BasedOn="{StaticResource DefaultTabItemStyle}" TargetType="TabItem">
-                            <Setter Property="FontFamily" Value="Courier New" />
-                        </Style>
-                    </TabControl.ItemContainerStyle>
-                </TabControl>
-            </sc:ControlExample>
-        </ui:SimpleStackPanel>
-    </ScrollViewer>
+        <local:ControlExample HeaderText="A TabControl with customized headers">
+            <TabControl x:Name="tabControl2">
+                <TabControl.Resources>
+                    <sys:Double x:Key="TabViewItemHeaderFontSize">24</sys:Double>
+                    <sys:Double x:Key="TabViewItemHeaderIconSize">32</sys:Double>
+                </TabControl.Resources>
+                <TabControl.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource DefaultTabItemStyle}" TargetType="TabItem">
+                        <Setter Property="FontFamily" Value="Courier New" />
+                    </Style>
+                </TabControl.ItemContainerStyle>
+            </TabControl>
+        </local:ControlExample>
+    </ui:SimpleStackPanel>
 </ui:Page>

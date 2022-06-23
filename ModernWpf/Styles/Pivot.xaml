@@ -322,6 +322,7 @@
                                     Grid.Column="1"
                                     VerticalContentAlignment="Stretch"
                                     HorizontalScrollBarVisibility="Hidden"
+                                    Orientation="Horizontal"
                                     Style="{DynamicResource {x:Type ScrollViewer}}"
                                     Template="{DynamicResource ScrollViewerScrollBarlessTemplate}"
                                     VerticalScrollBarVisibility="Disabled">

@@ -18,7 +18,7 @@
                 There's a known issue with zooming where we get into a layout cycle if we specify a height but not a width.
                 As a workaround for now, set an explicit height/width to match the natural size of the image.
             -->
-            <ScrollViewer
+            <ui:ScrollViewerEx
                 x:Name="Control1"
                 Width="400"
                 Height="266"
@@ -30,7 +30,7 @@
                     AutomationProperties.Name="cliff"
                     Source="/Assets/SampleMedia/cliff.jpg"
                     Stretch="None" />
-            </ScrollViewer>
+            </ui:ScrollViewerEx>
 
             <local:ControlExample.Options>
                 <Grid MinWidth="200">

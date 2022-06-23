@@ -10,6 +10,27 @@ namespace ModernWpf.Controls
 {
     public class ScrollViewerBehavior
     {
+        #region IsAnimating
+
+        public static readonly DependencyProperty IsAnimatingProperty =
+            DependencyProperty.RegisterAttached(
+                "IsAnimating",
+                typeof(bool),
+                typeof(ScrollViewerBehavior),
+                new UIPropertyMetadata(false));
+
+        public static void SetIsAnimating(FrameworkElement target, bool value)
+        {
+            target.SetValue(IsAnimatingProperty, value);
+        }
+
+        public static bool GetIsAnimating(FrameworkElement target)
+        {
+            return (bool)target.GetValue(IsAnimatingProperty);
+        }
+
+        #endregion
+
         #region VerticalOffset
 
         public static readonly DependencyProperty VerticalOffsetProperty =
