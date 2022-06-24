@@ -12,6 +12,10 @@
     <PackageOutputPath>$(MSBuildThisFileDirectory)localpackages</PackageOutputPath>
   </PropertyGroup>
 
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '4.6.1')) or
                             '$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
     <DefineConstants>$(DefineConstants);NET461_OR_NEWER</DefineConstants>

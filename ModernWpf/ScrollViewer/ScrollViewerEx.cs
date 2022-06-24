@@ -16,6 +16,11 @@ namespace ModernWpf.Controls
         public ScrollViewerEx()
         {
             Loaded += OnLoaded;
+            var valueSource = DependencyPropertyHelper.GetValueSource(this, AutoPanningMode.IsEnabledProperty).BaseValueSource;
+            if (valueSource == BaseValueSource.Default)
+            {
+                AutoPanningMode.SetIsEnabled(this, true);
+            }
         }
 
         #region Orientation

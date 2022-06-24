@@ -150,7 +150,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Remove="Assets\SampleMedia\fishes.wmv" />
+    <Resource Remove="Assets\SampleMedia\ladybug.wmv" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Assets\AppIcon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\SampleMedia\fishes.wmv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\SampleMedia\ladybug.wmv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="ControlPagesSampleCode\Brushes\RadialGradientBrushSample_xaml.txt" />
@@ -265,12 +276,6 @@
 
   <ItemGroup>
     <Resource Update="Assets\mtns.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Update="Assets\SampleMedia\fishes.wmv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Update="Assets\SampleMedia\ladybug.wmv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

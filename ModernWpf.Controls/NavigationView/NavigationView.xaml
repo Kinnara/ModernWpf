@@ -811,6 +811,7 @@
     <Style TargetType="local:NavigationView">
         <Setter Property="PaneToggleButtonStyle" Value="{DynamicResource PaneToggleButtonStyle}" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="ScrollViewer.PanningMode" Value="Both" />
         <Setter Property="CompactPaneLength" Value="{DynamicResource NavigationViewCompactPaneLength}" />
         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="Template">
