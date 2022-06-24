@@ -534,7 +534,7 @@
                                     FontSize="12"
                                     Foreground="{DynamicResource CommandBarFlyoutAppBarButtonForeground}"
                                     Opacity="0"
-                                    Text="&#xF984;"
+                                    Text="&#xF296;"
                                     Visibility="Collapsed" />
                                 <Viewbox
                                     x:Name="ContentViewbox"
@@ -1124,7 +1124,7 @@
                                                 VerticalAlignment="Center"
                                                 FontFamily="{DynamicResource FluentSystemIcons}"
                                                 FontSize="16"
-                                                Glyph="&#xFC2D;" />
+                                                Glyph="&#xE827;" />
                                         </ToggleButton>
                                     </Grid>
                                 </Border>

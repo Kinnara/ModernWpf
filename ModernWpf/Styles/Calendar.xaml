@@ -173,7 +173,7 @@
                                         Grid.Column="1"
                                         Margin="{DynamicResource CalendarViewNavigationPreviousButtonMargin}"
                                         HorizontalContentAlignment="Center"
-                                        Content="&#xF966;"
+                                        Content="&#xE2BC;"
                                         Focusable="False"
                                         Style="{StaticResource NavigationButtonStyle}" />
                                     <Button

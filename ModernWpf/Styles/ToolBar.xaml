@@ -526,7 +526,7 @@
                                         VerticalAlignment="Center"
                                         FontFamily="{DynamicResource FluentSystemIcons}"
                                         FontSize="20"
-                                        Glyph="&#xFC2D;" />
+                                        Glyph="&#xE827;" />
                                 </ToggleButton>
                                 <Popup
                                     x:Name="OverflowPopup"

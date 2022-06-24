@@ -45,8 +45,8 @@
     <sys:Double x:Key="CheckBoxMinWidth">120</sys:Double>
     <Thickness x:Key="CheckBoxPadding">8,7,0,0</Thickness>
     <Thickness x:Key="CheckBoxFocusVisualMargin">-7,-3,-7,-3</Thickness>
-    <sys:String x:Key="CheckBoxCheckedGlyph">&#xF984;</sys:String>
-    <sys:String x:Key="CheckBoxIndeterminateGlyph">&#xFC7D;</sys:String>
+    <sys:String x:Key="CheckBoxCheckedGlyph">&#xF296;</sys:String>
+    <sys:String x:Key="CheckBoxIndeterminateGlyph">&#xEBC9;</sys:String>
 
     <!--  Resources for ComboBox  -->
     <sys:Double x:Key="ComboBoxArrowThemeFontSize">21</sys:Double>
@@ -260,6 +260,9 @@
     <sys:Double x:Key="ProgressBarTrackHeight">1</sys:Double>
     <CornerRadius x:Key="ProgressBarCornerRadius">1.5</CornerRadius>
     <CornerRadius x:Key="ProgressBarTrackCornerRadius">0.5</CornerRadius>
+
+    <!--  Resources for ProgressRing  -->
+    <sys:Double x:Key="ProgressRingStrokeThickness">3</sys:Double>
 
     <!--  Resources for RadioButton  -->
     <sys:Double x:Key="RadioButtonCheckGlyphSize">12</sys:Double>

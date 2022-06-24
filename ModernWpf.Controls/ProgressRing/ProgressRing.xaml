@@ -11,8 +11,6 @@
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
-    <sys:Double x:Key="ProgressRingStrokeThickness">4</sys:Double>
-
     <Style TargetType="local:ProgressRingPresenter">
         <Setter Property="Background" Value="{DynamicResource ProgressRingBackgroundThemeBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource ProgressRingForegroundThemeBrush}" />
@@ -51,7 +49,7 @@
     <Style TargetType="local:ProgressRing">
         <Setter Property="Foreground" Value="{DynamicResource ProgressRingForegroundThemeBrush}" />
         <Setter Property="Background" Value="{DynamicResource ProgressRingBackgroundThemeBrush}" />
-        <Setter Property="StrokeThickness" Value="{StaticResource ProgressRingStrokeThickness}" />
+        <Setter Property="StrokeThickness" Value="{DynamicResource ProgressRingStrokeThickness}" />
         <Setter Property="IsHitTestVisible" Value="False" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -96,17 +94,21 @@
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                         </Border.Resources>
-                        <local:ProgressRingPresenter
-                            x:Name="Presenter"
-                            Background="{TemplateBinding Background}"
-                            Foreground="{TemplateBinding Foreground}"
-                            RenderTransformOrigin="0.5,0.5"
-                            StrokeThickness="{TemplateBinding StrokeThickness}"
-                            Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=TemplateSettings.NormalizedRange}">
-                            <local:ProgressRingPresenter.RenderTransform>
-                                <RotateTransform />
-                            </local:ProgressRingPresenter.RenderTransform>
-                        </local:ProgressRingPresenter>
+                        <Viewbox Stretch="Fill">
+                            <local:ProgressRingPresenter
+                                x:Name="Presenter"
+                                Width="32"
+                                Height="32"
+                                Background="{TemplateBinding Background}"
+                                Foreground="{TemplateBinding Foreground}"
+                                RenderTransformOrigin="0.5,0.5"
+                                StrokeThickness="{TemplateBinding StrokeThickness}"
+                                Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=TemplateSettings.NormalizedRange}">
+                                <local:ProgressRingPresenter.RenderTransform>
+                                    <RotateTransform />
+                                </local:ProgressRingPresenter.RenderTransform>
+                            </local:ProgressRingPresenter>
+                        </Viewbox>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ActiveStates">
                                 <VisualStateGroup.Transitions>

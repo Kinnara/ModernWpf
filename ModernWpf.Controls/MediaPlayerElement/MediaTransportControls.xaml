@@ -249,7 +249,7 @@
                                                                     <ui:FontIcon
                                                                         x:Name="AudioMuteSymbol"
                                                                         FontFamily="{DynamicResource FluentSystemIcons}"
-                                                                        Glyph="&#xFC65;" />
+                                                                        Glyph="&#xEB46;" />
                                                                 </local:AppBarButton.Icon>
                                                             </local:AppBarButton>
                                                             <Slider
@@ -278,7 +278,7 @@
                                                     <ui:FontIcon
                                                         x:Name="VolumeMuteSymbol"
                                                         FontFamily="{DynamicResource FluentSystemIcons}"
-                                                        Glyph="&#xFC65;" />
+                                                        Glyph="&#xEB46;" />
                                                 </local:AppBarButton.Icon>
                                             </local:AppBarButton>
                                             <local:AppBarButton
@@ -309,7 +309,7 @@
                                                 Visibility="{TemplateBinding IsStopButtonVisible,
                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
                                                 <local:AppBarButton.Icon>
-                                                    <ui:FontIcon FontFamily="{DynamicResource FluentSystemIcons}" Glyph="&#x01F6;" />
+                                                    <ui:FontIcon FontFamily="{DynamicResource FluentSystemIcons}" Glyph="&#xEB78;" />
                                                 </local:AppBarButton.Icon>
                                             </local:AppBarButton>
                                             <local:AppBarButton
@@ -319,7 +319,7 @@
                                                 Visibility="{TemplateBinding IsSkipBackwardButtonVisible,
                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
                                                 <local:AppBarButton.Icon>
-                                                    <ui:FontIcon FontFamily="{DynamicResource FluentSystemIcons}" Glyph="&#x04D4;" />
+                                                    <ui:FontIcon FontFamily="{DynamicResource FluentSystemIcons}" Glyph="&#xEAFF;" />
                                                 </local:AppBarButton.Icon>
                                             </local:AppBarButton>
                                             <local:AppBarButton
@@ -338,7 +338,7 @@
                                                 Visibility="{TemplateBinding IsFastRewindButtonVisible,
                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
                                                 <local:AppBarRepeatButton.Icon>
-                                                    <ui:FontIcon FontFamily="{DynamicResource FluentSystemIconsFilled}" Glyph="&#x028B;" />
+                                                    <ui:FontIcon FontFamily="{DynamicResource FluentSystemIconsFilled}" Glyph="&#xEA26;" />
                                                 </local:AppBarRepeatButton.Icon>
                                             </local:AppBarRepeatButton>
                                             <local:AppBarButton x:Name="PlayPauseButton" Style="{StaticResource AppBarButtonStyle}">
@@ -356,7 +356,7 @@
                                                 Visibility="{TemplateBinding IsFastForwardButtonVisible,
                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
                                                 <local:AppBarRepeatButton.Icon>
-                                                    <ui:FontIcon FontFamily="{DynamicResource FluentSystemIconsFilled}" Glyph="&#x027A;" />
+                                                    <ui:FontIcon FontFamily="{DynamicResource FluentSystemIconsFilled}" Glyph="&#xE614;" />
                                                 </local:AppBarRepeatButton.Icon>
                                             </local:AppBarRepeatButton>
                                             <local:AppBarButton
@@ -375,7 +375,7 @@
                                                 Visibility="{TemplateBinding IsSkipForwardButtonVisible,
                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
                                                 <local:AppBarButton.Icon>
-                                                    <ui:FontIcon FontFamily="{DynamicResource FluentSystemIcons}" Glyph="&#xFDED;" />
+                                                    <ui:FontIcon FontFamily="{DynamicResource FluentSystemIcons}" Glyph="&#xEB09;" />
                                                 </local:AppBarButton.Icon>
                                             </local:AppBarButton>
                                             <local:AppBarButton
@@ -385,7 +385,7 @@
                                                 Visibility="{TemplateBinding IsPlaybackRateButtonVisible,
                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
                                                 <local:AppBarButton.Icon>
-                                                    <ui:FontIcon FontFamily="{DynamicResource FluentSystemIcons}" Glyph="&#x00E8;" />
+                                                    <ui:FontIcon FontFamily="{DynamicResource FluentSystemIcons}" Glyph="&#xEA12;" />
                                                 </local:AppBarButton.Icon>
                                             </local:AppBarButton>
                                             <local:AppBarSeparator
@@ -445,7 +445,7 @@
                                                     <ui:FontIcon
                                                         x:Name="FullWindowSymbol"
                                                         FontFamily="{DynamicResource FluentSystemIcons}"
-                                                        Glyph="&#x01CA;" />
+                                                        Glyph="&#xE0D9;" />
                                                 </local:AppBarButton.Icon>
                                             </local:AppBarButton>
                                         </local:CommandBar.PrimaryCommands>
@@ -540,8 +540,8 @@
                         </Trigger>
                         <!--  PauseState  -->
                         <Trigger SourceName="VolumeMuteStatesListener" Property="CurrentStateName" Value="MuteState">
-                            <Setter TargetName="AudioMuteSymbol" Property="Glyph" Value="&#xFC6A;" />
-                            <Setter TargetName="VolumeMuteSymbol" Property="Glyph" Value="&#xFC6A;" />
+                            <Setter TargetName="AudioMuteSymbol" Property="Glyph" Value="&#xF707;" />
+                            <Setter TargetName="VolumeMuteSymbol" Property="Glyph" Value="&#xF707;" />
                         </Trigger>
                         <!--  PauseState  -->
                         <Trigger SourceName="FullWindowStatesListener" Property="CurrentStateName" Value="FullWindowState">

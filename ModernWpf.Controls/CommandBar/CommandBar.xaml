@@ -83,7 +83,7 @@
                                         VerticalAlignment="Center"
                                         FontFamily="{DynamicResource FluentSystemIcons}"
                                         FontSize="20"
-                                        Glyph="&#xFC2D;" />
+                                        Glyph="&#xE826;" />
                                 </ToggleButton>
                                 <Rectangle
                                     x:Name="HighContrastBorder"

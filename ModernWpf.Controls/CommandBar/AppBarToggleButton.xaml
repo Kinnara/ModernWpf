@@ -62,7 +62,7 @@
                                 FontSize="16"
                                 Foreground="{DynamicResource AppBarToggleButtonCheckGlyphForeground}"
                                 Opacity="0"
-                                Text="&#xF984;"
+                                Text="&#xF296;"
                                 Visibility="Collapsed" />
                             <Viewbox
                                 x:Name="ContentViewbox"

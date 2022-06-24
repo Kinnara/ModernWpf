@@ -140,7 +140,7 @@
                             FontFamily="{DynamicResource FluentSystemIcons}"
                             FontSize="16"
                             Foreground="{TemplateBinding Foreground}"
-                            Glyph="&#xFC2D;"
+                            Glyph="&#xE827;"
                             IsHitTestVisible="False" />
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -197,7 +197,7 @@
                             FontFamily="{DynamicResource FluentSystemIcons}"
                             FontSize="20"
                             Foreground="{TemplateBinding Foreground}"
-                            Glyph="&#xFC2D;"
+                            Glyph="&#xE827;"
                             IsHitTestVisible="False" />
                     </Grid>
                     <ControlTemplate.Triggers>

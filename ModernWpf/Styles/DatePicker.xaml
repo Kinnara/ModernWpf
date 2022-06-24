@@ -175,7 +175,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Background="Transparent"
-                            Content="&#xFD1E;"
+                            Content="&#xE252;"
                             Focusable="False"
                             FontFamily="{DynamicResource FluentSystemIcons}"
                             FontSize="12"

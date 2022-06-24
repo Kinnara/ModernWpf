@@ -179,7 +179,7 @@
                     FontFamily="{DynamicResource FluentSystemIconsFilled}"
                     FontSize="16"
                     Foreground="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForeground}"
-                    Glyph="&#xF984;"
+                    Glyph="&#xF296;"
                     Opacity="0"
                     Visibility="Collapsed" />
                 <Viewbox

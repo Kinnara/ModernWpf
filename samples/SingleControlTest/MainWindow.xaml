@@ -24,11 +24,11 @@
             <ui:DoubleProportionConverter x:Key="DoubleProportionConverter" />
         </ResourceDictionary>
     </Window.Resources>
-    <Grid
+    <StackPanel
         Margin="4"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch">
-        <!--<ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
+        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
             <ui:ToggleSwitch
                 x:Name="IsEnable"
                 MinWidth="0"
@@ -45,23 +45,23 @@
                 Header="IsIndeterminate"
                 IsOn="True" />
             <Button Click="Button_Click" Content="Test" />
-        </ui:SimpleStackPanel>-->
+        </ui:SimpleStackPanel>
 
-        <!--<Slider
+        <Slider
             x:Name="Value"
             Maximum="100"
-            Minimum="-1" />-->
+            Minimum="-1" />
 
-        <!--<ui:ProgressRing
+        <ui:ProgressRing
             IsActive="{Binding IsOn, ElementName=IsActive}"
             IsEnabled="{Binding IsOn, ElementName=IsEnable}"
             IsIndeterminate="{Binding IsOn, ElementName=IsIndeterminate}"
-            Value="{Binding Value, ElementName=Value}" />-->
+            Value="{Binding Value, ElementName=Value, Mode=TwoWay}" />
 
-        <ui:InfoBadge
+        <!--<ui:InfoBadge
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Style="{DynamicResource CriticalIconInfoBadgeStyle}" />
+            Style="{DynamicResource InformationalIconInfoBadgeStyle}" />-->
 
         <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />
 
@@ -75,5 +75,5 @@
             <sys:String>Test</sys:String>
             <sys:String>Test</sys:String>
         </ui:ListView>-->
-    </Grid>
+    </StackPanel>
 </Window>
