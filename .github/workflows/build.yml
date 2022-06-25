@@ -24,10 +24,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Publish
-      uses: brandedoutcast/publish-nuget@v2
-      if: success() && github.ref_name == 'master'
-      with:
-        PROJECT_FILE_PATH: ModernWpf.Controls/ModernWpf.Controls.csproj
-        PACKAGE_NAME: ModernWpfUI
-        VERSION_FILE_PATH: Directory.Build.props
-        NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+      if: success() && github.ref_name == 'master' && github.event.head_commit.message == 'Bump version'
+      run: |
+         dotnet pack ModernWpf.Controls\ModernWpf.Controls.csproj --c Release --no-build
+         dotnet nuget push "artifacts\*.nupkg" -k ${{ secrets.NUGET_API_KEY }}
