@@ -86,7 +86,7 @@ namespace ModernWpf.SampleApp
             InitializeComponent();
             // Workaround for VisualState issue that should be fixed
             // by https://github.com/microsoft/microsoft-ui-xaml/pull/2271
-            NavigationViewControl.PaneDisplayMode = NavigationViewPaneDisplayMode.Left;
+            //NavigationViewControl.PaneDisplayMode = NavigationViewPaneDisplayMode.Left;
 
             _navHelper = new RootFrameNavigationHelper(rootFrame, NavigationViewControl);
 

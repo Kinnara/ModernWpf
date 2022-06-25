@@ -72,6 +72,7 @@
             IsTitleBarAutoPaddingEnabled="False"
             Loaded="OnNavigationViewControlLoaded"
             PaneClosing="NavigationViewControl_PaneClosing"
+            PaneDisplayMode="Auto"
             PaneOpening="NavigationViewControl_PaneOpening"
             SelectionChanged="OnNavigationViewSelectionChanged">
             <ui:NavigationView.HeaderTemplate>

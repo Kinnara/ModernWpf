@@ -453,7 +453,7 @@
                                 </Border>
                             </Grid>
                         </Border>
-                        <ui:DebugVisualStateManager.VisualStateGroups>
+                        <VisualStateManager.VisualStateGroups>
                             <!--  ControlPanel Visibility states  -->
                             <VisualStateGroup x:Name="ControlPanelVisibilityStates">
                                 <VisualState x:Name="ControlPanelFadeIn">
@@ -517,7 +517,7 @@
                                 <VisualState x:Name="NonFullWindowState" />
                                 <VisualState x:Name="FullWindowState" />
                             </VisualStateGroup>
-                        </ui:DebugVisualStateManager.VisualStateGroups>
+                        </VisualStateManager.VisualStateGroups>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <!--  PauseState  -->

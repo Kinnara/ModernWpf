@@ -26,222 +26,224 @@
         </ui:Flyout>
     </Page.Resources>
 
-    <sc:NonClippingStackPanel
-        Margin="24,0,24,50"
-        Orientation="Horizontal"
-        Spacing="40">
+    <ui:ScrollViewerEx>
+        <sc:NonClippingStackPanel
+            Margin="24,0,24,50"
+            Orientation="Horizontal"
+            Spacing="40">
 
-        <sc:NonClippingStackPanel>
-            <TextBlock
-                Margin="0,0,0,20"
-                Style="{StaticResource BaseTextBlockStyle}"
-                Text="Buttons" />
-            <Button Content="Enabled button" />
-            <Button
-                Margin="0,15,0,0"
-                Content="Disabled button"
-                IsEnabled="False" />
-            <ToggleButton
-                Margin="0,15,0,0"
-                Content="Toggle button"
-                IsChecked="True" />
-            <ui:DropDownButton
-                Margin="0,15,0,0"
-                Content="Drop down button"
-                Flyout="{StaticResource ExampleFlyout}" />
-            <ui:SplitButton
-                Margin="0,15,0,25"
-                Content="Split button"
-                Flyout="{StaticResource ExampleFlyout}" />
+            <sc:NonClippingStackPanel>
+                <TextBlock
+                    Margin="0,0,0,20"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="Buttons" />
+                <Button Content="Enabled button" />
+                <Button
+                    Margin="0,15,0,0"
+                    Content="Disabled button"
+                    IsEnabled="False" />
+                <ToggleButton
+                    Margin="0,15,0,0"
+                    Content="Toggle button"
+                    IsChecked="True" />
+                <ui:DropDownButton
+                    Margin="0,15,0,0"
+                    Content="Drop down button"
+                    Flyout="{StaticResource ExampleFlyout}" />
+                <ui:SplitButton
+                    Margin="0,15,0,25"
+                    Content="Split button"
+                    Flyout="{StaticResource ExampleFlyout}" />
 
-            <TextBlock
-                Margin="0,0,0,15"
-                Style="{StaticResource BaseTextBlockStyle}"
-                Text="Checkbox" />
-            <CheckBox Content="Unchecked" />
-            <CheckBox
-                Margin="0,8,0,0"
-                Content="Checked"
-                IsChecked="True" />
-            <CheckBox
-                Margin="0,8,0,0"
-                Content="Third state"
-                IsChecked="{x:Null}"
-                IsThreeState="True" />
-            <CheckBox
-                Margin="0,8,0,20"
-                Content="Disabled"
-                IsChecked="True"
-                IsEnabled="False" />
+                <TextBlock
+                    Margin="0,0,0,15"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="Checkbox" />
+                <CheckBox Content="Unchecked" />
+                <CheckBox
+                    Margin="0,8,0,0"
+                    Content="Checked"
+                    IsChecked="True" />
+                <CheckBox
+                    Margin="0,8,0,0"
+                    Content="Third state"
+                    IsChecked="{x:Null}"
+                    IsThreeState="True" />
+                <CheckBox
+                    Margin="0,8,0,20"
+                    Content="Disabled"
+                    IsChecked="True"
+                    IsEnabled="False" />
 
-            <TextBlock
-                Margin="0,0,0,14"
-                Style="{StaticResource BaseTextBlockStyle}"
-                Text="Radio button" />
-            <RadioButton Content="Unchecked" />
-            <RadioButton
-                Margin="0,8,0,0"
-                Content="Checked"
-                IsChecked="True" />
-            <RadioButton
-                Margin="0,8,0,0"
-                Content="Disabled"
-                GroupName="Disabled"
-                IsChecked="True"
-                IsEnabled="False" />
+                <TextBlock
+                    Margin="0,0,0,14"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="Radio button" />
+                <RadioButton Content="Unchecked" />
+                <RadioButton
+                    Margin="0,8,0,0"
+                    Content="Checked"
+                    IsChecked="True" />
+                <RadioButton
+                    Margin="0,8,0,0"
+                    Content="Disabled"
+                    GroupName="Disabled"
+                    IsChecked="True"
+                    IsEnabled="False" />
+            </sc:NonClippingStackPanel>
+
+            <sc:NonClippingStackPanel Width="296">
+                <TextBlock
+                    Margin="0,0,0,11"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="Date picker" />
+                <DatePicker
+                    HorizontalAlignment="Stretch"
+                    ui:ControlHelper.Header="Label title"
+                    ui:ControlHelper.PlaceholderText="mm/dd/yyyy" />
+                <DatePicker
+                    Margin="0,18,0,20"
+                    HorizontalAlignment="Stretch"
+                    ui:ControlHelper.Header="Disabled"
+                    ui:ControlHelper.PlaceholderText="mm/dd/yyyy"
+                    IsEnabled="False" />
+                <TextBlock
+                    Margin="0,0,0,11"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="Time picker" />
+                <ui:SimpleTimePicker HorizontalAlignment="Stretch" Header="Label title" />
+                <Calendar Margin="0,31,0,0" />
+            </sc:NonClippingStackPanel>
+
+            <sc:NonClippingStackPanel Width="241">
+                <TextBlock
+                    Margin="0,0,0,11"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="Combo box" />
+                <ComboBox
+                    HorizontalAlignment="Stretch"
+                    ui:ControlHelper.Header="Label title"
+                    ui:ControlHelper.PlaceholderText="Placeholder text">
+                    <ComboBoxItem>List item</ComboBoxItem>
+                    <ComboBoxItem>List item</ComboBoxItem>
+                    <ComboBoxItem>List item</ComboBoxItem>
+                    <ComboBoxItem>List item</ComboBoxItem>
+                </ComboBox>
+                <ComboBox
+                    Margin="0,17,0,0"
+                    HorizontalAlignment="Stretch"
+                    ui:ControlHelper.Header="Disabled"
+                    ui:ControlHelper.PlaceholderText="Placeholder text"
+                    IsEnabled="False" />
+
+                <Grid Margin="0,31,0,0">
+                    <ListBox Margin="0,6" SelectedIndex="0">
+                        <ListBoxItem Content="Microsoft" />
+                        <ListBoxItem Content="Windows" />
+                        <ListBoxItem Content="Office" />
+                    </ListBox>
+                    <Border
+                        BorderBrush="{DynamicResource SystemControlForegroundChromeHighBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        IsHitTestVisible="False" />
+                </Grid>
+
+                <Grid
+                    Width="148"
+                    Margin="0,31,0,0"
+                    HorizontalAlignment="Left">
+                    <ListBox Margin="0,6" SelectedIndex="0">
+                        <ListBox.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource DefaultListBoxItemStyle}" TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="12,5,12,8" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBoxItem Content="Microsoft" />
+                        <ListBoxItem Content="Windows" />
+                        <ListBoxItem Content="Office" />
+                    </ListBox>
+                    <Border
+                        BorderBrush="{DynamicResource SystemControlForegroundChromeHighBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        IsHitTestVisible="False" />
+                </Grid>
+
+                <Button Margin="0,31,0,0" Content="Button with flyout">
+                    <ui:FlyoutService.Flyout>
+                        <ui:Flyout Placement="BottomEdgeAlignedLeft">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,12"
+                                    Style="{StaticResource BaseTextBlockStyle}"
+                                    Text="All items will be removed. Do you want to continue?" />
+                                <Button Content="Yes, empty my cart" />
+                            </StackPanel>
+                        </ui:Flyout>
+                    </ui:FlyoutService.Flyout>
+                </Button>
+            </sc:NonClippingStackPanel>
+
+            <sc:NonClippingStackPanel Width="265">
+                <TextBlock
+                    Margin="0,0,0,11"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="Textbox" />
+                <TextBox ui:ControlHelper.Header="Label title" ui:ControlHelper.PlaceholderText="Placeholder text" />
+                <TextBox
+                    Margin="0,17,0,0"
+                    ui:ControlHelper.Header="Disabled"
+                    ui:ControlHelper.PlaceholderText="Placeholder text"
+                    IsEnabled="False" />
+                <PasswordBox
+                    Margin="0,17,0,25"
+                    ui:ControlHelper.Header="Password"
+                    ui:ControlHelper.PlaceholderText="Placeholder text" />
+
+                <TextBlock
+                    Margin="0,0,0,14"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="Toggle switch" />
+                <Grid Margin="0,0,0,25">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="12" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ui:ToggleSwitch Grid.Row="0" Grid.Column="0" />
+                    <ui:ToggleSwitch
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        IsOn="True" />
+                    <ui:ToggleSwitch
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        IsEnabled="False"
+                        OffContent="Disabled Off" />
+                    <ui:ToggleSwitch
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        IsEnabled="False"
+                        IsOn="True"
+                        OnContent="Disabled On" />
+                </Grid>
+
+                <TextBlock
+                    Margin="0,0,0,14"
+                    Style="{StaticResource BaseTextBlockStyle}"
+                    Text="Slider" />
+                <Slider
+                    ui:ControlHelper.Header="Label title"
+                    AutoToolTipPlacement="TopLeft"
+                    Maximum="100"
+                    Value="50" />
+            </sc:NonClippingStackPanel>
+
         </sc:NonClippingStackPanel>
-
-        <sc:NonClippingStackPanel Width="296">
-            <TextBlock
-                Margin="0,0,0,11"
-                Style="{StaticResource BaseTextBlockStyle}"
-                Text="Date picker" />
-            <DatePicker
-                HorizontalAlignment="Stretch"
-                ui:ControlHelper.Header="Label title"
-                ui:ControlHelper.PlaceholderText="mm/dd/yyyy" />
-            <DatePicker
-                Margin="0,18,0,20"
-                HorizontalAlignment="Stretch"
-                ui:ControlHelper.Header="Disabled"
-                ui:ControlHelper.PlaceholderText="mm/dd/yyyy"
-                IsEnabled="False" />
-            <TextBlock
-                Margin="0,0,0,11"
-                Style="{StaticResource BaseTextBlockStyle}"
-                Text="Time picker" />
-            <ui:SimpleTimePicker HorizontalAlignment="Stretch" Header="Label title" />
-            <Calendar Margin="0,31,0,0" />
-        </sc:NonClippingStackPanel>
-
-        <sc:NonClippingStackPanel Width="241">
-            <TextBlock
-                Margin="0,0,0,11"
-                Style="{StaticResource BaseTextBlockStyle}"
-                Text="Combo box" />
-            <ComboBox
-                HorizontalAlignment="Stretch"
-                ui:ControlHelper.Header="Label title"
-                ui:ControlHelper.PlaceholderText="Placeholder text">
-                <ComboBoxItem>List item</ComboBoxItem>
-                <ComboBoxItem>List item</ComboBoxItem>
-                <ComboBoxItem>List item</ComboBoxItem>
-                <ComboBoxItem>List item</ComboBoxItem>
-            </ComboBox>
-            <ComboBox
-                Margin="0,17,0,0"
-                HorizontalAlignment="Stretch"
-                ui:ControlHelper.Header="Disabled"
-                ui:ControlHelper.PlaceholderText="Placeholder text"
-                IsEnabled="False" />
-
-            <Grid Margin="0,31,0,0">
-                <ListBox Margin="0,6" SelectedIndex="0">
-                    <ListBoxItem Content="Microsoft" />
-                    <ListBoxItem Content="Windows" />
-                    <ListBoxItem Content="Office" />
-                </ListBox>
-                <Border
-                    BorderBrush="{DynamicResource SystemControlForegroundChromeHighBrush}"
-                    BorderThickness="1"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    IsHitTestVisible="False" />
-            </Grid>
-
-            <Grid
-                Width="148"
-                Margin="0,31,0,0"
-                HorizontalAlignment="Left">
-                <ListBox Margin="0,6" SelectedIndex="0">
-                    <ListBox.ItemContainerStyle>
-                        <Style BasedOn="{StaticResource DefaultListBoxItemStyle}" TargetType="ListBoxItem">
-                            <Setter Property="Padding" Value="12,5,12,8" />
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                    <ListBoxItem Content="Microsoft" />
-                    <ListBoxItem Content="Windows" />
-                    <ListBoxItem Content="Office" />
-                </ListBox>
-                <Border
-                    BorderBrush="{DynamicResource SystemControlForegroundChromeHighBrush}"
-                    BorderThickness="1"
-                    CornerRadius="{DynamicResource ControlCornerRadius}"
-                    IsHitTestVisible="False" />
-            </Grid>
-
-            <Button Margin="0,31,0,0" Content="Button with flyout">
-                <ui:FlyoutService.Flyout>
-                    <ui:Flyout Placement="BottomEdgeAlignedLeft">
-                        <StackPanel>
-                            <TextBlock
-                                Margin="0,0,0,12"
-                                Style="{StaticResource BaseTextBlockStyle}"
-                                Text="All items will be removed. Do you want to continue?" />
-                            <Button Content="Yes, empty my cart" />
-                        </StackPanel>
-                    </ui:Flyout>
-                </ui:FlyoutService.Flyout>
-            </Button>
-        </sc:NonClippingStackPanel>
-
-        <sc:NonClippingStackPanel Width="265">
-            <TextBlock
-                Margin="0,0,0,11"
-                Style="{StaticResource BaseTextBlockStyle}"
-                Text="Textbox" />
-            <TextBox ui:ControlHelper.Header="Label title" ui:ControlHelper.PlaceholderText="Placeholder text" />
-            <TextBox
-                Margin="0,17,0,0"
-                ui:ControlHelper.Header="Disabled"
-                ui:ControlHelper.PlaceholderText="Placeholder text"
-                IsEnabled="False" />
-            <PasswordBox
-                Margin="0,17,0,25"
-                ui:ControlHelper.Header="Password"
-                ui:ControlHelper.PlaceholderText="Placeholder text" />
-
-            <TextBlock
-                Margin="0,0,0,14"
-                Style="{StaticResource BaseTextBlockStyle}"
-                Text="Toggle switch" />
-            <Grid Margin="0,0,0,25">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="12" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <ui:ToggleSwitch Grid.Row="0" Grid.Column="0" />
-                <ui:ToggleSwitch
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    IsOn="True" />
-                <ui:ToggleSwitch
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    IsEnabled="False"
-                    OffContent="Disabled Off" />
-                <ui:ToggleSwitch
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    IsEnabled="False"
-                    IsOn="True"
-                    OnContent="Disabled On" />
-            </Grid>
-
-            <TextBlock
-                Margin="0,0,0,14"
-                Style="{StaticResource BaseTextBlockStyle}"
-                Text="Slider" />
-            <Slider
-                ui:ControlHelper.Header="Label title"
-                AutoToolTipPlacement="TopLeft"
-                Maximum="100"
-                Value="50" />
-        </sc:NonClippingStackPanel>
-
-    </sc:NonClippingStackPanel>
+    </ui:ScrollViewerEx>
 </ui:Page>
