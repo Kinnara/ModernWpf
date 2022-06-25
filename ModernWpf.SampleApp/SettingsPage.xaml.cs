@@ -91,7 +91,12 @@ namespace ModernWpf.SampleApp
 
         private void OnThemeRadioButtonChecked(object sender, RoutedEventArgs e)
         {
+            var selectTheme = ((RadioButton)sender)?.Tag?.ToString();
 
+            if(selectTheme != null)
+            {
+                ThemeHelper.RootTheme = App.GetEnum<ElementTheme>(selectTheme);
+            }
         }
 
         private void OnThemeRadioButtonKeyDown(object sender, KeyEventArgs e)

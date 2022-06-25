@@ -28,7 +28,24 @@
         x:Key="DefaultWindowChrome"
         x:Shared="False"
         CaptionHeight="{DynamicResource {x:Static local:TitleBar.HeightKey}}"
+        NonClientFrameEdges="None"
+        ResizeBorderThickness="4"
+        UseAeroCaptionButtons="False" />
+
+    <WindowChrome
+        x:Key="AeroWindowChrome"
+        x:Shared="False"
+        CaptionHeight="{DynamicResource {x:Static local:TitleBar.HeightKey}}"
         GlassFrameThickness="-1"
+        NonClientFrameEdges="None"
+        ResizeBorderThickness="4"
+        UseAeroCaptionButtons="False" />
+
+    <WindowChrome
+        x:Key="AcrylicWindowChrome"
+        x:Shared="False"
+        CaptionHeight="{DynamicResource {x:Static local:TitleBar.HeightKey}}"
+        GlassFrameThickness="0,1,0,0"
         NonClientFrameEdges="None"
         ResizeBorderThickness="4"
         UseAeroCaptionButtons="False" />
@@ -153,6 +170,231 @@
         BasedOn="{StaticResource BaseWindowStyle}"
         TargetType="Window">
         <Setter Property="OverridesDefaultStyle" Value="True" />
+    </Style>
+
+    <Style
+        x:Key="AeroWindowStyle"
+        BasedOn="{StaticResource BaseWindowStyle}"
+        TargetType="Window">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="WindowChrome.WindowChrome" Value="{DynamicResource AeroWindowChrome}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <Border
+                        x:Name="LayoutRoot"
+                        Padding="{TemplateBinding Padding}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid x:Name="Background">
+                                <!--  Color tint overlay  -->
+                                <Rectangle
+                                    x:Name="TintColorLayer"
+                                    Fill="{TemplateBinding Background}"
+                                    Opacity="0.8" />
+                                <!--  Tiled noise texture  -->
+                                <Rectangle x:Name="NoiseLayer" Opacity="0.02">
+                                    <Rectangle.Fill>
+                                        <ImageBrush
+                                            ImageSource="/ModernWpf;component/Materials/Acrylic/noise.png"
+                                            Stretch="None"
+                                            TileMode="Tile"
+                                            Viewport="0,0,128,128"
+                                            ViewportUnits="Absolute" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </Grid>
+
+                            <Grid x:Name="ContentGrid">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <primitives:TitleBarControl
+                                    Title="{TemplateBinding Title}"
+                                    Panel.ZIndex="1"
+                                    BackButtonCommand="{TemplateBinding local:TitleBar.BackButtonCommand}"
+                                    BackButtonCommandParameter="{TemplateBinding local:TitleBar.BackButtonCommandParameter}"
+                                    BackButtonCommandTarget="{TemplateBinding local:TitleBar.BackButtonCommandTarget}"
+                                    BackButtonStyle="{TemplateBinding local:TitleBar.BackButtonStyle}"
+                                    Background="{TemplateBinding local:TitleBar.Background}"
+                                    ButtonStyle="{TemplateBinding local:TitleBar.ButtonStyle}"
+                                    ExtendViewIntoTitleBar="{TemplateBinding local:TitleBar.ExtendViewIntoTitleBar}"
+                                    Foreground="{TemplateBinding local:TitleBar.Foreground}"
+                                    Icon="{TemplateBinding Icon}"
+                                    InactiveBackground="{TemplateBinding local:TitleBar.InactiveBackground}"
+                                    InactiveForeground="{TemplateBinding local:TitleBar.InactiveForeground}"
+                                    IsActive="{TemplateBinding IsActive}"
+                                    IsBackButtonVisible="{TemplateBinding local:TitleBar.IsBackButtonVisible}"
+                                    IsBackEnabled="{TemplateBinding local:TitleBar.IsBackEnabled}"
+                                    IsIconVisible="{TemplateBinding local:TitleBar.IsIconVisible}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                    Style="{TemplateBinding local:TitleBar.Style}" />
+
+                                <AdornerDecorator x:Name="AdornerDecorator" Grid.Row="1">
+                                    <local:ContentPresenterEx Foreground="{TemplateBinding Foreground}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </AdornerDecorator>
+
+                                <ResizeGrip
+                                    x:Name="WindowResizeGrip"
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    IsTabStop="false"
+                                    Visibility="Collapsed"
+                                    WindowChrome.ResizeGripDirection="BottomRight" />
+                            </Grid>
+
+                            <Border
+                                x:Name="HighContrastBorder"
+                                BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
+                                BorderThickness="7,1,7,7"
+                                IsHitTestVisible="False"
+                                Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Background" Value="Transparent">
+                            <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="0" />
+                        </Trigger>
+                        <Trigger Property="IsActive" Value="False">
+                            <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource WindowBorderInactive}" />
+                            <Setter TargetName="HighContrastBorder" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true">
+                            <Setter TargetName="ContentGrid" Property="Margin" Value="7,0,7,7" />
+                            <Setter TargetName="HighContrastBorder" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="0" />
+                            <Setter TargetName="ContentGrid" Property="Margin" Value="0" />
+                            <Setter TargetName="HighContrastBorder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="local:TitleBar.ExtendViewIntoTitleBar" Value="True">
+                            <Setter TargetName="AdornerDecorator" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="AdornerDecorator" Property="Grid.RowSpan" Value="2" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="ResizeMode" Value="CanResizeWithGrip" />
+                                <Condition Property="WindowState" Value="Normal" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="WindowResizeGrip" Property="Visibility" Value="Visible" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="AcrylicWindowStyle"
+        BasedOn="{StaticResource BaseWindowStyle}"
+        TargetType="Window">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="WindowChrome.WindowChrome" Value="{DynamicResource AcrylicWindowChrome}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <Border
+                        x:Name="LayoutRoot"
+                        Padding="{TemplateBinding Padding}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid x:Name="ContentGrid">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <primitives:TitleBarControl
+                                    Title="{TemplateBinding Title}"
+                                    Panel.ZIndex="1"
+                                    BackButtonCommand="{TemplateBinding local:TitleBar.BackButtonCommand}"
+                                    BackButtonCommandParameter="{TemplateBinding local:TitleBar.BackButtonCommandParameter}"
+                                    BackButtonCommandTarget="{TemplateBinding local:TitleBar.BackButtonCommandTarget}"
+                                    BackButtonStyle="{TemplateBinding local:TitleBar.BackButtonStyle}"
+                                    Background="{TemplateBinding local:TitleBar.Background}"
+                                    ButtonStyle="{TemplateBinding local:TitleBar.ButtonStyle}"
+                                    ExtendViewIntoTitleBar="{TemplateBinding local:TitleBar.ExtendViewIntoTitleBar}"
+                                    Foreground="{TemplateBinding local:TitleBar.Foreground}"
+                                    Icon="{TemplateBinding Icon}"
+                                    InactiveBackground="{TemplateBinding local:TitleBar.InactiveBackground}"
+                                    InactiveForeground="{TemplateBinding local:TitleBar.InactiveForeground}"
+                                    IsActive="{TemplateBinding IsActive}"
+                                    IsBackButtonVisible="{TemplateBinding local:TitleBar.IsBackButtonVisible}"
+                                    IsBackEnabled="{TemplateBinding local:TitleBar.IsBackEnabled}"
+                                    IsIconVisible="{TemplateBinding local:TitleBar.IsIconVisible}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                    Style="{TemplateBinding local:TitleBar.Style}" />
+
+                                <AdornerDecorator x:Name="AdornerDecorator" Grid.Row="1">
+                                    <local:ContentPresenterEx Foreground="{TemplateBinding Foreground}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </AdornerDecorator>
+
+                                <ResizeGrip
+                                    x:Name="WindowResizeGrip"
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    IsTabStop="false"
+                                    Visibility="Collapsed"
+                                    WindowChrome.ResizeGripDirection="BottomRight" />
+                            </Grid>
+
+                            <Border
+                                x:Name="HighContrastBorder"
+                                BorderBrush="{DynamicResource {x:Static SystemColors.ActiveCaptionBrushKey}}"
+                                BorderThickness="7,1,7,7"
+                                IsHitTestVisible="False"
+                                Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Background" Value="Transparent">
+                            <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="0" />
+                        </Trigger>
+                        <Trigger Property="IsActive" Value="False">
+                            <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource WindowBorderInactive}" />
+                            <Setter TargetName="HighContrastBorder" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true">
+                            <Setter TargetName="ContentGrid" Property="Margin" Value="7,0,7,7" />
+                            <Setter TargetName="HighContrastBorder" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="0" />
+                            <Setter TargetName="ContentGrid" Property="Margin" Value="0" />
+                            <Setter TargetName="HighContrastBorder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="local:TitleBar.ExtendViewIntoTitleBar" Value="True">
+                            <Setter TargetName="AdornerDecorator" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="AdornerDecorator" Property="Grid.RowSpan" Value="2" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="ResizeMode" Value="CanResizeWithGrip" />
+                                <Condition Property="WindowState" Value="Normal" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="WindowResizeGrip" Property="Visibility" Value="Visible" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="SnapWindowStyle"
+        BasedOn="{StaticResource BaseWindowStyle}"
+        TargetType="Window">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="WindowChrome.WindowChrome" Value="{DynamicResource AeroWindowChrome}" />
     </Style>
 
     <Style BasedOn="{StaticResource DefaultWindowStyle}" TargetType="Window" />

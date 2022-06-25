@@ -122,15 +122,18 @@
                     Style="{DynamicResource SubtitleTextBlockStyle}"
                     Text="About" />
                 <FlowDocumentScrollViewer MaxWidth="840" Margin="0,10,0,0">
-                    <FlowDocument>
+                    <FlowDocument FontFamily="{DynamicResource ContentControlThemeFontFamily}" FontSize="{DynamicResource ContentControlFontSize}">
                         <Paragraph>
-                            This app is the interactive companion to the<Hyperlink NavigateUri="https://developer.microsoft.com/windows/apps/design">Fluent Design System web site</Hyperlink>
-                            .</Paragraph>
-                        <Paragraph Margin="0,10,0,0">
-                            Source code:<Hyperlink NavigateUri="https://github.com/microsoft/WinUI-Gallery">GitHub</Hyperlink>
+                            <Run Text="This app is the interactive companion to the " />
+                            <Hyperlink NavigateUri="https://developer.microsoft.com/windows/apps/design">Fluent Design System web site</Hyperlink>
+                            <Run Text="." />
                         </Paragraph>
                         <Paragraph Margin="0,10,0,0">
-                            <Run>To clone the source repository:</Run>
+                            <Run Text="Source code: " />
+                            <Hyperlink NavigateUri="https://github.com/microsoft/WinUI-Gallery">GitHub</Hyperlink>
+                        </Paragraph>
+                        <Paragraph Margin="0,10,0,0">
+                            <Run Text="To clone the source repository: " />
                             <Run FontStyle="Italic">git clone https://github.com/microsoft/WinUI-Gallery</Run>
                         </Paragraph>
                     </FlowDocument>
@@ -144,7 +147,7 @@
                     Style="{DynamicResource SubtitleTextBlockStyle}"
                     Text="Found a bug? Want a new sample?" />
                 <FlowDocumentScrollViewer MaxWidth="840" Margin="0,10,0,0">
-                    <FlowDocument>
+                    <FlowDocument FontFamily="{DynamicResource ContentControlThemeFontFamily}" FontSize="{DynamicResource ContentControlFontSize}">
                         <Paragraph>
                             If you have found a bug within the WinUI 3 Gallery, please file an issue on GitHub:
                         </Paragraph>
@@ -171,7 +174,7 @@
                     Style="{DynamicResource SubtitleTextBlockStyle}"
                     Text="Dependencies and References" />
                 <FlowDocumentScrollViewer MaxWidth="840" Margin="0,10,0,0">
-                    <FlowDocument>
+                    <FlowDocument FontFamily="{DynamicResource ContentControlThemeFontFamily}" FontSize="{DynamicResource ContentControlFontSize}">
                         <Paragraph Margin="0,10,0,10">
                             <Hyperlink NavigateUri="https://aka.ms/winui">Windows UI Library</Hyperlink>
                         </Paragraph>
@@ -192,7 +195,7 @@
                     Style="{DynamicResource SubtitleTextBlockStyle}"
                     Text="Companion apps" />
                 <FlowDocumentScrollViewer MaxWidth="840" Margin="0,10,0,0">
-                    <FlowDocument>
+                    <FlowDocument FontFamily="{DynamicResource ContentControlThemeFontFamily}" FontSize="{DynamicResource ContentControlFontSize}">
                         <Paragraph>
                             Check out these great companion apps:
                         </Paragraph>
@@ -213,14 +216,15 @@
                     Style="{DynamicResource SubtitleTextBlockStyle}"
                     Text="Disclaimer" />
                 <FlowDocumentScrollViewer MaxWidth="840" Margin="0,10,0,50">
-                    <FlowDocument>
+                    <FlowDocument FontFamily="{DynamicResource ContentControlThemeFontFamily}" FontSize="{DynamicResource ContentControlFontSize}">
                         <Paragraph>THIS CODE AND INFORMATION IS PROVIDED ‘AS IS’ WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.</Paragraph>
                         <Paragraph>
                             <LineBreak />
                             Copyright (c) Microsoft Corporation. All rights reserved.</Paragraph>
                         <Paragraph Margin="0,10,0,10">
                             <Hyperlink NavigateUri="https://go.microsoft.com/fwlink/?LinkId=822631">Microsoft Services Agreement</Hyperlink>
-                            ,<Hyperlink NavigateUri="https://go.microsoft.com/fwlink/?LinkId=521839">Microsoft Privacy Statement</Hyperlink>
+                            <Run Text=", " />
+                            <Hyperlink NavigateUri="https://go.microsoft.com/fwlink/?LinkId=521839">Microsoft Privacy Statement</Hyperlink>
                         </Paragraph>
                     </FlowDocument>
                 </FlowDocumentScrollViewer>

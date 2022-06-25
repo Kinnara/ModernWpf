@@ -26,12 +26,9 @@ namespace ModernWpf.SampleApp.Helper
             {
                 foreach (Window window in WindowHelper.ActiveWindows)
                 {
-                    if (window.Content is FrameworkElement rootElement)
+                    if (ThemeManager.GetActualTheme(window) != ElementTheme.Default)
                     {
-                        if (ThemeManager.GetActualTheme(rootElement) != ElementTheme.Default)
-                        {
-                            return ThemeManager.GetActualTheme(rootElement);
-                        }
+                        return ThemeManager.GetActualTheme(window);
                     }
                 }
 
@@ -48,10 +45,7 @@ namespace ModernWpf.SampleApp.Helper
             {
                 foreach (Window window in WindowHelper.ActiveWindows)
                 {
-                    if (window.Content is FrameworkElement rootElement)
-                    {
-                        return ThemeManager.GetActualTheme(rootElement);
-                    }
+                    return ThemeManager.GetActualTheme(window);
                 }
 
                 return ElementTheme.Default;
@@ -60,10 +54,7 @@ namespace ModernWpf.SampleApp.Helper
             {
                 foreach (Window window in WindowHelper.ActiveWindows)
                 {
-                    if (window.Content is FrameworkElement rootElement)
-                    {
-                        ThemeManager.SetRequestedTheme(rootElement, value);
-                    }
+                    ThemeManager.SetRequestedTheme(window, value);
                 }
 
                 if (PackagedAppHelper.IsPackagedApp)

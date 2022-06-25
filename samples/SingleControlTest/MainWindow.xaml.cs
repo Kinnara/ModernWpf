@@ -1,4 +1,5 @@
-﻿using ModernWpf.Controls;
+﻿using ModernWpf;
+using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using System;
 using System.Collections.Generic;
@@ -29,13 +30,17 @@ namespace SingleControlTest
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            //ListView.SelectionMode = ListView.SelectionMode == SelectionMode.Multiple ?
-            //    SelectionMode.Single : SelectionMode.Multiple;
+            ThemeManager.Current.ApplicationTheme = ThemeManager.Current.ApplicationTheme == ApplicationTheme.Light ? ApplicationTheme.Dark : ApplicationTheme.Light;
         }
 
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
             AppBarButton button = sender as AppBarButton;
+        }
+
+        private void UseAcrylicBackdrop_Toggled(object sender, RoutedEventArgs e)
+        {
+            WindowHelper.SetUseAcrylicBackdrop(this, UseAcrylicBackdrop.IsOn);
         }
     }
 }

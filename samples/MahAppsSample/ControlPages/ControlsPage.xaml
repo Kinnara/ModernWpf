@@ -26,7 +26,11 @@
         </ui:Flyout>
     </Page.Resources>
 
-    <ui:ScrollViewerEx>
+    <ui:ScrollViewerEx
+        HorizontalScrollBarVisibility="Auto"
+        Orientation="Horizontal"
+        PanningMode="Both"
+        VerticalScrollBarVisibility="Hidden">
         <sc:NonClippingStackPanel
             Margin="24,0,24,50"
             Orientation="Horizontal"

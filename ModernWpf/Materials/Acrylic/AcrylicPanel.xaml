@@ -21,12 +21,12 @@
                         <Grid>
                             <!--  Color tint overlay  -->
                             <Rectangle
-                                x:Name="tintColorLayer"
+                                x:Name="TintColorLayer"
                                 Fill="{TemplateBinding local:AcrylicElement.TintColor,
                                                        Converter={StaticResource ColorToSolidColorBrushConverter}}"
                                 Opacity="{TemplateBinding local:AcrylicElement.TintOpacity}" />
                             <!--  Tiled noise texture  -->
-                            <Rectangle x:Name="noiseLayer" Opacity="{TemplateBinding local:AcrylicElement.NoiseOpacity}">
+                            <Rectangle x:Name="NoiseLayer" Opacity="{TemplateBinding local:AcrylicElement.NoiseOpacity}">
                                 <Rectangle.Fill>
                                     <ImageBrush
                                         ImageSource="noise.png"

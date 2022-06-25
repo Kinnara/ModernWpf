@@ -12,6 +12,7 @@
     Width="800"
     Height="450"
     ui:WindowHelper.SystemBackdropType="Mica"
+    ui:WindowHelper.UseAcrylicBackdrop="True"
     ui:WindowHelper.UseModernWindowStyle="True"
     mc:Ignorable="d">
     <Window.Resources>
@@ -44,6 +45,12 @@
                 MinWidth="0"
                 Header="IsIndeterminate"
                 IsOn="True" />
+            <ui:ToggleSwitch
+                x:Name="UseAcrylicBackdrop"
+                MinWidth="0"
+                Header="UseAcrylicBackdrop"
+                IsOn="True"
+                Toggled="UseAcrylicBackdrop_Toggled" />
             <Button Click="Button_Click" Content="Test" />
         </ui:SimpleStackPanel>
 

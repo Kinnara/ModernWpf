@@ -34,9 +34,9 @@ namespace ModernWpf.SampleApp.SamplePages
             {
                 case BackdropType.Mica: newType = BackdropType.Tabbed; break;
                 case BackdropType.Tabbed: newType = BackdropType.Acrylic; break;
-                case BackdropType.Acrylic: newType = BackdropType.Auto; break;
+                case BackdropType.Acrylic: newType = BackdropType.None; break;
                 default:
-                case BackdropType.Auto: newType = BackdropType.Mica; break;
+                case BackdropType.None: newType = BackdropType.Mica; break;
             }
             WindowHelper.SetSystemBackdropType(this, newType);
         }

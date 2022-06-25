@@ -15,7 +15,7 @@ namespace ModernWpf.Controls.Primitives
 {
     public enum BackdropType
     {
-        Auto = 1,
+        None = 1,
         Mica = 2,
         Acrylic = 3,
         Tabbed = 4
@@ -34,10 +34,10 @@ namespace ModernWpf.Controls.Primitives
 
             return type switch
             {
-                BackdropType.Auto => OSVersionHelper.OSVersion >= new Version(10, 0, 22523), // Insider with new API                
+                BackdropType.None => OSVersionHelper.OSVersion >= new Version(10, 0, 21996), // Insider with new API                
                 BackdropType.Tabbed => OSVersionHelper.OSVersion >= new Version(10, 0, 22523),
-                BackdropType.Mica => OSVersionHelper.OSVersion >= new Version(10, 0, 22000),
-                BackdropType.Acrylic => (OSVersionHelper.OSVersion >= new Version(6, 0) && OSVersionHelper.OSVersion < new Version(6, 3)) || OSVersionHelper.OSVersion >= new Version(10, 0),
+                BackdropType.Mica => OSVersionHelper.OSVersion >= new Version(10, 0, 21996),
+                BackdropType.Acrylic => OSVersionHelper.OSVersion >= new Version(10, 0, 22523),
                 _ => false
             };
         }
@@ -56,64 +56,6 @@ namespace ModernWpf.Controls.Primitives
 
             if (windowHandle == IntPtr.Zero) { return false; }
 
-            void SetStyle()
-            {
-                if (window.Style != null)
-                {
-                    foreach (Setter setter in window.Style.Setters)
-                    {
-                        if (setter.Property == Control.BackgroundProperty && setter.Value == Brushes.Transparent)
-                        {
-                            goto stylesetted;
-                        }
-                    }
-                    Style style = new Style
-                    {
-                        TargetType = typeof(Window),
-                        BasedOn = window.Style
-                    };
-                    style.Setters.Add(new Setter
-                    {
-                        Property = FrameworkElement.TagProperty,
-                        Value = true
-                    });
-                    style.Setters.Add(new Setter
-                    {
-                        Property = Control.BackgroundProperty,
-                        Value = Brushes.Transparent
-                    });
-                    window.Style = style;
-                stylesetted:;
-                }
-                else
-                {
-                    Style style = new Style
-                    {
-                        TargetType = typeof(Window)
-                    };
-                    style.Setters.Add(new Setter
-                    {
-                        Property = FrameworkElement.TagProperty,
-                        Value = true
-                    });
-                    style.Setters.Add(new Setter
-                    {
-                        Property = Control.BackgroundProperty,
-                        Value = Brushes.Transparent
-                    });
-                    window.Style = style;
-                }
-            }
-
-            if (window.IsLoaded)
-            {
-                SetStyle();
-            }
-            else
-            {
-                window.Loaded += (sender, e) => SetStyle();
-            }
-
             Apply(windowHandle, type);
 
             return true;
@@ -131,11 +73,9 @@ namespace ModernWpf.Controls.Primitives
 
             if (handle == IntPtr.Zero) { return false; }
 
-            if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark) { ApplyDarkMode(handle); }
-
             return type switch
             {
-                BackdropType.Auto => TryApplyAuto(handle),
+                BackdropType.None => TryApplyNone(handle),
                 BackdropType.Mica => TryApplyMica(handle),
                 BackdropType.Acrylic => TryApplyAcrylic(handle),
                 BackdropType.Tabbed => TryApplyTabbed(handle),
@@ -147,29 +87,11 @@ namespace ModernWpf.Controls.Primitives
         /// Tries to remove background effects if they have been applied to the <see cref="Window"/>.
         /// </summary>
         /// <param name="window">The window from which the effect should be removed.</param>
-        public static void Remove(this Window window)
+        public static void Remove(Window window)
         {
             var windowHandle = new WindowInteropHelper(window).EnsureHandle();
 
             if (windowHandle == IntPtr.Zero) return;
-
-            if (window.Style != null)
-            {
-                foreach(Setter setter in window.Style.Setters)
-                {
-                    if(setter.Property == FrameworkElement.TagProperty&& setter.Value is bool boolen && boolen)
-                    {
-                        if (window.Style.BasedOn != null)
-                        {
-                            window.Style = window.Style.BasedOn;
-                        }
-                        else
-                        {
-                            window.ClearValue(FrameworkElement.StyleProperty);
-                        }
-                    }
-                }
-            }
 
             Remove(windowHandle);
         }
@@ -178,7 +100,7 @@ namespace ModernWpf.Controls.Primitives
         /// Tries to remove all effects if they have been applied to the <c>hWnd</c>.
         /// </summary>
         /// <param name="handle">Pointer to the window handle.</param>
-        public static void Remove(this IntPtr handle)
+        public static void Remove(IntPtr handle)
         {
             if (handle == IntPtr.Zero) return;
 
@@ -300,15 +222,23 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private static bool TryApplyAuto(this IntPtr handle)
+        private static bool TryApplyNone(this IntPtr handle)
         {
-            int backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_AUTO;
+            if (OSVersionHelper.OSVersion >= new Version(10, 0, 22523))
+            {
+                int backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_AUTO;
 
-            DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
-                ref backdropPvAttribute,
-                Marshal.SizeOf(typeof(int)));
+                DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
+                    ref backdropPvAttribute,
+                    Marshal.SizeOf(typeof(int)));
 
-            return true;
+                return true;
+            }
+            else
+            {
+                Remove(handle);
+                return true;
+            }
         }
 
         private static bool TryApplyTabbed(this IntPtr handle)
