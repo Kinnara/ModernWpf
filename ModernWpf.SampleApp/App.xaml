@@ -181,7 +181,7 @@
 
             <sys:String x:Key="ControlsName">All controls</sys:String>
             <sys:String x:Key="AppTitleName">ModernWPF Gallery</sys:String>
-            <sys:String x:Key="WinUIVersion">SDK 0.9.5</sys:String>
+            <sys:String x:Key="WinUIVersion">SDK 0.10.0</sys:String>
 
             <sys:String x:Key="NewControlsName">What's New</sys:String>
 

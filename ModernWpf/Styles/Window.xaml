@@ -75,6 +75,7 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Grid>
                             <Grid x:Name="ContentGrid">
@@ -186,6 +187,7 @@
                         Padding="{TemplateBinding Padding}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Grid>
                             <Grid x:Name="Background">
@@ -304,6 +306,7 @@
                         Padding="{TemplateBinding Padding}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Grid>
                             <Grid x:Name="ContentGrid">
@@ -387,6 +390,15 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style
+        x:Key="MicaWindowStyle"
+        BasedOn="{StaticResource BaseWindowStyle}"
+        TargetType="Window">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="{DynamicResource ControlFillColorTransparentBrush}" />
+        <Setter Property="WindowChrome.WindowChrome" Value="{DynamicResource AeroWindowChrome}" />
     </Style>
 
     <Style

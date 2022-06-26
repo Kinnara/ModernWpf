@@ -178,6 +178,7 @@
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
                                 RecognizesAccessKey="True"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                                 <ContentPresenter.Resources>

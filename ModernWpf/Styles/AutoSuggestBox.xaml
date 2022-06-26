@@ -196,6 +196,8 @@
                             Grid.ColumnSpan="3"
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             Content="{TemplateBinding primitives:ControlHelper.PlaceholderText}"
                             Focusable="False"
                             Foreground="{DynamicResource TextControlPlaceholderForeground}"

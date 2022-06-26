@@ -848,7 +848,7 @@ namespace ModernWpf.Controls
                             button = PrimaryButton ?? SecondaryButton ?? CloseButton;
                         }
 
-                        if (button != null)
+                        if (button != null && button.IsEnabled)
                         {
                             OnButtonClick(button, null);
                             e.Handled = true;

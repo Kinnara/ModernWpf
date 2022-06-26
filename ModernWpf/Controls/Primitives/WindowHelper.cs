@@ -13,6 +13,7 @@ namespace ModernWpf.Controls.Primitives
         private const string DefaultWindowStyleKey = "DefaultWindowStyle";
         private const string AeroWindowStyleKey = "AeroWindowStyle";
         private const string AcrylicWindowStyleKey = "AcrylicWindowStyle";
+        private const string MicaWindowStyleKey = "MicaWindowStyle";
         private const string SnapWindowStyleKey = "SnapWindowStyle";
 
         #region UseModernWindowStyle
@@ -96,7 +97,7 @@ namespace ModernWpf.Controls.Primitives
 
         private static void OnUseAeroBackdropChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (OSVersionHelper.OSVersion < new Version(6, 0) || new Version(6, 3) <= OSVersionHelper.OSVersion)
+            if (OSVersionHelper.OSVersion < new Version(6, 0) || new Version(6, 2) <= OSVersionHelper.OSVersion)
             {
                 return;
             }
@@ -284,10 +285,17 @@ namespace ModernWpf.Controls.Primitives
                 }
                 else
                 {
-                    window.Loaded += (sender, e) => window.RemoveTitleBar();
-                    ThemeManager.RemoveActualThemeChangedHandler(window, handler);
-                    ThemeManager.AddActualThemeChangedHandler(window, handler);
+                    void RemoveTitleBar(object sender, RoutedEventArgs e)
+                    {
+                        window.RemoveTitleBar();
+                    }
+
+                    window.Loaded -= RemoveTitleBar;
+                    window.Loaded += RemoveTitleBar;
                 }
+
+                ThemeManager.RemoveActualThemeChangedHandler(window, handler);
+                ThemeManager.AddActualThemeChangedHandler(window, handler);
 
                 if (isUseMica)
                 {
@@ -295,7 +303,7 @@ namespace ModernWpf.Controls.Primitives
                     if (MicaHelper.IsSupported(type))
                     {
                         isSetMica = true;
-                        window.SetResourceReference(FrameworkElement.StyleProperty, AeroWindowStyleKey);
+                        window.SetResourceReference(FrameworkElement.StyleProperty, MicaWindowStyleKey);
                     }
                 }
 
@@ -315,7 +323,7 @@ namespace ModernWpf.Controls.Primitives
 
                 if (!isSetMica && !isSetAcrylic && isUseAero)
                 {
-                    if (new Version(6, 0) <= OSVersionHelper.OSVersion && OSVersionHelper.OSVersion < new Version(6, 3))
+                    if (new Version(6, 0) <= OSVersionHelper.OSVersion && OSVersionHelper.OSVersion < new Version(6, 2))
                     {
                         isSetAero = true;
                         window.SetResourceReference(FrameworkElement.StyleProperty, AeroWindowStyleKey);

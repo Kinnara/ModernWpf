@@ -1,6 +1,7 @@
 ﻿using ModernWpf.Controls.Primitives;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,8 @@ namespace ModernWpf.SampleApp.SamplePages
     public partial class SampleSystemBackdropsWindow : Window
     {
         BackdropType m_currentBackdrop => WindowHelper.GetSystemBackdropType(this);
+        bool m_useAcrylicBackdrop => WindowHelper.GetUseAcrylicBackdrop(this);
+        bool m_useAeroBackdrop => WindowHelper.GetUseAeroBackdrop(this);
 
         public SampleSystemBackdropsWindow()
         {
@@ -29,16 +32,27 @@ namespace ModernWpf.SampleApp.SamplePages
 
         void ChangeBackdropButton_Click(object sender, RoutedEventArgs e)
         {
-            BackdropType newType;
-            switch (m_currentBackdrop)
+            if (OSVersionHelper.IsWindows11OrGreater)
             {
-                case BackdropType.Mica: newType = BackdropType.Tabbed; break;
-                case BackdropType.Tabbed: newType = BackdropType.Acrylic; break;
-                case BackdropType.Acrylic: newType = BackdropType.None; break;
-                default:
-                case BackdropType.None: newType = BackdropType.Mica; break;
+                BackdropType newType;
+                switch (m_currentBackdrop)
+                {
+                    case BackdropType.Mica: newType = BackdropType.Tabbed; break;
+                    case BackdropType.Tabbed: newType = BackdropType.Acrylic; break;
+                    case BackdropType.Acrylic: newType = BackdropType.None; break;
+                    default:
+                    case BackdropType.None: newType = BackdropType.Mica; break;
+                }
+                WindowHelper.SetSystemBackdropType(this, newType);
             }
-            WindowHelper.SetSystemBackdropType(this, newType);
+            else if (OSVersionHelper.IsWindows10OrGreater)
+            {
+                WindowHelper.SetUseAcrylicBackdrop(this, !m_useAcrylicBackdrop);
+            }
+            else if (OSVersionHelper.IsWindowsVistaOrGreater)
+            {
+                WindowHelper.SetUseAeroBackdrop(this, !m_useAeroBackdrop);
+            }
         }
     }
 }

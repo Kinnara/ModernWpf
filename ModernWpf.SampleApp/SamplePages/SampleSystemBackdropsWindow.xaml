@@ -10,6 +10,8 @@
     Width="800"
     Height="450"
     ui:WindowHelper.SystemBackdropType="Mica"
+    ui:WindowHelper.UseAcrylicBackdrop="True"
+    ui:WindowHelper.UseAeroBackdrop="True"
     ui:WindowHelper.UseModernWindowStyle="True"
     mc:Ignorable="d">
     <Grid>

@@ -6,13 +6,14 @@
     xmlns:local="clr-namespace:SingleControlTest"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="clr-namespace:ModernWpf.Media;assembly=ModernWpf"
-    xmlns:sys="clr-namespace:System;assembly=netstandard"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="MainWindow"
     Width="800"
     Height="450"
     ui:WindowHelper.SystemBackdropType="Mica"
     ui:WindowHelper.UseAcrylicBackdrop="True"
+    ui:WindowHelper.UseAeroBackdrop="True"
     ui:WindowHelper.UseModernWindowStyle="True"
     mc:Ignorable="d">
     <Window.Resources>
