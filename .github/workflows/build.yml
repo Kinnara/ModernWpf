@@ -23,3 +23,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
+    - name: Publish
+      if: success() && github.ref_name == 'master' && github.event.head_commit.message == 'Bump version'
+      run: |
+         dotnet pack ModernWpf.Controls\ModernWpf.Controls.csproj -c Release --no-build
+         dotnet nuget push "artifacts\*.nupkg" -k ${{ secrets.NUGET_API_KEY }}
