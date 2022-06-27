@@ -61,6 +61,7 @@
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Background" Property="Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
+                            <Setter TargetName="Cursor" Property="Cursor" Value="No" />
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushDisabled}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
                         </Trigger>
@@ -113,6 +114,7 @@
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Background" Property="Background" Value="{DynamicResource AccentButtonBackgroundDisabled}" />
+                            <Setter TargetName="Cursor" Property="Cursor" Value="No" />
                             <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushDisabled}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource AccentButtonForegroundDisabled}" />
                         </Trigger>
@@ -121,5 +123,4 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 </ResourceDictionary>
