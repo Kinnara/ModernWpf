@@ -1115,6 +1115,31 @@
           ]
         },
         {
+          "UniqueId": "InfoBadge",
+          "Title": "InfoBadge",
+          "Subtitle": "An non-intrusive UI to display notifications or bring focus to an area",
+          "ImagePath": "ms-appx:///Assets/ControlImages/InfoBadge.png",
+          "ImageIconPath": "ms-appx:///Assets/ControlIcons/MenuBarIcon.png",
+          "Description": "Badging is a non-intrusive and intuitive way to display notifications or bring focus to an area within an app - whether that be for notifications, indicating new content, or showing an alert.",
+          "Content": "<p>Look at the <i>InfoBadgePage.xaml</i> file in Visual Studio to see the full code for this page.</p>",
+          "IsNew": true,
+          "IsUpdated": false,
+          "Docs": [
+            {
+              "Title": "InfoBadge - API",
+              "Uri": "https://docs.microsoft.com/uwp/api/microsoft.ui.xaml.controls.infobadge"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://docs.microsoft.com/windows/uwp/design/controls-and-patterns/infobadge"
+            }
+          ],
+          "RelatedControls": [
+            "InfoBar",
+            "TeachingTip"
+          ]
+        },
+        {
           "UniqueId": "InfoBar",
           "Title": "InfoBar",
           "Subtitle": "An inline message to display app-wide status change information",

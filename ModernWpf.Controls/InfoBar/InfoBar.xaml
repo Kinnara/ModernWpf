@@ -82,8 +82,8 @@
                                     Visibility="Collapsed" />
 
                                 <primitives:InfoBarPanel
-                                    Grid.Column="1"
                                     x:Name="InfoPanel"
+                                    Grid.Column="1"
                                     Margin="{DynamicResource InfoBarPanelMargin}"
                                     HorizontalOrientationPadding="{DynamicResource InfoBarPanelHorizontalOrientationPadding}"
                                     VerticalOrientationPadding="{DynamicResource InfoBarPanelVerticalOrientationPadding}">
@@ -100,9 +100,9 @@
 
                                     <TextBlock
                                         x:Name="Message"
-                                        ui:TextBlockHelper.IsEnabled="True"
                                         primitives:InfoBarPanel.HorizontalOrientationMargin="{DynamicResource InfoBarMessageHorizontalOrientationMargin}"
                                         primitives:InfoBarPanel.VerticalOrientationMargin="{DynamicResource InfoBarMessageVerticalOrientationMargin}"
+                                        ui:TextBlockHelper.IsEnabled="True"
                                         FontSize="{DynamicResource InfoBarMessageFontSize}"
                                         FontWeight="{DynamicResource InfoBarMessageFontWeight}"
                                         Foreground="{DynamicResource InfoBarMessageForeground}"

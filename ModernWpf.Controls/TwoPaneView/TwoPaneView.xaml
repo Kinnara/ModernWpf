@@ -1,0 +1,115 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style x:Key="DefaultTwoPaneViewStyle" TargetType="local:TwoPaneView">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="MinWideModeWidth" Value="641" />
+        <Setter Property="MinTallModeHeight" Value="641" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:TwoPaneView">
+                    <Grid
+                        x:Name="RootGrid"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="{TemplateBinding Background}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="PART_ColumnLeft" Width="Auto" />
+                            <ColumnDefinition x:Name="PART_ColumnMiddle" Width="0" />
+                            <ColumnDefinition x:Name="PART_ColumnRight" Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition x:Name="PART_RowTop" Height="*" />
+                            <RowDefinition x:Name="PART_RowMiddle" Height="0" />
+                            <RowDefinition x:Name="PART_RowBottom" Height="0" />
+                        </Grid.RowDefinitions>
+
+                        <Border x:Name="PART_Pane1" Grid.Column="0">
+                            <ContentControl Content="{TemplateBinding Pane1}" />
+                        </Border>
+
+                        <Border x:Name="PART_Pane2" Grid.Column="2">
+                            <ContentControl Content="{TemplateBinding Pane2}" />
+                        </Border>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ModeStates">
+                                <VisualState x:Name="ViewMode_LeftRight" />
+
+                                <VisualState x:Name="ViewMode_RightLeft">
+                                    <Storyboard>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PART_Pane1" Storyboard.TargetProperty="(Grid.Column)">
+                                            <DiscreteInt32KeyFrame KeyTime="0" Value="2" />
+                                        </Int32AnimationUsingKeyFrames>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PART_Pane2" Storyboard.TargetProperty="(Grid.Column)">
+                                            <DiscreteInt32KeyFrame KeyTime="0" Value="0" />
+                                        </Int32AnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="ViewMode_TopBottom">
+                                    <Storyboard>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PART_Pane1" Storyboard.TargetProperty="(Grid.Column)">
+                                            <DiscreteInt32KeyFrame KeyTime="0" Value="0" />
+                                        </Int32AnimationUsingKeyFrames>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PART_Pane1" Storyboard.TargetProperty="(Grid.Row)">
+                                            <DiscreteInt32KeyFrame KeyTime="0" Value="0" />
+                                        </Int32AnimationUsingKeyFrames>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PART_Pane2" Storyboard.TargetProperty="(Grid.Column)">
+                                            <DiscreteInt32KeyFrame KeyTime="0" Value="0" />
+                                        </Int32AnimationUsingKeyFrames>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PART_Pane2" Storyboard.TargetProperty="(Grid.Row)">
+                                            <DiscreteInt32KeyFrame KeyTime="0" Value="2" />
+                                        </Int32AnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="ViewMode_BottomTop">
+                                    <Storyboard>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PART_Pane1" Storyboard.TargetProperty="(Grid.Column)">
+                                            <DiscreteInt32KeyFrame KeyTime="0" Value="0" />
+                                        </Int32AnimationUsingKeyFrames>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PART_Pane1" Storyboard.TargetProperty="(Grid.Row)">
+                                            <DiscreteInt32KeyFrame KeyTime="0" Value="2" />
+                                        </Int32AnimationUsingKeyFrames>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PART_Pane2" Storyboard.TargetProperty="(Grid.Column)">
+                                            <DiscreteInt32KeyFrame KeyTime="0" Value="0" />
+                                        </Int32AnimationUsingKeyFrames>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PART_Pane2" Storyboard.TargetProperty="(Grid.Row)">
+                                            <DiscreteInt32KeyFrame KeyTime="0" Value="0" />
+                                        </Int32AnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="ViewMode_OneOnly">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_Pane2" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="ViewMode_TwoOnly">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PART_Pane1" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PART_Pane2" Storyboard.TargetProperty="(Grid.Column)">
+                                            <DiscreteInt32KeyFrame KeyTime="0" Value="0" />
+                                        </Int32AnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultTwoPaneViewStyle}" TargetType="local:TwoPaneView" />
+
+</ResourceDictionary>

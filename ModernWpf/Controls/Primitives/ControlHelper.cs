@@ -358,7 +358,7 @@ namespace ModernWpf.Controls.Primitives
         /// </summary>
         /// <param name="control">The element on which to set the attached property.</param>
         /// <returns>The visual state for the control.</returns>
-        public static string GetVisualState(Control control)
+        public static string GetVisualState(FrameworkElement control)
         {
             return (string)control.GetValue(VisualStateProperty);
         }
@@ -368,17 +368,17 @@ namespace ModernWpf.Controls.Primitives
         /// </summary>
         /// <param name="control">The element on which to set the attached property.</param>
         /// <param name="value">The visual state for the control.</param>
-        public static void SetVisualState(Control control, string value)
+        public static void SetVisualState(FrameworkElement control, string value)
         {
             control.SetValue(VisualStateProperty, value);
         }
 
         private static void OnVisualStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            UpdateVisualState((Control)d);
+            UpdateVisualState((FrameworkElement)d);
         }
 
-        private static void UpdateVisualState(Control control)
+        private static void UpdateVisualState(FrameworkElement control)
         {
             string State = GetVisualState(control);
             if (!string.IsNullOrEmpty(State))

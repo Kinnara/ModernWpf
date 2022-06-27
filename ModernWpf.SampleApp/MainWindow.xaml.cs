@@ -1,6 +1,7 @@
 ﻿using ModernWpf.Controls;
 using ModernWpf.SampleApp.Common;
 using ModernWpf.SampleApp.DataModel;
+using ModernWpf.SampleApp.Helper;
 using ModernWpf.SampleApp.Helpers;
 using ModernWpf.SampleApp.Properties;
 using SamplesCommon;
@@ -26,12 +27,13 @@ namespace ModernWpf.SampleApp
             Current = this;
             InitializeComponent();
             InitialzeApp();
-            WindowHelper.TrackWindow(this);
         }
 
         private async void InitialzeApp()
         {
             await Task.Delay(1);
+            WindowHelper.TrackWindow(this);
+            ThemeHelper.Initialize();
             await ControlInfoDataSource.Instance.GetGroupsAsync();
             SubscribeToResourcesChanged();
             NavigationRootPage NavigationRootPage = new NavigationRootPage();
