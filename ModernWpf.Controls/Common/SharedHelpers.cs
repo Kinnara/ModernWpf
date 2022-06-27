@@ -166,7 +166,8 @@ namespace ModernWpf.Controls
 
                 fontIcon.Glyph = fontIconSource.Glyph;
                 fontIcon.FontSize = fontIconSource.FontSize;
-                if (fontIconSource.Foreground is Brush newForeground)
+                var newForeground = fontIconSource.Foreground;
+                if (newForeground != null)
                 {
                     fontIcon.Foreground = newForeground;
                 }
@@ -178,8 +179,8 @@ namespace ModernWpf.Controls
 
                 fontIcon.FontWeight = fontIconSource.FontWeight;
                 fontIcon.FontStyle = fontIconSource.FontStyle;
-                //fontIcon.IsTextScaleFactorEnabled(fontIconSource.IsTextScaleFactorEnabled());
-                //fontIcon.MirroredWhenRightToLeft(fontIconSource.MirroredWhenRightToLeft());
+                //fontIcon.IsTextScaleFactorEnabled = fontIconSource.IsTextScaleFactorEnabled;
+                //fontIcon.MirroredWhenRightToLeft = fontIconSource.MirroredWhenRightToLeft;
 
                 return fontIcon;
             }
@@ -187,11 +188,11 @@ namespace ModernWpf.Controls
             {
                 SymbolIcon symbolIcon = new SymbolIcon();
                 symbolIcon.Symbol = symbolIconSource.Symbol;
-                if (symbolIconSource.Foreground is Brush newForeground)
+                var newForeground = symbolIconSource.Foreground;
+                if (newForeground != null)
                 {
                     symbolIcon.Foreground = newForeground;
                 }
-
                 return symbolIcon;
             }
             else if (iconSource is BitmapIconSource bitmapIconSource)
@@ -204,12 +205,27 @@ namespace ModernWpf.Controls
                 }
 
                 bitmapIcon.ShowAsMonochrome = bitmapIconSource.ShowAsMonochrome;
-                if (bitmapIconSource.Foreground is Brush newForeground)
+                var newForeground = bitmapIconSource.Foreground;
+                if (newForeground != null)
                 {
                     bitmapIcon.Foreground = newForeground;
                 }
-
                 return bitmapIcon;
+            }
+            else if (iconSource is ImageIconSource imageIconSource)
+            {
+                ImageIcon imageIcon = new ImageIcon();
+                var imageSource = imageIconSource.ImageSource;
+                if (imageSource != null)
+                {
+                    imageIcon.Source = imageSource;
+                }
+                var newForeground = imageIconSource.Foreground;
+                if (newForeground != null)
+                {
+                    imageIcon.Foreground = newForeground;
+                }
+                return imageIcon;
             }
             else if (iconSource is PathIconSource pathIconSource)
             {
@@ -219,14 +235,13 @@ namespace ModernWpf.Controls
                 {
                     pathIcon.Data = pathIconSource.Data;
                 }
-                if (pathIconSource.Foreground is Brush newForeground)
+                var newForeground = pathIconSource.Foreground;
+                if (newForeground != null)
                 {
                     pathIcon.Foreground = newForeground;
                 }
-
                 return pathIcon;
             }
-
             return null;
         }
 

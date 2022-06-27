@@ -7,7 +7,7 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.modernwpf.com/2019">
 
-    <Style TargetType="local:AutoSuggestBox">
+    <Style x:Key="DefaultAutoSuggestBoxStyle" TargetType="local:AutoSuggestBox">
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="VerticalContentAlignment" Value="Top" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -99,5 +99,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultAutoSuggestBoxStyle}" TargetType="local:AutoSuggestBox" />
 
 </ResourceDictionary>

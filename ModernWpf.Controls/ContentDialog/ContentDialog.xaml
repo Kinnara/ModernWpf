@@ -11,7 +11,7 @@
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="local:ContentDialog">
+    <Style x:Key="DefaultContentDialogStyle" TargetType="local:ContentDialog">
         <Setter Property="Foreground" Value="{DynamicResource ContentDialogForeground}" />
         <Setter Property="Background" Value="{DynamicResource ContentDialogBackground}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ContentDialogBorderWidth}" />
@@ -399,4 +399,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultContentDialogStyle}" TargetType="local:ContentDialog" />
+
 </ResourceDictionary>

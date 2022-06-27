@@ -1,0 +1,67 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Button.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style
+        x:Key="InfoBarCloseButtonStyle"
+        BasedOn="{StaticResource DefaultButtonStyle}"
+        TargetType="Button">
+        <Style.Setters>
+            <Setter Property="Background" Value="{DynamicResource InfoBarCloseButtonBackground}" />
+            <Setter Property="Foreground" Value="{DynamicResource InfoBarCloseButtonForeground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource InfoBarCloseButtonBorderBrush}" />
+            <Setter Property="Width" Value="{DynamicResource InfoBarCloseButtonSize}" />
+            <Setter Property="Height" Value="{DynamicResource InfoBarCloseButtonSize}" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="Background"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                            SnapsToDevicePixels="True">
+                            <Border
+                                x:Name="Border"
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                                <local:ContentPresenterEx
+                                    x:Name="ContentPresenter"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Focusable="False"
+                                    RecognizesAccessKey="True"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Border>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Background" Property="Background" Value="{DynamicResource InfoBarCloseButtonBackgroundPointerOver}" />
+                                <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource InfoBarCloseButtonBorderBrushPointerOver}" />
+                                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource InfoBarCloseButtonForegroundPointerOver}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Background" Property="Background" Value="{DynamicResource InfoBarCloseButtonBackgroundPressed}" />
+                                <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource InfoBarCloseButtonBorderBrushPressed}" />
+                                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource InfoBarCloseButtonForegroundPressed}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Background" Property="Background" Value="{DynamicResource InfoBarCloseButtonBackgroundDisabled}" />
+                                <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource InfoBarCloseButtonBorderBrushDisabled}" />
+                                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource InfoBarCloseButtonForegroundDisabled}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style.Setters>
+    </Style>
+</ResourceDictionary>

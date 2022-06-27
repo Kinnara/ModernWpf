@@ -1043,7 +1043,7 @@
 
                                     </Grid>
                                 </Border>
-                                <Border x:Name="TopNavContentOverlayAreaGrid" ui:BorderHelper.Child="{TemplateBinding ContentOverlay}" />
+                                <Border x:Name="TopNavContentOverlayAreaGrid" ui:DecoratorHelper.Child="{TemplateBinding ContentOverlay}" />
                             </StackPanel>
 
                             <!--  Displaymode (compact/minimal/normal) left  -->

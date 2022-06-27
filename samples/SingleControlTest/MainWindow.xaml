@@ -66,10 +66,12 @@
             IsIndeterminate="{Binding IsOn, ElementName=IsIndeterminate}"
             Value="{Binding Value, ElementName=Value, Mode=TwoWay}" />
 
-        <!--<ui:InfoBadge
-            HorizontalAlignment="Center"
+        <ui:InfoBar
+            Title="Title"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
-            Style="{DynamicResource InformationalIconInfoBadgeStyle}" />-->
+            IsOpen="True"
+            Message="Essential app message for your users to be informed of, acknowledge, or take action on." />
 
         <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />
 

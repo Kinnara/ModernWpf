@@ -46,6 +46,12 @@
     </Page>
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="InfoBar\Strings\Resources.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+
   <Target Name="GetDocumentationFile">
     <ItemGroup>
       <BuildOutputInPackage Include="$(OutputPath)$(AssemblyName).xml" />

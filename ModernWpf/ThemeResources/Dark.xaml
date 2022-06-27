@@ -1394,6 +1394,42 @@
     <Thickness x:Key="ValueInfoBadgeTextMargin">4,0,4,2</Thickness>
     <Thickness x:Key="IconInfoBadgeIconMargin">4,4,4,4</Thickness>
 
+    <!--  Resources for InfoBar  -->
+    <m:StaticResource x:Key="InfoBarErrorSeverityBackgroundBrush" ResourceKey="SystemFillColorCriticalBackgroundBrush" />
+    <m:StaticResource x:Key="InfoBarWarningSeverityBackgroundBrush" ResourceKey="SystemFillColorCautionBackgroundBrush" />
+    <m:StaticResource x:Key="InfoBarSuccessSeverityBackgroundBrush" ResourceKey="SystemFillColorSuccessBackgroundBrush" />
+    <m:StaticResource x:Key="InfoBarInformationalSeverityBackgroundBrush" ResourceKey="SystemFillColorAttentionBackgroundBrush" />
+
+    <m:StaticResource x:Key="InfoBarErrorSeverityIconBackground" ResourceKey="SystemFillColorCriticalBrush" />
+    <m:StaticResource x:Key="InfoBarWarningSeverityIconBackground" ResourceKey="SystemFillColorCautionBrush" />
+    <m:StaticResource x:Key="InfoBarSuccessSeverityIconBackground" ResourceKey="SystemFillColorSuccessBrush" />
+    <m:StaticResource x:Key="InfoBarInformationalSeverityIconBackground" ResourceKey="SystemFillColorAttentionBrush" />
+
+    <m:StaticResource x:Key="InfoBarErrorSeverityIconForeground" ResourceKey="TextFillColorInverseBrush" />
+    <m:StaticResource x:Key="InfoBarWarningSeverityIconForeground" ResourceKey="TextFillColorInverseBrush" />
+    <m:StaticResource x:Key="InfoBarSuccessSeverityIconForeground" ResourceKey="TextFillColorInverseBrush" />
+    <m:StaticResource x:Key="InfoBarInformationalSeverityIconForeground" ResourceKey="TextFillColorInverseBrush" />
+
+    <m:StaticResource x:Key="InfoBarTitleForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="InfoBarMessageForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="InfoBarHyperlinkButtonForeground" ResourceKey="AccentTextFillColorPrimaryBrush" />
+
+    <m:StaticResource x:Key="InfoBarBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+    <Thickness x:Key="InfoBarBorderThickness">1</Thickness>
+
+    <m:StaticResource x:Key="InfoBarCloseButtonBackground" ResourceKey="AppBarButtonBackground" />
+    <m:StaticResource x:Key="InfoBarCloseButtonBackgroundPointerOver" ResourceKey="AppBarButtonBackgroundPointerOver" />
+    <m:StaticResource x:Key="InfoBarCloseButtonBackgroundPressed" ResourceKey="AppBarButtonBackgroundPressed" />
+    <m:StaticResource x:Key="InfoBarCloseButtonBackgroundDisabled" ResourceKey="AppBarButtonBackgroundDisabled" />
+    <m:StaticResource x:Key="InfoBarCloseButtonForeground" ResourceKey="AppBarButtonForeground" />
+    <m:StaticResource x:Key="InfoBarCloseButtonForegroundPointerOver" ResourceKey="AppBarButtonForegroundPointerOver" />
+    <m:StaticResource x:Key="InfoBarCloseButtonForegroundPressed" ResourceKey="AppBarButtonForegroundPressed" />
+    <m:StaticResource x:Key="InfoBarCloseButtonForegroundDisabled" ResourceKey="AppBarButtonForegroundDisabled" />
+    <m:StaticResource x:Key="InfoBarCloseButtonBorderBrush" ResourceKey="AppBarButtonBorderBrush" />
+    <m:StaticResource x:Key="InfoBarCloseButtonBorderBrushPointerOver" ResourceKey="AppBarButtonBorderBrushPointerOver" />
+    <m:StaticResource x:Key="InfoBarCloseButtonBorderBrushPressed" ResourceKey="AppBarButtonBorderBrushPressed" />
+    <m:StaticResource x:Key="InfoBarCloseButtonBorderBrushDisabled" ResourceKey="AppBarButtonBorderBrushDisabled" />
+
     <!--  Resources for ListBox  -->
     <Thickness x:Key="ListBoxBorderThemeThickness">0</Thickness>
     <m:StaticResource x:Key="ListBoxForeground" ResourceKey="TextFillColorPrimaryBrush" />

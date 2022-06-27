@@ -1,0 +1,262 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:ui="http://schemas.modernwpf.com/2019">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/ModernWpf.Controls;component/HyperlinkButton/HyperlinkButton.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style TargetType="local:InfoBar">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="CloseButtonStyle" Value="{DynamicResource InfoBarCloseButtonStyle}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="{DynamicResource InfoBarBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource InfoBarBorderThickness}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:InfoBar">
+                    <Border
+                        x:Name="ContentRoot"
+                        VerticalAlignment="Top"
+                        Background="{DynamicResource InfoBarInformationalSeverityBackgroundBrush}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <!--  Background is used here so that it overrides the severity status color if set.  -->
+                        <Border
+                            MinHeight="{DynamicResource InfoBarMinHeight}"
+                            Padding="{DynamicResource InfoBarContentRootPadding}"
+                            HorizontalAlignment="Stretch"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <!--  Icon  -->
+                                    <ColumnDefinition Width="*" />
+                                    <!--  Title, message, and action  -->
+                                    <ColumnDefinition Width="Auto" />
+                                    <!--  Close button  -->
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid x:Name="StandardIconArea" Visibility="Collapsed">
+
+                                    <TextBlock
+                                        x:Name="IconBackground"
+                                        Grid.Column="0"
+                                        Margin="{DynamicResource InfoBarIconMargin}"
+                                        VerticalAlignment="Top"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        FontSize="{DynamicResource InfoBarIconFontSize}"
+                                        Foreground="{DynamicResource InfoBarInformationalSeverityIconBackground}"
+                                        Text="{DynamicResource InfoBarIconBackgroundGlyph}" />
+
+                                    <TextBlock
+                                        x:Name="StandardIcon"
+                                        Grid.Column="0"
+                                        Margin="{DynamicResource InfoBarIconMargin}"
+                                        VerticalAlignment="Top"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        FontSize="{DynamicResource InfoBarIconFontSize}"
+                                        Foreground="{DynamicResource InfoBarInformationalSeverityIconForeground}"
+                                        Text="{DynamicResource InfoBarInformationalIconGlyph}" />
+                                </Grid>
+
+                                <Viewbox
+                                    x:Name="UserIconBox"
+                                    Grid.Column="0"
+                                    MaxWidth="{DynamicResource InfoBarIconFontSize}"
+                                    MaxHeight="{DynamicResource InfoBarIconFontSize}"
+                                    Margin="{DynamicResource InfoBarIconMargin}"
+                                    VerticalAlignment="Top"
+                                    ui:DecoratorHelper.Child="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}"
+                                    Visibility="Collapsed" />
+
+                                <primitives:InfoBarPanel
+                                    Grid.Column="1"
+                                    x:Name="InfoPanel"
+                                    Margin="{DynamicResource InfoBarPanelMargin}"
+                                    HorizontalOrientationPadding="{DynamicResource InfoBarPanelHorizontalOrientationPadding}"
+                                    VerticalOrientationPadding="{DynamicResource InfoBarPanelVerticalOrientationPadding}">
+
+                                    <TextBlock
+                                        x:Name="Title"
+                                        primitives:InfoBarPanel.HorizontalOrientationMargin="{DynamicResource InfoBarTitleHorizontalOrientationMargin}"
+                                        primitives:InfoBarPanel.VerticalOrientationMargin="{DynamicResource InfoBarTitleVerticalOrientationMargin}"
+                                        FontSize="{DynamicResource InfoBarTitleFontSize}"
+                                        FontWeight="{DynamicResource InfoBarTitleFontWeight}"
+                                        Foreground="{DynamicResource InfoBarTitleForeground}"
+                                        Text="{TemplateBinding Title}"
+                                        TextWrapping="Wrap" />
+
+                                    <TextBlock
+                                        x:Name="Message"
+                                        ui:TextBlockHelper.IsEnabled="True"
+                                        primitives:InfoBarPanel.HorizontalOrientationMargin="{DynamicResource InfoBarMessageHorizontalOrientationMargin}"
+                                        primitives:InfoBarPanel.VerticalOrientationMargin="{DynamicResource InfoBarMessageVerticalOrientationMargin}"
+                                        FontSize="{DynamicResource InfoBarMessageFontSize}"
+                                        FontWeight="{DynamicResource InfoBarMessageFontWeight}"
+                                        Foreground="{DynamicResource InfoBarMessageForeground}"
+                                        Text="{TemplateBinding Message}"
+                                        TextWrapping="Wrap" />
+
+                                    <ContentPresenter
+                                        VerticalAlignment="Top"
+                                        primitives:InfoBarPanel.HorizontalOrientationMargin="{DynamicResource InfoBarActionHorizontalOrientationMargin}"
+                                        primitives:InfoBarPanel.VerticalOrientationMargin="{DynamicResource InfoBarActionVerticalOrientationMargin}"
+                                        Content="{TemplateBinding ActionButton}">
+
+                                        <ContentPresenter.Resources>
+                                            <Style BasedOn="{StaticResource DefaultHyperlinkButtonStyle}" TargetType="local:HyperlinkButton">
+                                                <Style.Setters>
+                                                    <Setter Property="Margin" Value="{DynamicResource InfoBarHyperlinkButtonMargin}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource InfoBarHyperlinkButtonForeground}" />
+                                                </Style.Setters>
+                                            </Style>
+                                        </ContentPresenter.Resources>
+                                    </ContentPresenter>
+
+                                </primitives:InfoBarPanel>
+
+                                <ContentPresenter
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}" />
+
+                                <Button
+                                    Name="CloseButton"
+                                    Grid.Column="2"
+                                    Command="{TemplateBinding CloseButtonCommand}"
+                                    CommandParameter="{TemplateBinding CloseButtonCommandParameter}"
+                                    Style="{TemplateBinding CloseButtonStyle}">
+                                    <Viewbox
+                                        Width="{DynamicResource InfoBarCloseButtonGlyphSize}"
+                                        Height="{DynamicResource InfoBarCloseButtonGlyphSize}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
+                                        <ui:FontIcon
+                                            FontFamily="{DynamicResource FluentSystemIcons}"
+                                            Foreground="{DynamicResource InfoBarCloseButtonForeground}"
+                                            Glyph="{DynamicResource InfoBarCloseButtonGlyph}" />
+                                    </Viewbox>
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <VisualStateManager.VisualStateGroups>
+
+                            <VisualStateGroup x:Name="SeverityLevels">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="SeverityLevelsListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="Informational" />
+                                <VisualState x:Name="Error" />
+                                <VisualState x:Name="Warning" />
+                                <VisualState x:Name="Success" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="IconStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="IconStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="StandardIconVisible" />
+                                <VisualState x:Name="UserIconVisible" />
+                                <VisualState x:Name="NoIconVisible" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup>
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CloseButtonVisibilityListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="CloseButtonVisible" />
+                                <VisualState x:Name="CloseButtonCollapsed" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="InfoBarVisibility">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="InfoBarVisibilityListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="InfoBarVisible" />
+                                <VisualState x:Name="InfoBarCollapsed" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup>
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ForegroundListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="ForegroundNotSet" />
+                                <VisualState x:Name="ForegroundSet" />
+                            </VisualStateGroup>
+
+                        </VisualStateManager.VisualStateGroups>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!--  Error  -->
+                        <Trigger SourceName="SeverityLevelsListener" Property="CurrentStateName" Value="Error">
+                            <Setter TargetName="ContentRoot" Property="Background" Value="{DynamicResource InfoBarErrorSeverityBackgroundBrush}" />
+                            <Setter TargetName="IconBackground" Property="Foreground" Value="{DynamicResource InfoBarErrorSeverityIconBackground}" />
+                            <Setter TargetName="StandardIcon" Property="Text" Value="{DynamicResource InfoBarErrorIconGlyph}" />
+                            <Setter TargetName="StandardIcon" Property="Foreground" Value="{DynamicResource InfoBarErrorSeverityIconForeground}" />
+                        </Trigger>
+                        <!--  Warning  -->
+                        <Trigger SourceName="SeverityLevelsListener" Property="CurrentStateName" Value="Warning">
+                            <Setter TargetName="ContentRoot" Property="Background" Value="{DynamicResource InfoBarWarningSeverityBackgroundBrush}" />
+                            <Setter TargetName="IconBackground" Property="Foreground" Value="{DynamicResource InfoBarWarningSeverityIconBackground}" />
+                            <Setter TargetName="StandardIcon" Property="Text" Value="{DynamicResource InfoBarWarningIconGlyph}" />
+                            <Setter TargetName="StandardIcon" Property="Foreground" Value="{DynamicResource InfoBarWarningSeverityIconForeground}" />
+                        </Trigger>
+                        <!--  Success  -->
+                        <Trigger SourceName="SeverityLevelsListener" Property="CurrentStateName" Value="Success">
+                            <Setter TargetName="ContentRoot" Property="Background" Value="{DynamicResource InfoBarSuccessSeverityBackgroundBrush}" />
+                            <Setter TargetName="IconBackground" Property="Foreground" Value="{DynamicResource InfoBarSuccessSeverityIconBackground}" />
+                            <Setter TargetName="StandardIcon" Property="Text" Value="{DynamicResource InfoBarSuccessIconGlyph}" />
+                            <Setter TargetName="StandardIcon" Property="Foreground" Value="{DynamicResource InfoBarSuccessSeverityIconForeground}" />
+                        </Trigger>
+
+                        <!--  StandardIconVisible  -->
+                        <Trigger SourceName="IconStatesListener" Property="CurrentStateName" Value="StandardIconVisible">
+                            <Setter TargetName="UserIconBox" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="StandardIconArea" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <!--  UserIconVisible  -->
+                        <Trigger SourceName="IconStatesListener" Property="CurrentStateName" Value="UserIconVisible">
+                            <Setter TargetName="UserIconBox" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="StandardIconArea" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <!--  CloseButtonCollapsed  -->
+                        <Trigger SourceName="CloseButtonVisibilityListener" Property="CurrentStateName" Value="CloseButtonCollapsed">
+                            <Setter TargetName="CloseButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <!--  InfoBarCollapsed  -->
+                        <Trigger SourceName="InfoBarVisibilityListener" Property="CurrentStateName" Value="InfoBarCollapsed">
+                            <Setter TargetName="ContentRoot" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <!--  ForegroundSet  -->
+                        <Trigger SourceName="ForegroundListener" Property="CurrentStateName" Value="ForegroundSet">
+                            <Setter TargetName="Title" Property="Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}" />
+                            <Setter TargetName="Message" Property="Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}" />
+                        </Trigger>
+
+                        <Trigger SourceName="Message" Property="ui:TextBlockHelper.IsTextTrimmed" Value="True">
+                            <Setter TargetName="InfoPanel" Property="ForceVertical" Value="true" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

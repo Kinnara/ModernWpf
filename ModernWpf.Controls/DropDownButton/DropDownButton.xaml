@@ -5,7 +5,7 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:ui="http://schemas.modernwpf.com/2019">
 
-    <Style TargetType="local:DropDownButton">
+    <Style x:Key="DefaultDropDownButtonStyle" TargetType="local:DropDownButton">
         <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource ButtonForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrush}" />
@@ -92,5 +92,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultDropDownButtonStyle}" TargetType="local:DropDownButton" />
 
 </ResourceDictionary>

@@ -97,7 +97,7 @@ namespace ModernWpf.Controls.Primitives
 
         private static void OnUseAeroBackdropChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (OSVersionHelper.OSVersion < new Version(6, 0) || new Version(6, 2) <= OSVersionHelper.OSVersion)
+            if (OSVersionHelper.OSVersion < new Version(6, 0) || new Version(6, 2, 8824) < OSVersionHelper.OSVersion)
             {
                 return;
             }
@@ -323,7 +323,7 @@ namespace ModernWpf.Controls.Primitives
 
                 if (!isSetMica && !isSetAcrylic && isUseAero)
                 {
-                    if (new Version(6, 0) <= OSVersionHelper.OSVersion && OSVersionHelper.OSVersion < new Version(6, 2))
+                    if (new Version(6, 0) <= OSVersionHelper.OSVersion && OSVersionHelper.OSVersion < new Version(6, 2, 8824))
                     {
                         isSetAero = true;
                         window.SetResourceReference(FrameworkElement.StyleProperty, AeroWindowStyleKey);

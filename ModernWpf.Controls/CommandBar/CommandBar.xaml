@@ -189,7 +189,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="primitives:CommandBarOverflowPresenter">
+    <Style x:Key="DefaultCommandBarOverflowPresenterStyle" TargetType="primitives:CommandBarOverflowPresenter">
         <Setter Property="Background" Value="{DynamicResource CommandBarOverflowPresenterBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource CommandBarOverflowPresenterBorderBrush}" />
         <Setter Property="Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderPadding}" />
@@ -244,6 +244,8 @@
         </Setter>
     </Style>
 
+    <Style BasedOn="{StaticResource DefaultCommandBarOverflowPresenterStyle}" TargetType="primitives:CommandBarOverflowPresenter" />
+
     <Style x:Key="DefaultCommandBarStyle" TargetType="local:CommandBar">
         <Setter Property="Background" Value="{DynamicResource CommandBarBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource CommandBarForeground}" />
@@ -253,6 +255,7 @@
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="CommandBarOverflowPresenterStyle" Value="{StaticResource DefaultCommandBarOverflowPresenterStyle}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>

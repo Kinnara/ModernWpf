@@ -35,7 +35,7 @@ namespace ModernWpf.Controls.Primitives
         {
             if (!OSVersionHelper.IsWindowsNT) { return false; }
 
-            if (new Version(10, 0, 17763) <= OSVersionHelper.OSVersion && OSVersionHelper.OSVersion < new Version(10, 0, 22523)) { return true; }
+            if (new Version(10, 0, 17063) <= OSVersionHelper.OSVersion && OSVersionHelper.OSVersion < new Version(10, 0, 22523)) { return true; }
 
             return false;
         }

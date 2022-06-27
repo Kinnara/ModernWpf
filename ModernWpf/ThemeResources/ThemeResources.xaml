@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!--  Resources for AppBarButton  -->
@@ -130,6 +131,46 @@
     <Thickness x:Key="GroupBoxPadding">0,0,0,15</Thickness>
     <sys:Double x:Key="GroupBoxHeaderFontSize">20</sys:Double>
     <Thickness x:Key="GroupBoxHeaderMargin">0,4,0,20</Thickness>
+
+    <!--  Resources for InfoBar  -->
+    <sys:Double x:Key="InfoBarTitleFontSize">14</sys:Double>
+    <FontWeight x:Key="InfoBarTitleFontWeight">SemiBold</FontWeight>
+
+    <sys:Double x:Key="InfoBarMessageFontSize">14</sys:Double>
+    <FontWeight x:Key="InfoBarMessageFontWeight">Normal</FontWeight>
+
+    <sys:Double x:Key="InfoBarMinHeight">48</sys:Double>
+
+    <sys:Double x:Key="InfoBarCloseButtonSize">38</sys:Double>
+    <sys:Double x:Key="InfoBarCloseButtonGlyphSize">16</sys:Double>
+
+    <!--  This negative margin makes the link visually line up with the title/message  -->
+    <Thickness x:Key="InfoBarHyperlinkButtonMargin">-12,0,0,0</Thickness>
+
+    <sys:String x:Key="InfoBarIconBackgroundGlyph">&#xF136;</sys:String>
+    <sys:String x:Key="InfoBarInformationalIconGlyph">&#xF13F;</sys:String>
+    <sys:String x:Key="InfoBarErrorIconGlyph">&#xF13D;</sys:String>
+    <sys:String x:Key="InfoBarWarningIconGlyph">&#xF13C;</sys:String>
+    <sys:String x:Key="InfoBarSuccessIconGlyph">&#xF13E;</sys:String>
+    <sys:String x:Key="InfoBarCloseButtonGlyph">&#xF36B;</sys:String>
+
+    <Thickness x:Key="InfoBarContentRootPadding">16,0,0,0</Thickness>
+
+    <Thickness x:Key="InfoBarIconMargin">0,14,14,14</Thickness>
+    <sys:Double x:Key="InfoBarIconFontSize">16</sys:Double>
+
+    <Thickness x:Key="InfoBarPanelMargin">0,0,16,0</Thickness>
+    <Thickness x:Key="InfoBarPanelHorizontalOrientationPadding">0,0,0,0</Thickness>
+    <Thickness x:Key="InfoBarPanelVerticalOrientationPadding">0,14,0,18</Thickness>
+
+    <Thickness x:Key="InfoBarTitleHorizontalOrientationMargin">0,14,0,0</Thickness>
+    <Thickness x:Key="InfoBarTitleVerticalOrientationMargin">0,14,0,0</Thickness>
+
+    <Thickness x:Key="InfoBarMessageHorizontalOrientationMargin">12,14,0,0</Thickness>
+    <Thickness x:Key="InfoBarMessageVerticalOrientationMargin">0,4,0,0</Thickness>
+
+    <Thickness x:Key="InfoBarActionHorizontalOrientationMargin">16,8,0,0</Thickness>
+    <Thickness x:Key="InfoBarActionVerticalOrientationMargin">0,12,0,0</Thickness>
 
     <!--  Resources for ListBox  -->
     <Thickness x:Key="ListBoxItemPadding">12,9,12,12</Thickness>

@@ -7,7 +7,7 @@
     <Thickness x:Key="ButtonPadding">11,5,11,5</Thickness>
     <Thickness x:Key="HyperlinkButtonPadding">0,6,0,7</Thickness>
 
-    <Style TargetType="local:HyperlinkButton">
+    <Style x:Key="DefaultHyperlinkButtonStyle" TargetType="local:HyperlinkButton">
         <Setter Property="Background" Value="{DynamicResource HyperlinkButtonBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource HyperlinkButtonForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource HyperlinkButtonBorderBrush}" />
@@ -70,5 +70,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultHyperlinkButtonStyle}" TargetType="local:HyperlinkButton" />
 
 </ResourceDictionary>

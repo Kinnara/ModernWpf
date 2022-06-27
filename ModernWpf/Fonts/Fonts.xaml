@@ -4,5 +4,4 @@
     <FontFamily x:Key="SegoeFluentIcons">Segoe Fluent Icons</FontFamily>
     <FontFamily x:Key="FluentSystemIcons">pack://application:,,,/ModernWpf;component/Fonts/#FluentSystemIcons-Regular</FontFamily>
     <FontFamily x:Key="FluentSystemIconsFilled">pack://application:,,,/ModernWpf;component/Fonts/#FluentSystemIcons-Filled</FontFamily>
-    <FontFamily x:Key="FluentSystemIconsResizable">pack://application:,,,/ModernWpf;component/Fonts/#FluentSystemIcons-Resizable</FontFamily>
 </ResourceDictionary>

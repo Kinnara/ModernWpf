@@ -1297,7 +1297,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="primitives:CommandBarFlyoutCommandBar">
+    <Style x:Key="DefaultCommandBarFlyoutCommandBarStyle" TargetType="primitives:CommandBarFlyoutCommandBar">
         <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource CommandBarFlyoutForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource CommandBarFlyoutBorderBrush}" />
@@ -1339,4 +1339,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultCommandBarFlyoutCommandBarStyle}" TargetType="primitives:CommandBarFlyoutCommandBar" />
+
 </ResourceDictionary>

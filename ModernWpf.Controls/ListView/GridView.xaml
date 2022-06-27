@@ -10,7 +10,7 @@
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
-    <Style TargetType="local:GridViewItem">
+    <Style x:Key="DefaultGridViewItemStyle" TargetType="local:GridViewItem">
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="Background" Value="{DynamicResource GridViewItemBackground}" />
@@ -248,6 +248,8 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="local:GridViewItem" />
 
     <Style TargetType="local:GridView">
         <Setter Property="Padding" Value="0,0,0,10" />

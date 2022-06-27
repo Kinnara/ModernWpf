@@ -614,7 +614,7 @@
                                 <TranslateTransform x:Name="PaneTransform" />
                             </Border.RenderTransform>
                             <Grid>
-                                <Border ui:BorderHelper.Child="{TemplateBinding Pane}" />
+                                <Border ui:DecoratorHelper.Child="{TemplateBinding Pane}" />
                                 <Rectangle
                                     x:Name="HCPaneBorder"
                                     Width="1"
@@ -628,7 +628,7 @@
                             <Grid.RenderTransform>
                                 <TranslateTransform x:Name="ContentTransform" />
                             </Grid.RenderTransform>
-                            <Border ui:BorderHelper.Child="{TemplateBinding Content}" />
+                            <Border ui:DecoratorHelper.Child="{TemplateBinding Content}" />
                             <Rectangle
                                 x:Name="LightDismissLayer"
                                 Fill="Transparent"

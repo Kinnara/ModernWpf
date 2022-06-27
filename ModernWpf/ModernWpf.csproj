@@ -31,8 +31,7 @@
     <PackageReference Include="Microsoft.Windows.CsWinRT" Version="1.6.4" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '3.0')) and $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '5.0')) or
-                        '$(TargetFrameworkIdentifier)' == '.NETFramework' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '4.6.1'))">
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '3.0')) and $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '5.0')) or&#xD;&#xA;                        '$(TargetFrameworkIdentifier)' == '.NETFramework' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '4.6.1'))">
     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.18362.2005" />
   </ItemGroup>
 
@@ -62,7 +61,6 @@
   <ItemGroup>
     <None Remove="Fonts\FluentSystemIcons-Filled.ttf" />
     <None Remove="Fonts\FluentSystemIcons-Regular.ttf" />
-    <None Remove="Fonts\FluentSystemIcons-Resizable.ttf" />
     <None Remove="Materials\Acrylic\noise.png" />
   </ItemGroup>
 
@@ -77,7 +75,6 @@
   <ItemGroup>
     <Resource Include="Fonts\FluentSystemIcons-Filled.ttf" />
     <Resource Include="Fonts\FluentSystemIcons-Regular.ttf" />
-    <Resource Include="Fonts\FluentSystemIcons-Resizable.ttf" />
     <Resource Include="Materials\Acrylic\noise.png" />
   </ItemGroup>
 

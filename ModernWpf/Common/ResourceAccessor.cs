@@ -155,6 +155,14 @@ namespace ModernWpf
         public const string SR_InfoBarClosedNotification = "InfoBarClosedNotification";
         public const string SR_InfoBarCustomLandmarkName = "InfoBarCustomLandmarkName";
         public const string SR_InfoBarCloseButtonTooltip = "InfoBarCloseButtonTooltip";
+        public const string SR_InfoBarSeverityInformationalName = "InfoBarSeverityInformationalName";
+        public const string SR_InfoBarSeveritySuccessName = "InfoBarSeveritySuccessName";
+        public const string SR_InfoBarSeverityWarningName = "InfoBarSeverityWarningName";
+        public const string SR_InfoBarSeverityErrorName = "InfoBarSeverityErrorName";
+        public const string SR_InfoBarIconSeverityInformationalName = "InfoBarIconSeverityInformationalName";
+        public const string SR_InfoBarIconSeveritySuccessName = "InfoBarIconSeveritySuccessName";
+        public const string SR_InfoBarIconSeverityWarningName = "InfoBarIconSeverityWarningName";
+        public const string SR_InfoBarIconSeverityErrorName = "InfoBarIconSeverityErrorName";
 
         public const string IR_NoiseAsset_256X256_PNG = "NoiseAsset_256X256_PNG";
 
