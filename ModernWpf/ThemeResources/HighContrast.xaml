@@ -2161,6 +2161,28 @@
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 
+    <!--  Resources for TeachingTip  -->
+    <m:StaticResource x:Key="TeachingTipBorderBrush" ResourceKey="SystemColorWindowTextColorBrush"/>
+    <SolidColorBrush x:Key="TeachingTipTopHighlightBrush" Color="Transparent"/>
+    <m:StaticResource x:Key="TeachingTipTransientBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush"/>
+    <m:StaticResource x:Key="TeachingTipForegroundBrush" ResourceKey="SystemColorWindowTextColorBrush"/>
+    <m:StaticResource x:Key="TeachingTipBackgroundBrush" ResourceKey="SystemColorWindowColorBrush"/>
+    <m:StaticResource x:Key="TeachingTipTitleForegroundBrush" ResourceKey="SystemColorWindowTextColorBrush"/>
+    <m:StaticResource x:Key="TeachingTipSubtitleForegroundBrush" ResourceKey="SystemColorWindowTextColorBrush"/>
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBackgroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBackgroundPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBackgroundDisabled" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBorderBrush" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBorderBrushPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBorderBrushDisabled" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <Thickness x:Key="TeachingTipAlternateCloseButtonBorderThickness">1</Thickness>
+
     <!--  Resources for TextBox  -->
     <SolidColorBrush x:Key="TextBoxForegroundHeaderThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
     <SolidColorBrush x:Key="TextBoxPlaceholderTextThemeBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />

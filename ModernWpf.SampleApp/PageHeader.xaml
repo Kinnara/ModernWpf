@@ -73,6 +73,53 @@
                         </ui:AppBarButton>
                     </ui:CommandBar>
                 </Border>
+                <ui:TeachingTip
+                    x:Name="CopyLinkButtonTeachingTip"
+                    Title="Quickly reference this sample!"
+                    ActionButtonClick="OnCopyDontShowAgainButtonClick"
+                    ActionButtonContent="Don't show again"
+                    CloseButtonContent="Got it!"
+                    PreferredPlacement="Bottom"
+                    Subtitle="Share with others or paste this link into the Run dialog to open the app to this page directly."
+                    Target="{Binding ElementName=CopyLinkButton}">
+                    <ui:TeachingTip.HeroContent>
+                        <Image Source="/Assets/CopyLinkTeachingTip.png" />
+                    </ui:TeachingTip.HeroContent>
+                </ui:TeachingTip>
+                <ui:TeachingTip
+                    x:Name="ToggleThemeTeachingTip1"
+                    Title="Change themes without hassle"
+                    Subtitle="It's easier than ever to see control samples in both light and dark theme!"
+                    Target="{Binding ElementName=ThemeButton}">
+                    <ui:TeachingTip.IconSource>
+                        <ui:SymbolIconSource Symbol="Refresh" />
+                    </ui:TeachingTip.IconSource>
+                </ui:TeachingTip>
+                <ui:TeachingTip
+                    x:Name="ToggleThemeTeachingTip2"
+                    Title="Change themes without hassle"
+                    ActionButtonClick="ToggleThemeTeachingTip2_ActionButtonClick"
+                    ActionButtonContent="Toggle theme now"
+                    CloseButtonContent="Got it!"
+                    IsLightDismissEnabled="True"
+                    PlacementMargin="20"
+                    PreferredPlacement="Auto"
+                    Subtitle="It's easier than ever to see control samples in both light and dark theme!" />
+                <ui:TeachingTip
+                    x:Name="ToggleThemeTeachingTip3"
+                    Title="Change themes without hassle"
+                    PreferredPlacement="LeftBottom"
+                    Subtitle="It's easier than ever to see control samples in both light and dark theme!"
+                    Target="{Binding ElementName=ThemeButton}">
+                    <ui:TeachingTip.HeroContent>
+                        <Image AutomationProperties.Name="Sunset" Source="/Assets/SampleMedia/sunset.jpg" />
+                    </ui:TeachingTip.HeroContent>
+                    <ui:TeachingTip.Content>
+                        <TextBlock Margin="0,16,0,0" TextWrapping="Wrap">
+                            To change your desktop theme visit the<Hyperlink NavigateUri="ms-settings:colors">Settings app</Hyperlink>
+                            .</TextBlock>
+                    </ui:TeachingTip.Content>
+                </ui:TeachingTip>
             </Grid>
         </Border>
     </Grid>

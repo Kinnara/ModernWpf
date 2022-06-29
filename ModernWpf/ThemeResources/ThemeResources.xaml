@@ -422,6 +422,48 @@
     <Thickness x:Key="TabViewLeftHeaderPadding">8,8,0,8</Thickness>
     <Thickness x:Key="TabViewRightHeaderPadding">0,8,8,8</Thickness>
 
+    <!--  Resources for TeachingTip  -->
+    <sys:Double x:Key="TeachingTipMinHeight">40</sys:Double>
+    <sys:Double x:Key="TeachingTipMaxHeight">520</sys:Double>
+    <sys:Double x:Key="TeachingTipMinWidth">320</sys:Double>
+    <sys:Double x:Key="TeachingTipMaxWidth">336</sys:Double>
+
+    <Thickness x:Key="TeachingTipButtonPanelMargin">0,12,0,0</Thickness>
+    <Thickness x:Key="TeachingTipRightButtonMargin">4,12,0,0</Thickness>
+    <Thickness x:Key="TeachingTipLeftButtonMargin">0,12,4,0</Thickness>
+
+    <Thickness x:Key="TeachingTipMainContentPresentMargin">0,12,0,0</Thickness>
+    <Thickness x:Key="TeachingTipMainContentAbsentMargin">0,0,0,0</Thickness>
+
+    <Thickness x:Key="TeachingTipTitleStackPanelMarginWithHeaderCloseButton">0,0,28,0</Thickness>
+    <Thickness x:Key="TeachingTipTitleStackPanelMarginWithFooterCloseButton">0,0,0,0</Thickness>
+
+    <Thickness x:Key="TeachingTipIconPresenterMarginWithIcon">0,0,12,0</Thickness>
+    <Thickness x:Key="TeachingTipIconPresenterMarginWithoutIcon">0,0,0,0</Thickness>
+
+    <Thickness x:Key="TeachingTipContentBorderThicknessTop">1,1,1,0</Thickness>
+    <Thickness x:Key="TeachingTipContentBorderThicknessBottom">1,0,1,1</Thickness>
+    <Thickness x:Key="TeachingTipContentBorderThicknessLeft">1,1,0,1</Thickness>
+    <Thickness x:Key="TeachingTipContentBorderThicknessRight">0,1,1,1</Thickness>
+    <Thickness x:Key="TeachingTipContentBorderThicknessUntargeted">1,1,1,1</Thickness>
+
+    <Thickness x:Key="TeachingTipTailPolygonMarginTop">0,-1,0,0</Thickness>
+    <Thickness x:Key="TeachingTipTailPolygonMarginBottom">0,0,0,-1</Thickness>
+    <Thickness x:Key="TeachingTipTailPolygonMarginLeft">-1,0,0,0</Thickness>
+    <Thickness x:Key="TeachingTipTailPolygonMarginRight">0,0,-1,0</Thickness>
+
+    <GridLength x:Key="TeachingTipTailShortSideLength">8</GridLength>
+    <GridLength x:Key="TeachingTipTailMargin">10</GridLength>
+
+    <sys:Double x:Key="TeachingTipAlternateCloseButtonSize">40</sys:Double>
+    <sys:Double x:Key="TeachingTipAlternateCloseButtonGlyphSize">16</sys:Double>
+
+    <Thickness x:Key="TeachingTipContentMargin">12</Thickness>
+
+    <sys:Double x:Key="TeachingTipTopHighlightHeight">1</sys:Double>
+    <sys:Double x:Key="TeachingTipBorderThickness">1</sys:Double>
+    <Thickness x:Key="TeachingTipTopHighlightOffsetForBorder">0,1,0,0</Thickness>
+
     <!--  Resources for TextBox  -->
     <Thickness x:Key="TextBoxTopHeaderMargin">0,0,0,8</Thickness>
     <Thickness x:Key="TextBoxInnerButtonMargin">0,4,4,4</Thickness>

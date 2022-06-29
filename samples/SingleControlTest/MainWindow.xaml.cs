@@ -33,6 +33,11 @@ namespace SingleControlTest
             ThemeManager.Current.ApplicationTheme = ThemeManager.Current.ApplicationTheme == ApplicationTheme.Light ? ApplicationTheme.Dark : ApplicationTheme.Light;
         }
 
+        private void TestButtonClick1(object sender, RoutedEventArgs e)
+        {
+            ToggleThemeTeachingTip1.IsOpen = true;
+        }
+
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
             AppBarButton button = sender as AppBarButton;

@@ -25,6 +25,10 @@ namespace ModernWpf.SampleApp
         public Action CopyLinkAction { get; set; }
         public Action ToggleThemeAction { get; set; }
 
+        public TeachingTip TeachingTip1 => ToggleThemeTeachingTip1;
+        public TeachingTip TeachingTip2 => ToggleThemeTeachingTip2;
+        public TeachingTip TeachingTip3 => ToggleThemeTeachingTip3;
+
 
         public object Title
         {
@@ -111,6 +115,17 @@ namespace ModernWpf.SampleApp
         {
             this.CopyLinkButton.Label = "Generate Link to Page";
             this.CopyLinkButtonIcon.Symbol = Symbol.Link;
+        }
+
+        private void OnCopyDontShowAgainButtonClick(TeachingTip sender, object args)
+        {
+            //ProtocolActivationClipboardHelper.ShowCopyLinkTeachingTip = false;
+            this.CopyLinkButtonTeachingTip.IsOpen = false;
+        }
+
+        private void ToggleThemeTeachingTip2_ActionButtonClick(TeachingTip sender, object args)
+        {
+            NavigationRootPage.Current.PageHeader.ToggleThemeAction?.Invoke();
         }
 
         /// <summary>

@@ -2235,6 +2235,28 @@
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 
+    <!--  Resources for TeachingTip  -->
+    <m:StaticResource x:Key="TeachingTipBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush"/>
+    <SolidColorBrush x:Key="TeachingTipTopHighlightBrush" Color="#0DFFFFFF"/>
+    <m:StaticResource x:Key="TeachingTipTransientBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush"/>
+    <m:StaticResource x:Key="TeachingTipForegroundBrush" ResourceKey="TextFillColorPrimaryBrush"/>
+    <m:StaticResource x:Key="TeachingTipBackgroundBrush" ResourceKey="SolidBackgroundFillColorTertiaryBrush"/>
+    <m:StaticResource x:Key="TeachingTipTitleForegroundBrush" ResourceKey="TextFillColorPrimaryBrush"/>
+    <m:StaticResource x:Key="TeachingTipSubtitleForegroundBrush" ResourceKey="TextFillColorPrimaryBrush"/>
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBackgroundPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBackgroundDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBorderBrushPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBorderBrushPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="TeachingTipAlternateCloseButtonBorderBrushDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <Thickness x:Key="TeachingTipAlternateCloseButtonBorderThickness">1</Thickness>
+
     <!--  Resources for TextBox  -->
     <SolidColorBrush x:Key="TextBoxForegroundHeaderThemeBrush" Color="#FFFFFFFF" />
     <SolidColorBrush x:Key="TextBoxPlaceholderTextThemeBrush" Color="#AB000000" />

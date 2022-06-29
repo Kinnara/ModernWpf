@@ -73,6 +73,17 @@
             IsOpen="True"
             Message="Essential app message for your users to be informed of, acknowledge, or take action on." />
 
+        <ui:TeachingTip
+            x:Name="ToggleThemeTeachingTip1"
+            Title="Title"
+            ActionButtonContent="Toggle theme now"
+            CloseButtonContent="Got it!"
+            IsLightDismissEnabled="True"
+            Subtitle="It's easier than ever to see control samples in both light and dark theme!"
+            Target="{Binding ElementName=IsEnable}" />
+
+        <Button Click="TestButtonClick1" Content="Show TeachingTip" />
+
         <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />
 
         <ui:ListView

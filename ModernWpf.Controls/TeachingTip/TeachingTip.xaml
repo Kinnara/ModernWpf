@@ -1,0 +1,494 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:ui="http://schemas.modernwpf.com/2019">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary>
+            <ui:CornerRadiusFilterConverter x:Key="TopCornerRadiusFilterConverter" Filter="Top" />
+            <ui:CornerRadiusFilterConverter x:Key="BottomCornerRadiusFilterConverter" Filter="Bottom" />
+        </ResourceDictionary>
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style x:Key="DefaultTeachingTipStyle" TargetType="local:TeachingTip">
+        <Setter Property="Background" Value="{DynamicResource TeachingTipBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TeachingTipForegroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource TeachingTipBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource TeachingTipContentBorderThicknessUntargeted}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+        <Setter Property="ActionButtonStyle" Value="{DynamicResource DefaultButtonStyle}" />
+        <Setter Property="CloseButtonStyle" Value="{DynamicResource DefaultButtonStyle}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:TeachingTip">
+                    <Border
+                        x:Name="Container"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Background="Transparent">
+                        <Grid
+                            MinWidth="{DynamicResource TeachingTipMinWidth}"
+                            MinHeight="{DynamicResource TeachingTipMinHeight}"
+                            MaxWidth="{DynamicResource TeachingTipMaxWidth}"
+                            MaxHeight="{DynamicResource TeachingTipMaxHeight}"
+                            AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{DynamicResource TeachingTipTailShortSideLength}" />
+                                <ColumnDefinition Width="{DynamicResource TeachingTipTailMargin}" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="{DynamicResource TeachingTipTailMargin}" />
+                                <ColumnDefinition Width="{DynamicResource TeachingTipTailShortSideLength}" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{DynamicResource TeachingTipTailShortSideLength}" />
+                                <RowDefinition Height="{DynamicResource TeachingTipTailMargin}" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="{DynamicResource TeachingTipTailMargin}" />
+                                <RowDefinition Height="{DynamicResource TeachingTipTailShortSideLength}" />
+                            </Grid.RowDefinitions>
+
+                            <Grid
+                                x:Name="TailOcclusionGrid"
+                                Grid.RowSpan="5"
+                                Grid.ColumnSpan="5"
+                                MinWidth="{DynamicResource TeachingTipMinWidth}"
+                                MinHeight="{DynamicResource TeachingTipMinHeight}"
+                                MaxWidth="{DynamicResource TeachingTipMaxWidth}"
+                                MaxHeight="{DynamicResource TeachingTipMaxHeight}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="{DynamicResource TeachingTipTailShortSideLength}" />
+                                    <ColumnDefinition Width="{DynamicResource TeachingTipTailMargin}" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="{DynamicResource TeachingTipTailMargin}" />
+                                    <ColumnDefinition Width="{DynamicResource TeachingTipTailShortSideLength}" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="{DynamicResource TeachingTipTailShortSideLength}" />
+                                    <RowDefinition Height="{DynamicResource TeachingTipTailMargin}" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="{DynamicResource TeachingTipTailMargin}" />
+                                    <RowDefinition Height="{DynamicResource TeachingTipTailShortSideLength}" />
+                                </Grid.RowDefinitions>
+
+                                <Border
+                                    x:Name="ContentRootGrid"
+                                    Grid.Row="1"
+                                    Grid.RowSpan="3"
+                                    Grid.Column="1"
+                                    Grid.ColumnSpan="3"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    FlowDirection="{TemplateBinding FlowDirection}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Border
+                                            x:Name="HeroContentBorder"
+                                            Grid.Row="0"
+                                            ui:DecoratorHelper.Child="{TemplateBinding HeroContent}"
+                                            Background="{TemplateBinding Background}" />
+                                        <Grid x:Name="NonHeroContentRootGrid" Grid.Row="1">
+                                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                                <StackPanel Margin="{DynamicResource TeachingTipContentMargin}">
+                                                    <Grid Grid.Row="0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <ContentControl
+                                                            x:Name="IconPresenter"
+                                                            Grid.Column="0"
+                                                            Foreground="{TemplateBinding Foreground}">
+                                                            <Border ui:DecoratorHelper.Child="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}" />
+                                                        </ContentControl>
+                                                        <StackPanel x:Name="TitlesStackPanel" Grid.Column="1">
+                                                            <TextBlock
+                                                                x:Name="TitleTextBlock"
+                                                                Grid.Column="0"
+                                                                FontFamily="{TemplateBinding FontFamily}"
+                                                                FontWeight="SemiBold"
+                                                                Foreground="{DynamicResource TeachingTipTitleForegroundBrush}"
+                                                                Text="{TemplateBinding Title}"
+                                                                TextWrapping="Wrap"
+                                                                Visibility="Collapsed" />
+                                                            <TextBlock
+                                                                x:Name="SubtitleTextBlock"
+                                                                Grid.Row="1"
+                                                                FontFamily="{TemplateBinding FontFamily}"
+                                                                Foreground="{DynamicResource TeachingTipSubtitleForegroundBrush}"
+                                                                Text="{TemplateBinding Subtitle}"
+                                                                TextWrapping="Wrap"
+                                                                Visibility="Collapsed" />
+                                                        </StackPanel>
+                                                    </Grid>
+                                                    <Border x:Name="MainContentPresenterBorder" Background="{TemplateBinding Background}">
+                                                        <ui:ContentPresenterEx
+                                                            x:Name="MainContentPresenter"
+                                                            Grid.Row="1"
+                                                            Content="{TemplateBinding Content}"
+                                                            FontFamily="{TemplateBinding FontFamily}"
+                                                            FontSize="{TemplateBinding FontSize}"
+                                                            FontStretch="{TemplateBinding FontStretch}"
+                                                            FontStyle="{TemplateBinding FontStyle}"
+                                                            FontWeight="{TemplateBinding FontWeight}"
+                                                            Foreground="{TemplateBinding Foreground}" />
+                                                    </Border>
+                                                    <Grid Grid.Row="2">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Button
+                                                            x:Name="ActionButton"
+                                                            HorizontalAlignment="Stretch"
+                                                            Command="{TemplateBinding ActionButtonCommand}"
+                                                            CommandParameter="{TemplateBinding ActionButtonCommandParameter}"
+                                                            Style="{TemplateBinding ActionButtonStyle}">
+                                                            <ui:ContentPresenterEx Content="{TemplateBinding ActionButtonContent}" />
+                                                        </Button>
+                                                        <Button
+                                                            x:Name="CloseButton"
+                                                            Grid.Column="1"
+                                                            HorizontalAlignment="Stretch"
+                                                            Command="{TemplateBinding CloseButtonCommand}"
+                                                            CommandParameter="{TemplateBinding CloseButtonCommandParameter}"
+                                                            Style="{TemplateBinding CloseButtonStyle}">
+                                                            <ui:ContentPresenterEx Content="{TemplateBinding CloseButtonContent}" />
+                                                        </Button>
+                                                    </Grid>
+                                                </StackPanel>
+                                            </ScrollViewer>
+                                            <Button x:Name="AlternateCloseButton" Style="{DynamicResource AlternateCloseButtonStyle}" />
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                                <Polygon
+                                    x:Name="TailPolygon"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Fill="{TemplateBinding Background}"
+                                    Stroke="{TemplateBinding BorderBrush}"
+                                    StrokeThickness="{DynamicResource TeachingTipBorderThickness}" />
+                            </Grid>
+                        </Grid>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="LightDismissStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="LightDismissStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="LightDismiss" />
+                                <VisualState x:Name="NormalDismiss" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ButtonsStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ButtonsStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="NoButtonsVisible" />
+                                <VisualState x:Name="ActionButtonVisible" />
+                                <VisualState x:Name="CloseButtonVisible" />
+                                <VisualState x:Name="BothButtonsVisible" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ContentStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="ContentStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="Content" />
+                                <VisualState x:Name="NoContent" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CloseButtonLocations">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CloseButtonLocationsListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="HeaderCloseButton" />
+                                <VisualState x:Name="FooterCloseButton" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="IconStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="IconStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="Icon" />
+                                <VisualState x:Name="NoIcon" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="HeroContentPlacementStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="HeroContentPlacementStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="HeroContentTop" />
+                                <VisualState x:Name="HeroContentBottom" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="PlacementStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="PlacementStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="Top" />
+                                <VisualState x:Name="Bottom" />
+                                <VisualState x:Name="Left" />
+                                <VisualState x:Name="Right" />
+                                <VisualState x:Name="TopRight" />
+                                <VisualState x:Name="TopLeft" />
+                                <VisualState x:Name="BottomRight" />
+                                <VisualState x:Name="BottomLeft" />
+                                <VisualState x:Name="LeftTop" />
+                                <VisualState x:Name="LeftBottom" />
+                                <VisualState x:Name="RightTop" />
+                                <VisualState x:Name="RightBottom" />
+                                <VisualState x:Name="Center" />
+                                <VisualState x:Name="Untargeted" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="TitleBlockStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="TitleBlockStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="ShowTitleTextBlock" />
+                                <VisualState x:Name="CollapseTitleTextBlock" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SubtitleBlockStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="SubtitleBlockStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="ShowSubtitleTextBlock" />
+                                <VisualState x:Name="CollapseSubtitleTextBlock" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!--  LightDismiss  -->
+                        <Trigger SourceName="LightDismissStatesListener" Property="CurrentStateName" Value="LightDismiss">
+                            <Setter TargetName="TailPolygon" Property="Fill" Value="{DynamicResource TeachingTipTransientBackground}" />
+                            <Setter TargetName="ContentRootGrid" Property="Background" Value="{DynamicResource TeachingTipTransientBackground}" />
+                            <Setter TargetName="MainContentPresenterBorder" Property="Background" Value="{DynamicResource TeachingTipTransientBackground}" />
+                            <Setter TargetName="HeroContentBorder" Property="Background" Value="{DynamicResource TeachingTipTransientBackground}" />
+                        </Trigger>
+
+                        <!--  NoButtonsVisible  -->
+                        <Trigger SourceName="ButtonsStatesListener" Property="CurrentStateName" Value="NoButtonsVisible">
+                            <Setter TargetName="CloseButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ActionButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!--  ActionButtonVisible  -->
+                        <Trigger SourceName="ButtonsStatesListener" Property="CurrentStateName" Value="ActionButtonVisible">
+                            <Setter TargetName="CloseButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ActionButton" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="ActionButton" Property="Grid.ColumnSpan" Value="2" />
+                            <Setter TargetName="ActionButton" Property="Margin" Value="{DynamicResource TeachingTipButtonPanelMargin}" />
+                        </Trigger>
+                        <!--  CloseButtonVisible  -->
+                        <Trigger SourceName="ButtonsStatesListener" Property="CurrentStateName" Value="CloseButtonVisible">
+                            <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="CloseButton" Property="Margin" Value="{DynamicResource TeachingTipButtonPanelMargin}" />
+                            <Setter TargetName="CloseButton" Property="Grid.Column" Value="0" />
+                            <Setter TargetName="CloseButton" Property="Grid.ColumnSpan" Value="2" />
+                            <Setter TargetName="ActionButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!--  BothButtonsVisible  -->
+                        <Trigger SourceName="ButtonsStatesListener" Property="CurrentStateName" Value="BothButtonsVisible">
+                            <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="CloseButton" Property="Margin" Value="{DynamicResource TeachingTipRightButtonMargin}" />
+                            <Setter TargetName="ActionButton" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="ActionButton" Property="Grid.Column" Value="0" />
+                            <Setter TargetName="ActionButton" Property="Margin" Value="{DynamicResource TeachingTipLeftButtonMargin}" />
+                        </Trigger>
+
+                        <!--  Content  -->
+                        <Trigger SourceName="ContentStatesListener" Property="CurrentStateName" Value="Content">
+                            <Setter TargetName="MainContentPresenter" Property="Margin" Value="{DynamicResource TeachingTipMainContentPresentMargin}" />
+                        </Trigger>
+                        <!--  NoContent  -->
+                        <Trigger SourceName="ContentStatesListener" Property="CurrentStateName" Value="NoContent">
+                            <Setter TargetName="MainContentPresenter" Property="Margin" Value="{DynamicResource TeachingTipMainContentAbsentMargin}" />
+                        </Trigger>
+
+                        <!--  HeaderCloseButton  -->
+                        <Trigger SourceName="CloseButtonLocationsListener" Property="CurrentStateName" Value="HeaderCloseButton">
+                            <Setter TargetName="TitlesStackPanel" Property="Margin" Value="{DynamicResource TeachingTipTitleStackPanelMarginWithHeaderCloseButton}" />
+                            <Setter TargetName="AlternateCloseButton" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <!--  FooterCloseButton  -->
+                        <Trigger SourceName="CloseButtonLocationsListener" Property="CurrentStateName" Value="FooterCloseButton">
+                            <Setter TargetName="TitlesStackPanel" Property="Margin" Value="{DynamicResource TeachingTipTitleStackPanelMarginWithFooterCloseButton}" />
+                            <Setter TargetName="AlternateCloseButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <!--  Icon  -->
+                        <Trigger SourceName="IconStatesListener" Property="CurrentStateName" Value="Icon">
+                            <Setter TargetName="IconPresenter" Property="Margin" Value="{DynamicResource TeachingTipIconPresenterMarginWithIcon}" />
+                        </Trigger>
+                        <!--  NoIcon  -->
+                        <Trigger SourceName="IconStatesListener" Property="CurrentStateName" Value="NoIcon">
+                            <Setter TargetName="IconPresenter" Property="Margin" Value="{DynamicResource TeachingTipIconPresenterMarginWithoutIcon}" />
+                        </Trigger>
+
+                        <!--  HeroContentTop  -->
+                        <Trigger SourceName="HeroContentPlacementStatesListener" Property="CurrentStateName" Value="HeroContentTop">
+                            <Setter TargetName="HeroContentBorder" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="HeroContentBorder" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}, FallbackValue=0}" />
+                        </Trigger>
+                        <!--  HeroContentBottom  -->
+                        <Trigger SourceName="HeroContentPlacementStatesListener" Property="CurrentStateName" Value="HeroContentBottom">
+                            <Setter TargetName="HeroContentBorder" Property="Grid.Row" Value="2" />
+                            <Setter TargetName="HeroContentBorder" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}, FallbackValue=0}" />
+                        </Trigger>
+
+                        <!--  Top  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="Top">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="0,0 10,10, 20,0" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="4" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Center" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Bottom" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginTop}" />
+                        </Trigger>
+                        <!--  Bottom  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="Bottom">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="0,10 10,0 20,10" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Center" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Top" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginBottom}" />
+                        </Trigger>
+                        <!--  Left  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="Left">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="0,0 10,10 0,20" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="4" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Right" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Center" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginLeft}" />
+                        </Trigger>
+                        <!--  Right  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="Right">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="10,0 0,10 10,20" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="0" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Left" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Center" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginRight}" />
+                        </Trigger>
+                        <!--  TopRight  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="TopRight">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="0,0 10,10 20,0" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="4" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Left" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Bottom" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginTop}" />
+                        </Trigger>
+                        <!--  TopLeft  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="TopLeft">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="0,0 10,10 20,0" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="4" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Right" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Bottom" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginTop}" />
+                        </Trigger>
+                        <!--  BottomRight  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="BottomRight">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="0,10 10,0 20,10" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Left" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Top" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginBottom}" />
+                        </Trigger>
+                        <!--  BottomLeft  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="BottomLeft">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="0,10 10,0 20,10" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="0" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Right" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Top" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginBottom}" />
+                        </Trigger>
+                        <!--  LeftTop  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="LeftTop">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="0,0 10,10 0,20" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="4" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Right" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Bottom" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginLeft}" />
+                        </Trigger>
+                        <!--  LeftBottom  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="LeftBottom">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="0,0 10,10 0,20" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="4" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Right" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Top" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginLeft}" />
+                        </Trigger>
+                        <!--  RightTop  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="RightTop">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="10,0 0,10 10,20" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="0" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Left" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Bottom" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginRight}" />
+                        </Trigger>
+                        <!--  RightBottom  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="RightBottom">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="10,0 0,10 10,20" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="0" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Left" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Top" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginRight}" />
+                        </Trigger>
+                        <!--  Center  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="Center">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="TailPolygon" Property="Points" Value="0,0 10,10, 20,0" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Row" Value="4" />
+                            <Setter TargetName="TailPolygon" Property="Grid.Column" Value="2" />
+                            <Setter TargetName="TailPolygon" Property="HorizontalAlignment" Value="Center" />
+                            <Setter TargetName="TailPolygon" Property="VerticalAlignment" Value="Bottom" />
+                            <Setter TargetName="TailPolygon" Property="Margin" Value="{DynamicResource TeachingTipTailPolygonMarginTop}" />
+                        </Trigger>
+                        <!--  Untargeted  -->
+                        <Trigger SourceName="PlacementStatesListener" Property="CurrentStateName" Value="Untargeted">
+                            <Setter TargetName="TailPolygon" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <!--  ShowTitleTextBlock  -->
+                        <Trigger SourceName="TitleBlockStatesListener" Property="CurrentStateName" Value="ShowTitleTextBlock">
+                            <Setter TargetName="TitleTextBlock" Property="Visibility" Value="Visible" />
+                        </Trigger>
+
+                        <!--  ShowSubtitleTextBlock  -->
+                        <Trigger SourceName="SubtitleBlockStatesListener" Property="CurrentStateName" Value="ShowSubtitleTextBlock">
+                            <Setter TargetName="SubtitleTextBlock" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultTeachingTipStyle}" TargetType="local:TeachingTip" />
+
+</ResourceDictionary>

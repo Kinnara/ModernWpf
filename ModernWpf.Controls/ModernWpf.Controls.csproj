@@ -52,6 +52,10 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TeachingTip\Strings\" />
+  </ItemGroup>
+
   <Target Name="GetDocumentationFile">
     <ItemGroup>
       <BuildOutputInPackage Include="$(OutputPath)$(AssemblyName).xml" />

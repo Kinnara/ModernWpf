@@ -26,6 +26,36 @@ namespace ModernWpf.Controls
             return nameof(InfoBar);
         }
 
+        public void RaiseOpenedEvent(InfoBarSeverity severity, string displayString)
+        {
+            //if (this is IAutomationPeer7 automationPeer7)
+            //{
+            //    automationPeer7.RaiseNotificationEvent(Automation.Peers.AutomationNotificationKind.Other, GetProcessingForSeverity(severity), displayString, "InfoBarOpenedActivityId");
+            //}
+        }
+
+        public void RaiseClosedEvent(InfoBarSeverity severity, string displayString)
+        {
+            //Peers.AutomationNotificationProcessing processing = Peers.AutomationNotificationProcessing.CurrentThenMostRecent;
+
+            //if (this is IAutomationPeer7 automationPeer7)
+            //{
+            //    automationPeer7.RaiseNotificationEvent(Automation.Peers.AutomationNotificationKind.Other, GetProcessingForSeverity(severity), displayString, "InfoBarClosedActivityId");
+            //}
+        }
+
+        //public Peers.AutomationNotificationProcessing GetProcessingForSeverity(InfoBarSeverity severity)
+        //{
+        //    Peers.AutomationNotificationProcessing processing = Peers.AutomationNotificationProcessing.CurrentThenMostRecent;
+
+        //    if (severity == InfoBarSeverity.Error || severity == InfoBarSeverity.Warning)
+        //    {
+        //        processing = Peers.AutomationNotificationProcessing.ImportantAll;
+        //    }
+
+        //    return new Peers.AutomationNotificationProcessing(processing);
+        //}
+
         public InfoBar GetInfoBar()
         {
             UIElement owner = Owner;

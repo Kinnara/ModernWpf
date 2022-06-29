@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -183,9 +186,9 @@ namespace ModernWpf.Controls
                     {
                         if (notify && peer != null)
                         {
-                            var notificationString = String.Format(ResourceAccessor.GetLocalizedStringResource(SR_InfoBarOpenedNotification), ResourceAccessor.GetLocalizedStringResource(GetIconSeverityLevelResourceName(Severity)), Title, Message);
+                            var notificationString = string.Format(ResourceAccessor.GetLocalizedStringResource(SR_InfoBarOpenedNotification), ResourceAccessor.GetLocalizedStringResource(GetIconSeverityLevelResourceName(Severity)), Title, Message);
 
-                            //((InfoBarAutomationPeer)peer).RaiseOpenedEvent(Severity, notificationString);
+                            peer.RaiseOpenedEvent(Severity, notificationString);
                         }
 
                         VisualStateManager.GoToState(this, "InfoBarVisible", false);
@@ -198,7 +201,7 @@ namespace ModernWpf.Controls
                         {
                             var notificationString = ResourceAccessor.GetLocalizedStringResource(SR_InfoBarClosedNotification);
 
-                            //((InfoBarAutomationPeer)peer).RaiseClosedEvent(Severity, notificationString);
+                            peer.RaiseClosedEvent(Severity, notificationString);
                         }
 
                         VisualStateManager.GoToState(this, "InfoBarCollapsed", false);
