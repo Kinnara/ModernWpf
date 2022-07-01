@@ -1,0 +1,205 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Button.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style
+        x:Key="PipsPagerNavigationButtonBaseStyle"
+        BasedOn="{StaticResource DefaultButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource PipsPagerNavigationButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource PipsPagerNavigationButtonForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PipsPagerNavigationButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource PipsPagerNavigationButtonBorderThickness}" />
+        <Setter Property="FontFamily" Value="{DynamicResource FluentSystemIconsFilled}" />
+        <Setter Property="FontSize" Value="{DynamicResource PipsPagerNavigationButtonFontSize}" />
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Width" Value="{DynamicResource PipsPagerNavigationButtonWidth}" />
+        <Setter Property="Height" Value="{DynamicResource PipsPagerNavigationButtonHeight}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                        <Border RenderTransformOrigin="0.5, 0.5">
+                            <Border.RenderTransform>
+                                <ScaleTransform x:Name="ScaleTransform" ScaleX="1" ScaleY="1" />
+                            </Border.RenderTransform>
+                            <local:FontIcon
+                                x:Name="Content"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="{TemplateBinding Foreground}"
+                                Glyph="{TemplateBinding Content}" />
+                        </Border>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames
+                                            RepeatBehavior="Forever"
+                                            Storyboard.TargetName="ScaleTransform"
+                                            Storyboard.TargetProperty="ScaleX">
+                                            <DiscreteDoubleKeyFrame KeyTime="0:0:0.016" Value="{DynamicResource PipsPagerNavigationButtonScalePressed}" />
+                                            <DiscreteDoubleKeyFrame KeyTime="0:0:30" Value="{DynamicResource PipsPagerNavigationButtonScalePressed}" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames
+                                            RepeatBehavior="Forever"
+                                            Storyboard.TargetName="ScaleTransform"
+                                            Storyboard.TargetProperty="ScaleY">
+                                            <DiscreteDoubleKeyFrame KeyTime="0:0:0.016" Value="{DynamicResource PipsPagerNavigationButtonScalePressed}" />
+                                            <DiscreteDoubleKeyFrame KeyTime="0:0:30" Value="{DynamicResource PipsPagerNavigationButtonScalePressed}" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource PipsPagerNavigationButtonBackgroundPointerOver}" />
+                            <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource PipsPagerNavigationButtonBorderBrushPressed}" />
+                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource PipsPagerNavigationButtonForegroundPointerOver}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource PipsPagerNavigationButtonBackgroundPressed}" />
+                            <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource PipsPagerNavigationButtonBorderBrushPressed}" />
+                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource PipsPagerNavigationButtonForegroundPressed}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource PipsPagerNavigationButtonBackgroundDisabled}" />
+                            <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource PipsPagerNavigationButtonBorderBrushDisabled}" />
+                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource PipsPagerNavigationButtonForegroundDisabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="PipsPagerPreviousPageButtonStyle"
+        BasedOn="{StaticResource PipsPagerNavigationButtonBaseStyle}"
+        TargetType="Button">
+        <Setter Property="Content" Value="{DynamicResource PipsPagerPreviousPageButtonGlyph}" />
+    </Style>
+
+    <Style
+        x:Key="PipsPagerNextPageButtonStyle"
+        BasedOn="{StaticResource PipsPagerNavigationButtonBaseStyle}"
+        TargetType="Button">
+        <Setter Property="Content" Value="{DynamicResource PipsPagerNextPageButtonGlyph}" />
+    </Style>
+
+    <Style
+        x:Key="PipsPagerButtonBaseStyle"
+        BasedOn="{StaticResource DefaultButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource PipsPagerSelectionIndicatorBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource PipsPagerSelectionIndicatorForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PipsPagerSelectionIndicatorBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource PipsPagerButtonBorderThickness}" />
+        <Setter Property="FontFamily" Value="{DynamicResource FluentSystemIconsFilled}" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="0" />
+        <Setter Property="Content" Value="{DynamicResource PipsPagerNormalGlyph}" />
+        <Setter Property="FontSize" Value="{DynamicResource PipsPagerNormalGlyphFontSize}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="RootGrid"
+                        Width="{DynamicResource PipsPagerHorizontalOrientationButtonWidth}"
+                        Height="{DynamicResource PipsPagerHorizontalOrientationButtonHeight}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                        <local:FontIcon
+                            x:Name="Content"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            FontSize="{TemplateBinding FontSize}"
+                            Foreground="{TemplateBinding Foreground}"
+                            Glyph="{TemplateBinding Content}" />
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="OrientationStates">
+                                <primitives:VisualStateGroupListener.Listener>
+                                    <primitives:VisualStateGroupListener x:Name="OrientationStatesListener" />
+                                </primitives:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="HorizontalOrientation" />
+                                <VisualState x:Name="VerticalOrientation" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource PipsPagerSelectionIndicatorBackgroundPointerOver}" />
+                            <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource PipsPagerSelectionIndicatorBorderBrushPointerOver}" />
+                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource PipsPagerSelectionIndicatorForegroundPointerOver}" />
+                            <Setter TargetName="Content" Property="FontSize" Value="{DynamicResource PipsPagerSelectedGlyphFontSize}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource PipsPagerSelectionIndicatorBackgroundPressed}" />
+                            <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource PipsPagerSelectionIndicatorBorderBrushPressed}" />
+                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource PipsPagerSelectionIndicatorForegroundPressed}" />
+                            <Setter TargetName="Content" Property="FontSize" Value="{DynamicResource PipsPagerNormalGlyphFontSize}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource PipsPagerSelectionIndicatorBackgroundDisabled}" />
+                            <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource PipsPagerSelectionIndicatorBorderBrushDisabled}" />
+                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource PipsPagerSelectionIndicatorForegroundDisabled}" />
+                        </Trigger>
+                        <!--  VerticalOrientation  -->
+                        <Trigger SourceName="OrientationStatesListener" Property="CurrentStateName" Value="VerticalOrientation">
+                            <Setter TargetName="RootGrid" Property="Width" Value="{DynamicResource PipsPagerVerticalOrientationButtonWidth}" />
+                            <Setter TargetName="RootGrid" Property="Height" Value="{DynamicResource PipsPagerVerticalOrientationButtonHeight}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style
+        x:Key="PipsPagerSelectedPipButtonStyle"
+        BasedOn="{StaticResource PipsPagerButtonBaseStyle}"
+        TargetType="Button">
+        <Setter Property="Content" Value="{DynamicResource PipsPagerSelectedGlyph}" />
+        <Setter Property="FontSize" Value="{DynamicResource PipsPagerSelectedGlyphFontSize}" />
+        <Setter Property="Background" Value="{DynamicResource PipsPagerSelectionIndicatorBackgroundSelected}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource PipsPagerSelectionIndicatorBorderBrushSelected}" />
+        <Setter Property="Foreground" Value="{DynamicResource PipsPagerSelectionIndicatorForegroundSelected}" />
+    </Style>
+
+    <Style
+        x:Key="PipsPagerNormalPipButtonStyle"
+        BasedOn="{StaticResource PipsPagerButtonBaseStyle}"
+        TargetType="Button">
+        <Setter Property="Content" Value="{DynamicResource PipsPagerNormalGlyph}" />
+        <Setter Property="FontSize" Value="{DynamicResource PipsPagerNormalGlyphFontSize}" />
+    </Style>
+
+</ResourceDictionary>

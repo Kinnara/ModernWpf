@@ -1,0 +1,171 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:ui="http://schemas.modernwpf.com/2019">
+
+    <Style TargetType="local:PipsPager">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="PreviousButtonStyle" Value="{DynamicResource PipsPagerPreviousPageButtonStyle}" />
+        <Setter Property="NextButtonStyle" Value="{DynamicResource PipsPagerNextPageButtonStyle}" />
+        <Setter Property="SelectedPipStyle" Value="{DynamicResource PipsPagerSelectedPipButtonStyle}" />
+        <Setter Property="NormalPipStyle" Value="{DynamicResource PipsPagerNormalPipButtonStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PipsPager">
+                    <StackPanel
+                        x:Name="RootPanel"
+                        Background="{TemplateBinding Background}"
+                        Orientation="{TemplateBinding Orientation}">
+                        <Button
+                            x:Name="PreviousPageButton"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Style="{TemplateBinding PreviousButtonStyle}"
+                            ToolTipService.Placement="Top"
+                            ToolTipService.ToolTip="{Binding ElementName=PreviousPageButton, Path=(AutomationProperties.Name)}" />
+
+                        <local:ItemsRepeaterScrollHost>
+                            <ui:ScrollViewerEx
+                                x:Name="PipsPagerScrollViewer"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                HorizontalScrollBarVisibility="Hidden"
+                                Orientation="{TemplateBinding Orientation}"
+                                VerticalScrollBarVisibility="Hidden">
+                                <local:ItemsRepeater x:Name="PipsPagerItemsRepeater" ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.PipsPagerItems}">
+                                    <local:ItemsRepeater.Layout>
+                                        <local:StackLayout Orientation="Horizontal" />
+                                    </local:ItemsRepeater.Layout>
+                                    <local:ItemsRepeater.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button />
+                                        </DataTemplate>
+                                    </local:ItemsRepeater.ItemTemplate>
+                                </local:ItemsRepeater>
+                            </ui:ScrollViewerEx>
+                        </local:ItemsRepeaterScrollHost>
+
+                        <Button
+                            x:Name="NextPageButton"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Style="{TemplateBinding NextButtonStyle}"
+                            ToolTipService.Placement="Bottom"
+                            ToolTipService.ToolTip="{Binding ElementName=NextPageButton, Path=(AutomationProperties.Name)}" />
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="PreviousPageButtonVisibilityStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="PreviousPageButtonVisibilityStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="PreviousPageButtonVisible" />
+                                <VisualState x:Name="PreviousPageButtonHidden" />
+                                <VisualState x:Name="PreviousPageButtonCollapsed" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="PreviousPageButtonIsEnabledStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="PreviousPageButtonIsEnabledStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="PreviousPageButtonEnabled" />
+                                <VisualState x:Name="PreviousPageButtonDisabled" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="NextPageButtonVisibilityStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="NextPageButtonVisibilityStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="NextPageButtonVisible" />
+                                <VisualState x:Name="NextPageButtonHidden" />
+                                <VisualState x:Name="NextPageButtonCollapsed" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="NextPageButtonIsEnabledStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="NextPageButtonIsEnabledStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="NextPageButtonEnabled" />
+                                <VisualState x:Name="NextPageButtonDisabled" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="RootPanelOrientationStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="RootPanelOrientationStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="VerticalOrientationView" />
+                                <VisualState x:Name="HorizontalOrientationView" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <!--  PreviousPageButtonHidden  -->
+                        <Trigger SourceName="PreviousPageButtonVisibilityStatesListener" Property="CurrentStateName" Value="PreviousPageButtonHidden">
+                            <Setter TargetName="PreviousPageButton" Property="Opacity" Value="0" />
+                        </Trigger>
+                        <!--  PreviousPageButtonCollapsed  -->
+                        <Trigger SourceName="PreviousPageButtonVisibilityStatesListener" Property="CurrentStateName" Value="PreviousPageButtonCollapsed">
+                            <Setter TargetName="PreviousPageButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <!--  PreviousPageButtonDisabled  -->
+                        <Trigger SourceName="PreviousPageButtonIsEnabledStatesListener" Property="CurrentStateName" Value="PreviousPageButtonDisabled">
+                            <Setter TargetName="PreviousPageButton" Property="IsEnabled" Value="False" />
+                        </Trigger>
+
+                        <!--  NextPageButtonHidden  -->
+                        <Trigger SourceName="NextPageButtonVisibilityStatesListener" Property="CurrentStateName" Value="NextPageButtonHidden">
+                            <Setter TargetName="NextPageButton" Property="Opacity" Value="0" />
+                        </Trigger>
+                        <!--  NextPageButtonCollapsed  -->
+                        <Trigger SourceName="NextPageButtonVisibilityStatesListener" Property="CurrentStateName" Value="NextPageButtonCollapsed">
+                            <Setter TargetName="NextPageButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <!--  NextPageButtonDisabled  -->
+                        <Trigger SourceName="NextPageButtonIsEnabledStatesListener" Property="CurrentStateName" Value="NextPageButtonDisabled">
+                            <Setter TargetName="NextPageButton" Property="IsEnabled" Value="False" />
+                        </Trigger>
+
+                        <!--  HorizontalOrientationView  -->
+                        <Trigger SourceName="RootPanelOrientationStatesListener" Property="CurrentStateName" Value="HorizontalOrientationView">
+                            <Setter TargetName="RootPanel" Property="Orientation" Value="Horizontal" />
+                            <Setter TargetName="PreviousPageButton" Property="ToolTipService.Placement" Value="Left" />
+                            <Setter TargetName="PreviousPageButton" Property="RenderTransformOrigin" Value="0.5, 0.5" />
+                            <Setter TargetName="PreviousPageButton" Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="-90" />
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="NextPageButton" Property="ToolTipService.Placement" Value="Right" />
+                            <Setter TargetName="NextPageButton" Property="RenderTransformOrigin" Value="0.5, 0.5" />
+                            <Setter TargetName="NextPageButton" Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="-90" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+
+                        <Trigger Property="Orientation" Value="Vertical">
+                            <Setter TargetName="PipsPagerItemsRepeater" Property="Layout">
+                                <Setter.Value>
+                                    <local:StackLayout Orientation="Vertical" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="Orientation" Value="Horizontal">
+                            <Setter TargetName="PipsPagerItemsRepeater" Property="Layout">
+                                <Setter.Value>
+                                    <local:StackLayout Orientation="Horizontal" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

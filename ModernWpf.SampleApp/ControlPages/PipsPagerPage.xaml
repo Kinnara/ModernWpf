@@ -1,0 +1,108 @@
+﻿<ui:Page
+    x:Class="ModernWpf.SampleApp.ControlPages.PipsPagerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="Pips Pager Page"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel>
+        <local:ControlExample x:Name="Example1" HeaderText="PipsPager integrated with a FlipView">
+            <local:ControlExample.Example>
+                <StackPanel>
+                    <!--<FlipView x:Name="Gallery" MaxWidth="400" Height="270" ItemsSource="{Binding Pictures}">
+                        <FlipView.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Image Source="{Binding Mode=OneWay}"/>
+                            </DataTemplate>
+                        </FlipView.ItemTemplate>
+                    </FlipView>-->
+                    <ui:PipsPager
+                        x:Name="FlipViewPipsPager"
+                        Margin="0,12,0,0"
+                        HorizontalAlignment="Center"
+                        NumberOfPages="{Binding Count, ElementName=Pictures}"
+                        SelectedPageIndex="{Binding SelectedIndex, ElementName=Gallery, Mode=TwoWay}" />
+                </StackPanel>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve"> 
+&lt;StackPanel&gt;
+    &lt;FlipView x:Name=&quot;Gallery&quot; MaxWidth=&quot;400&quot; Height=&quot;270&quot; ItemsSource=&quot;{Binding Pictures}&quot;&gt;
+        &lt;FlipView.ItemTemplate&gt;
+            &lt;DataTemplate x:DataType=&quot;x:String&quot;&gt;
+                &lt;Image Source=&quot;{Binding Mode=OneWay}&quot; /&gt;
+            &lt;/DataTemplate&gt;
+        &lt;/FlipView.ItemTemplate&gt;
+    &lt;/FlipView&gt;
+    &lt;muxc:PipsPager x:Name=&quot;FlipViewPipsPager&quot;                   
+        HorizontalAlignment=&quot;Center&quot;
+        Margin=&quot;0, 12, 0, 0&quot;
+        NumberOfPages=&quot;{Binding Pictures.Count}&quot;
+        SelectedPageIndex=&quot;{Binding Path=Gallery.SelectedIndex, Mode=TwoWay}&quot; /&gt;
+&lt;/StackPanel&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+        <local:ControlExample x:Name="Example2" HeaderText="PipsPager with options to change its orientation and button visibility.">
+            <local:ControlExample.Resources>
+                <ResourceDictionary>
+                    <ui:BindingProxy x:Key="OrientationComboBox" Value="{x:Reference OrientationComboBox}" />
+                    <ui:BindingProxy x:Key="PrevButtonComboBox" Value="{x:Reference PrevButtonComboBox}" />
+                    <ui:BindingProxy x:Key="NextButtonComboBox" Value="{x:Reference NextButtonComboBox}" />
+                </ResourceDictionary>
+            </local:ControlExample.Resources>
+            <local:ControlExample.Example>
+                <ui:PipsPager x:Name="TestPipsPager2" />
+            </local:ControlExample.Example>
+            <local:ControlExample.Options>
+                <StackPanel>
+                    <ComboBox
+                        x:Name="OrientationComboBox"
+                        ui:ControlHelper.Header="Orientation"
+                        SelectedValue="Horizontal"
+                        SelectionChanged="OrientationComboBox_SelectionChanged">
+                        <sys:String>Horizontal</sys:String>
+                        <sys:String>Vertical</sys:String>
+                    </ComboBox>
+                    <ComboBox
+                        x:Name="PrevButtonComboBox"
+                        ui:ControlHelper.Header="Previous Button Visibility"
+                        SelectedValue="Visible"
+                        SelectionChanged="PrevButtonComboBox_SelectionChanged">
+                        <sys:String>Visible</sys:String>
+                        <sys:String>VisibleOnPointerOver</sys:String>
+                        <sys:String>Collapsed</sys:String>
+                    </ComboBox>
+                    <ComboBox
+                        x:Name="NextButtonComboBox"
+                        ui:ControlHelper.Header="Next Button Visibility"
+                        SelectedValue="Visible"
+                        SelectionChanged="NextButtonComboBox_SelectionChanged">
+                        <sys:String>Visible</sys:String>
+                        <sys:String>VisibleOnPointerOver</sys:String>
+                        <sys:String>Collapsed</sys:String>
+                    </ComboBox>
+                </StackPanel>
+            </local:ControlExample.Options>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;muxc:PipsPager
+    Orientation=&quot;$(Orientation)&quot;
+    PreviousButtonVisibility=&quot;$(PrevButton)&quot;
+    NextButtonVisibility=&quot;$(NextButton)&quot; /&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+            <local:ControlExample.Substitutions>
+                <local:ControlExampleSubstitution Key="Orientation" Value="{Binding Value.SelectedValue, Source={StaticResource OrientationComboBox}, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="PrevButton" Value="{Binding Value.SelectedValue, Source={StaticResource PrevButtonComboBox}, Mode=OneWay}" />
+                <local:ControlExampleSubstitution Key="NextButton" Value="{Binding Value.SelectedValue, Source={StaticResource NextButtonComboBox}, Mode=OneWay}" />
+            </local:ControlExample.Substitutions>
+        </local:ControlExample>
+    </StackPanel>
+</ui:Page>

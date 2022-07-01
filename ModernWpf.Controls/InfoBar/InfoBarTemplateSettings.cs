@@ -31,6 +31,5 @@ namespace ModernWpf.Controls
         }
 
         #endregion
-
     }
 }

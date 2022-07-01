@@ -34,5 +34,17 @@ namespace ModernWpf
                 dispatcher.BeginInvoke(action);
             }
         }
+
+        public static void RunOnUIThread(this Dispatcher dispatcher, Action action)
+        {
+            if (dispatcher.CheckAccess())
+            {
+                action();
+            }
+            else
+            {
+                dispatcher.BeginInvoke(action);
+            }
+        }
     }
 }

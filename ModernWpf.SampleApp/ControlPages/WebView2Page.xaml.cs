@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace ModernWpf.SampleApp.ControlPages
 {
     /// <summary>
-    /// WebViewPage.xaml 的交互逻辑
+    /// WebView2Page.xaml 的交互逻辑
     /// </summary>
-    public partial class WebViewPage : Page
+    public partial class WebView2Page : Page
     {
-        public WebViewPage()
+        public WebView2Page()
         {
             InitializeComponent();
         }

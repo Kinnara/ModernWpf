@@ -200,6 +200,60 @@ namespace ModernWpf.Controls
             }
         }
 
+        /// <summary>
+        /// Causes the <see cref="ScrollViewerEx"/> to load a new view into the viewport using the specified offsets and zoom factor.
+        /// </summary>
+        /// <param name="horizontalOffset">A value between 0 and <see cref="ScrollViewer.ScrollableWidth"/> that specifies the distance the content should be scrolled horizontally.</param>
+        /// <param name="verticalOffset">A value between 0 and <see cref="ScrollViewer.ScrollableHeight"/> that specifies the distance the content should be scrolled vertically.</param>
+        /// <param name="zoomFactor">A value between MinZoomFactor and MaxZoomFactor that specifies the required target ZoomFactor.</param>
+        /// <returns><see langword="true"/> if the view is changed; otherwise, <see langword="false"/>.</returns>
+        public bool ChangeView(double? horizontalOffset, double? verticalOffset, float? zoomFactor)
+        {
+            return ChangeView(horizontalOffset, verticalOffset, zoomFactor, false);
+        }
+
+        /// <summary>
+        /// Causes the <see cref="ScrollViewerEx"/> to load a new view into the viewport using the specified offsets and zoom factor, and optionally disables scrolling animation.
+        /// </summary>
+        /// <param name="horizontalOffset">A value between 0 and <see cref="ScrollViewer.ScrollableWidth"/> that specifies the distance the content should be scrolled horizontally.</param>
+        /// <param name="verticalOffset">A value between 0 and <see cref="ScrollViewer.ScrollableHeight"/> that specifies the distance the content should be scrolled vertically.</param>
+        /// <param name="zoomFactor">A value between MinZoomFactor and MaxZoomFactor that specifies the required target ZoomFactor.</param>
+        /// <param name="disableAnimation"><see langword="true"/> to disable zoom/pan animations while changing the view; otherwise, <see langword="false"/>. The default is false.</param>
+        /// <returns><see langword="true"/> if the view is changed; otherwise, <see langword="false"/>.</returns>
+        public bool ChangeView(double? horizontalOffset, double? verticalOffset, float? zoomFactor, bool disableAnimation)
+        {
+            if (disableAnimation)
+            {
+                if (horizontalOffset.HasValue)
+                {
+                    ScrollToHorizontalOffset(horizontalOffset.Value);
+                }
+
+                if (verticalOffset.HasValue)
+                {
+                    ScrollToVerticalOffset(verticalOffset.Value);
+                }
+            }
+            else
+            {
+                if (horizontalOffset.HasValue)
+                {
+                    ScrollToHorizontalOffset(LastHorizontalLocation);
+                    AnimateScroll(horizontalOffset.Value, Orientation.Vertical, 1);
+                    LastHorizontalLocation = horizontalOffset.Value;
+                }
+
+                if (verticalOffset.HasValue)
+                {
+                    ScrollToVerticalOffset(LastVerticalLocation);
+                    AnimateScroll(verticalOffset.Value, Orientation.Vertical, 1);
+                    LastVerticalLocation = verticalOffset.Value;
+                }
+            }
+
+            return true; // TODO
+        }
+
         private void AnimateScroll(double ToValue, Orientation Direction, double Scale)
         {
             if (Direction == Orientation.Vertical)

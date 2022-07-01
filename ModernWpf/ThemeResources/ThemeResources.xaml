@@ -101,6 +101,7 @@
     <sys:Double x:Key="DataGridRowMinHeight">32</sys:Double>
 
     <!--  Resources for CheckBox  -->
+
     <!--  Shared header/content  -->
     <sys:Double x:Key="ExpanderMinHeight">48</sys:Double>
 
@@ -290,6 +291,39 @@
     <!--  Resources for PasswordBox  -->
     <Thickness x:Key="PasswordBoxTopHeaderMargin">0,0,0,8</Thickness>
     <sys:Double x:Key="PasswordBoxIconFontSize">12</sys:Double>
+
+    <!--  Resources for PipsPager  -->
+
+    <!--  Deprecated Resources: might be removed later  -->
+    <sys:Double x:Key="PipsPagerButtonWidth">20</sys:Double>
+    <sys:Double x:Key="PipsPagerButtonHeight">12</sys:Double>
+    <!--  Deprecated Resources: might be removed later  -->
+
+    <sys:Double x:Key="PipsPagerHorizontalOrientationButtonWidth">12</sys:Double>
+    <sys:Double x:Key="PipsPagerHorizontalOrientationButtonHeight">20</sys:Double>
+
+    <sys:Double x:Key="PipsPagerVerticalOrientationButtonWidth">20</sys:Double>
+    <sys:Double x:Key="PipsPagerVerticalOrientationButtonHeight">12</sys:Double>
+
+
+    <Thickness x:Key="PipsPagerButtonBorderThickness">1</Thickness>
+    <Thickness x:Key="PipsPagerNavigationButtonBorderThickness">1</Thickness>
+
+    <sys:String x:Key="PipsPagerSelectedGlyph">&#xE347;</sys:String>
+    <sys:String x:Key="PipsPagerNormalGlyph">&#xE347;</sys:String>
+
+    <sys:String x:Key="PipsPagerPreviousPageButtonGlyph">&#xE2BC;</sys:String>
+    <sys:String x:Key="PipsPagerNextPageButtonGlyph">&#xF260;</sys:String>
+
+    <sys:Double x:Key="PipsPagerNavigationButtonHeight">20</sys:Double>
+    <sys:Double x:Key="PipsPagerNavigationButtonWidth">20</sys:Double>
+
+    <sys:Double x:Key="PipsPagerNavigationButtonFontSize">15</sys:Double>
+
+    <sys:Double x:Key="PipsPagerSelectedGlyphFontSize">6</sys:Double>
+    <sys:Double x:Key="PipsPagerNormalGlyphFontSize">4</sys:Double>
+
+    <sys:Double x:Key="PipsPagerNavigationButtonScalePressed">0.875</sys:Double>
 
     <!--  Resources for Pivot  -->
     <sys:Double x:Key="PivotHeaderItemSelectedPipeMinScale">0.625</sys:Double>

@@ -1718,17 +1718,48 @@
     <m:StaticResource x:Key="NumberBoxPopupSpinButtonBackground" ResourceKey="SystemControlTransparentBrush" />
     <Thickness x:Key="NumberBoxPopupSpinButtonBorderThickness">2</Thickness>
 
-    <!--  Resources for PersonPicture  -->
-    <SolidColorBrush x:Key="PersonPictureForegroundThemeBrush" Color="{m:StaticColor SystemAltHighColor}" />
-    <SolidColorBrush x:Key="PersonPictureEllipseBadgeForegroundThemeBrush" Color="{m:StaticColor SystemBaseHighColor}" />
-    <SolidColorBrush x:Key="PersonPictureEllipseBadgeFillThemeBrush" Color="{m:StaticColor SystemChromeDisabledHighColor}" />
-    <SolidColorBrush x:Key="PersonPictureEllipseBadgeStrokeThemeBrush" Color="{m:StaticColor SystemListMediumColor}" />
-    <SolidColorBrush x:Key="PersonPictureEllipseFillThemeBrush" Color="{m:StaticColor SystemBaseMediumColor}" />
-    <sys:Double x:Key="PersonPictureEllipseBadgeStrokeOpacity">0.8</sys:Double>
-    <sys:Double x:Key="PersonPictureEllipseBadgeImageSourceStrokeOpacity">1.0</sys:Double>
-    <sys:Double x:Key="PersonPictureEllipseStrokeThickness">0</sys:Double>
-    <sys:Double x:Key="PersonPictureEllipseBadgeStrokeThickness">2</sys:Double>
+    <!--  Resources for PipsPager  -->
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundSelected" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundDisabled" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrush" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrushPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrushSelected" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrushDisabled" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForegroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForegroundPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForegroundSelected" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBackgroundPointerOver" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBackgroundPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBackgroundDisabled" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBorderBrush" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBorderBrushPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonBorderBrushDisabled" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="PipsPagerNavigationButtonForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
 
+    <!--  Resources for PersonPicture  -->
+    <StaticResource x:Key="PersonPictureForegroundThemeBrush" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <SolidColorBrush x:Key="PersonPictureEllipseBadgeForegroundThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}"/>
+    <SolidColorBrush x:Key="PersonPictureEllipseBadgeFillThemeBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}"/>
+    <SolidColorBrush x:Key="PersonPictureEllipseBadgeStrokeThemeBrush" Color="{m:ThemeResource SystemColorButtonTextColor}"/>
+    <StaticResource x:Key="PersonPictureEllipseFillThemeBrush" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <StaticResource x:Key="PersonPictureEllipseFillStrokeBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+    <sys:Double x:Key="PersonPictureEllipseBadgeStrokeOpacity">1</sys:Double>
+    <sys:Double x:Key="PersonPictureEllipseBadgeImageSourceStrokeOpacity">1</sys:Double>
+    <sys:Double x:Key="PersonPictureEllipseStrokeThickness">1</sys:Double>
+    <sys:Double x:Key="PersonPictureEllipseBadgeStrokeThickness">2</sys:Double>
+    <Thickness x:Key="PersonPictureBadgeGridMargin">0,-4,-4,0</Thickness>
+    
     <!--  Resources for Pivot  -->
     <m:StaticResource x:Key="PivotBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="PivotHeaderBackground" ResourceKey="SystemControlTransparentBrush" />

@@ -82,7 +82,10 @@
             Subtitle="It's easier than ever to see control samples in both light and dark theme!"
             Target="{Binding ElementName=IsEnable}" />
 
-        <Button Click="TestButtonClick1" Content="Show TeachingTip" />
+        <ui:PipsPager
+            NextButtonVisibility="Visible"
+            NumberOfPages="13"
+            PreviousButtonVisibility="Visible" />
 
         <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />
 

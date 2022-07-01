@@ -29,6 +29,7 @@
         <ResourceDictionary Source="Styles/NavigationBackButton.xaml" />
         <ResourceDictionary Source="Styles/NavigationView.xaml" />
         <ResourceDictionary Source="Styles/PasswordBox.xaml" />
+        <ResourceDictionary Source="Styles/PipsPager.xaml" />
         <ResourceDictionary Source="Styles/Pivot.xaml" />
         <ResourceDictionary Source="Styles/ProgressBar.xaml" />
         <ResourceDictionary Source="Styles/RadioButton.xaml" />

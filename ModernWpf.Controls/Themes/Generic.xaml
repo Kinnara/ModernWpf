@@ -23,6 +23,7 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/NavigationView/NavigationView.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/NumberBox/NumberBox.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/PersonPicture/PersonPicture.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/PipsPager/PipsPager.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ProgressBar/ProgressBar.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ProgressRing/ProgressRing.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/RatingControl/RatingControl.xaml" />
