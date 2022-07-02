@@ -242,6 +242,27 @@ namespace ModernWpf.Controls
                 }
                 return pathIcon;
             }
+            else if (iconSource is AnimatedIconSource animatedIconSource)
+            {
+                AnimatedIcon animatedIcon = new AnimatedIcon();
+                var source = animatedIconSource.Source;
+                if (source != null)
+                {
+                    animatedIcon.Source = source;
+                }
+                var fallbackIconSource = animatedIconSource.FallbackIconSource;
+                if (fallbackIconSource != null)
+                {
+                    animatedIcon.FallbackIconSource = fallbackIconSource;
+                }
+                var newForeground = animatedIconSource.Foreground;
+                if (newForeground != null)
+                {
+                    animatedIcon.Foreground = newForeground;
+                }
+                animatedIcon.FontSize = animatedIconSource.FontSize;
+                return animatedIcon;
+            }
             return null;
         }
 

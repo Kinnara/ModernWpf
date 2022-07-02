@@ -34,7 +34,7 @@ namespace ModernWpf.Controls
         /// Gets or sets a Geometry that specifies the shape to be drawn. In XAML. this can
         /// also be set using a string that describes Move and draw commands syntax.
         /// </summary>
-        /// <returns>A description of the shape to be drawn.</returns>
+        /// <value>A description of the shape to be drawn.</value>
         public Geometry Data
         {
             get => (Geometry)GetValue(DataProperty);

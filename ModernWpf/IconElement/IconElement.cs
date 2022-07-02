@@ -45,9 +45,7 @@ namespace ModernWpf.Controls
         /// <summary>
         /// Gets or sets a brush that describes the foreground color.
         /// </summary>
-        /// <returns>
-        /// The brush that paints the foreground of the control.
-        /// </returns>
+        /// <value>The brush that paints the foreground of the control.</value>
         [Bindable(true), Category("Appearance")]
         public Brush Foreground
         {

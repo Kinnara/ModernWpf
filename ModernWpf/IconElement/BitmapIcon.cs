@@ -38,7 +38,7 @@ namespace ModernWpf.Controls
         /// Gets or sets the Uniform Resource Identifier (URI) of the bitmap to use as the
         /// icon content.
         /// </summary>
-        /// <returns>The Uri of the bitmap to use as the icon content. The default is **null**.</returns>
+        /// <value>The Uri of the bitmap to use as the icon content. The default is <see langword="null"/>.</value>
         public Uri UriSource
         {
             get => (Uri)GetValue(UriSourceProperty);
@@ -67,10 +67,7 @@ namespace ModernWpf.Controls
         /// <summary>
         /// Gets or sets a value that indicates whether the bitmap is shown in a single color.
         /// </summary>
-        /// <returns>
-        /// **true** to show the bitmap in a single color; **false** to show the bitmap in
-        /// full color. The default is **true.**
-        /// </returns>
+        /// <value><see langword="true"/> to show the bitmap in a single color; <see langword="false"/> to show the bitmap in full color. The default is <see langword="true"/>.</value>
         public bool ShowAsMonochrome
         {
             get => (bool)GetValue(ShowAsMonochromeProperty);

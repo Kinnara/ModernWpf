@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/ModernWpf;component/AnimatedVisuals/AnimatedVisualSource.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/Navigation/Frame.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/Navigation/Page.xaml" />
         <ResourceDictionary Source="/ModernWpf;component/Themes/FontIconFallback.xaml" />

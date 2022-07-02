@@ -707,6 +707,7 @@
                                 <ContentPresenter
                                     x:Name="InfoBadgePresenter"
                                     Grid.Column="2"
+                                    Margin="0,0,16,0"
                                     VerticalAlignment="Center"
                                     Content="{TemplateBinding InfoBadge}" />
                             </Grid>
@@ -992,7 +993,32 @@
                                                         <Style TargetType="local:FlyoutPresenter">
                                                             <Setter Property="Padding" Value="{DynamicResource TopNavigationViewOverflowMenuPadding}" />
                                                             <!--  Set negative top margin to make the flyout align exactly with the button  -->
-                                                            <!--<Setter Property="Margin" Value="0,-4,0,0" />-->
+                                                            <Setter Property="Margin" Value="0,-4,0,0" />
+                                                            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+                                                            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+                                                            <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="local:FlyoutPresenter">
+                                                                        <ui:ScrollViewerEx
+                                                                            x:Name="ScrollViewer"
+                                                                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                                                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+                                                                            <Border
+                                                                                Padding="{TemplateBinding Padding}"
+                                                                                Background="{TemplateBinding Background}"
+                                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                                                CornerRadius="{TemplateBinding CornerRadius}">
+                                                                                <ui:ContentPresenterEx
+                                                                                    x:Name="ContentPresenter"
+                                                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                                            </Border>
+                                                                        </ui:ScrollViewerEx>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
                                                         </Style>
                                                     </local:Flyout.FlyoutPresenterStyle>
                                                     <local:ItemsRepeaterScrollHost>

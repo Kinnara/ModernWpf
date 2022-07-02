@@ -114,6 +114,43 @@
                             </Border>
                         </Grid>
                         <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="1,0,0,0"
+                                                KeyTime="{DynamicResource ListViewItemScaleAnimationDuration}"
+                                                Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="0,0,0,1"
+                                                KeyTime="{DynamicResource ListViewItemScaleAnimationDuration}"
+                                                Value="{DynamicResource ListViewItemPillMinScale}" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectionStates">
+                                <VisualState x:Name="Selected">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PillTransform" Storyboard.TargetProperty="ScaleY">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{DynamicResource ListViewItemPillMinScale}" />
+                                            <SplineDoubleKeyFrame
+                                                KeySpline="0,0,0,1"
+                                                KeyTime="{DynamicResource ListViewItemScaleAnimationDuration}"
+                                                Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Unselected" />
+                                <VisualState x:Name="SelectedInactive" />
+                            </VisualStateGroup>
                             <VisualStateGroup x:Name="MultiSelectStates">
                                 <VisualState x:Name="MultiSelectDisabled">
                                     <Storyboard>

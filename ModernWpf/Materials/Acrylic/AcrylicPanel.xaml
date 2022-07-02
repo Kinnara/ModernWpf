@@ -29,7 +29,7 @@
                             <Rectangle x:Name="NoiseLayer" Opacity="{TemplateBinding local:AcrylicElement.NoiseOpacity}">
                                 <Rectangle.Fill>
                                     <ImageBrush
-                                        ImageSource="noise.png"
+                                        ImageSource="NoiseAsset_256X256_PNG.png"
                                         Stretch="None"
                                         TileMode="Tile"
                                         Viewport="0,0,128,128"

@@ -22,6 +22,7 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/MediaPlayerElement/MediaTransportControls.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/NavigationView/NavigationView.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/NumberBox/NumberBox.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/ParallaxView/ParallaxView.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/PersonPicture/PersonPicture.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/PipsPager/PipsPager.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ProgressBar/ProgressBar.xaml" />

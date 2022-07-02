@@ -1,0 +1,77 @@
+﻿<local:ItemsPageBase
+    x:Class="ModernWpf.SampleApp.ControlPages.ParallaxViewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ModernWpf.SampleApp"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="ParallaxView Page"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+    mc:Ignorable="d">
+    <StackPanel>
+        <local:ControlExample
+            x:Name="Example1"
+            Height="750"
+            HeaderText="Parallax on a ListView">
+            <local:ControlExample.Example>
+                <Grid>
+                    <ui:ParallaxView
+                        x:Name="parallaxView"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Source="{Binding ElementName=listView}"
+                        VerticalShift="500">
+                        <Image Source="/Assets/SampleMedia/cliff.jpg" Stretch="UniformToFill" />
+                    </ui:ParallaxView>
+                    <ui:ListView
+                        x:Name="listView"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        Background="#80000000"
+                        ItemsSource="{Binding Items}">
+                        <ui:ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Foreground="{DynamicResource SystemControlForegroundAltHighBrush}" Text="{Binding Title}" />
+                            </DataTemplate>
+                        </ui:ListView.ItemTemplate>
+                        <ui:ListView.Header>
+                            <TextBlock
+                                MaxWidth="280"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="28"
+                                Foreground="White"
+                                Text="Scroll the list to see parallaxing of images"
+                                TextWrapping="Wrap" />
+                        </ui:ListView.Header>
+                    </ui:ListView>
+                </Grid>
+            </local:ControlExample.Example>
+            <local:ControlExample.Xaml>
+                <sys:String xml:space="preserve">
+&lt;Grid&gt;
+    &lt;ParallaxView Source=&quot;{Binding ElementName=listView}&quot; VerticalShift=&quot;500&quot;&gt;
+        &lt;Image Source=&quot;ms-appx:///Assets/SampleMedia/cliff.jpg&quot; /&gt;
+    &lt;/ParallaxView&gt;
+    &lt;ListView x:Name=&quot;listView&quot; ItemsSource=&quot;{Binding Items}&quot;&gt;
+        &lt;ListView.Header&gt;
+            &lt;Grid&gt;
+                &lt;ParallaxView Source=&quot;{Binding listView}&quot; VerticalShift=&quot;100&quot;
+                              VerticalSourceOffsetKind=&quot;Absolute&quot; VerticalSourceStartOffset=&quot;-50&quot;
+                              VerticalSourceEndOffset=&quot;250&quot;&gt;
+                    &lt;Image Source=&quot;ms-appx:///Assets/SampleMedia/cliff.jpg&quot; /&gt;
+                &lt;/ParallaxView&gt;
+                &lt;TextBlock Text=&quot;Scroll the list to see parallaxing of images&quot; /&gt;
+            &lt;/Grid&gt;
+        &lt;/ListView.Header&gt;
+    &lt;/ListView&gt;
+&lt;/Grid&gt;
+                </sys:String>
+            </local:ControlExample.Xaml>
+        </local:ControlExample>
+    </StackPanel>
+</local:ItemsPageBase>

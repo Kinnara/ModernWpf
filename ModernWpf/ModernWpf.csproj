@@ -61,7 +61,7 @@
   <ItemGroup>
     <None Remove="Fonts\FluentSystemIcons-Filled.ttf" />
     <None Remove="Fonts\FluentSystemIcons-Regular.ttf" />
-    <None Remove="Materials\Acrylic\noise.png" />
+    <None Remove="Materials\Acrylic\NoiseAsset_256X256_PNG.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -75,7 +75,7 @@
   <ItemGroup>
     <Resource Include="Fonts\FluentSystemIcons-Filled.ttf" />
     <Resource Include="Fonts\FluentSystemIcons-Regular.ttf" />
-    <Resource Include="Materials\Acrylic\noise.png" />
+    <Resource Include="Materials\Acrylic\NoiseAsset_256X256_PNG.png" />
   </ItemGroup>
 
   <ItemGroup>
