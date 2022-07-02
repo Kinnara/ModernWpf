@@ -5,12 +5,12 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:ui="http://schemas.modernwpf.com/2019">
 
-    <Style TargetType="local:PersonPicture">
+    <Style x:Key="DefaultPersonPictureStyle" TargetType="local:PersonPicture">
         <Setter Property="Foreground" Value="{DynamicResource PersonPictureForegroundThemeBrush}" />
-        <Setter Property="Width" Value="100" />
-        <Setter Property="Height" Value="100" />
+        <Setter Property="Width" Value="96" />
+        <Setter Property="Height" Value="96" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontWeight" Value="350" />
+        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
@@ -25,7 +25,7 @@
                             Width="{TemplateBinding Width}"
                             Height="{TemplateBinding Height}"
                             Fill="{DynamicResource PersonPictureEllipseFillThemeBrush}"
-                            Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                            Stroke="{DynamicResource PersonPictureEllipseFillStrokeBrush}"
                             StrokeThickness="{DynamicResource PersonPictureEllipseStrokeThickness}" />
 
                         <TextBlock
@@ -33,14 +33,10 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontFamily="{TemplateBinding FontFamily}"
-                            FontSize="36"
+                            FontSize="40"
                             FontWeight="{TemplateBinding FontWeight}"
                             Foreground="{TemplateBinding Foreground}"
-                            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ActualInitials}">
-                            <TextBlock.RenderTransform>
-                                <TranslateTransform Y="-2" />
-                            </TextBlock.RenderTransform>
-                        </TextBlock>
+                            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ActualInitials}" />
 
                         <ui:FontIconFallback
                             x:Name="PlaceholderIcon"
@@ -48,11 +44,7 @@
                             VerticalAlignment="Center"
                             FontSize="{Binding FontSize, ElementName=InitialsTextBlock}"
                             Foreground="{TemplateBinding Foreground}"
-                            Visibility="Collapsed">
-                            <ui:FontIconFallback.RenderTransform>
-                                <TranslateTransform Y="-2" />
-                            </ui:FontIconFallback.RenderTransform>
-                        </ui:FontIconFallback>
+                            Visibility="Collapsed" />
 
                         <Ellipse
                             x:Name="PersonPictureEllipse"
@@ -163,4 +155,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultPersonPictureStyle}" TargetType="local:PersonPicture" />
+
 </ResourceDictionary>
