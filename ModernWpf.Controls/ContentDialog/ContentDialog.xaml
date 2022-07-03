@@ -6,7 +6,6 @@
     xmlns:ui="http://schemas.modernwpf.com/2019">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary>
-            <GridLength x:Key="OneStarGridLength">*</GridLength>
             <ui:CornerRadiusFilterConverter x:Key="BottomCornerRadiusDoubleValueConverter" Filter="Bottom" />
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
@@ -285,7 +284,11 @@
                                             <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{DynamicResource ContentDialogButtonSpacing}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SecondaryColumn" Storyboard.TargetProperty="Width">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{StaticResource OneStarGridLength}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <GridLength>*</GridLength>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
                                         </ObjectAnimationUsingKeyFrames>
                                         <Int32AnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="(Grid.Column)">
                                             <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="2" />

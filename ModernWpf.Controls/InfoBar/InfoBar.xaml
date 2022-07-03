@@ -71,14 +71,14 @@
                                         Text="{DynamicResource InfoBarInformationalIconGlyph}" />
                                 </Grid>
 
-                                <Viewbox
+                                <ContentControl
                                     x:Name="UserIconBox"
                                     Grid.Column="0"
                                     MaxWidth="{DynamicResource InfoBarIconFontSize}"
                                     MaxHeight="{DynamicResource InfoBarIconFontSize}"
                                     Margin="{DynamicResource InfoBarIconMargin}"
                                     VerticalAlignment="Top"
-                                    ui:DecoratorHelper.Child="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}"
+                                    Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}"
                                     Visibility="Collapsed" />
 
                                 <primitives:InfoBarPanel
@@ -139,16 +139,17 @@
                                     Command="{TemplateBinding CloseButtonCommand}"
                                     CommandParameter="{TemplateBinding CloseButtonCommandParameter}"
                                     Style="{TemplateBinding CloseButtonStyle}">
-                                    <Viewbox
+                                    <ContentControl
                                         Width="{DynamicResource InfoBarCloseButtonGlyphSize}"
                                         Height="{DynamicResource InfoBarCloseButtonGlyphSize}"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center">
                                         <ui:FontIcon
                                             FontFamily="{DynamicResource FluentSystemIcons}"
+                                            FontSize="{DynamicResource InfoBarCloseButtonGlyphSize}"
                                             Foreground="{DynamicResource InfoBarCloseButtonForeground}"
                                             Glyph="{DynamicResource InfoBarCloseButtonGlyph}" />
-                                    </Viewbox>
+                                    </ContentControl>
                                 </Button>
                             </Grid>
                         </Border>

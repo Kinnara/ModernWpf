@@ -12,7 +12,7 @@ using System.Windows.Media;
 
 namespace ModernWpf.Controls.Primitives
 {
-    internal static class AcrylicHelper
+    public static class AcrylicHelper
     {
         /// <summary>
         /// Checks if the current <see cref="Windows"/> supports Aero.
@@ -45,7 +45,7 @@ namespace ModernWpf.Controls.Primitives
         /// </summary>
         /// <param name="window">Window to apply effect.</param>
         /// <param name="force">Skip the compatibility check.</param>
-        public static bool Apply(this Window window, bool force = false)
+        public static bool Apply(Window window, bool force = false)
         {
             if (!force && (!IsSupported())) { return false; }
 
@@ -71,7 +71,7 @@ namespace ModernWpf.Controls.Primitives
         /// <param name="handle">Pointer to the window handle.</param>
         /// <param name="color">The Gradient Color of Acrylic.</param>
         /// <param name="force">Skip the compatibility check.</param>
-        public static bool Apply(this IntPtr handle, Color color, bool force = false)
+        public static bool Apply(IntPtr handle, Color color, bool force = false)
         {
             if (!force && (!IsSupported())) { return false; }
 
@@ -123,7 +123,7 @@ namespace ModernWpf.Controls.Primitives
             Marshal.FreeHGlobal(accentPtr);
         }
 
-        private static bool TryApplyAero(this IntPtr handle)
+        private static bool TryApplyAero(IntPtr handle)
         {
             User32.ACCENT_POLICY accentPolicy = new User32.ACCENT_POLICY
             {
@@ -149,7 +149,7 @@ namespace ModernWpf.Controls.Primitives
             return true;
         }
 
-        private static bool TryApplyAcrylic(this IntPtr handle, Color backcolor)
+        private static bool TryApplyAcrylic(IntPtr handle, Color backcolor)
         {
             User32.ACCENT_POLICY accentPolicy = new User32.ACCENT_POLICY
             {

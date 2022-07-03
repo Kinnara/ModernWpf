@@ -21,7 +21,7 @@ namespace ModernWpf.Controls.Primitives
         Tabbed = 4
     }
 
-    internal static class MicaHelper
+    public static class MicaHelper
     {
         /// <summary>
         /// Checks if the current <see cref="Windows"/> supports selected <see cref="BackgroundType"/>.
@@ -48,7 +48,7 @@ namespace ModernWpf.Controls.Primitives
         /// <param name="window">Window to apply effect.</param>
         /// <param name="type">Background type.</param>
         /// <param name="force">Skip the compatibility check.</param>
-        public static bool Apply(this Window window, BackdropType type, bool force = false)
+        public static bool Apply(Window window, BackdropType type, bool force = false)
         {
             if (!force && (!IsSupported(type))) { return false; }
 
@@ -67,7 +67,7 @@ namespace ModernWpf.Controls.Primitives
         /// <param name="handle">Pointer to the window handle.</param>
         /// <param name="type">Background type.</param>
         /// <param name="force">Skip the compatibility check.</param>
-        public static bool Apply(this IntPtr handle, BackdropType type, bool force = false)
+        public static bool Apply(IntPtr handle, BackdropType type, bool force = false)
         {
             if (!force && (!IsSupported(type))) { return false; }
 
@@ -134,7 +134,7 @@ namespace ModernWpf.Controls.Primitives
         /// Tries to inform the operating system that this <c>hWnd</c> uses dark mode.
         /// </summary>
         /// <param name="handle">Pointer to the window handle.</param>
-        public static void ApplyDarkMode(this IntPtr handle)
+        public static void ApplyDarkMode(IntPtr handle)
         {
             if (handle == IntPtr.Zero) return;
 
@@ -168,7 +168,7 @@ namespace ModernWpf.Controls.Primitives
         /// Tries to clear the dark theme usage information.
         /// </summary>
         /// <param name="handle">Pointer to the window handle.</param>
-        public static void RemoveDarkMode(this IntPtr handle)
+        public static void RemoveDarkMode(IntPtr handle)
         {
             if (handle == IntPtr.Zero) { return; }
 
@@ -203,7 +203,7 @@ namespace ModernWpf.Controls.Primitives
         /// </summary>
         /// <param name="handle">Pointer to the window handle.</param>
         /// <returns><see langowrd="false"/> is problem occurs.</returns>
-        private static bool RemoveTitleBar(this IntPtr handle)
+        private static bool RemoveTitleBar(IntPtr handle)
         {
             // Hide default TitleBar
             // https://stackoverflow.com/questions/743906/how-to-hide-close-button-in-wpf-window
@@ -222,7 +222,7 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private static bool TryApplyNone(this IntPtr handle)
+        private static bool TryApplyNone(IntPtr handle)
         {
             if (OSVersionHelper.OSVersion >= new Version(10, 0, 22523))
             {
@@ -241,7 +241,7 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private static bool TryApplyTabbed(this IntPtr handle)
+        private static bool TryApplyTabbed(IntPtr handle)
         {
             int backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_TABBEDWINDOW;
 
@@ -252,7 +252,7 @@ namespace ModernWpf.Controls.Primitives
             return true;
         }
 
-        private static bool TryApplyMica(this IntPtr handle)
+        private static bool TryApplyMica(IntPtr handle)
         {
             int backdropPvAttribute;
 
@@ -278,78 +278,15 @@ namespace ModernWpf.Controls.Primitives
             return true;
         }
 
-        private static bool TryApplyAcrylic(this IntPtr handle)
+        private static bool TryApplyAcrylic(IntPtr handle)
         {
-            if (OSVersionHelper.OSVersion >= new Version(10, 0, 22523))
-            {
-                int backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_TRANSIENTWINDOW;
+            int backdropPvAttribute = (int)DWMAPI.DWMSBT.DWMSBT_TRANSIENTWINDOW;
 
-                DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
-                    ref backdropPvAttribute,
-                    Marshal.SizeOf(typeof(int)));
+            DWMAPI.DwmSetWindowAttribute(handle, DWMAPI.DWMWINDOWATTRIBUTE.DWMWA_SYSTEMBACKDROP_TYPE,
+                ref backdropPvAttribute,
+                Marshal.SizeOf(typeof(int)));
 
-                return true;
-            }
-
-            if (OSVersionHelper.OSVersion >= new Version(10, 0, 17763))
-            {
-                User32.ACCENT_POLICY accentPolicy = new User32.ACCENT_POLICY
-                {
-                    AccentState = User32.ACCENT_STATE.ACCENT_ENABLE_ACRYLICBLURBEHIND,
-                    GradientColor = (0 << 24) | (0x990000 & 0xFFFFFF)
-                };
-
-                int accentStructSize = Marshal.SizeOf(accentPolicy);
-
-                IntPtr accentPtr = Marshal.AllocHGlobal(accentStructSize);
-                Marshal.StructureToPtr(accentPolicy, accentPtr, false);
-
-                User32.WINCOMPATTRDATA data = new User32.WINCOMPATTRDATA
-                {
-                    Attribute = User32.WINCOMPATTR.WCA_ACCENT_POLICY,
-                    SizeOfData = accentStructSize,
-                    Data = accentPtr
-                };
-
-                User32.SetWindowCompositionAttribute(handle, ref data);
-
-                Marshal.FreeHGlobal(accentPtr);
-
-                return true;
-            }
-
-            if (OSVersionHelper.OSVersion >= new Version(10, 0))
-            {
-                User32.ACCENT_POLICY accentPolicy = new User32.ACCENT_POLICY
-                {
-                    AccentState = User32.ACCENT_STATE.ACCENT_ENABLE_BLURBEHIND,
-                };
-
-                int accentStructSize = Marshal.SizeOf(accentPolicy);
-
-                IntPtr accentPtr = Marshal.AllocHGlobal(accentStructSize);
-                Marshal.StructureToPtr(accentPolicy, accentPtr, false);
-
-                User32.WINCOMPATTRDATA data = new User32.WINCOMPATTRDATA
-                {
-                    Attribute = User32.WINCOMPATTR.WCA_ACCENT_POLICY,
-                    SizeOfData = accentStructSize,
-                    Data = accentPtr
-                };
-
-                User32.SetWindowCompositionAttribute(handle, ref data);
-
-                Marshal.FreeHGlobal(accentPtr);
-
-                return true;
-            }
-
-            if (OSVersionHelper.OSVersion >= new Version(6, 0))
-            {
-                return true;
-            }
-
-            return false;
+            return true;
         }
     }
 }

@@ -59,7 +59,7 @@
                                         Value="1.0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="FromClosedToOpenOverlayRight">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
@@ -98,7 +98,7 @@
                                         Value="1.0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="FromClosedCompactLeftToOpenCompactOverlayLeft">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.CompactPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
@@ -133,7 +133,7 @@
                                         Value="1.0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="FromClosedCompactRightToOpenCompactOverlayRight">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0">
@@ -178,7 +178,7 @@
                                         Value="1.0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="FromOpenOverlayLeftToClosed">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
@@ -209,7 +209,7 @@
                                         Value="0.0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="FromOpenOverlayRightToClosed">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
@@ -246,7 +246,7 @@
                                         Value="0.0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="FromOpenCompactOverlayLeftToClosedCompactLeft">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.CompactPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
@@ -281,7 +281,7 @@
                                         Value="0.0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="FromOpenCompactOverlayRightToClosedCompactRight">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0">
@@ -326,7 +326,7 @@
                                         Value="0.0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="FromOpenInlineLeftToClosed">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="{StaticResource SplitViewPaneAnimationCloseDuration}" Value="{x:Static Visibility.Collapsed}" />
@@ -363,7 +363,7 @@
                                         Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="FromClosedToOpenInlineLeft">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
@@ -405,7 +405,7 @@
                                         Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="FromClosedCompactLeftToOpenInlineLeft">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
@@ -440,7 +440,7 @@
                                         Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="FromOpenInlineLeftToClosedCompactLeft">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.CompactPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
@@ -472,7 +472,7 @@
                                         Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.NegativeOpenPaneLengthMinusCompactLength}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="ClosedCompactLeft">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.CompactPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
@@ -490,7 +490,7 @@
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.NegativeOpenPaneLengthMinusCompactLength}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="ClosedCompactRight">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0">
@@ -518,7 +518,7 @@
                                     <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLengthMinusCompactLength}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="OpenInlineRight">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0">
@@ -549,7 +549,7 @@
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
                                 </ObjectAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="OpenCompactOverlayLeft">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.CompactPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
@@ -570,7 +570,7 @@
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
                                 </ObjectAnimationUsingKeyFrames>
                             </Storyboard>
-                            
+
                             <Storyboard x:Key="OpenCompactOverlayRight">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0">

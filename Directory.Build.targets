@@ -12,6 +12,10 @@
     <PackageOutputPath>$(MSBuildThisFileDirectory)localpackages</PackageOutputPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '4.6.1')) or
                             '$(TargetFrameworkIdentifier)' == '.NETCoreApp'">
     <DefineConstants>$(DefineConstants);NET461_OR_NEWER</DefineConstants>

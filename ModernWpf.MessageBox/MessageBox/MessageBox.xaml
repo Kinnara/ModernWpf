@@ -1,0 +1,278 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:ui="http://schemas.modernwpf.com/2019">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary>
+            <ui:CornerRadiusFilterConverter x:Key="BottomCornerRadiusDoubleValueConverter" Filter="Bottom" />
+        </ResourceDictionary>
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style TargetType="local:MessageBox">
+        <Setter Property="Foreground" Value="{DynamicResource ContentDialogForeground}" />
+        <Setter Property="Background" Value="{DynamicResource ContentDialogBackground}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ContentDialogBorderWidth}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ContentDialogBorderBrush}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+        <Setter Property="OKButtonStyle" Value="{DynamicResource DefaultButtonStyle}" />
+        <Setter Property="YesButtonStyle" Value="{DynamicResource DefaultButtonStyle}" />
+        <Setter Property="NoButtonStyle" Value="{DynamicResource DefaultButtonStyle}" />
+        <Setter Property="CancelButtonStyle" Value="{DynamicResource DefaultButtonStyle}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="WindowChrome.WindowChrome" Value="{DynamicResource AeroWindowChrome}" />
+        <Setter Property="ui:ThemeManager.IsThemeAware" Value="True" />
+        <Setter Property="ResizeMode" Value="NoResize" />
+        <Setter Property="SizeToContent" Value="WidthAndHeight" />
+        <Setter Property="WindowStyle" Value="None" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:MessageBox">
+                    <Border x:Name="Container">
+                        <Grid x:Name="LayoutRoot" SnapsToDevicePixels="True">
+                            <Border
+                                x:Name="BackgroundElement"
+                                MinWidth="{DynamicResource ContentDialogMinWidth}"
+                                MinHeight="{DynamicResource ContentDialogMinHeight}"
+                                MaxWidth="{DynamicResource ContentDialogMaxWidth}"
+                                MaxHeight="{DynamicResource ContentDialogMaxHeight}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                FlowDirection="{TemplateBinding FlowDirection}"
+                                RenderTransformOrigin="0.5,0.5">
+                                <Border.RenderTransform>
+                                    <ScaleTransform x:Name="ScaleTransform" />
+                                </Border.RenderTransform>
+                                <Border x:Name="DialogSpace" CornerRadius="{DynamicResource OverlayCornerRadius}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <ui:ScrollViewerEx
+                                            x:Name="ContentScrollViewer"
+                                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                            IsTabStop="False"
+                                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+                                            <Border
+                                                Padding="{DynamicResource ContentDialogPadding}"
+                                                Background="{DynamicResource ContentDialogTopOverlay}"
+                                                BorderBrush="{DynamicResource ContentDialogSeparatorBorderBrush}"
+                                                BorderThickness="{DynamicResource ContentDialogSeparatorThickness}">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="*" />
+                                                    </Grid.RowDefinitions>
+                                                    <ContentControl
+                                                        x:Name="Title"
+                                                        Margin="{DynamicResource ContentDialogTitleMargin}"
+                                                        HorizontalAlignment="Left"
+                                                        VerticalAlignment="Top"
+                                                        Content="{TemplateBinding Caption}"
+                                                        ContentTemplate="{TemplateBinding CaptionTemplate}"
+                                                        FontFamily="{DynamicResource ContentControlThemeFontFamily}"
+                                                        FontSize="20"
+                                                        FontWeight="SemiBold"
+                                                        Foreground="{TemplateBinding Foreground}"
+                                                        IsTabStop="False"
+                                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                        Visibility="Collapsed">
+                                                        <ContentControl.Template>
+                                                            <ControlTemplate TargetType="ContentControl">
+                                                                <ui:ContentPresenterEx
+                                                                    Margin="{TemplateBinding Padding}"
+                                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                    Content="{TemplateBinding Content}"
+                                                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                    TextWrapping="Wrap" />
+                                                            </ControlTemplate>
+                                                        </ContentControl.Template>
+                                                    </ContentControl>
+                                                    <Grid x:Name="MessagePanel" Grid.Row="1">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <ContentControl
+                                                            x:Name="UserIconBox"
+                                                            Margin="0,0,16,0"
+                                                            VerticalAlignment="Center"
+                                                            Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}"
+                                                            IsTabStop="False"
+                                                            Visibility="Collapsed" />
+                                                        <ui:ContentPresenterEx
+                                                            Grid.Column="1"
+                                                            VerticalAlignment="Center"
+                                                            FontFamily="{DynamicResource ContentControlThemeFontFamily}"
+                                                            FontSize="{DynamicResource ControlContentThemeFontSize}"
+                                                            Foreground="{TemplateBinding Foreground}"
+                                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                            TextWrapping="Wrap" />
+                                                    </Grid>
+                                                </Grid>
+                                            </Border>
+                                        </ui:ScrollViewerEx>
+                                        <Border
+                                            x:Name="CommandSpace"
+                                            Grid.Row="1"
+                                            Padding="{DynamicResource ContentDialogPadding}"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Bottom"
+                                            Background="{TemplateBinding Background}"
+                                            CornerRadius="{Binding CornerRadius, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource BottomCornerRadiusDoubleValueConverter}}">
+                                            <Grid KeyboardNavigation.DirectionalNavigation="Contained">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition x:Name="PrimaryColumn" Width="*" />
+                                                    <ColumnDefinition x:Name="FirstSpacer" Width="0" />
+                                                    <ColumnDefinition x:Name="SecondaryColumn" Width="0" />
+                                                    <ColumnDefinition x:Name="SecondSpacer" Width="{DynamicResource ContentDialogButtonSpacing}" />
+                                                    <ColumnDefinition x:Name="CloseColumn" Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <Button
+                                                    x:Name="OKButton"
+                                                    HorizontalAlignment="Stretch"
+                                                    Content="{Binding TemplateSettings.OKButtonText, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                                    Style="{TemplateBinding OKButtonStyle}" />
+                                                <Button
+                                                    x:Name="YesButton"
+                                                    HorizontalAlignment="Stretch"
+                                                    Content="{Binding TemplateSettings.YesButtonText, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                                    Style="{TemplateBinding YesButtonStyle}" />
+                                                <Button
+                                                    x:Name="NoButton"
+                                                    HorizontalAlignment="Stretch"
+                                                    Content="{Binding TemplateSettings.NoButtonText, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                                    Style="{TemplateBinding NoButtonStyle}" />
+                                                <Button
+                                                    x:Name="CancelButton"
+                                                    Grid.Column="4"
+                                                    HorizontalAlignment="Stretch"
+                                                    Content="{Binding TemplateSettings.CancelButtonText, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                                    Style="{TemplateBinding CancelButtonStyle}" />
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </Border>
+                        </Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ButtonsVisibilityStates">
+                                <VisualState x:Name="YesNoCancelVisible">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FirstSpacer" Storyboard.TargetProperty="Width">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{DynamicResource ContentDialogButtonSpacing}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SecondaryColumn" Storyboard.TargetProperty="Width">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <GridLength>*</GridLength>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="NoButton" Storyboard.TargetProperty="(Grid.Column)">
+                                            <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="2" />
+                                        </Int32AnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OKButton" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="OKVisible">
+                                    <Storyboard>
+                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="OKButton" Storyboard.TargetProperty="(Grid.Column)">
+                                            <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="4" />
+                                        </Int32AnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="YesButton" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NoButton" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CancelButton" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="OKCancelVisible">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="YesButton" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NoButton" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="YesNoVisible">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OKButton" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CancelButton" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="DefaultButtonStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="DefaultButtonStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="OKAsDefaultButton" />
+                                <VisualState x:Name="YesAsDefaultButton" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="TitleVisibleStates">
+                                <VisualState x:Name="TitleVisible">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Title" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="TitleCollapsed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MessagePanel" Storyboard.TargetProperty="VerticalAlignment">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static VerticalAlignment.Center}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="IconVisibleStates">
+                                <VisualState x:Name="IconVisible">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UserIconBox" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="IconCollapsed" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <!--  OKAsDefaultButton  -->
+                        <Trigger SourceName="DefaultButtonStatesListener" Property="CurrentStateName" Value="OKAsDefaultButton">
+                            <Setter TargetName="OKButton" Property="Style" Value="{DynamicResource AccentButtonStyle}" />
+                        </Trigger>
+                        <!--  YesAsDefaultButton  -->
+                        <Trigger SourceName="DefaultButtonStatesListener" Property="CurrentStateName" Value="YesAsDefaultButton">
+                            <Setter TargetName="YesButton" Property="Style" Value="{DynamicResource AccentButtonStyle}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

@@ -55,7 +55,7 @@
             <Button Click="Button_Click" Content="Test" />
         </ui:SimpleStackPanel>
 
-        <!--<Slider
+        <Slider
             x:Name="Value"
             Maximum="100"
             Minimum="-1" />
@@ -85,12 +85,12 @@
         <ui:PipsPager
             NextButtonVisibility="Visible"
             NumberOfPages="13"
-            PreviousButtonVisibility="Visible" />-->
+            PreviousButtonVisibility="Visible" />
 
 
         <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />-->
 
-        <ListView
+        <!--<ListView
             x:Name="ListView"
             IsEnabled="{Binding IsOn, ElementName=IsEnable}"
             SelectionMode="Multiple">
@@ -99,7 +99,7 @@
             <sys:String>Test</sys:String>
             <sys:String>Test</sys:String>
             <sys:String>Test</sys:String>
-        </ListView>
+        </ListView>-->
 
     </StackPanel>
 </Window>

@@ -1,0 +1,5 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/ModernWpf.MessageBox;component/MessageBox/MessageBox.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

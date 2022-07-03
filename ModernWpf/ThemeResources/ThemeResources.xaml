@@ -157,17 +157,17 @@
 
     <Thickness x:Key="InfoBarContentRootPadding">16,0,0,0</Thickness>
 
-    <Thickness x:Key="InfoBarIconMargin">0,14,14,14</Thickness>
+    <Thickness x:Key="InfoBarIconMargin">0,16,14,16</Thickness>
     <sys:Double x:Key="InfoBarIconFontSize">16</sys:Double>
 
     <Thickness x:Key="InfoBarPanelMargin">0,0,16,0</Thickness>
     <Thickness x:Key="InfoBarPanelHorizontalOrientationPadding">0,0,0,0</Thickness>
     <Thickness x:Key="InfoBarPanelVerticalOrientationPadding">0,14,0,18</Thickness>
 
-    <Thickness x:Key="InfoBarTitleHorizontalOrientationMargin">0,14,0,0</Thickness>
-    <Thickness x:Key="InfoBarTitleVerticalOrientationMargin">0,14,0,0</Thickness>
+    <Thickness x:Key="InfoBarTitleHorizontalOrientationMargin">0,16,0,0</Thickness>
+    <Thickness x:Key="InfoBarTitleVerticalOrientationMargin">0,16,0,0</Thickness>
 
-    <Thickness x:Key="InfoBarMessageHorizontalOrientationMargin">12,14,0,0</Thickness>
+    <Thickness x:Key="InfoBarMessageHorizontalOrientationMargin">12,16,0,0</Thickness>
     <Thickness x:Key="InfoBarMessageVerticalOrientationMargin">0,4,0,0</Thickness>
 
     <Thickness x:Key="InfoBarActionHorizontalOrientationMargin">16,8,0,0</Thickness>
