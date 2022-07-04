@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Ported from https://github.com/MahApps/MahApps.Metro/blob/develop/src/MahApps.Metro/Controls/TimePicker/TimePickerBase.cs
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -286,7 +288,7 @@ namespace ModernWpf.Controls
         /// </summary>
         /// <remarks>
         /// If this value is set to false then <see cref="Orientation" /> is set to
-        /// <see cref="System.Windows.Controls.Orientation.Vertical" />
+        /// <see cref="Orientation.Vertical" />
         /// </remarks>
         /// <returns>
         /// true if the clock is visible; otherwise, false. The default value is true.

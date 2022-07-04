@@ -115,7 +115,7 @@
                     Margin="0,0,0,11"
                     Style="{StaticResource BaseTextBlockStyle}"
                     Text="Time picker" />
-                <ui:SimpleTimePicker HorizontalAlignment="Stretch" Header="Label title" />
+                <ui:TimePicker HorizontalAlignment="Stretch" Header="Label title" />
                 <Calendar Margin="0,31,0,0" />
             </sc:NonClippingStackPanel>
 

@@ -15,18 +15,22 @@
         <local:ControlExample x:Name="Example1" HeaderText="PipsPager integrated with a FlipView">
             <local:ControlExample.Example>
                 <StackPanel>
-                    <!--<FlipView x:Name="Gallery" MaxWidth="400" Height="270" ItemsSource="{Binding Pictures}">
-                        <FlipView.ItemTemplate>
-                            <DataTemplate x:DataType="x:String">
-                                <Image Source="{Binding Mode=OneWay}"/>
+                    <ui:FlipView
+                        x:Name="Gallery"
+                        Height="270"
+                        MaxWidth="400"
+                        ItemsSource="{Binding}">
+                        <ui:FlipView.ItemTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Mode=OneWay}" />
                             </DataTemplate>
-                        </FlipView.ItemTemplate>
-                    </FlipView>-->
+                        </ui:FlipView.ItemTemplate>
+                    </ui:FlipView>
                     <ui:PipsPager
                         x:Name="FlipViewPipsPager"
                         Margin="0,12,0,0"
                         HorizontalAlignment="Center"
-                        NumberOfPages="{Binding Count, ElementName=Pictures}"
+                        NumberOfPages="{Binding Count}"
                         SelectedPageIndex="{Binding SelectedIndex, ElementName=Gallery, Mode=TwoWay}" />
                 </StackPanel>
             </local:ControlExample.Example>

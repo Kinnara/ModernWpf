@@ -2,50 +2,34 @@
     x:Class="MahAppsSample.ControlPages.FlipViewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:MahAppsSample.ControlPages"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sc="clr-namespace:SamplesCommon;assembly=SamplesCommon"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     mc:Ignorable="d">
 
     <ScrollViewer>
         <ui:SimpleStackPanel Style="{StaticResource ControlPageContentPanelStyle}">
-            <sc:ControlExample
-                x:Name="Example1"
-                HeaderText="A simple FlipView with items declared inline.">
+            <sc:ControlExample x:Name="Example1" HeaderText="A simple FlipView with items declared inline.">
                 <sc:ControlExample.Example>
-                    <mah:FlipView
+                    <ui:FlipView
                         x:Name="FlipView1"
-                        MaxWidth="400"
                         Height="270"
+                        MaxWidth="400"
                         HorizontalAlignment="Left">
-                        <Image
-                            Source="/Assets/SampleMedia/cliff.jpg"
-                            AutomationProperties.Name="Cliff" />
-                        <Image
-                            Source="/Assets/SampleMedia/grapes.jpg"
-                            AutomationProperties.Name="Grapes" />
-                        <Image
-                            Source="/Assets/SampleMedia/rainier.jpg"
-                            AutomationProperties.Name="Rainier" />
-                        <Image
-                            Source="/Assets/SampleMedia/sunset.jpg"
-                            AutomationProperties.Name="Sunset" />
-                        <Image
-                            Source="/Assets/SampleMedia/valley.jpg"
-                            AutomationProperties.Name="Valley" />
-                    </mah:FlipView>
+                        <Image AutomationProperties.Name="Cliff" Source="/Assets/SampleMedia/cliff.jpg" />
+                        <Image AutomationProperties.Name="Grapes" Source="/Assets/SampleMedia/grapes.jpg" />
+                        <Image AutomationProperties.Name="Rainier" Source="/Assets/SampleMedia/rainier.jpg" />
+                        <Image AutomationProperties.Name="Sunset" Source="/Assets/SampleMedia/sunset.jpg" />
+                        <Image AutomationProperties.Name="Valley" Source="/Assets/SampleMedia/valley.jpg" />
+                    </ui:FlipView>
                 </sc:ControlExample.Example>
                 <sc:ControlExample.Options>
                     <ui:SimpleStackPanel Style="{StaticResource OptionsPanelStyle}">
-                        <CheckBox
-                            Content="CircularNavigation"
-                            IsChecked="{Binding ElementName=FlipView1, Path=CircularNavigation}" />
-                        <CheckBox
-                            Content="IsNavigationEnabled"
-                            IsChecked="{Binding ElementName=FlipView1, Path=IsNavigationEnabled}" />
+                        <CheckBox Content="CircularNavigation" IsChecked="{Binding ElementName=FlipView1, Path=CircularNavigation}" />
+                        <CheckBox Content="IsNavigationEnabled" IsChecked="{Binding ElementName=FlipView1, Path=IsNavigationEnabled}" />
                         <ui:RadioButtons
                             Header="Orientation"
                             ItemsSource="{Binding Source={x:Type Orientation}, Converter={StaticResource EnumValuesConverter}}"
@@ -54,17 +38,15 @@
                 </sc:ControlExample.Options>
             </sc:ControlExample>
 
-            <sc:ControlExample
-                x:Name="Example2"
-                HeaderText="A FlipView showing bound data with a data template.">
+            <sc:ControlExample x:Name="Example2" HeaderText="A FlipView showing bound data with a data template.">
                 <sc:ControlExample.Example>
-                    <mah:FlipView
+                    <ui:FlipView
                         x:Name="FlipView2"
                         Width="400"
                         Height="180"
                         BorderBrush="Black"
                         BorderThickness="1">
-                        <mah:FlipView.ItemTemplate>
+                        <ui:FlipView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
                                     <Grid.RowDefinitions>
@@ -74,23 +56,23 @@
                                     <Rectangle
                                         Width="36"
                                         Height="36"
-                                        Fill="{Binding}"
-                                        VerticalAlignment="Center" />
+                                        VerticalAlignment="Center"
+                                        Fill="{Binding}" />
                                     <Border
-                                        Background="#A5FFFFFF"
+                                        Grid.Row="1"
                                         Height="60"
-                                        Grid.Row="1">
+                                        Background="#A5FFFFFF">
                                         <TextBlock
-                                            Text="{Binding}"
-                                            Foreground="Black"
                                             Padding="12,12"
+                                            HorizontalAlignment="Center"
+                                            Foreground="Black"
                                             Style="{StaticResource TitleTextBlockStyle}"
-                                            HorizontalAlignment="Center" />
+                                            Text="{Binding}" />
                                     </Border>
                                 </Grid>
                             </DataTemplate>
-                        </mah:FlipView.ItemTemplate>
-                    </mah:FlipView>
+                        </ui:FlipView.ItemTemplate>
+                    </ui:FlipView>
                 </sc:ControlExample.Example>
             </sc:ControlExample>
         </ui:SimpleStackPanel>

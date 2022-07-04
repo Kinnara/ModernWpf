@@ -11,6 +11,7 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/CommandBar.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBarFlyout/CommandBarFlyout.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/DropDownButton/DropDownButton.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/FlipView/FlipView.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/Flyout/FlyoutPresenter.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/HyperlinkButton/HyperlinkButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/InfoBadge/InfoBadge.xaml" />
@@ -35,6 +36,7 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/TeachingTip/TeachingTip.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/TimePicker/TimePicker.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ToggleSwitch/ToggleSwitch.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/TransitioningContentControl/TransitioningContentControl.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/TwoPaneView/TwoPaneView.xaml" />
     </ResourceDictionary.MergedDictionaries>
 

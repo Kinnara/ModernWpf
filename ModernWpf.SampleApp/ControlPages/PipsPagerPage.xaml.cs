@@ -37,6 +37,7 @@ namespace ModernWpf.SampleApp.ControlPages
         public PipsPagerPage()
         {
             this.InitializeComponent();
+            DataContext = Pictures;
         }
 
         private void OrientationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -5,7 +5,6 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:ui="http://schemas.modernwpf.com/2019">
-
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/ModernWpf;component/Styles/Button.xaml" />
         <ResourceDictionary>
