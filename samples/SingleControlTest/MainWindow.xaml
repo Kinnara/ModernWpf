@@ -87,6 +87,7 @@
             NumberOfPages="13"
             PreviousButtonVisibility="Visible" />
 
+        <ui:TimePicker />
 
         <!--<Calendar IsEnabled="{Binding IsOn, ElementName=IsEnable}" />-->
 

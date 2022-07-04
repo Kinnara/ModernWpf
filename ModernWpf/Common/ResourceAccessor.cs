@@ -107,6 +107,10 @@ namespace ModernWpf
         public const string SR_RatingLocalizedControlType = "RatingLocalizedControlType";
         public const string SR_SplitButtonSecondaryButtonName = "SplitButtonSecondaryButtonName";
         public const string SR_ProofingMenuItemLabel = "ProofingMenuItemLabel";
+        public const string SR_TimePickerAM = "TimePickerAM";
+        public const string SR_TimePickerHour = "TimePickerHour";
+        public const string SR_TimePickerMinute = "TimePickerMinute";
+        public const string SR_TimePickerSecond = "TimePickerSecond";
         public const string SR_TextCommandLabelCut = "TextCommandLabelCut";
         public const string SR_TextCommandLabelCopy = "TextCommandLabelCopy";
         public const string SR_TextCommandLabelPaste = "TextCommandLabelPaste";

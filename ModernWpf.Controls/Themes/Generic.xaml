@@ -33,6 +33,7 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/RadioButtons/RadioButtons.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/RadioMenuItem/RadioMenuItem.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/TeachingTip/TeachingTip.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/TimePicker/TimePicker.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ToggleSwitch/ToggleSwitch.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/TwoPaneView/TwoPaneView.xaml" />
     </ResourceDictionary.MergedDictionaries>

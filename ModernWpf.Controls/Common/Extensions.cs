@@ -9,5 +9,10 @@ namespace ModernWpf.Controls
         {
             return FlyoutService.GetFlyout(button);
         }
+
+        public static string DefaultIfNullOrEmpty(this string s, string defaultValue)
+        {
+            return !string.IsNullOrEmpty(s) ? s : defaultValue;
+        }
     }
 }

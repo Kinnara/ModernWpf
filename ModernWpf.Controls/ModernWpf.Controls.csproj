@@ -11,10 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="AutoSuggestBox\AutoSuggestBoxHelper.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Page Remove="Properties\DesignTimeResources.xaml" />
   </ItemGroup>
 
@@ -31,29 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="AutoSuggestBox\AutoSuggestBoxHelper.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="ModernWpf.Controls.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="ProgressBar\ProgressBar.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="InfoBar\Strings\Resources.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="TeachingTip\Strings\" />
   </ItemGroup>
 
   <Target Name="GetDocumentationFile">
