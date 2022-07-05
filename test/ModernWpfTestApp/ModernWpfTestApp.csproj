@@ -6,7 +6,6 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>MUXControlsTestApp</AssemblyName>
     <RootNamespace>MUXControlsTestApp</RootNamespace>
-    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

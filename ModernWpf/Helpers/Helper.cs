@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 
 namespace ModernWpf
@@ -81,7 +83,7 @@ namespace ModernWpf
             return d.ReadLocalValue(dp) != DependencyProperty.UnsetValue;
         }
     }
-
+    
     internal enum InterestPoint
     {
         TopLeft = 0,

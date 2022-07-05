@@ -1,12 +1,10 @@
-﻿using MS.Win32;
-using Standard;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
-using System.Windows.Media;
+using MS.Win32;
+using Standard;
 using NativeMethods = Standard.NativeMethods;
 
 namespace ModernWpf.Controls.Primitives
