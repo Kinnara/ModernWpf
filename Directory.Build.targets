@@ -44,4 +44,36 @@
     <SupportedOSPlatform>7.0</SupportedOSPlatform>
   </PropertyGroup>
 
+  <Choose>
+    <When Condition="'$(UseWinRT)' == 'true'">
+      <Choose>
+        <When Condition="$(DefineConstants.Contains('NET5_0_OR_NEWER'))" />
+        <When Condition="$(DefineConstants.Contains('NET461_OR_NEWER'))">
+          <ItemGroup>
+            <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.22000.196" />
+          </ItemGroup>
+        </When>
+        <Otherwise>
+          <ItemGroup>
+            <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.7.0" />
+            <Reference Include="Windows">
+              <HintPath>$(MSBuildThisFileDirectory)WinMD\Windows.WinMD</HintPath>
+              <IsWinMDFile>true</IsWinMDFile>
+              <Private>false</Private>
+            </Reference>
+            <Reference Include="Windows.Foundation.FoundationContract">
+              <HintPath>$(MSBuildThisFileDirectory)WinMD\Windows.Foundation.FoundationContract.winmd</HintPath>
+              <IsWinMDFile>true</IsWinMDFile>
+              <Private>false</Private>
+            </Reference>
+            <Reference Include="Windows.Foundation.UniversalApiContract">
+              <HintPath>$(MSBuildThisFileDirectory)WinMD\Windows.Foundation.UniversalApiContract.winmd</HintPath>
+              <IsWinMDFile>true</IsWinMDFile>
+              <Private>false</Private>
+            </Reference>
+          </ItemGroup>
+        </Otherwise>
+      </Choose>
+    </When>
+  </Choose>
 </Project>
