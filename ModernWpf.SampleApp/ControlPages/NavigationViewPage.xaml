@@ -5,7 +5,6 @@
     xmlns:converters="clr-namespace:ModernWpf.SampleApp.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ModernWpf.SampleApp"
-    xmlns:local1="clr-namespace:ModernWpf.SampleApp.ControlPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="http://schemas.modernwpf.com/2019"
     xmlns:ui="http://schemas.modernwpf.com/2019"
@@ -301,7 +300,7 @@
                     Margin="0,0,0,12"
                     TextWrapping="Wrap" />
                 <RichTextBox Margin="0,0,0,15" Style="{StaticResource RichTextBlockStyle}">
-                    <local1:NoPaddingFlowDocument>
+                    <FlowDocument>
                         <Paragraph>
                             NavigationView supports hierarchy in Left, LeftCompact, and Top display modes.<LineBreak />
                         </Paragraph>
@@ -314,7 +313,7 @@
                         <Paragraph>
                             Switch between the three pane display modes on the right.
                         </Paragraph>
-                    </local1:NoPaddingFlowDocument>
+                    </FlowDocument>
                 </RichTextBox>
                 <muxc:NavigationView
                     x:Name="nvSample8"

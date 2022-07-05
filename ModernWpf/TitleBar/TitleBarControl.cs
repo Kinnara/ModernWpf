@@ -8,7 +8,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static Windows.Win32.PInvoke;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -503,25 +502,10 @@ namespace ModernWpf.Controls.Primitives
 
         private void InvokeBack()
         {
-            InvokeButton(BackButton);
-        }
-
-        private static void InvokeButton(Button button)
-        {
-            if (button != null && button.IsEnabled)
+            if (BackButton != null && BackButton.IsEnabled)
             {
-                if (button is TitleBarButton titleBarButton)
-                {
-                    titleBarButton.DoClick();
-                }
-                else
-                {
-                    if (UIElementAutomationPeer.CreatePeerForElement(button) is { } peer
-                        && peer.GetPattern(PatternInterface.Invoke) is IInvokeProvider invokeProvider)
-                    {
-                        invokeProvider.Invoke();
-                    }
-                }
+                var peer = UIElementAutomationPeer.CreatePeerForElement(BackButton);
+                (peer?.GetPattern(PatternInterface.Invoke) as IInvokeProvider)?.Invoke();
             }
         }
 
