@@ -22,8 +22,6 @@ namespace ModernWpf
 
         public static bool IsWindows11OrGreater { get; } = IsWindowsNT && OSVersion >= new Version(10, 0, 21996);
 
-        internal static bool IsWindows11OrGreater { get; } = IsWindowsNT && _osVersion >= new Version(10, 0, 22000);
-
         private static Version GetOSVersion()
         {
             var osv = new RTL_OSVERSIONINFOEX();

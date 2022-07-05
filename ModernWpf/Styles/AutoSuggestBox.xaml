@@ -195,8 +195,6 @@
                             Grid.Row="1"
                             Grid.ColumnSpan="3"
                             Margin="{TemplateBinding BorderThickness}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             Padding="{TemplateBinding Padding}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"

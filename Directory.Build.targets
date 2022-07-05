@@ -1,10 +1,4 @@
 ﻿<Project>
-  <PropertyGroup>
-    <Version>0.10.0</Version>
-    <Authors>Yimeng Wu</Authors>
-    <Product>ModernWPF UI Library</Product>
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(PackageId)' != ''">
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Kinnara/ModernWpf</PackageProjectUrl>

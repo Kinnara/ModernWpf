@@ -82,33 +82,8 @@ namespace ModernWpf
         {
             return d.ReadLocalValue(dp) != DependencyProperty.UnsetValue;
         }
-
-        public static DpiScale2 GetDpi(this Window window)
-        {
-            if (window is null)
-            {
-                throw new ArgumentNullException(nameof(window));
-            }
-
-#if NET462_OR_NEWER
-            return new DpiScale2(VisualTreeHelper.GetDpi(window));
-#else
-            var hwnd = new WindowInteropHelper(window).Handle;
-            var hwndSource = HwndSource.FromHwnd(hwnd);
-            if (hwndSource != null)
-            {
-                Matrix transformToDevice = hwndSource.CompositionTarget.TransformToDevice;
-                return new DpiScale2(transformToDevice.M11, transformToDevice.M22);
-            }
-            else
-            {
-                Debug.Fail("Should not reach here");
-                return new DpiScale2(1, 1);
-            }
-#endif
-        }
     }
-
+    
     internal enum InterestPoint
     {
         TopLeft = 0,
