@@ -4,12 +4,12 @@
     <Authors>Yimeng Wu</Authors>
     <Product>ModernWPF UI Library</Product>
   </PropertyGroup>
-    
+
   <PropertyGroup Condition="'$(PackageId)' != ''">
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Kinnara/ModernWpf</PackageProjectUrl>
     <PackageTags>WPF XAML UI Theme Controls Fluent Modern Metro WinUI</PackageTags>
-    <PackageOutputPath>$(MSBuildThisFileDirectory)localpackages</PackageOutputPath>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts</PackageOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -43,7 +43,6 @@
   <PropertyGroup Condition="'$(SupportedOSPlatform)' != '' and $([MSBuild]::VersionGreaterThan($(SupportedOSPlatform), '7.0'))">
     <SupportedOSPlatform>7.0</SupportedOSPlatform>
   </PropertyGroup>
-
   <Choose>
     <When Condition="'$(UseWinRT)' == 'true'">
       <Choose>

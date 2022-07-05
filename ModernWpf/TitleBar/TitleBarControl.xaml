@@ -143,25 +143,25 @@
                         </Trigger>
                         <DataTrigger Binding="{Binding WindowStyle, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="ToolWindow">
                             <Setter TargetName="MinimizeButton" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="MaximizeRestoreButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_MaximizeRestoreButton" Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="NoResize">
                             <Setter TargetName="MinimizeButton" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="MaximizeRestoreButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_MaximizeRestoreButton" Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding ResizeMode, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="CanMinimize">
-                            <Setter TargetName="MaximizeRestoreButton" Property="IsEnabled" Value="False" />
+                            <Setter TargetName="PART_MaximizeRestoreButton" Property="IsEnabled" Value="False" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="Maximized">
-                            <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeRestore}" />
-                            <Setter TargetName="MaximizeRestoreButton" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
-                            <Setter TargetName="MaximizeRestoreButton" Property="AutomationProperties.Name" Value="Restore" />
+                            <Setter TargetName="PART_MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeRestore}" />
+                            <Setter TargetName="PART_MaximizeRestoreButton" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
+                            <Setter TargetName="PART_MaximizeRestoreButton" Property="AutomationProperties.Name" Value="Restore" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true">
                             <Setter TargetName="PART_BackButton" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
                             <Setter TargetName="Title" Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ActiveCaptionTextBrushKey}}" />
                             <Setter TargetName="MinimizeButton" Property="Content" Value="{StaticResource ChromeMinimizeContrast}" />
-                            <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeMaximizeContrast}" />
+                            <Setter TargetName="PART_MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeMaximizeContrast}" />
                             <Setter TargetName="CloseButton" Property="Content" Value="{StaticResource ChromeCloseContrast}" />
                             <Setter TargetName="CloseButton" Property="HoverBackground" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
                             <Setter TargetName="CloseButton" Property="HoverForeground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
@@ -187,7 +187,7 @@
                                 <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
                                 <Condition Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="Maximized" />
                             </MultiDataTrigger.Conditions>
-                            <Setter TargetName="MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeRestoreContrast}" />
+                            <Setter TargetName="PART_MaximizeRestoreButton" Property="Content" Value="{StaticResource ChromeRestoreContrast}" />
                         </MultiDataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
