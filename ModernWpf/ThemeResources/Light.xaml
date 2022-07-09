@@ -199,7 +199,7 @@
     <SolidColorBrush x:Key="GridViewItemRevealBorderBrush" Color="Transparent" />
 
     <!-- Legacy brushes -->
-    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{m:StaticColor SolidBackgroundFillColorBase}" />
 
     <!--#region Common_themeresources.xaml-->
     <!-- Colors -->
