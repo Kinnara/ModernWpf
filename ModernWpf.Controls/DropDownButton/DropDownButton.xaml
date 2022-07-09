@@ -26,62 +26,59 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:DropDownButton">
                     <ControlTemplate.Resources>
-                        <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
+                        <StreamGeometry x:Key="ChevronDownSmall">F1 M 17.568359 3.408203 L 19.931641 5.761719 L 10 15.693359 L 0.068359 5.761719 L 2.431641 3.408203 L 10 10.976562 L 17.568359 3.408203 Z</StreamGeometry>
                     </ControlTemplate.Resources>
-                    <Border
-                        x:Name="RootBorder"
+                    <Border x:Name="RootBorder"
+                        Padding="{TemplateBinding Padding}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
                         Background="{TemplateBinding Background}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
 
-                        <Border
-                            x:Name="InnerBorder"
-                            Padding="{TemplateBinding Padding}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
-                            <Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
 
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Focusable="False"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
-                                <ContentPresenter
-                                    x:Name="ContentPresenter"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    Focusable="False"
-                                    RecognizesAccessKey="True"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-
-                                <ui:FontIconFallback
-                                    x:Name="ChevronTextBlock"
-                                    Grid.Column="1"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    FontSize="12"
-                                    Data="{StaticResource ChevronDown}"
-                                    VerticalAlignment="Center"
-                                    Margin="6,0,0,0" />
-                            </Grid>
-                        </Border>
+                            <ui:FontIconFallback
+                                x:Name="ChevronTextBlock"
+                                Grid.Column="1"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontSize="8"
+                                Foreground="{DynamicResource ButtonForegroundPressed}"
+                                Data="{StaticResource ChevronDownSmall}"
+                                VerticalAlignment="Center"
+                                Padding="2,4,2,0"
+                                Margin="8,0,0,0" />
+                        </Grid>
 
                     </Border>
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
-                            <Setter TargetName="InnerBorder" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ButtonForegroundPointerOver}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ButtonBackgroundPressed}" />
-                            <Setter TargetName="InnerBorder" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPressed}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPressed}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
+                            <Setter TargetName="ChevronTextBlock" Property="Foreground" Value="{DynamicResource DropDownButtonForegroundSecondaryPressed}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
-                            <Setter TargetName="InnerBorder" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushDisabled}" />
+                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushDisabled}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
                             <Setter TargetName="ChevronTextBlock" Property="Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
                         </Trigger>

@@ -5,6 +5,7 @@ using System.Windows.Media;
 
 namespace ModernWpf.Controls
 {
+    // TODO: Use font icon if available
     [EditorBrowsable(EditorBrowsableState.Never)]
     public class FontIconFallback : Control
     {

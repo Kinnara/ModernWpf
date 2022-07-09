@@ -7,10 +7,10 @@
 
     <Style x:Key="DefaultProgressBarStyle" TargetType="ProgressBar">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
-        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ProgressBarForeground}" />
+        <Setter Property="Background" Value="{DynamicResource ProgressBarBackground}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ProgressBarBorderThemeThickness}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightTransparentBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ProgressBarBorderBrush}" />
         <Setter Property="MinHeight" Value="{DynamicResource ProgressBarThemeMinHeight}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="VerticalAlignment" Value="Center" />
