@@ -88,6 +88,15 @@ namespace ModernWpf.Controls
             set => SetValue(FocusVisualMarginProperty, value);
         }
 
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(HyperlinkButton));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new HyperlinkButtonAutomationPeer(this);

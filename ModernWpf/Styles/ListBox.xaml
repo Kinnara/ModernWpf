@@ -41,11 +41,11 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ListBoxItemForegroundDisabled}" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
+                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource ListBoxItemBackgroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ListBoxItemForeground}" />
                         </Trigger>
                         <!-- Selected -->
                         <MultiTrigger>
@@ -54,8 +54,8 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsMouseOver" Value="False" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentMediumLowBrush}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
+                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource ListBoxItemBackgroundSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ListBoxItemForeground}" />
                         </MultiTrigger>
                         <!-- SelectedUnfocused -->
                         <MultiTrigger>
@@ -64,8 +64,8 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsMouseOver" Value="False" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentMediumLowBrush}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
+                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource ListBoxItemBackgroundSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ListBoxItemForeground}" />
                         </MultiTrigger>
                         <!-- SelectedPointerOver -->
                         <MultiTrigger>
@@ -73,8 +73,8 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
+                            <Setter TargetName="PressedBackground" Property="Fill" Value="{DynamicResource ListBoxItemBackgroundSelectedPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ListBoxItemForeground}" />
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -86,9 +86,9 @@
 
     <Style x:Key="DefaultListBoxStyle" TargetType="ListBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource ListBoxForeground}" />
+        <Setter Property="Background" Value="{DynamicResource ListBoxBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ListBoxBorder}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ListBoxBorderThemeThickness}" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />

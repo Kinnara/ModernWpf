@@ -148,7 +148,7 @@
                             <Rectangle
                                 x:Name="BorderBackground"
                                 IsHitTestVisible="False"
-                                Fill="{DynamicResource SystemControlHighlightListAccentLowBrush}"
+                                Fill="{DynamicResource ListViewItemBorderBackground}"
                                 Opacity="0" />
                             <Grid
                                 x:Name="ContentPresenterGrid"
@@ -189,7 +189,7 @@
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     Data="{StaticResource CheckMark}"
                                     FontSize="16"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumHighBrush}"
+                                    Foreground="{DynamicResource ListViewItemCheckBrush}"
                                     Visibility="Collapsed"
                                     Opacity="0" />
                             </Border>

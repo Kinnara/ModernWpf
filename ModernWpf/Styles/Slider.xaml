@@ -11,15 +11,18 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Thickness x:Key="SliderTopHeaderMargin">0,0,0,4</Thickness>
+    <CornerRadius x:Key="SliderTrackCornerRadius">2</CornerRadius>
+    <CornerRadius x:Key="SliderThumbCornerRadius">10</CornerRadius>
     <sys:Double x:Key="SliderPreContentMargin">15</sys:Double>
     <sys:Double x:Key="SliderPostContentMargin">15</sys:Double>
     <sys:Double x:Key="SliderHorizontalHeight">32</sys:Double>
     <sys:Double x:Key="SliderVerticalWidth">32</sys:Double>
-    <CornerRadius x:Key="SliderThumbCornerRadius">10</CornerRadius>
     <sys:Double x:Key="SliderHorizontalThumbWidth">20</sys:Double>
     <sys:Double x:Key="SliderHorizontalThumbHeight">20</sys:Double>
     <sys:Double x:Key="SliderVerticalThumbWidth">20</sys:Double>
     <sys:Double x:Key="SliderVerticalThumbHeight">20</sys:Double>
+    <sys:Double x:Key="SliderInnerThumbWidth">12</sys:Double>
+    <sys:Double x:Key="SliderInnerThumbHeight">12</sys:Double>
 
     <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
     <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
@@ -42,17 +45,82 @@
     </Style>
 
     <Style TargetType="Thumb" x:Key="SliderThumbStyle">
-        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Background" Value="{DynamicResource SliderThumbBackground}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
                     <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
+                        Margin="-1"
+                        Background="{DynamicResource SliderOuterThumbBackground}"
+                        BorderBrush="{DynamicResource SliderThumbBorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{DynamicResource SliderThumbCornerRadius}" />
+                        CornerRadius="{DynamicResource SliderThumbCornerRadius}">
+                        <Ellipse
+                            x:Name="SliderInnerThumb"
+                            RenderTransformOrigin="0.5, 0.5"
+                            Fill="{TemplateBinding Background}"                                                  
+                            Width="{DynamicResource SliderInnerThumbWidth}"
+                            Height="{DynamicResource SliderInnerThumbHeight}">
+                            <Ellipse.RenderTransform>
+                                <ScaleTransform />
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+                                            <!-- 0.86 is relative scale from 14px to 12px -->
+                                            <SplineDoubleKeyFrame KeyTime="0:0:0.167" KeySpline="0.0,0.0 0.0,1.0" Value="0.86" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)">
+                                            <!-- 0.86 is relative scale from 14px to 12px -->
+                                            <SplineDoubleKeyFrame KeyTime="0:0:0.167" KeySpline="0.0,0.0 0.0,1.0" Value="0.86" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+                                            <!-- 1.167 is relative scale from 12px to 14px -->
+                                            <SplineDoubleKeyFrame KeyTime="0:0:0.25" KeySpline="0.0,0.0 0.0,1.0" Value="1.167" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)">
+                                            <!-- 1.167 is relative scale from 12px to 14px -->
+                                            <SplineDoubleKeyFrame KeyTime="0:0:0.25" KeySpline="0.0,0.0 0.0,1.0" Value="1.167" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+                                            <!-- 0.71 is relative scale from 14px to 10px -->
+                                            <SplineDoubleKeyFrame KeyTime="0:0:0.25" KeySpline="0.0,0.0 0.0,1.0" Value="0.71" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)">
+                                            <!-- 0.71 is relative scale from 14px to 10px -->
+                                            <SplineDoubleKeyFrame KeyTime="0:0:0.25" KeySpline="0.0,0.0 0.0,1.0" Value="0.71" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+                                            <!-- 1.167 is relative scale from 12px to 14px -->
+                                            <SplineDoubleKeyFrame KeyTime="0:0:0.167" KeySpline="0.0,0.0 0.0,1.0" Value="1.167" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SliderInnerThumb" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)">
+                                            <!-- 1.167 is relative scale from 12px to 14px -->
+                                            <SplineDoubleKeyFrame KeyTime="0:0:0.167" KeySpline="0.0,0.0 0.0,1.0" Value="1.167" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -357,6 +425,7 @@
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false" />
         <Setter Property="Background" Value="{DynamicResource SliderTrackFill}" />
         <Setter Property="BorderThickness" Value="{DynamicResource SliderBorderThemeThickness}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SliderThumbBorderBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource SliderTrackValueFill}" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
@@ -364,7 +433,7 @@
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-7,0,-7,0" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource SliderTrackCornerRadius}" />
         <Setter Property="Template" Value="{StaticResource SliderHorizontal}" />
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Vertical">

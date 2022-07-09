@@ -13,7 +13,8 @@
                         Width="{TemplateBinding FontSize}"
                         Height="{TemplateBinding FontSize}"
                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Margin="{TemplateBinding Padding}">
                         <Path
                             Width="20"
                             Height="20"
