@@ -27,4 +27,4 @@ jobs:
       if: success() && github.ref_name == 'master' && github.event.head_commit.message == 'Bump version'
       run: |
          dotnet pack ModernWpf.Controls\ModernWpf.Controls.csproj -c Release --no-build
-         dotnet nuget push "artifacts\*.nupkg" -k ${{ secrets.NUGET_API_KEY }}
+         dotnet nuget push "artifacts\*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
