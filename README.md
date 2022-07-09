@@ -52,10 +52,10 @@ Modern styles and controls for your WPF applications.
 5. See [the wiki](https://github.com/Kinnara/ModernWpf/wiki) for more information.
 
 ## Packages
-| NuGet Package | Latest Version |
+| NuGet Package | Latest Versions |
 | --- | --- |
-| [ModernWpfUI][NuGet] | [![latest stable version](https://img.shields.io/nuget/v/ModernWpfUI)][NuGet] |
-| [ModernWpfUI.MahApps][NuGet.MahApps] | [![latest stable version](https://img.shields.io/nuget/v/ModernWpfUI.MahApps)][NuGet.MahApps] |
+| [ModernWpfUI][NuGet] | [![latest stable version](https://img.shields.io/nuget/v/ModernWpfUI)][NuGet]<br />[![latest prerelease version](https://img.shields.io/nuget/vpre/ModernWpfUI)][NuGet.Pre] |
+| [ModernWpfUI.MahApps][NuGet.MahApps] | [![latest stable version](https://img.shields.io/nuget/v/ModernWpfUI.MahApps)][NuGet.MahApps]<br />[![latest prerelease version](https://img.shields.io/nuget/vpre/ModernWpfUI.MahApps)][NuGet.MahApps.Pre] |
 
 ## Screenshots
 ![Overview of controls (dark theme)](docs/images/Controls.Dark.png "Overview of controls (dark theme)")
@@ -87,4 +87,6 @@ Modern styles and controls for your WPF applications.
 ![High contrast mode](docs/images/HighContrast.png "High contrast mode")
 
 [NuGet]: https://www.nuget.org/packages/ModernWpfUI/
+[NuGet.Pre]: https://www.nuget.org/packages/ModernWpfUI/absoluteLatest
 [NuGet.MahApps]: https://www.nuget.org/packages/ModernWpfUI.MahApps/
+[NuGet.MahApps.Pre]: https://www.nuget.org/packages/ModernWpfUI.MahApps/absoluteLatest
