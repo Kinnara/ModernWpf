@@ -941,9 +941,9 @@
     <m:StaticResource x:Key="ListBoxItemForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="ListBoxItemBackgroundPointerOver" ResourceKey="GhostFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ListBoxItemBackgroundPressed" ResourceKey="GhostFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="ListBoxItemBackgroundSelected" ResourceKey="GhostFillColorSecondaryBrush" />
-    <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPointerOver" ResourceKey="GhostFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPressed" ResourceKey="GhostFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ListBoxItemBackgroundSelected" ResourceKey="SystemControlHighlightListAccentLowBrush" />
+    <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPointerOver" ResourceKey="SystemControlHighlightListAccentMediumBrush" />
+    <m:StaticResource x:Key="ListBoxItemBackgroundSelectedPressed" ResourceKey="SystemControlHighlightListAccentHighBrush" />
 
     <!-- Resources for ListViewHeaderItem -->
     <sys:Double x:Key="ListViewHeaderItemMinHeight">44</sys:Double>
