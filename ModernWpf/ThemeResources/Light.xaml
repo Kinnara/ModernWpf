@@ -1289,16 +1289,19 @@
     <m:StaticResource x:Key="RadioButtonsHeaderForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
 
     <!-- Resources for RatingControl -->
-    <m:StaticResource x:Key="RatingControlUnselectedForeground" ResourceKey="ControlFillColorTertiaryBrush"/>
+    <m:StaticResource x:Key="RatingControlUnselectedForeground" ResourceKey="TextFillColorSecondaryBrush"/>
     <m:StaticResource x:Key="RatingControlSelectedForeground" ResourceKey="AccentAAFillColorDefaultBrush"/>
     <m:StaticResource x:Key="RatingControlPlaceholderForeground" ResourceKey="TextFillColorPrimaryBrush"/>
     <m:StaticResource x:Key="RatingControlPointerOverPlaceholderForeground" ResourceKey="ControlAltFillColorTertiaryBrush"/>
     <m:StaticResource x:Key="RatingControlPointerOverUnselectedForeground" ResourceKey="ControlAltFillColorTertiaryBrush"/>
     <m:StaticResource x:Key="RatingControlPointerOverSelectedForeground" ResourceKey="AccentAAFillColorDefaultBrush"/>
     <m:StaticResource x:Key="RatingControlDisabledSelectedForeground" ResourceKey="TextFillColorDisabledBrush"/>
-    <m:StaticResource x:Key="RatingControlCaptionForeground" ResourceKey="ControlAltFillColorTertiaryBrush"/>
-    <local:RatingItemFontInfo x:Key="RatingControlDefaultFontInfo" Glyph="&#xE735;" />
-    <local:RatingItemPathInfo x:Key="RatingControlDefaultPathInfo" Data="M 13.828125 12.246094 L 16.25 20 L 10 15.195313 L 3.75 20 L 6.171875 12.246094 L 0 7.5 L 7.65625 7.5 L 10 0 L 12.34375 7.5 L 20 7.5 Z" />
+    <m:StaticResource x:Key="RatingControlCaptionForeground" ResourceKey="TextFillColorSecondaryBrush"/>
+    <local:RatingItemFontInfo x:Key="RatingControlDefaultFontInfo" Glyph="&#xE735;" UnsetGlyph="&#xE734;" />
+    <local:RatingItemPathInfo
+        x:Key="RatingControlDefaultPathInfo"
+        Data="M 13.828125 12.246094 L 16.25 20 L 10 15.195313 L 3.75 20 L 6.171875 12.246094 L 0 7.5 L 7.65625 7.5 L 10 0 L 12.34375 7.5 L 20 7.5 Z"
+        UnsetData="F1 M 13.828125 12.246094 L 16.25 20 L 10 15.195312 L 3.75 20 L 6.171875 12.246094 L 0 7.5 L 7.65625 7.5 L 10 0 L 12.34375 7.5 L 20 7.5 Z M 13.876953 16.601562 C 13.629557 15.794271 13.38216 14.991862 13.134766 14.194336 C 12.887369 13.396811 12.633463 12.594401 12.373047 11.787109 C 13.043619 11.285808 13.704427 10.78125 14.355469 10.273438 C 15.00651 9.765625 15.664062 9.257812 16.328125 8.75 L 11.425781 8.75 L 10 4.189453 L 8.574219 8.75 L 3.671875 8.75 C 4.335938 9.257812 4.993489 9.765625 5.644531 10.273438 C 6.295572 10.78125 6.95638 11.285808 7.626953 11.787109 C 7.366536 12.594401 7.11263 13.396811 6.865234 14.194336 C 6.617838 14.991862 6.370442 15.794271 6.123047 16.601562 L 10 13.613281 Z " />
 
     <!-- Resources for RepeatButton -->
     <Thickness x:Key="RepeatButtonBorderThemeThickness">1</Thickness>

@@ -1173,7 +1173,7 @@
     <m:StaticResource x:Key="RatingControlPointerOverUnselectedForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
     <m:StaticResource x:Key="RatingControlPointerOverSelectedForeground" ResourceKey="SystemControlHighlightAccentBrush" />
     <SolidColorBrush x:Key="RatingControlDisabledSelectedForeground" Color="{m:ThemeResource SystemColorGrayTextColor}" />
-    <m:StaticResource x:Key="RatingControlCaptionForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+    <m:StaticResource x:Key="RatingControlCaptionForeground" ResourceKey="TextFillColorSecondaryBrush" />
     <local:RatingItemFontInfo x:Key="RatingControlDefaultFontInfo" Glyph="&#xE735;" UnsetGlyph="&#xE734;" />
     <local:RatingItemPathInfo
         x:Key="RatingControlDefaultPathInfo"
