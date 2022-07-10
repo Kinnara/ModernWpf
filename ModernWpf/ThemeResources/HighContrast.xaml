@@ -684,7 +684,7 @@
     <Thickness x:Key="CommandBarOverflowPresenterBorderUpPadding">0</Thickness>
 
     <!-- Resources for CommandBarFlyout -->
-    <Thickness x:Key="CommandBarFlyoutBorderThemeThickness">1</Thickness>
+    <Thickness x:Key="CommandBarFlyoutBorderThemeThickness">2</Thickness>
     <Thickness x:Key="CommandBarFlyoutBorderUpThemeThickness">1,1,1,0</Thickness>
     <Thickness x:Key="CommandBarFlyoutBorderDownThemeThickness">1,0,1,1</Thickness>
     <SolidColorBrush x:Key="CommandBarFlyoutButtonBackground" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
@@ -775,8 +775,8 @@
     <Thickness x:Key="FlyoutBorderThemeThickness">1</Thickness>
     <Thickness x:Key="FlyoutBorderThemePadding">0</Thickness>
     <Thickness x:Key="FlyoutContentThemePadding">12,11,12,12</Thickness>
-    <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemControlPageBackgroundChromeMediumLowBrush" />
-    <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemControlTransientBorderBrush" />
+    <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemColorWindowTextColorBrush" />
 
     <!-- Resources for HyperlinkButton -->
     <m:StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="SystemControlHyperlinkTextBrush" />

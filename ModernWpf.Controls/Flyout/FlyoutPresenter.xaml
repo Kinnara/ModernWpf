@@ -15,7 +15,7 @@
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource FlyoutBorderThemeBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource FlyoutBorderThemeThickness}" />
-        <Setter Property="Padding" Value="{DynamicResource FlyoutContentThemePadding}" />
+        <Setter Property="Padding" Value="{DynamicResource FlyoutContentPadding}" />
         <Setter Property="MinWidth" Value="{DynamicResource FlyoutThemeMinWidth}" />
         <Setter Property="MaxWidth" Value="{DynamicResource FlyoutThemeMaxWidth}" />
         <Setter Property="MinHeight" Value="{DynamicResource FlyoutThemeMinHeight}" />
@@ -39,8 +39,7 @@
                             <Border
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                Padding="{DynamicResource FlyoutBorderThemePadding}">
+                                CornerRadius="{TemplateBinding CornerRadius}">
                                 <ScrollViewer
                                     x:Name="ScrollViewer"
                                     HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
