@@ -15,7 +15,7 @@
         <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource FlyoutBorderThemeBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource FlyoutBorderThemeThickness}" />
-        <Setter Property="Padding" Value="{DynamicResource FlyoutContentPadding}" />
+        <Setter Property="Padding" Value="{DynamicResource FlyoutContentThemePadding}" />
         <Setter Property="MinWidth" Value="{DynamicResource FlyoutThemeMinWidth}" />
         <Setter Property="MaxWidth" Value="{DynamicResource FlyoutThemeMaxWidth}" />
         <Setter Property="MinHeight" Value="{DynamicResource FlyoutThemeMinHeight}" />

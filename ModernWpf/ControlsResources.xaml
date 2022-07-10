@@ -69,7 +69,6 @@
     <sys:Double x:Key="ToggleSwitchPreContentMargin">6</sys:Double>
     <sys:Double x:Key="ToggleSwitchPostContentMargin">6</sys:Double>
     <sys:Double x:Key="ToggleSwitchThemeMinWidth">154</sys:Double>
-    <Thickness x:Key="FlyoutContentPadding">12</Thickness>
     
     <ControlTemplate x:Key="TextControlValidationErrorTemplate">
         <Grid SnapsToDevicePixels="True">
