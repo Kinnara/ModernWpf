@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <Version>0.9.6</Version>
+    <Version>0.9.7-preview.1</Version>
     <Authors>Yimeng Wu</Authors>
     <Product>ModernWPF UI Library</Product>
     <LangVersion>10.0</LangVersion>
