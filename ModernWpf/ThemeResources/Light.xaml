@@ -1433,22 +1433,22 @@
     <m:StaticResource x:Key="TabViewBackground"                                       ResourceKey="GhostFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackground"                             ResourceKey="GhostFillColorTransparentBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundSelected"                     ResourceKey="ControlFillColorInputActiveBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderBackgroundPointerOver"                  ResourceKey="SystemAltMediumLowColor" />
-    <m:StaticResource x:Key="TabViewItemHeaderBackgroundPressed"                      ResourceKey="SystemAltMediumColor" />
+    <SolidColorBrush  x:Key="TabViewItemHeaderBackgroundPointerOver"                  Color="{m:StaticColor SystemAltMediumLowColor}" />
+    <SolidColorBrush  x:Key="TabViewItemHeaderBackgroundPressed"                       Color="{m:StaticColor SystemAltMediumColor}" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundDisabled"                     ResourceKey="GhostFillColorTransparentBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderForeground"                             ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderForegroundPressed"                      ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderForegroundSelected"                     ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderForegroundPointerOver"                  ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderForegroundDisabled"                     ResourceKey="TextFillColorDisabledBrush" />
-    <m:StaticResource x:Key="TabViewItemIconForeground"                               ResourceKey="ControlAltFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="TabViewItemIconForegroundPressed"                        ResourceKey="ControlAltFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="TabViewItemIconForegroundSelected"                       ResourceKey="ControlAltFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="TabViewItemIconForegroundPointerOver"                    ResourceKey="ControlAltFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="TabViewItemIconForeground"                               ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="TabViewItemIconForegroundPressed"                        ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="TabViewItemIconForegroundSelected"                       ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="TabViewItemIconForegroundPointerOver"                    ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TabViewItemIconForegroundDisabled"                       ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="TabViewButtonBackground"                                 ResourceKey="GhostFillColorTransparentBrush" />
-    <m:StaticResource x:Key="TabViewButtonBackgroundPressed"                          ResourceKey="SystemAltMediumColor" />
-    <m:StaticResource x:Key="TabViewButtonBackgroundPointerOver"                      ResourceKey="SystemAltMediumLowColor" />
+    <SolidColorBrush  x:Key="TabViewButtonBackgroundPressed"                          Color="{m:StaticColor SystemAltMediumColor}" />
+    <SolidColorBrush  x:Key="TabViewButtonBackgroundPointerOver"                      Color="{m:StaticColor SystemAltMediumLowColor}" />
     <m:StaticResource x:Key="TabViewButtonBackgroundDisabled"                         ResourceKey="GhostFillColorTransparentBrush" />
     <m:StaticResource x:Key="TabViewButtonForeground"                                 ResourceKey="ControlAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="TabViewButtonForegroundPressed"                          ResourceKey="TextFillColorPrimaryBrush" />

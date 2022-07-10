@@ -129,6 +129,7 @@
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundSelected}" />
                             <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundSelected}" />
                             <Setter Property="Panel.ZIndex" Value="1" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.FontWeight" Value="SemiBold"/>
                         </Trigger>
                         <!-- PointerOverSelected -->
                         <MultiTrigger>
@@ -140,6 +141,7 @@
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
                             <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundPointerOver}" />
                             <Setter Property="Panel.ZIndex" Value="1" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.FontWeight" Value="SemiBold"/>
                         </MultiTrigger>
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
