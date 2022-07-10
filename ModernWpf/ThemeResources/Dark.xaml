@@ -811,27 +811,12 @@
     <m:StaticResource x:Key="CommandBarFlyoutButtonBackground" ResourceKey="SystemControlTransparentBrush" />
 
     <!-- Resources for ContentDialog -->
-    <sys:Double x:Key="ContentDialogMinWidth">320</sys:Double>
-    <sys:Double x:Key="ContentDialogMaxWidth">548</sys:Double>
-    <sys:Double x:Key="ContentDialogMinHeight">184</sys:Double>
-    <sys:Double x:Key="ContentDialogMaxHeight">756</sys:Double>
-    <sys:Double x:Key="ContentDialogButtonMinWidth">130</sys:Double>
-    <sys:Double x:Key="ContentDialogButtonMaxWidth">202</sys:Double>
-    <sys:Double x:Key="ContentDialogButtonMinHeight">32</sys:Double>
-    <sys:Double x:Key="ContentDialogButtonHeight">32</sys:Double>
-    <sys:Double x:Key="ContentDialogTitleMaxHeight">56</sys:Double>
+    <m:StaticResource x:Key="ContentDialogForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ContentDialogBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+    <m:StaticResource x:Key="ContentDialogSmokeFill" ResourceKey="SmokeFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ContentDialogTopOverlay" ResourceKey="SolidBackgroundFillColorQuarternaryBrush" />
+    <m:StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="ControlElevationBorderBrush" />
     <Thickness x:Key="ContentDialogBorderWidth">1</Thickness>
-    <Thickness x:Key="ContentDialogButton1HostMargin">0,0,4,0</Thickness>
-    <Thickness x:Key="ContentDialogButton2HostMargin">0,0,0,0</Thickness>
-    <Thickness x:Key="ContentDialogContentMargin">0,0,0,0</Thickness>
-    <Thickness x:Key="ContentDialogContentScrollViewerMargin">0,0,0,0</Thickness>
-    <Thickness x:Key="ContentDialogCommandSpaceMargin">0,24,0,0</Thickness>
-    <Thickness x:Key="ContentDialogTitleMargin">0,0,0,12</Thickness>
-    <Thickness x:Key="ContentDialogPadding">24,18,24,24</Thickness>
-    <m:StaticResource x:Key="ContentDialogForeground" ResourceKey="SystemControlPageTextBaseHighBrush" />
-    <m:StaticResource x:Key="ContentDialogBackground" ResourceKey="SystemControlPageBackgroundAltHighBrush" />
-    <m:StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="ContentDialogLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
 
     <!-- Resources for DataGrid -->
     <sys:Double x:Key="ListAccentLowOpacity">0.6</sys:Double>

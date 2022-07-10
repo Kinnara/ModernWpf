@@ -94,15 +94,6 @@
                 <Setter Property="Spacing" Value="16" />
             </Style>
 
-            <Style x:Key="ScrollableContentDialogStyle" TargetType="ui:ContentDialog">
-                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-                <Style.Resources>
-                    <Thickness x:Key="ContentDialogContentMargin">24,0,24,0</Thickness>
-                    <Thickness x:Key="ContentDialogContentScrollViewerMargin">-24,0,-24,0</Thickness>
-                    <Thickness x:Key="ContentDialogTitleMargin">24,0,24,12</Thickness>
-                </Style.Resources>
-            </Style>
-
             <Style x:Key="ControlExampleFullStyle" TargetType="sc:ControlExample">
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                 <Setter Property="VerticalContentAlignment" Value="Stretch" />
