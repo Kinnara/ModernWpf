@@ -197,9 +197,6 @@
     <SolidColorBrush x:Key="ListViewItemRevealBorderBrushPointerOver" Color="Transparent" />
     <SolidColorBrush x:Key="ListViewItemRevealBorderBrushPressed" Color="Transparent" />
     <SolidColorBrush x:Key="GridViewItemRevealBorderBrush" Color="Transparent" />
-
-    <!-- Legacy brushes -->
-    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{m:StaticColor SolidBackgroundFillColorBase}" />
     
     <!--#region Common_themeresources.xaml-->
     <!-- Colors -->
@@ -405,7 +402,7 @@
     <SolidColorBrush x:Key="SystemFillColorCriticalBackgroundBrush" Color="{StaticResource SystemFillColorCriticalBackground}" />
 
     <m:StaticResource x:Key="DefaultTextForegroundThemeBrush" ResourceKey="TextFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="DefaultApplicationBackgroundThemeBrush" ResourceKey="SolidBackgroundFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ApplicationPageBackgroundThemeBrush" ResourceKey="SolidBackgroundFillColorTertiaryBrush" />
 
     <!-- Elevation border brushes-->
 
@@ -443,7 +440,7 @@
     <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumLowBrush" Color="{m:DynamicColor SystemAccentColor}" Opacity="0.75" />
     <sys:Boolean x:Key="UseSystemFocusVisuals">True</sys:Boolean>
     <Thickness x:Key="TextControlBorderThemeThickness">1</Thickness>
-    <Thickness x:Key="TextControlBorderThemeThicknessFocused">2</Thickness>
+    <Thickness x:Key="TextControlBorderThemeThicknessFocused">1,1,1,2</Thickness>
     <Thickness x:Key="TextControlThemePadding">10,6,6,5</Thickness>
     <!--#endregion-->
     
@@ -1647,34 +1644,58 @@
     <sys:Double x:Key="TextControlThemeMinWidth">64</sys:Double>
     <Thickness x:Key="TextControlMarginThemeThickness">0,9.5,0,9.5</Thickness>
     <Thickness x:Key="HelperButtonThemePadding">0,0,-2,0</Thickness>
-    <m:StaticResource x:Key="TextControlForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="TextControlForegroundPointerOver" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="TextControlForegroundFocused" ResourceKey="TextFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="TextControlForegroundDisabled" ResourceKey="SystemControlDisabledChromeDisabledLowBrush" />
-    <m:StaticResource x:Key="TextControlBackground" ResourceKey="SystemControlBackgroundAltMediumLowBrush" />
-    <m:StaticResource x:Key="TextControlBackgroundPointerOver" ResourceKey="SystemControlBackgroundAltMediumBrush" />
+    
+    <!--#region TextBox_themeresources.xaml-->
+    <!-- BUG 31342318: Text color doesn't update if the main color value is the same. To be removed when the bug is fixed. -->
+    <Color x:Key="TemporaryTextFillColorDisabled">#5DFEFEFE</Color>
+
+    <m:StaticResource x:Key="TextControlBackground" ResourceKey="ControlFillColorDefaultBrush" />
+    <m:StaticResource x:Key="TextControlBackgroundPointerOver" ResourceKey="ControlFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TextControlBackgroundFocused" ResourceKey="ControlFillColorInputActiveBrush" />
-    <m:StaticResource x:Key="TextControlBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TextControlBorderBrush" ResourceKey="ControlAltFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="TextControlBorderBrushPointerOver" ResourceKey="ControlAAStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="SystemControlHighlightAccentBrush" />
-    <m:StaticResource x:Key="TextControlBorderBrushDisabled" ResourceKey="SystemControlDisabledBaseLowBrush" />
-    <m:StaticResource x:Key="TextControlPlaceholderForeground" ResourceKey="SystemControlPageTextBaseMediumBrush" />
-    <m:StaticResource x:Key="TextControlPlaceholderForegroundPointerOver" ResourceKey="SystemControlPageTextBaseMediumBrush" />
-    <m:StaticResource x:Key="TextControlPlaceholderForegroundFocused" ResourceKey="ControlAltFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="TextControlPlaceholderForegroundDisabled" ResourceKey="SystemControlDisabledChromeDisabledLowBrush" />
-    <m:StaticResource x:Key="TextControlHeaderForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="TextControlHeaderForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="TextControlSelectionHighlightColor" ResourceKey="SystemControlHighlightAccentBrush" />
-    <m:StaticResource x:Key="TextControlButtonBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="TextControlButtonBackgroundPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="TextControlButtonBackgroundPressed" ResourceKey="SystemControlHighlightAccentBrush" />
-    <m:StaticResource x:Key="TextControlButtonBorderBrush" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="TextControlButtonBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="TextControlButtonBorderBrushPressed" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="TextControlBackgroundDisabled" ResourceKey="ControlFillColorDisabledBrush" />
+    <m:StaticResource x:Key="TextControlBorderBrush" ResourceKey="TextControlElevationBorderBrush" />
+    <m:StaticResource x:Key="TextControlBorderBrushPointerOver" ResourceKey="TextControlElevationBorderBrush" />
+    <m:StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="TextControlElevationBorderFocusedBrush" />
+    <m:StaticResource x:Key="TextControlBorderBrushDisabled" ResourceKey="ControlStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="TextControlForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="TextControlForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="TextControlForegroundFocused" ResourceKey="TextFillColorPrimaryBrush" />
+    <SolidColorBrush x:Key="TextControlForegroundDisabled" Color="{StaticResource TemporaryTextFillColorDisabled}" />
+    <m:StaticResource x:Key="TextControlPlaceholderForeground" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="TextControlPlaceholderForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="TextControlPlaceholderForegroundFocused" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="TextControlPlaceholderForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="TextControlSelectionHighlightColor" ResourceKey="AccentFillColorDefaultBrush" />
+
+    <m:StaticResource x:Key="TextControlButtonBackgroundPointerOver" ResourceKey="GhostFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="TextControlButtonBackgroundPressed" ResourceKey="GhostFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="TextControlButtonBorderBrush" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TextControlButtonBorderBrushPointerOver" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TextControlButtonBorderBrushPressed" ResourceKey="ControlFillColorTransparentBrush" />
     <m:StaticResource x:Key="TextControlButtonForeground" ResourceKey="TextFillColorSecondaryBrush" />
-    <m:StaticResource x:Key="TextControlButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAccentBrush" />
-    <m:StaticResource x:Key="TextControlButtonForegroundPressed" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
+    <m:StaticResource x:Key="TextControlButtonForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="TextControlButtonForegroundPressed" ResourceKey="TextFillColorTertiaryBrush" />
+
+    <LinearGradientBrush x:Key="TextControlElevationBorderBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
+        <LinearGradientBrush.RelativeTransform>
+            <ScaleTransform ScaleY="-1" CenterY="0.5"/>
+        </LinearGradientBrush.RelativeTransform>
+        <LinearGradientBrush.GradientStops>
+            <GradientStop Offset="0" Color="{StaticResource ControlAAFillColorDefault}"/>
+            <GradientStop Offset="1.0" Color="{StaticResource ControlStrokeColorDefault}"/>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="TextControlElevationBorderFocusedBrush" MappingMode="Absolute" StartPoint="0,1.5" EndPoint="0,2.5">
+        <LinearGradientBrush.RelativeTransform>
+            <ScaleTransform ScaleY="-1" CenterY="0.5"/>
+        </LinearGradientBrush.RelativeTransform>
+        <LinearGradientBrush.GradientStops>
+            <GradientStop Offset="0" Color="{StaticResource AccentFillColorDefault}"/>
+            <GradientStop Offset="1.0" Color="{StaticResource ControlStrokeColorDefault}"/>
+        </LinearGradientBrush.GradientStops>
+    </LinearGradientBrush>
+    <!--#endregion-->
 
     <!-- Resources for Window -->
     <SolidColorBrush x:Key="WindowBorder" Color="#FF707070" />
