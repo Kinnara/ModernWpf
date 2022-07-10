@@ -51,6 +51,8 @@ namespace ModernWpf.Controls
         static NumberBox()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(NumberBox), new FrameworkPropertyMetadata(typeof(NumberBox)));
+
+            AutomationProperties.NameProperty.OverrideMetadata(typeof(NumberBox), new FrameworkPropertyMetadata(OnAutomationPropertiesNamePropertyChanged));
         }
 
         public NumberBox()
@@ -329,6 +331,32 @@ namespace ModernWpf.Controls
         private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs args)
         {
             UpdateVisualStateForIsEnabledChange();
+        }
+
+        private static void OnAutomationPropertiesNamePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((NumberBox)d).ReevaluateForwardedUIAName();
+        }
+
+        private void ReevaluateForwardedUIAName()
+        {
+            if (m_textBox is { } textBox)
+            {
+                var name = AutomationProperties.GetName(this);
+                if (!string.IsNullOrEmpty(name))
+                {
+                    // AutomationProperties.Name is a non empty string, we will use that value.
+                    AutomationProperties.SetName(textBox, name);
+                }
+                else
+                {
+                    if (Header is string headerAsString)
+                    {
+                        // Header is a string, we can use that as our UIA name.
+                        AutomationProperties.SetName(textBox, headerAsString);
+                    }
+                }
+            }
         }
 
         private void UpdateVisualStateForIsEnabledChange()
@@ -657,6 +685,11 @@ namespace ModernWpf.Controls
                 {
                     // Header is not a string, so let's show header presenter
                     shouldShowHeader = true;
+                    // When our header isn't a string, we use the NumberBox's UIA name for the textbox's UIA name.
+                    if (m_textBox is { } textBox)
+                    {
+                        AutomationProperties.SetName(textBox, AutomationProperties.GetName(this));
+                    }
                 }
             }
             if (HeaderTemplate is { } headerTemplate)
@@ -677,6 +710,8 @@ namespace ModernWpf.Controls
             {
                 m_headerPresenter.Visibility = shouldShowHeader ? Visibility.Visible : Visibility.Collapsed;
             }
+
+            ReevaluateForwardedUIAName();
         }
 
         private void MoveCaretToTextEnd()
