@@ -338,17 +338,20 @@ namespace ModernWpf.Controls
                     parent = CachedVisualTreeHelpers.GetParent(parent);
                 }
 
-                if (m_parentScrollers.Empty())
+                if (!m_managingViewportDisabled)
                 {
-                    // We usually update the viewport in the post arrange handler. But, since we don't have
-                    // a scroller, let's do it now.
-                    UpdateViewport();
-                }
-                else
-                {
-                    var outerScrollerInfo = m_parentScrollers.Last();
-                    outerScrollerInfo.Scroller.PostArrange += OnPostArrange;
-                    //outerScrollerInfo.PostArrangeToken = outerScrollerInfo.Scroller().PostArrange(winrt::auto_revoke, { this, &ViewportManagerDownLevel::OnPostArrange });
+                    if (m_parentScrollers.Empty())
+                    {
+                        // We usually update the viewport in the post arrange handler. 
+                        // But, since we don't have a scroller, let's do it now.
+                        UpdateViewport();
+                    }
+                    else
+                    {
+                        var outerScrollerInfo = m_parentScrollers.Last();
+                        outerScrollerInfo.Scroller.PostArrange += OnPostArrange;
+                        //outerScrollerInfo.PostArrangeToken = outerScrollerInfo.Scroller().PostArrange(winrt::auto_revoke, { this, &ViewportManagerDownLevel::OnPostArrange });
+                    }
                 }
 
                 m_ensuredScrollers = true;
