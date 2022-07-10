@@ -257,7 +257,7 @@
     <SolidColorBrush x:Key="SystemFillColorCriticalBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
     <m:StaticResource x:Key="DefaultTextForegroundThemeBrush" ResourceKey="TextFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="DefaultApplicationBackgroundThemeBrush" ResourceKey="SolidBackgroundFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ApplicationPageBackgroundThemeBrush" ResourceKey="SolidBackgroundFillColorTertiaryBrush" />
 
     <!-- Elevation border brushes-->
 
@@ -322,9 +322,6 @@
     <SolidColorBrush x:Key="ListViewItemRevealBorderBrushPointerOver" Color="Transparent" />
     <SolidColorBrush x:Key="ListViewItemRevealBorderBrushPressed" Color="Transparent" />
     <SolidColorBrush x:Key="GridViewItemRevealBorderBrush" Color="Transparent" />
-
-    <!-- Legacy brushes -->
-    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
     <!-- Resources for AppBarButton -->
     <sys:Double x:Key="AppBarExpandButtonThemeHeight">24</sys:Double>
