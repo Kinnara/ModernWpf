@@ -12,6 +12,8 @@ using ModernWpf.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation;
 
 #if USING_TAEF
 using WEX.TestExecution;
@@ -172,6 +174,53 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
             {
                 Verify.AreEqual("Normal", commonStatesGroup.CurrentState.Name);
             });
+        }
+
+        [TestMethod]
+        public void VerifyUIANameBehavior()
+        {
+            NumberBox numberBox = null;
+            TextBox textBox = null;
+
+            RunOnUIThread.Execute(() =>
+            {
+                numberBox = new NumberBox();
+                Content = numberBox;
+                Content.UpdateLayout();
+
+                textBox = TestPage.FindVisualChildrenByType<TextBox>(numberBox)[0];
+                Verify.IsNotNull(textBox);
+                numberBox.Header = "Some header";
+            });
+
+            IdleSynchronizer.Wait();
+
+            RunOnUIThread.Execute(() =>
+            {
+                VerifyUIAName("Some header");
+                numberBox.Header = new Button();
+                AutomationProperties.SetName(numberBox, "Some UIA name");
+            });
+
+            IdleSynchronizer.Wait();
+
+            RunOnUIThread.Execute(() =>
+            {
+                VerifyUIAName("Some UIA name");
+                numberBox.Header = new Button();
+            });
+
+            IdleSynchronizer.Wait();
+
+            RunOnUIThread.Execute(() =>
+            {
+                VerifyUIAName("Some UIA name");
+            });
+
+            void VerifyUIAName(string value)
+            {
+                Verify.AreEqual(value, FrameworkElementAutomationPeer.CreatePeerForElement(textBox).GetName());
+            }
         }
 
         private NumberBox SetupNumberBox()
