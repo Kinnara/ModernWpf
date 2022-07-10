@@ -10,7 +10,6 @@
     d:DesignHeight="756"
     d:DesignWidth="548"
     x:Name="dialog"
-    Style="{StaticResource ScrollableContentDialogStyle}"
     Title="Title"
     PrimaryButtonText="Yes"
     SecondaryButtonText="No"
