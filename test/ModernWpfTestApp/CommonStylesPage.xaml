@@ -394,6 +394,18 @@
                         <RadioButton
                             Style="{StaticResource DefaultRadioButtonStyle}"
                             Content="I am a RadioButton with DefaultRadioButtonStyle set" />
+
+                        <ButtonEx Content="Test flyout">
+                            <ButtonEx.Flyout>
+                                <Flyout>
+                                    <StackPanel>
+                                        <TextBlock Style="{DynamicResource BaseTextBlockStyle}" Text="All items will be removed. Do you want to continue?" Margin="0,0,0,12" />
+                                        <Button Content="Yes, empty my cart" />
+                                    </StackPanel>
+                                </Flyout>
+                            </ButtonEx.Flyout>
+                        </ButtonEx>
+                        
                     </StackPanel>
                 </Border>
                 <Border Style="{DynamicResource CompactBorderStyle}">

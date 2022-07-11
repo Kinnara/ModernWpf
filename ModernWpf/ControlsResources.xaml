@@ -69,7 +69,7 @@
     <sys:Double x:Key="ToggleSwitchPreContentMargin">6</sys:Double>
     <sys:Double x:Key="ToggleSwitchPostContentMargin">6</sys:Double>
     <sys:Double x:Key="ToggleSwitchThemeMinWidth">154</sys:Double>
-
+    
     <ControlTemplate x:Key="TextControlValidationErrorTemplate">
         <Grid SnapsToDevicePixels="True">
             <AdornedElementPlaceholder />

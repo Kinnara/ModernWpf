@@ -165,9 +165,7 @@
     <SolidColorBrush x:Key="AccentTextFillColorTertiaryBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="AccentTextFillColorDisabledBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
 
-    <SolidColorBrush x:Key="TextOnAccentFillColorPrimaryBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
-    <SolidColorBrush x:Key="TextOnAccentFillColorSecondaryBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
-    <SolidColorBrush x:Key="TextOnAccentFillColorDisabledBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="TextOnAccentFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
 
     <SolidColorBrush x:Key="TextOnAccentAAFillColorPrimaryBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="TextOnAccentAAFillColorSecondaryBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
@@ -202,9 +200,6 @@
     <SolidColorBrush x:Key="ControlOnImageFillColorDisabledBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
 
     <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
-    <SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
-    <SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
-    <SolidColorBrush x:Key="AccentFillColorDisabledBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
     <SolidColorBrush x:Key="AccentAAFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="AccentAAFillColorSecondaryBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
@@ -217,6 +212,7 @@
     <SolidColorBrush x:Key="ControlStrokeColorOnAccentSecondaryBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
     <SolidColorBrush x:Key="ControlStrokeColorOnAccentTertiaryBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
     <SolidColorBrush x:Key="ControlStrokeColorOnAccentDisabledBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="ControlStrokeColorForAAFillOnImageBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
 
     <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="CardStrokeColorDefaultSolidBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
@@ -251,13 +247,15 @@
     <SolidColorBrush x:Key="SystemFillColorSuccessBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="SystemFillColorCautionBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="SystemFillColorCriticalBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="SystemFillColorNeutralBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="SystemFillColorAttentionBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemFillColorSuccessBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemFillColorCautionBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemFillColorCriticalBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemFillColorNeutralBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
     <m:StaticResource x:Key="DefaultTextForegroundThemeBrush" ResourceKey="TextFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="DefaultApplicationBackgroundThemeBrush" ResourceKey="SolidBackgroundFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ApplicationPageBackgroundThemeBrush" ResourceKey="SolidBackgroundFillColorTertiaryBrush" />
 
     <!-- Elevation border brushes-->
 
@@ -322,9 +320,6 @@
     <SolidColorBrush x:Key="ListViewItemRevealBorderBrushPointerOver" Color="Transparent" />
     <SolidColorBrush x:Key="ListViewItemRevealBorderBrushPressed" Color="Transparent" />
     <SolidColorBrush x:Key="GridViewItemRevealBorderBrush" Color="Transparent" />
-
-    <!-- Legacy brushes -->
-    <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
     <!-- Resources for AppBarButton -->
     <sys:Double x:Key="AppBarExpandButtonThemeHeight">24</sys:Double>
@@ -687,33 +682,18 @@
     <Thickness x:Key="CommandBarOverflowPresenterBorderUpPadding">0</Thickness>
 
     <!-- Resources for CommandBarFlyout -->
-    <Thickness x:Key="CommandBarFlyoutBorderThemeThickness">1</Thickness>
+    <Thickness x:Key="CommandBarFlyoutBorderThemeThickness">2</Thickness>
     <Thickness x:Key="CommandBarFlyoutBorderUpThemeThickness">1,1,1,0</Thickness>
     <Thickness x:Key="CommandBarFlyoutBorderDownThemeThickness">1,0,1,1</Thickness>
     <SolidColorBrush x:Key="CommandBarFlyoutButtonBackground" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
 
     <!-- Resources for ContentDialog -->
-    <sys:Double x:Key="ContentDialogMinWidth">320</sys:Double>
-    <sys:Double x:Key="ContentDialogMaxWidth">548</sys:Double>
-    <sys:Double x:Key="ContentDialogMinHeight">184</sys:Double>
-    <sys:Double x:Key="ContentDialogMaxHeight">756</sys:Double>
-    <sys:Double x:Key="ContentDialogButtonMinWidth">130</sys:Double>
-    <sys:Double x:Key="ContentDialogButtonMaxWidth">202</sys:Double>
-    <sys:Double x:Key="ContentDialogButtonMinHeight">32</sys:Double>
-    <sys:Double x:Key="ContentDialogButtonHeight">32</sys:Double>
-    <sys:Double x:Key="ContentDialogTitleMaxHeight">56</sys:Double>
-    <Thickness x:Key="ContentDialogBorderWidth">1</Thickness>
-    <Thickness x:Key="ContentDialogButton1HostMargin">0,0,4,0</Thickness>
-    <Thickness x:Key="ContentDialogButton2HostMargin">0,0,0,0</Thickness>
-    <Thickness x:Key="ContentDialogContentMargin">0,0,0,0</Thickness>
-    <Thickness x:Key="ContentDialogContentScrollViewerMargin">0,0,0,0</Thickness>
-    <Thickness x:Key="ContentDialogCommandSpaceMargin">0,24,0,0</Thickness>
-    <Thickness x:Key="ContentDialogTitleMargin">0,0,0,12</Thickness>
-    <Thickness x:Key="ContentDialogPadding">24,18,24,24</Thickness>
-    <m:StaticResource x:Key="ContentDialogForeground" ResourceKey="SystemControlPageTextBaseHighBrush" />
-    <m:StaticResource x:Key="ContentDialogBackground" ResourceKey="SystemControlPageBackgroundAltHighBrush" />
-    <m:StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="ContentDialogLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
+    <m:StaticResource x:Key="ContentDialogForeground" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="ContentDialogBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="ContentDialogSmokeFill" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="ContentDialogTopOverlay" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+    <Thickness x:Key="ContentDialogBorderWidth">2</Thickness>
 
     <!-- Resources for DataGrid -->
     <sys:Double x:Key="ListAccentLowOpacity">0.6</sys:Double>
@@ -793,8 +773,8 @@
     <Thickness x:Key="FlyoutBorderThemeThickness">1</Thickness>
     <Thickness x:Key="FlyoutBorderThemePadding">0</Thickness>
     <Thickness x:Key="FlyoutContentThemePadding">12,11,12,12</Thickness>
-    <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemControlPageBackgroundChromeMediumLowBrush" />
-    <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemControlTransientBorderBrush" />
+    <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemColorWindowTextColorBrush" />
 
     <!-- Resources for HyperlinkButton -->
     <m:StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="SystemControlHyperlinkTextBrush" />
@@ -1193,7 +1173,7 @@
     <m:StaticResource x:Key="RatingControlPointerOverUnselectedForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
     <m:StaticResource x:Key="RatingControlPointerOverSelectedForeground" ResourceKey="SystemControlHighlightAccentBrush" />
     <SolidColorBrush x:Key="RatingControlDisabledSelectedForeground" Color="{m:ThemeResource SystemColorGrayTextColor}" />
-    <m:StaticResource x:Key="RatingControlCaptionForeground" ResourceKey="SystemControlForegroundBaseMediumBrush" />
+    <m:StaticResource x:Key="RatingControlCaptionForeground" ResourceKey="TextFillColorSecondaryBrush" />
     <local:RatingItemFontInfo x:Key="RatingControlDefaultFontInfo" Glyph="&#xE735;" UnsetGlyph="&#xE734;" />
     <local:RatingItemPathInfo
         x:Key="RatingControlDefaultPathInfo"

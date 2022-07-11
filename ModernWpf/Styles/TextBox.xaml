@@ -6,8 +6,7 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
     <Thickness x:Key="TextBoxTopHeaderMargin">0,0,0,4</Thickness>
-
-    <primitives:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
+    <Thickness x:Key="TextBoxInnerButtonMargin">0,4,4,4</Thickness>
 
     <Style x:Key="DefaultTextBoxStyle" TargetType="TextBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -49,6 +48,7 @@
                                         </ControlTemplate.Resources>
                                         <Border
                                             x:Name="ButtonLayoutGrid"
+                                            Margin="{DynamicResource TextBoxInnerButtonMargin}"
                                             BorderBrush="{DynamicResource TextControlButtonBorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             Background="{DynamicResource TextControlButtonBackground}"
@@ -166,12 +166,12 @@
                             Focusable="False"
                             Style="{StaticResource DeleteButtonStyle}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                             Padding="{DynamicResource HelperButtonThemePadding}"
                             IsTabStop="False"
                             Visibility="Collapsed"
                             FontSize="{TemplateBinding FontSize}"
-                            MinWidth="34"
+                            Width="30"
                             VerticalAlignment="Stretch"
                             primitives:TextBoxHelper.IsDeleteButton="True" />
                         <ContentPresenter

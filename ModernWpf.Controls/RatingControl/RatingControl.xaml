@@ -40,15 +40,9 @@
                                 Orientation="Horizontal"
                                 Background="Transparent"
                                 Margin="20,20,0,20" />
-                            <TextBlock
-                                x:Name="Caption"
-                                Height="32"
-                                Margin="4,9,20,0"
-                                Style="{DynamicResource CaptionTextBlockStyle}"
-                                VerticalAlignment="Center"
-                                AutomationProperties.Name="RatingCaption"
-                                IsHitTestVisible="False"
-                                Text="{TemplateBinding Caption}" />
+                            <TextBlock x:Name="Caption" Height="32" Margin="4,9,20,0" Style="{DynamicResource CaptionTextBlockStyle}"
+                                Foreground="{DynamicResource RatingControlCaptionForeground}" VerticalAlignment="Center" IsHitTestVisible="False"
+                                AutomationProperties.Name="RatingCaption" Text="{TemplateBinding Caption}"/>
                             <!-- 4 = 8 item spacing +4 of magic redline spacing -8 to compensate for scale of the last RatingItem -->
                             <!--
                                 NB: The redlines say 8px, but it's really 12 px because:

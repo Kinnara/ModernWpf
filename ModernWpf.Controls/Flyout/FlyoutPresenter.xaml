@@ -39,8 +39,7 @@
                             <Border
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                Padding="{DynamicResource FlyoutBorderThemePadding}">
+                                CornerRadius="{TemplateBinding CornerRadius}">
                                 <ScrollViewer
                                     x:Name="ScrollViewer"
                                     HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
