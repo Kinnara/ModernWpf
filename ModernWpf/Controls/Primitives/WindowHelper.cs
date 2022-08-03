@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -70,10 +71,56 @@ namespace ModernWpf.Controls.Primitives
                 {
                     window.ClearValue(FrameworkElement.StyleProperty);
                 }
+
+                SetFixSizeToContent(window, true);
             }
         }
 
         #endregion
+
+
+        #region FixSizeToContent
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static readonly DependencyProperty FixSizeToContentProperty =
+            DependencyProperty.RegisterAttached(
+                "FixSizeToContent",
+                typeof(bool),
+                typeof(WindowHelper),
+                new PropertyMetadata(
+                    (d, e) => FixSizeToContent((Window)d, (bool)e.NewValue)
+                ));
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static bool GetFixSizeToContent(Window window)
+            => (bool)window.GetValue(FixSizeToContentProperty);
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static void SetFixSizeToContent(Window window, bool value)
+            => window.SetValue(FixSizeToContentProperty, value);
+
+        /// <summary>
+        ///   Work around extra space when using Window.SizeToContent. Fixes
+        ///   #142.
+        /// </summary>
+        static void FixSizeToContent(Window window, bool newValue)
+        {
+            if (newValue)
+                window.Activated += OnActivated;
+            else
+                window.Activated -= OnActivated;
+
+            void OnActivated(object sender, EventArgs e)
+            {
+                window.Activated -= OnActivated;
+
+                void action() => window.InvalidateMeasure();
+                window.Dispatcher.BeginInvoke((Action)action);
+            }
+        }
+
+        #endregion
+
 
         #region FixMaximizedWindow
 
