@@ -99,11 +99,11 @@
                 Placement="Bottom">
                 <primitives:ThemeShadowChrome
                     IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
-                    CornerRadius="{DynamicResource OverlayCornerRadius}">
+                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                     <Border
                         x:Name="SubMenuRoot"
                         Background="{DynamicResource MenuFlyoutPresenterBackground}"
-                        CornerRadius="{DynamicResource OverlayCornerRadius}">
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                         <Grid>
                             <ScrollViewer
                                 x:Name="SubMenuScrollViewer"
@@ -123,7 +123,7 @@
                                 x:Name="SubMenuBorder"
                                 BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
                                 BorderThickness="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}"
-                                CornerRadius="{DynamicResource OverlayCornerRadius}" />
+                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
                         </Grid>
                     </Border>
                 </primitives:ThemeShadowChrome>
@@ -174,11 +174,10 @@
                     x:Name="CheckGlyph"
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                     Data="{StaticResource CheckMark}"
-                    FontSize="16"
+                    FontSize="12"
                     Foreground="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForeground}"
                     Opacity="0"
-                    Width="16"
-                    Margin="0,0,12,0"
+                    Margin="0,0,16,0"
                     Visibility="Collapsed" />
                 <Viewbox
                     x:Name="IconRoot"
@@ -207,10 +206,10 @@
                     Grid.Column="3"
                     Style="{StaticResource CaptionTextBlockStyle}"
                     Text="{TemplateBinding InputGestureText}"
-                    Margin="24,0,0,0"
+                    Margin="24,4,0,0"
                     Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
                     HorizontalAlignment="Right"
-                    VerticalAlignment="Center" />
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
             </Grid>
         </Border>
         <ControlTemplate.Triggers>
@@ -227,27 +226,18 @@
                 <Setter TargetName="CheckGlyph" Property="Visibility" Value="Visible" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutItemRevealBackgroundPointerOver}" />
-                <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemRevealBorderBrushPointerOver}" />
-                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
+                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutItemBackgroundPointerOver}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
-                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForegroundPointerOver}" />
                 <Setter TargetName="KeyboardAcceleratorTextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutItemRevealBackgroundPressed}" />
-                <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemRevealBorderBrushPressed}" />
-                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPressed}" />
+                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutItemBackgroundPressed}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPressed}" />
-                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForegroundPressed}" />
                 <Setter TargetName="KeyboardAcceleratorTextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutItemBackgroundDisabled}" />
-                <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemRevealBorderBrushDisabled}" />
-                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundDisabled}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundDisabled}" />
-                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForegroundDisabled}" />
                 <Setter TargetName="KeyboardAcceleratorTextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled}" />
             </Trigger>
         </ControlTemplate.Triggers>
@@ -324,11 +314,11 @@
                     </Popup.PlacementRectangle>
                     <primitives:ThemeShadowChrome
                         IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
-                        CornerRadius="{DynamicResource OverlayCornerRadius}">
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                         <Border
                             x:Name="SubMenuRoot"
                             Background="{DynamicResource MenuFlyoutPresenterBackground}"
-                            CornerRadius="{DynamicResource OverlayCornerRadius}">
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                             <Grid>
                                 <ScrollViewer
                                     x:Name="SubMenuScrollViewer"
@@ -348,7 +338,7 @@
                                     x:Name="SubMenuBorder"
                                     BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
                                     BorderThickness="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}"
-                                    CornerRadius="{DynamicResource OverlayCornerRadius}" />
+                                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
                             </Grid>
                         </Border>
                     </primitives:ThemeShadowChrome>
@@ -363,30 +353,22 @@
                 <Setter Property="Visibility" TargetName="IconRoot" Value="Collapsed" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemRevealBackgroundPointerOver}" />
-                <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource MenuFlyoutSubItemRevealBorderBrushPointerOver}" />
-                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
+                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPointerOver}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
                 <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronPointerOver}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemRevealBackgroundPressed}" />
-                <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource MenuFlyoutSubItemRevealBorderBrushPressed}" />
-                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
+                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPressed}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
                 <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronPressed}" />
             </Trigger>
             <Trigger Property="IsSubmenuOpen" Value="True">
-                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemRevealBackgroundSubMenuOpened}" />
-                <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource MenuFlyoutSubItemRevealBorderBrushSubMenuOpened}" />
-                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
+                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundSubMenuOpened}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
                 <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronSubMenuOpened}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemRevealBackgroundDisabled}" />
-                <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource MenuFlyoutSubItemRevealBorderBrushDisabled}" />
-                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
+                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundDisabled}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
                 <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronDisabled}" />
             </Trigger>
@@ -399,9 +381,7 @@
 
     <Style x:Key="DefaultMenuItemStyle" TargetType="MenuItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Background" Value="{DynamicResource MenuFlyoutItemRevealBackground}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemRevealBorderBrush}" />
-        <Setter Property="BorderThickness" Value="{DynamicResource MenuFlyoutItemRevealBorderThickness}" />
+        <Setter Property="Background" Value="{DynamicResource MenuFlyoutItemBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource MenuFlyoutItemForeground}" />
         <Setter Property="Padding" Value="{DynamicResource MenuFlyoutItemThemePaddingNarrow}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
@@ -411,6 +391,7 @@
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuItemTemplateKey}}" />
         <Style.Triggers>
             <Trigger Property="Role" Value="TopLevelHeader">
@@ -430,11 +411,13 @@
                 <Setter Property="Height" Value="{StaticResource MenuBarHeight}" />
             </Trigger>
             <Trigger Property="Role" Value="SubmenuHeader">
-                <Setter Property="Background" Value="{DynamicResource MenuFlyoutSubItemRevealBackground}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutSubItemRevealBorderBrush}" />
-                <Setter Property="BorderThickness" Value="{DynamicResource MenuFlyoutSubItemRevealBorderThickness}" />
+                <Setter Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackground}" />
                 <Setter Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForeground}" />
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuHeaderTemplateKey}}" />
+            </Trigger>
+            <Trigger Property="IsCheckable" Value="True">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="True" />
             </Trigger>
         </Style.Triggers>
     </Style>
