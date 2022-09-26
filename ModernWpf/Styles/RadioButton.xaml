@@ -31,7 +31,16 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                        SnapsToDevicePixels="True">
+                        SnapsToDevicePixels="True">   
+                        
+                        <Border.Resources>
+                            <primitives:BindingProxy x:Key="RadioButtonOuterEllipseStrokePointerOverProxy" Value="{DynamicResource RadioButtonOuterEllipseStrokePointerOver}" />
+                            <primitives:BindingProxy x:Key="RadioButtonOuterEllipseFillPointerOverProxy" Value="{DynamicResource RadioButtonOuterEllipseFillPointerOver}" />
+                            <primitives:BindingProxy x:Key="RadioButtonOuterEllipseStrokePressedProxy" Value="{DynamicResource RadioButtonOuterEllipseStrokePressed}" />
+                            <primitives:BindingProxy x:Key="RadioButtonOuterEllipseFillPressedProxy" Value="{DynamicResource RadioButtonOuterEllipseFillPressed}" />
+                            <primitives:BindingProxy x:Key="RadioButtonOuterEllipseStrokeDisabledProxy" Value="{DynamicResource RadioButtonOuterEllipseStrokeDisabled}" />
+                            <primitives:BindingProxy x:Key="RadioButtonOuterEllipseFillDisabledProxy" Value="{DynamicResource RadioButtonOuterEllipseFillDisabled}" />
+                        </Border.Resources>
                         
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -47,25 +56,14 @@
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="PointerOver">
+                                <VisualState x:Name="MouseOver">
                                     <Storyboard>
-                                        <!-- TODO
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseStrokePointerOver}" />
+                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{Binding Value.Color, Source={StaticResource RadioButtonOuterEllipseStrokePointerOverProxy}}" />
                                         </ColorAnimationUsingKeyFrames>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseFillPointerOver}" />
+                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{Binding Value.Color, Source={StaticResource RadioButtonOuterEllipseFillPointerOverProxy}}" />
                                         </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames  Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseCheckedStrokePointerOver}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseCheckedFillPointerOver}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonCheckGlyphFillPointerOver}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        -->
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
                                             <!-- 1.167 is relative scale from 12px to 14px -->
                                             <SplineDoubleKeyFrame KeyTime="0:0:0.25" KeySpline="0.0,0.0 0.0,1.0" Value="1.167" />
@@ -78,22 +76,12 @@
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <!-- TODO
                                         <ColorAnimationUsingKeyFrames  Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame  KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseStrokePressed}" />
+                                            <LinearColorKeyFrame  KeyTime="0:0:0.083" Value="{Binding Value.Color, Source={StaticResource RadioButtonOuterEllipseStrokePressedProxy}}" />
                                         </ColorAnimationUsingKeyFrames>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseFillPressed}" />
+                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{Binding Value.Color, Source={StaticResource RadioButtonOuterEllipseFillPressedProxy}}" />
                                         </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames  Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame  KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseCheckedStrokePressed}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimation Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Duration="0:0:0.083" To="{DynamicResource RadioButtonOuterEllipseCheckedFillPressed}">
-                                        </ColorAnimation>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonCheckGlyphFillPressed}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        -->
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
                                             <!-- 0.71 is relative scale from 14px to 10px -->
                                             <SplineDoubleKeyFrame KeyTime="0:0:0.25" KeySpline="0.0,0.0 0.0,1.0" Value="0.71" />
@@ -117,23 +105,12 @@
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <!-- TODO
                                         <ColorAnimationUsingKeyFrames  Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame  KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseStrokeDisabled}" />
+                                            <LinearColorKeyFrame  KeyTime="0:0:0.083" Value="{Binding Value.Color, Source={StaticResource RadioButtonOuterEllipseStrokeDisabledProxy}}" />
                                         </ColorAnimationUsingKeyFrames>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseFillDisabled}" />
+                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{Binding Value.Color, Source={StaticResource RadioButtonOuterEllipseFillDisabledProxy}}" />
                                         </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames  Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame  KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseCheckedStrokeDisabled}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseCheckedFillDisabled}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonCheckGlyphFillDisabled}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        -->
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
                                             <!-- 1.167 is relative scale from 12px to 14px -->
                                             <SplineDoubleKeyFrame KeyTime="0:0:0.167" KeySpline="0.0,0.0 0.0,1.0" Value="1.167" />
@@ -152,9 +129,6 @@
                                         <DoubleAnimation Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
                                         <DoubleAnimation Storyboard.TargetName="CheckOuterEllipse" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
                                         <DoubleAnimation Storyboard.TargetName="PressedCheckGlyph" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
-                                        <ObjectAnimationUsingKeyFrames  Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Stroke">
-                                            <DiscreteObjectKeyFrame  KeyTime="0" Value="{DynamicResource RadioButtonCheckGlyphStrokeChecked}" />
-                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Unchecked" />
@@ -203,8 +177,6 @@
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource RadioButtonForegroundPointerOver}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource RadioButtonBackgroundPointerOver}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource RadioButtonBorderBrushPointerOver}" />
-                            <Setter TargetName="OuterEllipse" Property="Stroke" Value="{DynamicResource RadioButtonOuterEllipseStrokePointerOver}" />
-                            <Setter TargetName="OuterEllipse" Property="Fill" Value="{DynamicResource RadioButtonOuterEllipseFillPointerOver}" />
                             <Setter TargetName="CheckOuterEllipse" Property="Stroke" Value="{DynamicResource RadioButtonOuterEllipseCheckedStrokePointerOver}" />
                             <Setter TargetName="CheckOuterEllipse" Property="Fill" Value="{DynamicResource RadioButtonOuterEllipseCheckedFillPointerOver}" />
                             <Setter TargetName="CheckGlyph" Property="Fill" Value="{DynamicResource RadioButtonCheckGlyphFillPointerOver}" />
@@ -214,8 +186,6 @@
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource RadioButtonForegroundPressed}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource RadioButtonBackgroundPressed}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource RadioButtonBorderBrushPressed}" />
-                            <Setter TargetName="OuterEllipse" Property="Stroke" Value="{DynamicResource RadioButtonOuterEllipseStrokePressed}" />
-                            <Setter TargetName="OuterEllipse" Property="Fill" Value="{DynamicResource RadioButtonOuterEllipseFillPressed}" />
                             <Setter TargetName="CheckOuterEllipse" Property="Stroke" Value="{DynamicResource RadioButtonOuterEllipseCheckedStrokePressed}" />
                             <Setter TargetName="CheckOuterEllipse" Property="Fill" Value="{DynamicResource RadioButtonOuterEllipseCheckedFillPressed}" />
                             <Setter TargetName="CheckGlyph" Property="Fill" Value="{DynamicResource RadioButtonCheckGlyphFillPressed}" />
@@ -225,12 +195,13 @@
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource RadioButtonForegroundDisabled}" />
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource RadioButtonBackgroundDisabled}" />
                             <Setter TargetName="RootGrid" Property="BorderBrush" Value="{DynamicResource RadioButtonBorderBrushDisabled}" />
-                            <Setter TargetName="OuterEllipse" Property="Stroke" Value="{DynamicResource RadioButtonOuterEllipseStrokeDisabled}" />
-                            <Setter TargetName="OuterEllipse" Property="Fill" Value="{DynamicResource RadioButtonOuterEllipseFillDisabled}" />
                             <Setter TargetName="CheckOuterEllipse" Property="Stroke" Value="{DynamicResource RadioButtonOuterEllipseCheckedStrokeDisabled}" />
                             <Setter TargetName="CheckOuterEllipse" Property="Fill" Value="{DynamicResource RadioButtonOuterEllipseCheckedFillDisabled}" />
                             <Setter TargetName="CheckGlyph" Property="Fill" Value="{DynamicResource RadioButtonCheckGlyphFillDisabled}" />
                             <Setter TargetName="CheckGlyph" Property="Stroke" Value="{DynamicResource RadioButtonCheckGlyphStrokeDisabled}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckGlyph" Property="Stroke" Value="{DynamicResource RadioButtonCheckGlyphStrokeChecked}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
