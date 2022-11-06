@@ -1,8 +1,15 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Thickness x:Key="AppBarSeparatorMargin">16,12,15,12</Thickness>
+    <Thickness x:Key="AppBarOverflowSeparatorMargin">12,4,12,4</Thickness>
+    <sys:Double x:Key="AppBarSeparatorWidth">1</sys:Double>
+    <sys:Double x:Key="AppBarOverflowSeparatorHeight">1</sys:Double>
+    <sys:Double x:Key="AppBarSeparatorCornerRadius">0.5</sys:Double>
 
     <Style TargetType="local:AppBarSeparator">
         <Setter Property="Foreground" Value="{DynamicResource AppBarSeparatorForeground}" />
@@ -10,32 +17,41 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarSeparator">
-                    <Grid
-                        x:Name="SeparatorRectangle"
-                        Width="1"
-                        Height="20"
-                        Background="{TemplateBinding Foreground}"
-                        Margin="16,10,15,10"
-                        VerticalAlignment="Top"
-                        SnapsToDevicePixels="True">
+                    <Grid x:Name="RootGrid">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
                                 <ui:VisualStateGroupListener.Listener>
                                     <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
                                 </ui:VisualStateGroupListener.Listener>
+                                <!-- FullSize is used when we are in landscape or filled mode -->
                                 <VisualState x:Name="FullSize" />
+                                <!-- Compact is used when we are in portrait or snapped mode -->
                                 <VisualState x:Name="Compact" />
                                 <VisualState x:Name="Overflow" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+
+                        <Rectangle x:Name="SeparatorRectangle"
+                            RadiusX="{StaticResource AppBarSeparatorCornerRadius}"
+                            RadiusY="{StaticResource AppBarSeparatorCornerRadius}"
+                            Width="{StaticResource AppBarSeparatorWidth}"
+                            VerticalAlignment="Stretch"
+                            Fill="{TemplateBinding Foreground}"
+                            Margin="{StaticResource AppBarSeparatorMargin}"/>
                     </Grid>
+                    
                     <ControlTemplate.Triggers>
+                        <!-- Compact -->
+                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Compact">
+                            <Setter TargetName="RootGrid" Property="Height" Value="{DynamicResource AppBarThemeCompactHeight}" />
+                            <Setter TargetName="RootGrid" Property="VerticalAlignment" Value="Top" />
+                        </Trigger>
                         <!-- Overflow -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="SeparatorRectangle" Property="Width" Value="NaN" />
                             <Setter TargetName="SeparatorRectangle" Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter TargetName="SeparatorRectangle" Property="Height" Value="1" />
-                            <Setter TargetName="SeparatorRectangle" Property="Margin" Value="12,4,12,4" />
+                            <Setter TargetName="SeparatorRectangle" Property="Height" Value="{StaticResource AppBarOverflowSeparatorHeight}" />
+                            <Setter TargetName="SeparatorRectangle" Property="Margin" Value="{StaticResource AppBarOverflowSeparatorMargin}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

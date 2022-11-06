@@ -536,7 +536,7 @@
     <m:StaticResource x:Key="AppBarEllipsisButtonBorderBrushPressed" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="AppBarEllipsisButtonBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
 
-    <m:StaticResource x:Key="AppBarSeparatorForeground" ResourceKey="SystemControlForegroundBaseMediumLowBrush" />
+    <m:StaticResource x:Key="AppBarSeparatorForeground" ResourceKey="DividerStrokeColorDefaultBrush" />
 
     <!-- Resources for AutoSuggestBox -->
     <sys:Double x:Key="AutoSuggestListMaxHeight">374</sys:Double>
