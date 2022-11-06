@@ -762,8 +762,7 @@
                         SnapsToDevicePixels="True">
                         <ScrollViewer
                             x:Name="DG_ScrollViewer"
-                            Focusable="false"
-                            primitives:ScrollViewerHelper.AutoHideScrollBars="False">
+                            Focusable="false">
                             <ScrollViewer.Template>
                                 <ControlTemplate TargetType="ScrollViewer">
                                     <Grid>

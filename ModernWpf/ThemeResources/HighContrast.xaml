@@ -1231,7 +1231,7 @@
     <m:StaticResource x:Key="ScrollBarPanningThumbBackgroundDisabled" ResourceKey="SystemControlDisabledChromeHighBrush" />
 
     <!-- Resource for ScrollViewer -->
-    <m:StaticResource x:Key="ScrollViewerScrollBarSeparatorBackground" ResourceKey="SystemControlPageBackgroundChromeLowBrush" />
+    <m:StaticResource x:Key="ScrollViewerScrollBarSeparatorBackground" ResourceKey="ControlFillColorTransparentBrush" />
 
     <!-- Resources for Slider -->
     <sys:Double x:Key="SliderOutsideTickBarThemeHeight">4</sys:Double>

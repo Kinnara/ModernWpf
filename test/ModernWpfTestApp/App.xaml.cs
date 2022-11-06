@@ -107,6 +107,7 @@ namespace MUXControlsTestApp
             {
                 Title = "ModernWpfTestApp",
                 Content = frame,
+                UseLayoutRounding = true,
                 WindowState = WindowState.Maximized
             };
             MainWindow = window;

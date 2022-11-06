@@ -1334,28 +1334,28 @@
     <m:StaticResource x:Key="ScrollBarButtonBorderBrushPointerOver" ResourceKey="GhostFillColorTransparentBrush" />
     <m:StaticResource x:Key="ScrollBarButtonBorderBrushPressed" ResourceKey="GhostFillColorTransparentBrush" />
     <m:StaticResource x:Key="ScrollBarButtonBorderBrushDisabled" ResourceKey="GhostFillColorTransparentBrush" />
-    <m:StaticResource x:Key="ScrollBarButtonArrowForeground" ResourceKey="TextFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="ScrollBarButtonArrowForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="ScrollBarButtonArrowForegroundPressed" ResourceKey="FocusStrokeColorOuterBrush" />
-    <m:StaticResource x:Key="ScrollBarButtonArrowForegroundDisabled" ResourceKey="DividerStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="ScrollBarButtonArrowForeground" ResourceKey="ControlAAFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ScrollBarButtonArrowForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ScrollBarButtonArrowForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ScrollBarButtonArrowForegroundDisabled" ResourceKey="ControlAAFillColorDisabledBrush" />
     <m:StaticResource x:Key="ScrollBarThumbFill" ResourceKey="ControlAAFillColorDefaultBrush" />
-    <m:StaticResource x:Key="ScrollBarThumbFillPointerOver" ResourceKey="ControlAltFillColorQuarternaryBrush" />
+    <m:StaticResource x:Key="ScrollBarThumbFillPointerOver" ResourceKey="ControlAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="ScrollBarThumbFillPressed" ResourceKey="ControlAAFillColorDefaultBrush" />
-    <m:StaticResource x:Key="ScrollBarThumbFillDisabled" ResourceKey="GhostFillColorDisabledBrush" />
-    <SolidColorBrush x:Key="ScrollBarTrackFill" Color="{m:StaticColor SystemChromeMediumColor}" Opacity="0.9" />
-    <SolidColorBrush x:Key="ScrollBarTrackFillPointerOver" Color="{m:StaticColor SystemChromeMediumColor}" Opacity="0.9" />
-    <m:StaticResource x:Key="ScrollBarTrackFillDisabled" ResourceKey="GhostFillColorDisabledBrush" />
-    <m:StaticResource x:Key="ScrollBarTrackStroke" ResourceKey="ControlStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="ScrollBarTrackStrokePointerOver" ResourceKey="ControlStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="ScrollBarTrackStrokeDisabled" ResourceKey="GhostFillColorDisabledBrush" />
+    <m:StaticResource x:Key="ScrollBarThumbFillDisabled" ResourceKey="ControlAAFillColorDisabledBrush" />
+    <m:StaticResource x:Key="ScrollBarTrackFill" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ScrollBarTrackFillPointerOver" ResourceKey="AcrylicInAppFillColorDefaultBrush"  />
+    <m:StaticResource x:Key="ScrollBarTrackFillDisabled" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ScrollBarTrackStroke" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ScrollBarTrackStrokePointerOver" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ScrollBarTrackStrokeDisabled" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ScrollBarThumbBackground" ResourceKey="ControlAAFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ScrollBarPanningThumbBackground" ResourceKey="ControlAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="ScrollBarPanningThumbBackgroundDisabled" ResourceKey="ControlAAFillColorDisabledBrush" />
-    <m:StaticResource x:Key="ScrollBarThumbBackgroundColor" ResourceKey="SystemBaseLowColor" />
-    <m:StaticResource x:Key="ScrollBarPanningThumbBackgroundColor" ResourceKey="SystemChromeDisabledLowColor" />
-    <SolidColorBrush x:Key="ScrollBarThumbBackground" Color="{m:StaticResource ScrollBarThumbBackgroundColor}" />
-    <SolidColorBrush x:Key="ScrollBarPanningThumbBackground" Color="{m:StaticResource ScrollBarPanningThumbBackgroundColor}" />
+    <m:StaticResource x:Key="ScrollBarThumbBackgroundColor" ResourceKey="ControlAAFillColorDefault" />
+    <m:StaticResource x:Key="ScrollBarPanningThumbBackgroundColor" ResourceKey="ControlAAFillColorDefault" />
 
     <!-- Resource for ScrollViewer -->
-    <SolidColorBrush x:Key="ScrollViewerScrollBarSeparatorBackground" Color="{m:StaticColor SystemChromeMediumColor}" Opacity="0.9" />
+    <m:StaticResource x:Key="ScrollViewerScrollBarSeparatorBackground" ResourceKey="ControlFillColorTransparentBrush" />
 
     <!-- Resources for Slider -->
     <sys:Double x:Key="SliderOutsideTickBarThemeHeight">4</sys:Double>
