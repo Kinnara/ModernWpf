@@ -77,7 +77,7 @@
                                                 VerticalAlignment="Center"
                                                 HorizontalAlignment="Center"
                                                 FontStyle="Normal"
-                                                FontSize="12"
+                                                FontSize="{DynamicResource TextBoxIconFontSize}"
                                                 Data="{StaticResource Cancel}"
                                                 FontFamily="{DynamicResource SymbolThemeFontFamily}" />
                                         </Border>
