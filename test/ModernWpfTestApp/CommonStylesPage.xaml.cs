@@ -9,7 +9,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ComboBox = System.Windows.Controls.ComboBox;
 using ListViewItem = System.Windows.Controls.ListViewItem;
+using SelectionChangedEventArgs = System.Windows.Controls.SelectionChangedEventArgs;
 
 namespace MUXControlsTestApp
 {
@@ -313,5 +315,52 @@ namespace MUXControlsTestApp
             RootSampleControlsPanel.Background = new SolidColorBrush(Colors.Transparent);
         }
 
+        private void CmbListViewSelectionMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (listView1 != null)
+            {
+                listView1.SelectionMode = (SelectionMode)(sender as ComboBox).SelectedIndex;
+            }
+        }
+
+        private void CmbGridViewSelectionMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (gridView1 != null)
+            {
+                gridView1.SelectionMode = (SelectionMode)(sender as ComboBox).SelectedIndex;
+            }
+        }
+
+        private void ChkListViewIsEnabled_Checked(object sender, RoutedEventArgs e)
+        {
+            if (listView1 != null)
+            {
+                listView1.IsEnabled = true;
+            }
+        }
+
+        private void ChkListViewIsEnabled_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (listView1 != null)
+            {
+                listView1.IsEnabled = false;
+            }
+        }
+
+        private void ChkGridViewIsEnabled_Checked(object sender, RoutedEventArgs e)
+        {
+            if (gridView1 != null)
+            {
+                gridView1.IsEnabled = true;
+            }
+        }
+
+        private void ChkGridViewIsEnabled_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (gridView1 != null)
+            {
+                gridView1.IsEnabled = false;
+            }
+        }
     }
 }
