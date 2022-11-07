@@ -184,10 +184,10 @@
 
     <SolidColorBrush x:Key="ControlSolidFillColorDefaultBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
 
-    <SolidColorBrush x:Key="GhostFillColorTransparentBrush" Color="Transparent" />
-    <SolidColorBrush x:Key="GhostFillColorSecondaryBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
-    <SolidColorBrush x:Key="GhostFillColorTertiaryBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
-    <SolidColorBrush x:Key="GhostFillColorDisabledBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SubtleFillColorTransparentBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="SubtleFillColorSecondaryBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SubtleFillColorTertiaryBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SubtleFillColorDisabledBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
 
     <SolidColorBrush x:Key="ControlAltFillColorTransparentBrush" Color="Transparent" />
     <SolidColorBrush x:Key="ControlAltFillColorSecondaryBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
