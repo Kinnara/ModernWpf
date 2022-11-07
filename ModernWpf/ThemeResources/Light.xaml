@@ -244,8 +244,6 @@
     <Color x:Key="ControlOnImageFillColorTertiary">#EBEBEB</Color>
     <Color x:Key="ControlOnImageFillColorDisabled">#00FFFFFF</Color>
 
-    <Color x:Key="AccentFillColorDefault">#0078D4</Color>
-
     <Color x:Key="AccentAAFillColorDisabled">#37000000</Color>
 
     <Color x:Key="ControlStrokeColorDefault">#0F000000</Color>
@@ -266,7 +264,7 @@
     <Color x:Key="SurfaceStrokeColorFlyout">#0F000000</Color>
     <Color x:Key="SurfaceStrokeColorInverse">#15FFFFFF</Color>
 
-    <Color x:Key="DividerStrokeColorDefault">#14000000</Color>
+    <Color x:Key="DividerStrokeColorDefault">#0F000000</Color>
 
     <Color x:Key="FocusStrokeColorOuter">#E4000000</Color>
     <Color x:Key="FocusStrokeColorInner">#B3FFFFFF</Color>
@@ -286,9 +284,9 @@
     <Color x:Key="SolidBackgroundFillColorQuarternary">#FFFFFF</Color>
 
     <Color x:Key="SystemFillColorAttention">#0070CB</Color>
-    <Color x:Key="SystemFillColorSuccess">#117D11</Color>
-    <Color x:Key="SystemFillColorCaution">#A16100</Color>
-    <Color x:Key="SystemFillColorCritical">#D03728</Color>
+    <Color x:Key="SystemFillColorSuccess">#0F7B0F</Color>
+    <Color x:Key="SystemFillColorCaution">#9D5D00</Color>
+    <Color x:Key="SystemFillColorCritical">#C42B1C</Color>
     <Color x:Key="SystemFillColorNeutral">#72000000</Color>
     <Color x:Key="SystemFillColorAttentionBackground">#80F6F6F6</Color>
     <Color x:Key="SystemFillColorSuccessBackground">#DFF6DD</Color>
@@ -1696,7 +1694,7 @@
             <ScaleTransform ScaleY="-1" CenterY="0.5"/>
         </LinearGradientBrush.RelativeTransform>
         <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="{StaticResource AccentFillColorDefault}"/>
+            <GradientStop Offset="0" Color="{DynamicResource SystemAccentColor}"/>
             <GradientStop Offset="1.0" Color="{StaticResource ControlStrokeColorDefault}"/>
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
