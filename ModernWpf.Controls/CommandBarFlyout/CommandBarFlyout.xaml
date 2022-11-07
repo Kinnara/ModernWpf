@@ -10,19 +10,20 @@
     <ui:CornerRadiusFilterConverter x:Key="BottomCornerRadiusFilterConverter" Filter="Bottom" />
 
     <Style x:Key="CommandBarFlyoutAppBarButtonStyleBase" TargetType="local:AppBarButton">
-        <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutButtonBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlTransparentBrush}" />
+        <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CommandBarFlyoutAppBarButtonBorderBrush}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="Width" Value="40" />
+        <Setter Property="Width" Value="NaN" />
         <Setter Property="Height" Value="40" />
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin" Value="0,0,0,2" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarButton">
@@ -32,7 +33,8 @@
                         MaxWidth="{TemplateBinding MaxWidth}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -68,7 +70,7 @@
                                 <VisualState x:Name="KeyboardAcceleratorTextVisible" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid x:Name="ContentRoot">
+                        <Grid x:Name="ContentRoot" Width="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -103,7 +105,7 @@
                                 Text="{TemplateBinding InputGestureText}"
                                 MinWidth="34"
                                 Margin="24,0,12,0"
-                                Foreground="{DynamicResource SystemControlBackgroundBaseMediumBrush}"
+                                Foreground="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground}"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 Visibility="Collapsed" />
@@ -113,7 +115,7 @@
                                 Glyph="&#xE76C;"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 FontSize="12"
-                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                                Foreground="{DynamicResource CommandBarFlyoutAppBarButtonSubItemChevronForeground}"
                                 Margin="12,0,12,0"
                                 VerticalAlignment="Center"
                                 Visibility="Collapsed" />-->
@@ -124,12 +126,15 @@
                         <!-- Overflow -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
+                            <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ContentViewbox" Property="Margin" Value="15,0,12,0" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <!-- OverflowWithToggleButtons -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
+                            <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
@@ -137,6 +142,7 @@
                         <!-- OverflowWithMenuIcons -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
+                            <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
                             <Setter TargetName="ContentViewbox" Property="Width" Value="16" />
@@ -148,13 +154,14 @@
                         <!-- OverflowWithToggleButtonsAndMenuIcons -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtonsAndMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
+                            <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
                             <Setter TargetName="ContentViewbox" Property="Width" Value="16" />
                             <Setter TargetName="ContentViewbox" Property="Height" Value="16" />
-                            <Setter TargetName="ContentViewbox" Property="Margin" Value="38,0,12,0" />
+                            <Setter TargetName="ContentViewbox" Property="Margin" Value="15,0,12,0" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="76,0,12,0" />
+                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="53,0,12,0" />
                         </Trigger>
                         <!--#endregion-->
                         <!--#region CommonStates-->
@@ -210,18 +217,19 @@
     <Style x:Key="CommandBarFlyoutAppBarButtonStyle" TargetType="local:AppBarButton" BasedOn="{StaticResource CommandBarFlyoutAppBarButtonStyleBase}" />
 
     <Style x:Key="CommandBarFlyoutAppBarToggleButtonStyleBase" TargetType="local:AppBarToggleButton">
-        <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutButtonBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundTransparentBrush}" />
-        <Setter Property="HorizontalAlignment" Value="Left" />
-        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CommandBarFlyoutAppBarButtonBorderBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="Width" Value="40" />
+        <Setter Property="Width" Value="NaN" />
         <Setter Property="Height" Value="40" />
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin" Value="0,0,0,2" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarToggleButton">
@@ -234,7 +242,8 @@
                         MaxWidth="{TemplateBinding MaxWidth}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -277,9 +286,9 @@
                         <Grid>
                             <Rectangle
                                 x:Name="CheckedHighlightBackground"
-                                Fill="{DynamicResource SystemControlHighlightListAccentLowBrush}"
+                                Fill="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundChecked}"
                                 Opacity="0" />
-                            <Grid x:Name="ContentRoot">
+                            <Grid x:Name="ContentRoot" Width="40">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
@@ -292,7 +301,7 @@
                                     FontSize="16"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
-                                    Margin="12,4,12,4"
+                                    Margin="15,4,12,4"
                                     Opacity="0"
                                     Visibility="Collapsed" />
                                 <Viewbox
@@ -324,7 +333,7 @@
                                     Text="{TemplateBinding InputGestureText}"
                                     MinWidth="34"
                                     Margin="24,0,12,0"
-                                    Foreground="{DynamicResource SystemControlBackgroundBaseMediumBrush}"
+                                    Foreground="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground}"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     Visibility="Collapsed" />
@@ -336,6 +345,7 @@
                         <!-- Overflow -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
+                            <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Visibility" Value="Visible" />
@@ -344,16 +354,17 @@
                         <!-- OverflowWithMenuIcons -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
+                            <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Visible" />
                             <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
                             <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
                             <Setter TargetName="ContentViewbox" Property="MaxWidth" Value="16" />
                             <Setter TargetName="ContentViewbox" Property="MaxHeight" Value="16" />
-                            <Setter TargetName="ContentViewbox" Property="Margin" Value="38,0,12,0" />
+                            <Setter TargetName="ContentViewbox" Property="Margin" Value="15,0,12,0" />
                             <Setter TargetName="CheckedHighlightBackground" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="76,0,12,0" />
+                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="53,0,12,0" />
                         </Trigger>
                         <!--#endregion-->
                         <!--#region CommonStates-->
@@ -792,6 +803,7 @@
                                         <primitives:CommandBarPanel
                                             x:Name="PART_ToolBarPanel"
                                             Height="40"
+                                            Margin="3,3,0,3"
                                             Grid.Column="0"
                                             HorizontalAlignment="Left"
                                             IsItemsHost="true"
@@ -803,6 +815,7 @@
                                             Style="{DynamicResource CommandBarFlyoutEllipsisButtonStyle}"
                                             Grid.Column="1"
                                             IsTabStop="False"
+                                            ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}"
                                             Visibility="{TemplateBinding EffectiveOverflowButtonVisibility}"
                                             IsChecked="{Binding Path=IsOverflowOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                             ClickMode="Press"
@@ -956,7 +969,7 @@
         <Setter Property="VerticalContentAlignment" Value="Top" />
         <Setter Property="DefaultLabelPosition" Value="Collapsed" />
         <Setter Property="MaxWidth" Value="440" />
-        <Setter Property="Height" Value="40" />
+        <Setter Property="Height" Value="48" />
         <Setter Property="IsDynamicOverflowEnabled" Value="False" />
         <Setter Property="CommandBarOverflowPresenterStyle" Value="{StaticResource CommandBarFlyoutCommandBarOverflowPresenterStyle}" />
         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />

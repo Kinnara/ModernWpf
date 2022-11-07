@@ -7,9 +7,18 @@
     xmlns:local="clr-namespace:MUXControlsTestApp"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12">
-        <ScrollBar/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="300"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <ScrollBar Orientation="Horizontal" Visibility="Visible" VerticalAlignment="Bottom" ui:ScrollBarHelper.IndicatorMode="MouseIndicator"/>
+        <ScrollBar Orientation="Vertical" Visibility="Visible" Grid.Column="1" ui:ScrollBarHelper.IndicatorMode="MouseIndicator"/>
     </Grid>
 </local:TestPage>

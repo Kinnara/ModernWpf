@@ -8,7 +8,7 @@
     xmlns:local="clr-namespace:MUXControlsTestApp.Samples">
 
     <mux:ItemsRepeaterScrollHost Width="180">
-        <ScrollViewer ui:ScrollViewerHelper.AutoHideScrollBars="True">
+        <ScrollViewer>
             <mux:ItemsRepeater
                 x:Name="repeater"
                 HorizontalAlignment="Center"
