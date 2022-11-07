@@ -585,19 +585,19 @@
     <m:StaticResource x:Key="CalendarDatePickerForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="CalendarDatePickerCalendarGlyphForeground" ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="CalendarDatePickerCalendarGlyphForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
-    <m:StaticResource x:Key="CalendarDatePickerTextForeground" ResourceKey="ControlAltFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CalendarDatePickerTextForeground" ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="CalendarDatePickerTextForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="CalendarDatePickerTextForegroundSelected" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CalendarDatePickerHeaderForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="CalendarDatePickerBackground" ResourceKey="ControlFillColorDefaultBrush" />
-    <m:StaticResource x:Key="CalendarDatePickerBackgroundPointerOver" ResourceKey="GhostFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CalendarDatePickerBackgroundPointerOver" ResourceKey="ControlFillColorSecondaryBrush" />
     <m:StaticResource x:Key="CalendarDatePickerBackgroundPressed" ResourceKey="ControlFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="CalendarDatePickerBackgroundDisabled" ResourceKey="ControlFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="CalendarDatePickerBackgroundFocused" ResourceKey="GhostFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="CalendarDatePickerBorderBrush" ResourceKey="ControlAltFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="CalendarDatePickerBorderBrushPointerOver" ResourceKey="ControlAAStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="CalendarDatePickerBackgroundDisabled" ResourceKey="ControlFillColorDisabledBrush" />
+    <m:StaticResource x:Key="CalendarDatePickerBackgroundFocused" ResourceKey="ControlFillColorDefaultBrush" />
+    <m:StaticResource x:Key="CalendarDatePickerBorderBrush" ResourceKey="ControlElevationBorderBrush" />
+    <m:StaticResource x:Key="CalendarDatePickerBorderBrushPointerOver" ResourceKey="ControlElevationBorderBrush" />
     <m:StaticResource x:Key="CalendarDatePickerBorderBrushPressed" ResourceKey="ControlStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="CalendarDatePickerBorderBrushDisabled" ResourceKey="AccentAAFillColorDisabledBrush" />
+    <m:StaticResource x:Key="CalendarDatePickerBorderBrushDisabled" ResourceKey="ControlStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="CalendarDatePickerLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
 
     <!-- Resources for CalendarView -->
