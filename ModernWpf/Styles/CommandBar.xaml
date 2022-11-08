@@ -13,34 +13,37 @@
 
     <Thickness x:Key="CommandBarMoreButtonMargin">14,19,14,0</Thickness>
     <sys:Double x:Key="AppBarButtonContentHeight">16</sys:Double>
-    <sys:Double x:Key="AppBarThemeMinHeight">56</sys:Double>
-    <sys:Double x:Key="AppBarThemeCompactHeight">40</sys:Double>
+    <sys:Double x:Key="AppBarThemeMinHeight">64</sys:Double>
+    <sys:Double x:Key="AppBarThemeCompactHeight">48</sys:Double>
+    <Thickness x:Key="AppBarEllipsisButtonInnerBorderMargin">0,9,9,9</Thickness>
 
-    <Thickness x:Key="AppBarButtonContentViewboxMargin">12,10,0,10</Thickness>
+    <Thickness x:Key="AppBarButtonContentViewboxMargin">12,16,0,10</Thickness>
     <Thickness x:Key="AppBarButtonContentViewboxCompactMargin">0,12,0,12</Thickness>
-    <Thickness x:Key="AppBarButtonContentViewboxCollapsedMargin">0,12,0,4</Thickness>
+    <Thickness x:Key="AppBarButtonContentViewboxCollapsedMargin">0,16,0,4</Thickness>
     <Thickness x:Key="AppBarButtonOverflowTextTouchMargin">0,9,0,12</Thickness>
     <Thickness x:Key="AppBarButtonOverflowTextLabelPadding">0,5,0,8</Thickness>
     <Thickness x:Key="AppBarButtonTextLabelMargin">2,0,2,8</Thickness>
-    <Thickness x:Key="AppBarButtonTextLabelOnRightMargin">8,11,12,13</Thickness>
+    <Thickness x:Key="AppBarButtonTextLabelOnRightMargin">8,16,12,10</Thickness>
+    <Thickness x:Key="AppBarButtonInnerBorderMargin">0,9,0,9</Thickness>
+    <Thickness x:Key="AppBarButtonInnerBorderCompactMargin">0,9,0,25</Thickness>
 
     <Thickness x:Key="AppBarToggleButtonOverflowTextTouchMargin">0,9,0,12</Thickness>
     <Thickness x:Key="AppBarToggleButtonOverflowCheckTouchMargin">12,10,12,10</Thickness>
     <Thickness x:Key="AppBarToggleButtonOverflowCheckMargin">12,4,12,4</Thickness>
     <Thickness x:Key="AppBarToggleButtonTextLabelMargin">2,0,2,8</Thickness>
-    <Thickness x:Key="AppBarToggleButtonTextLabelOnRightMargin">8,11,12,13</Thickness>
+    <Thickness x:Key="AppBarToggleButtonTextLabelOnRightMargin">8,16,12,10</Thickness>
     <Thickness x:Key="AppBarToggleButtonOverflowTextLabelPadding">0,5,0,8</Thickness>
 
     <Style x:Key="EllipsisButton" TargetType="ToggleButton" BasedOn="{StaticResource DefaultToggleButtonStyle}">
-        <Setter Property="Background" Value="{DynamicResource AppBarEllipsisButtonBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource AppBarEllipsisButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource AppBarEllipsisButtonBorderBrush}" />
+        <Setter Property="Background" Value="{DynamicResource AppBarButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource AppBarButtonForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrush}" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="0,0,9,0" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Right" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
-        <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
@@ -48,37 +51,39 @@
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="0" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
-                    <Border
-                        x:Name="Border"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        Padding="{TemplateBinding Padding}"
-                        SnapsToDevicePixels="True">
-                        <ContentPresenter
-                            x:Name="ContentPresenter"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                    </Border>
+                    <Grid Background="Transparent">
+                        <local:ContentControlEx x:Name="ContentPresenter"
+                            Background="{TemplateBinding Background}"
+                            Foreground="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Margin="{StaticResource AppBarEllipsisButtonInnerBorderMargin}"
+                            Padding="0"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource AppBarEllipsisButtonBackgroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource AppBarEllipsisButtonForegroundPointerOver}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarEllipsisButtonBorderBrushPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource AppBarEllipsisButtonBackgroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource AppBarEllipsisButtonForegroundPressed}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarEllipsisButtonBorderBrushPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource AppBarEllipsisButtonBackgroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource AppBarEllipsisButtonForegroundDisabled}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarEllipsisButtonBorderBrushDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource AppBarButtonBackgroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushDisabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

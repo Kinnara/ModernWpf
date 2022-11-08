@@ -5,6 +5,16 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:ui="http://schemas.modernwpf.com/2019">
 
+    <Style x:Key="AppBarButtonOverflowStyle" TargetType="local:AppBarButton">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Width" Value="NaN" />
+    </Style>
+
+    <Style x:Key="AppBarToggleButtonOverflowStyle" TargetType="local:AppBarToggleButton">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Width" Value="NaN" />
+    </Style>
+
     <Style TargetType="primitives:CommandBarToolBar">
         <Setter Property="Background" Value="{DynamicResource CommandBarBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource CommandBarForeground}" />
@@ -121,6 +131,10 @@
                                         x:Name="SecondaryItemsControl"
                                         Style="{TemplateBinding OverflowPresenterStyle}"
                                         IsTabStop="False">
+                                        <primitives:CommandBarOverflowPresenter.Resources>
+                                            <Style TargetType="local:AppBarButton" BasedOn="{StaticResource AppBarButtonOverflowStyle}" />
+                                            <Style TargetType="local:AppBarToggleButton" BasedOn="{StaticResource AppBarToggleButtonOverflowStyle}" />
+                                        </primitives:CommandBarOverflowPresenter.Resources>
                                         <primitives:CommandBarOverflowPanel
                                             x:Name="PART_ToolBarOverflowPanel"
                                             Focusable="true"
