@@ -5,7 +5,7 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
-    <Thickness x:Key="CalendarDatePickerTopHeaderMargin">0,0,0,4</Thickness>
+    <Thickness x:Key="CalendarDatePickerTopHeaderMargin">0,0,0,8</Thickness>
 
     <Style x:Key="DefaultDatePickerTextBoxStyle" TargetType="DatePickerTextBox">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -104,7 +104,8 @@
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
-        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource IsApplicationFocusVisualKindReveal}" />
+        <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-3" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="primitives:DatePickerHelper.IsEnabled" Value="True" />
         <Setter Property="Template">
