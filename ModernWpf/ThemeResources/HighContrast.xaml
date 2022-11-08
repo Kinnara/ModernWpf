@@ -800,6 +800,11 @@
     <m:StaticResource x:Key="FlyoutPresenterBackground" ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="FlyoutBorderThemeBrush" ResourceKey="SystemColorWindowTextColorBrush" />
 
+    <!-- Resources for Hyperlink -->
+    <SolidColorBrush x:Key="HyperlinkForeground" Color="{m:ThemeResource SystemColorHotlightColor}"/>
+    <SolidColorBrush x:Key="HyperlinkForegroundPointerOver" Color="{m:ThemeResource SystemColorWindowTextColor}"/>
+    <SolidColorBrush x:Key="HyperlinkForegroundPressed" Color="{m:ThemeResource SystemColorHighlightColor}"/>
+
     <!-- Resources for HyperlinkButton -->
     <m:StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="SystemControlHyperlinkTextBrush" />
     <m:StaticResource x:Key="HyperlinkButtonForegroundPointerOver" ResourceKey="SystemControlPageTextBaseMediumBrush" />
