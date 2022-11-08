@@ -15,6 +15,7 @@
         <Setter Property="Width" Value="68" />
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarToggleButton">
@@ -23,12 +24,9 @@
                     </ControlTemplate.Resources>
                     <Border
                         x:Name="Root"
+                        Background="Transparent"
                         MinWidth="{TemplateBinding MinWidth}"
                         MaxWidth="{TemplateBinding MaxWidth}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
@@ -70,17 +68,12 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid>
-                            <Rectangle
-                                x:Name="CheckedHighlightBackground"
-                                Fill="{DynamicResource AppBarToggleButtonBackgroundChecked}"
-                                Opacity="0" />
-                            <Rectangle
-                                x:Name="AccentOverlayBackground"
-                                Fill="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlay}" />
-                            <Rectangle
-                                x:Name="AppBarToggleButtonInnerBorder"
-                                StrokeThickness="1"
-                                Stroke="{TemplateBinding BorderBrush}" />
+                            <Border x:Name="AppBarToggleButtonInnerBorder"                                       
+                                Margin="{DynamicResource AppBarButtonInnerBorderMargin}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}"/>
                             <Grid
                                 x:Name="ContentRoot"
                                 MinHeight="{DynamicResource AppBarThemeMinHeight}">
@@ -159,6 +152,7 @@
                         <!--#region ApplicationViewStates-->
                         <!-- Compact -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Compact">
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Margin" Value="{StaticResource AppBarButtonInnerBorderCompactMargin}" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <!-- LabelOnRight -->
@@ -181,7 +175,6 @@
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
@@ -195,7 +188,6 @@
                             <Setter TargetName="ContentViewbox" Property="MaxHeight" Value="16" />
                             <Setter TargetName="ContentViewbox" Property="Margin" Value="38,0,12,0" />
                             <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Margin" Value="76,0,12,0" />
@@ -204,94 +196,81 @@
                         <!--#region CommonStates-->
                         <!-- PointerOver -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOver">
-                            <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayPointerOver}" />
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushPointerOver}" />
-                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushPointerOver}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundPointerOver}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushPointerOver}" />
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundPointerOver}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundPointerOver}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundPointerOver}" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundPointerOver}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundPointerOver}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver}" />
                         </Trigger>
                         <!-- Pressed -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Pressed">
-                            <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayPressed}" />
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushPressed}" />
-                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushPressed}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundPressed}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushPressed}" />
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundPressed}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundPressed}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundPressed}" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundPressed}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundPressed}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed}" />
                         </Trigger>
                         <!-- Disabled -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundDisabled}" />
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushDisabled}" />
-                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushDisabled}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundDisabled}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushDisabled}" />
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundDisabled}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundDisabled}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundDisabled}" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundDisabled}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundDisabled}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundDisabled}" />
                         </Trigger>
                         <!-- Checked -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Checked">
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
-                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundChecked}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundChecked}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <!-- CheckedPointerOver -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPointerOver">
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPointerOver}" />
-                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPointerOver}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPointerOver}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPointerOver}" />
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPointerOver}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPointerOver}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundCheckedPointerOver}" />
-                            <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPointerOver}" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPointerOver}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <!-- CheckedPressed -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPressed">
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
-                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundCheckedPressed}" />
-                            <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPressed}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPressed}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedPressed}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <!-- CheckedDisabled -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedDisabled">
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedDisabled}" />
-                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedDisabled}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedDisabled}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedDisabled}" />
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedDisabled}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedDisabled}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundCheckedDisabled}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedDisabled}" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedDisabled}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedDisabled}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundCheckedDisabled}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <!-- OverflowPointerOver -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPointerOver">
-                            <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayPointerOver}" />
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayPointerOver}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushPointerOver}" />
-                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushPointerOver}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushPointerOver}" />
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundPointerOver}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundPointerOver}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundPointerOver}" />
@@ -300,9 +279,9 @@
                         </Trigger>
                         <!-- OverflowPressed -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPressed">
-                            <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayPressed}" />
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayPressed}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushPressed}" />
-                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushPressed}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushPressed}" />
                             <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundPressed}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundPressed}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundPressed}" />
@@ -312,39 +291,33 @@
                         <!-- OverflowChecked -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowChecked">
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
-                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
-                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
-                            <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundChecked}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForeground}" />
+                            <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForeground}" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForeground}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <!-- OverflowCheckedPointerOver -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowCheckedPointerOver">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPointerOver}" />
-                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPointerOver}" />
-                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPointerOver}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPointerOver}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundCheckedPointerOver}" />
-                            <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPointerOver}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPointerOver}" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPointerOver}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPointerOver}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <!-- OverflowCheckedPressed -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowCheckedPressed">
+                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed}" />
                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
-                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="Stroke" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
-                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                            <Setter TargetName="AppBarToggleButtonInnerBorder" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPressed}" />
                             <Setter TargetName="TextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonCheckGlyphForegroundCheckedPressed}" />
-                            <Setter TargetName="AccentOverlayBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundHighLightOverlayCheckedPressed}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPressed}" />
                             <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonOverflowLabelForegroundCheckedPressed}" />
                             <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource AppBarToggleButtonKeyboardAcceleratorTextForegroundPressed}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <!--#endregion-->
