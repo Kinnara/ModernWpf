@@ -78,6 +78,7 @@
     <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
         <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
         <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
+        <!--<Setter Property="BackgroundSizing" Value="OuterBorderEdge" />-->
         <Setter Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrush}" />
         <Setter Property="Template">
             <Setter.Value>

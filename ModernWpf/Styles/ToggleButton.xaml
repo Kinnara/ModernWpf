@@ -91,6 +91,7 @@
                             <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource ToggleButtonBackgroundChecked}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ToggleButtonForegroundChecked}" />
                             <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource ToggleButtonBorderBrushChecked}" />
+                            <!--<Setter TargetName="ContentPresenter" Property="BackgroundSizing" Value="OuterBorderEdge" />-->
                         </MultiTrigger>
                         <!-- CheckedPointerOver -->
                         <MultiTrigger>
@@ -101,6 +102,7 @@
                             <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource ToggleButtonBackgroundCheckedPointerOver}" />
                             <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource ToggleButtonBorderBrushCheckedPointerOver}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ToggleButtonForegroundCheckedPointerOver}" />
+                            <!--<Setter TargetName="ContentPresenter" Property="BackgroundSizing" Value="OuterBorderEdge" />-->
                         </MultiTrigger>
                         <!-- CheckedPressed -->
                         <MultiTrigger>
@@ -111,6 +113,7 @@
                             <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource ToggleButtonBackgroundCheckedPressed}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ToggleButtonForegroundCheckedPressed}" />
                             <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource ToggleButtonBorderBrushCheckedPressed}" />
+                            <!--<Setter TargetName="ContentPresenter" Property="BackgroundSizing" Value="OuterBorderEdge" />-->
                         </MultiTrigger>
                         <!-- CheckedDisabled -->
                         <MultiTrigger>
