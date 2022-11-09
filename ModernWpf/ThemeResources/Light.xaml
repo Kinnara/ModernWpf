@@ -1283,9 +1283,9 @@
 
     <!-- ColorAnimation requires TargetProperty to be Color thus some resources point to the colour instead of brush-->
     <m:StaticResource x:Key="RadioButtonOuterEllipseStroke" ResourceKey="ControlAAStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokePointerOver" ResourceKey="ControlAAStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokePressed" ResourceKey="ControlAAStrokeColorDisabledBrush" />
-    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokeDisabled" ResourceKey="ControlAAStrokeColorDisabledBrush" />
+    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokePointerOver" ResourceKey="ControlAAStrokeColorDefault" />
+    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokePressed" ResourceKey="ControlAAStrokeColorDisabled" />
+    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokeDisabled" ResourceKey="ControlAAStrokeColorDisabled" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseFill" ResourceKey="ControlAltFillColorSecondaryBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseFillPointerOver" ResourceKey="ControlAltFillColorTertiaryBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseFillPressed" ResourceKey="ControlAltFillColorQuarternaryBrush" />
