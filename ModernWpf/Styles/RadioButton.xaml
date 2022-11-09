@@ -38,9 +38,6 @@
                         SnapsToDevicePixels="True">   
                         
                         <Border.Resources>
-                            <primitives:BindingProxy x:Key="RadioButtonOuterEllipseStrokePointerOverProxy" Value="{DynamicResource RadioButtonOuterEllipseStrokePointerOver}" />
-                            <primitives:BindingProxy x:Key="RadioButtonOuterEllipseStrokePressedProxy" Value="{DynamicResource RadioButtonOuterEllipseStrokePressed}" />
-                            <primitives:BindingProxy x:Key="RadioButtonOuterEllipseStrokeDisabledProxy" Value="{DynamicResource RadioButtonOuterEllipseStrokeDisabled}" />
                             <primitives:BindingProxy x:Key="RadioButtonOuterEllipseFillPointerOverProxy" Value="{DynamicResource RadioButtonOuterEllipseFillPointerOver}" />
                             <primitives:BindingProxy x:Key="RadioButtonOuterEllipseFillPressedProxy" Value="{DynamicResource RadioButtonOuterEllipseFillPressed}" />
                             <primitives:BindingProxy x:Key="RadioButtonOuterEllipseFillDisabledProxy" Value="{DynamicResource RadioButtonOuterEllipseFillDisabled}" />
@@ -65,7 +62,7 @@
                                 <VisualState x:Name="MouseOver">
                                     <Storyboard>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{Binding Value, Source={StaticResource RadioButtonOuterEllipseStrokePointerOverProxy}, Converter={StaticResource BrushToColorConverter}}" />
+                                            <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseStrokePointerOver}" />
                                         </ColorAnimationUsingKeyFrames>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{Binding Value, Source={StaticResource RadioButtonOuterEllipseFillPointerOverProxy}, Converter={StaticResource BrushToColorConverter}}" />
@@ -83,7 +80,7 @@
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
                                         <ColorAnimationUsingKeyFrames  Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame  KeyTime="0:0:0.083" Value="{Binding Value, Source={StaticResource RadioButtonOuterEllipseStrokePressedProxy}, Converter={StaticResource BrushToColorConverter}}" />
+                                            <LinearColorKeyFrame  KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseStrokePressed}" />
                                         </ColorAnimationUsingKeyFrames>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{Binding Value, Source={StaticResource RadioButtonOuterEllipseFillPressedProxy}, Converter={StaticResource BrushToColorConverter}}" />
@@ -112,7 +109,7 @@
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ColorAnimationUsingKeyFrames  Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame  KeyTime="0:0:0.083" Value="{Binding Value, Source={StaticResource RadioButtonOuterEllipseStrokeDisabledProxy}, Converter={StaticResource BrushToColorConverter}}" />
+                                            <LinearColorKeyFrame  KeyTime="0:0:0.083" Value="{DynamicResource RadioButtonOuterEllipseStrokeDisabled}" />
                                         </ColorAnimationUsingKeyFrames>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterEllipse" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="0:0:0.083" Value="{Binding Value, Source={StaticResource RadioButtonOuterEllipseFillDisabledProxy}, Converter={StaticResource BrushToColorConverter}}" />
