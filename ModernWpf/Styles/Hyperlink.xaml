@@ -4,15 +4,15 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
     <Style x:Key="DefaultHyperlinkStyle" TargetType="Hyperlink">
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlHyperlinkTextBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource HyperlinkForeground}" />
         <Setter Property="TextDecorations" Value="Underline" />
         <Setter Property="primitives:HyperlinkHelper.IsPressEnabled" Value="True" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="Foreground" Value="{DynamicResource SystemControlHyperlinkBaseMediumBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource HyperlinkForegroundPointerOver}" />
             </Trigger>
             <Trigger Property="primitives:HyperlinkHelper.IsPressed" Value="true">
-                <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource HyperlinkForegroundPressed}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
