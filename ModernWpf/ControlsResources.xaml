@@ -71,15 +71,15 @@
     <sys:Double x:Key="ToggleSwitchThemeMinWidth">154</sys:Double>
 
     <sys:Double x:Key="MenuFlyoutSeparatorHeight">1</sys:Double>
-    <Thickness x:Key="MenuFlyoutPresenterThemePadding">0</Thickness>
+    <Thickness x:Key="MenuFlyoutPresenterThemePadding">0,2,0,2</Thickness>
     <sys:Double x:Key="MenuFlyoutThemeMinHeight">40</sys:Double>
     <Thickness x:Key="MenuFlyoutItemChevronMargin">24,0,0,0</Thickness>
     <Thickness x:Key="MenuFlyoutItemPlaceholderThemeThickness">28,0,0,0</Thickness>
     <Thickness x:Key="MenuFlyoutSeparatorThemePadding">-4,2,-4,2</Thickness>
     <Thickness x:Key="MenuFlyoutItemDoublePlaceholderThemeThickness">56,0,0,0</Thickness>
-    <Thickness x:Key="MenuFlyoutScrollerMargin">4</Thickness>
-    <Thickness x:Key="MenuFlyoutItemThemePadding">11,9,11,10</Thickness>
-    <Thickness x:Key="MenuFlyoutItemThemePaddingNarrow">11,5,11,7</Thickness>
+    <Thickness x:Key="MenuFlyoutItemMargin">4,2,4,2</Thickness>
+    <Thickness x:Key="MenuFlyoutItemThemePadding">11,11,11,12</Thickness>
+    <Thickness x:Key="MenuFlyoutItemThemePaddingNarrow">11,7,11,9</Thickness>
 
     <ControlTemplate x:Key="TextControlValidationErrorTemplate">
         <Grid SnapsToDevicePixels="True">

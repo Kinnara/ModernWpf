@@ -113,7 +113,6 @@
                                 MinWidth="{DynamicResource FlyoutThemeMinWidth}">
                                 <ItemsPresenter
                                     RenderOptions.ClearTypeHint="Enabled"
-                                    Margin="{StaticResource MenuFlyoutScrollerMargin}"
                                     KeyboardNavigation.DirectionalNavigation="Cycle"
                                     KeyboardNavigation.TabNavigation="Cycle"
                                     Grid.IsSharedSizeScope="true"
@@ -152,6 +151,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
+    <!-- DefaultMenuFlyoutSubItemStyle -->
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuItemTemplateKey}" TargetType="MenuItem">
         <ControlTemplate.Resources>
             <StreamGeometry x:Key="CheckMark">F1 M 17.939453 5.439453 L 7.5 15.888672 L 2.060547 10.439453 L 2.939453 9.560547 L 7.5 14.111328 L 17.060547 4.560547 Z</StreamGeometry>
@@ -162,7 +162,9 @@
             Padding="{TemplateBinding Padding}"
             Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"
-            BorderThickness="{TemplateBinding BorderThickness}">
+            BorderThickness="{TemplateBinding BorderThickness}"
+            Margin="{DynamicResource MenuFlyoutItemMargin}"
+            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
             <Grid x:Name="AnimationRoot">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition SharedSizeGroup="{TemplateBinding Visibility, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemCheckColumnGroup}" Width="Auto" />
@@ -243,6 +245,7 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
+    <!-- DefaultMenuFlyoutItemStyle -->
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuHeaderTemplateKey}" TargetType="MenuItem">
         <ControlTemplate.Resources>
             <StreamGeometry x:Key="ChevronRight">M 5.029297 19.091797 L 14.111328 10 L 5.029297 0.908203 L 5.908203 0.029297 L 15.888672 10 L 5.908203 19.970703 Z</StreamGeometry>
@@ -253,6 +256,8 @@
             Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"
             BorderThickness="{TemplateBinding BorderThickness}"
+            Margin="{DynamicResource MenuFlyoutItemMargin}"
+            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
             SnapsToDevicePixels="True">
             <Grid x:Name="AnimationRoot">
                 <Grid.ColumnDefinitions>
@@ -328,7 +333,6 @@
                                     MinWidth="{DynamicResource FlyoutThemeMinWidth}">
                                     <ItemsPresenter
                                         RenderOptions.ClearTypeHint="Enabled"
-                                        Margin="{StaticResource MenuFlyoutScrollerMargin}"
                                         KeyboardNavigation.DirectionalNavigation="Cycle"
                                         KeyboardNavigation.TabNavigation="Cycle"
                                         Grid.IsSharedSizeScope="true"
@@ -391,7 +395,7 @@
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
-        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuItemTemplateKey}}" />
         <Style.Triggers>
             <Trigger Property="Role" Value="TopLevelHeader">

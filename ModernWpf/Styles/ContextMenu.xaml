@@ -46,7 +46,6 @@
                                     MinWidth="{DynamicResource FlyoutThemeMinWidth}">
                                     <ItemsPresenter
                                         RenderOptions.ClearTypeHint="Enabled"
-                                        Margin="{StaticResource MenuFlyoutScrollerMargin}"
                                         KeyboardNavigation.DirectionalNavigation="Cycle"
                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                 </ScrollViewer>
