@@ -856,30 +856,30 @@
     <sys:Double x:Key="ListViewItemReorderTargetThemeScale">0.95</sys:Double>
     <sys:Double x:Key="ListViewItemReorderHintThemeOffset">10.0</sys:Double>
     <sys:Double x:Key="ListViewItemSelectedBorderThemeThickness">4</sys:Double>
-    <m:StaticResource x:Key="ListViewItemBorderBackground" ResourceKey="SystemControlHighlightListAccentLowBrush" />
-    <m:StaticResource x:Key="ListViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="ListViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
-    <m:StaticResource x:Key="ListViewItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
-    <m:StaticResource x:Key="ListViewItemBackgroundSelected" ResourceKey="SystemControlHighlightListAccentMediumLowBrush" />
-    <m:StaticResource x:Key="ListViewItemBackgroundSelectedPointerOver" ResourceKey="SystemControlHighlightListAccentMediumBrush" />
-    <m:StaticResource x:Key="ListViewItemBackgroundSelectedPressed" ResourceKey="SystemControlHighlightListAccentVeryHighBrush" />
-    <m:StaticResource x:Key="ListViewItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="ListViewItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="ListViewItemForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="ListViewItemForegroundSelected" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="ListViewItemForegroundSelectedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="ListViewItemForegroundSelectedPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="ListViewItemFocusVisualPrimaryBrush" ResourceKey="SystemControlFocusVisualPrimaryBrush" />
-    <m:StaticResource x:Key="ListViewItemFocusVisualSecondaryBrush" ResourceKey="SystemControlFocusVisualSecondaryBrush" />
-    <m:StaticResource x:Key="ListViewItemFocusBorderBrush" ResourceKey="SystemControlForegroundAltHighBrush" />
-    <m:StaticResource x:Key="ListViewItemFocusSecondaryBorderBrush" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="ListViewItemCheckBrush" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-    <m:StaticResource x:Key="ListViewItemCheckBoxBrush" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-    <m:StaticResource x:Key="ListViewItemDragBackground" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="ListViewItemDragForeground" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
-    <m:StaticResource x:Key="ListViewItemPlaceholderBackground" ResourceKey="SystemControlDisabledChromeDisabledHighBrush" />
-    <m:StaticResource x:Key="ListViewItemMultiArrangeOverlayTextBorder" ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
-    <m:StaticResource x:Key="ListViewItemMultiArrangeOverlayTextBackground" ResourceKey="SystemControlBackgroundAccentBrush" />
+    <SolidColorBrush x:Key="ListViewItemBorderBackground" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ListViewItemBackground" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="ListViewItemBackgroundPointerOver" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ListViewItemBackgroundPressed" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ListViewItemBackgroundSelected" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPointerOver" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ListViewItemBackgroundSelectedPressed" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="ListViewItemForeground" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="ListViewItemForegroundPointerOver" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="ListViewItemForegroundPressed" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="ListViewItemForegroundSelected" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="ListViewItemForegroundSelectedPointerOver" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="ListViewItemForegroundSelectedPressed" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="ListViewItemFocusVisualPrimaryBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="ListViewItemFocusVisualSecondaryBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="ListViewItemFocusBorderBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="ListViewItemFocusSecondaryBorderBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="ListViewItemCheckBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="ListViewItemCheckBoxBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ListViewItemDragBackground" Color="Transparent" />
+    <SolidColorBrush x:Key="ListViewItemDragForeground" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="ListViewItemPlaceholderBackground" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="ListViewItemMultiArrangeOverlayTextBorder" Color="{m:ThemeResource SystemColorWindowTextColor}" />
+    <SolidColorBrush x:Key="ListViewItemMultiArrangeOverlayTextBackground" Color="{m:ThemeResource SystemColorWindowColor}" />
     <sys:Boolean x:Key="ListViewItemSelectionCheckMarkVisualEnabled">True</sys:Boolean>
     <!--<ListViewItemPresenterCheckMode x:Key="ListViewItemCheckMode">Inline</ListViewItemPresenterCheckMode>-->
 
