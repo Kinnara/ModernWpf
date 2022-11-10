@@ -146,7 +146,6 @@
     <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="#2B2B2B" />
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
-    <SolidColorBrush x:Key="SystemControlDefaultBrighteningBrush" Color="#FFFFFF" Opacity="0.5"/>
     <m:StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
     <m:StaticResource x:Key="SystemControlTransientBackgroundBrush" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
 
@@ -379,6 +378,7 @@
     <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="{StaticResource LayerFillColorDefault}" />
     <SolidColorBrush x:Key="LayerFillColorSecondaryBrush" Color="{StaticResource LayerFillColorSecondary}" />
     <SolidColorBrush x:Key="LayerFillColorTertiaryBrush" Color="{StaticResource LayerFillColorTertiary}" />
+    <SolidColorBrush x:Key="AccentLayerFillColorDefaultBrush" Opacity="0.25" Color="{m:DynamicColor SystemAccentColorLight3}"/>
 
     <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
     <SolidColorBrush x:Key="SolidBackgroundFillColorSecondaryBrush" Color="{StaticResource SolidBackgroundFillColorSecondary}" />
@@ -1092,7 +1092,7 @@
     <m:StaticResource x:Key="MenuFlyoutSubItemForegroundPressed" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemForegroundSubMenuOpened" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
-    <m:StaticResource x:Key="MenuFlyoutSubItemChevron" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemChevron" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemChevronPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemChevronPressed" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemChevronSubMenuOpened" ResourceKey="TextFillColorPrimaryBrush" />
@@ -1283,9 +1283,9 @@
 
     <!-- ColorAnimation requires TargetProperty to be Color thus some resources point to the colour instead of brush-->
     <m:StaticResource x:Key="RadioButtonOuterEllipseStroke" ResourceKey="ControlAAStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokePointerOver" ResourceKey="ControlAAStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokePressed" ResourceKey="ControlAAStrokeColorDisabledBrush" />
-    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokeDisabled" ResourceKey="ControlAAStrokeColorDisabledBrush" />
+    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokePointerOver" ResourceKey="ControlAAStrokeColorDefault" />
+    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokePressed" ResourceKey="ControlAAStrokeColorDisabled" />
+    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokeDisabled" ResourceKey="ControlAAStrokeColorDisabled" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseFill" ResourceKey="ControlAltFillColorSecondaryBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseFillPointerOver" ResourceKey="ControlAltFillColorTertiaryBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseFillPressed" ResourceKey="ControlAltFillColorQuarternaryBrush" />
