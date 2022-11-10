@@ -667,9 +667,9 @@
     <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminatePointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminatePressed" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminateDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUnchecked" ResourceKey="ControlAltFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUnchecked" ResourceKey="ControlAAStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" ResourceKey="ControlAAStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed" ResourceKey="ControlAAStrokeColorDisabledBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedDisabled" ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeChecked" ResourceKey="ControlStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" ResourceKey="SystemAccentColorLight1Brush" />
@@ -679,18 +679,18 @@
     <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePointerOver" ResourceKey="SystemAccentColorLight1Brush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePressed" ResourceKey="SystemAccentColorDark1Brush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminateDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUnchecked" ResourceKey="SubtleFillColorTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUnchecked" ResourceKey="ControlAltFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPointerOver" ResourceKey="ControlAltFillColorTertiaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPressed" ResourceKey="ControlAltFillColorQuarternaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillChecked" ResourceKey="AccentAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" ResourceKey="SystemAccentColorLight1Brush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPressed" ResourceKey="SystemAccentColorDark1Brush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedDisabled" ResourceKey="ControlFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedDisabled" ResourceKey="AccentAAFillColorDisabledBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminate" ResourceKey="AccentAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminatePointerOver" ResourceKey="SystemAccentColorLight1Brush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminatePressed" ResourceKey="SystemAccentColorDark1Brush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminateDisabled" ResourceKey="ControlFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminateDisabled" ResourceKey="AccentAAFillColorDisabledBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUnchecked" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedPointerOver" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedPressed" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
@@ -698,11 +698,11 @@
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundChecked" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedDisabled" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedDisabled" ResourceKey="TextOnAccentAAFillColorDisabledBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminate" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminatePointerOver" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminatePressed" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminateDisabled" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminateDisabled" ResourceKey="TextOnAccentAAFillColorDisabledBrush" />
 
     <!-- Resource for ComboBox -->
     <sys:Double x:Key="ComboBoxThemeMinWidth">64</sys:Double>
@@ -1182,7 +1182,7 @@
     <m:StaticResource x:Key="NavigationViewBackButtonBackground" ResourceKey="SubtleFillColorTransparentBrush" />
 
     <!-- Resources for NumberBox -->
-    <m:StaticResource x:Key="NumberBoxPopupIndicatorForeground" ResourceKey="ControlAltFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="NumberBoxPopupIndicatorForeground" ResourceKey="TextFillColorSecondaryBrush" />
 
     <!-- The following NumberBoxPopup* theme resources resource must be defined at the app level in order to take effect. -->
     <m:StaticResource x:Key="NumberBoxPopupBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
