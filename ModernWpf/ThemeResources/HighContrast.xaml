@@ -266,7 +266,9 @@
     <SolidColorBrush x:Key="AccentControlElevationBorderBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
 
     <!-- Other -->
-
+    <SolidColorBrush x:Key="SystemColorGrayTextColorBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
+    <SolidColorBrush x:Key="SystemColorHighlightColorBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="SystemColorHighlightTextColorBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
     <SolidColorBrush x:Key="SystemColorWindowTextColorBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="SystemColorWindowColorBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemControlTransparentBrush" Color="Transparent" />
@@ -510,81 +512,106 @@
     <m:StaticResource x:Key="CalendarViewNavigationButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
     <m:StaticResource x:Key="CalendarViewNavigationButtonBorderBrush" ResourceKey="SystemControlTransparentBrush" />
 
-    <!-- Resources for CheckBox -->
-    <sys:Double x:Key="CheckBoxBorderThemeThickness">1</sys:Double>
-    <sys:Double x:Key="CheckBoxCheckedStrokeThickness">1</sys:Double>
-    <m:StaticResource x:Key="CheckBoxForegroundUnchecked" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CheckBoxForegroundUncheckedPointerOver" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CheckBoxForegroundUncheckedPressed" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CheckBoxForegroundUncheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CheckBoxForegroundChecked" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CheckBoxForegroundCheckedPointerOver" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CheckBoxForegroundCheckedPressed" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CheckBoxForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CheckBoxForegroundIndeterminate" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CheckBoxForegroundIndeterminatePointerOver" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CheckBoxForegroundIndeterminatePressed" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CheckBoxForegroundIndeterminateDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CheckBoxBackgroundUnchecked" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBackgroundUncheckedPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBackgroundUncheckedPressed" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBackgroundUncheckedDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBackgroundChecked" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBackgroundCheckedPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBackgroundCheckedPressed" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBackgroundCheckedDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBackgroundIndeterminate" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBackgroundIndeterminatePointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBackgroundIndeterminatePressed" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBackgroundIndeterminateDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBorderBrushUnchecked" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBorderBrushUncheckedPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBorderBrushUncheckedPressed" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBorderBrushUncheckedDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBorderBrushChecked" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBorderBrushCheckedPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBorderBrushCheckedPressed" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBorderBrushCheckedDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminate" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminatePointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminatePressed" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminateDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUnchecked" ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" ResourceKey="SystemControlHighlightBaseMediumHighBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeChecked" ResourceKey="SystemControlHighlightTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminate" ResourceKey="SystemControlForegroundAccentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePointerOver" ResourceKey="SystemControlHighlightAccentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePressed" ResourceKey="SystemControlHighlightBaseMediumBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminateDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUnchecked" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPointerOver" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPressed" ResourceKey="SystemControlBackgroundBaseMediumBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillChecked" ResourceKey="SystemControlHighlightAccentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" ResourceKey="SystemControlBackgroundAccentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPressed" ResourceKey="SystemControlHighlightBaseMediumBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminate" ResourceKey="SystemControlHighlightTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminatePointerOver" ResourceKey="SystemControlHighlightTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminatePressed" ResourceKey="SystemControlHighlightTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminateDisabled" ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUnchecked" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedPointerOver" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedPressed" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedDisabled" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundChecked" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" ResourceKey="SystemControlForegroundChromeWhiteBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" ResourceKey="SystemControlForegroundChromeWhiteBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminate" ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminatePointerOver" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminatePressed" ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminateDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <!--#region CheckBox_themeresources.xaml-->
+
+    <!-- Content brushes -->
+
+    <m:StaticResource x:Key="CheckBoxForegroundUnchecked" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxForegroundUncheckedPointerOver" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxForegroundUncheckedPressed" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxForegroundUncheckedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxForegroundChecked" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxForegroundCheckedPointerOver" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxForegroundCheckedPressed" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxForegroundCheckedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxForegroundIndeterminate" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxForegroundIndeterminatePointerOver" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxForegroundIndeterminatePressed" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxForegroundIndeterminateDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxBackgroundUnchecked" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBackgroundUncheckedPointerOver" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBackgroundUncheckedPressed" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBackgroundUncheckedDisabled" ResourceKey="SystemColorWindowColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxBackgroundChecked" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBackgroundCheckedPointerOver" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBackgroundCheckedPressed" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBackgroundCheckedDisabled" ResourceKey="SystemColorWindowColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxBackgroundIndeterminate" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBackgroundIndeterminatePointerOver" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBackgroundIndeterminatePressed" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBackgroundIndeterminateDisabled" ResourceKey="SystemColorWindowColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxBorderBrushUnchecked" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBorderBrushUncheckedPointerOver" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBorderBrushUncheckedPressed" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBorderBrushUncheckedDisabled" ResourceKey="SystemColorWindowColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxBorderBrushChecked" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBorderBrushCheckedPointerOver" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBorderBrushCheckedPressed" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBorderBrushCheckedDisabled" ResourceKey="SystemColorWindowColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminate" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminatePointerOver" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminatePressed" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminateDisabled" ResourceKey="SystemColorWindowColorBrush" />
+
+    <!-- Checkbox stroke brushes -->
+
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUnchecked" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeChecked" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminate" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminateDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <!-- Checkbox fill brushes -->
+
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUnchecked" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPointerOver" ResourceKey="SystemColorHighlightTextBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedDisabled" ResourceKey="SystemColorWindowColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillChecked" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminate" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminatePointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminatePressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminateDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <!-- Checkbox glyph brushes -->
+
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUnchecked" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundChecked" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedDisabled" ResourceKey="SystemColorWindowColorBrush" />
+
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminate" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminatePointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminatePressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminateDisabled" ResourceKey="SystemColorWindowColorBrush" />
+    <!--#endregion-->
 
     <!-- Resource for ComboBox -->
     <sys:Double x:Key="ComboBoxThemeMinWidth">64</sys:Double>

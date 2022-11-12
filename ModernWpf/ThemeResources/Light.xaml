@@ -628,81 +628,106 @@
     <m:StaticResource x:Key="CalendarViewNavigationButtonBorderBrushPointerOver" ResourceKey="ControlStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="CalendarViewNavigationButtonBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
 
-    <!-- Resources for CheckBox -->
-    <sys:Double x:Key="CheckBoxBorderThemeThickness">1</sys:Double>
-    <sys:Double x:Key="CheckBoxCheckedStrokeThickness">0</sys:Double>
+    <!--#region CheckBox_themeresources.xaml-->
+    
+    <!-- Content brushes -->
+
     <m:StaticResource x:Key="CheckBoxForegroundUnchecked" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxForegroundUncheckedPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxForegroundUncheckedPressed" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxForegroundUncheckedDisabled" ResourceKey="TextFillColorDisabledBrush" />
+
     <m:StaticResource x:Key="CheckBoxForegroundChecked" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxForegroundCheckedPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxForegroundCheckedPressed" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxForegroundCheckedDisabled" ResourceKey="TextFillColorDisabledBrush" />
+
     <m:StaticResource x:Key="CheckBoxForegroundIndeterminate" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxForegroundIndeterminatePointerOver" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxForegroundIndeterminatePressed" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxForegroundIndeterminateDisabled" ResourceKey="TextFillColorDisabledBrush" />
+
     <m:StaticResource x:Key="CheckBoxBackgroundUnchecked" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBackgroundUncheckedPointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBackgroundUncheckedPressed" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBackgroundUncheckedDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+
     <m:StaticResource x:Key="CheckBoxBackgroundChecked" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBackgroundCheckedPointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBackgroundCheckedPressed" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBackgroundCheckedDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+
     <m:StaticResource x:Key="CheckBoxBackgroundIndeterminate" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBackgroundIndeterminatePointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBackgroundIndeterminatePressed" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBackgroundIndeterminateDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+
     <m:StaticResource x:Key="CheckBoxBorderBrushUnchecked" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrushUncheckedPointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrushUncheckedPressed" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrushUncheckedDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+
     <m:StaticResource x:Key="CheckBoxBorderBrushChecked" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrushCheckedPointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrushCheckedPressed" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrushCheckedDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+
     <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminate" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminatePointerOver" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminatePressed" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="CheckBoxBorderBrushIndeterminateDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+
+    <!-- Checkbox stroke brushes -->
+
     <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUnchecked" ResourceKey="ControlAAStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" ResourceKey="ControlAAStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed" ResourceKey="ControlAAStrokeColorDisabledBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedDisabled" ResourceKey="TextFillColorDisabledBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeChecked" ResourceKey="ControlStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" ResourceKey="SystemAccentColorLight1Brush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed" ResourceKey="ControlStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeUncheckedDisabled" ResourceKey="ControlAAStrokeColorDisabledBrush" />
+
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeChecked" ResourceKey="AccentAAFillColorDefaultBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" ResourceKey="AccentAAFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed" ResourceKey="AccentAAFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeCheckedDisabled" ResourceKey="ControlAAStrokeColorDisabledBrush" />
+
     <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminate" ResourceKey="AccentAAFillColorDefaultBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePointerOver" ResourceKey="SystemAccentColorLight1Brush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePressed" ResourceKey="SystemAccentColorDark1Brush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminateDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePointerOver" ResourceKey="AccentAAFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminatePressed" ResourceKey="AccentAAFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundStrokeIndeterminateDisabled" ResourceKey="ControlAAStrokeColorDisabledBrush" />
+
+    <!-- Checkbox fill brushes -->
+
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUnchecked" ResourceKey="ControlAltFillColorSecondaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPointerOver" ResourceKey="ControlAltFillColorTertiaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedPressed" ResourceKey="ControlAltFillColorQuarternaryBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillUncheckedDisabled" ResourceKey="ControlAltFillColorDisabledBrush" />
+
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillChecked" ResourceKey="AccentAAFillColorDefaultBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" ResourceKey="SystemAccentColorLight1Brush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPressed" ResourceKey="SystemAccentColorDark1Brush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" ResourceKey="AccentAAFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedPressed" ResourceKey="AccentAAFillColorTertiaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillCheckedDisabled" ResourceKey="AccentAAFillColorDisabledBrush" />
+
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminate" ResourceKey="AccentAAFillColorDefaultBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminatePointerOver" ResourceKey="SystemAccentColorLight1Brush" />
-    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminatePressed" ResourceKey="SystemAccentColorDark1Brush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminatePointerOver" ResourceKey="AccentAAFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminatePressed" ResourceKey="AccentAAFillColorTertiaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckBackgroundFillIndeterminateDisabled" ResourceKey="AccentAAFillColorDisabledBrush" />
+
+    <!-- Checkbox glyph brushes -->
+
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUnchecked" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedPointerOver" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedPressed" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedDisabled" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundUncheckedDisabled" ResourceKey="TextOnAccentAAFillColorDisabledBrush" />
+
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundChecked" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedPressed" ResourceKey="TextOnAccentAAFillColorSecondaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundCheckedDisabled" ResourceKey="TextOnAccentAAFillColorDisabledBrush" />
+
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminate" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminatePointerOver" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminatePressed" ResourceKey="TextOnAccentAAFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminatePressed" ResourceKey="TextOnAccentAAFillColorSecondaryBrush" />
     <m:StaticResource x:Key="CheckBoxCheckGlyphForegroundIndeterminateDisabled" ResourceKey="TextOnAccentAAFillColorDisabledBrush" />
+    <!--#endregion-->
 
     <!-- Resource for ComboBox -->
     <sys:Double x:Key="ComboBoxThemeMinWidth">64</sys:Double>
