@@ -10,10 +10,54 @@
         <ResourceDictionary Source="TextBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Thickness x:Key="ComboBoxTopHeaderMargin">0,0,0,4</Thickness>
-    <Thickness x:Key="ComboBoxPadding">12,6,0,6</Thickness>
-    <Thickness x:Key="ComboBoxEditableTextPadding">11,5,32,6</Thickness>
+    <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
+    <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
+
+    <sys:Double x:Key="ComboBoxArrowThemeFontSize">21</sys:Double>
+    <sys:Double x:Key="ComboBoxThemeMinWidth">64</sys:Double>
+    <sys:Double x:Key="ComboBoxPopupThemeMinWidth">80</sys:Double>
+    <sys:Double x:Key="ComboBoxPopupThemeTouchMinWidth">240</sys:Double>
+    <sys:Double x:Key="ComboBoxItemPillHeight">16</sys:Double>
+    <sys:Double x:Key="ComboBoxItemPillWidth">3</sys:Double>
+    <sys:Double x:Key="ComboBoxItemPillMinScale">0.625</sys:Double>
     <sys:Double x:Key="ComboBoxMinHeight">32</sys:Double>
+
+    <sys:Int32 x:Key="ComboBoxPopupMaxNumberOfItems">15</sys:Int32>
+    <sys:Int32 x:Key="ComboBoxPopupMaxNumberOfItemsThatCanBeShownOnOneSide">7</sys:Int32>
+
+    <sys:String x:Key="ComboBoxItemScaleAnimationDuration">00:00:00.167</sys:String>
+
+    <Thickness x:Key="ComboBoxBorderThemeThickness">1</Thickness>
+    <Thickness x:Key="ComboBoxDropdownBorderThickness">1</Thickness>
+    <Thickness x:Key="ComboBoxHeaderThemeMargin">0,0,0,4</Thickness>
+    <Thickness x:Key="ComboBoxPopupBorderThemeThickness">2</Thickness>
+    <Thickness x:Key="ComboBoxItemThemePadding">11,5,11,7</Thickness>
+    <Thickness x:Key="ComboBoxItemThemeTouchPadding">11,11,11,13</Thickness>
+    <Thickness x:Key="ComboBoxItemThemeGameControllerPadding">11,11,11,13</Thickness>
+    <Thickness x:Key="ComboBoxBackgroundBorderThicknessFocused">2</Thickness>
+    <Thickness x:Key="ComboBoxDropdownBorderPadding">0</Thickness>
+    <Thickness x:Key="ComboBoxDropdownContentMargin">0,4</Thickness>
+    <Thickness x:Key="ComboBoxTopHeaderMargin">0,0,0,8</Thickness>
+    <Thickness x:Key="ComboBoxPadding">12,5,0,7</Thickness>
+    <Thickness x:Key="ComboBoxEditableTextPadding">11,5,32,6</Thickness>
+
+    <CornerRadius x:Key="ComboBoxHiglightBorderCornerRadius">7</CornerRadius>
+    <CornerRadius x:Key="ComboBoxDropDownButtonBackgroundCornerRadius">4</CornerRadius>
+    <CornerRadius x:Key="ComboBoxItemCornerRadius">3</CornerRadius>
+    <CornerRadius x:Key="ComboBoxItemPillCornerRadius">1.5</CornerRadius>
+
+    <FontWeight x:Key="ComboBoxHeaderThemeFontWeight">Normal</FontWeight>
+    <FontWeight x:Key="ComboBoxPlaceholderTextThemeFontWeight">350</FontWeight>
+
+    <Style x:Key="ComboBoxItemPill" TargetType="Rectangle">
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Height" Value="{StaticResource ComboBoxItemPillHeight}"/>
+        <Setter Property="Width" Value="{StaticResource ComboBoxItemPillWidth}"/>
+        <Setter Property="Fill" Value="{DynamicResource ComboBoxItemPillFillBrush}"/>
+        <Setter Property="RadiusX" Value="{Binding Source={StaticResource ComboBoxItemPillCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"/>
+        <Setter Property="RadiusY" Value="{Binding Source={StaticResource ComboBoxItemPillCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"/>
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+    </Style>
 
     <Style x:Key="DefaultComboBoxItemStyle" TargetType="ComboBoxItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -26,6 +70,8 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="True" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-3" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{StaticResource ComboBoxItemCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBoxItem">
@@ -34,14 +80,29 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
+                        Margin="5,2,5,2"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <ContentPresenter
-                            x:Name="ContentPresenter"
-                            TextElement.Foreground="{TemplateBinding Foreground}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Margin="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
+                        <Grid>
+                            <Rectangle
+                                x:Name="Pill"
+                                Style="{StaticResource ComboBoxItemPill}"
+                                Grid.Row="1" Grid.Column="0"
+                                Opacity="0">
+                                <Rectangle.RenderTransform>
+                                    <ScaleTransform x:Name="PillTransform" ScaleY="1"/>
+                                </Rectangle.RenderTransform>
+                            </Rectangle>
+
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                TextElement.Foreground="{TemplateBinding Foreground}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Margin="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <MultiTrigger>
@@ -68,6 +129,7 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsFocused" Value="True" />
                             </MultiTrigger.Conditions>
+                            <Setter TargetName="Pill" Property="Opacity" Value="1" />
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource ComboBoxItemBackgroundSelected}" />
                             <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource ComboBoxItemBorderBrushSelected}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxItemForegroundSelected}" />
@@ -78,6 +140,7 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsFocused" Value="False" />
                             </MultiTrigger.Conditions>
+                            <Setter TargetName="Pill" Property="Opacity" Value="1" />
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource ComboBoxItemBackgroundSelectedUnfocused}" />
                             <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource ComboBoxItemBorderBrushSelectedUnfocused}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxItemForegroundSelectedUnfocused}" />
@@ -88,6 +151,7 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsEnabled" Value="False" />
                             </MultiTrigger.Conditions>
+                            <Setter TargetName="Pill" Property="Opacity" Value="1" />
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource ComboBoxItemBackgroundSelectedDisabled}" />
                             <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource ComboBoxItemBorderBrushSelectedDisabled}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxItemForegroundSelectedDisabled}" />
@@ -98,6 +162,7 @@
                                 <Condition Property="IsSelected" Value="True" />
                                 <Condition Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
+                            <Setter TargetName="Pill" Property="Opacity" Value="1" />
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource ComboBoxItemBackgroundSelectedPointerOver}" />
                             <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource ComboBoxItemBorderBrushSelectedPointerOver}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxItemForegroundSelectedPointerOver}" />
@@ -118,8 +183,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
-                    <Grid
+                    <Border
                         Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True" />
                 </ControlTemplate>
             </Setter.Value>
@@ -260,6 +326,18 @@
                             VerticalAlignment="Top"
                             Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
+                        <Border x:Name="HighlightBackground"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Margin="-4"
+                            Background="{DynamicResource ComboBoxBackgroundFocused}"
+                            BorderBrush="{DynamicResource ComboBoxBackgroundBorderBrushFocused}"
+                            BorderThickness="{StaticResource ComboBoxBackgroundBorderThicknessFocused}"
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                            Opacity="0" />
+
                         <Border
                             x:Name="Background"
                             Grid.Row="1"
@@ -271,16 +349,17 @@
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                             MinWidth="{DynamicResource ComboBoxThemeMinWidth}"
                             primitives:ValidationHelper.IsTemplateValidationAdornerSite="True" />
-                        <Border
-                            x:Name="HighlightBackground"
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="2"
-                            Background="{DynamicResource ComboBoxBackgroundUnfocused}"
-                            BorderBrush="{DynamicResource ComboBoxBackgroundBorderBrushUnfocused}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                            Opacity="0" />
+
+                        <Rectangle x:Name="Pill"
+                            Style="{StaticResource ComboBoxItemPill}"
+                            Margin="1,0,0,0"
+                            Grid.Row="1" Grid.Column="0"
+                            Opacity="0">
+                            <Rectangle.RenderTransform>
+                                <ScaleTransform x:Name="PillTransform" ScaleY="1" />
+                            </Rectangle.RenderTransform>
+                        </Rectangle>
+
                         <ContentPresenter
                             x:Name="ContentPresenter"
                             Grid.Row="1"
@@ -339,8 +418,9 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             Background="Transparent"
-                            Margin="0,1,1,1"
+                            Margin="-4,4,4,4"
                             Visibility="Collapsed"
+                            primitives:ControlHelper.CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                             Width="30"
                             HorizontalAlignment="Right" />
                         <local:FontIconFallback
@@ -349,7 +429,7 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             IsHitTestVisible="False"
-                            Margin="0,0,10,0"
+                            Margin="0,0,14,0"
                             Foreground="{DynamicResource ComboBoxDropDownGlyphForeground}"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             FontSize="12"
@@ -396,6 +476,7 @@
                                     <Border
                                         BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}"
                                         BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}"
+                                        Margin="0,-0.5,0,-1"
                                         Padding="{DynamicResource ComboBoxDropdownBorderPadding}"
                                         CornerRadius="{Binding ElementName=PopupBorder, Path=CornerRadius}">
                                         <ScrollViewer
@@ -419,7 +500,6 @@
                         <!-- PointerOver -->
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Background" Property="Background" Value="{DynamicResource ComboBoxBackgroundPointerOver}" />
-                            <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource ComboBoxBorderBrushPointerOver}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundPointerOver}" />
                             <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxPlaceHolderForegroundPointerOver}" />
                         </Trigger>
@@ -443,8 +523,7 @@
                         <!-- Focused -->
                         <Trigger Property="primitives:FocusVisualHelper.ShowFocusVisual" Value="True">
                             <Setter TargetName="HighlightBackground" Property="Opacity" Value="1" />
-                            <Setter TargetName="HighlightBackground" Property="Background" Value="{DynamicResource ComboBoxBackgroundFocused}" />
-                            <Setter TargetName="HighlightBackground" Property="BorderBrush" Value="{DynamicResource ComboBoxBackgroundBorderBrushFocused}" />
+                            <Setter TargetName="Pill" Property="Opacity" Value="1" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundFocused}" />
                             <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxPlaceHolderForegroundFocused}" />
                             <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxDropDownGlyphForegroundFocused}" />
@@ -456,6 +535,7 @@
                                 <Condition SourceName="ToggleButton" Property="IsPressed" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="HighlightBackground" Property="Opacity" Value="1" />
+                            <Setter TargetName="Pill" Property="Opacity" Value="1" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ComboBoxForegroundFocusedPressed}" />
                             <Setter TargetName="PlaceholderTextBlock" Property="Foreground" Value="{DynamicResource ComboBoxPlaceHolderForegroundFocusedPressed}" />
                             <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxDropDownGlyphForegroundFocusedPressed}" />
@@ -491,7 +571,6 @@
                                 <Condition SourceName="DropDownOverlay" Property="IsPressed" Value="False" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
-                            <Setter TargetName="DropDownOverlay" Property="Margin" Value="0,2,2,2" />
                         </MultiTrigger>
                         <!-- TextBoxFocusedOverlayPointerOver -->
                         <MultiTrigger>
@@ -500,8 +579,7 @@
                                 <Condition SourceName="DropDownOverlay" Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="DropDownGlyph" Property="Foreground" Value="{DynamicResource ComboBoxEditableDropDownGlyphForeground}" />
-                            <Setter TargetName="DropDownOverlay" Property="Background" Value="{DynamicResource ComboBoxFocusedDropDownBackgroundPointerOver}" />
-                            <Setter TargetName="DropDownOverlay" Property="Margin" Value="0,2,2,2" />
+                            <Setter TargetName="DropDownOverlay" Property="Background" Value="{DynamicResource ComboBoxDropDownBackgroundPointerOver}" />
                         </MultiTrigger>
                         <!-- TextBoxFocusedOverlayPressed -->
                         <MultiTrigger>
