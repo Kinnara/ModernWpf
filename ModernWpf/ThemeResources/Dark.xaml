@@ -1389,6 +1389,7 @@
     <m:StaticResource x:Key="ScrollBarThumbFillPointerOver" ResourceKey="ControlAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="ScrollBarThumbFillPressed" ResourceKey="ControlAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="ScrollBarThumbFillDisabled" ResourceKey="ControlAAFillColorDisabledBrush" />
+    <m:StaticResource x:Key="ScrollBarThumbBorderBrush" ResourceKey="ControlFillColorTransparentBrush" />
     <m:StaticResource x:Key="ScrollBarTrackFill" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
     <m:StaticResource x:Key="ScrollBarTrackFillPointerOver" ResourceKey="AcrylicInAppFillColorDefaultBrush"  />
     <m:StaticResource x:Key="ScrollBarTrackFillDisabled" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
