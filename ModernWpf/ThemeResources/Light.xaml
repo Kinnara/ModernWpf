@@ -1388,6 +1388,7 @@
     <m:StaticResource x:Key="ScrollBarThumbFillPointerOver" ResourceKey="ControlAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="ScrollBarThumbFillPressed" ResourceKey="ControlAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="ScrollBarThumbFillDisabled" ResourceKey="ControlAAFillColorDisabledBrush" />
+    <m:StaticResource x:Key="ScrollBarThumbBorderBrush" ResourceKey="ControlFillColorTransparentBrush" />
     <m:StaticResource x:Key="ScrollBarTrackFill" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
     <m:StaticResource x:Key="ScrollBarTrackFillPointerOver" ResourceKey="AcrylicInAppFillColorDefaultBrush"  />
     <m:StaticResource x:Key="ScrollBarTrackFillDisabled" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
@@ -1634,9 +1635,8 @@
     <!-- Resources for ToolTip -->
     <sys:Double x:Key="ToolTipContentThemeFontSize">12</sys:Double>
     <Thickness x:Key="ToolTipBorderThemeThickness">1</Thickness>
-    <Thickness x:Key="ToolTipBorderThemePadding">8,5,8,7</Thickness>
-    <m:StaticResource x:Key="ToolTipForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="ToolTipBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
+    <m:StaticResource x:Key="ToolTipForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ToolTipBackgroundBrush" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
     <m:StaticResource x:Key="ToolTipBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush" />
 
     <!-- Resources for TreeView -->
