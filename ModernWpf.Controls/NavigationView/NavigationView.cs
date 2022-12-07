@@ -101,6 +101,8 @@ namespace ModernWpf.Controls
         const int c_backButtonRowDefinition = 1;
         const float c_paneElevationTranslationZ = 32;
 
+        const int c_paneCloseButtonWidth = 40;
+
         const int c_mainMenuBlockIndex = 0;
         const int c_footerMenuBlockIndex = 1;
 
@@ -4616,7 +4618,7 @@ namespace ModernWpf.Controls
 
                     if (useLeftPaddingForBackOrCloseButton)
                     {
-                        paneHeaderPaddingForCloseButton = closeButton.Width;
+                        paneHeaderPaddingForCloseButton = double.IsNaN(closeButton.Width) ? c_paneCloseButtonWidth : closeButton.Width;
                         leftPaddingForBackOrCloseButton += paneHeaderPaddingForCloseButton;
                     }
                 }
