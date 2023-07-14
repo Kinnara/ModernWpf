@@ -185,6 +185,7 @@ namespace ModernWpf.MahApps.Controls
 
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         {
+            ReleaseMouseCapture();
             e.Handled = true;
             _deferredSelectionChangedEventArgs = e;
 
