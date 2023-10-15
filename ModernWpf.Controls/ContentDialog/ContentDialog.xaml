@@ -242,10 +242,8 @@
                                     IsShadowEnabled="{TemplateBinding IsShadowEnabled}"
                                     CornerRadius="{TemplateBinding CornerRadius}"
                                     Margin="{DynamicResource ContentDialogBorderWidth}" />
-                                <Border
-                                    Background="{TemplateBinding Background}"
-                                    CornerRadius="{TemplateBinding CornerRadius}" />
                                 <ui:BorderEx
+                                    Background="{TemplateBinding Background}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     CornerRadius="{TemplateBinding CornerRadius}"
