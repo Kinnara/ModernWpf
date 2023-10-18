@@ -108,7 +108,7 @@
 
     <sys:Double x:Key="ScrollBarButtonArrowIconFontSize">8</sys:Double>
     <sys:TimeSpan x:Key="ScrollBarExpandBeginTime">00:00:00.40</sys:TimeSpan>
-    <sys:TimeSpan x:Key="ScrollBarContractBeginTime">00:00:02.00</sys:TimeSpan>
+    <sys:TimeSpan x:Key="ScrollBarContractBeginTime">00:00:00.50</sys:TimeSpan>
     <CornerRadius x:Key="ScrollBarCornerRadius">3</CornerRadius>
 
     <sys:Double x:Key="SmallScrollThumbScale">0.125</sys:Double>
