@@ -1720,7 +1720,7 @@
             <ScaleTransform ScaleY="-1" CenterY="0.5"/>
         </LinearGradientBrush.RelativeTransform>
         <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="{DynamicResource SystemAccentColor}"/>
+            <GradientStop Offset="0" Color="{DynamicResource SystemAccentColorLight2}"/>
             <GradientStop Offset="1.0" Color="{StaticResource ControlStrokeColorDefault}"/>
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
