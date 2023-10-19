@@ -9,6 +9,8 @@
     <sys:Double x:Key="GridViewColumnHeaderMinHeight">33</sys:Double>
     <sys:Double x:Key="GridViewItemContainerMinHeight">32</sys:Double>
 
+    <sys:Boolean x:Key="ListViewBaseItemRoundedChromeEnabled">True</sys:Boolean>
+
     <Style x:Key="DefaultListViewItemStyle" TargetType="ListViewItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
