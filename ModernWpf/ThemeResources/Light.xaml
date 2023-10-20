@@ -803,8 +803,8 @@
     <sys:Double x:Key="CommandBarOverflowMaxWidth">480</sys:Double>
     <sys:Double x:Key="CommandBarOverflowMaxHeight">198</sys:Double>
     <m:StaticResource x:Key="CommandBarBackground" ResourceKey="ControlFillColorTransparentBrush" />
-    <m:StaticResource x:Key="CommandBarBackgroundOpen" ResourceKey="CardBackgroundFillColorDefaultBrush" />
-    <m:StaticResource x:Key="CommandBarBorderBrushOpen" ResourceKey="CardStrokeColorDefaultSolid" />
+    <m:StaticResource x:Key="CommandBarBackgroundOpen" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
+    <m:StaticResource x:Key="CommandBarBorderBrushOpen" ResourceKey="CardStrokeColorDefaultSolidBrush" />
     <Thickness x:Key="CommandBarBorderThicknessOpen">1</Thickness>
     <m:StaticResource x:Key="CommandBarForeground" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="CommandBarHighContrastBorder" ResourceKey="ControlFillColorTransparentBrush" />
