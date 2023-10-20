@@ -1,8 +1,11 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
+    <sys:Boolean x:Key="HyperlinkUnderlineVisible">False</sys:Boolean>
+    
     <Style x:Key="DefaultHyperlinkStyle" TargetType="Hyperlink">
         <Setter Property="Foreground" Value="{DynamicResource HyperlinkForeground}" />
         <Setter Property="TextDecorations" Value="Underline" />
