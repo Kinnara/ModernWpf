@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
     <Thickness x:Key="AppBarSeparatorMargin">16,12,15,12</Thickness>
-    <Thickness x:Key="AppBarOverflowSeparatorMargin">12,4,12,4</Thickness>
+    <Thickness x:Key="AppBarOverflowSeparatorMargin">0,4,0,4</Thickness>
     <sys:Double x:Key="AppBarSeparatorWidth">1</sys:Double>
     <sys:Double x:Key="AppBarOverflowSeparatorHeight">1</sys:Double>
     <sys:Double x:Key="AppBarSeparatorCornerRadius">0.5</sys:Double>

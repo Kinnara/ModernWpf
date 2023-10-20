@@ -26,6 +26,7 @@
     <Thickness x:Key="AppBarButtonTextLabelOnRightMargin">8,16,12,10</Thickness>
     <Thickness x:Key="AppBarButtonInnerBorderMargin">0,9,0,9</Thickness>
     <Thickness x:Key="AppBarButtonInnerBorderCompactMargin">0,9,0,25</Thickness>
+    <Thickness x:Key="AppBarButtonInnerBorderOverflowMargin">4,0,4,0</Thickness>
 
     <Thickness x:Key="AppBarToggleButtonOverflowTextTouchMargin">0,9,0,12</Thickness>
     <Thickness x:Key="AppBarToggleButtonOverflowCheckTouchMargin">12,10,12,10</Thickness>
@@ -50,40 +51,40 @@
         <Setter Property="Width" Value="{DynamicResource AppBarExpandButtonThemeWidth}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
-        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="0" />
+        <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-3" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
                     <Grid Background="Transparent">
-                        <local:ContentControlEx x:Name="ContentPresenter"
-                            Background="{TemplateBinding Background}"
-                            Foreground="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            Margin="{StaticResource AppBarEllipsisButtonInnerBorderMargin}"
-                            Padding="0"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                                Margin="{StaticResource AppBarEllipsisButtonInnerBorderMargin}"
+                                Padding="0"
+                                primitives:FocusVisualHelper.IsTemplateFocusTarget="True">
+                            <local:ContentPresenterEx x:Name="ContentPresenter"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPointerOver}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource AppBarButtonBackgroundDisabled}" />
+                            <Setter TargetName="Border" Property="Background" Value="{DynamicResource AppBarButtonBackgroundDisabled}" />
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushDisabled}" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushDisabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
