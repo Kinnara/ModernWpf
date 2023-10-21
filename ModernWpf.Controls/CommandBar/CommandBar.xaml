@@ -152,6 +152,13 @@
                                 VerticalAlignment="Stretch"
                                 Stroke="{DynamicResource CommandBarHighContrastBorder}"
                                 StrokeThickness="1" />
+                            <Border x:Name="OpenBorder"
+                                Grid.ColumnSpan="2"
+                                Visibility="Collapsed"
+                                VerticalAlignment="Stretch"
+                                BorderThickness="{DynamicResource CommandBarBorderThicknessOpen}"
+                                BorderBrush="{DynamicResource CommandBarBorderBrushOpen}"
+                                CornerRadius="{DynamicResource ControlCornerRadius}" />
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -166,6 +173,9 @@
                         <Trigger Property="IsDynamicOverflowEnabled" Value="True">
                             <Setter TargetName="ContentControlColumnDefinition" Property="Width" Value="Auto" />
                             <Setter TargetName="PrimaryItemsControlColumnDefinition" Property="Width" Value="*" />
+                        </Trigger>
+                        <Trigger Property="IsOverflowOpen" Value="True">
+                            <Setter TargetName="OpenBorder" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger SourceName="OverflowPopup" Property="IsSuspendingAnimation" Value="true">
                             <Setter TargetName="OverflowPopup" Property="PopupAnimation" Value="None" />
