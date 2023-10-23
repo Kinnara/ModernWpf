@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -845,6 +846,19 @@ namespace ModernWpf.Controls
         {
             var owner = (NavigationView)sender;
             owner.PropertyChanged(args);
+        }
+
+        #endregion
+
+        #region CornerRadius
+
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(NavigationView));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
         }
 
         #endregion

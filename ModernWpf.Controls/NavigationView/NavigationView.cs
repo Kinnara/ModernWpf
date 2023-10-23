@@ -1847,6 +1847,8 @@ namespace ModernWpf.Controls
 
         void UpdatePaneButtonsWidths()
         {
+            var templateSettings = GetTemplateSettings();
+
             double newButtonWidths;
             {
                 double init()
@@ -1860,18 +1862,8 @@ namespace ModernWpf.Controls
                 newButtonWidths = init();
             }
 
-            if (m_backButton is { } backButton)
-            {
-                backButton.Width = newButtonWidths;
-            }
-            if (m_paneToggleButton is { } paneToggleButton)
-            {
-                paneToggleButton.MinWidth = newButtonWidths;
-                if (paneToggleButton.GetTemplateChild<ColumnDefinition>(c_paneToggleButtonIconGridColumnName) is { } paneToggleButtonIconColumn)
-                {
-                    paneToggleButtonIconColumn.Width = new GridLength(newButtonWidths);
-                }
-            }
+            templateSettings.PaneButtonWidth = newButtonWidths;
+            templateSettings.LatestPaneButtonWidth = newButtonWidths - 8;
         }
 
         void OnBackButtonClicked(object sender, RoutedEventArgs args)
@@ -4524,7 +4516,7 @@ namespace ModernWpf.Controls
             {
                 if (m_rootSplitView is { } splitView)
                 {
-                    double width = GetPaneToggleButtonWidth();
+                    double width = GetTemplateSettings().PaneButtonWidth;
                     double togglePaneButtonWidth = width;
 
                     if (ShouldShowBackButton() && splitView.DisplayMode == SplitViewDisplayMode.Overlay)
