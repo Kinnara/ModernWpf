@@ -471,26 +471,23 @@
                                 <Border
                                     x:Name="PopupBorder"
                                     Background="{DynamicResource ComboBoxDropDownBackground}"
+                                    BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}"
+                                    BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}"
+                                    Margin="0,-0.5,0,-1"
+                                    Padding="{DynamicResource ComboBoxDropdownBorderPadding}"
                                     HorizontalAlignment="Stretch"
                                     CornerRadius="{DynamicResource OverlayCornerRadius}">
-                                    <Border
-                                        BorderBrush="{DynamicResource ComboBoxDropDownBorderBrush}"
-                                        BorderThickness="{DynamicResource ComboBoxDropdownBorderThickness}"
-                                        Margin="0,-0.5,0,-1"
-                                        Padding="{DynamicResource ComboBoxDropdownBorderPadding}"
-                                        CornerRadius="{Binding ElementName=PopupBorder, Path=CornerRadius}">
-                                        <ScrollViewer
-                                            x:Name="ScrollViewer"
-                                            Foreground="{DynamicResource ComboBoxDropDownForeground}"
-                                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}">
-                                            <ItemsPresenter
-                                                Margin="{DynamicResource ComboBoxDropdownContentMargin}"
-                                                KeyboardNavigation.DirectionalNavigation="Contained"
-                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                        </ScrollViewer>
-                                    </Border>
+                                    <ScrollViewer
+                                        x:Name="ScrollViewer"
+                                        Foreground="{DynamicResource ComboBoxDropDownForeground}"
+                                        HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                        VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                        IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}">
+                                        <ItemsPresenter
+                                            Margin="{DynamicResource ComboBoxDropdownContentMargin}"
+                                            KeyboardNavigation.DirectionalNavigation="Contained"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </ScrollViewer>
                                 </Border>
                             </primitives:ThemeShadowChrome>
                         </Popup>

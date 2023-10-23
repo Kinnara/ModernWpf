@@ -53,17 +53,15 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
                                             <Border
+                                                x:Name="Border"
                                                 Background="{TemplateBinding Background}"
+                                                BorderBrush="{DynamicResource CalendarViewNavigationButtonBorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
                                                 Margin="{TemplateBinding Padding}">
-                                                <Border
-                                                    x:Name="Border"
-                                                    BorderBrush="{DynamicResource CalendarViewNavigationButtonBorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}">
-                                                    <ContentPresenter
-                                                        x:Name="Text"
-                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                                </Border>
+                                                <ContentPresenter
+                                                    x:Name="Text"
+                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                                             </Border>
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="IsMouseOver" Value="True">

@@ -472,6 +472,8 @@
                         x:Name="LayoutRoot"
                         Background="{TemplateBinding Background}"
                         Padding="{TemplateBinding Padding}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <VisualStateManager.VisualStateGroups>
@@ -481,19 +483,13 @@
                                 <VisualState x:Name="FullWidthOpenUp" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid>
-                            <Border
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}" />
-                            <ScrollViewer
-                                Content="{TemplateBinding Content}"
-                                Margin="{TemplateBinding BorderThickness}"
-                                Padding="0,4,0,4"
-                                HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </Grid>
+                        <ScrollViewer
+                            Content="{TemplateBinding Content}"
+                            Margin="{TemplateBinding BorderThickness}"
+                            Padding="0,4,0,4"
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
