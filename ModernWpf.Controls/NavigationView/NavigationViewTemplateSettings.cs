@@ -150,5 +150,45 @@ namespace ModernWpf.Controls
         }
 
         #endregion
+
+        #region LatestPaneButtonWidth
+
+        private static readonly DependencyPropertyKey LatestPaneButtonWidthPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(LatestPaneButtonWidth),
+                typeof(double),
+                typeof(NavigationViewTemplateSettings),
+                null);
+
+        public static readonly DependencyProperty LatestPaneButtonWidthProperty =
+            LatestPaneButtonWidthPropertyKey.DependencyProperty;
+
+        public double LatestPaneButtonWidth
+        {
+            get => (double)GetValue(LatestPaneButtonWidthProperty);
+            internal set => SetValue(LatestPaneButtonWidthPropertyKey, value);
+        }
+
+        #endregion
+
+        #region PaneButtonWidth
+
+        private static readonly DependencyPropertyKey PaneButtonWidthPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(PaneButtonWidth),
+                typeof(double),
+                typeof(NavigationViewTemplateSettings),
+                null);
+
+        public static readonly DependencyProperty PaneButtonWidthProperty =
+            PaneButtonWidthPropertyKey.DependencyProperty;
+
+        public double PaneButtonWidth
+        {
+            get => (double)GetValue(PaneButtonWidthProperty);
+            internal set => SetValue(PaneButtonWidthPropertyKey, value);
+        }
+
+        #endregion
     }
 }

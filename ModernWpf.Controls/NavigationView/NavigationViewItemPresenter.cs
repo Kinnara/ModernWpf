@@ -38,6 +38,7 @@ namespace ModernWpf.Controls.Primitives
 
         public NavigationViewItemPresenter()
         {
+            TemplateSettings = new NavigationViewItemPresenterTemplateSettings();
             InputHelper.SetIsTapEnabled(this, true);
         }
 
@@ -54,6 +55,26 @@ namespace ModernWpf.Controls.Primitives
         {
             get => (IconElement)GetValue(IconProperty);
             set => SetValue(IconProperty, value);
+        }
+
+        #endregion
+
+        #region TemplateSettings
+
+        private static readonly DependencyPropertyKey TemplateSettingsPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(TemplateSettings),
+                typeof(NavigationViewItemPresenterTemplateSettings),
+                typeof(NavigationViewItemPresenter),
+                null);
+
+        public static readonly DependencyProperty TemplateSettingsProperty =
+            TemplateSettingsPropertyKey.DependencyProperty;
+
+        public NavigationViewItemPresenterTemplateSettings TemplateSettings
+        {
+            get => (NavigationViewItemPresenterTemplateSettings)GetValue(TemplateSettingsProperty);
+            private set => SetValue(TemplateSettingsPropertyKey, value);
         }
 
         #endregion
@@ -214,12 +235,14 @@ namespace ModernWpf.Controls.Primitives
         internal void UpdateCompactPaneLength(double compactPaneLength, bool shouldUpdate)
         {
             m_compactPaneLengthValue = compactPaneLength;
+
             if (shouldUpdate)
             {
-                if (GetTemplateChildT<ColumnDefinition>(c_iconBoxColumnDefinitionName, this) is { } iconGridColumn)
-                {
-                    ColumnDefinitionHelper.SetPixelWidth(iconGridColumn, compactPaneLength);
-                }
+                var templateSettings = TemplateSettings;
+                var gridLength = compactPaneLength;
+
+                templateSettings.IconColumnWidth = gridLength;
+                templateSettings.LatestIconColumnWidth = gridLength - 8;
             }
         }
 

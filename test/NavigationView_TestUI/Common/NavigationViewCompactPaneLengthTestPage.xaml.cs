@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using ModernWpf;
 using ModernWpf.Controls;
 using System;
 using System.Windows.Controls;
@@ -10,7 +11,6 @@ using System.Windows.Media;
 using NavigationViewPaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode;
 using NavigationViewBackButtonVisible = ModernWpf.Controls.NavigationViewBackButtonVisible;
 using NavigationViewItem = ModernWpf.Controls.NavigationViewItem;
-
 
 namespace MUXControlsTestApp
 {
@@ -82,7 +82,7 @@ namespace MUXControlsTestApp
                 {
                     continue;
                 }
-                var transform = GetContentBox(item as NavigationViewItem).TransformToVisual(null) as MatrixTransform;
+                var transform = GetContentBox(item as NavigationViewItem).TransformToVisual(Window.GetWindow(this)) as MatrixTransform;
                 if(Math.Abs(transform.Matrix.OffsetX - NavView.CompactPaneLength) > double.Epsilon)
                 {
                     allCorrect = false;
@@ -90,17 +90,18 @@ namespace MUXControlsTestApp
             }
 
             var rootgrid = VisualTreeHelper.GetChild(NavView, 0);
-            var paneToggleButtonGrid = VisualTreeHelper.GetChild(rootgrid, 0);
+            var paneToggleButtonGrid = rootgrid.FindDescendantByName("PaneToggleButtonGrid");
             var buttonHolderGrid = VisualTreeHelper.GetChild(paneToggleButtonGrid, 1);
             var backButton = VisualTreeHelper.GetChild(buttonHolderGrid, 0) as Button;
             var togglePaneButton = VisualTreeHelper.GetChild(buttonHolderGrid, 2) as Button;
+            var CompactPaneMargin = 8;
 
-            if (Math.Abs(backButton.ActualWidth - NavView.CompactPaneLength) > double.Epsilon)
+            if (Math.Abs(backButton.ActualWidth - NavView.CompactPaneLength) - CompactPaneMargin > double.Epsilon)
             {
                 allCorrect = false;
             }
 
-            if (Math.Abs(togglePaneButton.ActualWidth - NavView.CompactPaneLength) > double.Epsilon)
+            if (Math.Abs(togglePaneButton.ActualWidth - NavView.CompactPaneLength) - CompactPaneMargin > double.Epsilon)
             {
                 allCorrect = false;
             }
@@ -122,7 +123,7 @@ namespace MUXControlsTestApp
             var elementGrid = VisualTreeHelper.GetChild(element,0);
             var presenter = VisualTreeHelper.GetChild(elementGrid, 0);
             var layoutRoot = VisualTreeHelper.GetChild(presenter, 0);
-            var presenterContentRootGrid = VisualTreeHelper.GetChild(layoutRoot, 1);
+            var presenterContentRootGrid = layoutRoot.FindDescendantByName("PresenterContentRootGrid");
             var contentGrid = VisualTreeHelper.GetChild(presenterContentRootGrid, 1);
             var contentPresenter = VisualTreeHelper.GetChild(contentGrid, 1);
             return contentPresenter as UIElement;

@@ -12,37 +12,37 @@
 
     <Thickness x:Key="NavigationViewAutoSuggestBoxMargin">10,0,16,0</Thickness>
     <Thickness x:Key="TopNavigationViewAutoSuggestBoxMargin">12,0,12,0</Thickness>
-    <sys:Double x:Key="PaneToggleButtonSize">40</sys:Double>
-    <sys:Double x:Key="PaneToggleButtonHeight">40</sys:Double>
-    <sys:Double x:Key="PaneToggleButtonWidth">40</sys:Double>
-    <sys:Double x:Key="NavigationViewCompactPaneLength">40</sys:Double>
-    <sys:Double x:Key="NavigationViewTopPaneHeight">40</sys:Double>
+    <sys:Double x:Key="PaneToggleButtonHeight">34</sys:Double>
+    <sys:Double x:Key="PaneToggleButtonWidth">46</sys:Double>
+    <sys:Double x:Key="NavigationViewCompactPaneLength">46</sys:Double>
+    <sys:Double x:Key="NavigationViewIconBoxWidth">38</sys:Double>
+    <sys:Double x:Key="NavigationViewTopPaneHeight">48</sys:Double>
     <sys:Double x:Key="TopNavigationViewPaneCustomContentMinWidth">40</sys:Double>
-    <sys:Double x:Key="TopNavigationViewOverflowButtonWidth">48</sys:Double>
+    <sys:Double x:Key="TopNavigationViewOverflowButtonWidth">40</sys:Double>
     <sys:Double x:Key="TopNavigationViewOverflowButtonHeight">40</sys:Double>
 
-    <sys:Double x:Key="NavigationViewItemOnLeftMinHeight">40</sys:Double>
-    <sys:Double x:Key="NavigationViewPaneHeaderRowMinHeight">4</sys:Double>
+    <sys:Double x:Key="NavigationViewItemOnLeftMinHeight">36</sys:Double>
+    <sys:Double x:Key="NavigationViewPaneHeaderRowMinHeight">44</sys:Double>
 
     <sys:Double x:Key="NavigationViewItemSeparatorHeight">1</sys:Double>
     <sys:Double x:Key="TopNavigationViewItemSeparatorWidth">1</sys:Double>
 
     <Thickness x:Key="NavigationViewToggleBorderThickness">1</Thickness>
     <Thickness x:Key="NavigationViewItemBorderThickness">1</Thickness>
-    <Thickness x:Key="NavigationViewItemOnLeftIconBoxMargin">12,0,12,0</Thickness>
-    <Thickness x:Key="NavigationViewItemInnerHeaderMargin">10,0,0,0</Thickness>
+    <Thickness x:Key="NavigationViewItemOnLeftIconBoxMargin">11,0,11,0</Thickness>
+    <Thickness x:Key="NavigationViewItemInnerHeaderMargin">12,0</Thickness>
     <Thickness x:Key="NavigationViewMinimalHeaderMargin">8,5,0,0</Thickness>
     <Thickness x:Key="NavigationViewHeaderMargin">12,5,0,11</Thickness>
     <Thickness x:Key="NavigationViewPaneTitlePresenterMargin">8,4,0,0</Thickness>
     <Thickness x:Key="NavigationViewItemMargin">0</Thickness>
     <Thickness x:Key="TopNavigationViewItemMargin">0</Thickness>
-    <Thickness x:Key="NavigationViewItemSeparatorMargin">16,10</Thickness>
-    <Thickness x:Key="NavigationViewCompactItemSeparatorMargin">16,10</Thickness>
-    <Thickness x:Key="TopNavigationViewItemSeparatorMargin">10,0</Thickness>
+    <Thickness x:Key="NavigationViewItemSeparatorMargin">0,2</Thickness>
+    <Thickness x:Key="NavigationViewCompactItemSeparatorMargin">0,2</Thickness>
+    <Thickness x:Key="TopNavigationViewItemSeparatorMargin">4,0</Thickness>
     <Thickness x:Key="TopNavigationViewOverflowButtonMargin">0</Thickness>
-    <Thickness x:Key="NavigationViewItemContentPresenterMargin">0,0,20,0</Thickness>
+    <Thickness x:Key="NavigationViewItemContentPresenterMargin">4,0,20,0</Thickness>
     <Thickness x:Key="NavigationViewCompactItemContentPresenterMargin">0,0,0,0</Thickness>
-    <Thickness x:Key="TopNavigationViewItemContentPresenterMargin">8,0,16,0</Thickness>
+    <Thickness x:Key="TopNavigationViewItemContentPresenterMargin">8,0,12,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemContentOnlyContentPresenterMargin">12,0</Thickness>
     <Thickness x:Key="NavigationViewItemExpandChevronMargin">-20,0,6,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemExpandChevronMargin">-16,0,0,0</Thickness>
@@ -58,7 +58,7 @@
     <Thickness x:Key="NavigationViewItemChildrenMenuFlyoutPadding">0,8</Thickness>
 
     <!-- The resource below must be defined at the app level in order to affect the expand/collapse chevron font size
-         used in the Top NavigationView's Overflow menu. -->
+    used in the Top NavigationView's Overflow menu. -->
     <sys:Double x:Key="NavigationViewItemExpandedGlyphFontSize">12.0</sys:Double>
     <sys:String x:Key="NavigationViewItemExpandedGlyph">&#xE70D;</sys:String>
     <StreamGeometry x:Key="NavigationViewItemExpandedPath">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
@@ -68,7 +68,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="MinHeight" Value="{StaticResource PaneToggleButtonHeight}" />
         <Setter Property="MinWidth" Value="{StaticResource PaneToggleButtonWidth}" />
-        <Setter Property="Padding" Value="0" />
+        <Setter Property="Padding" Value="4,2" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -76,53 +76,51 @@
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
         <Setter Property="BorderThickness" Value="{DynamicResource NavigationViewToggleBorderThickness}" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid
-                        x:Name="LayoutRoot"
-                        MinWidth="{TemplateBinding MinWidth}"
-                        Height="{TemplateBinding MinHeight}"
-                        Margin="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
-                        HorizontalAlignment="Stretch"
-                        SnapsToDevicePixels="True">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition primitives:ColumnDefinitionHelper.PixelWidth="{TemplateBinding MinWidth}" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition primitives:RowDefinitionHelper.PixelHeight="{DynamicResource PaneToggleButtonHeight}" />
-                        </Grid.RowDefinitions>
+                    <Border x:Name="LayoutRoot"
+                            MinWidth="{TemplateBinding MinWidth}"
+                            Height="{TemplateBinding MinHeight}"
+                            Margin="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            HorizontalAlignment="Stretch"
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                            SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition primitives:RowDefinitionHelper.PixelHeight="{DynamicResource PaneToggleButtonHeight}" />
+                            </Grid.RowDefinitions>
 
-                        <Viewbox
-                            x:Name="IconHost"
-                            Width="16"
-                            Height="16"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <Border Width="{TemplateBinding MinWidth}">
+                                <Viewbox
+                                    x:Name="IconHost"
+                                    Width="16"
+                                    Height="16"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                    <local:FontIconFallback
+                                        x:Name="Icon"
+                                        Data="M 20 6.25 L 0 6.25 L 0 5 L 20 5 L 20 6.25 Z M 20 16.25 L 0 16.25 L 0 15 L 20 15 L 20 16.25 Z M 20 11.25 L 0 11.25 L 0 10 L 20 10 L 20 11.25 Z"
+                                        FontSize="{TemplateBinding FontSize}" />
+                                </Viewbox>
+                            </Border>
 
-                            <local:FontIconFallback
-                                x:Name="Icon"
-                                Data="M 20 6.25 L 0 6.25 L 0 5 L 20 5 L 20 6.25 Z M 20 16.25 L 0 16.25 L 0 15 L 20 15 L 20 16.25 Z M 20 11.25 L 0 11.25 L 0 10 L 20 10 L 20 11.25 Z"
-                                FontSize="{TemplateBinding FontSize}" />
-
-                        </Viewbox>
-
-                        <ContentPresenter
-                            x:Name="ContentPresenter"
-                            VerticalAlignment="Center"
-                            Content="{TemplateBinding Content}"
-                            TextElement.FontSize="{TemplateBinding FontSize}"
-                            Grid.Column="1" />
-
-                        <Border
-                            x:Name="RevealBorder"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Grid.ColumnSpan="2" />
-                    </Grid>
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}"
+                                TextElement.FontSize="{TemplateBinding FontSize}"
+                                Margin="4,0,0,0"
+                                Grid.Column="1" />
+                        </Grid>
+                    </Border>
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
