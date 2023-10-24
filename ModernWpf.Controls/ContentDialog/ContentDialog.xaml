@@ -309,7 +309,8 @@
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Bottom"
                                                 KeyboardNavigation.DirectionalNavigation="Contained"
-                                                Margin="{StaticResource ContentDialogPadding}">
+                                                Margin="{StaticResource ContentDialogPadding}"
+                                                Background="{TemplateBinding Background}">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition x:Name="PrimaryColumn" Width="*" />
                                                     <ColumnDefinition x:Name="FirstSpacer" Width="0" />
