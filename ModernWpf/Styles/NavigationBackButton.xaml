@@ -10,12 +10,12 @@
         <ResourceDictionary Source="Button.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <sys:Double x:Key="NavigationBackButtonWidth">40</sys:Double>
-    <sys:Double x:Key="NavigationBackButtonHeight">40</sys:Double>
+    <sys:Double x:Key="NavigationBackButtonWidth">38</sys:Double>
+    <sys:Double x:Key="NavigationBackButtonHeight">34</sys:Double>
 
     <Style x:Key="NavigationBackButtonNormalStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
         <Setter Property="Background" Value="{DynamicResource NavigationViewBackButtonBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize" Value="16" />
         <Setter Property="Height" Value="{DynamicResource NavigationBackButtonHeight}" />
@@ -30,12 +30,15 @@
                 <StreamGeometry>M 20 10.625 L 2.441406 10.625 L 10.126953 18.310547 L 9.248047 19.189453 L 0.058594 10 L 9.248047 0.810547 L 10.126953 1.689453 L 2.441406 9.375 L 20 9.375 Z</StreamGeometry>
             </Setter.Value>
         </Setter>
+        <Setter Property="Margin"  Value="4,2" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid
+                    <Border
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
                         <local:FontIconFallback
                             x:Name="Content"
@@ -45,7 +48,7 @@
                             Foreground="{TemplateBinding Foreground}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                    </Grid>
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource NavigationViewButtonBackgroundPointerOver}" />
