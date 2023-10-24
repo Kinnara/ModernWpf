@@ -257,10 +257,10 @@ namespace ModernWpf.Controls
         void SuggestedToolTipChanged(object newContent)
         {
             var potentialString = newContent;
-            bool stringableToolTip = (potentialString != null && potentialString is string);
+            bool validStringableToolTip = !string.IsNullOrEmpty(potentialString as string);
 
             object newToolTipContent = null;
-            if (stringableToolTip)
+            if (validStringableToolTip)
             {
                 newToolTipContent = newContent;
             }
