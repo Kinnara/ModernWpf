@@ -87,7 +87,7 @@ namespace ModernWpf
         public const string SR_FallBackPlaceString = "FallBackPlaceString";
         public const string SR_PagerControlPageTextName = "PagerControlPageText";
         public const string SR_PagerControlPrefixTextName = "PagerControlPrefixText";
-        public const string SR_PagerControlSuffixTextName = "PagerControlPrefixText";
+        public const string SR_PagerControlSuffixTextName = "PagerControlSuffixText";
         public const string SR_PagerControlFirstPageButtonTextName = "PagerControlFirstPageButtonText";
         public const string SR_PagerControlPreviousPageButtonTextName = "PagerControlPreviousPageButtonText";
         public const string SR_PagerControlNextPageButtonTextName = "PagerControlNextPageButtonText";
