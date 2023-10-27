@@ -32,6 +32,7 @@ using System.Windows.Markup;
 using ModernWpf.Controls;
 using System.Windows.Media;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
 {
@@ -152,6 +153,26 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 repeater.SetValue(ItemsRepeater.ItemsSourceProperty, dataSource);
                 Verify.AreSame(dataSource, repeater.GetValue(ItemsRepeater.ItemsSourceProperty) as ItemsSourceView);
                 Verify.AreSame(dataSource, repeater.ItemsSourceView);
+            });
+        }
+
+        [TestMethod]
+        public void ValidateNullItemsSource()
+        {
+            RunOnUIThread.Execute(() =>
+            {
+                string errorMessage = string.Empty;
+                ItemsRepeater repeater = new ItemsRepeater();
+                try
+                {
+                    repeater.GetOrCreateElement(0);
+                }
+                catch (InvalidOperationException e)
+                {
+                    errorMessage = e.Message;
+                }
+                //Make sure that we threw E_FAIL
+                Verify.IsTrue(errorMessage.Contains("ItemSource doesn't have a value"));
             });
         }
 
@@ -617,12 +638,12 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
             });
         }
 
-    
+
         [TestMethod]
         public void VerifyRepeaterDoesNotLeakItemContainers()
         {
             ObservableCollection<int> items = new ObservableCollection<int>();
-            for(int i=0;i<10;i++)
+            for (int i = 0; i < 10; i++)
             {
                 items.Add(i);
             }
@@ -633,12 +654,13 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
             {
                 var template = (DataTemplate)XamlReader.Parse("<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation' "
                     + "xmlns:local='clr-namespace:MUXControlsTestApp.Samples;assembly=MUXControlsTestApp'>"
-                    + "<local:DisposableUserControl Number='{Binding}'/>" 
+                    + "<local:DisposableUserControl Number='{Binding}'/>"
                     + "</DataTemplate>");
                 Verify.IsNotNull(template);
                 Verify.AreEqual(0, MUXControlsTestApp.Samples.DisposableUserControl.OpenItems, "Verify we start with 0 DisposableUserControl");
 
-                repeater = new ItemsRepeater() {
+                repeater = new ItemsRepeater()
+                {
                     ItemsSource = items,
                     ItemTemplate = template,
                     VerticalAlignment = VerticalAlignment.Top,
@@ -646,7 +668,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 };
 
                 Content = repeater;
-                
+
             });
 
             IdleSynchronizer.Wait();
@@ -682,7 +704,8 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 repeater = new ItemsRepeater();
                 repeater.ItemsSource = Enumerable.Range(0, 100).Select(x => x.ToString()).ToList();
 
-                scrollViewer = new System.Windows.Controls.ScrollViewerEx() {
+                scrollViewer = new System.Windows.Controls.ScrollViewerEx()
+                {
                     Content = repeater,
                     MaxHeight = 400,
                     MaxWidth = 200
@@ -700,7 +723,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 Log.Comment("Scroll to end");
                 scrollViewer.ViewChanged += (object sender, ScrollViewerViewChangedEventArgs e) =>
                 {
-                    if(!e.IsIntermediate)
+                    if (!e.IsIntermediate)
                     {
                         Log.Comment("ScrollViewer scrolling finished");
                         scrollViewerScrolledEvent.Set();
