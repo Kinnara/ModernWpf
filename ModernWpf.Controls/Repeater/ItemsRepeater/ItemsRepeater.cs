@@ -361,6 +361,11 @@ namespace ModernWpf.Controls
 
         internal UIElement GetOrCreateElementImpl(int index)
         {
+            if (ItemsSourceView == null)
+            {
+                throw new InvalidOperationException("ItemSource doesn't have a value");
+            }
+
             if (index >= 0 && index >= ItemsSourceView.Count)
             {
                 throw new ArgumentException(nameof(index), "Argument index is invalid.");
