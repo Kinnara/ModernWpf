@@ -33,11 +33,24 @@ namespace MUXControlsTestApp
 
             var progressBarRoot = VisualTreeHelper.GetChild(layoutRoot, 0);
             var clip = VisualTreeHelper.GetChild(progressBarRoot, 0);
-            var stackPanel = VisualTreeHelper.GetChild(clip, 0);
-            var indicator = (Rectangle)VisualTreeHelper.GetChild(stackPanel, 0);
+            var grid = VisualTreeHelper.GetChild(clip, 0);
+            Rectangle indicator = null;
+            int child = 0;
 
-            indicator.SizeChanged += this.Indicator_SizeChanged;
+            do
+            {
+                indicator = VisualTreeHelper.GetChild(grid, child) as Rectangle;
+                child++;
+            }
+            while ((indicator == null || indicator.Name != "DeterminateProgressBarIndicator") && child < VisualTreeHelper.GetChildrenCount(grid));
+
+            if (indicator != null)
+            {
+                indicator.SizeChanged += this.Indicator_SizeChanged;
+            }
+
             IndicatorWidthText.Text = indicator.ActualWidth.ToString();
+            ROValueText.Text = TestProgressBar.Value.ToString();
 
             Loaded -= ProgressBarPage_Loaded;
         }
@@ -56,6 +69,7 @@ namespace MUXControlsTestApp
         {
             TestProgressBar.Maximum = string.IsNullOrEmpty(MaximumInput.Text) ? double.Parse(ControlHelper.GetPlaceholderText(MaximumInput)) : double.Parse(MaximumInput.Text);
             TestProgressBar.Minimum = string.IsNullOrEmpty(MinimumInput.Text) ? double.Parse(ControlHelper.GetPlaceholderText(MinimumInput)) : double.Parse(MinimumInput.Text);
+            ROValueText.Text = TestProgressBar.Value.ToString();
         }
 
         public void UpdateWidth_Click(object sender, RoutedEventArgs e)
@@ -66,6 +80,7 @@ namespace MUXControlsTestApp
         public void UpdateValue_Click(object sender, RoutedEventArgs e)
         {
             TestProgressBar.Value = string.IsNullOrEmpty(ValueInput.Text) ? double.Parse(ControlHelper.GetPlaceholderText(ValueInput)) : double.Parse(ValueInput.Text);
+            ROValueText.Text = TestProgressBar.Value.ToString();
         }
 
         public void ChangeValue_Click(object sender, RoutedEventArgs e)
@@ -78,6 +93,7 @@ namespace MUXControlsTestApp
             {
                 TestProgressBar.Value += 1;
             }
+            ROValueText.Text = TestProgressBar.Value.ToString();
         }
 
         public void UpdatePadding_Click(object sender, RoutedEventArgs e)
@@ -86,6 +102,7 @@ namespace MUXControlsTestApp
             double paddingRight = string.IsNullOrEmpty(PaddingRightInput.Text) ? double.Parse(ControlHelper.GetPlaceholderText(PaddingRightInput)) : double.Parse(PaddingRightInput.Text);
 
             TestProgressBar.Padding = new Thickness(paddingLeft, 0, paddingRight, 0);
+            ROValueText.Text = TestProgressBar.Value.ToString();
         }
 
         private void ToggleTheme_Click(object sender, RoutedEventArgs e)
