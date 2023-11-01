@@ -235,9 +235,9 @@
     <SolidColorBrush x:Key="SmokeFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
     <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
-    <SolidColorBrush x:Key="LayerFillColorSecondaryBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
-    <SolidColorBrush x:Key="LayerFillColorTertiaryBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
-    <SolidColorBrush x:Key="AccentLayerFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
+    <SolidColorBrush x:Key="LayerFillColorAltBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="LayerOnAcrylicFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="LayerOnAccentAcrylicFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
 
     <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SolidBackgroundFillColorSecondaryBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
@@ -1152,10 +1152,12 @@
     <sys:Double x:Key="ProgressBarIndicatorPauseOpacity">1</sys:Double>
     <sys:Double x:Key="ProgressBarThemeMinHeight">4</sys:Double>
     <Thickness x:Key="ProgressBarBorderThemeThickness">1</Thickness>
-    <Color x:Key="SystemControlErrorBackgroundColor">#33FFFFFF</Color>
-    <m:StaticResource x:Key="ProgressBarForeground" ResourceKey="SystemControlHighlightAccentBrush" />
-    <m:StaticResource x:Key="ProgressBarBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="ProgressBarBorderBrush" ResourceKey="SystemControlForegroundBaseHighBrush" />
+
+    <m:StaticResource x:Key="ProgressBarForeground" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ProgressBarBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="ProgressBarBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="ProgressBarPausedForegroundColor" ResourceKey="{x:Static SystemColors.WindowTextColor}" />
+    <m:StaticResource x:Key="ProgressBarErrorForegroundColor" ResourceKey="{x:Static SystemColors.HotTrackColor}" />
 
     <!-- Resources for ProgressRing -->
     <m:StaticResource x:Key="ProgressRingForegroundThemeBrush" ResourceKey="SystemControlHighlightAccentBrush" />

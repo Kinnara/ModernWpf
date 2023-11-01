@@ -274,8 +274,9 @@
     <Color x:Key="SmokeFillColorDefault">#4C000000</Color>
 
     <Color x:Key="LayerFillColorDefault">#09FFFFFF</Color>
-    <Color x:Key="LayerFillColorSecondary">#0DFFFFFF</Color>
-    <Color x:Key="LayerFillColorTertiary">#05FFFFFF</Color>
+    <Color x:Key="LayerFillColorAlt">#0DFFFFFF</Color>
+    <Color x:Key="LayerOnAcrylicFillColorDefault">#09FFFFFF</Color>
+    <Color x:Key="LayerOnAccentAcrylicFillColorDefault">#09FFFFFF</Color>
 
     <Color x:Key="SolidBackgroundFillColorBase">#202020</Color>
     <Color x:Key="SolidBackgroundFillColorSecondary">#1C1C1C</Color>
@@ -376,9 +377,9 @@
     <SolidColorBrush x:Key="SmokeFillColorDefaultBrush" Color="{StaticResource SmokeFillColorDefault}" />
 
     <SolidColorBrush x:Key="LayerFillColorDefaultBrush" Color="{StaticResource LayerFillColorDefault}" />
-    <SolidColorBrush x:Key="LayerFillColorSecondaryBrush" Color="{StaticResource LayerFillColorSecondary}" />
-    <SolidColorBrush x:Key="LayerFillColorTertiaryBrush" Color="{StaticResource LayerFillColorTertiary}" />
-    <SolidColorBrush x:Key="AccentLayerFillColorDefaultBrush" Opacity="0.25" Color="{m:DynamicColor SystemAccentColorDark1}"/>
+    <SolidColorBrush x:Key="LayerFillColorAltBrush" Color="{StaticResource LayerFillColorAlt}" />
+    <SolidColorBrush x:Key="LayerOnAcrylicFillColorDefaultBrush" Color="{StaticResource LayerOnAcrylicFillColorDefault}" />
+    <SolidColorBrush x:Key="LayerOnAccentAcrylicFillColorDefaultBrush" Color="{StaticResource LayerOnAccentAcrylicFillColorDefault}" />
 
     <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
     <SolidColorBrush x:Key="SolidBackgroundFillColorSecondaryBrush" Color="{StaticResource SolidBackgroundFillColorSecondary}" />
@@ -406,7 +407,7 @@
             <ScaleTransform ScaleY="-1" CenterY="0.5"/>
         </LinearGradientBrush.RelativeTransform>
         <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="{StaticResource ControlStrokeColorSecondary}"/>
+            <GradientStop Offset="0.33" Color="{StaticResource ControlStrokeColorSecondary}"/>
             <GradientStop Offset="1.0" Color="{StaticResource ControlStrokeColorDefault}"/>
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
@@ -423,7 +424,7 @@
             <ScaleTransform ScaleY="-1" CenterY="0.5"/>
         </LinearGradientBrush.RelativeTransform>
         <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="{StaticResource ControlStrokeColorOnAccentSecondary}"/>
+            <GradientStop Offset="0.33" Color="{StaticResource ControlStrokeColorOnAccentSecondary}"/>
             <GradientStop Offset="1.0" Color="{StaticResource ControlStrokeColorOnAccentDefault}"/>
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
@@ -1270,10 +1271,12 @@
     <sys:Double x:Key="ProgressBarIndicatorPauseOpacity">0.6</sys:Double>
     <sys:Double x:Key="ProgressBarThemeMinHeight">4</sys:Double>
     <Thickness x:Key="ProgressBarBorderThemeThickness">0</Thickness>
-    <Color x:Key="SystemControlErrorBackgroundColor">#33FFFFFF</Color>
+    
     <m:StaticResource x:Key="ProgressBarForeground" ResourceKey="AccentAAFillColorDefaultBrush" />
-    <m:StaticResource x:Key="ProgressBarBackground" ResourceKey="ControlFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ProgressBarBackground" ResourceKey="ControlAAStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="ProgressBarBorderBrush" ResourceKey="ControlStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="ProgressBarPausedForegroundColor" ResourceKey="SystemFillColorCaution" />
+    <m:StaticResource x:Key="ProgressBarErrorForegroundColor" ResourceKey="SystemFillColorCritical" />
 
     <!-- Resources for ProgressRing -->
     <m:StaticResource x:Key="ProgressRingForegroundThemeBrush" ResourceKey="AccentAAFillColorDefaultBrush" />
@@ -1708,17 +1711,17 @@
             <ScaleTransform ScaleY="-1" CenterY="0.5"/>
         </LinearGradientBrush.RelativeTransform>
         <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="{StaticResource ControlAAFillColorDefault}"/>
+            <GradientStop Offset="0.5" Color="{StaticResource ControlAAStrokeColorDefault}"/>
             <GradientStop Offset="1.0" Color="{StaticResource ControlStrokeColorDefault}"/>
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
 
-    <LinearGradientBrush x:Key="TextControlElevationBorderFocusedBrush" MappingMode="Absolute" StartPoint="0,1.5" EndPoint="0,2.5">
+    <LinearGradientBrush x:Key="TextControlElevationBorderFocusedBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
         <LinearGradientBrush.RelativeTransform>
             <ScaleTransform ScaleY="-1" CenterY="0.5"/>
         </LinearGradientBrush.RelativeTransform>
         <LinearGradientBrush.GradientStops>
-            <GradientStop Offset="0" Color="{DynamicResource SystemAccentColorLight2}"/>
+            <GradientStop Offset="1.0" Color="{DynamicResource SystemAccentColorLight2}"/>
             <GradientStop Offset="1.0" Color="{StaticResource ControlStrokeColorDefault}"/>
         </LinearGradientBrush.GradientStops>
     </LinearGradientBrush>
