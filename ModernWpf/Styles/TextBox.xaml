@@ -6,7 +6,7 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <Thickness x:Key="TextBoxTopHeaderMargin">0,0,0,4</Thickness>
+    <Thickness x:Key="TextBoxTopHeaderMargin">0,0,0,8</Thickness>
     <Thickness x:Key="TextBoxInnerButtonMargin">0,4,4,4</Thickness>
     <sys:Double x:Key="TextBoxIconFontSize">12</sys:Double>
 
