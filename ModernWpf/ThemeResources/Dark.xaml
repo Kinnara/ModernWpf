@@ -437,7 +437,7 @@
     <sys:Boolean x:Key="UseSystemFocusVisuals">True</sys:Boolean>
     <Thickness x:Key="TextControlBorderThemeThickness">1</Thickness>
     <Thickness x:Key="TextControlBorderThemeThicknessFocused">1,1,1,2</Thickness>
-    <Thickness x:Key="TextControlThemePadding">10,6,6,5</Thickness>
+    <Thickness x:Key="TextControlThemePadding">10,5,6,6</Thickness>
     <!--#endregion-->
     
     <!-- Resources for AppBarButton -->

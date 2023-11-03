@@ -10,7 +10,7 @@
         <ResourceDictionary Source="/ModernWpf;component/Styles/Button.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Thickness x:Key="AutoSuggestBoxTopHeaderMargin">0,0,0,4</Thickness>
+    <Thickness x:Key="AutoSuggestBoxTopHeaderMargin">0,0,0,8</Thickness>
     <Thickness x:Key="AutoSuggestBoxInnerButtonMargin">0,4,0,4</Thickness>
     <sys:Double x:Key="AutoSuggestBoxRightButtonMargin">4</sys:Double>
 
