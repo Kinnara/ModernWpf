@@ -51,7 +51,7 @@
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
                             <ui:FontIconFallback
-                                x:Name="ChevronTextBlock"
+                                x:Name="ChevronIcon"
                                 Grid.Column="1"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 FontSize="8"
@@ -74,13 +74,13 @@
                             <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ButtonBackgroundPressed}" />
                             <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPressed}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
-                            <Setter TargetName="ChevronTextBlock" Property="Foreground" Value="{DynamicResource DropDownButtonForegroundSecondaryPressed}" />
+                            <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource DropDownButtonForegroundSecondaryPressed}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
                             <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushDisabled}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
-                            <Setter TargetName="ChevronTextBlock" Property="Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
+                            <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
