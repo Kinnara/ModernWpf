@@ -11,14 +11,14 @@
     Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
 
     <StackPanel Margin="12">
-        <TextBlock
-            Text="Sample AutoSuggestBoxes"
-            Style="{DynamicResource StandardGroupHeader}" />
-        <controls:AutoSuggestBox />
-        <controls:AutoSuggestBox Header="AutoSuggestBox with header" />
-        <controls:AutoSuggestBox
-            Header="AutoSuggestBox with suggestions"
-            QuerySubmitted="AutoSuggestBox_QuerySubmitted" />
+        <TextBlock Text="Sample AutoSuggestBoxes" Style="{DynamicResource StandardGroupHeader}" />
+        <controls:AutoSuggestBox QueryIcon="Find" />
+        <controls:AutoSuggestBox Header="AutoSuggestBox with header" FontSize="12">
+            <controls:AutoSuggestBox.QueryIcon>
+                <controls:FontIcon Glyph="&#xE11A;" FontSize="12" />
+            </controls:AutoSuggestBox.QueryIcon>
+        </controls:AutoSuggestBox>
+        <controls:AutoSuggestBox Header="AutoSuggestBox with suggestions" QuerySubmitted="AutoSuggestBox_QuerySubmitted" />
     </StackPanel>
 
 </local:TestPage>
