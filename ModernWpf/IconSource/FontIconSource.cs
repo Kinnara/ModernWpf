@@ -131,5 +131,29 @@ namespace ModernWpf.Controls
             get => (string)GetValue(GlyphProperty);
             set => SetValue(GlyphProperty, value);
         }
+
+        protected override IconElement CreateIconElementCore()
+        {
+            FontIcon fontIcon = new();
+
+            fontIcon.Glyph = Glyph;
+            fontIcon.FontSize = FontSize;
+            if (Foreground is Brush newForeground)
+            {
+                fontIcon.Foreground = newForeground;
+            }
+
+            if (FontFamily != null)
+            {
+                fontIcon.FontFamily = FontFamily;
+            }
+
+            fontIcon.FontWeight = FontWeight;
+            fontIcon.FontStyle = FontStyle;
+            //fontIcon.IsTextScaleFactorEnabled(IsTextScaleFactorEnabled());
+            //fontIcon.MirroredWhenRightToLeft(MirroredWhenRightToLeft());
+
+            return fontIcon;
+        }
     }
 }

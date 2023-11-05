@@ -59,5 +59,21 @@ namespace ModernWpf.Controls
             get => (bool)GetValue(ShowAsMonochromeProperty);
             set => SetValue(ShowAsMonochromeProperty, value);
         }
+
+        protected override IconElement CreateIconElementCore()
+        {
+            BitmapIcon bitmapIcon = new();
+
+            if (UriSource is { })
+            {
+                bitmapIcon.UriSource = UriSource;
+            }
+
+            if (Foreground is { } newForeground)
+            {
+                bitmapIcon.Foreground = newForeground;
+            }
+            return bitmapIcon;
+        }
     }
 }

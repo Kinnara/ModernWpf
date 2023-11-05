@@ -38,5 +38,16 @@ namespace ModernWpf.Controls
             get => (Symbol)GetValue(SymbolProperty);
             set => SetValue(SymbolProperty, value);
         }
+
+        protected override IconElement CreateIconElementCore()
+        {
+            SymbolIcon symbolIcon = new();
+            symbolIcon.Symbol = Symbol;
+            if (Foreground is { } newForeground)
+            {
+                symbolIcon.Foreground = newForeground;
+            }
+            return symbolIcon;
+        }
     }
 }
