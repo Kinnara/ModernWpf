@@ -278,7 +278,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <Border x:Name="IconColumn" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LatestIconColumnWidth}">
+                                    <Border x:Name="IconColumn" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.SmallerIconWidth}">
                                         <Viewbox x:Name="IconBox"
                                                  Height="16"
                                                  Margin="{DynamicResource NavigationViewItemOnLeftIconBoxMargin}">
@@ -1000,7 +1000,7 @@
                                 <Button
                                     x:Name="NavigationViewBackButton"
                                     Style="{DynamicResource NavigationBackButtonNormalStyle}"
-                                    Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LatestPaneButtonWidth}"
+                                    Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.SmallerPaneToggleButtonWidth}"
                                     VerticalAlignment="Top"
                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.BackButtonVisibility}"
                                     IsEnabled="{TemplateBinding IsBackEnabled}">
@@ -1022,7 +1022,7 @@
                                     HorizontalAlignment="Center"
                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.PaneToggleButtonVisibility}"
                                     VerticalAlignment="Top"
-                                    MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LatestPaneButtonWidth}">
+                                    MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.SmallerPaneToggleButtonWidth}">
                                     <TextBlock
                                         x:Name="PaneTitleTextBlock"
                                         Grid.Column="0"

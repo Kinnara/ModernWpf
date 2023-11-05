@@ -1862,8 +1862,8 @@ namespace ModernWpf.Controls
                 newButtonWidths = init();
             }
 
-            templateSettings.PaneButtonWidth = newButtonWidths;
-            templateSettings.LatestPaneButtonWidth = newButtonWidths - 8;
+            templateSettings.PaneToggleButtonWidth = newButtonWidths;
+            templateSettings.SmallerPaneToggleButtonWidth = newButtonWidths - 8;
         }
 
         void OnBackButtonClicked(object sender, RoutedEventArgs args)
@@ -4516,7 +4516,7 @@ namespace ModernWpf.Controls
             {
                 if (m_rootSplitView is { } splitView)
                 {
-                    double width = GetTemplateSettings().PaneButtonWidth;
+                    double width = GetTemplateSettings().PaneToggleButtonWidth;
                     double togglePaneButtonWidth = width;
 
                     if (ShouldShowBackButton() && splitView.DisplayMode == SplitViewDisplayMode.Overlay)
