@@ -11,42 +11,42 @@ namespace ModernWpf.Controls.Primitives
         {                
         }
 
-        #region IconColumnWidth
+        #region IconWidth
 
-        private static readonly DependencyPropertyKey IconColumnWidthPropertyKey =
+        private static readonly DependencyPropertyKey IconWidthPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                nameof(IconColumnWidth),
+                nameof(IconWidth),
                 typeof(double),
                 typeof(NavigationViewItemPresenterTemplateSettings),
                 null);
 
-        public static readonly DependencyProperty IconColumnWidthProperty =
-            IconColumnWidthPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty IconWidthProperty =
+            IconWidthPropertyKey.DependencyProperty;
 
-        public double IconColumnWidth
+        public double IconWidth
         {
-            get => (double)GetValue(IconColumnWidthProperty);
-            internal set => SetValue(IconColumnWidthPropertyKey, value);
+            get => (double)GetValue(IconWidthProperty);
+            internal set => SetValue(IconWidthPropertyKey, value);
         }
 
         #endregion
 
-        #region LatestIconColumnWidth
+        #region SmallerIconWidth
 
-        private static readonly DependencyPropertyKey LatestIconColumnWidthPropertyKey =
+        private static readonly DependencyPropertyKey SmallerIconWidthPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                nameof(LatestIconColumnWidth),
+                nameof(SmallerIconWidth),
                 typeof(double),
                 typeof(NavigationViewItemPresenterTemplateSettings),
                 null);
 
-        public static readonly DependencyProperty LatestIconColumnWidthProperty =
-            LatestIconColumnWidthPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty SmallerIconWidthProperty =
+            SmallerIconWidthPropertyKey.DependencyProperty;
 
-        public double LatestIconColumnWidth
+        public double SmallerIconWidth
         {
-            get => (double)GetValue(LatestIconColumnWidthProperty);
-            internal set => SetValue(LatestIconColumnWidthPropertyKey, value);
+            get => (double)GetValue(SmallerIconWidthProperty);
+            internal set => SetValue(SmallerIconWidthPropertyKey, value);
         }
 
         #endregion
