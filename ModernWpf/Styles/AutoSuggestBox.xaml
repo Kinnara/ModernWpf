@@ -11,7 +11,8 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Thickness x:Key="AutoSuggestBoxTopHeaderMargin">0,0,0,8</Thickness>
-    <Thickness x:Key="AutoSuggestBoxInnerButtonMargin">0,4,0,4</Thickness>
+    <Thickness x:Key="AutoSuggestBoxInnerButtonMargin">0,3</Thickness>
+    <Thickness x:Key="AutoSuggestBoxQueryButtonPadding">3,2</Thickness>
     <sys:Double x:Key="AutoSuggestBoxRightButtonMargin">4</sys:Double>
 
     <Style TargetType="TextBox" x:Key="AutoSuggestBoxTextBoxStyle">
@@ -224,7 +225,7 @@
                             Grid.Column="1"
                             Visibility="Collapsed"
                             FontSize="{TemplateBinding FontSize}"
-                            Width="30"
+                            Width="32"
                             VerticalAlignment="Stretch"
                             primitives:TextBoxHelper.IsDeleteButton="True" />
                         <Button
@@ -237,7 +238,8 @@
                             Focusable="False"
                             Grid.Column="2"
                             FontSize="{TemplateBinding FontSize}"
-                            Width="30"
+                            Width="32"
+                            Height="28"
                             VerticalAlignment="Stretch" />
                         <ContentPresenter
                             x:Name="DescriptionPresenter"

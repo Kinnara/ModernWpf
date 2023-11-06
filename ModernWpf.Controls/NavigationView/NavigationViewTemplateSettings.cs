@@ -151,42 +151,42 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region LatestPaneButtonWidth
+        #region SmallerPaneToggleButtonWidth
 
-        private static readonly DependencyPropertyKey LatestPaneButtonWidthPropertyKey =
+        private static readonly DependencyPropertyKey SmallerPaneToggleButtonWidthPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                nameof(LatestPaneButtonWidth),
+                nameof(SmallerPaneToggleButtonWidth),
                 typeof(double),
                 typeof(NavigationViewTemplateSettings),
                 null);
 
-        public static readonly DependencyProperty LatestPaneButtonWidthProperty =
-            LatestPaneButtonWidthPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty SmallerPaneToggleButtonWidthProperty =
+            SmallerPaneToggleButtonWidthPropertyKey.DependencyProperty;
 
-        public double LatestPaneButtonWidth
+        public double SmallerPaneToggleButtonWidth
         {
-            get => (double)GetValue(LatestPaneButtonWidthProperty);
-            internal set => SetValue(LatestPaneButtonWidthPropertyKey, value);
+            get => (double)GetValue(SmallerPaneToggleButtonWidthProperty);
+            internal set => SetValue(SmallerPaneToggleButtonWidthPropertyKey, value);
         }
 
         #endregion
 
-        #region PaneButtonWidth
+        #region PaneToggleButtonWidth
 
-        private static readonly DependencyPropertyKey PaneButtonWidthPropertyKey =
+        private static readonly DependencyPropertyKey PaneToggleButtonWidthPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                nameof(PaneButtonWidth),
+                nameof(PaneToggleButtonWidth),
                 typeof(double),
                 typeof(NavigationViewTemplateSettings),
                 null);
 
-        public static readonly DependencyProperty PaneButtonWidthProperty =
-            PaneButtonWidthPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty PaneToggleButtonWidthProperty =
+            PaneToggleButtonWidthPropertyKey.DependencyProperty;
 
-        public double PaneButtonWidth
+        public double PaneToggleButtonWidth
         {
-            get => (double)GetValue(PaneButtonWidthProperty);
-            internal set => SetValue(PaneButtonWidthPropertyKey, value);
+            get => (double)GetValue(PaneToggleButtonWidthProperty);
+            internal set => SetValue(PaneToggleButtonWidthPropertyKey, value);
         }
 
         #endregion

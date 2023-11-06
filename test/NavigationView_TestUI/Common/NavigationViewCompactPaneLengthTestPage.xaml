@@ -33,7 +33,11 @@
             </muxc:NavigationView.MenuItems>
 
             <muxc:NavigationView.AutoSuggestBox>
-                <muxc:AutoSuggestBox QueryIcon="Find" AutomationProperties.Name="PaneAutoSuggestBox"/>
+                <muxc:AutoSuggestBox AutomationProperties.Name="PaneAutoSuggestBox">
+                    <muxc:AutoSuggestBox.QueryIcon>
+                        <muxc:FontIcon Glyph="&#xE11A;" FontSize="12" FontFamily="{ThemeResource SymbolThemeFontFamily}"/>
+                    </muxc:AutoSuggestBox.QueryIcon>
+                </muxc:AutoSuggestBox>
             </muxc:NavigationView.AutoSuggestBox>
 
             <muxc:NavigationView.PaneFooter>

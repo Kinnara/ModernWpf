@@ -225,6 +225,9 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                             </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
+                                                <DiscreteDoubleKeyFrame KeyTime="0" Value="180" />
+                                            </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="ChevronVisibleClosed">
@@ -232,6 +235,9 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                             </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
+                                                <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                                            </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
                                 </VisualStateGroup>
@@ -272,7 +278,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <Border x:Name="IconColumn" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LatestIconColumnWidth}">
+                                    <Border x:Name="IconColumn" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.SmallerIconWidth}">
                                         <Viewbox x:Name="IconBox"
                                                  Height="16"
                                                  Margin="{DynamicResource NavigationViewItemOnLeftIconBoxMargin}">
@@ -302,7 +308,10 @@
                                         Margin="{DynamicResource NavigationViewItemExpandChevronMargin}"
                                         Background="Transparent">
                                         <ui:FontIconFallback
+                                            Width="12"
+                                            Height="12"
                                             RenderTransformOrigin="0.5, 0.5"
+                                            x:Name="ExpandCollapseChevronIcon"
                                             Foreground="{DynamicResource NavigationViewItemForeground}"
                                             FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
                                             Data="{DynamicResource NavigationViewItemExpandedPath}"
@@ -516,6 +525,9 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="180" />
+                                        </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="ChevronVisibleClosed">
@@ -523,6 +535,9 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
                                         </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -569,15 +584,18 @@
                                 Margin="{DynamicResource TopNavigationViewItemExpandChevronMargin}"
                                 Background="Transparent">
                                 <ui:FontIconFallback
+                                    Width="12"
+                                    Height="12"
                                     Foreground="{DynamicResource NavigationViewItemForeground}"
                                     RenderTransformOrigin="0.5, 0.5"
+                                    x:Name="ExpandCollapseChevronIcon"
                                     FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
                                     Data="{DynamicResource NavigationViewItemExpandedPath}"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Center">
                                     <ui:FontIconFallback.RenderTransform>
-                                        <RotateTransform x:Name="ExpandCollapseChevronRotateTransform"/>
+                                        <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" Angle="0"/>
                                     </ui:FontIconFallback.RenderTransform>
                                 </ui:FontIconFallback>
                             </Grid>
@@ -776,15 +794,17 @@
                                     <Border Padding="{DynamicResource TopNavigationViewItemOnOverflowExpandChevronPadding}">
                                         <ui:FontIconFallback
                                             Foreground="{DynamicResource NavigationViewItemForeground}"
-                                            Width="12" Height="12"
+                                            Width="12"
+                                            Height="12"
                                             RenderTransformOrigin="0.5, 0.5"
+                                            x:Name="ExpandCollapseChevronIcon"
                                             FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
                                             Data="{DynamicResource NavigationViewItemExpandedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center">
                                             <ui:FontIconFallback.RenderTransform>
-                                                <RotateTransform x:Name="ExpandCollapseChevronRotateTransform"/>
+                                                <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" Angle="0"/>
                                             </ui:FontIconFallback.RenderTransform>
                                         </ui:FontIconFallback>
                                     </Border>
@@ -980,7 +1000,7 @@
                                 <Button
                                     x:Name="NavigationViewBackButton"
                                     Style="{DynamicResource NavigationBackButtonNormalStyle}"
-                                    Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LatestPaneButtonWidth}"
+                                    Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.SmallerPaneToggleButtonWidth}"
                                     VerticalAlignment="Top"
                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.BackButtonVisibility}"
                                     IsEnabled="{TemplateBinding IsBackEnabled}">
@@ -1002,7 +1022,7 @@
                                     HorizontalAlignment="Center"
                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.PaneToggleButtonVisibility}"
                                     VerticalAlignment="Top"
-                                    MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LatestPaneButtonWidth}">
+                                    MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.SmallerPaneToggleButtonWidth}">
                                     <TextBlock
                                         x:Name="PaneTitleTextBlock"
                                         Grid.Column="0"

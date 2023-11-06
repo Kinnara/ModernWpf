@@ -241,8 +241,8 @@ namespace ModernWpf.Controls.Primitives
                 var templateSettings = TemplateSettings;
                 var gridLength = compactPaneLength;
 
-                templateSettings.IconColumnWidth = gridLength;
-                templateSettings.LatestIconColumnWidth = gridLength - 8;
+                templateSettings.IconWidth = gridLength;
+                templateSettings.SmallerIconWidth = gridLength - 8;
             }
         }
 

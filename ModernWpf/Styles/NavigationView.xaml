@@ -59,7 +59,7 @@
 
     <!-- The resource below must be defined at the app level in order to affect the expand/collapse chevron font size
     used in the Top NavigationView's Overflow menu. -->
-    <sys:Double x:Key="NavigationViewItemExpandedGlyphFontSize">12.0</sys:Double>
+    <sys:Double x:Key="NavigationViewItemExpandedGlyphFontSize">8</sys:Double>
     <sys:String x:Key="NavigationViewItemExpandedGlyph">&#xE70D;</sys:String>
     <StreamGeometry x:Key="NavigationViewItemExpandedPath">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
 
@@ -99,17 +99,14 @@
                             </Grid.RowDefinitions>
 
                             <Border Width="{TemplateBinding MinWidth}">
-                                <Viewbox
-                                    x:Name="IconHost"
+                                <local:FontIconFallback
+                                    x:Name="Icon"
                                     Width="16"
                                     Height="16"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                                    <local:FontIconFallback
-                                        x:Name="Icon"
-                                        Data="M 20 6.25 L 0 6.25 L 0 5 L 20 5 L 20 6.25 Z M 20 16.25 L 0 16.25 L 0 15 L 20 15 L 20 16.25 Z M 20 11.25 L 0 11.25 L 0 10 L 20 10 L 20 11.25 Z"
-                                        FontSize="{TemplateBinding FontSize}" />
-                                </Viewbox>
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Data="M 20 6.25 L 0 6.25 L 0 5 L 20 5 L 20 6.25 Z M 20 16.25 L 0 16.25 L 0 15 L 20 15 L 20 16.25 Z M 20 11.25 L 0 11.25 L 0 10 L 20 10 L 20 11.25 Z"
+                                    FontSize="{TemplateBinding FontSize}" />
                             </Border>
 
                             <ContentPresenter

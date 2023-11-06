@@ -9,7 +9,7 @@ namespace ModernWpf.Controls
     /// <summary>
     /// Represents the base class for an icon source.
     /// </summary>
-    public class IconSource : DependencyObject
+    public abstract class IconSource : DependencyObject
     {
         /// <summary>
         /// Identifies the <see cref="Foreground"/> dependency property.
@@ -32,5 +32,12 @@ namespace ModernWpf.Controls
             get => (Brush)GetValue(ForegroundProperty);
             set => SetValue(ForegroundProperty, value);
         }
+
+        public IconElement CreateIconElement()
+        {
+            return CreateIconElementCore();
+        }
+
+        protected abstract IconElement CreateIconElementCore();
     }
 }
