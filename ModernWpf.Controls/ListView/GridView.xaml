@@ -7,8 +7,8 @@
     <Style TargetType="local:GridViewItem">
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="Background" Value="{DynamicResource GridViewItemBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource GridViewItemForeground}" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="Local" />
         <!--<Setter Property="IsHoldingEnabled" Value="True" />-->
         <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -18,6 +18,10 @@
         <Setter Property="MinHeight" Value="{DynamicResource GridViewItemMinHeight}" />
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin" Value="-2" />
+        <Setter Property="FocusVisualPrimaryBrush" Value="{DynamicResource GridViewItemFocusVisualPrimaryBrush}" />
+        <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+        <Setter Property="FocusVisualSecondaryBrush" Value="{DynamicResource GridViewItemFocusVisualSecondaryBrush}" />
+        <Setter Property="FocusVisualSecondaryThickness" Value="1" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -74,7 +78,7 @@
                                 Opacity="0" />
                             <Border
                                 x:Name="MultiSelectSquare"
-                                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                                Background="{DynamicResource GridViewItemCheckBoxBrush}"
                                 Width="20"
                                 Height="20"
                                 Margin="0,2,2,0"
@@ -86,7 +90,7 @@
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                     Data="{StaticResource CheckMark}"
                                     FontSize="16"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseMediumHighBrush}"
+                                    Foreground="{DynamicResource GridViewItemCheckBrush}"
                                     Opacity="0" />
                             </Border>
                         </Grid>
@@ -104,9 +108,9 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="BorderRectangle" Property="Opacity" Value="1" />
                             <Setter TargetName="BorderRectangle" Property="Stroke" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-                            <Setter Property="ui:FocusVisualHelper.FocusVisualSecondaryBrush" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
-                            <Setter Property="ui:FocusVisualHelper.FocusVisualSecondaryThickness" Value="2" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource GridViewItemForegroundPointerOver}" />
+                            <Setter Property="FocusVisualSecondaryBrush" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
+                            <Setter Property="FocusVisualSecondaryThickness" Value="2" />
                         </MultiTrigger>
                         <!-- Selected -->
                         <MultiTrigger>
@@ -117,9 +121,9 @@
                             <Setter TargetName="MultiSelectCheck" Property="Opacity" Value="1" />
                             <Setter TargetName="BorderRectangle" Property="Opacity" Value="1" />
                             <Setter TargetName="BorderRectangle" Property="Stroke" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-                            <Setter Property="ui:FocusVisualHelper.FocusVisualSecondaryBrush" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
-                            <Setter Property="ui:FocusVisualHelper.FocusVisualSecondaryThickness" Value="2" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource GridViewItemForegroundSelected}" />
+                            <Setter Property="FocusVisualSecondaryBrush" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+                            <Setter Property="FocusVisualSecondaryThickness" Value="2" />
                             <Setter TargetName="MultiSelectSquare" Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
                         </MultiTrigger>
                         <!-- PointerOverSelected -->
@@ -131,9 +135,9 @@
                             <Setter TargetName="MultiSelectCheck" Property="Opacity" Value="1" />
                             <Setter TargetName="BorderRectangle" Property="Opacity" Value="1" />
                             <Setter TargetName="BorderRectangle" Property="Stroke" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-                            <Setter Property="ui:FocusVisualHelper.FocusVisualSecondaryBrush" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
-                            <Setter Property="ui:FocusVisualHelper.FocusVisualSecondaryThickness" Value="2" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource GridViewItemForegroundSelected}" />
+                            <Setter Property="FocusVisualSecondaryBrush" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
+                            <Setter Property="FocusVisualSecondaryThickness" Value="2" />
                             <Setter TargetName="MultiSelectSquare" Property="Background" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
                         </MultiTrigger>
                         <!-- Disabled -->
