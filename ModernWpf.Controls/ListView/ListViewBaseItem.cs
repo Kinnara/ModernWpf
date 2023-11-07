@@ -38,6 +38,58 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region FocusVisualPrimaryBrush
+
+        public static readonly DependencyProperty FocusVisualPrimaryBrushProperty =
+            FocusVisualHelper.FocusVisualPrimaryBrushProperty.AddOwner(typeof(ListViewBaseItem));
+
+        public Thickness FocusVisualPrimaryBrush
+        {
+            get => (Thickness)GetValue(FocusVisualPrimaryBrushProperty);
+            set => SetValue(FocusVisualPrimaryBrushProperty, value);
+        }
+
+        #endregion
+
+        #region FocusVisualPrimaryThickness
+
+        public static readonly DependencyProperty FocusVisualPrimaryThicknessProperty =
+            FocusVisualHelper.FocusVisualPrimaryThicknessProperty.AddOwner(typeof(ListViewBaseItem));
+
+        public Thickness FocusVisualPrimaryThickness
+        {
+            get => (Thickness)GetValue(FocusVisualPrimaryThicknessProperty);
+            set => SetValue(FocusVisualPrimaryThicknessProperty, value);
+        }
+
+        #endregion
+
+        #region FocusVisualSecondaryBrush
+
+        public static readonly DependencyProperty FocusVisualSecondaryBrushProperty =
+            FocusVisualHelper.FocusVisualSecondaryBrushProperty.AddOwner(typeof(ListViewBaseItem));
+
+        public Thickness FocusVisualSecondaryBrush
+        {
+            get => (Thickness)GetValue(FocusVisualSecondaryBrushProperty);
+            set => SetValue(FocusVisualSecondaryBrushProperty, value);
+        }
+
+        #endregion
+
+        #region FocusVisualSecondaryThickness
+
+        public static readonly DependencyProperty FocusVisualSecondaryThicknessProperty =
+            FocusVisualHelper.FocusVisualSecondaryThicknessProperty.AddOwner(typeof(ListViewBaseItem));
+
+        public Thickness FocusVisualSecondaryThickness
+        {
+            get => (Thickness)GetValue(FocusVisualSecondaryThicknessProperty);
+            set => SetValue(FocusVisualSecondaryThicknessProperty, value);
+        }
+
+        #endregion
+
         #region CornerRadius
 
         public static readonly DependencyProperty CornerRadiusProperty =
