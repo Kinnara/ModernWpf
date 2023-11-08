@@ -8,9 +8,8 @@
     <ui:SharedSizeGroupConverter x:Key="SharedSizeGroupConverter" />
 
     <Style TargetType="local:RadioMenuItem">
-        <Setter Property="Background" Value="{DynamicResource MenuFlyoutItemRevealBackground}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemRevealBorderBrush}" />
-        <Setter Property="BorderThickness" Value="{DynamicResource MenuFlyoutItemRevealBorderThickness}" />
+        <Setter Property="Background" Value="{DynamicResource MenuFlyoutItemBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemForeground}" />
         <Setter Property="Foreground" Value="{DynamicResource MenuFlyoutItemForeground}" />
         <Setter Property="Padding" Value="{DynamicResource MenuFlyoutItemThemePaddingNarrow}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
@@ -18,6 +17,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="ScrollViewer.PanningMode" Value="Both" />
         <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
         <Setter Property="Template">
@@ -32,89 +32,49 @@
                         Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                        <Grid x:Name="AnimationRoot">
+                        Margin="{DynamicResource MenuFlyoutItemMargin}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition SharedSizeGroup="{TemplateBinding Visibility, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemCheckColumnGroup}" Width="Auto" />
                                 <ColumnDefinition SharedSizeGroup="{TemplateBinding Visibility, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemIconColumnGroup}" Width="Auto" />
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
+
                             <ui:FontIconFallback
                                 x:Name="CheckGlyph"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Data="{StaticResource RadioBullet}"
-                                FontSize="16"
-                                Foreground="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForeground}"
+                                FontSize="12"
+                                Foreground="{DynamicResource MenuFlyoutSubItemChevron}"
                                 Opacity="0"
-                                Width="16"
-                                Margin="0,0,12,0" />
-                            <Viewbox
-                                x:Name="IconRoot"
-                                Grid.Column="1"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Width="16"
-                                Height="16"
-                                Margin="0,0,12,0">
-                                <ContentPresenter
-                                    x:Name="IconContent"
-                                    ContentSource="Icon"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                            </Viewbox>
-                            <ContentPresenter
-                                x:Name="ContentPresenter"
-                                Grid.Column="2"
-                                ContentSource="Header"
-                                RecognizesAccessKey="True"
-                                TextElement.Foreground="{TemplateBinding Foreground}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                Margin="0,0,16,0" />
                             <TextBlock
-                                x:Name="KeyboardAcceleratorTextBlock"
-                                Grid.Column="3"
-                                Style="{DynamicResource CaptionTextBlockStyle}"
-                                Text="{TemplateBinding InputGestureText}"
-                                Margin="24,0,0,0"
-                                Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center" />
+                                x:Name="TextBlock"
+                                Grid.Column="2"
+                                Text="{TemplateBinding Header}"
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="Icon" Value="{x:Null}">
-                            <Setter Property="Visibility" TargetName="IconRoot" Value="Collapsed" />
-                        </Trigger>
-                        <Trigger Property="InputGestureText" Value="">
-                            <Setter Property="Visibility" TargetName="KeyboardAcceleratorTextBlock" Value="Collapsed" />
-                        </Trigger>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <Trigger Property="IsHighlighted" Value="True">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutItemRevealBackgroundPointerOver}" />
-                            <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemRevealBorderBrushPointerOver}" />
-                            <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
-                            <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForegroundPointerOver}" />
-                            <Setter TargetName="KeyboardAcceleratorTextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver}" />
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPointerOver}" />
+                            <Setter TargetName="TextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
+                            <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutItemRevealBackgroundPressed}" />
-                            <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemRevealBorderBrushPressed}" />
-                            <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPressed}" />
-                            <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForegroundPressed}" />
-                            <Setter TargetName="KeyboardAcceleratorTextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed}" />
+                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPressed}" />
+                            <Setter TargetName="TextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
+                            <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutItemBackgroundDisabled}" />
-                            <Setter TargetName="LayoutRoot" Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemRevealBorderBrushDisabled}" />
-                            <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundDisabled}" />
-                            <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForegroundDisabled}" />
-                            <Setter TargetName="KeyboardAcceleratorTextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled}" />
+                            <Setter TargetName="TextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
+                            <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
