@@ -47,6 +47,19 @@ namespace ModernWpf.Controls
             set => SetValue(UseSystemFocusVisualsProperty, value);
         }
 
+        #region CornerRadius
+
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(RadioMenuItem));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
+
         protected override void OnChecked(RoutedEventArgs e)
         {
             if (m_surpressOnChecked)
