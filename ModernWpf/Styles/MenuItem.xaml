@@ -165,13 +165,14 @@
             BorderThickness="{TemplateBinding BorderThickness}"
             Margin="{DynamicResource MenuFlyoutItemMargin}"
             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
-            <Grid x:Name="AnimationRoot">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition SharedSizeGroup="{TemplateBinding Visibility, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemCheckColumnGroup}" Width="Auto" />
                     <ColumnDefinition SharedSizeGroup="{TemplateBinding Visibility, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemIconColumnGroup}" Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+                
                 <local:FontIconFallback
                     x:Name="CheckGlyph"
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
@@ -259,13 +260,14 @@
             Margin="{DynamicResource MenuFlyoutItemMargin}"
             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
             SnapsToDevicePixels="True">
-            <Grid x:Name="AnimationRoot">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition SharedSizeGroup="MenuItemCheckColumnGroup" Width="Auto" />
                     <ColumnDefinition SharedSizeGroup="MenuItemIconColumnGroup" Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+                
                 <Viewbox
                     x:Name="IconRoot"
                     Grid.Column="1"
@@ -274,10 +276,7 @@
                     Width="16"
                     Height="16"
                     Margin="0,0,12,0">
-                    <ContentPresenter
-                        x:Name="IconContent"
-                        ContentSource="Icon"
-                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    <ContentPresenter x:Name="IconContent" ContentSource="Icon" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                 </Viewbox>
                 <ContentPresenter
                     x:Name="ContentPresenter"
