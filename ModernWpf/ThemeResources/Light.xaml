@@ -228,8 +228,8 @@
     <Color x:Key="ControlSolidFillColorDefault">#FFFFFF</Color>
 
     <Color x:Key="SubtleFillColorTransparent">#00FFFFFF</Color>
-    <Color x:Key="SubtleFillColorSecondary">#06000000</Color>
-    <Color x:Key="SubtleFillColorTertiary">#03000000</Color>
+    <Color x:Key="SubtleFillColorSecondary">#09000000</Color>
+    <Color x:Key="SubtleFillColorTertiary">#06000000</Color>
     <Color x:Key="SubtleFillColorDisabled">#00FFFFFF</Color>
 
     <Color x:Key="ControlAltFillColorTransparent">#00FFFFFF</Color>
@@ -271,7 +271,7 @@
     <Color x:Key="CardBackgroundFillColorDefault">#B3FFFFFF</Color>
     <Color x:Key="CardBackgroundFillColorSecondary">#80F6F6F6</Color>
 
-    <Color x:Key="SmokeFillColorDefault">#4D000000</Color>
+    <Color x:Key="SmokeFillColorDefault">#4DFFFFFF</Color>
 
     <Color x:Key="LayerFillColorDefault">#80FFFFFF</Color>
     <Color x:Key="LayerFillColorAlt">#FFFFFF</Color>
