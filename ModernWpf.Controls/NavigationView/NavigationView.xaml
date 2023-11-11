@@ -163,166 +163,164 @@
                             CornerRadius="{TemplateBinding CornerRadius}"
                             Margin="4,2,4,2"
                             ui:FocusVisualHelper.IsTemplateFocusTarget="True">
-                        <Grid>
-                            <Grid.Resources>
-                                <Storyboard x:Key="ExpandCollapseRotateExpandedStoryboard">
-                                    <DoubleAnimation
-                                        Storyboard.TargetName="ExpandCollapseChevronRotateTransform"
-                                        Storyboard.TargetProperty="Angle"
-                                        From="0.0" To="180.0" Duration="0:0:0.1"/>
-                                </Storyboard>
-                                <Storyboard x:Key="ExpandCollapseRotateCollapsedStoryboard">
-                                    <DoubleAnimation
-                                        Storyboard.TargetName="ExpandCollapseChevronRotateTransform"
-                                        Storyboard.TargetProperty="Angle"
-                                        From="180.0" To="0.0" Duration="0:0:0.1"/>
-                                </Storyboard>
-                            </Grid.Resources>
+                        <Border.Resources>
+                            <Storyboard x:Key="ExpandCollapseRotateExpandedStoryboard">
+                                <DoubleAnimation
+                                    Storyboard.TargetName="ExpandCollapseChevronRotateTransform"
+                                    Storyboard.TargetProperty="Angle"
+                                    From="0.0" To="180.0" Duration="0:0:0.1"/>
+                            </Storyboard>
+                            <Storyboard x:Key="ExpandCollapseRotateCollapsedStoryboard">
+                                <DoubleAnimation
+                                    Storyboard.TargetName="ExpandCollapseChevronRotateTransform"
+                                    Storyboard.TargetProperty="Angle"
+                                    From="180.0" To="0.0" Duration="0:0:0.1"/>
+                            </Storyboard>
+                        </Border.Resources>
 
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="PointerStates">
-                                    <ui:VisualStateGroupListener.Listener>
-                                        <ui:VisualStateGroupListener x:Name="PointerStatesListener" />
-                                    </ui:VisualStateGroupListener.Listener>
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver" />
-                                    <VisualState x:Name="Pressed" />
-                                    <VisualState x:Name="Selected" />
-                                    <VisualState x:Name="PointerOverSelected" />
-                                    <VisualState x:Name="PressedSelected" />
-                                </VisualStateGroup>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="PointerStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="PointerStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Selected" />
+                                <VisualState x:Name="PointerOverSelected" />
+                                <VisualState x:Name="PressedSelected" />
+                            </VisualStateGroup>
 
-                                <VisualStateGroup x:Name="DisabledStates">
-                                    <ui:VisualStateGroupListener.Listener>
-                                        <ui:VisualStateGroupListener x:Name="DisabledStatesListener" />
-                                    </ui:VisualStateGroupListener.Listener>
-                                    <VisualState x:Name="Enabled"/>
-                                    <VisualState x:Name="Disabled"/>
-                                </VisualStateGroup>
+                            <VisualStateGroup x:Name="DisabledStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="DisabledStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="Enabled"/>
+                                <VisualState x:Name="Disabled"/>
+                            </VisualStateGroup>
 
-                                <VisualStateGroup x:Name="IconStates">
-                                    <VisualState x:Name="IconVisible" />
-                                    <VisualState x:Name="IconCollapsed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="IconBox" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="IconColumn" Storyboard.TargetProperty="Width">
-                                                <DiscreteObjectKeyFrame KeyTime="0">
-                                                    <DiscreteObjectKeyFrame.Value>
-                                                        <GridLength>16</GridLength>
-                                                    </DiscreteObjectKeyFrame.Value>
-                                                </DiscreteObjectKeyFrame>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
+                            <VisualStateGroup x:Name="IconStates">
+                                <VisualState x:Name="IconVisible" />
+                                <VisualState x:Name="IconCollapsed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="IconBox" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="IconColumn" Storyboard.TargetProperty="Width">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <GridLength>16</GridLength>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
 
-                                <VisualStateGroup x:Name="ChevronStates">
-                                    <VisualState x:Name="ChevronHidden"/>
-                                    <VisualState x:Name="ChevronVisibleOpen">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
-                                                <DiscreteDoubleKeyFrame KeyTime="0" Value="180" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="ChevronVisibleClosed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
-                                                <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
-                                            </DoubleAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
+                            <VisualStateGroup x:Name="ChevronStates">
+                                <VisualState x:Name="ChevronHidden"/>
+                                <VisualState x:Name="ChevronVisibleOpen">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="180" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="ChevronVisibleClosed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevron" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ExpandCollapseChevronRotateTransform" Storyboard.TargetProperty="Angle">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
 
-                                <VisualStateGroup x:Name="PaneAndTopLevelItemStates">
-                                    <ui:VisualStateGroupListener.Listener>
-                                        <ui:VisualStateGroupListener x:Name="PaneAndTopLevelItemStatesListener" />
-                                    </ui:VisualStateGroupListener.Listener>
-                                    <VisualState x:Name="NotClosedCompactAndTopLevelItem" />
-                                    <VisualState x:Name="ClosedCompactAndTopLevelItem" />
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="PaneAndTopLevelItemStates">
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="PaneAndTopLevelItemStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                                <VisualState x:Name="NotClosedCompactAndTopLevelItem" />
+                                <VisualState x:Name="ClosedCompactAndTopLevelItem" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
 
-                            <Grid x:Name="PresenterContentRootGrid">
-                                <!-- Wrap SelectionIndicator in a grid so that its offset is 0,0 - this enables the offset animation. -->
+                        <Grid x:Name="PresenterContentRootGrid">
+                            <!-- Wrap SelectionIndicator in a grid so that its offset is 0,0 - this enables the offset animation. -->
+                            <Grid
+                                Margin="4,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center">
+
+                                <Rectangle
+                                    x:Name="SelectionIndicator"
+                                    Width="3"
+                                    Height="16"
+                                    Fill="{DynamicResource NavigationViewSelectionIndicatorForeground}"
+                                    Opacity="0.0"
+                                    RadiusX="2"
+                                    RadiusY="2"/>
+                            </Grid>
+
+                            <Grid
+                                x:Name="ContentGrid"
+                                MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"
+                                HorizontalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border x:Name="IconColumn" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.SmallerIconWidth}">
+                                    <Viewbox x:Name="IconBox"
+                                             Height="16"
+                                             Margin="{DynamicResource NavigationViewItemOnLeftIconBoxMargin}">
+                                        <ContentPresenter
+                                            x:Name="Icon"
+                                            Content="{TemplateBinding Icon}" />
+                                    </Viewbox>
+                                </Border>
+
+                                <!-- Padding="{TemplateBinding Padding}" -->
+                                <ContentPresenter
+                                    x:Name="ContentPresenter"
+                                    Grid.Column="1"
+                                    Margin="{DynamicResource NavigationViewItemContentPresenterMargin}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    Content="{TemplateBinding Content}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"/>
+
                                 <Grid
-                                    Margin="4,0,0,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center">
-
-                                    <Rectangle
-                                        x:Name="SelectionIndicator"
-                                        Width="3"
-                                        Height="16"
-                                        Fill="{DynamicResource NavigationViewSelectionIndicatorForeground}"
-                                        Opacity="0.0"
-                                        RadiusX="2"
-                                        RadiusY="2"/>
-                                </Grid>
-
-                                <Grid
-                                    x:Name="ContentGrid"
-                                    MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"
-                                    HorizontalAlignment="Stretch">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <Border x:Name="IconColumn" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.SmallerIconWidth}">
-                                        <Viewbox x:Name="IconBox"
-                                                 Height="16"
-                                                 Margin="{DynamicResource NavigationViewItemOnLeftIconBoxMargin}">
-                                            <ContentPresenter
-                                                x:Name="Icon"
-                                                Content="{TemplateBinding Icon}" />
-                                        </Viewbox>
-                                    </Border>
-
-                                    <!-- Padding="{TemplateBinding Padding}" -->
-                                    <ContentPresenter
-                                        x:Name="ContentPresenter"
-                                        Grid.Column="1"
-                                        Margin="{DynamicResource NavigationViewItemContentPresenterMargin}"
-                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                        Content="{TemplateBinding Content}"
-                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                        ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"/>
-
-                                    <Grid
-                                        x:Name="ExpandCollapseChevron"
-                                        Grid.Column="2"
-                                        Visibility="Collapsed"
-                                        HorizontalAlignment="Right"
-                                        Width="40"
-                                        Margin="{DynamicResource NavigationViewItemExpandChevronMargin}"
-                                        Background="Transparent">
-                                        <ui:FontIconFallback
-                                            Width="12"
-                                            Height="12"
-                                            RenderTransformOrigin="0.5, 0.5"
-                                            x:Name="ExpandCollapseChevronIcon"
-                                            Foreground="{DynamicResource NavigationViewItemForeground}"
-                                            FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
-                                            Data="{DynamicResource NavigationViewItemExpandedPath}"
-                                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center">
-                                            <ui:FontIconFallback.RenderTransform>
-                                                <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" Angle="0"/>
-                                            </ui:FontIconFallback.RenderTransform>
-                                        </ui:FontIconFallback>
-                                    </Grid>
+                                    x:Name="ExpandCollapseChevron"
+                                    Grid.Column="2"
+                                    Visibility="Collapsed"
+                                    HorizontalAlignment="Right"
+                                    Width="40"
+                                    Margin="{DynamicResource NavigationViewItemExpandChevronMargin}"
+                                    Background="Transparent">
+                                    <ui:FontIconFallback
+                                        Width="12"
+                                        Height="12"
+                                        RenderTransformOrigin="0.5, 0.5"
+                                        x:Name="ExpandCollapseChevronIcon"
+                                        Foreground="{DynamicResource NavigationViewItemForeground}"
+                                        FontSize="{DynamicResource NavigationViewItemExpandedGlyphFontSize}"
+                                        Data="{DynamicResource NavigationViewItemExpandedPath}"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
+                                        <ui:FontIconFallback.RenderTransform>
+                                            <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" Angle="0"/>
+                                        </ui:FontIconFallback.RenderTransform>
+                                    </ui:FontIconFallback>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -760,8 +758,8 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Viewbox 
-                                    x:Name="IconBox" 
+                                <Viewbox
+                                    x:Name="IconBox"
                                     Height="16"
                                     Width="16"
                                     Margin="16,0,0,0"
