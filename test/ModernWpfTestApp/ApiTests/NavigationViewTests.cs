@@ -31,6 +31,8 @@ using NavigationViewBackButtonVisible = ModernWpf.Controls.NavigationViewBackBut
 using System.Collections.ObjectModel;
 using System.Windows.Automation.Peers;
 using ModernWpf.Automation.Peers;
+using System.Windows.Markup;
+using System.Collections.Generic;
 
 namespace ModernWpf.Tests.MUXControls.ApiTests
 {
@@ -665,6 +667,67 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
                 Verify.IsTrue(menuItem2.IsSelected);
                 Verify.IsFalse(menuItem1.IsSelected, "MenuItem1 should have been deselected when MenuItem2 was selected");
                 Verify.AreEqual(menuItem2, navView.SelectedItem);
+            });
+        }
+
+        [TestMethod]
+        public void VerifyClosedCompactVisualState()
+        {
+            NavigationView navView = null;
+            RunOnUIThread.Execute(() =>
+            {
+                navView = new NavigationView();
+                Content = navView;
+
+                var template = (DataTemplate)XamlReader.Parse(@"
+                    <DataTemplate
+                        xmlns ='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
+                        xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
+                        xmlns:controls='http://schemas.modernwpf.com/2019'>
+                        <controls:NavigationViewItem
+                            Content='Item'>
+                            <controls:NavigationViewItem.Icon>
+                                <controls:SymbolIcon Symbol='Home' />
+                            </controls:NavigationViewItem.Icon>
+                         </controls:NavigationViewItem>
+                      </DataTemplate>");
+                navView.MenuItemTemplate = template;
+                navView.IsPaneOpen = false;
+                navView.IsSettingsVisible = false;
+
+                RoutedEventHandler loaded = null;
+                loaded = (object sender, RoutedEventArgs args) =>
+                {
+                    navView.Loaded -= loaded;
+
+                    var items = new List<object>() { new object() }; ;
+                    navView.MenuItemsSource = items;
+                };
+                navView.Loaded += loaded;
+
+                Content.UpdateLayout();
+            });
+            IdleSynchronizer.Wait();
+
+            RunOnUIThread.Execute(() =>
+            {
+                var footerRepeater = VisualTree.FindDescendantByName(navView, "MenuItemsHost") as FrameworkElement;
+                var menuItem = VisualTreeHelper.GetChild(footerRepeater, 0) as FrameworkElement;
+                var menuItemLayoutRoot = VisualTreeHelper.GetChild(menuItem, 0) as FrameworkElement;
+                var navItemPresenter = VisualTreeHelper.GetChild(menuItemLayoutRoot, 0) as FrameworkElement;
+                var navItemPresenterLayoutRoot = VisualTreeHelper.GetChild(navItemPresenter, 0) as FrameworkElement;
+                var statesGroups = VisualStateManager.GetVisualStateGroups(navItemPresenterLayoutRoot);
+
+                string navItemPresenter1CurrentState = null;
+                foreach (VisualStateGroup visualStateGroup in statesGroups)
+                {
+                    if (visualStateGroup.Name == "PaneAndTopLevelItemStates")
+                    {
+                        navItemPresenter1CurrentState = visualStateGroup.CurrentState.Name;
+                    }
+                }
+
+                Verify.AreEqual("ClosedCompactAndTopLevelItem", navItemPresenter1CurrentState);
             });
         }
 

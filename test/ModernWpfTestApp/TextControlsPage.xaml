@@ -26,7 +26,8 @@
             <StackPanelEx Orientation="Vertical" Margin="0,0,12,0">
                 <TextBlock Text="TextBox"/>
 
-                <TextBoxEx Header="Normal" Text="Text" IsEnabled="{x:Bind EnabledCheckBox.IsChecked.Value, Mode=OneWay}" />
+                <TextBoxEx Header="Normal" Text="Text" IsEnabled="{x:Bind EnabledCheckBox.IsChecked.Value, Mode=OneWay}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                <RichEditBox Header="Normal" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
                 <TextBoxEx PlaceholderText="Placeholder" Header="Placeholder" IsEnabled="{x:Bind EnabledCheckBox.IsChecked.Value, Mode=OneWay}" />
             </StackPanelEx>
 

@@ -228,11 +228,6 @@ namespace ModernWpf.Controls
                     && (splitView.DisplayMode == SplitViewDisplayMode.CompactOverlay || splitView.DisplayMode == SplitViewDisplayMode.CompactInline);
 
                 UpdateVisualState(true /*useTransitions*/);
-
-                if (GetPresenter() is { } presenter)
-                {
-                    presenter.UpdateClosedCompactVisualState(IsTopLevelItem, m_isClosedCompact);
-                }
             }
         }
 
@@ -329,6 +324,14 @@ namespace ModernWpf.Controls
             {
                 var stateName = showIcon ? (showContent ? "IconOnLeft" : "IconOnly") : "ContentOnly";
                 VisualStateManager.GoToState(presenter, stateName, false /*useTransitions*/);
+            }
+        }
+
+        void UpdateVisualStateForClosedCompact()
+        {
+            if (GetPresenter() is { } presenter)
+            {
+                presenter.UpdateClosedCompactVisualState(IsTopLevelItem, m_isClosedCompact);
             }
         }
 
@@ -493,6 +496,8 @@ namespace ModernWpf.Controls
                     // Backward Compatibility with RS4-, new implementation prefer IconOnLeft/IconOnly/ContentOnly
                     VisualStateManager.GoToState(presenter, shouldShowIcon ? "IconVisible" : "IconCollapsed", useTransitions);
                 }
+
+                UpdateVisualStateForClosedCompact();
             }
 
             UpdateVisualStateForToolTip();
