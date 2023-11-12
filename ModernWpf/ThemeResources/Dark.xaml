@@ -853,8 +853,9 @@
     <m:StaticResource x:Key="ContentDialogForeground" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="ContentDialogBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
     <m:StaticResource x:Key="ContentDialogSmokeFill" ResourceKey="SmokeFillColorDefaultBrush" />
-    <m:StaticResource x:Key="ContentDialogTopOverlay" ResourceKey="SolidBackgroundFillColorQuarternaryBrush" />
+    <m:StaticResource x:Key="ContentDialogTopOverlay" ResourceKey="LayerFillColorAltBrush" />
     <m:StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="ControlElevationBorderBrush" />
+    <m:StaticResource x:Key="ContentDialogSeparatorBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
     <Thickness x:Key="ContentDialogBorderWidth">1</Thickness>
 
     <!-- Resources for DataGrid -->
