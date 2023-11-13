@@ -186,6 +186,7 @@
                 AutomationProperties.Name="Basic Demo">
                 Basic Demo
             </Button>
+            <Button x:Name="uniformGridLayoutDemo" AutomationProperties.Name="UniformGridLayoutDemo">UniformGridLayout testing</Button>
         </StackPanel>
 
     </controls:LayoutPanel>

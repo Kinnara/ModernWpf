@@ -355,7 +355,9 @@ namespace ModernWpf.Controls
                         {
                             // Does not fit, wrap to the previous row
                             var availableSizeMinor = OM.Minor(availableSize);
-                            OM.SetMinorStart(ref currentBounds, !double.IsInfinity(availableSizeMinor) ? availableSizeMinor - OM.Minor(desiredSize) : 0.0);
+                            // If the last available size is finite, start from end and subtract our desired size.
+                            // Otherwise, look at the last extent and use that for positioning.
+                            OM.SetMinorStart(ref currentBounds, !double.IsInfinity(availableSizeMinor) ? availableSizeMinor - OM.Minor(desiredSize) : OM.MinorSize(LastExtent) - OM.Minor(desiredSize));
                             OM.SetMajorStart(ref currentBounds, lineOffset - OM.Major(desiredSize) - lineSpacing);
 
                             if (lineNeedsReposition)
