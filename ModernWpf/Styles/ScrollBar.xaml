@@ -227,8 +227,8 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollBar">
                     <ControlTemplate.Resources>
-                        <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
-                        <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
+                        <StreamGeometry x:Key="CaretUp">F1 M 10 5 L 20 15 L 0 15 L 10 5 Z</StreamGeometry>
+                        <StreamGeometry x:Key="CaretDown">F1 M 0 5 L 20 5 L 10 15 L 0 5 Z</StreamGeometry>
                     </ControlTemplate.Resources>
                     <Border
                         x:Name="Root"
@@ -342,7 +342,7 @@
                                 IsTabStop="False"
                                 Margin="0"
                                 Grid.Row="0"
-                                Content="{StaticResource ChevronUp}"
+                                Content="{StaticResource CaretUp}"
                                 Template="{StaticResource ScrollBarButtonTemplate}"
                                 HorizontalAlignment="Center" />
                             <Track
@@ -393,7 +393,7 @@
                                 IsTabStop="False"
                                 Margin="0"
                                 Grid.Row="2"
-                                Content="{StaticResource ChevronDown}"
+                                Content="{StaticResource CaretDown}"
                                 Template="{StaticResource ScrollBarButtonTemplate}"
                                 HorizontalAlignment="Center" />
                         </Grid>
@@ -436,8 +436,8 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="ScrollBar">
                             <ControlTemplate.Resources>
-                                <StreamGeometry x:Key="ChevronLeft">M 14.091797 19.970703 L 4.111328 10 L 14.091797 0.029297 L 14.970703 0.908203 L 5.888672 10 L 14.970703 19.091797 Z</StreamGeometry>
-                                <StreamGeometry x:Key="ChevronRight">M 5.029297 19.091797 L 14.111328 10 L 5.029297 0.908203 L 5.908203 0.029297 L 15.888672 10 L 5.908203 19.970703 Z</StreamGeometry>
+                                <StreamGeometry x:Key="CaretLeft">F1 M 5 10 L 15 0 L 15 20 L 5 10 Z</StreamGeometry>
+                                <StreamGeometry x:Key="CaretRight">F1 M 5 0 L 15 10 L 5 20 L 5 0 Z</StreamGeometry>
                             </ControlTemplate.Resources>
                             <Border
                                 x:Name="Root"
@@ -547,7 +547,7 @@
                                         MinHeight="{StaticResource ScrollBarSize}"
                                         IsTabStop="False"
                                         Margin="0"
-                                        Content="{StaticResource ChevronLeft}"
+                                        Content="{StaticResource CaretLeft}"
                                         Template="{StaticResource ScrollBarButtonTemplate}"
                                         Width="{StaticResource ScrollBarSize}"
                                         VerticalAlignment="Center" />
@@ -597,7 +597,7 @@
                                         MinHeight="{StaticResource ScrollBarSize}"
                                         IsTabStop="False"
                                         Margin="0"
-                                        Content="{StaticResource ChevronRight}"
+                                        Content="{StaticResource CaretRight}"
                                         Template="{StaticResource ScrollBarButtonTemplate}"
                                         Width="{StaticResource ScrollBarSize}"
                                         VerticalAlignment="Center" />

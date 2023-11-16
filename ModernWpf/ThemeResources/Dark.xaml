@@ -1637,11 +1637,11 @@
     <m:StaticResource x:Key="ToggleSwitchFillOn" ResourceKey="AccentAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="ToggleSwitchFillOnPointerOver" ResourceKey="AccentAAFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ToggleSwitchFillOnPressed" ResourceKey="AccentAAFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="ToggleSwitchFillOnDisabled" ResourceKey="AccentAAFillColorDisabled" />
+    <m:StaticResource x:Key="ToggleSwitchFillOnDisabled" ResourceKey="AccentAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="ToggleSwitchStrokeOn" ResourceKey="AccentAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="ToggleSwitchStrokeOnPointerOver" ResourceKey="AccentAAFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ToggleSwitchStrokeOnPressed" ResourceKey="AccentAAFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="ToggleSwitchStrokeOnDisabled" ResourceKey="AccentAAFillColorDisabled" />
+    <m:StaticResource x:Key="ToggleSwitchStrokeOnDisabled" ResourceKey="AccentAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOff" ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOffPointerOver" ResourceKey="TextFillColorSecondary" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOffPressed" ResourceKey="TextFillColorSecondary" />
