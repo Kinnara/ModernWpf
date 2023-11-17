@@ -1,8 +1,13 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls">
+
+    <sys:Double x:Key="FlipViewButtonFontSize">8</sys:Double>
+    <sys:Double x:Key="FlipViewButtonFontSizePointerOver">9</sys:Double>
+    <sys:Double x:Key="FlipViewButtonFontSizePressed">7</sys:Double>
 
     <Style x:Key="DefaultFlipViewStyle" TargetType="Controls:FlipView">
         <Setter Property="Background" Value="{DynamicResource FlipViewBackground}" />
@@ -71,7 +76,7 @@
                                         <ui:FontIconFallback
                                             x:Name="Arrow"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            FontSize="12"
+                                            FontSize="{DynamicResource FlipViewButtonFontSize}"
                                             Foreground="{DynamicResource FlipViewNextPreviousArrowForeground}"
                                             Data="{StaticResource CaretRight}"
                                             HorizontalAlignment="Center"
@@ -83,11 +88,13 @@
                                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource FlipViewNextPreviousButtonBackgroundPointerOver}" />
                                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource FlipViewNextPreviousButtonBorderBrushPointerOver}" />
                                             <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource FlipViewNextPreviousArrowForegroundPointerOver}" />
+                                            <Setter TargetName="Arrow" Property="FontSize" Value="{StaticResource FlipViewButtonFontSizePointerOver}" />
                                         </Trigger>
                                         <Trigger Property="IsPressed" Value="True">
                                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource FlipViewNextPreviousButtonBackgroundPressed}" />
                                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource FlipViewNextPreviousButtonBorderBrushPressed}" />
                                             <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource FlipViewNextPreviousArrowForegroundPressed}" />
+                                            <Setter TargetName="Arrow" Property="FontSize" Value="{StaticResource FlipViewButtonFontSizePressed}" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -101,7 +108,7 @@
                                         <ui:FontIconFallback
                                             x:Name="Arrow"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            FontSize="12"
+                                            FontSize="{DynamicResource FlipViewButtonFontSize}"
                                             Foreground="{DynamicResource FlipViewNextPreviousArrowForeground}"
                                             Data="{StaticResource CaretLeft}"
                                             HorizontalAlignment="Center"
@@ -113,11 +120,13 @@
                                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource FlipViewNextPreviousButtonBackgroundPointerOver}" />
                                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource FlipViewNextPreviousButtonBorderBrushPointerOver}" />
                                             <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource FlipViewNextPreviousArrowForegroundPointerOver}" />
+                                            <Setter TargetName="Arrow" Property="FontSize" Value="{StaticResource FlipViewButtonFontSizePointerOver}" />
                                         </Trigger>
                                         <Trigger Property="IsPressed" Value="True">
                                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource FlipViewNextPreviousButtonBackgroundPressed}" />
                                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource FlipViewNextPreviousButtonBorderBrushPressed}" />
                                             <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource FlipViewNextPreviousArrowForegroundPressed}" />
+                                            <Setter TargetName="Arrow" Property="FontSize" Value="{StaticResource FlipViewButtonFontSizePressed}" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -131,7 +140,7 @@
                                         <ui:FontIconFallback
                                             x:Name="Arrow"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            FontSize="12"
+                                            FontSize="{DynamicResource FlipViewButtonFontSize}"
                                             Foreground="{DynamicResource FlipViewNextPreviousArrowForeground}"
                                             Data="{StaticResource CaretDown}"
                                             HorizontalAlignment="Center"
@@ -143,11 +152,13 @@
                                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource FlipViewNextPreviousButtonBackgroundPointerOver}" />
                                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource FlipViewNextPreviousButtonBorderBrushPointerOver}" />
                                             <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource FlipViewNextPreviousArrowForegroundPointerOver}" />
+                                            <Setter TargetName="Arrow" Property="FontSize" Value="{StaticResource FlipViewButtonFontSizePointerOver}" />
                                         </Trigger>
                                         <Trigger Property="IsPressed" Value="True">
                                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource FlipViewNextPreviousButtonBackgroundPressed}" />
                                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource FlipViewNextPreviousButtonBorderBrushPressed}" />
                                             <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource FlipViewNextPreviousArrowForegroundPressed}" />
+                                            <Setter TargetName="Arrow" Property="FontSize" Value="{StaticResource FlipViewButtonFontSizePressed}" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -161,7 +172,7 @@
                                         <ui:FontIconFallback
                                             x:Name="Arrow"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                            FontSize="12"
+                                            FontSize="{DynamicResource FlipViewButtonFontSize}"
                                             Foreground="{DynamicResource FlipViewNextPreviousArrowForeground}"
                                             Data="{StaticResource CaretUp}"
                                             HorizontalAlignment="Center"
@@ -173,11 +184,13 @@
                                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource FlipViewNextPreviousButtonBackgroundPointerOver}" />
                                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource FlipViewNextPreviousButtonBorderBrushPointerOver}" />
                                             <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource FlipViewNextPreviousArrowForegroundPointerOver}" />
+                                            <Setter TargetName="Arrow" Property="FontSize" Value="{StaticResource FlipViewButtonFontSizePointerOver}" />
                                         </Trigger>
                                         <Trigger Property="IsPressed" Value="True">
                                             <Setter TargetName="Root" Property="Background" Value="{DynamicResource FlipViewNextPreviousButtonBackgroundPressed}" />
                                             <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource FlipViewNextPreviousButtonBorderBrushPressed}" />
                                             <Setter TargetName="Arrow" Property="Foreground" Value="{DynamicResource FlipViewNextPreviousArrowForegroundPressed}" />
+                                            <Setter TargetName="Arrow" Property="FontSize" Value="{StaticResource FlipViewButtonFontSizePressed}" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -193,9 +206,10 @@
                             <Button
                                 x:Name="PART_BackButton"
                                 Template="{StaticResource HorizontalPreviousTemplate}"
-                                Width="20"
-                                Height="36"
-                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                                Width="16"
+                                Height="38"
+                                Margin="1"
+                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}"
                                 IsTabStop="False"
                                 FocusVisualStyle="{x:Null}"
                                 HorizontalAlignment="Left"
@@ -204,9 +218,10 @@
                             <Button
                                 x:Name="PART_ForwardButton"
                                 Template="{StaticResource HorizontalNextTemplate}"
-                                Width="20"
-                                Height="36"
-                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}"
+                                Width="16"
+                                Height="38"
+                                Margin="1"
+                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}"
                                 IsTabStop="False"
                                 FocusVisualStyle="{x:Null}"
                                 HorizontalAlignment="Right"
@@ -215,9 +230,10 @@
                             <Button
                                 x:Name="PART_UpButton"
                                 Template="{StaticResource VerticalPreviousTemplate}"
-                                Width="36"
-                                Height="20"
-                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource BottomCornerRadiusFilterConverter}}"
+                                Width="38"
+                                Height="16"
+                                Margin="1"
+                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}"
                                 IsTabStop="False"
                                 FocusVisualStyle="{x:Null}"
                                 HorizontalAlignment="Center"
@@ -226,9 +242,10 @@
                             <Button
                                 x:Name="PART_DownButton"
                                 Template="{StaticResource VerticalNextTemplate}"
-                                Width="36"
-                                Height="20"
-                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}"
+                                Width="38"
+                                Height="16"
+                                Margin="1"
+                                ui:ControlHelper.CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}"
                                 IsTabStop="False"
                                 FocusVisualStyle="{x:Null}"
                                 HorizontalAlignment="Center"

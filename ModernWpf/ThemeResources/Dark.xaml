@@ -913,9 +913,9 @@
     <!-- Resources for FlipView -->
     <Thickness x:Key="FlipViewButtonBorderThemeThickness">0</Thickness>
     <m:StaticResource x:Key="FlipViewBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
-    <m:StaticResource x:Key="FlipViewNextPreviousButtonBackground" ResourceKey="ControlAltFillColorQuarternaryBrush" />
-    <m:StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPointerOver" ResourceKey="ControlStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPressed" ResourceKey="ControlAAStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="FlipViewNextPreviousButtonBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPointerOver" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPressed" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
     <m:StaticResource x:Key="FlipViewNextPreviousArrowForeground" ResourceKey="ControlAAFillColorDefaultBrush" />
     <m:StaticResource x:Key="FlipViewNextPreviousArrowForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="FlipViewNextPreviousArrowForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
