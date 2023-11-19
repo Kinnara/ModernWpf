@@ -43,13 +43,16 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
                 autoSuggestBox.CornerRadius = new CornerRadius(2);
                 autoSuggestBox.Focus(/*FocusState.Keyboard*/);
                 autoSuggestBox.Text = "123";
+                autoSuggestBox.MaxHeight = 32;
             });
             IdleSynchronizer.Wait();
 
             RunOnUIThread.Execute(() =>
             {
                 var textBox = TestUtilities.FindDescendents<TextBox>(autoSuggestBox).Where(e => e.Name == "TextBox").Single();
-                Verify.AreEqual(new CornerRadius(2, 2, 0, 0), textBox.GetCornerRadius());
+
+                // Flyout might open differently and as such flip corner radii values
+                Verify.IsTrue(new CornerRadius(2, 2, 0, 0) == textBox.GetCornerRadius() || new CornerRadius(0, 0, 2, 2) == textBox.GetCornerRadius());
 
                 var overlayCornerRadius = new CornerRadius(0, 0, 0, 0);
                 var radius = App.Current.Resources["OverlayCornerRadius"];
@@ -60,7 +63,9 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
                 var popup = VisualTreeHelperEx.GetOpenPopups(WindowEx.Current).Last();
                 var popupBorder = TestUtilities.FindDescendents<Border>(popup).First();
 
-                Verify.AreEqual(new CornerRadius(0, 0, overlayCornerRadius.BottomRight, overlayCornerRadius.BottomLeft), popupBorder.CornerRadius);
+                // Flyout might open differently and as such flip corner radii values
+                Verify.IsTrue(new CornerRadius(0, 0, overlayCornerRadius.BottomRight, overlayCornerRadius.BottomLeft) == popupBorder.CornerRadius
+                    || new CornerRadius(overlayCornerRadius.TopRight, overlayCornerRadius.TopLeft, 0, 0) == popupBorder.CornerRadius);
             });
         }
 

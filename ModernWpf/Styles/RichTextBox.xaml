@@ -20,6 +20,7 @@
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
         <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst" />
+        <Setter Property="MinWidth" Value="{DynamicResource TextControlThemeMinWidth}" />
         <Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
@@ -60,7 +61,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                            MinWidth="{DynamicResource TextControlThemeMinWidth}"
+                            MinWidth="{TemplateBinding MinWidth}"
                             MinHeight="{DynamicResource TextControlThemeMinHeight}"
                             primitives:ValidationHelper.IsTemplateValidationAdornerSite="True" />
                         <ScrollViewer

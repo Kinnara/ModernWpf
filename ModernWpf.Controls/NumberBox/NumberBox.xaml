@@ -260,7 +260,8 @@
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThickness}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
+        <Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
