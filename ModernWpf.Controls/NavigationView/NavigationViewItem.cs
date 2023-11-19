@@ -240,7 +240,11 @@ namespace ModernWpf.Controls
             {
                 if (ShouldEnableToolTip())
                 {
-                    ToolTipService.SetToolTip(this, m_suggestedToolTipContent);
+                    // Don't SetToolTip with the same parameter because it close/re-open the ToolTip
+                    if (toolTipContent != m_suggestedToolTipContent)
+                    {
+                        ToolTipService.SetToolTip(this, m_suggestedToolTipContent);
+                    }
                 }
                 else
                 {
