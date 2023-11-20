@@ -128,9 +128,23 @@ namespace ModernWpf.Controls
             {
                 InternalPopup.SuppressFadeAnimation = true;
 
-                if (ShowMode == FlyoutShowMode.Standard)
+                if (m_commandBar is { } commandBar)
                 {
-                    m_commandBar.IsOpen = true;
+                    if (ShowMode == FlyoutShowMode.Standard)
+                    {
+                        m_commandBar.IsOpen = true;
+                    }
+
+                    // When CommandBarFlyout is in AlwaysOpen state, don't show the overflow button
+                    if (AlwaysExpanded)
+                    {
+                        commandBar.IsOpen = true;
+                        commandBar.OverflowButtonVisibility = CommandBarOverflowButtonVisibility.Collapsed;
+                    }
+                    else
+                    {
+                        commandBar.OverflowButtonVisibility = CommandBarOverflowButtonVisibility.Auto;
+                    }
                 }
             };
 
@@ -182,6 +196,8 @@ namespace ModernWpf.Controls
                 }
             };
         }
+
+        public bool AlwaysExpanded { get; set; }
 
         public ObservableCollection<ICommandBarElement> PrimaryCommands { get; }
 

@@ -798,7 +798,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" MinWidth="3"/>
                                         </Grid.ColumnDefinitions>
                                         <primitives:CommandBarPanel
                                             x:Name="PART_ToolBarPanel"

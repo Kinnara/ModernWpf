@@ -16,6 +16,7 @@
     <sys:Double x:Key="AppBarThemeMinHeight">64</sys:Double>
     <sys:Double x:Key="AppBarThemeCompactHeight">48</sys:Double>
     <Thickness x:Key="AppBarEllipsisButtonInnerBorderMargin">2,6,6,6</Thickness>
+    <sys:Double x:Key="AppBarMoreButtonColumnMinWidth">6</sys:Double>
 
     <Thickness x:Key="AppBarButtonContentViewboxMargin">12,16,0,10</Thickness>
     <Thickness x:Key="AppBarButtonContentViewboxCompactMargin">0,12,0,12</Thickness>
