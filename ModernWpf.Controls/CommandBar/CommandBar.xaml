@@ -60,7 +60,7 @@
                             Background="{TemplateBinding Background}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" MinWidth="{DynamicResource AppBarMoreButtonColumnMinWidth}"/>
                             </Grid.ColumnDefinitions>
                             <Grid>
                                 <Grid.ColumnDefinitions>
