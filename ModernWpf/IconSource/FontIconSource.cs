@@ -155,5 +155,39 @@ namespace ModernWpf.Controls
 
             return fontIcon;
         }
+
+        protected override DependencyProperty GetIconElementPropertyCore(DependencyProperty sourceProperty)
+        {
+            if (sourceProperty == FontFamilyProperty)
+            {
+                return FontIcon.FontFamilyProperty;
+            }
+            else if (sourceProperty == FontSizeProperty)
+            {
+                return FontIcon.FontSizeProperty;
+            }
+            else if (sourceProperty == FontStyleProperty)
+            {
+                return FontIcon.FontStyleProperty;
+            }
+            else if (sourceProperty == FontWeightProperty)
+            {
+                return FontIcon.FontWeightProperty;
+            }
+            else if (sourceProperty == GlyphProperty)
+            {
+                return FontIcon.GlyphProperty;
+            }
+            //else if (sourceProperty == IsTextScaleFactorEnabledProperty)
+            //{
+            //    return FontIcon.IsTextScaleFactorEnabledProperty;
+            //}
+            //else if (sourceProperty == MirroredWhenRightToLeftProperty)
+            //{
+            //    return FontIcon.MirroredWhenRightToLeftProperty;
+            //}
+
+            return base.GetIconElementPropertyCore(sourceProperty);
+        }
     }
 }
