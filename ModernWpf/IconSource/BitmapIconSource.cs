@@ -75,5 +75,19 @@ namespace ModernWpf.Controls
             }
             return bitmapIcon;
         }
+
+        protected override DependencyProperty GetIconElementPropertyCore(DependencyProperty sourceProperty)
+        {
+            if (sourceProperty == ShowAsMonochromeProperty)
+            {
+                return BitmapIcon.ShowAsMonochromeProperty;
+            }
+            else if (sourceProperty == UriSourceProperty)
+            {
+                return BitmapIcon.UriSourceProperty;
+            }
+
+            return base.GetIconElementPropertyCore(sourceProperty);
+        }
     }
 }
