@@ -55,7 +55,6 @@
                                 Grid.Column="1"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 FontSize="8"
-                                Foreground="{DynamicResource ButtonForegroundPressed}"
                                 Data="{StaticResource ChevronDownSmall}"
                                 VerticalAlignment="Center"
                                 Padding="2,4,2,0"

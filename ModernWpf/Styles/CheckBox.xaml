@@ -11,7 +11,7 @@
 
     <sys:Double x:Key="CheckBoxBorderThickness">1</sys:Double>
     <sys:Double x:Key="CheckBoxSize">20</sys:Double>
-    <sys:Double x:Key="CheckBoxGlyphSize">16</sys:Double>
+    <sys:Double x:Key="CheckBoxGlyphSize">12</sys:Double>
     <sys:Double x:Key="CheckBoxHeight">32</sys:Double>
     <sys:Double x:Key="CheckBoxMinWidth">120</sys:Double>
     <Thickness x:Key="CheckBoxPadding">8,5,0,0</Thickness>
@@ -76,6 +76,7 @@
                                     Data="{StaticResource CheckMark}"
                                     FontSize="{StaticResource CheckBoxGlyphSize}"
                                     Foreground="{DynamicResource CheckBoxCheckGlyphForegroundUnchecked}"
+                                    Margin="4"
                                     Opacity="0" />
                             </Grid>
                             <local:ContentPresenterEx
