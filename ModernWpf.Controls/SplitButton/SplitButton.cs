@@ -254,7 +254,14 @@ namespace ModernWpf.Controls
             {
                 if (m_isFlyoutOpen)
                 {
-                    VisualStateManager.GoToState(this, "FlyoutOpen", useTransitions);
+                    if (InternalIsChecked)
+                    {
+                        VisualStateManager.GoToState(this, "CheckedFlyoutOpen", useTransitions);
+                    }
+                    else
+                    {
+                        VisualStateManager.GoToState(this, "FlyoutOpen", useTransitions);
+                    }
                 }
                 // SplitButton and ToggleSplitButton share a template -- this section is driving the checked states for ToggleSplitButton.
                 else if (InternalIsChecked)

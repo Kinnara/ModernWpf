@@ -1481,7 +1481,7 @@
     <m:StaticResource x:Key="SplitButtonBorderBrushCheckedPointerOver" ResourceKey="AccentControlElevationBorderBrush" />
     <m:StaticResource x:Key="SplitButtonBorderBrushCheckedPressed" ResourceKey="ControlFillColorTransparentBrush" />
     <m:StaticResource x:Key="SplitButtonBorderBrushCheckedDisabled" ResourceKey="ControlFillColorTransparentBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedDivider" ResourceKey="ControlStrokeColorOnAccentDefaultBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedDivider" ResourceKey="ControlStrokeColorOnAccentTertiaryBrush" />
     <Thickness x:Key="SplitButtonBorderThemeThickness">1</Thickness>
 
     <!-- Resources for SplitView -->
