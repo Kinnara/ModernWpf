@@ -74,8 +74,8 @@
     <SolidColorBrush x:Key="SystemControlDisabledChromeMediumLowBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
     <SolidColorBrush x:Key="SystemControlDisabledListMediumBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
     <SolidColorBrush x:Key="SystemControlDisabledTransparentBrush" Color="{m:ThemeResource SystemColorGrayTextColor}" />
-    <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
-    <SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="{m:ThemeResource SystemColorWindowTextColor }"/>
+    <SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
     <SolidColorBrush x:Key="SystemControlRevealFocusVisualBrush" Color="{m:ThemeResource SystemAccentColor}" />
     <SolidColorBrush x:Key="SystemControlForegroundAccentBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
     <SolidColorBrush x:Key="SystemControlForegroundAltHighBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />

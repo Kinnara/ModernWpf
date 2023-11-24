@@ -74,8 +74,8 @@
     <SolidColorBrush x:Key="SystemControlDisabledChromeMediumLowBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
     <SolidColorBrush x:Key="SystemControlDisabledListMediumBrush" Color="{m:StaticColor SystemListMediumColor}" />
     <SolidColorBrush x:Key="SystemControlDisabledTransparentBrush" Color="Transparent" />
-    <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="{m:StaticColor SystemBaseHighColor}" />
-    <SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="{m:StaticColor SystemAltMediumColor}" />
+    <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="{StaticResource FocusStrokeColorOuter}"/>
+    <SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="{StaticResource FocusStrokeColorInner}"/>
     <SolidColorBrush x:Key="SystemControlRevealFocusVisualBrush" Color="{m:DynamicColor SystemAccentColor}" />
     <SolidColorBrush x:Key="SystemControlForegroundAccentBrush" Color="{m:DynamicColor SystemAccentColor}" />
     <SolidColorBrush x:Key="SystemControlForegroundAltHighBrush" Color="{m:StaticColor SystemAltHighColor}" />
