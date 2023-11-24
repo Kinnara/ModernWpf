@@ -1849,18 +1849,7 @@ namespace ModernWpf.Controls
         {
             var templateSettings = GetTemplateSettings();
 
-            double newButtonWidths;
-            {
-                double init()
-                {
-                    if (DisplayMode == NavigationViewDisplayMode.Minimal)
-                    {
-                        return c_paneToggleButtonWidth;
-                    }
-                    return CompactPaneLength;
-                }
-                newButtonWidths = init();
-            }
+            var newButtonWidths = CompactPaneLength;
 
             templateSettings.PaneToggleButtonWidth = newButtonWidths;
             templateSettings.SmallerPaneToggleButtonWidth = newButtonWidths - 8;

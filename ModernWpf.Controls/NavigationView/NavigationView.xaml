@@ -550,7 +550,7 @@
                                 x:Name="IconBox"
                                 Height="16"
                                 Width="16"
-                                Margin="12,0,0,0"
+                                Margin="16,0,0,0"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center">
                                 <ContentPresenter
@@ -1016,7 +1016,8 @@
                                     HorizontalAlignment="Center"
                                     Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.PaneToggleButtonVisibility}"
                                     VerticalAlignment="Top"
-                                    MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.SmallerPaneToggleButtonWidth}">
+                                    MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.SmallerPaneToggleButtonWidth}"
+                                    ui:FocusVisualHelper.FocusVisualMargin="0">
                                     <TextBlock
                                         x:Name="PaneTitleTextBlock"
                                         Grid.Column="0"
@@ -1025,6 +1026,7 @@
                                         VerticalAlignment="Center"
                                         Style="{DynamicResource NavigationViewItemHeaderTextStyle}"/>
                                 </Button>
+                                
                                 <Grid
                                     x:Name="PaneTitleHolder"
                                     Visibility="Collapsed">
@@ -1255,7 +1257,19 @@
                                                 x:Name="PaneAutoSuggestButton"
                                                 Visibility="Collapsed"
                                                 Style="{DynamicResource NavigationViewPaneSearchButtonStyle}"
-                                                Width="{TemplateBinding CompactPaneLength}"/>
+                                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.SmallerPaneToggleButtonWidth}">
+                                                <Button.Resources>
+                                                    <ui:StaticResource x:Key="ButtonBackgroundPointerOver" ResourceKey="NavigationViewItemBackgroundPointerOver" />
+                                                    <ui:StaticResource x:Key="ButtonBackgroundPressed" ResourceKey="NavigationViewItemBackgroundPressed" />
+                                                    <ui:StaticResource x:Key="ButtonBackgroundDisabled" ResourceKey="NavigationViewItemBackgroundDisabled" />
+                                                    <ui:StaticResource x:Key="ButtonForegroundPointerOver" ResourceKey="NavigationViewItemForegroundPointerOver" />
+                                                    <ui:StaticResource x:Key="ButtonForegroundPressed" ResourceKey="NavigationViewItemForegroundPressed" />
+                                                    <ui:StaticResource x:Key="ButtonForegroundDisabled" ResourceKey="NavigationViewItemForegroundDisabled" />
+                                                    <ui:StaticResource x:Key="ButtonBorderBrushPointerOver" ResourceKey="NavigationViewItemBorderBrushPointerOver" />
+                                                    <ui:StaticResource x:Key="ButtonBorderBrushPressed" ResourceKey="NavigationViewItemBorderBrushPressed" />
+                                                    <ui:StaticResource x:Key="ButtonBorderBrushDisabled" ResourceKey="NavigationViewItemBorderBrushDisabled" />
+                                                </Button.Resources>
+                                            </Button>
                                         </Grid>
 
                                         <ContentControl

@@ -74,8 +74,6 @@
     <SolidColorBrush x:Key="SystemControlDisabledChromeMediumLowBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
     <SolidColorBrush x:Key="SystemControlDisabledListMediumBrush" Color="{m:StaticColor SystemListMediumColor}" />
     <SolidColorBrush x:Key="SystemControlDisabledTransparentBrush" Color="Transparent" />
-    <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="{StaticResource FocusStrokeColorOuter}"/>
-    <SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="{StaticResource FocusStrokeColorInner}"/>
     <SolidColorBrush x:Key="SystemControlRevealFocusVisualBrush" Color="{m:DynamicColor SystemAccentColor}" />
     <SolidColorBrush x:Key="SystemControlForegroundAccentBrush" Color="{m:DynamicColor SystemAccentColor}" />
     <SolidColorBrush x:Key="SystemControlForegroundAltHighBrush" Color="{m:StaticColor SystemAltHighColor}" />
@@ -437,6 +435,8 @@
     <Thickness x:Key="TextControlBorderThemeThickness">1</Thickness>
     <Thickness x:Key="TextControlBorderThemeThicknessFocused">1,1,1,2</Thickness>
     <Thickness x:Key="TextControlThemePadding">10,5,6,6</Thickness>
+    <SolidColorBrush x:Key="SystemControlFocusVisualPrimaryBrush" Color="{StaticResource FocusStrokeColorOuter}"/>
+    <SolidColorBrush x:Key="SystemControlFocusVisualSecondaryBrush" Color="{StaticResource FocusStrokeColorInner}"/>
     <!--#endregion-->
 
     <!-- Resources for AppBarButton -->
@@ -1145,9 +1145,9 @@
     <m:StaticResource x:Key="MenuFlyoutSubItemRevealBorderBrushDisabled" ResourceKey="SubtleFillColorTransparentBrush" />
 
     <!-- Resources for NavigationView -->
-    <m:StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-    <m:StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
-    <m:StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+    <m:StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
 
     <m:StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
