@@ -5,13 +5,16 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
-    
-	<ResourceDictionary.MergedDictionaries>
-		<ResourceDictionary Source="/ModernWpf;component/Styles/Common.xaml"/>
-	</ResourceDictionary.MergedDictionaries>
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/ModernWpf;component/Styles/Common.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
 
     <ui:CornerRadiusFilterConverter x:Key="TopCornerRadiusFilterConverter" Filter="Top" />
     <ui:CornerRadiusFilterConverter x:Key="BottomCornerRadiusFilterConverter" Filter="Bottom" />
+
+    <Thickness x:Key="CommandBarFlyoutAppBarButtonInnerBorderMargin">2</Thickness>
+    <Thickness x:Key="CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin">2,2,6,2</Thickness>
 
     <Style x:Key="CommandBarFlyoutAppBarButtonStyleBase" TargetType="local:AppBarButton">
         <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackground}" />
@@ -31,14 +34,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarButton">
-                    <Border
+                    <Grid
                         x:Name="Root"
                         MinWidth="{TemplateBinding MinWidth}"
-                        MaxWidth="{TemplateBinding MaxWidth}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
+                        MaxWidth="{TemplateBinding MaxWidth}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -74,6 +73,20 @@
                                 <VisualState x:Name="KeyboardAcceleratorTextVisible" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+
+                        <Border x:Name="AppBarButtonInnerBorder"
+                                Margin="{StaticResource CommandBarFlyoutAppBarButtonInnerBorderMargin}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                ui:FocusVisualHelper.IsTemplateFocusTarget="True">
+
+                            <!--<contract7Present:Border.BackgroundTransition>
+                            <contract7Present:BrushTransition Duration="0:0:0.083" />
+                            </contract7Present:Border.BackgroundTransition>-->
+                        </Border>
+
                         <Grid x:Name="ContentRoot" Width="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -114,17 +127,17 @@
                                 VerticalAlignment="Center"
                                 Visibility="Collapsed" />
                             <!--<ui:FontIcon
-                                x:Name="SubItemChevron"
-                                Grid.Column="2"
-                                Glyph="&#xE76C;"
-                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                FontSize="12"
-                                Foreground="{DynamicResource CommandBarFlyoutAppBarButtonSubItemChevronForeground}"
-                                Margin="12,0,12,0"
-                                VerticalAlignment="Center"
-                                Visibility="Collapsed" />-->
+                            x:Name="SubItemChevron"
+                            Grid.Column="2"
+                            Glyph="&#xE76C;"
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            FontSize="12"
+                            Foreground="{DynamicResource CommandBarFlyoutAppBarButtonSubItemChevronForeground}"
+                            Margin="12,0,12,0"
+                            VerticalAlignment="Center"
+                            Visibility="Collapsed" />-->
                         </Grid>
-                    </Border>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <!--#region ApplicationViewStates-->
                         <!-- Overflow -->
@@ -132,7 +145,7 @@
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="ContentViewbox" Property="Margin" Value="15,0,12,0" />
+                            <Setter TargetName="ContentViewbox" Property="Margin" Value="12,0,12,0" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <!-- OverflowWithToggleButtons -->
@@ -141,7 +154,7 @@
                             <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
+                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="39,0,12,0" />
                         </Trigger>
                         <!-- OverflowWithMenuIcons -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
@@ -153,7 +166,7 @@
                             <Setter TargetName="ContentViewbox" Property="Height" Value="16" />
                             <Setter TargetName="ContentViewbox" Property="Margin" Value="12,0,12,0" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="38,0,12,0" />
+                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="39,0,12,0" />
                         </Trigger>
                         <!-- OverflowWithToggleButtonsAndMenuIcons -->
                         <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtonsAndMenuIcons">
@@ -163,37 +176,49 @@
                             <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
                             <Setter TargetName="ContentViewbox" Property="Width" Value="16" />
                             <Setter TargetName="ContentViewbox" Property="Height" Value="16" />
-                            <Setter TargetName="ContentViewbox" Property="Margin" Value="15,0,12,0" />
+                            <Setter TargetName="ContentViewbox" Property="Margin" Value="39,0,12,0" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="53,0,12,0" />
+                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="67,0,12,0" />
                         </Trigger>
                         <!--#endregion-->
                         <!--#region CommonStates-->
                         <!-- PointerOver -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOver">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
                         </Trigger>
                         <!-- Pressed -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Pressed">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
                         </Trigger>
                         <!-- Disabled -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundDisabled}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
                         </Trigger>
                         <!-- OverflowPointerOver -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPointerOver">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver}" />
                         </Trigger>
                         <!-- OverflowPressed -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPressed">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed}" />
                         </Trigger>
                         <!-- OverflowSubMenuOpened -->
                         <!--<Trigger>
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
+                        <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
+                        <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                        <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                        <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver}" />
                         </Trigger>-->
                         <!--#endregion-->
                         <!-- KeyboardAcceleratorTextVisible -->
@@ -202,7 +227,7 @@
                         </Trigger>
                         <!-- HasFlyout -->
                         <!--<Trigger>
-                            <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
+                        <Setter TargetName="SubItemChevron" Property="Visibility" Value="Visible" />
                         </Trigger>-->
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -240,14 +265,10 @@
                     <ControlTemplate.Resources>
                         <StreamGeometry x:Key="Accept">M 6.25 17.138672 L 0.185547 11.064453 L 1.064453 10.185547 L 6.25 15.361328 L 18.935547 2.685547 L 19.814453 3.564453 L 6.25 17.138672 Z</StreamGeometry>
                     </ControlTemplate.Resources>
-                    <Border
+                    <Grid
                         x:Name="Root"
                         MinWidth="{TemplateBinding MinWidth}"
-                        MaxWidth="{TemplateBinding MaxWidth}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
+                        MaxWidth="{TemplateBinding MaxWidth}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -287,63 +308,71 @@
                                 <VisualState x:Name="KeyboardAcceleratorTextVisible" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid>
-                            <Rectangle
-                                x:Name="CheckedHighlightBackground"
-                                Fill="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundChecked}"
-                                Opacity="0" />
-                            <Grid x:Name="ContentRoot" Width="40">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <ui:FontIconFallback
-                                    x:Name="OverflowCheckGlyph"
-                                    Data="{StaticResource Accept}"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    FontSize="16"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Margin="15,4,12,4"
-                                    Opacity="0"
-                                    Visibility="Collapsed" />
-                                <Viewbox
-                                    x:Name="ContentViewbox"
-                                    Height="16"
-                                    HorizontalAlignment="Stretch">
-                                    <ContentPresenter
-                                        x:Name="Content"
-                                        Content="{TemplateBinding Icon}"
-                                        TextElement.Foreground="{TemplateBinding Foreground}" />
-                                </Viewbox>
-                                <TextBlock
-                                    x:Name="OverflowTextLabel"
-                                    Text="{TemplateBinding Label}"
-                                    Style="{DynamicResource BodyTextBlockStyle}"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    FontFamily="{TemplateBinding FontFamily}"
-                                    TextAlignment="Left"
-                                    TextWrapping="NoWrap"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    Margin="38,0,12,0"
-                                    Padding="0,5,0,7"
-                                    Visibility="Collapsed" />
-                                <TextBlock
-                                    x:Name="KeyboardAcceleratorTextLabel"
-                                    Grid.Column="1"
-                                    Style="{DynamicResource CaptionTextBlockStyle}"
-                                    Text="{TemplateBinding InputGestureText}"
-                                    MinWidth="34"
-                                    Margin="24,0,12,0"
-                                    Foreground="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground}"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    Visibility="Collapsed" />
-                            </Grid>
+
+                        <Border x:Name="AppBarButtonInnerBorder"
+                            Margin="{StaticResource CommandBarFlyoutAppBarButtonInnerBorderMargin}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            ui:FocusVisualHelper.IsTemplateFocusTarget="True">
+
+                            <!--<contract7Present:Border.BackgroundTransition>
+                                <contract7Present:BrushTransition Duration="0:0:0.083" />
+                            </contract7Present:Border.BackgroundTransition>-->
+                        </Border>
+
+                        <Grid x:Name="ContentRoot" Width="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ui:FontIconFallback
+                                x:Name="OverflowCheckGlyph"
+                                Data="{StaticResource Accept}"
+                                Foreground="{DynamicResource CommandBarFlyoutAppBarButtonForeground}"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontSize="12"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Margin="15,4,14,4"
+                                Opacity="0"
+                                Visibility="Collapsed" />
+                            <Viewbox
+                                x:Name="ContentViewbox"
+                                Height="16"
+                                HorizontalAlignment="Stretch">
+                                <ContentPresenter
+                                    x:Name="Content"
+                                    Content="{TemplateBinding Icon}"
+                                    TextElement.Foreground="{TemplateBinding Foreground}" />
+                            </Viewbox>
+                            <TextBlock
+                                x:Name="OverflowTextLabel"
+                                Text="{TemplateBinding Label}"
+                                Style="{DynamicResource BodyTextBlockStyle}"
+                                Foreground="{TemplateBinding Foreground}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                TextAlignment="Left"
+                                TextWrapping="NoWrap"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Margin="39,0,12,0"
+                                Padding="0,5,0,7"
+                                Visibility="Collapsed" />
+                            <TextBlock
+                                x:Name="KeyboardAcceleratorTextLabel"
+                                Grid.Column="1"
+                                Style="{DynamicResource CaptionTextBlockStyle}"
+                                Text="{TemplateBinding InputGestureText}"
+                                MinWidth="34"
+                                Margin="24,0,12,0"
+                                Foreground="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForeground}"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Visibility="Collapsed" />
                         </Grid>
-                    </Border>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <!--#region ApplicationViewStates-->
                         <!-- Overflow -->
@@ -351,7 +380,6 @@
                             <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
                             <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
                             <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
                         </Trigger>
@@ -364,80 +392,88 @@
                             <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
                             <Setter TargetName="ContentViewbox" Property="MaxWidth" Value="16" />
                             <Setter TargetName="ContentViewbox" Property="MaxHeight" Value="16" />
-                            <Setter TargetName="ContentViewbox" Property="Margin" Value="15,0,12,0" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ContentViewbox" Property="Margin" Value="39,0,12,0" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Visibility" Value="Visible" />
                             <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="53,0,12,0" />
+                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="67,0,12,0" />
                         </Trigger>
                         <!--#endregion-->
                         <!--#region CommonStates-->
                         <!-- PointerOver -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOver">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
                         </Trigger>
                         <!-- Pressed -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Pressed">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
                         </Trigger>
                         <!-- Disabled -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundDisabled}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
                         </Trigger>
                         <!-- Checked -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Checked">
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundChecked}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundChecked}" />
                         </Trigger>
                         <!-- CheckedPointerOver -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPointerOver">
-                            <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundCheckedPointerOver}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundCheckedPointerOver}" />
                         </Trigger>
                         <!-- CheckedPressed -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPressed">
-                            <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundCheckedPressed}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundCheckedPressed}" />
                         </Trigger>
                         <!-- CheckedDisabled -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedDisabled">
-                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
-                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundDisabled}" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <!-- OverflowPointerOver -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPointerOver">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver}" />
                         </Trigger>
                         <!-- OverflowPressed -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPressed">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource SystemControlBackgroundListMediumBrush}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed}" />
                         </Trigger>
                         <!-- OverflowChecked -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowChecked">
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
                         </Trigger>
                         <!-- OverflowCheckedPointerOver -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowCheckedPointerOver">
-                            <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
                         </Trigger>
                         <!-- OverflowCheckedPressed -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowCheckedPressed">
-                            <Setter TargetName="CheckedHighlightBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentHighBrush}" />
-                            <Setter TargetName="CheckedHighlightBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
+                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="Content" Property="TextElement.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
                         </Trigger>
                         <!--#endregion-->
                         <!-- KeyboardAcceleratorTextVisible -->
@@ -528,10 +564,10 @@
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                             <!--
-                                The closing animation plays the opening animation in reverse and then snaps to a position where
-                                the clip will fully hide the flyout, in preparation for closing the flyout.
-                                As such, it's expected and normal that we use OpenAnimation* template settings properties
-                                in the closing animation.
+                            The closing animation plays the opening animation in reverse and then snaps to a position where
+                            the clip will fully hide the flyout, in preparation for closing the flyout.
+                            As such, it's expected and normal that we use OpenAnimation* template settings properties
+                            in the closing animation.
                             -->
                             <Storyboard x:Key="ClosingStoryboard">
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OuterContentRootClipTransform" Storyboard.TargetProperty="X">
@@ -778,10 +814,10 @@
                                         Rect="{Binding Source={StaticResource TemplateSettingsProxy}, Path=FlyoutTemplateSettings.ContentClipRect}">
                                         <RectangleGeometry.Transform>
                                             <!--
-                                                If you have a value set by a binding and then animate that value,
-                                                the animation will clear the binding.  Because of that, we need to have
-                                                two translate transforms - one that we bind to a property,
-                                                and another that we can animate.
+                                            If you have a value set by a binding and then animate that value,
+                                            the animation will clear the binding.  Because of that, we need to have
+                                            two translate transforms - one that we bind to a property,
+                                            and another that we can animate.
                                             -->
                                             <TransformGroup>
                                                 <TranslateTransform X="{Binding Source={StaticResource TemplateSettingsProxy}, Path=FlyoutTemplateSettings.WidthExpansionDelta}" />
@@ -864,10 +900,10 @@
                                                     Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OverflowContentClipRect}">
                                                     <RectangleGeometry.Transform>
                                                         <!--
-                                                            If you have a value set by a binding and then animate that value,
-                                                            the animation will clear the binding.  Because of that, we need to have
-                                                            two translate transforms - one that we bind to a property,
-                                                            and another that we can animate.
+                                                        If you have a value set by a binding and then animate that value,
+                                                        the animation will clear the binding.  Because of that, we need to have
+                                                        two translate transforms - one that we bind to a property,
+                                                        and another that we can animate.
                                                         -->
                                                         <TransformGroup>
                                                             <TranslateTransform X="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionDelta}" />

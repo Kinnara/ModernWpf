@@ -27,7 +27,7 @@
                 <ui:AppBarButton x:Name="PasteButton1" AutomationProperties.AutomationId="PasteButton1" Label="Paste" Icon="Paste" Click="OnElementClicked" />
                 <ui:AppBarButton x:Name="BoldButton1" AutomationProperties.AutomationId="BoldButton1" Label="Bold" Icon="Bold" Click="OnElementClicked" />
                 <ui:AppBarButton x:Name="ItalicButton1" AutomationProperties.AutomationId="ItalicButton1" Label="Italic" Icon="Italic" Click="OnElementClicked" />
-                <ui:AppBarButton x:Name="UnderlineButton1" AutomationProperties.AutomationId="UnderlineButton1" Label="Underline" Icon="Underline" Click="OnElementClicked" />
+                <ui:AppBarToggleButton x:Name="UnderlineButton1" AutomationProperties.AutomationId="UnderlineButton1" Label="Underline" Icon="Underline" Click="OnElementClicked" />
                 <muxc:CommandBarFlyout.SecondaryCommands>
                     <ui:AppBarButton x:Name="UndoButton1" AutomationProperties.AutomationId="UndoButton1" Label="Undo" Icon="Undo" Click="OnElementClicked" />
                     <ui:AppBarButton x:Name="RedoButton1" AutomationProperties.AutomationId="RedoButton1" Label="Redo" Icon="Redo" Click="OnElementClicked" />
