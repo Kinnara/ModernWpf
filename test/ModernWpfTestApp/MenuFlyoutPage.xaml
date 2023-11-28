@@ -48,7 +48,29 @@
                                 <muxc:SymbolIcon Symbol="Delete" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
+                        <ToggleMenuFlyoutItem Text="ToggleMenuFlyoutItem">
+                            <ToggleMenuFlyoutItem.Icon>
+                                <muxc:SymbolIcon Symbol="Delete" />
+                            </ToggleMenuFlyoutItem.Icon>
+                        </ToggleMenuFlyoutItem>
+                        <ToggleMenuFlyoutItem Text="ToggleMenuFlyoutItem" InputGestureText="Ctrl+S">
+                            <ToggleMenuFlyoutItem.Icon>
+                                <muxc:SymbolIcon Symbol="Delete" />
+                            </ToggleMenuFlyoutItem.Icon>
+                        </ToggleMenuFlyoutItem>
+                        <ToggleMenuFlyoutItem Text="ToggleMenuFlyoutItem" />
                         <MenuFlyoutSeparator/>
+                        <RadioMenuFlyoutItem Text="Radio And Has Icon">
+                            <RadioMenuFlyoutItem.Icon>
+                                <muxc:SymbolIcon Symbol="Delete" />
+                            </RadioMenuFlyoutItem.Icon>
+                        </RadioMenuFlyoutItem>
+                        <RadioMenuFlyoutItem Text="Radio with icon and accelerator" InputGestureText="Ctrl+S">
+                            <RadioMenuFlyoutItem.Icon>
+                                <muxc:SymbolIcon Symbol="Delete" />
+                            </RadioMenuFlyoutItem.Icon>
+                        </RadioMenuFlyoutItem>
+                        <RadioMenuFlyoutItem Text="Radio with accelerator" InputGestureText="Ctrl+S"/>
                         <MenuFlyoutItem Text="Rename"/>
                         <MenuFlyoutItem Text="Select"/>
                     </MenuFlyout>
