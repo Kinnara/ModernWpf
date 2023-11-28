@@ -209,7 +209,7 @@
                     Grid.Column="3"
                     Style="{StaticResource CaptionTextBlockStyle}"
                     Text="{TemplateBinding InputGestureText}"
-                    Margin="24,4,0,0"
+                    Margin="24,0,0,0"
                     Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
                     HorizontalAlignment="Right"
                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
@@ -231,16 +231,22 @@
             <Trigger Property="IsHighlighted" Value="True">
                 <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutItemBackgroundPointerOver}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
+                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
+                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
                 <Setter TargetName="KeyboardAcceleratorTextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
                 <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutItemBackgroundPressed}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPressed}" />
+                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPressed}" />
+                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPressed}" />
                 <Setter TargetName="KeyboardAcceleratorTextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutItemBackgroundDisabled}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundDisabled}" />
+                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutItemForegroundDisabled}" />
+                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundDisabled}" />
                 <Setter TargetName="KeyboardAcceleratorTextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled}" />
             </Trigger>
         </ControlTemplate.Triggers>
@@ -359,21 +365,25 @@
                 <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPointerOver}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
                 <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronPointerOver}" />
+                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
                 <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPressed}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
                 <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronPressed}" />
+                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
             </Trigger>
             <Trigger Property="IsSubmenuOpen" Value="True">
                 <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundSubMenuOpened}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
                 <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronSubMenuOpened}" />
+                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundDisabled}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
                 <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronDisabled}" />
+                <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
             </Trigger>
             <!--<Trigger SourceName="SubMenuScrollViewer" Property="ScrollViewer.CanContentScroll" Value="false" >
                 <Setter TargetName="OpaqueRect" Property="Canvas.Top" Value="{Binding ElementName=SubMenuScrollViewer, Path=VerticalOffset}" />
