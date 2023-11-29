@@ -11,6 +11,8 @@
     </ResourceDictionary.MergedDictionaries>
 
     <sys:Double x:Key="MenuBarHeight">40</sys:Double>
+    <Thickness x:Key="MenuBarItemButtonPadding">10,4,10,4</Thickness>
+    <Thickness x:Key="MenuBarItemMargin">4,4,4,4</Thickness>
     <Thickness x:Key="MenuFlyoutScrollerMargin">0,4,0,4</Thickness>
     <Thickness x:Key="MenuFlyoutItemRevealBorderThickness">1</Thickness>
     <Thickness x:Key="ToggleMenuFlyoutItemRevealBorderThickness">1</Thickness>
@@ -43,23 +45,26 @@
     <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator" BasedOn="{StaticResource DefaultMenuItemSeparatorStyle}" />
 
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=TopLevelItemTemplateKey}" TargetType="MenuItem">
-        <Grid
-            x:Name="ContentRoot"
-            Background="{TemplateBinding Background}"
-            SnapsToDevicePixels="True">
-            <Border
-                x:Name="Background"
-                Background="{TemplateBinding Background}"
-                BorderThickness="{TemplateBinding BorderThickness}"
-                BorderBrush="{TemplateBinding BorderBrush}" />
+        <local:BorderEx x:Name="ContentRoot"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        ClipToBounds="True"
+                        SnapsToDevicePixels="True">
+            <Grid>
+                <Border
+                    x:Name="Background"
+                    Background="{TemplateBinding Background}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    BorderBrush="{TemplateBinding BorderBrush}" />
 
-            <ContentPresenter
-                ContentSource="Header"
-                RecognizesAccessKey="True"
-                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                Margin="12,0,12,0"
-                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-        </Grid>
+                <ContentPresenter
+                    ContentSource="Header"
+                    RecognizesAccessKey="True"
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                    Margin="{StaticResource MenuBarItemButtonPadding}"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+            </Grid>
+        </local:BorderEx>
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter TargetName="Background" Property="Background" Value="{DynamicResource MenuBarItemBackgroundPointerOver}" />
@@ -73,61 +78,64 @@
     </ControlTemplate>
 
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=TopLevelHeaderTemplateKey}" TargetType="MenuItem">
-        <Grid
-            x:Name="ContentRoot"
-            Background="{TemplateBinding Background}"
-            SnapsToDevicePixels="True">
-            <Border
-                x:Name="Background"
-                Background="{TemplateBinding Background}"
-                BorderThickness="{TemplateBinding BorderThickness}"
-                BorderBrush="{TemplateBinding BorderBrush}" />
+        <local:BorderEx x:Name="ContentRoot"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                        ClipToBounds="True"
+                        SnapsToDevicePixels="True">
+            <Grid>
+                <Border
+                    x:Name="Background"
+                    Background="{TemplateBinding Background}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    BorderBrush="{TemplateBinding BorderBrush}" />
 
-            <ContentPresenter
-                ContentSource="Header"
-                RecognizesAccessKey="True"
-                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                Margin="12,0,12,0"
-                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                <ContentPresenter
+                    ContentSource="Header"
+                    RecognizesAccessKey="True"
+                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                    Margin="{StaticResource MenuBarItemButtonPadding}"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
-            <primitives:MenuPopup
-                x:Name="PART_Popup"
-                AllowsTransparency="true"
-                Focusable="false"
-                IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
-                Placement="Bottom">
-                <primitives:ThemeShadowChrome
-                    IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
-                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
-                    <Border
-                        x:Name="SubMenuRoot"
-                        Background="{DynamicResource MenuFlyoutPresenterBackground}"
+                <primitives:MenuPopup
+                    x:Name="PART_Popup"
+                    AllowsTransparency="true"
+                    Focusable="false"
+                    IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                    PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+                    Placement="Bottom">
+                    <primitives:ThemeShadowChrome
+                        IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
-                        <Grid>
-                            <ScrollViewer
-                                x:Name="SubMenuScrollViewer"
-                                Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
-                                                                              TypeInTargetAssembly={x:Type FrameworkElement}}}"
-                                Margin="{DynamicResource MenuFlyoutPresenterThemePadding}"
-                                MinWidth="{DynamicResource FlyoutThemeMinWidth}">
-                                <ItemsPresenter
-                                    RenderOptions.ClearTypeHint="Enabled"
-                                    KeyboardNavigation.DirectionalNavigation="Cycle"
-                                    KeyboardNavigation.TabNavigation="Cycle"
-                                    Grid.IsSharedSizeScope="true"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                            </ScrollViewer>
-                            <Border
-                                x:Name="SubMenuBorder"
-                                BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
-                                BorderThickness="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}"
-                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
-                        </Grid>
-                    </Border>
-                </primitives:ThemeShadowChrome>
-            </primitives:MenuPopup>
-        </Grid>
+                        <Border
+                            x:Name="SubMenuRoot"
+                            Background="{DynamicResource MenuFlyoutPresenterBackground}"
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
+                            <Grid>
+                                <ScrollViewer
+                                    x:Name="SubMenuScrollViewer"
+                                    Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
+                                    TypeInTargetAssembly={x:Type FrameworkElement}}}"
+                                    Margin="{DynamicResource MenuFlyoutPresenterThemePadding}"
+                                    MinWidth="{DynamicResource FlyoutThemeMinWidth}">
+                                    <ItemsPresenter
+                                        RenderOptions.ClearTypeHint="Enabled"
+                                        KeyboardNavigation.DirectionalNavigation="Cycle"
+                                        KeyboardNavigation.TabNavigation="Cycle"
+                                        Grid.IsSharedSizeScope="true"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </ScrollViewer>
+                                <Border
+                                    x:Name="SubMenuBorder"
+                                    BorderBrush="{DynamicResource MenuFlyoutPresenterBorderBrush}"
+                                    BorderThickness="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}"
+                                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
+                            </Grid>
+                        </Border>
+                    </primitives:ThemeShadowChrome>
+                </primitives:MenuPopup>
+            </Grid>
+        </local:BorderEx>
         <ControlTemplate.Triggers>
             <Trigger Property="IsSuspendingPopupAnimation" Value="true">
                 <Setter TargetName="PART_Popup" Property="PopupAnimation" Value="None" />
@@ -172,7 +180,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                
+
                 <local:FontIconFallback
                     x:Name="CheckGlyph"
                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
@@ -273,7 +281,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                
+
                 <Viewbox
                     x:Name="IconRoot"
                     Grid.Column="1"
@@ -333,7 +341,7 @@
                                 <ScrollViewer
                                     x:Name="SubMenuScrollViewer"
                                     Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
-                                                                                  TypeInTargetAssembly={x:Type FrameworkElement}}}"
+                                    TypeInTargetAssembly={x:Type FrameworkElement}}}"
                                     Margin="{DynamicResource MenuFlyoutPresenterThemePadding}"
                                     MinWidth="{DynamicResource FlyoutThemeMinWidth}">
                                     <ItemsPresenter
@@ -386,8 +394,8 @@
                 <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
             </Trigger>
             <!--<Trigger SourceName="SubMenuScrollViewer" Property="ScrollViewer.CanContentScroll" Value="false" >
-                <Setter TargetName="OpaqueRect" Property="Canvas.Top" Value="{Binding ElementName=SubMenuScrollViewer, Path=VerticalOffset}" />
-                <Setter TargetName="OpaqueRect" Property="Canvas.Left" Value="{Binding ElementName=SubMenuScrollViewer, Path=HorizontalOffset}" />
+            <Setter TargetName="OpaqueRect" Property="Canvas.Top" Value="{Binding ElementName=SubMenuScrollViewer, Path=VerticalOffset}" />
+            <Setter TargetName="OpaqueRect" Property="Canvas.Left" Value="{Binding ElementName=SubMenuScrollViewer, Path=HorizontalOffset}" />
             </Trigger>-->
         </ControlTemplate.Triggers>
     </ControlTemplate>
@@ -411,17 +419,19 @@
                 <Setter Property="Background" Value="{DynamicResource MenuBarItemBackground}" />
                 <Setter Property="BorderBrush" Value="{DynamicResource MenuBarItemBorderBrush}" />
                 <Setter Property="BorderThickness" Value="{DynamicResource MenuBarItemBorderThickness}" />
+                <Setter Property="Margin" Value="{DynamicResource MenuBarItemMargin}"/>
+                <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=TopLevelHeaderTemplateKey}}" />
                 <Setter Property="IsTabStop" Value="True" />
-                <Setter Property="Height" Value="{StaticResource MenuBarHeight}" />
             </Trigger>
             <Trigger Property="Role" Value="TopLevelItem">
                 <Setter Property="Background" Value="{DynamicResource MenuBarItemBackground}" />
                 <Setter Property="BorderBrush" Value="{DynamicResource MenuBarItemBorderBrush}" />
                 <Setter Property="BorderThickness" Value="{DynamicResource MenuBarItemBorderThickness}" />
+                <Setter Property="Margin" Value="{DynamicResource MenuBarItemMargin}"/>
+                <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=TopLevelItemTemplateKey}}" />
                 <Setter Property="IsTabStop" Value="True" />
-                <Setter Property="Height" Value="{StaticResource MenuBarHeight}" />
             </Trigger>
             <Trigger Property="Role" Value="SubmenuHeader">
                 <Setter Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackground}" />
