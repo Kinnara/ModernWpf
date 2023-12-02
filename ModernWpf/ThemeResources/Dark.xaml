@@ -793,6 +793,7 @@
     <m:StaticResource x:Key="ComboBoxFocusedDropDownBackgroundPointerPressed" ResourceKey="ControlAltFillColorQuarternaryBrush" />
     <m:StaticResource x:Key="ComboBoxEditableDropDownGlyphForeground" ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ComboBoxItemPillFillBrush" ResourceKey="AccentFillColorDefaultBrush"/>
+    <Thickness x:Key="ComboBoxDropdownBorderPadding">0</Thickness>
 
     <!-- Resources for CommandBar -->
     <sys:Double x:Key="CommandBarOverflowMinWidth">160</sys:Double>
