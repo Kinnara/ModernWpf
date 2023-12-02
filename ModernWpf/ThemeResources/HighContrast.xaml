@@ -1645,10 +1645,12 @@
                     <Border
                         BorderBrush="{StaticResource SystemControlFocusVisualPrimaryBrush}"
                         BorderThickness="2"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Border
                             BorderBrush="{StaticResource SystemControlFocusVisualSecondaryBrush}"
-                            BorderThickness="1" />
+                            BorderThickness="1"
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
