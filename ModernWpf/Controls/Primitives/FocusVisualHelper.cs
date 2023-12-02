@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -486,6 +485,7 @@ namespace ModernWpf.Controls.Primitives
                         TransferValue(focusedElement, focusVisual, FocusVisualPrimaryThicknessProperty);
                         TransferValue(focusedElement, focusVisual, FocusVisualSecondaryBrushProperty);
                         TransferValue(focusedElement, focusVisual, FocusVisualSecondaryThicknessProperty);
+                        TransferValue(focusedElement, focusVisual, ControlHelper.CornerRadiusProperty);
                         focusVisual.Margin = GetFocusVisualMargin(focusedElement);
                     }
 
@@ -502,6 +502,7 @@ namespace ModernWpf.Controls.Primitives
                     focusVisual.ClearValue(FocusVisualPrimaryThicknessProperty);
                     focusVisual.ClearValue(FocusVisualSecondaryBrushProperty);
                     focusVisual.ClearValue(FocusVisualSecondaryThicknessProperty);
+                    focusVisual.ClearValue(ControlHelper.CornerRadiusProperty);
                     focusVisual.ClearValue(FrameworkElement.MarginProperty);
                     focusVisual.ClearValue(Control.TemplateProperty);
                     focusVisual.ClearValue(FocusedElementProperty);
@@ -535,6 +536,7 @@ namespace ModernWpf.Controls.Primitives
                 TransferValue(focusedElement, control, FocusVisualPrimaryThicknessProperty);
                 TransferValue(focusedElement, control, FocusVisualSecondaryBrushProperty);
                 TransferValue(focusedElement, control, FocusVisualSecondaryThicknessProperty);
+                TransferValue(focusedElement, control, ControlHelper.CornerRadiusProperty);
                 _adorderChild = control;
                 IsClipEnabled = true;
                 IsHitTestVisible = false;

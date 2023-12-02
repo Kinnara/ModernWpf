@@ -26,6 +26,7 @@
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="-7,-3,-7,-3" />
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ToggleSwitch">
@@ -351,11 +352,12 @@
                                     <ColumnDefinition Width="12" MaxWidth="12" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Grid
+                                <Border
                                     x:Name="SwitchAreaGrid"
                                     Grid.RowSpan="3"
                                     Grid.ColumnSpan="3"
                                     Margin="0,5"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
                                     ui:FocusVisualHelper.IsTemplateFocusTarget="True"
                                     Background="{DynamicResource ToggleSwitchContainerBackground}" />
                                 <ContentPresenter

@@ -49,6 +49,8 @@
                                 <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
                                 <Setter Property="FontSize" Value="20" />
                                 <Setter Property="Background" Value="{DynamicResource CalendarViewNavigationButtonBackground}" />
+                                <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+                                <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="2,2,2,0"/>
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
@@ -57,7 +59,8 @@
                                                 Background="{TemplateBinding Background}"
                                                 BorderBrush="{DynamicResource CalendarViewNavigationButtonBorderBrush}"
                                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                                Margin="{TemplateBinding Padding}">
+                                                Margin="{TemplateBinding Padding}"
+                                                CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
                                                 <ContentPresenter
                                                     x:Name="Text"
                                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"

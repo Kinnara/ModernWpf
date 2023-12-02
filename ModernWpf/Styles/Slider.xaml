@@ -151,11 +151,12 @@
                 TextWrapping="Wrap"
                 Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-            <Grid
+            <Border
                 x:Name="SliderContainer"
                 Grid.Row="1"
                 Background="{DynamicResource SliderContainerBackground}"
-                primitives:FocusVisualHelper.IsTemplateFocusTarget="True">
+                primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
+                CornerRadius="{DynamicResource ControlCornerRadius}">
                 <Grid
                     x:Name="HorizontalTemplate"
                     MinHeight="{DynamicResource SliderHorizontalHeight}">
@@ -230,6 +231,7 @@
                                 DataContext="{TemplateBinding Value}"
                                 Height="{DynamicResource SliderHorizontalThumbHeight}"
                                 Width="{DynamicResource SliderHorizontalThumbWidth}"
+                                primitives:ControlHelper.CornerRadius="{DynamicResource ControlCornerRadius}"
                                 primitives:FocusVisualHelper.FocusVisualMargin="-14,-6,-14,-6">
                                 <Thumb.Resources>
                                     <Style TargetType="ToolTip" BasedOn="{StaticResource SliderAutoToolTipStyle}" />
@@ -238,7 +240,7 @@
                         </Track.Thumb>
                     </Track>
                 </Grid>
-            </Grid>
+            </Border>
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="TickPlacement" Value="TopLeft">
@@ -296,11 +298,12 @@
                 Visibility="{TemplateBinding primitives:ControlHelper.HeaderVisibility}"
                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
             </local:ContentPresenterEx>
-            <Grid
+            <Border
                 x:Name="SliderContainer"
                 Grid.Row="1"
                 Background="{DynamicResource SliderContainerBackground}"
-                primitives:FocusVisualHelper.IsTemplateFocusTarget="True">
+                primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
+                CornerRadius="{DynamicResource ControlCornerRadius}">
                 <Grid
                     x:Name="VerticalTemplate"
                     MinWidth="{DynamicResource SliderVerticalWidth}">
@@ -376,6 +379,7 @@
                                 DataContext="{TemplateBinding Value}"
                                 Width="{DynamicResource SliderVerticalThumbWidth}"
                                 Height="{DynamicResource SliderVerticalThumbHeight}"
+                                primitives:ControlHelper.CornerRadius="{DynamicResource ControlCornerRadius}"
                                 primitives:FocusVisualHelper.FocusVisualMargin="-6,-14,-6,-14">
                                 <Thumb.Resources>
                                     <Style TargetType="ToolTip" BasedOn="{StaticResource SliderAutoToolTipStyle}" />
@@ -384,7 +388,7 @@
                         </Track.Thumb>
                     </Track>
                 </Grid>
-            </Grid>
+            </Border>
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="TickPlacement" Value="TopLeft">
