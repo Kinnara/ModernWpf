@@ -17,6 +17,9 @@ using System.Collections.Generic;
 using XamlControlsResources = ModernWpf.Controls.XamlControlsResources;
 using System.Windows.Markup;
 using System;
+using ModernWpf.Controls;
+using System.Text;
+using System.Collections;
 
 #if USING_TAEF
 using WEX.TestExecution;
@@ -32,6 +35,163 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
     [TestClass]
     public class CommonStylesApiTests : ApiTestBase
     {
+        [TestMethod]
+        public void VerifyAllThemesContainSameResourceKeys()
+        {
+            bool dictionariesContainSameElements = true;
+            RunOnUIThread.Execute(() =>
+            {
+                var resourceDictionaries = new ResourceDictionaryEx();
+                resourceDictionaries.ThemeDictionaries.Add("Default", ThemeResources.Current.GetThemeDictionary("Dark"));
+                resourceDictionaries.ThemeDictionaries.Add("Light", ThemeResources.Current.GetThemeDictionary("Light"));
+                resourceDictionaries.ThemeDictionaries.Add("HighContrast", ThemeResources.Current.GetThemeDictionary("HighContrast"));
+                Log.Comment("ThemeDictionaries");
+
+                var defaultThemeDictionary = resourceDictionaries.ThemeDictionaries["Default"] as ResourceDictionary;
+
+                foreach (var dictionaryName in resourceDictionaries.ThemeDictionaries.Keys)
+                {
+                    // Skip the Default theme dictionary
+                    if (dictionaryName.ToString() == "Default")
+                    {
+                        continue;
+                    }
+
+                    Log.Comment("Comparing against " + dictionaryName.ToString());
+                    var themeDictionary = resourceDictionaries.ThemeDictionaries[dictionaryName] as ResourceDictionary;
+
+                    bool allKeysInDefaultExistInDictionary = AreKeysFromExpectedInActualDictionary(defaultThemeDictionary, "Default", themeDictionary, dictionaryName.ToString());
+                    bool allKeysInDictionaryExistInDefault = AreKeysFromExpectedInActualDictionary(themeDictionary, dictionaryName.ToString(), defaultThemeDictionary, "Default");
+
+                    dictionariesContainSameElements &= (allKeysInDefaultExistInDictionary && allKeysInDictionaryExistInDefault);
+                }
+
+                Verify.AreEqual(0, resourceDictionaries.MergedDictionaries.Count, "MergedDictionaries is not empty, Verify if you really wanted to update the merged dictionary. If so, update the test");
+            });
+
+            Verify.IsTrue(dictionariesContainSameElements, "Resource Keys you have added are missing in one of the theme dictionaries. This is trouble since we might end up crashing when trying to resolve the key in that Theme.");
+            if (!dictionariesContainSameElements)
+            {
+                Log.Error("Resource Keys you have added are missing in one of the theme dictionaries. This is trouble since we might end up crashing when trying to resolve the key in that Theme.");
+            }
+        }
+
+        [TestMethod]
+        public void VerifyNoResourceKeysWereRemovedFromPreviousStableReleaseInV2Styles()
+        {
+            /*
+            if (PlatformConfiguration.IsOSVersionLessThan(OSVersion.Redstone5))
+            {
+                // https://github.com/microsoft/microsoft-ui-xaml/issues/4674
+                Log.Comment("Skipping validation below RS5.");
+                return;
+            }
+            */
+
+            RunOnUIThread.Execute(() =>
+            {
+                EnsureNoMissingThemeResources(
+                BaselineResources.BaselineResourcesList2dot5Stable,
+                ThemeResources.Current);
+            });
+        }
+
+        private bool AreKeysFromExpectedInActualDictionary(ResourceDictionary expectedDictionary, string expectedDictionaryName, ResourceDictionary actualDictionary, string actualDictionaryName)
+        {
+            List<string> missingKeysInActualDictionary = new List<string>();
+            foreach (DictionaryEntry entry in expectedDictionary)
+            {
+                if (!actualDictionary.Contains(entry.Key))
+                {
+                    missingKeysInActualDictionary.Add(entry.Key.ToString());
+                }
+            }
+
+            if (missingKeysInActualDictionary.Count > 0)
+            {
+                Log.Comment("Keys found in " + expectedDictionaryName + " but not in " + actualDictionaryName);
+                foreach (var missingKey in missingKeysInActualDictionary)
+                {
+                    Log.Error("* " + missingKey);
+                }
+            }
+
+            return (missingKeysInActualDictionary.Count == 0);
+        }
+
+        private void EnsureNoMissingThemeResources(IList<string> baseline, ThemeResources dictionaryToVerify)
+        {
+            var actualResourcesKeys = new HashSet<string>();
+            var resourceDictionaries = dictionaryToVerify;
+
+            foreach (var dictionaryName in resourceDictionaries.ThemeDictionaries.Keys)
+            {
+                var themeDictionary = resourceDictionaries.ThemeDictionaries[dictionaryName] as ResourceDictionary;
+
+                foreach (DictionaryEntry entry in themeDictionary)
+                {
+                    string entryKey = entry.Key as string;
+                    if (!actualResourcesKeys.Contains(entryKey))
+                    {
+                        actualResourcesKeys.Add(entryKey);
+                    }
+                }
+            }
+
+            foreach (DictionaryEntry entry in resourceDictionaries)
+            {
+                string entryKey = entry.Key as string;
+                if (!actualResourcesKeys.Contains(entryKey))
+                {
+                    actualResourcesKeys.Add(entryKey);
+                }
+            }
+
+            StringBuilder missingKeysList = new StringBuilder();
+
+            bool allBaselineResourceKeysExist = true;
+            foreach (var baselineResourceKey in baseline)
+            {
+                if (!actualResourcesKeys.Contains(baselineResourceKey))
+                {
+                    missingKeysList.Append(baselineResourceKey + ", ");
+                    allBaselineResourceKeysExist = false;
+                }
+            }
+
+            Verify.IsTrue(allBaselineResourceKeysExist, "List of missing resource keys: " + missingKeysList.ToString());
+            if (!allBaselineResourceKeysExist)
+            {
+                Log.Error("List of missing resource keys: " + missingKeysList.ToString());
+            }
+        }
+
+        public void DumpThemeResources()
+        {
+            RunOnUIThread.Execute(() =>
+            {
+                var resourceDictionary = ThemeResources.Current;
+
+                Log.Comment("ThemeDictionaries");
+                foreach (var key in resourceDictionary.ThemeDictionaries.Keys)
+                {
+                    Log.Comment("* " + key.ToString());
+
+                    var themeDictionary = resourceDictionary.ThemeDictionaries[key] as ResourceDictionary;
+                    foreach (var entry in themeDictionary)
+                    {
+                        Log.Comment("\t*" + entry.ToString());
+                    }
+                }
+
+                Log.Comment("Entries in Resource Dictionary");
+                foreach (var entry in resourceDictionary)
+                {
+                    Log.Comment("* " + entry.ToString());
+                }
+            });
+        }
+
         [TestMethod]
         public void VerifyUseCompactResourcesAPI()
         {

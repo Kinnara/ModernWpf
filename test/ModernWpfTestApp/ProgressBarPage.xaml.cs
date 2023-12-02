@@ -67,19 +67,23 @@ namespace MUXControlsTestApp
 
         public void UpdateMinMax_Click(object sender, RoutedEventArgs e)
         {
-            TestProgressBar.Maximum = string.IsNullOrEmpty(MaximumInput.Text) ? double.Parse(ControlHelper.GetPlaceholderText(MaximumInput)) : double.Parse(MaximumInput.Text);
-            TestProgressBar.Minimum = string.IsNullOrEmpty(MinimumInput.Text) ? double.Parse(ControlHelper.GetPlaceholderText(MinimumInput)) : double.Parse(MinimumInput.Text);
+            TestProgressBar.Maximum = String.IsNullOrEmpty(MaximumInput.Text) ? Double.Parse(MaximumInput.PlaceholderText) : Double.Parse(MaximumInput.Text);
+            TestWUXProgressBar.Maximum = String.IsNullOrEmpty(MaximumInput.Text) ? Double.Parse(MaximumInput.PlaceholderText) : Double.Parse(MaximumInput.Text);
+            TestProgressBar.Minimum = String.IsNullOrEmpty(MinimumInput.Text) ? Double.Parse(MinimumInput.PlaceholderText) : Double.Parse(MinimumInput.Text);
+            TestWUXProgressBar.Minimum = String.IsNullOrEmpty(MinimumInput.Text) ? Double.Parse(MinimumInput.PlaceholderText) : Double.Parse(MinimumInput.Text);
             ROValueText.Text = TestProgressBar.Value.ToString();
         }
 
         public void UpdateWidth_Click(object sender, RoutedEventArgs e)
         {
-            TestProgressBar.Width = string.IsNullOrEmpty(WidthInput.Text) ? double.Parse(ControlHelper.GetPlaceholderText(WidthInput)) : double.Parse(WidthInput.Text);
+            TestProgressBar.Width = String.IsNullOrEmpty(WidthInput.Text) ? Double.Parse(WidthInput.PlaceholderText) : Double.Parse(WidthInput.Text);
+            TestWUXProgressBar.Width = String.IsNullOrEmpty(WidthInput.Text) ? Double.Parse(WidthInput.PlaceholderText) : Double.Parse(WidthInput.Text);
         }
 
         public void UpdateValue_Click(object sender, RoutedEventArgs e)
         {
-            TestProgressBar.Value = string.IsNullOrEmpty(ValueInput.Text) ? double.Parse(ControlHelper.GetPlaceholderText(ValueInput)) : double.Parse(ValueInput.Text);
+            TestProgressBar.Value = String.IsNullOrEmpty(ValueInput.Text) ? Double.Parse(ValueInput.PlaceholderText) : Double.Parse(ValueInput.Text);
+            TestWUXProgressBar.Value = String.IsNullOrEmpty(ValueInput.Text) ? Double.Parse(ValueInput.PlaceholderText) : Double.Parse(ValueInput.Text);
             ROValueText.Text = TestProgressBar.Value.ToString();
         }
 
@@ -94,6 +98,15 @@ namespace MUXControlsTestApp
                 TestProgressBar.Value += 1;
             }
             ROValueText.Text = TestProgressBar.Value.ToString();
+
+            if (TestWUXProgressBar.Value + 1 > TestWUXProgressBar.Maximum)
+            {
+                TestWUXProgressBar.Value = (int)(TestWUXProgressBar.Minimum + 0.5);
+            }
+            else
+            {
+                TestWUXProgressBar.Value += 1;
+            }
         }
 
         public void UpdatePadding_Click(object sender, RoutedEventArgs e)
@@ -103,6 +116,8 @@ namespace MUXControlsTestApp
 
             TestProgressBar.Padding = new Thickness(paddingLeft, 0, paddingRight, 0);
             ROValueText.Text = TestProgressBar.Value.ToString();
+
+            TestWUXProgressBar.Padding = new Thickness(paddingLeft, 0, paddingRight, 0);
         }
 
         private void ToggleTheme_Click(object sender, RoutedEventArgs e)
