@@ -30,6 +30,7 @@
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="-7,-3,-7,-3" />
+        <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
@@ -37,15 +38,15 @@
                     <ControlTemplate.Resources>
                         <primitives:BrushToColorConverter x:Key="BrushToColorConverter" />
                     </ControlTemplate.Resources>
-                    
+
                     <Border
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                        SnapsToDevicePixels="True">   
-                        
+                        SnapsToDevicePixels="True">
+
                         <Border.Resources>
                             <primitives:BindingProxy x:Key="RadioButtonOuterEllipseFillPointerOverProxy" Value="{DynamicResource RadioButtonOuterEllipseFillPointerOver}" />
                             <primitives:BindingProxy x:Key="RadioButtonOuterEllipseFillPressedProxy" Value="{DynamicResource RadioButtonOuterEllipseFillPressed}" />
@@ -53,7 +54,7 @@
                             <primitives:BindingProxy x:Key="RadioButtonOuterEllipseCheckedStrokeDisabledProxy" Value="{DynamicResource RadioButtonOuterEllipseCheckedStrokeDisabled}" />
                             <primitives:BindingProxy x:Key="RadioButtonOuterEllipseCheckedFillDisabledProxy" Value="{DynamicResource RadioButtonOuterEllipseCheckedFillDisabled}" />
                         </Border.Resources>
-                        
+
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -134,7 +135,7 @@
                                 <VisualState x:Name="Indeterminate" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        
+
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="20" />

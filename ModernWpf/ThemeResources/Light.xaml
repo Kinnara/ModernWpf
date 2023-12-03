@@ -1770,10 +1770,12 @@
                     <Border
                         BorderBrush="{TemplateBinding primitives:FocusVisualHelper.FocusVisualPrimaryBrush}"
                         BorderThickness="{TemplateBinding primitives:FocusVisualHelper.FocusVisualPrimaryThickness}"
+                        CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
                         <Border
                             BorderBrush="{TemplateBinding primitives:FocusVisualHelper.FocusVisualSecondaryBrush}"
-                            BorderThickness="{TemplateBinding primitives:FocusVisualHelper.FocusVisualSecondaryThickness}" />
+                            BorderThickness="{TemplateBinding primitives:FocusVisualHelper.FocusVisualSecondaryThickness}"
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
