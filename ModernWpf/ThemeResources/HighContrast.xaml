@@ -952,6 +952,8 @@
     <!-- Resources for MenuFlyout -->
     <sys:Double x:Key="MenuFlyoutSeparatorThemeHeight">1</sys:Double>
     <Thickness x:Key="MenuFlyoutPresenterBorderThemeThickness">2</Thickness>
+    <Thickness x:Key="MenuFlyoutItemBorderThickness">0</Thickness>
+    <Thickness x:Key="MenuFlyoutSubItemBorderThickness">0</Thickness>
     <Thickness x:Key="MenuFlyoutItemThemePadding">11,9,11,10</Thickness>
     <Thickness x:Key="MenuFlyoutItemThemePaddingNarrow">11,4,11,7</Thickness>
     <Thickness x:Key="MenuFlyoutItemDoublePlaceholderThemeThickness">56,0,0,0</Thickness>
@@ -963,6 +965,7 @@
     <m:StaticResource x:Key="MenuFlyoutItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
     <m:StaticResource x:Key="MenuFlyoutItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
     <m:StaticResource x:Key="MenuFlyoutItemBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="MenuFlyoutItemBackgroundBrush" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="MenuFlyoutItemForeground" ResourceKey="SystemColorWindowTextColorBrush" />
     <m:StaticResource x:Key="MenuFlyoutItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="MenuFlyoutItemForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
@@ -1010,6 +1013,7 @@
     <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundPressed" ResourceKey="SystemControlHighlightListAccentHighBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundSubMenuOpened" ResourceKey="SystemControlHighlightListLowBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="MenuFlyoutSubItemBackgroundBrush" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemForeground" ResourceKey="SystemColorWindowTextColorBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="MenuFlyoutSubItemForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
