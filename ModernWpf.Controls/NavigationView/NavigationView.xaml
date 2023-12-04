@@ -1329,7 +1329,7 @@
                                 </local:SplitView.Pane>
 
                                 <local:SplitView.Content>
-                                    <Grid x:Name="ContentGrid">
+                                    <Grid x:Name="ContentGrid" Background="{DynamicResource NavigationViewContentBackground}">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
