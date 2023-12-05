@@ -403,6 +403,8 @@
     <Style x:Key="DefaultMenuItemStyle" TargetType="MenuItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="{DynamicResource MenuFlyoutItemBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutItemBackgroundBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource MenuFlyoutItemBorderThickness}"/>
         <Setter Property="Foreground" Value="{DynamicResource MenuFlyoutItemForeground}" />
         <Setter Property="Padding" Value="{DynamicResource MenuFlyoutItemThemePaddingNarrow}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
@@ -435,6 +437,8 @@
             </Trigger>
             <Trigger Property="Role" Value="SubmenuHeader">
                 <Setter Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutSubItemBackgroundBrush}" />
+                <Setter Property="BorderThickness" Value="{DynamicResource MenuFlyoutSubItemBorderThickness}"/>
                 <Setter Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForeground}" />
                 <Setter Property="Template" Value="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuHeaderTemplateKey}}" />
             </Trigger>
