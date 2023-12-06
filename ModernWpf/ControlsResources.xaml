@@ -81,6 +81,12 @@
     <Thickness x:Key="MenuFlyoutItemThemePadding">11,8,11,9</Thickness>
     <Thickness x:Key="MenuFlyoutItemThemePaddingNarrow">11,4,11,5</Thickness>
 
+    <sys:Double x:Key="SplitViewOpenPaneThemeLength">320</sys:Double>
+    <sys:Double x:Key="SplitViewCompactPaneThemeLength">48</sys:Double>
+    <Thickness x:Key="SplitViewLeftBorderThemeThickness">0,0,1,0</Thickness>
+    <Thickness x:Key="SplitViewRightBorderThemeThickness">1,0,0,0</Thickness>
+    <CornerRadius x:Key="SplitViewPaneRootCornerRadius">0</CornerRadius>
+
     <ControlTemplate x:Key="TextControlValidationErrorTemplate">
         <Grid SnapsToDevicePixels="True">
             <AdornedElementPlaceholder />

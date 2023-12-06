@@ -1790,6 +1790,8 @@ namespace ModernWpf.Controls
                             VisualStateManager.GoToState(this, "ListSizeCompact", true /*useTransitions*/);
                             UpdatePaneToggleSize();
                         }
+
+                        VisualStateManager.GoToState(this, "PaneNotOverlaying", true /*useTransitions*/);
                     }
                 }
             }
@@ -1806,6 +1808,14 @@ namespace ModernWpf.Controls
             {
                 // See UpdateIsClosedCompact 'RS3+ animation timing enhancement' for explanation:
                 VisualStateManager.GoToState(this, "ListSizeFull", true /*useTransitions*/);
+
+                if (m_rootSplitView is { } splitView)
+                {
+                    if (splitView.DisplayMode == SplitViewDisplayMode.CompactOverlay || splitView.DisplayMode == SplitViewDisplayMode.Overlay)
+                    {
+                        VisualStateManager.GoToState(this, "PaneOverlaying", true /*useTransitions*/);
+                    }
+                }
             }
 
             PaneOpening?.Invoke(this, null);
@@ -4636,6 +4646,11 @@ namespace ModernWpf.Controls
 
             if (m_paneContentGrid is { } paneContentGridAsUIE)
             {
+                if (paneContentGridAsUIE is Border paneContentGridAsBorder)
+                {
+                    paneContentGridAsUIE = paneContentGridAsBorder.Child;
+                }
+
                 if (paneContentGridAsUIE is Grid paneContentGrid)
                 {
                     var rowDefs = paneContentGrid.RowDefinitions;
