@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -10,7 +9,7 @@ using ModernWpf.Controls.Primitives;
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Content))]
-    public partial class SplitView : Control
+    public partial class SplitView : ControlEx
     {
         static SplitView()
         {
