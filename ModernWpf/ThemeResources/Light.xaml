@@ -341,8 +341,8 @@
     <SolidColorBrush x:Key="AccentFillColorSelectedTextBackgroundBrush" Color="{m:DynamicColor SystemAccentColor}" />
 
     <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="{m:DynamicColor SystemAccentColorDark1}" />
-    <SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="{m:DynamicColor SystemAccentColorDark2}" />
-    <SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="{m:DynamicColor SystemAccentColor}" />
+    <SolidColorBrush x:Key="AccentFillColorSecondaryBrush" Color="{m:DynamicColor SystemAccentColorDark1}" Opacity="0.9" />
+    <SolidColorBrush x:Key="AccentFillColorTertiaryBrush" Color="{m:DynamicColor SystemAccentColorDark1}" Opacity="0.8" />
     <SolidColorBrush x:Key="AccentFillColorDisabledBrush" Color="{StaticResource AccentAAFillColorDisabled}" />
 
     <SolidColorBrush x:Key="ControlStrokeColorDefaultBrush" Color="{StaticResource ControlStrokeColorDefault}" />
