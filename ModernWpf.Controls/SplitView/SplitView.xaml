@@ -11,11 +11,14 @@
     <GridLength x:Key="ZeroGridLength">0</GridLength>
 
     <Style TargetType="local:SplitView">
+        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundTransparentBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource SplitViewLeftBorderThemeThickness}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="OpenPaneLength" Value="{DynamicResource SplitViewOpenPaneThemeLength}" />
         <Setter Property="CompactPaneLength" Value="{DynamicResource SplitViewCompactPaneThemeLength}" />
         <Setter Property="PaneBackground" Value="{DynamicResource SystemControlPageBackgroundChromeLowBrush}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource SplitViewPaneRootCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SplitView">
@@ -593,36 +596,45 @@
                             <ColumnDefinition x:Name="ColumnDefinition1" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
                             <ColumnDefinition x:Name="ColumnDefinition2" Width="*" />
                         </Grid.ColumnDefinitions>
-                        <!-- Pane Content Area -->  
-                        <Grid
+
+                        <!-- Pane Content Area -->
+                        <Border
                             x:Name="PaneRoot"
                             Grid.ColumnSpan="2"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             HorizontalAlignment="Left"
                             Visibility="Collapsed"
                             Background="{TemplateBinding PaneBackground}"
                             Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLength}"
                             Canvas.ZIndex="1"
+                            CornerRadius="{TemplateBinding CornerRadius}"
                             KeyboardNavigation.TabNavigation="Local"
                             KeyboardNavigation.TabIndex="0">
-                            <Grid.Clip>
+                            <Border.Clip>
                                 <RectangleGeometry x:Name="PaneClipRectangle">
                                     <RectangleGeometry.Transform>
                                         <TranslateTransform x:Name="PaneClipRectangleTransform" />
                                     </RectangleGeometry.Transform>
                                 </RectangleGeometry>
-                            </Grid.Clip>
-                            <Grid.RenderTransform>
+                            </Border.Clip>
+                            
+                            <Border.RenderTransform>
                                 <TranslateTransform x:Name="PaneTransform" />
-                            </Grid.RenderTransform>
-                            <Border ui:BorderHelper.Child="{TemplateBinding Pane}" />
-                            <Rectangle
-                                x:Name="HCPaneBorder"
-                                Visibility="Collapsed"
-                                Fill="{DynamicResource SystemControlForegroundTransparentBrush}"
-                                Width="1"
-                                HorizontalAlignment="Right" />
+                            </Border.RenderTransform>
 
-                        </Grid>
+                            <Grid>
+                                <Border ui:BorderHelper.Child="{TemplateBinding Pane}" />
+                                
+                                <Rectangle
+                                    x:Name="HCPaneBorder"
+                                    Visibility="Collapsed"
+                                    Fill="{DynamicResource SystemControlForegroundTransparentBrush}"
+                                    Width="1"
+                                    HorizontalAlignment="Right" />
+                            </Grid>
+                        </Border>
+                        
                         <!-- Content Area -->
                         <Grid
                             x:Name="ContentRoot"
@@ -635,7 +647,6 @@
                                 x:Name="LightDismissLayer"
                                 Fill="Transparent"
                                 Visibility="Collapsed" />
-
                         </Grid>
 
                     </Grid>
