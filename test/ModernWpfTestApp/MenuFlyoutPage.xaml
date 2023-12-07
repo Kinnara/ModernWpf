@@ -10,7 +10,26 @@
     mc:Ignorable="d">
 
     <Grid Background="{DynamicResource ApplicationPageBackgroundThemeBrush}" Margin="12">
-        <StackPanel>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.RowSpan="2">
+            <ButtonEx Content="Short Text MenuFlyout" x:Name="TestMenuFlyoutButton" AutomationProperties.Name="TestMenuFlyoutButton" Margin="0,0,0,12">
+                <ButtonEx.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Reset" x:Name="TestMenuFlyoutItem" AutomationProperties.Name="TestMenuFlyoutItem" Click="TestMenuFlyoutItemClick"/>
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Text="Repeat" />
+                        <MenuFlyoutItem Text="Shuffle" />
+                    </MenuFlyout>
+                </ButtonEx.Flyout>
+            </ButtonEx>
+
             <Button Content="MenuFlyout"  VerticalAlignment="Top">
                 <muxc:FlyoutService.Flyout>
                     <muxc:MenuFlyout>
@@ -102,5 +121,22 @@
                 </muxc:FlyoutService.Flyout>
             </Button>
         </StackPanel>
+
+        <Grid Grid.Column="1" Margin="20,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="MenuFlyoutItem height: "/>
+            <TextBlock x:Name="TestMenuFlyoutItemHeightTextBlock" AutomationProperties.Name="TestMenuFlyoutItemHeightTextBlock" Text="0" Grid.Column="1" Margin="5, 0, 0, 0"/>
+
+            <TextBlock Text="MenuFlyoutItem width: " Grid.Row="1"/>
+            <TextBlock x:Name="TestMenuFlyoutItemWidthTextBlock" AutomationProperties.Name="TestMenuFlyoutItemWidthTextBlock" Text="0" Grid.Row="1" Grid.Column="1" Margin="5, 0, 0, 0"/>
+        </Grid>
     </Grid>
 </local:TestPage>
