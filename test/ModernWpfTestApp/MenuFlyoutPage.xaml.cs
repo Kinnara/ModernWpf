@@ -11,5 +11,11 @@ namespace MUXControlsTestApp
         {
             InitializeComponent();
         }
+
+        private void TestMenuFlyoutItemClick(object sender, object e)
+        {
+            TestMenuFlyoutItemHeightTextBlock.Text = $"{TestMenuFlyoutItem.ActualHeight}";
+            TestMenuFlyoutItemWidthTextBlock.Text = $"{TestMenuFlyoutItem.ActualWidth}";
+        }
     }
 }

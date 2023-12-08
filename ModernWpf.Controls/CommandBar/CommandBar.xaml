@@ -23,6 +23,7 @@
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:CommandBarToolBar">
@@ -158,7 +159,7 @@
                                 VerticalAlignment="Stretch"
                                 BorderThickness="{DynamicResource CommandBarBorderThicknessOpen}"
                                 BorderBrush="{DynamicResource CommandBarBorderBrushOpen}"
-                                CornerRadius="{DynamicResource ControlCornerRadius}" />
+                                CornerRadius="{TemplateBinding CornerRadius}" />
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
