@@ -869,8 +869,16 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="TogglePaneGroup">
-                                <VisualState x:Name="TogglePaneButtonVisible" />
                                 <VisualState x:Name="TogglePaneButtonCollapsed" />
+                                <VisualState x:Name="TogglePaneButtonVisible">
+                                    <Storyboard>
+                                        <!-- Might not need this setter when all the margins/paddings will be adequately set. -->
+                                        <!-- This MinHeight setter is only here to ensure that AutoSuggestBox doesn't draw over ToggelButton. -->
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PaneContentGridToggleButtonRow" Storyboard.TargetProperty="MinHeight">
+                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{DynamicResource NavigationViewPaneHeaderRowMinHeight}"/>
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="HeaderGroup">
@@ -974,6 +982,17 @@
                                         </DoubleAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneToggleButtonGrid" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="PaneSeparatorStates">
+                                <VisualState x:Name="SeparatorCollapsed"/>
+                                <VisualState x:Name="SeparatorVisible">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VisualItemsSeparator" Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -1220,7 +1239,7 @@
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="0"/>
                                                 <!-- above button margin + back button space -->
-                                                <RowDefinition x:Name="PaneContentGridToggleButtonRow" Height="Auto" MinHeight="{DynamicResource NavigationViewPaneHeaderRowMinHeight}"/>
+                                                <RowDefinition x:Name="PaneContentGridToggleButtonRow" Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="8"/>
@@ -1295,10 +1314,10 @@
                                             <!-- "Non header" content -->
                                             <Grid x:Name="ItemsContainerGrid" Grid.Row="6" Margin="0,0,0,8">
                                                 <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"/> <!-- MenuItems -->
-                                                <RowDefinition Height="*" MinHeight="21"/> <!-- Fill spacing -->
-                                                <RowDefinition Height="Auto" /> <!-- PaneFooter -->
-                                                <RowDefinition Height="Auto" MinHeight="{DynamicResource NavigationViewItemOnLeftMinHeight}"/> <!-- FooterItems -->
+                                                    <RowDefinition Height="Auto"/> <!-- MenuItems -->
+                                                    <RowDefinition Height="*"/> <!-- Fill spacing -->
+                                                    <RowDefinition Height="Auto" /> <!-- PaneFooter -->
+                                                    <RowDefinition Height="Auto"/> <!-- FooterItems -->
                                                 </Grid.RowDefinitions>
 
                                                 <!-- MenuItems -->
@@ -1329,7 +1348,8 @@
 
                                                 <!-- FooterItems -->
                                                 <local:ItemsRepeaterScrollHost Grid.Row="3">
-                                                    <ScrollViewer x:Name="FooterItemsScrollViewer">
+                                                    <ScrollViewer x:Name="FooterItemsScrollViewer"
+                                                        VerticalScrollBarVisibility="Auto">
                                                         <!-- contract7Present:VerticalAnchorRatio="1" -->
                                                         <local:ItemsRepeater
                                                             x:Name="FooterMenuItemsHost" VerticalAlignment="Bottom"/>
