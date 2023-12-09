@@ -1307,7 +1307,7 @@
 
     <!-- Resources for ProgressRing -->
     <m:StaticResource x:Key="ProgressRingForegroundThemeBrush" ResourceKey="AccentFillColorDefaultBrush" />
-    <m:StaticResource x:Key="ProgressRingBackgroundThemeBrush" ResourceKey="ControlFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ProgressRingBackgroundThemeBrush" ResourceKey="ControlFillColorTransparentBrush" />
 
     <!-- Resources for RadioButton -->
     <sys:Double x:Key="RadioButtonBorderThemeThickness">1</sys:Double>
