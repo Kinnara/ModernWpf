@@ -55,7 +55,6 @@
                         <Grid
                             x:Name="ContentRoot"
                             VerticalAlignment="Top"
-                            Margin="{TemplateBinding Padding}"
                             Height="{TemplateBinding Height}"
                             MinHeight="{DynamicResource AppBarThemeCompactHeight}"
                             Background="{TemplateBinding Background}">
@@ -74,6 +73,7 @@
                                 -->
                                 <ContentControl
                                     x:Name="ContentControl"
+                                    Margin="{TemplateBinding Padding}"
                                     Content="{TemplateBinding Header}"
                                     ContentTemplate="{TemplateBinding HeaderTemplate}"
                                     Foreground="{TemplateBinding Foreground}"
