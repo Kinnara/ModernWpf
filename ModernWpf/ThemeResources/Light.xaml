@@ -200,7 +200,7 @@
     <!-- Colors -->
 
     <Color x:Key="TextFillColorPrimary">#E4000000</Color>
-    <Color x:Key="TextFillColorSecondary">#93000000</Color>
+    <Color x:Key="TextFillColorSecondary">#9E000000</Color>
     <Color x:Key="TextFillColorTertiary">#72000000</Color>
     <Color x:Key="TextFillColorDisabled">#5C000000</Color>
     <Color x:Key="TextFillColorInverse">#FFFFFF</Color>
@@ -1307,7 +1307,7 @@
 
     <!-- Resources for ProgressRing -->
     <m:StaticResource x:Key="ProgressRingForegroundThemeBrush" ResourceKey="AccentFillColorDefaultBrush" />
-    <m:StaticResource x:Key="ProgressRingBackgroundThemeBrush" ResourceKey="ControlFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ProgressRingBackgroundThemeBrush" ResourceKey="ControlFillColorTransparentBrush" />
 
     <!-- Resources for RadioButton -->
     <sys:Double x:Key="RadioButtonBorderThemeThickness">1</sys:Double>
