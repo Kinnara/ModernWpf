@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
@@ -177,6 +178,13 @@ namespace ModernWpf.Controls.Primitives
                 {
                     m_moreButton.IsTabStop = false;
                 }
+            }
+
+            // Keep the owning FlyoutPresenter's corner radius in sync with the
+            // primary commands's corner radius.
+            if (SharedHelpers.IsRS5OrHigher())
+            {
+                BindOwningFlyoutPresenterToCornerRadius();
             }
 
             if (OverflowPopup is PopupEx popupEx)
@@ -1026,6 +1034,24 @@ namespace ModernWpf.Controls.Primitives
 
         internal void ClearShadow()
         {
+        }
+
+        void BindOwningFlyoutPresenterToCornerRadius()
+        {
+            if (TryGetOwningFlyout(out var actualFlyout))
+            {
+                if (GetTemplateChild("LayoutRoot") is Border root)
+                {
+                    Binding binding = new();
+                    binding.Source = root;
+                    binding.Path = new PropertyPath("CornerRadius");
+                    binding.Mode = BindingMode.OneWay;
+                    if (actualFlyout.GetPresenter() is { } presenter)
+                    {
+                        presenter.SetBinding(ControlHelper.CornerRadiusProperty, binding);
+                    }
+                }
+            }
         }
 
         private void SecondaryItemsRootSizeChanged(object sender, SizeChangedEventArgs e)
