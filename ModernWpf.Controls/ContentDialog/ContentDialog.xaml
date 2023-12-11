@@ -224,133 +224,135 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid
-                            x:Name="LayoutRoot"
-                            Visibility="Collapsed"
-                            SnapsToDevicePixels="True">
-                            <Rectangle x:Name="SmokeLayerBackground" Fill="{DynamicResource ContentDialogSmokeFill}" />
-                            <Grid
-                                x:Name="BackgroundElement"
-                                FlowDirection="{TemplateBinding FlowDirection}"
-                                MinWidth="{StaticResource ContentDialogMinWidth}"
-                                MaxWidth="{StaticResource ContentDialogMaxWidth}"
-                                MinHeight="{StaticResource ContentDialogMinHeight}"
-                                MaxHeight="{StaticResource ContentDialogMaxHeight}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                RenderTransformOrigin="0.5,0.5">
-                                <Grid.RenderTransform>
-                                    <ScaleTransform x:Name="ScaleTransform" />
-                                </Grid.RenderTransform>
-                                <ui:ThemeShadowChrome
-                                    x:Name="Shdw"
-                                    IsShadowEnabled="{TemplateBinding IsShadowEnabled}"
-                                    CornerRadius="{TemplateBinding CornerRadius}"
-                                    Margin="{DynamicResource ContentDialogBorderWidth}" />
-                                <ui:BorderEx
-                                    Background="{TemplateBinding Background}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    CornerRadius="{TemplateBinding CornerRadius}"
-                                    ClipToBounds="True">
-                                    <Border x:Name="DialogSpace">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <ScrollViewer
-                                                x:Name="ContentScrollViewer"
-                                                HorizontalScrollBarVisibility="Disabled"
-                                                VerticalScrollBarVisibility="Disabled"
-                                                IsTabStop="False">
-                                                <Border
-                                                    Background="{DynamicResource ContentDialogTopOverlay}"
-                                                    Padding="{StaticResource ContentDialogPadding}"
-                                                    BorderThickness="{StaticResource ContentDialogSeparatorThickness}"
-                                                    BorderBrush="{DynamicResource ContentDialogSeparatorBorderBrush}">
-                                                    <Grid>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="Auto" />
-                                                            <RowDefinition Height="*" />
-                                                        </Grid.RowDefinitions>
-                                                        <ContentControl
-                                                            x:Name="Title"
-                                                            Margin="{StaticResource ContentDialogTitleMargin}"
-                                                            Content="{TemplateBinding Title}"
-                                                            ContentTemplate="{TemplateBinding TitleTemplate}"
-                                                            FontSize="20"
-                                                            FontFamily="{DynamicResource {x:Static SystemFonts.MessageFontFamilyKey}}"
-                                                            FontWeight="Normal"
-                                                            Foreground="{TemplateBinding Foreground}"
-                                                            HorizontalAlignment="Left"
-                                                            VerticalAlignment="Top"
-                                                            IsTabStop="False"
-                                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                                                            <ContentControl.Template>
-                                                                <ControlTemplate TargetType="ContentControl">
-                                                                    <ui:ContentPresenterEx
-                                                                        Content="{TemplateBinding Content}"
-                                                                        TextWrapping="Wrap"
-                                                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                        Margin="{TemplateBinding Padding}"
-                                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                                                </ControlTemplate>
-                                                            </ContentControl.Template>
-                                                        </ContentControl>
-                                                        <ui:ContentPresenterEx
-                                                            x:Name="Content"
-                                                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                            Content="{TemplateBinding Content}"
-                                                            FontSize="{DynamicResource ControlContentThemeFontSize}"
-                                                            FontFamily="{DynamicResource ContentControlThemeFontFamily}"
-                                                            Foreground="{TemplateBinding Foreground}"
-                                                            Grid.Row="1"
-                                                            TextWrapping="Wrap"
-                                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                                    </Grid>
-                                                </Border>
-                                            </ScrollViewer>
-                                            <Grid
-                                                x:Name="CommandSpace"
-                                                Grid.Row="1"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Bottom"
-                                                KeyboardNavigation.DirectionalNavigation="Contained"
-                                                Margin="{StaticResource ContentDialogPadding}"
-                                                Background="{TemplateBinding Background}">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition x:Name="PrimaryColumn" Width="*" />
-                                                    <ColumnDefinition x:Name="FirstSpacer" Width="0" />
-                                                    <ColumnDefinition x:Name="SecondaryColumn" Width="0" />
-                                                    <ColumnDefinition x:Name="SecondSpacer" Width="{StaticResource ContentDialogButtonSpacing}" />
-                                                    <ColumnDefinition x:Name="CloseColumn" Width="*" />
-                                                </Grid.ColumnDefinitions>
-                                                <Button
-                                                    x:Name="PrimaryButton"
-                                                    Content="{TemplateBinding PrimaryButtonText}"
-                                                    IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
-                                                    Style="{TemplateBinding PrimaryButtonStyle}"
-                                                    HorizontalAlignment="Stretch" />
-                                                <Button
-                                                    x:Name="SecondaryButton"
-                                                    Content="{TemplateBinding SecondaryButtonText}"
-                                                    IsEnabled="{TemplateBinding IsSecondaryButtonEnabled}"
-                                                    Style="{TemplateBinding SecondaryButtonStyle}"
-                                                    HorizontalAlignment="Stretch" />
-                                                <Button
-                                                    x:Name="CloseButton"
-                                                    Grid.Column="4" 
-                                                    Content="{TemplateBinding CloseButtonText}"
-                                                    Style="{TemplateBinding CloseButtonStyle}"
-                                                    HorizontalAlignment="Stretch" />
+                        <Border x:Name="LayoutRoot"
+                                CornerRadius="{DynamicResource OverlayCornerRadius}"
+                                Visibility="Collapsed"
+                                SnapsToDevicePixels="True">
+                            <Grid>
+                                <Rectangle x:Name="SmokeLayerBackground" Fill="{DynamicResource ContentDialogSmokeFill}" />
+                                <Grid
+                                    x:Name="BackgroundElement"
+                                    FlowDirection="{TemplateBinding FlowDirection}"
+                                    MinWidth="{StaticResource ContentDialogMinWidth}"
+                                    MaxWidth="{StaticResource ContentDialogMaxWidth}"
+                                    MinHeight="{StaticResource ContentDialogMinHeight}"
+                                    MaxHeight="{StaticResource ContentDialogMaxHeight}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    RenderTransformOrigin="0.5,0.5">
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform x:Name="ScaleTransform" />
+                                    </Grid.RenderTransform>
+                                    <ui:ThemeShadowChrome
+                                        x:Name="Shdw"
+                                        IsShadowEnabled="{TemplateBinding IsShadowEnabled}"
+                                        CornerRadius="{TemplateBinding CornerRadius}"
+                                        Margin="{DynamicResource ContentDialogBorderWidth}" />
+                                    <ui:BorderEx
+                                        Background="{TemplateBinding Background}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        CornerRadius="{TemplateBinding CornerRadius}"
+                                        ClipToBounds="True">
+                                        <Border x:Name="DialogSpace" CornerRadius="{DynamicResource OverlayCornerRadius}">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <ScrollViewer
+                                                    x:Name="ContentScrollViewer"
+                                                    HorizontalScrollBarVisibility="Disabled"
+                                                    VerticalScrollBarVisibility="Disabled"
+                                                    IsTabStop="False">
+                                                    <Border
+                                                        Background="{DynamicResource ContentDialogTopOverlay}"
+                                                        Padding="{StaticResource ContentDialogPadding}"
+                                                        BorderThickness="{StaticResource ContentDialogSeparatorThickness}"
+                                                        BorderBrush="{DynamicResource ContentDialogSeparatorBorderBrush}">
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="*" />
+                                                            </Grid.RowDefinitions>
+                                                            <ContentControl
+                                                                x:Name="Title"
+                                                                Margin="{StaticResource ContentDialogTitleMargin}"
+                                                                Content="{TemplateBinding Title}"
+                                                                ContentTemplate="{TemplateBinding TitleTemplate}"
+                                                                FontSize="20"
+                                                                FontFamily="{DynamicResource {x:Static SystemFonts.MessageFontFamilyKey}}"
+                                                                FontWeight="SemiBold"
+                                                                Foreground="{TemplateBinding Foreground}"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Top"
+                                                                IsTabStop="False"
+                                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                                                <ContentControl.Template>
+                                                                    <ControlTemplate TargetType="ContentControl">
+                                                                        <ui:ContentPresenterEx
+                                                                            Content="{TemplateBinding Content}"
+                                                                            TextWrapping="Wrap"
+                                                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                            Margin="{TemplateBinding Padding}"
+                                                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                                    </ControlTemplate>
+                                                                </ContentControl.Template>
+                                                            </ContentControl>
+                                                            <ui:ContentPresenterEx
+                                                                x:Name="Content"
+                                                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                Content="{TemplateBinding Content}"
+                                                                FontSize="{DynamicResource ControlContentThemeFontSize}"
+                                                                FontFamily="{DynamicResource ContentControlThemeFontFamily}"
+                                                                Foreground="{TemplateBinding Foreground}"
+                                                                Grid.Row="1"
+                                                                TextWrapping="Wrap"
+                                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                        </Grid>
+                                                    </Border>
+                                                </ScrollViewer>
+                                                <Grid
+                                                    x:Name="CommandSpace"
+                                                    Grid.Row="1"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Bottom"
+                                                    KeyboardNavigation.DirectionalNavigation="Contained"
+                                                    Margin="{StaticResource ContentDialogPadding}"
+                                                    Background="{TemplateBinding Background}">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition x:Name="PrimaryColumn" Width="*" />
+                                                        <ColumnDefinition x:Name="FirstSpacer" Width="0" />
+                                                        <ColumnDefinition x:Name="SecondaryColumn" Width="0" />
+                                                        <ColumnDefinition x:Name="SecondSpacer" Width="{StaticResource ContentDialogButtonSpacing}" />
+                                                        <ColumnDefinition x:Name="CloseColumn" Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Button
+                                                        x:Name="PrimaryButton"
+                                                        Content="{TemplateBinding PrimaryButtonText}"
+                                                        IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
+                                                        Style="{TemplateBinding PrimaryButtonStyle}"
+                                                        HorizontalAlignment="Stretch" />
+                                                    <Button
+                                                        x:Name="SecondaryButton"
+                                                        Content="{TemplateBinding SecondaryButtonText}"
+                                                        IsEnabled="{TemplateBinding IsSecondaryButtonEnabled}"
+                                                        Style="{TemplateBinding SecondaryButtonStyle}"
+                                                        HorizontalAlignment="Stretch" />
+                                                    <Button
+                                                        x:Name="CloseButton"
+                                                        Grid.Column="4"
+                                                        Content="{TemplateBinding CloseButtonText}"
+                                                        Style="{TemplateBinding CloseButtonStyle}"
+                                                        HorizontalAlignment="Stretch" />
+                                                </Grid>
                                             </Grid>
-                                        </Grid>
-                                    </Border>
-                                </ui:BorderEx>
+                                        </Border>
+                                    </ui:BorderEx>
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        </Border>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsShadowEnabled" Value="False">
