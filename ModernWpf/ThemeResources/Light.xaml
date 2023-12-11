@@ -856,7 +856,7 @@
     <m:StaticResource x:Key="ContentDialogBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
     <m:StaticResource x:Key="ContentDialogSmokeFill" ResourceKey="SmokeFillColorDefaultBrush" />
     <m:StaticResource x:Key="ContentDialogTopOverlay" ResourceKey="LayerFillColorAltBrush" />
-    <m:StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="ControlElevationBorderBrush" />
+    <m:StaticResource x:Key="ContentDialogBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="ContentDialogSeparatorBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
     <Thickness x:Key="ContentDialogBorderWidth">1</Thickness>
 
