@@ -209,11 +209,6 @@ namespace ModernWpf.Controls
         {
             var commandBar = new CommandBarFlyoutCommandBar();
 
-            commandBar.Opened += delegate
-            {
-                SetCurrentValue(ShowModeProperty, FlyoutShowMode.Standard);
-            };
-
             SharedHelpers.CopyList(PrimaryCommands, commandBar.PrimaryCommands);
             SharedHelpers.CopyList(SecondaryCommands, commandBar.SecondaryCommands);
 
@@ -233,6 +228,13 @@ namespace ModernWpf.Controls
                 Content = commandBar,
                 CornerRadius = new CornerRadius(0),
                 IsDefaultShadowEnabled = false
+            };
+
+            m_presenter = presenter;
+
+            commandBar.Opened += delegate
+            {
+                SetCurrentValue(ShowModeProperty, FlyoutShowMode.Standard);
             };
 
             commandBar.SetOwningFlyout(this);
@@ -270,6 +272,11 @@ namespace ModernWpf.Controls
             }
         }
 
+        internal FlyoutPresenter GetPresenter()
+        {
+            return m_presenter;
+        }
+
         private static void RevokeAndRemove(IDictionary<ICommandBarElement, RoutedEventHandlerRevoker> map, ICommandBarElement element)
         {
             if (map.TryGetValue(element, out var revoker))
@@ -296,6 +303,8 @@ namespace ModernWpf.Controls
             new Dictionary<ICommandBarElement, RoutedEventHandlerRevoker>();
         Dictionary<ICommandBarElement, RoutedEventHandlerRevoker> m_secondaryToggleButtonUncheckedRevokerByElementMap =
             new Dictionary<ICommandBarElement, RoutedEventHandlerRevoker>();
+
+        FlyoutPresenter m_presenter;
 
         bool m_isClosingAfterCloseAnimation;
     }
