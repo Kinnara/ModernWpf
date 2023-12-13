@@ -1376,6 +1376,8 @@
     <m:StaticResource x:Key="SplitButtonBorderBrushCheckedDivider" ResourceKey="SystemControlHighlightAltTransparentBrush" />
     <Thickness x:Key="SplitButtonBorderThemeThickness">1</Thickness>
 
+    <m:StaticResource x:Key="SplitButtonInAppBarUnfocusedPointerOver" ResourceKey="SubtleFillColorTertiaryBrush" />
+
     <!-- Resources for SplitView -->
     <sys:Double x:Key="SplitViewOpenPaneThemeLength">320</sys:Double>
     <sys:Double x:Key="SplitViewCompactPaneThemeLength">48</sys:Double>
