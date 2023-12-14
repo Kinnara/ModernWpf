@@ -5,6 +5,10 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:ui="http://schemas.modernwpf.com/2019">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/ModernWpf;component/Styles/CornerRadius.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
     <Style x:Key="AppBarButtonOverflowStyle" TargetType="local:AppBarButton">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="Width" Value="NaN" />
@@ -13,6 +17,282 @@
     <Style x:Key="AppBarToggleButtonOverflowStyle" TargetType="local:AppBarToggleButton">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="Width" Value="NaN" />
+    </Style>
+
+    <Style x:Key="SplitButtonCommandBarStyle" TargetType="local:SplitButton">
+        <Setter Property="Background" Value="{DynamicResource AppBarButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource AppBarButtonForeground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="HorizontalContentAlignment" Value="Right" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="IsTabStop" Value="True"/>
+        <Setter Property="Padding" Value="12,7,4,9"/>
+        <Setter Property="Height" Value="{DynamicResource AppBarThemeCompactHeight}" />
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SplitButton">
+                    <ControlTemplate.Resources>
+                        <StreamGeometry x:Key="ChevronDownSmall">F1 M 17.568359 3.408203 L 19.931641 5.761719 L 10 15.693359 L 0.068359 5.761719 L 2.431641 3.408203 L 10 10.976562 L 17.568359 3.408203 Z</StreamGeometry>
+                    </ControlTemplate.Resources>
+
+                    <Border x:Name="RootGrid"
+                            Background="Transparent"
+                            Padding="{DynamicResource AppBarButtonInnerBorderMargin}"
+                            SnapsToDevicePixels="True">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="FlyoutOpen" />
+                                <VisualState x:Name="TouchPressed" />
+                                <VisualState x:Name="PrimaryPointerOver" />
+                                <VisualState x:Name="PrimaryPressed" />
+                                <VisualState x:Name="SecondaryPointerOver" />
+                                <VisualState x:Name="SecondaryPressed" />
+                                <VisualState x:Name="Checked" />
+                                <VisualState x:Name="CheckedFlyoutOpen" />
+                                <VisualState x:Name="CheckedTouchPressed" />
+                                <VisualState x:Name="CheckedPrimaryPointerOver" />
+                                <VisualState x:Name="CheckedPrimaryPressed" />
+                                <VisualState x:Name="CheckedSecondaryPointerOver" />
+                                <VisualState x:Name="CheckedSecondaryPressed" />
+                                <ui:VisualStateGroupListener.Listener>
+                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
+                                </ui:VisualStateGroupListener.Listener>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="SecondaryButtonPlacementStates">
+                                <VisualState x:Name="SecondaryButtonRight"/>
+
+                                <VisualState x:Name="SecondaryButtonSpan">
+                                    <VisualState.Storyboard>
+                                        <Storyboard>
+                                            <Int32AnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="(Grid.Column)">
+                                                <DiscreteInt32KeyFrame KeyTime="0" Value="0" />
+                                            </Int32AnimationUsingKeyFrames>
+                                            <Int32AnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="(Grid.ColumnSpan)">
+                                                <DiscreteInt32KeyFrame KeyTime="0" Value="3" />
+                                            </Int32AnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState.Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid>
+                            <Grid.Resources>
+                                <!-- Override the style of the inner buttons so that they don't affect background/foreground/border colors -->
+                                <Style TargetType="Button">
+                                    <Setter Property="OverridesDefaultStyle" Value="True" />
+                                    <Setter Property="Foreground" Value="{DynamicResource AppBarButtonForeground}" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="HorizontalAlignment" Value="Left" />
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+                                    <Setter Property="FontWeight" Value="Normal" />
+                                    <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+                                    <Setter Property="ui:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
+                                    <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="-3" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid x:Name="RootGrid" Background="Transparent">
+                                                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            Padding="{TemplateBinding Padding}">
+                                                        <ContentPresenter x:Name="ContentPresenter"
+                                                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                    </Border>
+                                                </Grid>
+
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource AppBarButtonForegroundDisabled}" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Grid.Resources>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="PrimaryButtonColumn" Width="*"/>
+                                <ColumnDefinition x:Name="SecondaryButtonColumn" Width="23"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border x:Name="PrimaryBackgroundGrid"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="{TemplateBinding CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
+
+                            <Border x:Name="SecondaryBackgroundGrid"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="{TemplateBinding CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                                    Grid.Column="1"/>
+
+                            <Border x:Name="Border"
+                                    Grid.ColumnSpan="2"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"/>
+
+                            <Button x:Name="PrimaryButton"
+                                    Grid.Column="0"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="Transparent"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    Command="{TemplateBinding Command}"
+                                    CommandParameter="{TemplateBinding CommandParameter}"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    FontWeight="{TemplateBinding FontWeight}"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Padding="{TemplateBinding Padding}"
+                                    IsTabStop="False"/>
+
+                            <Button x:Name="SecondaryButton"
+                                    Grid.Column="1"
+                                    Foreground="{DynamicResource AppBarButtonForeground}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="Transparent"
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalContentAlignment="Stretch"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Padding="2,0,7,0"
+                                    IsTabStop="False">
+                                <Button.Content>
+                                    <ui:FontIconFallback
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        FontSize="8"
+                                        Data="{StaticResource ChevronDownSmall}"
+                                        VerticalAlignment="Center"
+                                        Padding="2,2,2,0"
+                                        HorizontalAlignment="Left"/>
+                                </Button.Content>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <!-- FlyoutOpen -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="FlyoutOpen">
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
+                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                        </Trigger>
+                        <!-- TouchPressed -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="TouchPressed">
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushPressed}" />
+                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                        </Trigger>
+                        <!-- PrimaryPointerOver -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PrimaryPointerOver">
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonInAppBarUnfocusedPointerOver}" />
+                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
+                        </Trigger>
+                        <!-- PrimaryPressed -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PrimaryPressed">
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonInAppBarUnfocusedPointerOver}" />
+                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                        </Trigger>
+                        <!-- SecondaryPointerOver -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="SecondaryPointerOver">
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonInAppBarUnfocusedPointerOver}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
+                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForeground}" />
+                        </Trigger>
+                        <!-- SecondaryPressed -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="SecondaryPressed">
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonInAppBarUnfocusedPointerOver}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarButtonBackgroundPressed}" />
+                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
+                        </Trigger>
+                        <!-- Checked -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Checked">
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
+                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
+                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
+                        </Trigger>
+                        <!-- CheckedFlyoutOpen -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedFlyoutOpen">
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
+                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                        </Trigger>
+                        <!-- CheckedTouchPressed -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedTouchPressed">
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushCheckedPressed}" />
+                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                        </Trigger>
+                        <!-- CheckedPrimaryPointerOver -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPrimaryPointerOver">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPointerOver}" />
+                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPointerOver}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
+                        </Trigger>
+                        <!-- CheckedPrimaryPressed -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPrimaryPressed">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
+                        </Trigger>
+                        <!-- CheckedSecondaryPointerOver -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedSecondaryPointerOver">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPointerOver}" />
+                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPointerOver}" />
+                        </Trigger>
+                        <!-- CheckedSecondaryPressed -->
+                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedSecondaryPressed">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AppBarToggleButtonBorderBrushChecked}" />
+                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundChecked}" />
+                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundChecked}" />
+                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource AppBarToggleButtonBackgroundCheckedPressed}" />
+                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource AppBarToggleButtonForegroundCheckedPressed}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="primitives:CommandBarToolBar">
@@ -33,6 +313,10 @@
                     <Grid
                         x:Name="LayoutRoot"
                         SnapsToDevicePixels="True">
+                        <Grid.Resources>
+                            <Style TargetType="local:SplitButton" BasedOn="{StaticResource SplitButtonCommandBarStyle}"/>
+                            <Style TargetType="local:ToggleSplitButton" BasedOn="{StaticResource SplitButtonCommandBarStyle}"/>
+                        </Grid.Resources>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="AvailableCommandsStates">
                                 <VisualState x:Name="BothCommands" />
@@ -68,8 +352,8 @@
                                     <ColumnDefinition x:Name="PrimaryItemsControlColumnDefinition" Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <!--
-                                    Use a ContentControl rather than a ContentPresenter so that IsEnabled can be set to false
-                                    in the Minimal/HiddenClosed states to remove it from being a tab-stop candidate.
+                                Use a ContentControl rather than a ContentPresenter so that IsEnabled can be set to false
+                                in the Minimal/HiddenClosed states to remove it from being a tab-stop candidate.
                                 -->
                                 <ContentControl
                                     x:Name="ContentControl"
@@ -154,12 +438,12 @@
                                 Stroke="{DynamicResource CommandBarHighContrastBorder}"
                                 StrokeThickness="1" />
                             <Border x:Name="OpenBorder"
-                                Grid.ColumnSpan="2"
-                                Visibility="Collapsed"
-                                VerticalAlignment="Stretch"
-                                BorderThickness="{DynamicResource CommandBarBorderThicknessOpen}"
-                                BorderBrush="{DynamicResource CommandBarBorderBrushOpen}"
-                                CornerRadius="{TemplateBinding CornerRadius}" />
+                                    Grid.ColumnSpan="2"
+                                    Visibility="Collapsed"
+                                    VerticalAlignment="Stretch"
+                                    BorderThickness="{DynamicResource CommandBarBorderThicknessOpen}"
+                                    BorderBrush="{DynamicResource CommandBarBorderBrushOpen}"
+                                    CornerRadius="{TemplateBinding CornerRadius}" />
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -205,11 +489,11 @@
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <!--<VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="DisplayModeStates">
-                                <VisualState x:Name="DisplayModeDefault" />
-                                <VisualState x:Name="FullWidthOpenDown" />
-                                <VisualState x:Name="FullWidthOpenUp" />
-                            </VisualStateGroup>
+                        <VisualStateGroup x:Name="DisplayModeStates">
+                        <VisualState x:Name="DisplayModeDefault" />
+                        <VisualState x:Name="FullWidthOpenDown" />
+                        <VisualState x:Name="FullWidthOpenUp" />
+                        </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>-->
                         <Border
                             Padding="{TemplateBinding Padding}"
@@ -227,13 +511,13 @@
                     <ControlTemplate.Triggers>
                         <!-- FullWidthOpenDown -->
                         <!--<Trigger SourceName="DisplayModeStatesListener" Property="CurrentStateName" Value="FullWidthOpenDown">
-                            <Setter TargetName="LayoutRoot" Property="Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderDownPadding}" />
-                            <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="{DynamicResource CommandBarOverflowPresenterBorderDownThickness}" />
+                        <Setter TargetName="LayoutRoot" Property="Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderDownPadding}" />
+                        <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="{DynamicResource CommandBarOverflowPresenterBorderDownThickness}" />
                         </Trigger>-->
                         <!-- FullWidthOpenUp -->
                         <!--<Trigger SourceName="DisplayModeStatesListener" Property="CurrentStateName" Value="FullWidthOpenUp">
-                            <Setter TargetName="LayoutRoot" Property="Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderUpPadding}" />
-                            <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="{DynamicResource CommandBarOverflowPresenterBorderUpThickness}" />
+                        <Setter TargetName="LayoutRoot" Property="Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderUpPadding}" />
+                        <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="{DynamicResource CommandBarOverflowPresenterBorderUpThickness}" />
                         </Trigger>-->
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
