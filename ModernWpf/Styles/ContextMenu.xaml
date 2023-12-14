@@ -36,25 +36,19 @@
                         SnapsToDevicePixels="True">
                         <Border
                             Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
-                            <Grid>
-                                <ScrollViewer
-                                    x:Name="ContextMenuScrollViewer"
-                                    Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer,
-                                                                                  TypeInTargetAssembly={x:Type FrameworkElement}}}"
-                                    Margin="{TemplateBinding Padding}"
-                                    MinWidth="{DynamicResource FlyoutThemeMinWidth}">
-                                    <ItemsPresenter
-                                        RenderOptions.ClearTypeHint="Enabled"
-                                        KeyboardNavigation.DirectionalNavigation="Cycle"
-                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                </ScrollViewer>
-                                <Border
-                                    x:Name="ContextMenuBorder"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}" />
-                            </Grid>
+                            <ScrollViewer
+                                x:Name="ContextMenuScrollViewer"
+                                Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}"
+                                Margin="{TemplateBinding Padding}"
+                                MinWidth="{DynamicResource FlyoutThemeMinWidth}">
+                                <ItemsPresenter
+                                    RenderOptions.ClearTypeHint="Enabled"
+                                    KeyboardNavigation.DirectionalNavigation="Cycle"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </ScrollViewer>
                         </Border>
                     </primitives:ThemeShadowChrome>
                 </ControlTemplate>
