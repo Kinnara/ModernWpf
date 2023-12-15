@@ -1151,7 +1151,8 @@
     <!-- Resources for NavigationView -->
     <m:StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
     <m:StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="ControlFillColorTransparentBrush" />
-    <m:StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
+    <m:StaticResource x:Key="NavigationViewTopPaneBackground" ResourceKey="ControlFillColorTransparentBrush" />
+    <m:StaticResource x:Key="NavigationViewContentBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
 
     <m:StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
@@ -1166,9 +1167,9 @@
     <m:StaticResource x:Key="NavigationViewItemBackgroundSelectedPressed" ResourceKey="SubtleFillColorSecondaryBrush" />
     <m:StaticResource x:Key="NavigationViewItemBackgroundSelectedDisabled" ResourceKey="SubtleFillColorSecondaryBrush" />
 
-    <m:StaticResource x:Key="NavigationViewItemForeground" ResourceKey="TextFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="NavigationViewItemForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="NavigationViewItemForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="NavigationViewItemForeground" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="NavigationViewItemForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="NavigationViewItemForegroundPressed" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="NavigationViewItemForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="NavigationViewItemForegroundChecked" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="NavigationViewItemForegroundCheckedPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
