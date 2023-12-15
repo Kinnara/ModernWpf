@@ -70,6 +70,11 @@ namespace ModernWpf.Controls
         void UpdateVisualState(bool useTransitions)
         {
             VisualStateManager.GoToState(this, m_isClosedCompact && IsTopLevelItem ? "HeaderTextCollapsed" : "HeaderTextVisible", useTransitions);
+
+            if (GetNavigationView() is { } navigationView)
+            {
+                VisualStateManager.GoToState(this, navigationView.PaneDisplayMode == NavigationViewPaneDisplayMode.Top ? "TopMode" : "LeftMode", useTransitions);
+            }
         }
 
         private protected override void OnNavigationViewItemBaseDepthChanged()

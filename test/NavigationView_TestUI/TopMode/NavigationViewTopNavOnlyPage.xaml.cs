@@ -183,7 +183,7 @@ namespace MUXControlsTestApp
 
         private void ChangeGamesContent_Click(object sender, RoutedEventArgs e)
         {
-            GamesItem.Content = "Games AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+            GamesItem.Content = "Games AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         }
 
         private void NavInvalidateMeasure_Click(object sender, RoutedEventArgs e)

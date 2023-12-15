@@ -10,19 +10,22 @@
         <ResourceDictionary Source="TextStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Thickness x:Key="NavigationViewAutoSuggestBoxMargin">10,0,16,0</Thickness>
-    <Thickness x:Key="TopNavigationViewAutoSuggestBoxMargin">12,0,12,0</Thickness>
-    <sys:Double x:Key="PaneToggleButtonHeight">34</sys:Double>
-    <sys:Double x:Key="PaneToggleButtonWidth">38</sys:Double>
-    <sys:Double x:Key="NavigationViewCompactPaneLength">46</sys:Double>
-    <sys:Double x:Key="NavigationViewIconBoxWidth">38</sys:Double>
-    <sys:Double x:Key="NavigationViewTopPaneHeight">40</sys:Double>
-    <sys:Double x:Key="TopNavigationViewPaneCustomContentMinWidth">40</sys:Double>
+    <Thickness x:Key="NavigationViewAutoSuggestBoxMargin">16,0</Thickness>
+    <Thickness x:Key="TopNavigationViewAutoSuggestBoxMargin">4,0</Thickness>
+    <sys:Double x:Key="PaneToggleButtonHeight">36</sys:Double>
+    <sys:Double x:Key="PaneToggleButtonWidth">40</sys:Double>
+    <sys:Double x:Key="NavigationViewCompactPaneLength">48</sys:Double>
+    <sys:Double x:Key="NavigationViewIconBoxWidth">40</sys:Double>
+    <sys:Double x:Key="NavigationViewTopPaneHeight">48</sys:Double>
+    <sys:Double x:Key="NavigationViewAutoSuggestAreaHeight">40</sys:Double>
+    <sys:Double x:Key="TopNavigationViewPaneCustomContentMinWidth">48</sys:Double>
     <sys:Double x:Key="TopNavigationViewOverflowButtonWidth">40</sys:Double>
     <sys:Double x:Key="TopNavigationViewOverflowButtonHeight">40</sys:Double>
+    <sys:Double x:Key="TopNavigationViewSettingsButtonWidth">40</sys:Double>
+    <sys:Double x:Key="TopNavigationViewSettingsButtonHeight">40</sys:Double>
 
     <sys:Double x:Key="NavigationViewItemOnLeftMinHeight">36</sys:Double>
-    <sys:Double x:Key="NavigationViewPaneHeaderRowMinHeight">44</sys:Double>
+    <sys:Double x:Key="NavigationViewPaneHeaderRowMinHeight">40</sys:Double>
 
     <sys:Double x:Key="NavigationViewItemSeparatorHeight">1</sys:Double>
     <sys:Double x:Key="TopNavigationViewItemSeparatorWidth">1</sys:Double>
@@ -30,21 +33,28 @@
     <Thickness x:Key="NavigationViewToggleBorderThickness">0</Thickness>
     <Thickness x:Key="NavigationViewItemBorderThickness">1</Thickness>
     <Thickness x:Key="NavigationViewItemOnLeftIconBoxMargin">11,0,11,0</Thickness>
-    <Thickness x:Key="NavigationViewItemInnerHeaderMargin">12,0</Thickness>
+    <Thickness x:Key="NavigationViewItemButtonMargin">4,2</Thickness>
+    <Thickness x:Key="NavigationViewItemInnerHeaderMargin">16,0</Thickness>
+    <Thickness x:Key="TopNavigationViewItemInnerHeaderMargin">12,0</Thickness>
     <Thickness x:Key="NavigationViewMinimalHeaderMargin">8,5,0,0</Thickness>
-    <Thickness x:Key="NavigationViewHeaderMargin">12,5,0,11</Thickness>
+    <Thickness x:Key="NavigationViewButtonHolderGridMargin">0,4</Thickness>
+    <Thickness x:Key="NavigationViewPaneContentGridMargin">0,4</Thickness>
+    <Thickness x:Key="TopNavigationViewTopNavGridMargin">4,0</Thickness>
+    <Thickness x:Key="NavigationViewHeaderMargin">56,44,0,0</Thickness>
+    <Thickness x:Key="NavigationViewContentPresenterMargin">48,12,0,0</Thickness>
+    <Thickness x:Key="NavigationViewContentMargin">0</Thickness>
     <Thickness x:Key="NavigationViewPaneTitlePresenterMargin">8,4,0,0</Thickness>
     <Thickness x:Key="NavigationViewItemMargin">0</Thickness>
     <Thickness x:Key="TopNavigationViewItemMargin">0</Thickness>
-    <Thickness x:Key="NavigationViewItemSeparatorMargin">0,2</Thickness>
-    <Thickness x:Key="NavigationViewCompactItemSeparatorMargin">0,2</Thickness>
-    <Thickness x:Key="TopNavigationViewItemSeparatorMargin">4,0</Thickness>
+    <Thickness x:Key="NavigationViewItemSeparatorMargin">0,3,0,4</Thickness>
+    <Thickness x:Key="NavigationViewCompactItemSeparatorMargin">0,3,0,4</Thickness>
+    <Thickness x:Key="TopNavigationViewItemSeparatorMargin">3,0,4,0</Thickness>
     <Thickness x:Key="TopNavigationViewOverflowButtonMargin">0</Thickness>
-    <Thickness x:Key="NavigationViewItemContentPresenterMargin">4,0,20,0</Thickness>
+    <Thickness x:Key="NavigationViewItemContentPresenterMargin">4,-1,20,-1</Thickness>
     <Thickness x:Key="NavigationViewCompactItemContentPresenterMargin">0,0,0,0</Thickness>
-    <Thickness x:Key="TopNavigationViewItemContentPresenterMargin">8,0,12,0</Thickness>
+    <Thickness x:Key="TopNavigationViewItemContentPresenterMargin">8,-1,12,-1</Thickness>
     <Thickness x:Key="TopNavigationViewItemContentOnlyContentPresenterMargin">12,0</Thickness>
-    <Thickness x:Key="NavigationViewItemExpandChevronMargin">-20,0,6,0</Thickness>
+    <Thickness x:Key="NavigationViewItemExpandChevronMargin">0</Thickness>
     <Thickness x:Key="TopNavigationViewItemExpandChevronMargin">-16,0,0,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemIconOnlyExpandChevronMargin">0,0,0,0</Thickness>
     <Thickness x:Key="TopNavigationViewItemContentOnlyExpandChevronMargin">-12,0,0,0</Thickness>
@@ -73,9 +83,9 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
+        <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundChecked}" />
         <Setter Property="BorderThickness" Value="{DynamicResource NavigationViewToggleBorderThickness}" />
-        <Setter Property="Padding" Value="4,2" />
+        <Setter Property="Padding" Value="{DynamicResource NavigationViewItemButtonMargin}" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="primitives:FocusVisualHelper.FocusVisualMargin" Value="0" />
         <Setter Property="Template">
@@ -144,7 +154,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="BorderThickness" Value="{DynamicResource NavigationViewToggleBorderThickness}" />
         <Setter Property="Background" Value="{DynamicResource NavigationViewItemBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForeground}" />
+        <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundChecked}" />
         <Setter Property="ContentTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -159,14 +169,15 @@
     </Style>
 
     <Style x:Key="NavigationViewItemHeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <!--<Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />-->
         <Setter Property="TextWrapping" Value="NoWrap" />
     </Style>
 
     <Style x:Key="NavigationViewTitleHeaderContentControlTextStyle" TargetType="ContentControl">
-        <Setter Property="FontWeight" Value="350" />
-        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="28" />
         <!--<Setter Property="FontFamily" Value="XamlAutoFontFamily" />-->
         <Setter Property="Margin" Value="{DynamicResource NavigationViewHeaderMargin}" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
