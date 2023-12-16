@@ -102,7 +102,7 @@ namespace ModernWpf.Controls
         const int c_toggleButtonHeightWhenShouldPreserveNavigationViewRS3Behavior = 56;
         const int c_backButtonRowDefinition = 1;
         const float c_paneElevationTranslationZ = 32;
-        const int c_paneItemsSeparatorHeight = 21;
+        const int c_paneItemsSeparatorHeight = 9;
 
         const int c_mainMenuBlockIndex = 0;
         const int c_footerMenuBlockIndex = 1;
@@ -756,6 +756,7 @@ namespace ModernWpf.Controls
             UpdateVisualState();
             UpdatePaneTitleMargins();
             UpdatePaneLayout();
+            UpdatePaneOverlayGroup();
         }
 
         void UpdateRepeaterItemsSource(bool forceSelectionModelUpdate)
@@ -1572,7 +1573,7 @@ namespace ModernWpf.Controls
                         }
                         var availableHeight = paneContentRow.ActualHeight - itemsContainerMargin;
 
-                        // The -21 below is to account for the separator height that we need to subtract.
+                        // The c_paneItemsSeparatorHeight is to account for the 9px separator height that we need to subtract.
                         if (PaneFooter is { })
                         {
                             availableHeight -= c_paneItemsSeparatorHeight;
@@ -1811,8 +1812,6 @@ namespace ModernWpf.Controls
                             VisualStateManager.GoToState(this, "ListSizeCompact", true /*useTransitions*/);
                             UpdatePaneToggleSize();
                         }
-
-                        VisualStateManager.GoToState(this, "PaneNotOverlaying", true /*useTransitions*/);
                     }
                 }
             }
@@ -1829,14 +1828,6 @@ namespace ModernWpf.Controls
             {
                 // See UpdateIsClosedCompact 'RS3+ animation timing enhancement' for explanation:
                 VisualStateManager.GoToState(this, "ListSizeFull", true /*useTransitions*/);
-
-                if (m_rootSplitView is { } splitView)
-                {
-                    if (splitView.DisplayMode == SplitViewDisplayMode.CompactOverlay || splitView.DisplayMode == SplitViewDisplayMode.Overlay)
-                    {
-                        VisualStateManager.GoToState(this, "PaneOverlaying", true /*useTransitions*/);
-                    }
-                }
             }
 
             PaneOpening?.Invoke(this, null);
@@ -2008,20 +1999,25 @@ namespace ModernWpf.Controls
             {
                 var isPaneToggleButtonVisible = IsPaneToggleButtonVisible;
                 var isTopNavigationView = IsTopNavigationView();
+                var paneTitleSize = PaneTitle?.Length ?? 0;
 
-                paneTitleHolderFrameworkElement.Visibility =
-                    (isPaneToggleButtonVisible ||
-                        isTopNavigationView ||
-                        PaneTitle.Length == 0 ||
-                        (PaneDisplayMode == NavigationViewPaneDisplayMode.LeftMinimal && !IsPaneOpen)) ?
-                    Visibility.Collapsed : Visibility.Visible;
+                m_isLeftPaneTitleEmpty = (isPaneToggleButtonVisible ||
+                    isTopNavigationView ||
+                    paneTitleSize == 0 ||
+                    (PaneDisplayMode == NavigationViewPaneDisplayMode.LeftMinimal && !IsPaneOpen));
+
+                paneTitleHolderFrameworkElement.Visibility = m_isLeftPaneTitleEmpty ? Visibility.Collapsed : Visibility.Visible;
 
                 if (m_paneTitleFrameworkElement is { } paneTitleFrameworkElement)
                 {
+                    var paneTitleTopPane = m_paneTitleOnTopPane;
+
                     var first = SetPaneTitleFrameworkElementParent(m_paneToggleButton, paneTitleFrameworkElement, isTopNavigationView || !isPaneToggleButtonVisible);
                     var second = SetPaneTitleFrameworkElementParent(m_paneTitlePresenter, paneTitleFrameworkElement, isTopNavigationView || isPaneToggleButtonVisible);
-                    var third = SetPaneTitleFrameworkElementParent(m_paneTitleOnTopPane, paneTitleFrameworkElement, !isTopNavigationView || isPaneToggleButtonVisible);
+                    var third = SetPaneTitleFrameworkElementParent(paneTitleTopPane, paneTitleFrameworkElement, !isTopNavigationView || isPaneToggleButtonVisible);
                     (first ?? second ?? third)?.Invoke();
+
+                    paneTitleTopPane.Visibility = third is { } && paneTitleSize != 0 ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
         }
@@ -3559,7 +3555,7 @@ namespace ModernWpf.Controls
         void UpdateLeftNavigationOnlyVisualState(bool useTransitions)
         {
             bool isToggleButtonVisible = IsPaneToggleButtonVisible;
-            VisualStateManager.GoToState(this, isToggleButtonVisible ? "TogglePaneButtonVisible" : "TogglePaneButtonCollapsed", false /*useTransitions*/);
+            VisualStateManager.GoToState(this, isToggleButtonVisible || !m_isLeftPaneTitleEmpty ? "TogglePaneButtonVisible" : "TogglePaneButtonCollapsed", false /*useTransitions*/);
         }
 
         void InvalidateTopNavPrimaryLayout()
@@ -4296,6 +4292,8 @@ namespace ModernWpf.Controls
             UpdatePaneTabFocusNavigation();
             UpdateSettingsItemToolTip();
             UpdatePaneTitleFrameworkElementParents();
+            UpdatePaneOverlayGroup();
+            UpdatePaneButtonsWidths();
 
             if (SharedHelpers.IsThemeShadowAvailable())
             {
@@ -4313,7 +4311,6 @@ namespace ModernWpf.Controls
                     }
                 }
             }
-            UpdatePaneButtonsWidths();
         }
 
         void UpdatePaneToggleButtonVisibility()
@@ -4653,15 +4650,6 @@ namespace ModernWpf.Controls
             {
                 // Account for the CloseButton's width in the PaneHeader's placement.
                 paneHeaderCloseButtonColumn.Width = GridLengthHelper.FromValueAndType(paneHeaderPaddingForCloseButton, GridUnitType.Pixel);
-            }
-
-            if (m_paneTitleHolderFrameworkElement is { } paneTitleHolderFrameworkElement)
-            {
-                if (paneHeaderContentBorderRowMinHeight == 0.00 && paneTitleHolderFrameworkElement.Visibility == Visibility.Visible)
-                {
-                    // Handling the case where the PaneTottleButton is collapsed and the PaneTitle's height needs to push the rest of the NavigationView's UI down.
-                    paneHeaderContentBorderRowMinHeight = paneTitleHolderFrameworkElement.ActualHeight;
-                }
             }
 
             if (m_paneHeaderContentBorderRow is { } paneHeaderContentBorderRow)
@@ -5025,6 +5013,21 @@ namespace ModernWpf.Controls
                 shadowReceiver.Margin = (shadowReceiverMargin);
             }
             */
+        }
+
+        void UpdatePaneOverlayGroup()
+        {
+            if (m_rootSplitView is { } splitView)
+            {
+                if (IsPaneOpen && (splitView.DisplayMode == SplitViewDisplayMode.CompactOverlay || splitView.DisplayMode == SplitViewDisplayMode.Overlay))
+                {
+                    VisualStateManager.GoToState(this, "PaneOverlaying", true /*useTransitions*/);
+                }
+                else
+                {
+                    VisualStateManager.GoToState(this, "PaneNotOverlaying", true /*useTransitions*/);
+                }
+            }
         }
 
         T GetContainerForData<T>(object data) where T : class
@@ -5869,6 +5872,8 @@ namespace ModernWpf.Controls
         bool m_OrientationChangedPendingAnimation = false;
 
         bool m_TabKeyPrecedesFocusChange = false;
+
+        bool m_isLeftPaneTitleEmpty = false;
 
         GettingFocusHelper m_leftNavRepeaterGettingFocusHelper;
         GettingFocusHelper m_topNavRepeaterGettingFocusHelper;

@@ -144,7 +144,7 @@ namespace ModernWpf.Controls
         }
 
         // TODO: Constant is a temporary measure. Potentially expose using TemplateSettings.
-        internal const int c_itemIndentation = 25;
+        internal const int c_itemIndentation = 31;
 
         internal bool IsTopLevelItem
         {
