@@ -7,16 +7,22 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/ModernWpf;component/Styles/CornerRadius.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
     <sys:Boolean x:Key="AutoHideScrollBars">False</sys:Boolean>
 
-    <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter" Filter="TopLeftValue" />
-    <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter" Filter="BottomRightValue" />
-    
     <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter8x" Filter="TopLeftValue" Scale="8" />
     <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter8x" Filter="BottomRightValue" Scale="8" />
 
     <primitives:CornerRadiusFilterConverter x:Key="TopLeftCornerRadiusDoubleValueConverter2x" Filter="TopLeftValue" Scale="2"/>
     <primitives:CornerRadiusFilterConverter x:Key="BottomRightCornerRadiusDoubleValueConverter2x" Filter="BottomRightValue" Scale="2"/>
+
+    <Thickness x:Key="ScrollBarHorizontalDecreaseMargin">4,0,0,0</Thickness>
+    <Thickness x:Key="ScrollBarHorizontalIncreaseMargin">0,0,4,0</Thickness>
+    <Thickness x:Key="ScrollBarVerticalDecreaseMargin">0,4,0,0</Thickness>
+    <Thickness x:Key="ScrollBarVerticalIncreaseMargin">0,0,0,4</Thickness>
 
     <Style x:Key="DefaultThumbStyle" TargetType="Thumb">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -137,6 +143,7 @@
             x:Name="Root"
             Background="{DynamicResource ScrollBarButtonBackground}"
             BorderBrush="{DynamicResource ScrollBarButtonBorderBrush}"
+            Padding="{TemplateBinding Padding}"
             SnapsToDevicePixels="True">
             <local:FontIconFallback
                 x:Name="Arrow"
@@ -243,7 +250,7 @@
                                 <DoubleAnimation Duration="{StaticResource ScrollBarOpacityChangeDuration}" BeginTime="{StaticResource ScrollBarContractBeginTime}" Storyboard.TargetName="VerticalLargeDecrease" Storyboard.TargetProperty="Opacity" To="0" />
                                 <DoubleAnimation Duration="{StaticResource ScrollBarOpacityChangeDuration}" BeginTime="{StaticResource ScrollBarContractBeginTime}" Storyboard.TargetName="PART_LineUpButton" Storyboard.TargetProperty="Opacity" To="0" />
                                 <DoubleAnimation Duration="{StaticResource ScrollBarOpacityChangeDuration}" BeginTime="{StaticResource ScrollBarContractBeginTime}" Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Opacity" To="0" />
-                                
+
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb" Storyboard.TargetProperty="Width" BeginTime="{StaticResource ScrollBarContractBeginTime}">
                                     <SplineDoubleKeyFrame KeyTime="{StaticResource ScrollBarContractDuration}" Value="{StaticResource ScrollBarVerticalThumbMinWidth}" KeySpline="0,0,0,1" />
                                 </DoubleAnimationUsingKeyFrames>
@@ -274,7 +281,7 @@
                                 <DoubleAnimation Duration="0" BeginTime="{StaticResource ScrollBarExpandBeginTime}" Storyboard.TargetName="VerticalLargeDecrease" Storyboard.TargetProperty="Opacity" To="1" />
                                 <DoubleAnimation Duration="0" BeginTime="{StaticResource ScrollBarExpandBeginTime}" Storyboard.TargetName="PART_LineUpButton" Storyboard.TargetProperty="Opacity" To="1" />
                                 <DoubleAnimation Duration="0" BeginTime="{StaticResource ScrollBarExpandBeginTime}" Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Opacity" To="1" />
-                                
+
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb" Storyboard.TargetProperty="Width" BeginTime="{StaticResource ScrollBarExpandBeginTime}">
                                     <SplineDoubleKeyFrame KeyTime="0" Value="{StaticResource ScrollBarSize}" KeySpline="0,0,0,1" />
                                 </DoubleAnimationUsingKeyFrames>
@@ -289,7 +296,7 @@
                                 <DoubleAnimation Duration="0" BeginTime="{StaticResource ScrollBarContractBeginTime}" Storyboard.TargetName="VerticalLargeDecrease" Storyboard.TargetProperty="Opacity" To="0" />
                                 <DoubleAnimation Duration="0" BeginTime="{StaticResource ScrollBarContractBeginTime}" Storyboard.TargetName="PART_LineUpButton" Storyboard.TargetProperty="Opacity" To="0" />
                                 <DoubleAnimation Duration="0" BeginTime="{StaticResource ScrollBarContractBeginTime}" Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Opacity" To="0" />
-                                
+
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb" Storyboard.TargetProperty="Width" BeginTime="{StaticResource ScrollBarContractBeginTime}">
                                     <SplineDoubleKeyFrame KeyTime="0" Value="{StaticResource ScrollBarVerticalThumbMinWidth}" KeySpline="0,0,0,1" />
                                 </DoubleAnimationUsingKeyFrames>
@@ -336,13 +343,13 @@
                             <RepeatButton
                                 x:Name="PART_LineUpButton"
                                 Command="{x:Static ScrollBar.LineUpCommand}"
+                                Grid.Row="0"
                                 Opacity="0"
                                 Height="{StaticResource ScrollBarSize}"
                                 MinWidth="{StaticResource ScrollBarSize}"
                                 IsTabStop="False"
-                                Margin="0"
-                                Grid.Row="0"
                                 Content="{StaticResource CaretUp}"
+                                Padding="{DynamicResource ScrollBarVerticalDecreaseMargin}"
                                 Template="{StaticResource ScrollBarButtonTemplate}"
                                 HorizontalAlignment="Center" />
                             <Track
@@ -387,13 +394,13 @@
                             <RepeatButton
                                 x:Name="PART_LineDownButton"
                                 Command="{x:Static ScrollBar.LineDownCommand}"
+                                Grid.Row="2"
                                 Opacity="0"
                                 Height="{StaticResource ScrollBarSize}"
                                 MinWidth="{StaticResource ScrollBarSize}"
                                 IsTabStop="False"
-                                Margin="0"
-                                Grid.Row="2"
                                 Content="{StaticResource CaretDown}"
+                                Padding="{DynamicResource ScrollBarVerticalIncreaseMargin}"
                                 Template="{StaticResource ScrollBarButtonTemplate}"
                                 HorizontalAlignment="Center" />
                         </Grid>
@@ -451,7 +458,7 @@
                                         <DoubleAnimation Duration="{StaticResource ScrollBarOpacityChangeDuration}" BeginTime="{StaticResource ScrollBarContractBeginTime}" Storyboard.TargetName="HorizontalLargeDecrease" Storyboard.TargetProperty="Opacity" To="0" />
                                         <DoubleAnimation Duration="{StaticResource ScrollBarOpacityChangeDuration}" BeginTime="{StaticResource ScrollBarContractBeginTime}" Storyboard.TargetName="PART_LineLeftButton" Storyboard.TargetProperty="Opacity" To="0" />
                                         <DoubleAnimation Duration="{StaticResource ScrollBarOpacityChangeDuration}" BeginTime="{StaticResource ScrollBarContractBeginTime}" Storyboard.TargetName="HorizontalTrackRect" Storyboard.TargetProperty="Opacity" To="0" />
-                                        
+
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="Height" BeginTime="{StaticResource ScrollBarContractBeginTime}">
                                             <SplineDoubleKeyFrame KeyTime="{StaticResource ScrollBarContractDuration}" Value="{StaticResource ScrollBarHorizontalThumbMinHeight}" KeySpline="0,0,0,1" />
                                         </DoubleAnimationUsingKeyFrames>
@@ -542,12 +549,12 @@
                                     <RepeatButton
                                         x:Name="PART_LineLeftButton"
                                         Command="{x:Static ScrollBar.LineLeftCommand}"
-                                        Opacity="0"
                                         Grid.Column="0"
+                                        Opacity="0"
                                         MinHeight="{StaticResource ScrollBarSize}"
                                         IsTabStop="False"
-                                        Margin="0"
                                         Content="{StaticResource CaretLeft}"
+                                        Padding="{DynamicResource ScrollBarHorizontalDecreaseMargin}"
                                         Template="{StaticResource ScrollBarButtonTemplate}"
                                         Width="{StaticResource ScrollBarSize}"
                                         VerticalAlignment="Center" />
@@ -592,12 +599,12 @@
                                     <RepeatButton
                                         x:Name="PART_LineRightButton"
                                         Command="{x:Static ScrollBar.LineRightCommand}"
-                                        Opacity="0"
                                         Grid.Column="2"
+                                        Opacity="0"
                                         MinHeight="{StaticResource ScrollBarSize}"
                                         IsTabStop="False"
-                                        Margin="0"
                                         Content="{StaticResource CaretRight}"
+                                        Padding="{DynamicResource ScrollBarHorizontalIncreaseMargin}"
                                         Template="{StaticResource ScrollBarButtonTemplate}"
                                         Width="{StaticResource ScrollBarSize}"
                                         VerticalAlignment="Center" />
