@@ -58,12 +58,17 @@
     <sys:Double x:Key="NumberBoxPopupHorizonalOffset">-20</sys:Double>
     <sys:Double x:Key="NumberBoxPopupVerticalOffset">-16</sys:Double>
     <sys:Double x:Key="NumberBoxPopupShadowDepth">16</sys:Double>
+
+    <!--#region RadioButtons-->
     <sys:Double x:Key="RadioButtonsColumnSpacing">7</sys:Double>
-    <sys:Double x:Key="RadioButtonsRowSpacing">3</sys:Double>
+    <sys:Double x:Key="RadioButtonsRowSpacing">8</sys:Double>
+
+    <Thickness x:Key="RadioButtonsTopHeaderMargin">0,0,0,8</Thickness>
+    <!--#endregion-->
+
     <sys:Double x:Key="TextControlThemeMinHeight">32</sys:Double>
     <Thickness x:Key="NumberBoxSpinButtonBorderThickness">0,1,1,1</Thickness>
     <Thickness x:Key="NumberBoxIconMargin">10,0,0,0</Thickness>
-    <Thickness x:Key="RadioButtonsTopHeaderMargin">0,0,0,4</Thickness>
     <Thickness x:Key="TextControlThemePadding">10,5,6,6</Thickness>
     <Thickness x:Key="ToggleSwitchTopHeaderMargin">0,0,0,4</Thickness>
     <sys:Double x:Key="ToggleSwitchPreContentMargin">10</sys:Double>
