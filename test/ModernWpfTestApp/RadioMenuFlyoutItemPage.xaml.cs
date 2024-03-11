@@ -39,23 +39,36 @@ namespace MUXControlsTestApp
             // register all RadioMenuFlyoutItems
             foreach (object item in ButtonMenuFlyout.Items)
             {
-                if (item is RadioMenuItem)
-                {
-                    RadioMenuItem radioItem = item as RadioMenuItem;
+                RegisterItem(item);
+            }
+            foreach (object item in ButtonSubMenuFlyout.Items)
+            {
+                RegisterItem(item);
+            }
+            foreach (object item in RadioSubMenu.Items)
+            {
+                RegisterItem(item);
+            }
+        }
 
-                    radioItem.RegisterPropertyChangedCallback(RadioMenuItem.IsCheckedProperty, IsCheckedChanged);
+        private void RegisterItem(object item)
+        {
+            if (item is RadioMenuItem)
+            {
+                RadioMenuItem radioItem = item as RadioMenuItem;
 
-                    TextBlock nameText = new TextBlock();
-                    nameText.Text = (string)radioItem.Header;
-                    ItemNames.Children.Add(nameText);
+                radioItem.RegisterPropertyChangedCallback(RadioMenuItem.IsCheckedProperty, IsCheckedChanged);
 
-                    TextBlock stateText = new TextBlock();
-                    AutomationProperties.SetName(stateText, (string)radioItem.Header + "State");
-                    UpdateTextState(radioItem, stateText);
-                    ItemStates.Children.Add(stateText);
+                TextBlock nameText = new TextBlock();
+                nameText.Text = (string)radioItem.Header;
+                ItemNames.Children.Add(nameText);
 
-                    itemStates.Add((string)radioItem.Header, stateText);
-                }
+                TextBlock stateText = new TextBlock();
+                AutomationProperties.SetName(stateText, (string)radioItem.Header + "State");
+                UpdateTextState(radioItem, stateText);
+                ItemStates.Children.Add(stateText);
+
+                itemStates.Add((string)radioItem.Header, stateText);
             }
         }
 

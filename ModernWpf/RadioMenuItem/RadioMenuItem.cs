@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System.Collections.Generic;
+using System.Threading;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using ModernWpf.Controls.Primitives;
@@ -13,6 +16,15 @@ namespace ModernWpf.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RadioMenuItem), new FrameworkPropertyMetadata(typeof(RadioMenuItem)));
             IsCheckableProperty.OverrideMetadata(typeof(RadioMenuItem), new FrameworkPropertyMetadata(true, null, CoerceIsCheckable));
+        }
+
+        public RadioMenuItem()
+        {
+            if (s_selectionMap.Value is null)
+            {
+                // Ensure that this object exists
+                s_selectionMap.Value = new Dictionary<string, WeakReference<RadioMenuItem>>();
+            }
         }
 
         private static object CoerceIsCheckable(DependencyObject d, object baseValue)
@@ -35,7 +47,7 @@ namespace ModernWpf.Controls
 
         private static void OnGroupNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((RadioMenuItem)d).UpdateSiblings();
+            ((RadioMenuItem)d).UpdateCheckedItemInGroup();
         }
 
         public static readonly DependencyProperty UseSystemFocusVisualsProperty =
@@ -60,6 +72,27 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region AreCheckStatesEnabled
+
+        public static readonly DependencyProperty AreCheckStatesEnabledProperty =
+            DependencyProperty.RegisterAttached(
+                "AreCheckStatesEnabled",
+                typeof(bool),
+                typeof(RadioMenuItem),
+                new PropertyMetadata(false, OnAreCheckStatesEnabledPropertyChanged));
+
+        public static bool GetAreCheckStatesEnabled(MenuItem target)
+        {
+            return (bool)target.GetValue(AreCheckStatesEnabledProperty);
+        }
+
+        public static void SetAreCheckStatesEnabled(MenuItem target, bool value)
+        {
+            target.SetValue(AreCheckStatesEnabledProperty, value);
+        }
+
+        #endregion
+
         protected override void OnChecked(RoutedEventArgs e)
         {
             if (m_surpressOnChecked)
@@ -68,7 +101,7 @@ namespace ModernWpf.Controls
                 return;
             }
 
-            UpdateSiblings();
+            UpdateCheckedItemInGroup();
 
             base.OnChecked(e);
         }
@@ -87,33 +120,51 @@ namespace ModernWpf.Controls
             base.OnUnchecked(e);
         }
 
-        private void UpdateSiblings()
+        private void UpdateCheckedItemInGroup()
         {
             if (IsChecked)
             {
-                // Since this item is checked, uncheck all siblings
-                if (ItemsControlFromItemContainer(this) is { } parent)
+                var groupName = GroupName;
+
+                if (s_selectionMap.Value.TryGetValue(groupName, out var previousCheckedItemWeak))
                 {
-                    int childrenCount = parent.Items.Count;
-                    for (int i = 0; i < childrenCount; i++)
+                    if (previousCheckedItemWeak.TryGetTarget(out var previousCheckedItem))
                     {
-                        var child = parent.Items[i];
-                        if (child is RadioMenuItem radioItem)
+                        // Uncheck the previously checked item
+                        previousCheckedItem.IsChecked = false;
+                    }
+                }
+                s_selectionMap.Value[groupName] = new(this);
+            }
+        }
+
+        static void OnAreCheckStatesEnabledPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            if ((bool)args.NewValue)
+            {
+                if (sender is MenuItem subMenu)
+                {
+                    // Every time the submenu is loaded, see if it contains a checked RadioMenuFlyoutItem or not.
+                    subMenu.Loaded += (s, e) =>
+                    {
+                        bool isAnyItemChecked = false;
+                        foreach (var item in subMenu.Items)
                         {
-                            if (radioItem != this
-                                && radioItem.GroupName == GroupName)
+                            if (item is RadioMenuItem radioItem)
                             {
-                                radioItem.m_isSafeUncheck = true;
-                                radioItem.SetCurrentValue(IsCheckedProperty, false);
-                                radioItem.m_isSafeUncheck = false;
+                                isAnyItemChecked = isAnyItemChecked || radioItem.IsChecked;
                             }
                         }
-                    }
+
+                        VisualStateManager.GoToState(subMenu, isAnyItemChecked ? "Checked" : "Unchecked", false);
+                    };
                 }
             }
         }
 
         private bool m_isSafeUncheck;
         private bool m_surpressOnChecked;
+
+        static readonly ThreadLocal<Dictionary<string, WeakReference<RadioMenuItem>>> s_selectionMap = new();
     }
 }

@@ -40,6 +40,8 @@ namespace System.Windows.Controls
         }
     }
 
+    public class MenuFlyoutSubItem : MenuFlyoutItem { }
+
     public class ToggleMenuFlyoutItem : MenuFlyoutItem
     {
         static ToggleMenuFlyoutItem()

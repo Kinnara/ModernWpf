@@ -451,4 +451,9 @@
 
     <Style TargetType="MenuItem" BasedOn="{StaticResource DefaultMenuItemStyle}" />
 
+    <Style TargetType="MenuItem" x:Key="RadioMenuFlyoutSubItemStyle" BasedOn="{StaticResource DefaultMenuItemStyle}">
+        <Setter Property="local:RadioMenuItem.AreCheckStatesEnabled" Value="True"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
 </ResourceDictionary>

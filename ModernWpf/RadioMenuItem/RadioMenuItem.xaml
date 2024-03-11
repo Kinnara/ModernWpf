@@ -3,9 +3,9 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ModernWpf.Controls"
-    xmlns:ui="http://schemas.modernwpf.com/2019">
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
-    <ui:SharedSizeGroupConverter x:Key="SharedSizeGroupConverter" />
+    <primitives:SharedSizeGroupConverter x:Key="SharedSizeGroupConverter" />
 
     <Style TargetType="local:RadioMenuItem">
         <Setter Property="Background" Value="{DynamicResource MenuFlyoutItemBackground}" />
@@ -42,7 +42,7 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <ui:FontIconFallback
+                            <local:FontIconFallback
                                 x:Name="CheckGlyph"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 Data="{StaticResource RadioBullet}"
