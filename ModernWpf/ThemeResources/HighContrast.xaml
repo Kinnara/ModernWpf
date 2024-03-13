@@ -44,6 +44,10 @@
     <Color x:Key="SystemListLowColor">#19FFFFFF</Color>
     <Color x:Key="SystemListMediumColor">#33FFFFFF</Color>
     <Color x:Key="SystemErrorTextColor">#FFF000</Color>
+    
+    <Color x:Key="ControlAAStrokeColorDefault">#8BFFFFFF</Color>
+
+    <m:StaticResource x:Key="SystemColorHighlightColor" ResourceKey="{x:Static SystemColors.HighlightColorKey}" />
 
     <SolidColorBrush x:Key="SystemControlBackgroundAccentBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
     <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
@@ -269,6 +273,8 @@
     <SolidColorBrush x:Key="SystemColorHighlightTextColorBrush" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
     <SolidColorBrush x:Key="SystemColorWindowTextColorBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="SystemColorWindowColorBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="SystemColorButtonFaceColorBrush" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
+    <SolidColorBrush x:Key="SystemColorButtonTextColorBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
     <SolidColorBrush x:Key="SystemControlTransparentBrush" Color="Transparent" />
     <SolidColorBrush x:Key="SystemControlHighlightListAccentVeryHighBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
     <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumLowBrush" Color="{m:ThemeResource SystemColorHighlightColor}" />
@@ -278,6 +284,88 @@
     <Thickness x:Key="TextControlThemePadding">10,5,6,6</Thickness>
     <m:StaticResource x:Key="SystemControlFocusVisualPrimaryBrush" ResourceKey="FocusStrokeColorOuterBrush"/>
     <m:StaticResource x:Key="SystemControlFocusVisualSecondaryBrush" ResourceKey="FocusStrokeColorInnerBrush"/>
+
+    <!-- Colors copied from Default theme to match list of keys. Should not
+                 be using these keys. These are set to Red to notify that.-->
+    <Color x:Key="TextFillColorPrimary">#FF0000</Color>
+    <Color x:Key="TextFillColorSecondary">#FF0000</Color>
+    <Color x:Key="TextFillColorTertiary">#FF0000</Color>
+    <Color x:Key="TextFillColorDisabled">#FF0000</Color>
+    <Color x:Key="TextFillColorInverse">#FF0000</Color>
+    <Color x:Key="AccentTextFillColorDisabled">#FF0000</Color>
+    <Color x:Key="ControlFillColorDefault">#FF0000</Color>
+    <Color x:Key="ControlFillColorSecondary">#FF0000</Color>
+    <Color x:Key="ControlFillColorTertiary">#FF0000</Color>
+    <Color x:Key="ControlFillColorDisabled">#FF0000</Color>
+    <Color x:Key="ControlFillColorTransparent">#FF0000</Color>
+    <Color x:Key="ControlFillColorInputActive">#FF0000</Color>
+    <Color x:Key="ControlSolidFillColorDefault">#FF0000</Color>
+    <Color x:Key="SubtleFillColorTransparent">#FF0000</Color>
+    <Color x:Key="SubtleFillColorSecondary">#FF0000</Color>
+    <Color x:Key="SubtleFillColorTertiary">#FF0000</Color>
+    <Color x:Key="SubtleFillColorDisabled">#FF0000</Color>
+    <Color x:Key="ControlAltFillColorTransparent">#FF0000</Color>
+    <Color x:Key="ControlAltFillColorSecondary">#FF0000</Color>
+    <Color x:Key="ControlAltFillColorTertiary">#FF0000</Color>
+    <Color x:Key="ControlAltFillColorQuarternary">#FF0000</Color>
+    <Color x:Key="ControlAltFillColorDisabled">#FF0000</Color>
+    <Color x:Key="ControlOnImageFillColorDefault">#FF0000</Color>
+    <Color x:Key="ControlOnImageFillColorSecondary">#FF0000</Color>
+    <Color x:Key="ControlOnImageFillColorTertiary">#FF0000</Color>
+    <Color x:Key="ControlOnImageFillColorDisabled">#FF0000</Color>
+    <Color x:Key="ControlStrokeColorDefault">#FF0000</Color>
+    <Color x:Key="ControlStrokeColorSecondary">#FF0000</Color>
+    <Color x:Key="ControlStrokeColorOnAccentDefault">#FF0000</Color>
+    <Color x:Key="ControlStrokeColorOnAccentSecondary">#FF0000</Color>
+    <Color x:Key="ControlStrokeColorOnAccentTertiary">#FF0000</Color>
+    <Color x:Key="ControlStrokeColorOnAccentDisabled">#FF0000</Color>
+    <Color x:Key="CardStrokeColorDefault">#FF0000</Color>
+    <Color x:Key="CardStrokeColorDefaultSolid">#FF0000</Color>
+    <Color x:Key="SurfaceStrokeColorDefault">#FF0000</Color>
+    <Color x:Key="SurfaceStrokeColorFlyout">#FF0000</Color>
+    <Color x:Key="SurfaceStrokeColorInverse">#FF0000</Color>
+    <Color x:Key="DividerStrokeColorDefault">#FF0000</Color>
+    <Color x:Key="FocusStrokeColorOuter">#FF0000</Color>
+    <Color x:Key="FocusStrokeColorInner">#FF0000</Color>
+    <Color x:Key="CardBackgroundFillColorDefault">#FF0000</Color>
+    <Color x:Key="CardBackgroundFillColorSecondary">#FF0000</Color>
+    <Color x:Key="SmokeFillColorDefault">#FF0000</Color>
+    <Color x:Key="LayerFillColorDefault">#FF0000</Color>
+    <Color x:Key="LayerFillColorAlt">#FF0000</Color>
+    <Color x:Key="LayerOnAcrylicFillColorDefault">#FF0000</Color>
+    <Color x:Key="LayerOnAccentAcrylicFillColorDefault">#FF0000</Color>
+    <Color x:Key="LayerOnMicaBaseAltFillColorDefault">#FF0000</Color>
+    <Color x:Key="LayerOnMicaBaseAltFillColorSecondary">#FF0000</Color>
+    <Color x:Key="LayerOnMicaBaseAltFillColorTertiary">#FF0000</Color>
+    <Color x:Key="LayerOnMicaBaseAltFillColorTransparent">#FF0000</Color>
+    <Color x:Key="SolidBackgroundFillColorBase">#FF0000</Color>
+    <Color x:Key="SolidBackgroundFillColorSecondary">#FF0000</Color>
+    <Color x:Key="SolidBackgroundFillColorTertiary">#FF0000</Color>
+    <Color x:Key="SolidBackgroundFillColorQuarternary">#FF0000</Color>
+    <Color x:Key="SolidBackgroundFillColorTransparent">#FF0000</Color>
+    <Color x:Key="SolidBackgroundFillColorBaseAlt">#FF0000</Color>
+    <Color x:Key="SystemFillColorSuccess">#FF0000</Color>
+    <Color x:Key="SystemFillColorCaution">#FF0000</Color>
+    <Color x:Key="SystemFillColorCritical">#FF0000</Color>
+    <Color x:Key="SystemFillColorNeutral">#FF0000</Color>
+    <Color x:Key="SystemFillColorSolidNeutral">#FF0000</Color>
+    <Color x:Key="SystemFillColorAttentionBackground">#FF0000</Color>
+    <Color x:Key="SystemFillColorSuccessBackground">#FF0000</Color>
+    <Color x:Key="SystemFillColorCautionBackground">#FF0000</Color>
+    <Color x:Key="SystemFillColorCriticalBackground">#FF0000</Color>
+    <Color x:Key="SystemFillColorNeutralBackground">#FF0000</Color>
+    <Color x:Key="SystemFillColorSolidAttentionBackground">#FF0000</Color>
+    <Color x:Key="SystemFillColorSolidNeutralBackground">#FF0000</Color>
+    <Color x:Key="TextOnAccentFillColorSelectedText">#FF0000</Color>
+    <Color x:Key="TextOnAccentFillColorPrimary">#FF0000</Color>
+    <Color x:Key="TextOnAccentFillColorSecondary">#FF0000</Color>
+    <Color x:Key="TextOnAccentFillColorDisabled">#FF0000</Color>
+    <Color x:Key="ControlStrongFillColorDefault">#FF0000</Color>
+    <Color x:Key="ControlStrongFillColorDisabled">#FF0000</Color>
+    <Color x:Key="AccentFillColorDisabled">#FF0000</Color>
+    <Color x:Key="ControlStrokeColorForStrongFillWhenOnImage">#FF0000</Color>
+    <Color x:Key="ControlStrongStrokeColorDefault">#FF0000</Color>
+    <Color x:Key="ControlStrongStrokeColorDisabled">#FF0000</Color>
     <!--#endregion-->
 
     <!-- Background Brushes -->
@@ -1187,8 +1275,8 @@
     <m:StaticResource x:Key="ProgressBarForeground" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="ProgressBarBackground" ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="ProgressBarBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
-    <m:StaticResource x:Key="ProgressBarPausedForegroundColor" ResourceKey="{x:Static SystemColors.WindowTextColor}" />
-    <m:StaticResource x:Key="ProgressBarErrorForegroundColor" ResourceKey="{x:Static SystemColors.HotTrackColor}" />
+    <m:StaticResource x:Key="ProgressBarPausedForegroundColor" ResourceKey="{x:Static SystemColors.WindowTextColorKey}" />
+    <m:StaticResource x:Key="ProgressBarErrorForegroundColor" ResourceKey="{x:Static SystemColors.HotTrackColorKey}" />
 
     <!-- Resources for ProgressRing -->
     <m:StaticResource x:Key="ProgressRingForegroundThemeBrush" ResourceKey="SystemControlHighlightAccentBrush" />
@@ -1212,7 +1300,7 @@
     <m:StaticResource x:Key="RadioButtonOuterEllipseStroke" ResourceKey="SystemControlForegroundBaseMediumBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseStrokePointerOver" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseStrokePressed" ResourceKey="SystemColorHighlightTextColorBrush" />
-    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokeDisabled" ResourceKey="SystemColorGrayTextColor" />
+    <m:StaticResource x:Key="RadioButtonOuterEllipseStrokeDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseFill" ResourceKey="SystemColorButtonFaceColorBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseFillPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseFillPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
@@ -1220,7 +1308,7 @@
     <m:StaticResource x:Key="RadioButtonOuterEllipseCheckedStroke" ResourceKey="SystemControlHighlightAccentBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseCheckedStrokePointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseCheckedStrokePressed" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <m:StaticResource x:Key="RadioButtonOuterEllipseCheckedStrokeDisabled" ResourceKey="SystemColorGrayTextColor" />
+    <m:StaticResource x:Key="RadioButtonOuterEllipseCheckedStrokeDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseCheckedFill" ResourceKey="SystemControlHighlightAltTransparentBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseCheckedFillPointerOver" ResourceKey="SystemColorButtonFaceColorBrush" />
     <m:StaticResource x:Key="RadioButtonOuterEllipseCheckedFillPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
@@ -1537,7 +1625,7 @@
     <m:StaticResource x:Key="ToggleSwitchKnobFillOff" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOffPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOffPressed" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="ToggleSwitchKnobFillOffDisabled" ResourceKey="SystemColorGrayTextColor" />
+    <m:StaticResource x:Key="ToggleSwitchKnobFillOffDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOn" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
     <m:StaticResource x:Key="ToggleSwitchKnobFillOnPressed" ResourceKey="SystemChromeWhiteColor" />
