@@ -125,7 +125,7 @@
                                 <DoubleAnimation Storyboard.TargetName="IndeterminateProgressBarIndicator" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
                                 <DoubleAnimation Storyboard.TargetName="DeterminateProgressBarIndicator" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
                                 <DoubleAnimation Storyboard.TargetName="IndeterminateProgressBarIndicator2" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
-                                <DoubleAnimation Storyboard.TargetName="ProgressBarTrack" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
+                                <DoubleAnimation Storyboard.TargetName="ProgressBarTrack" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
                                 <!--#endregion-->
                                 <DoubleAnimationUsingKeyFrames
                                     Storyboard.TargetName="IndeterminateProgressBarIndicator2"
@@ -159,7 +159,7 @@
                                 <DoubleAnimation Storyboard.TargetName="IndeterminateProgressBarIndicator" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
                                 <DoubleAnimation Storyboard.TargetName="DeterminateProgressBarIndicator" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
                                 <DoubleAnimation Storyboard.TargetName="IndeterminateProgressBarIndicator2" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
-                                <DoubleAnimation Storyboard.TargetName="ProgressBarTrack" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
+                                <DoubleAnimation Storyboard.TargetName="ProgressBarTrack" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
                                 <!--#endregion-->
                                 <DoubleAnimationUsingKeyFrames
                                     Storyboard.TargetName="IndeterminateProgressBarIndicator2"
