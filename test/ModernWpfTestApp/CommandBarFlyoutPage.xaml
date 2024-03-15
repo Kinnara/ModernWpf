@@ -23,6 +23,7 @@
                 Opened="OnFlyoutOpened"
                 Closed="OnFlyoutClosed">
                 <ui:AppBarButton x:Name="CutButton1" AutomationProperties.AutomationId="CutButton1" Label="Cut" Icon="Cut" Click="OnElementClicked" />
+                <AppBarSeparator />
                 <ui:AppBarButton x:Name="CopyButton1" AutomationProperties.AutomationId="CopyButton1" Label="Copy" Icon="Copy" Click="OnElementClicked" />
                 <ui:AppBarButton x:Name="PasteButton1" AutomationProperties.AutomationId="PasteButton1" Label="Paste" Icon="Paste" Click="OnElementClicked" />
                 <ui:AppBarButton x:Name="BoldButton1" AutomationProperties.AutomationId="BoldButton1" Label="Bold" Icon="Bold" Click="OnElementClicked" />
@@ -30,6 +31,7 @@
                 <ui:AppBarToggleButton x:Name="UnderlineButton1" AutomationProperties.AutomationId="UnderlineButton1" Label="Underline" Icon="Underline" Click="OnElementClicked" />
                 <muxc:CommandBarFlyout.SecondaryCommands>
                     <ui:AppBarButton x:Name="UndoButton1" AutomationProperties.AutomationId="UndoButton1" Label="Undo" Icon="Undo" Click="OnElementClicked" />
+                    <AppBarSeparator IsTabStop="False" />
                     <ui:AppBarButton x:Name="RedoButton1" AutomationProperties.AutomationId="RedoButton1" Label="Redo" Icon="Redo" Click="OnElementClicked" />
                     <ui:AppBarButton x:Name="SelectAllButton1" AutomationProperties.AutomationId="SelectAllButton1" Label="Select all" Click="OnElementClicked" />
                     <ui:AppBarToggleButton x:Name="FavoriteToggleButton1" AutomationProperties.AutomationId="FavoriteToggleButton1" Label="Favorite" Icon="Favorite" Checked="OnElementChecked" Unchecked="OnElementUnchecked" />

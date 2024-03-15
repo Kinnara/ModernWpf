@@ -633,7 +633,15 @@ namespace ModernWpf.Controls.Primitives
             {
                 if (command is UIElement commandAsUIElement)
                 {
-                    if (commandAsUIElement.Visibility == Visibility.Visible)
+                    // Don't count AppBarSeparator if IsTabStop is false
+                    if (commandAsUIElement is AppBarSeparator separator)
+                    {
+                        if (!separator.IsTabStop)
+                        {
+                            continue;
+                        }
+                    }
+                    else if (commandAsUIElement.Visibility == Visibility.Visible)
                     {
                         sizeOfSet++;
                     }
@@ -650,7 +658,15 @@ namespace ModernWpf.Controls.Primitives
             {
                 if (command is UIElement commandAsUIElement)
                 {
-                    if (commandAsUIElement.Visibility == Visibility.Visible)
+                    // Don't count AppBarSeparator if IsTabStop is false
+                    if (commandAsUIElement is AppBarSeparator separator)
+                    {
+                        if (!separator.IsTabStop)
+                        {
+                            continue;
+                        }
+                    }
+                    else if (commandAsUIElement.Visibility == Visibility.Visible)
                     {
                         AutomationProperties.SetSizeOfSet(commandAsUIElement, sizeOfSet);
                     }
@@ -868,7 +884,7 @@ namespace ModernWpf.Controls.Primitives
             return control != null &&
                 control.Visibility == Visibility.Visible &&
                 control.IsEnabled &&
-                (!checkTabStop || control.IsTabStop);
+                (control.IsTabStop || (!checkTabStop && !(control is AppBarSeparator))); // AppBarSeparator is not focusable if IsTabStop is false
         }
 
         Control GetFirstTabStopControl(
