@@ -7,10 +7,10 @@
 
     <Style TargetType="local:PersonPicture">
         <Setter Property="Foreground" Value="{DynamicResource PersonPictureForegroundThemeBrush}" />
-        <Setter Property="Width" Value="100" />
-        <Setter Property="Height" Value="100" />
+        <Setter Property="Width" Value="96" />
+        <Setter Property="Height" Value="96" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontWeight" Value="350" />
+        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
@@ -55,14 +55,14 @@
 
                         <Ellipse
                             Fill="{DynamicResource PersonPictureEllipseFillThemeBrush}"
-                            Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"
+                            Stroke="{DynamicResource PersonPictureEllipseFillStrokeBrush}"
                             StrokeThickness="{DynamicResource PersonPictureEllipseStrokeThickness}"
                             Width="{TemplateBinding Width}"
                             Height="{TemplateBinding Height}" />
 
                         <TextBlock
                             x:Name="InitialsTextBlock"
-                            FontSize="36"
+                            FontSize="40"
                             FontFamily="{TemplateBinding FontFamily}"
                             Foreground="{TemplateBinding Foreground}"
                             FontWeight="{TemplateBinding FontWeight}"
