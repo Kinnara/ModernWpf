@@ -1207,11 +1207,12 @@
     <Thickness x:Key="NumberBoxPopupSpinButtonBorderThickness">2</Thickness>
 
     <!-- Resources for PersonPicture -->
-    <SolidColorBrush x:Key="PersonPictureForegroundThemeBrush" Color="{StaticResource SystemAltHighColor}" />
+    <m:StaticResource x:Key="PersonPictureForegroundThemeBrush" ResourceKey="SystemControlForegroundBaseHighBrush" />
     <SolidColorBrush x:Key="PersonPictureEllipseBadgeForegroundThemeBrush" Color="{StaticResource SystemBaseHighColor}" />
     <SolidColorBrush x:Key="PersonPictureEllipseBadgeFillThemeBrush" Color="{StaticResource SystemChromeDisabledHighColor}" />
     <SolidColorBrush x:Key="PersonPictureEllipseBadgeStrokeThemeBrush" Color="{StaticResource SystemListMediumColor}" />
-    <SolidColorBrush x:Key="PersonPictureEllipseFillThemeBrush" Color="{StaticResource SystemBaseMediumColor}" />
+    <m:StaticResource x:Key="PersonPictureEllipseFillThemeBrush" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="PersonPictureEllipseFillStrokeBrush" ResourceKey="CardStrokeColorDefaultBrush" />
     <sys:Double x:Key="PersonPictureEllipseBadgeStrokeOpacity">0.8</sys:Double>
     <sys:Double x:Key="PersonPictureEllipseBadgeImageSourceStrokeOpacity">1.0</sys:Double>
     <sys:Double x:Key="PersonPictureEllipseStrokeThickness">0</sys:Double>
