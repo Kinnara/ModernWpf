@@ -39,7 +39,7 @@
     <Thickness x:Key="ComboBoxDropdownContentMargin">0,4</Thickness>
     <Thickness x:Key="ComboBoxTopHeaderMargin">0,0,0,8</Thickness>
     <Thickness x:Key="ComboBoxPadding">12,5,0,7</Thickness>
-    <Thickness x:Key="ComboBoxEditableTextPadding">11,5,32,6</Thickness>
+    <Thickness x:Key="ComboBoxEditableTextPadding">11,5,38,6</Thickness>
 
     <CornerRadius x:Key="ComboBoxHiglightBorderCornerRadius">7</CornerRadius>
     <CornerRadius x:Key="ComboBoxDropDownButtonBackgroundCornerRadius">4</CornerRadius>
@@ -308,7 +308,7 @@
 
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="32" />
+                            <ColumnDefinition Width="38" />
                         </Grid.ColumnDefinitions>
 
                         <local:ContentPresenterEx
@@ -429,13 +429,15 @@
                             Grid.Row="1"
                             Grid.Column="1"
                             IsHitTestVisible="False"
-                            Margin="0,0,14,0"
+                            Margin="0,0,12,0"
                             Foreground="{DynamicResource ComboBoxDropDownGlyphForeground}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Width="16"
+                            Height="16"
                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                             FontSize="12"
-                            Data="{StaticResource ChevronDown}"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center" />
+                            Data="{StaticResource ChevronDown}" />
                         <ContentPresenter
                             x:Name="DescriptionPresenter"
                             Grid.Row="2"
