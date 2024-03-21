@@ -269,7 +269,7 @@
     <Color x:Key="CardBackgroundFillColorDefault">#B3FFFFFF</Color>
     <Color x:Key="CardBackgroundFillColorSecondary">#80F6F6F6</Color>
 
-    <Color x:Key="SmokeFillColorDefault">#4DFFFFFF</Color>
+    <Color x:Key="SmokeFillColorDefault">#4D000000</Color>
 
     <Color x:Key="LayerFillColorDefault">#80FFFFFF</Color>
     <Color x:Key="LayerFillColorAlt">#FFFFFF</Color>
