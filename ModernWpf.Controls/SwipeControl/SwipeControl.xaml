@@ -1,0 +1,56 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style TargetType="local:SwipeControl">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SwipeControl">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel
+                            x:Name="PART_TopItemsPanel"
+                            Grid.Column="1"
+                            Orientation="Horizontal"
+                            Visibility="Collapsed" />
+                        <StackPanel
+                            x:Name="PART_LeftItemsPanel"
+                            Grid.Row="1"
+                            Orientation="Horizontal"
+                            Visibility="Collapsed" />
+                        <ContentPresenter
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Content="{TemplateBinding Content}"
+                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}" />
+                        <StackPanel
+                            x:Name="PART_RightItemsPanel"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Orientation="Horizontal"
+                            Visibility="Collapsed" />
+                        <StackPanel
+                            x:Name="PART_BottomItemsPanel"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Orientation="Horizontal"
+                            Visibility="Collapsed" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
