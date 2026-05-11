@@ -785,8 +785,9 @@
     <m:StaticResource x:Key="ComboBoxDropDownGlyphForegroundFocused" ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ComboBoxDropDownGlyphForegroundFocusedPressed" ResourceKey="SystemControlHighlightAltBaseMediumHighBrush" />
     <m:StaticResource x:Key="ComboBoxDropDownForeground" ResourceKey="TextFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="ComboBoxDropDownBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
-    <m:StaticResource x:Key="ComboBoxDropDownBorderBrush" ResourceKey="SurfaceStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="ComboBoxDropDownBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ComboBoxDropDownBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
+    <m:StaticResource x:Key="ComboBoxLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
     <m:StaticResource x:Key="ComboBoxDropDownBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
     <m:StaticResource x:Key="ComboBoxDropDownBackgroundPointerPressed" ResourceKey="SubtleFillColorTertiaryBrush" />
     <m:StaticResource x:Key="ComboBoxFocusedDropDownBackgroundPointerOver" ResourceKey="ControlFillColorTertiaryBrush" />

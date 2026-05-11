@@ -2,6 +2,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -13,6 +14,42 @@ namespace ModernWpf.WinUI.Tests.ComboBox;
 [TestClass]
 public class ComboBoxApiTests
 {
+    [TestMethod]
+    public void VerifyComboBoxDefaultStyleAndWinUI2Resources()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var comboBox = CreateComboBox();
+
+            using var host = new TestWindowHost(comboBox);
+            host.UpdateLayout();
+
+            Assert.AreEqual(HorizontalAlignment.Left, comboBox.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Top, comboBox.VerticalAlignment);
+            Assert.IsTrue(ComboBoxHelper.GetKeepInteriorCornersSquare(comboBox));
+            Assert.IsNotNull(ComboBoxHelper.GetTextBoxStyle(comboBox));
+            Assert.AreEqual(new Thickness(0), comboBox.TryFindResource("ComboBoxDropdownBorderPadding"));
+
+            comboBox.IsEditable = true;
+            host.UpdateLayout();
+
+            var editableTextBox = FindTemplateChild<TextBox>(comboBox, "PART_EditableTextBox");
+            Assert.AreSame(ComboBoxHelper.GetTextBoxStyle(comboBox), editableTextBox.Style);
+
+            AssertThemeResourceReference("Light", "ComboBoxDropDownBackground", "AcrylicInAppFillColorDefaultBrush");
+            AssertThemeResourceReference("Dark", "ComboBoxDropDownBackground", "AcrylicInAppFillColorDefaultBrush");
+            AssertThemeResourceReference("Light", "ComboBoxDropDownBorderBrush", "SurfaceStrokeColorFlyoutBrush");
+            AssertThemeResourceReference("Dark", "ComboBoxDropDownBorderBrush", "SurfaceStrokeColorFlyoutBrush");
+            AssertThemeResourceReference("HighContrast", "ComboBoxDropDownBackground", "SystemControlBackgroundChromeMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "ComboBoxDropDownBorderBrush", "SystemControlForegroundChromeHighBrush");
+            AssertThemeResourceReference("Light", "ComboBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
+            AssertThemeResourceReference("Dark", "ComboBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
+            AssertThemeResourceReference("HighContrast", "ComboBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
+        });
+    }
+
     [TestMethod]
     public void VerifyComboBoxOverlayCornerRadius()
     {
@@ -98,6 +135,14 @@ public class ComboBoxApiTests
     {
         return control.Template?.FindName(name, control) as T
             ?? throw new InvalidOperationException($"Could not find template child '{name}'.");
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 
     private static CornerRadius GetOverlayCornerRadius(FrameworkElement element)
