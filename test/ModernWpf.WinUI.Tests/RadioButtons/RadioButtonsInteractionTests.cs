@@ -81,6 +81,34 @@ public class RadioButtonsInteractionTests
     }
 
     [TestMethod]
+    public void FocusComingFromAnotherRepeaterTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var radioButtons1 = CreateRadioButtons(4);
+            var radioButtons2 = CreateRadioButtons(4);
+            var panel = new StackPanel();
+            panel.Children.Add(radioButtons1);
+            panel.Children.Add(radioButtons2);
+
+            using var host = new TestWindowHost(panel, width: 320, height: 360);
+
+            SelectItem(radioButtons1, 1);
+            SelectItem(radioButtons2, 2);
+
+            AssertSelectedFocusedIndex(radioButtons2, 2);
+
+            GetRadioButton(radioButtons1, 0).Focus();
+            WpfTestHost.DoEvents();
+            AssertSelectedFocusedIndex(radioButtons1, 1);
+
+            GetRadioButton(radioButtons2, 0).Focus();
+            WpfTestHost.DoEvents();
+            AssertSelectedFocusedIndex(radioButtons2, 2);
+        });
+    }
+
+    [TestMethod]
     public void BasicKeyboardTest()
     {
         WpfTestHost.Run(() =>
@@ -273,6 +301,23 @@ public class RadioButtonsInteractionTests
         });
     }
 
+    [TestMethod]
+    public void InsertedCheckedRadioButtonGetsSelection()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var radioButtons = CreateRadioButtons(10);
+            using var host = new TestWindowHost(radioButtons, width: 320, height: 360);
+
+            SelectItem(radioButtons, 3);
+            Assert.AreEqual(3, radioButtons.SelectedIndex);
+
+            InsertEnabledRadioButton(radioButtons, 6, isChecked: true);
+            Assert.AreEqual(6, radioButtons.SelectedIndex);
+            Assert.AreSame(GetRadioButton(radioButtons, 6), radioButtons.SelectedItem);
+        });
+    }
+
     private static ModernWpf.Controls.RadioButtons CreateRadioButtons(int itemCount)
     {
         var radioButtons = new ModernWpf.Controls.RadioButtons();
@@ -286,10 +331,28 @@ public class RadioButtonsInteractionTests
 
     private static void InsertDisabledRadioButton(ModernWpf.Controls.RadioButtons radioButtons, int index)
     {
+        InsertRadioButton(radioButtons, index, isEnabled: false);
+    }
+
+    private static void InsertEnabledRadioButton(
+        ModernWpf.Controls.RadioButtons radioButtons,
+        int index,
+        bool isChecked = false)
+    {
+        InsertRadioButton(radioButtons, index, isEnabled: true, isChecked);
+    }
+
+    private static void InsertRadioButton(
+        ModernWpf.Controls.RadioButtons radioButtons,
+        int index,
+        bool isEnabled,
+        bool isChecked = false)
+    {
         radioButtons.Items.Insert(index, new RadioButton
         {
             Content = "Custom",
-            IsEnabled = false
+            IsEnabled = isEnabled,
+            IsChecked = isChecked
         });
         WpfTestHost.DoEvents();
     }
