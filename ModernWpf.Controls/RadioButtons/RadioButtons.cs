@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -353,26 +354,28 @@ namespace ModernWpf.Controls
                     break;
                 case Key.Right:
                     {
-                        if (args.OriginalSource is UIElement sourceElement)
+                        if (MoveFocusHorizontally(1))
                         {
-                            if (sourceElement.MoveFocus(new TraversalRequest(FocusNavigationDirection.Right)))
-                            {
-                                args.Handled = true;
-                                return;
-                            }
+                            args.Handled = true;
+                            return;
+                        }
+
+                        if (args.OriginalSource is UIElement)
+                        {
                             args.Handled = HandleEdgeCaseFocus(false, args.OriginalSource);
                         }
                     }
                     break;
                 case Key.Left:
                     {
-                        if (args.OriginalSource is UIElement sourceElement)
+                        if (MoveFocusHorizontally(-1))
                         {
-                            if (sourceElement.MoveFocus(new TraversalRequest(FocusNavigationDirection.Left)))
-                            {
-                                args.Handled = true;
-                                return;
-                            }
+                            args.Handled = true;
+                            return;
+                        }
+
+                        if (args.OriginalSource is UIElement)
+                        {
                             args.Handled = HandleEdgeCaseFocus(true, args.OriginalSource);
                         }
                     }
@@ -642,6 +645,90 @@ namespace ModernWpf.Controls
                 }
             }
             return false;
+        }
+
+        bool MoveFocusHorizontally(int direction)
+        {
+            var repeater = m_repeater;
+            if (repeater != null &&
+                Keyboard.FocusedElement is UIElement focusedElement)
+            {
+                var focusedIndex = repeater.GetElementIndex(focusedElement);
+                if (focusedIndex < 0)
+                {
+                    return false;
+                }
+
+                var focusedCenter = GetElementCenter(focusedElement);
+                Control bestControl = null;
+                double bestVerticalDistance = double.PositiveInfinity;
+                double bestHorizontalDistance = double.PositiveInfinity;
+
+                var itemCount = repeater.ItemsSourceView.Count;
+                for (int index = 0; index < itemCount; index++)
+                {
+                    if (index == focusedIndex)
+                    {
+                        continue;
+                    }
+
+                    if (repeater.TryGetElement(index) is not Control candidate ||
+                        !CanFocusCandidate(candidate))
+                    {
+                        continue;
+                    }
+
+                    var candidateCenter = GetElementCenter(candidate);
+                    var horizontalDelta = candidateCenter.X - focusedCenter.X;
+                    if ((direction > 0 && horizontalDelta <= 0) ||
+                        (direction < 0 && horizontalDelta >= 0))
+                    {
+                        continue;
+                    }
+
+                    var verticalDistance = Math.Abs(candidateCenter.Y - focusedCenter.Y);
+                    var horizontalDistance = Math.Abs(horizontalDelta);
+
+                    if (verticalDistance < bestVerticalDistance ||
+                        (Math.Abs(verticalDistance - bestVerticalDistance) < 0.5 &&
+                         horizontalDistance < bestHorizontalDistance))
+                    {
+                        bestControl = candidate;
+                        bestVerticalDistance = verticalDistance;
+                        bestHorizontalDistance = horizontalDistance;
+                    }
+                }
+
+                if (bestControl != null)
+                {
+                    if (bestControl.Focus())
+                    {
+                        if (bestControl is ToggleButton toggleButton)
+                        {
+                            toggleButton.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
+                        }
+
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private Point GetElementCenter(UIElement element)
+        {
+            var elementAsFrameworkElement = element as FrameworkElement;
+            var width = elementAsFrameworkElement?.ActualWidth ?? 0;
+            var height = elementAsFrameworkElement?.ActualHeight ?? 0;
+            return element.TranslatePoint(new Point(width / 2, height / 2), this);
+        }
+
+        private bool CanFocusCandidate(Control control)
+        {
+            return control.IsEnabled &&
+                control.IsVisible &&
+                control.Focusable;
         }
 
         private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -177,6 +178,101 @@ public class RadioButtonsInteractionTests
         });
     }
 
+    [TestMethod]
+    public void DisabledItemsKeyboardTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var radioButtons = CreateRadioButtons(10);
+            radioButtons.MaxColumns = 3;
+            using var host = new TestWindowHost(radioButtons, width: 520, height: 420);
+
+            InsertDisabledRadioButton(radioButtons, 10);
+            SelectItemByLabel(radioButtons, 7);
+            AssertSelectedFocusedIndex(radioButtons, 7);
+
+            PressKeyAndAssert(radioButtons, Key.Right, 9);
+            PressKeyAndAssert(radioButtons, Key.Left, 5);
+            PressKeyAndAssert(radioButtons, Key.Down, 6);
+            PressKeyAndAssert(radioButtons, Key.Right, 9);
+
+            InsertDisabledRadioButton(radioButtons, 6);
+            InsertDisabledRadioButton(radioButtons, 6);
+
+            SelectItemByLabel(radioButtons, 1);
+            AssertSelectedFocusedIndex(radioButtons, 1);
+            PressKeyAndAssert(radioButtons, Key.Right, 10);
+
+            SelectItemByLabel(radioButtons, 2);
+            AssertSelectedFocusedIndex(radioButtons, 2);
+            PressKeyAndAssert(radioButtons, Key.Right, 11);
+
+            SelectItemByLabel(radioButtons, 5);
+            PressKeyAndAssert(radioButtons, Key.Up, 4);
+            PressKeyAndAssert(radioButtons, Key.Down, 5);
+            PressKeyAndAssert(radioButtons, Key.Down, 8);
+
+            SelectItemByLabel(radioButtons, 8);
+            AssertSelectedFocusedIndex(radioButtons, 10);
+            PressKeyAndAssert(radioButtons, Key.Left, 1);
+
+            SelectItemByLabel(radioButtons, 9);
+            AssertSelectedFocusedIndex(radioButtons, 11);
+            PressKeyAndAssert(radioButtons, Key.Left, 2);
+        });
+    }
+
+    [TestMethod]
+    public void DisabledItemsAtTopOfColumnKeyboardTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var radioButtons = CreateRadioButtons(10);
+            radioButtons.MaxColumns = 3;
+            using var host = new TestWindowHost(radioButtons, width: 520, height: 420);
+
+            InsertDisabledRadioButton(radioButtons, 5);
+            InsertDisabledRadioButton(radioButtons, 5);
+            InsertDisabledRadioButton(radioButtons, 5);
+
+            SelectItemByLabel(radioButtons, 0);
+            AssertSelectedFocusedIndex(radioButtons, 0);
+            PressKeyAndAssert(radioButtons, Key.Right, 9);
+
+            SelectItemByLabel(radioButtons, 1);
+            AssertSelectedFocusedIndex(radioButtons, 1);
+            PressKeyAndAssert(radioButtons, Key.Right, 10);
+
+            SelectItemByLabel(radioButtons, 2);
+            AssertSelectedFocusedIndex(radioButtons, 2);
+            PressKeyAndAssert(radioButtons, Key.Right, 11);
+
+            SelectItemByLabel(radioButtons, 3);
+            AssertSelectedFocusedIndex(radioButtons, 3);
+            PressKeyAndAssert(radioButtons, Key.Right, 8);
+
+            SelectItemByLabel(radioButtons, 4);
+            AssertSelectedFocusedIndex(radioButtons, 4);
+            PressKeyAndAssert(radioButtons, Key.Right, 8);
+
+            SelectItemByLabel(radioButtons, 6);
+            AssertSelectedFocusedIndex(radioButtons, 9);
+            PressKeyAndAssert(radioButtons, Key.Left, 0);
+
+            SelectItemByLabel(radioButtons, 7);
+            AssertSelectedFocusedIndex(radioButtons, 10);
+            PressKeyAndAssert(radioButtons, Key.Left, 1);
+
+            SelectItemByLabel(radioButtons, 8);
+            AssertSelectedFocusedIndex(radioButtons, 11);
+            PressKeyAndAssert(radioButtons, Key.Left, 2);
+
+            SelectItemByLabel(radioButtons, 9);
+            AssertSelectedFocusedIndex(radioButtons, 12);
+            PressKeyAndAssert(radioButtons, Key.Left, 8);
+        });
+    }
+
     private static ModernWpf.Controls.RadioButtons CreateRadioButtons(int itemCount)
     {
         var radioButtons = new ModernWpf.Controls.RadioButtons();
@@ -188,9 +284,30 @@ public class RadioButtonsInteractionTests
         return radioButtons;
     }
 
+    private static void InsertDisabledRadioButton(ModernWpf.Controls.RadioButtons radioButtons, int index)
+    {
+        radioButtons.Items.Insert(index, new RadioButton
+        {
+            Content = "Custom",
+            IsEnabled = false
+        });
+        WpfTestHost.DoEvents();
+    }
+
     private static void SelectItem(ModernWpf.Controls.RadioButtons radioButtons, int index)
     {
         var item = GetRadioButton(radioButtons, index);
+        item.Focus();
+        item.IsChecked = true;
+        WpfTestHost.DoEvents();
+    }
+
+    private static void SelectItemByLabel(ModernWpf.Controls.RadioButtons radioButtons, int labelIndex)
+    {
+        var item = radioButtons.Items
+            .OfType<RadioButton>()
+            .Single(radioButton => Equals(radioButton.Content, $"Radio Button {labelIndex}"));
+
         item.Focus();
         item.IsChecked = true;
         WpfTestHost.DoEvents();
