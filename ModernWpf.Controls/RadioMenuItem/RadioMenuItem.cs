@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using ModernWpf.Controls.Primitives;
@@ -35,7 +37,12 @@ namespace ModernWpf.Controls
 
         private static void OnGroupNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((RadioMenuItem)d).UpdateSiblings();
+            var radioItem = (RadioMenuItem)d;
+            if (radioItem.IsChecked)
+            {
+                radioItem.RemoveCheckedItemFromGroup((string)e.OldValue);
+                radioItem.UpdateCheckedItemInGroup();
+            }
         }
 
         public static readonly DependencyProperty UseSystemFocusVisualsProperty =
@@ -68,7 +75,7 @@ namespace ModernWpf.Controls
                 return;
             }
 
-            UpdateSiblings();
+            UpdateCheckedItemInGroup();
 
             base.OnChecked(e);
         }
@@ -85,33 +92,45 @@ namespace ModernWpf.Controls
             }
 
             base.OnUnchecked(e);
+            RemoveCheckedItemFromGroup(GroupName);
         }
 
-        private void UpdateSiblings()
+        private void UpdateCheckedItemInGroup()
         {
             if (IsChecked)
             {
-                // Since this item is checked, uncheck all siblings
-                if (ItemsControlFromItemContainer(this) is { } parent)
+                string groupName = GroupName ?? string.Empty;
+                if (s_selectionMap.TryGetValue(groupName, out var previousCheckedItemWeak) &&
+                    previousCheckedItemWeak.TryGetTarget(out var previousCheckedItem) &&
+                    !ReferenceEquals(previousCheckedItem, this))
                 {
-                    int childrenCount = parent.Items.Count;
-                    for (int i = 0; i < childrenCount; i++)
+                    previousCheckedItem.m_isSafeUncheck = true;
+                    try
                     {
-                        var child = parent.Items[i];
-                        if (child is RadioMenuItem radioItem)
-                        {
-                            if (radioItem != this
-                                && radioItem.GroupName == GroupName)
-                            {
-                                radioItem.m_isSafeUncheck = true;
-                                radioItem.SetCurrentValue(IsCheckedProperty, false);
-                                radioItem.m_isSafeUncheck = false;
-                            }
-                        }
+                        previousCheckedItem.SetCurrentValue(IsCheckedProperty, false);
+                    }
+                    finally
+                    {
+                        previousCheckedItem.m_isSafeUncheck = false;
                     }
                 }
+
+                s_selectionMap[groupName] = new WeakReference<RadioMenuItem>(this);
             }
         }
+
+        private void RemoveCheckedItemFromGroup(string groupName)
+        {
+            groupName ??= string.Empty;
+
+            if (s_selectionMap.TryGetValue(groupName, out var checkedItemWeak) &&
+                (!checkedItemWeak.TryGetTarget(out var checkedItem) || ReferenceEquals(checkedItem, this)))
+            {
+                s_selectionMap.Remove(groupName);
+            }
+        }
+
+        private static readonly Dictionary<string, WeakReference<RadioMenuItem>> s_selectionMap = new Dictionary<string, WeakReference<RadioMenuItem>>();
 
         private bool m_isSafeUncheck;
         private bool m_surpressOnChecked;
