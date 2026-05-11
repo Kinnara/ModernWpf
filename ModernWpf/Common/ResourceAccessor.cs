@@ -148,6 +148,8 @@ namespace ModernWpf
         public const string SR_TabViewScrollIncreaseButtonTooltip = "TabViewScrollIncreaseButtonTooltip";
         public const string SR_NumberBoxUpSpinButtonName = "NumberBoxUpSpinButtonName";
         public const string SR_NumberBoxDownSpinButtonName = "NumberBoxDownSpinButtonName";
+        public const string SR_NumberBoxMinimumValueStatus = "NumberBoxMinimumValueStatus";
+        public const string SR_NumberBoxMaximumValueStatus = "NumberBoxMaximumValueStatus";
         public const string SR_ExpanderDefaultControlName = "ExpanderDefaultControlName";
 
         public const string SR_InfoBarCloseButtonName = "InfoBarCloseButtonName";

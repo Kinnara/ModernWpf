@@ -35,6 +35,12 @@ public sealed class TestWindowHost : IDisposable
 
     public Window Window { get; }
 
+    public void UpdateLayout()
+    {
+        Window.UpdateLayout();
+        WpfTestHost.DoEvents();
+    }
+
     public void Dispose()
     {
         var app = Application.Current;

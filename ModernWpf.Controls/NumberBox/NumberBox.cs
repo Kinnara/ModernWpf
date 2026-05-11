@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -256,6 +257,7 @@ namespace ModernWpf.Controls
             CoerceValue();
 
             UpdateSpinButtonEnabled();
+            ReevaluateForwardedUIAName();
         }
 
         private void OnMaximumPropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -264,6 +266,7 @@ namespace ModernWpf.Controls
             CoerceValue();
 
             UpdateSpinButtonEnabled();
+            ReevaluateForwardedUIAName();
         }
 
         private void OnSmallChangePropertyChanged(DependencyPropertyChangedEventArgs args)
@@ -343,20 +346,32 @@ namespace ModernWpf.Controls
             if (m_textBox is { } textBox)
             {
                 var name = AutomationProperties.GetName(this);
+                var minimum = Minimum == double.MinValue
+                    ? string.Empty
+                    : " " + ResourceAccessor.GetLocalizedStringResource(SR_NumberBoxMinimumValueStatus) + FormatAutomationRangeValue(Minimum);
+                var maximum = Maximum == double.MaxValue
+                    ? string.Empty
+                    : " " + ResourceAccessor.GetLocalizedStringResource(SR_NumberBoxMaximumValueStatus) + FormatAutomationRangeValue(Maximum);
+
                 if (!string.IsNullOrEmpty(name))
                 {
                     // AutomationProperties.Name is a non empty string, we will use that value.
-                    AutomationProperties.SetName(textBox, name);
+                    AutomationProperties.SetName(textBox, name + minimum + maximum);
                 }
                 else
                 {
                     if (Header is string headerAsString)
                     {
                         // Header is a string, we can use that as our UIA name.
-                        AutomationProperties.SetName(textBox, headerAsString);
+                        AutomationProperties.SetName(textBox, headerAsString + minimum + maximum);
                     }
                 }
             }
+        }
+
+        private static string FormatAutomationRangeValue(double value)
+        {
+            return value.ToString(CultureInfo.InvariantCulture);
         }
 
         private void UpdateVisualStateForIsEnabledChange()
