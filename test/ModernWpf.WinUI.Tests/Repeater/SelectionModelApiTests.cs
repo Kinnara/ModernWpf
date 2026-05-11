@@ -239,6 +239,25 @@ public class SelectionModelApiTests
     }
 
     [TestMethod]
+    public void ValidateGroupInserts()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var data = CreateNestedData(levels: 1, groupsAtLevel: 3, countAtLeaf: 3);
+            var selectionModel = new SelectionModel { Source = data };
+
+            selectionModel.Select(1, 1);
+            ValidateSelection(selectionModel, [Path(1, 1)], [Path(), Path(1)]);
+
+            data.Insert(0, 100);
+            ValidateSelection(selectionModel, [Path(2, 1)], [Path(), Path(2)]);
+
+            data.Insert(3, 1000);
+            ValidateSelection(selectionModel, [Path(2, 1)], [Path(), Path(2)]);
+        });
+    }
+
+    [TestMethod]
     public void ValidateRemoves()
     {
         WpfTestHost.Run(() =>
@@ -265,6 +284,29 @@ public class SelectionModelApiTests
     }
 
     [TestMethod]
+    public void ValidateGroupRemoves()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var data = CreateNestedData(levels: 1, groupsAtLevel: 3, countAtLeaf: 3);
+            var selectionModel = new SelectionModel { Source = data };
+
+            selectionModel.Select(1, 1);
+            selectionModel.Select(1, 2);
+            ValidateSelection(selectionModel, [Path(1, 1), Path(1, 2)], [Path(), Path(1)]);
+
+            data.RemoveAt(0);
+            ValidateSelection(selectionModel, [Path(0, 1), Path(0, 2)], [Path(), Path(0)]);
+
+            data.RemoveAt(1);
+            ValidateSelection(selectionModel, [Path(0, 1), Path(0, 2)], [Path(), Path(0)]);
+
+            data.RemoveAt(0);
+            ValidateSelection(selectionModel, []);
+        });
+    }
+
+    [TestMethod]
     public void CanReplaceItem()
     {
         WpfTestHost.Run(() =>
@@ -284,6 +326,22 @@ public class SelectionModelApiTests
     }
 
     [TestMethod]
+    public void ValidateGroupReplaceLosesSelection()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var data = CreateNestedData(levels: 1, groupsAtLevel: 3, countAtLeaf: 3);
+            var selectionModel = new SelectionModel { Source = data };
+
+            selectionModel.Select(1, 1);
+            ValidateSelection(selectionModel, [Path(1, 1)], [Path(), Path(1)]);
+
+            data[1] = new ObservableCollection<int>(Enumerable.Range(0, 5));
+            ValidateSelection(selectionModel, []);
+        });
+    }
+
+    [TestMethod]
     public void ValidateClear()
     {
         WpfTestHost.Run(() =>
@@ -298,6 +356,49 @@ public class SelectionModelApiTests
 
             data.Clear();
             ValidateSelection(selectionModel, []);
+        });
+    }
+
+    [TestMethod]
+    public void ValidateGroupClear()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var data = CreateNestedData(levels: 1, groupsAtLevel: 3, countAtLeaf: 3);
+            var selectionModel = new SelectionModel { Source = data };
+
+            selectionModel.Select(1, 1);
+            ValidateSelection(selectionModel, [Path(1, 1)], [Path(), Path(1)]);
+
+            ((IList)data[1]).Clear();
+            ValidateSelection(selectionModel, []);
+        });
+    }
+
+    [TestMethod]
+    public void ValidateEventWhenInnerNodeChangesSelectionState()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var selectionChangedRaised = false;
+            var data = CreateNestedData(levels: 1, groupsAtLevel: 3, countAtLeaf: 3);
+            var selectionModel = new SelectionModel { Source = data };
+            selectionModel.SelectionChanged += (sender, args) => { selectionChangedRaised = true; };
+
+            selectionModel.Select(1, 0);
+            selectionModel.Select(1, 1);
+            selectionModel.Select(1, 2);
+            ValidateSelection(selectionModel, [Path(1, 0), Path(1, 1), Path(1, 2), Path(1)], [Path()], selectedInnerNodes: 1);
+
+            selectionChangedRaised = false;
+            ((ObservableCollection<object>)data[1]).Insert(0, 100);
+            Assert.IsTrue(selectionChangedRaised);
+            ValidateSelection(selectionModel, [Path(1, 1), Path(1, 2), Path(1, 3)], [Path(), Path(1)]);
+
+            selectionChangedRaised = false;
+            ((ObservableCollection<object>)data[1]).RemoveAt(0);
+            Assert.IsTrue(selectionChangedRaised);
+            ValidateSelection(selectionModel, [Path(1, 0), Path(1, 1), Path(1, 2), Path(1)], [Path()], selectedInnerNodes: 1);
         });
     }
 
@@ -642,9 +743,9 @@ public class SelectionModelApiTests
         return IndexPath.CreateFromIndices(indices);
     }
 
-    private static List<object> CreateNestedData(int levels = 3, int groupsAtLevel = 5, int countAtLeaf = 10)
+    private static ObservableCollection<object> CreateNestedData(int levels = 3, int groupsAtLevel = 5, int countAtLeaf = 10)
     {
-        var data = new List<object>();
+        var data = new ObservableCollection<object>();
         if (levels != 0)
         {
             for (var i = 0; i < groupsAtLevel; i++)
