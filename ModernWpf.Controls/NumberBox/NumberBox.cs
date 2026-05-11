@@ -464,7 +464,7 @@ namespace ModernWpf.Controls
                        ? NumberBoxParser.Compute(text, numberParser)
                        : numberParser.ParseDouble(text);
 
-                    if (!value.HasValue)
+                    if (!value.HasValue || double.IsNaN(value.Value))
                     {
                         if (ValidationMode == NumberBoxValidationMode.InvalidInputOverwritten)
                         {
