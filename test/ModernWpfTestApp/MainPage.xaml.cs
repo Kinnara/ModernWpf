@@ -81,8 +81,8 @@ namespace MUXControlsTestApp
             "uk-UA",
             "uz-Latn-UZ",
             "vi-VN",
-            "zh-CN",
-            "zh-TW"
+            "zh-Hans",
+            "zh-Hant"
         };
 
         public List<FlowDirection> FlowDirections

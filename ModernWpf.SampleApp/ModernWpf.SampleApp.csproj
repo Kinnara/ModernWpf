@@ -2,16 +2,9 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net45;net48;netcoreapp3.1;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>net462;net8.0-windows7.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
-  </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net45'">
-    <ApplicationManifest>app.net45.manifest</ApplicationManifest>
-  </PropertyGroup>
-    
-  <PropertyGroup Condition="'$(TargetFramework)' != 'net45'">
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 

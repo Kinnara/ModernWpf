@@ -3,6 +3,25 @@
 
 Modern styles and controls for your WPF applications.
 
+## Maintenance status
+
+ModernWpf is restarting active maintenance on a new 1.x line.
+
+| Line | Status | Support |
+| --- | --- | --- |
+| 0.9.x | Legacy | Security-only fixes for existing applications. |
+| 1.x | Active preview | New maintenance line for current WPF applications. |
+
+The NuGet package name remains `ModernWpfUI`. The first 1.x maintenance release is planned as `1.0.0-preview.1`.
+
+## Supported targets
+
+| Target framework | Theme source | Notes |
+| --- | --- | --- |
+| `net462` | ModernWpf Fluent backport | Compatibility target for existing .NET Framework WPF apps. |
+| `net8.0-windows7.0` | ModernWpf Fluent backport | Current LTS target for WPF apps. |
+| `net10.0-windows7.0` | WPF platform Fluent theme plus ModernWpf controls | Uses the official `PresentationFramework.Fluent` resources for stock WPF controls. |
+
 ## Features
 * Modern styles and new features for [the majority of the stock WPF controls](https://github.com/Kinnara/ModernWpf/wiki/Controls#styled-controls).
 
@@ -10,7 +29,7 @@ Modern styles and controls for your WPF applications.
 
 * [Additional controls](https://github.com/Kinnara/ModernWpf/wiki/Controls#additional-controls) to help you build modern applications. Some are ported from the [Windows UI Library](https://github.com/microsoft/microsoft-ui-xaml).
 
-* Targets .NET Framework 4.5+, .NET Core 3+, and .NET 5+. Runs on Windows Vista SP2 and above.
+* Targets .NET Framework 4.6.2, .NET 8 for Windows, and .NET 10 for Windows.
 
 ![Overview of controls (light theme)](docs/images/Controls.Light.png "Overview of controls (light theme)")
 
@@ -19,7 +38,25 @@ Modern styles and controls for your WPF applications.
 
 2. Install from NuGet `Install-Package ModernWpfUI`.
 
-3. Edit App.xaml to following:
+3. Edit App.xaml to use the recommended 1.x resource entry:
+```xaml
+<Application
+    ...
+    xmlns:ui="http://schemas.modernwpf.com/2019">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemeResources />
+                <ui:FluentControlsResources UseCompactResources="False" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
+```
+
+`FluentControlsResources` uses the official WPF Fluent theme on `net10.0-windows7.0` and the ModernWpf Fluent backport on older supported targets.
+
+For existing 0.9.x applications, the old resource entry remains supported:
 ```xaml
 <Application
     ...
