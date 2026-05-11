@@ -1,0 +1,34 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style x:Key="DefaultPipsPagerNavigationButtonStyle" TargetType="Button">
+        <Setter Property="MinWidth" Value="20" />
+        <Setter Property="MinHeight" Value="20" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="2" />
+    </Style>
+
+    <Style TargetType="local:PipsPager">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PipsPager">
+                    <StackPanel x:Name="PART_RootPanel" Orientation="Horizontal">
+                        <Button
+                            x:Name="PART_PreviousButton"
+                            Content="&#x2039;"
+                            Style="{StaticResource DefaultPipsPagerNavigationButtonStyle}"
+                            AutomationProperties.Name="Previous page" />
+                        <StackPanel x:Name="PART_PipsPanel" Orientation="Horizontal" />
+                        <Button
+                            x:Name="PART_NextButton"
+                            Content="&#x203A;"
+                            Style="{StaticResource DefaultPipsPagerNavigationButtonStyle}"
+                            AutomationProperties.Name="Next page" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
