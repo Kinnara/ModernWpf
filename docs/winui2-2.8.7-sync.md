@@ -1,6 +1,6 @@
 # WinUI 2.8.7 Sync Matrix
 
-Source of truth: `D:\repos\microsoft-ui-xaml` tag `v2.8.7`
+Source of truth: `D:\repos\microsoft-ui-xaml-v2.8.7`, a detached worktree at tag `v2.8.7`
 
 Verified tag:
 
@@ -40,7 +40,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | ComboBox helper/styles | Pending | Pending | Map to WPF ComboBox style/resource parity rather than a new control. |
 | CommandBar / AppBarButton / AppBarToggleButton / AppBarSeparator | Pending | Pending | Existing WPF port; sync resources and tests. |
 | CommandBarFlyout / TextCommandBarFlyout | Pending | Pending | Existing WPF port; sync command bar flyout behavior and tests. |
-| CommonStyles and compact density resources | Pending | Pending | Sync resource keys across Light, Dark, and HighContrast. |
+| CommonStyles and compact density resources | Pending | Ported initial API slice | `VerifyAllThemesContainSameResourceKeys`, `VerifyUseCompactResourcesAPI`, and `CornerRadiusFilterConverterTest` are ported; visual-tree and baseline resource tests remain pending. |
 | ContentDialog | Pending | Pending | Existing WPF port; sync resources and behavior tests. |
 | DropDownButton | Pending | Pending | Existing WPF port; sync resources and tests. |
 | Expander | Pending | Pending | WPF has stock Expander; align ModernWpf styling and WinUI resource/API expectations where feasible. |

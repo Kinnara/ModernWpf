@@ -357,15 +357,25 @@
     <Color x:Key="SystemFillColorSolidAttentionBackground">#FF0000</Color>
     <Color x:Key="SystemFillColorSolidNeutralBackground">#FF0000</Color>
     <Color x:Key="TextOnAccentFillColorSelectedText">#FF0000</Color>
+    <Color x:Key="TextOnAccentFillColorDefault">#FF0000</Color>
+    <Color x:Key="TextOnAccentAAFillColorPrimary">#FF0000</Color>
+    <Color x:Key="TextOnAccentAAFillColorSecondary">#FF0000</Color>
+    <Color x:Key="TextOnAccentAAFillColorDisabled">#FF0000</Color>
     <Color x:Key="TextOnAccentFillColorPrimary">#FF0000</Color>
     <Color x:Key="TextOnAccentFillColorSecondary">#FF0000</Color>
     <Color x:Key="TextOnAccentFillColorDisabled">#FF0000</Color>
+    <Color x:Key="ControlAAFillColorDefault">#FF0000</Color>
+    <Color x:Key="ControlAAFillColorDisabled">#FF0000</Color>
     <Color x:Key="ControlStrongFillColorDefault">#FF0000</Color>
     <Color x:Key="ControlStrongFillColorDisabled">#FF0000</Color>
+    <Color x:Key="AccentAAFillColorDisabled">#FF0000</Color>
     <Color x:Key="AccentFillColorDisabled">#FF0000</Color>
+    <Color x:Key="ControlStrokeColorForAAFillOnImage">#FF0000</Color>
     <Color x:Key="ControlStrokeColorForStrongFillWhenOnImage">#FF0000</Color>
     <Color x:Key="ControlStrongStrokeColorDefault">#FF0000</Color>
+    <Color x:Key="ControlAAStrokeColorDisabled">#FF0000</Color>
     <Color x:Key="ControlStrongStrokeColorDisabled">#FF0000</Color>
+    <Color x:Key="TemporaryTextFillColorDisabled">#FF0000</Color>
     <!--#endregion-->
 
     <!-- Background Brushes -->
