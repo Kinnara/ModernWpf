@@ -150,7 +150,7 @@ public class RadioButtonsInteractionTests
     {
         WpfTestHost.Run(() =>
         {
-            var radioButtons = CreateRadioButtons(10);
+            var radioButtons = CreateRadioButtons(10, compactContent: true);
             radioButtons.MaxColumns = 3;
             using var host = new TestWindowHost(radioButtons, width: 520, height: 360);
 
@@ -318,12 +318,49 @@ public class RadioButtonsInteractionTests
         });
     }
 
-    private static ModernWpf.Controls.RadioButtons CreateRadioButtons(int itemCount)
+    [TestMethod]
+    public void ColumnsTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var radioButtons = CreateRadioButtons(10);
+            using var host = new TestWindowHost(radioButtons, width: 2600, height: 1000);
+            ModernWpf.Controls.RadioButtonsTestHooks.SetTestHooksEnabled(radioButtons, true);
+            radioButtons.MaxColumns = 2;
+            host.UpdateLayout();
+
+            SetNumberOfColumns(radioButtons, host, 1);
+            AssertLayoutData(radioButtons, rows: 10, columns: 1, largerColumns: 0);
+
+            SetNumberOfColumns(radioButtons, host, 3);
+            AssertLayoutData(radioButtons, rows: 3, columns: 3, largerColumns: 1);
+
+            SetNumberOfColumns(radioButtons, host, 5);
+            AssertLayoutData(radioButtons, rows: 2, columns: 5, largerColumns: 0);
+
+            SetNumberOfColumns(radioButtons, host, 7);
+            AssertLayoutData(radioButtons, rows: 1, columns: 7, largerColumns: 3);
+
+            SetNumberOfColumns(radioButtons, host, 10);
+            AssertLayoutData(radioButtons, rows: 1, columns: 10, largerColumns: 0);
+
+            SetNumberOfColumns(radioButtons, host, 20);
+            AssertLayoutData(radioButtons, rows: 1, columns: 10, largerColumns: 0);
+
+            SetNumberOfItems(radioButtons, 77, compactContent: true);
+            host.UpdateLayout();
+            AssertLayoutData(radioButtons, rows: 3, columns: 20, largerColumns: 17);
+
+            ModernWpf.Controls.RadioButtonsTestHooks.SetTestHooksEnabled(radioButtons, false);
+        });
+    }
+
+    private static ModernWpf.Controls.RadioButtons CreateRadioButtons(int itemCount, bool compactContent = false)
     {
         var radioButtons = new ModernWpf.Controls.RadioButtons();
         for (var i = 0; i < itemCount; i++)
         {
-            radioButtons.Items.Add(new RadioButton { Content = $"Radio Button {i}" });
+            radioButtons.Items.Add(new RadioButton { Content = GetRadioButtonContent(i, compactContent) });
         }
 
         return radioButtons;
@@ -374,6 +411,44 @@ public class RadioButtonsInteractionTests
         item.Focus();
         item.IsChecked = true;
         WpfTestHost.DoEvents();
+    }
+
+    private static void SetNumberOfColumns(
+        ModernWpf.Controls.RadioButtons radioButtons,
+        TestWindowHost host,
+        int columns)
+    {
+        radioButtons.MaxColumns = columns;
+        host.UpdateLayout();
+    }
+
+    private static void SetNumberOfItems(
+        ModernWpf.Controls.RadioButtons radioButtons,
+        int itemCount,
+        bool compactContent = false)
+    {
+        radioButtons.Items.Clear();
+        for (var i = 0; i < itemCount; i++)
+        {
+            radioButtons.Items.Add(new RadioButton { Content = GetRadioButtonContent(i, compactContent) });
+        }
+        WpfTestHost.DoEvents();
+    }
+
+    private static string GetRadioButtonContent(int index, bool compactContent)
+    {
+        return compactContent ? index.ToString() : $"Radio Button {index}";
+    }
+
+    private static void AssertLayoutData(
+        ModernWpf.Controls.RadioButtons radioButtons,
+        int rows,
+        int columns,
+        int largerColumns)
+    {
+        Assert.AreEqual(rows, ModernWpf.Controls.RadioButtonsTestHooks.GetRows(radioButtons));
+        Assert.AreEqual(columns, ModernWpf.Controls.RadioButtonsTestHooks.GetColumns(radioButtons));
+        Assert.AreEqual(largerColumns, ModernWpf.Controls.RadioButtonsTestHooks.GetLargerColumns(radioButtons));
     }
 
     private static void AssertSelectedFocusedIndex(ModernWpf.Controls.RadioButtons radioButtons, int index)
