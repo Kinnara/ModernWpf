@@ -1,4 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestInfra;
@@ -9,6 +13,14 @@ namespace ModernWpf.WinUI.Tests.CommandBarFlyouts;
 [TestClass]
 public class CommandBarFlyoutApiTests
 {
+    private enum CommandBarSizingOptions
+    {
+        PrimaryItemsLarger,
+        SecondaryItemsLarger,
+        SecondaryItemsMaxWidth,
+        SecondaryItemsMaxHeight
+    }
+
     [TestMethod]
     public void VerifyFlyoutDefaultPropertyValues()
     {
@@ -84,6 +96,30 @@ public class CommandBarFlyoutApiTests
         });
     }
 
+    [TestMethod]
+    public void VerifyCommandBarSizingPrimaryItemsLarger()
+    {
+        VerifyCommandBarSizing(CommandBarSizingOptions.PrimaryItemsLarger);
+    }
+
+    [TestMethod]
+    public void VerifyCommandBarSizingSecondaryItemsLarger()
+    {
+        VerifyCommandBarSizing(CommandBarSizingOptions.SecondaryItemsLarger);
+    }
+
+    [TestMethod]
+    public void VerifyCommandBarSizingSecondaryItemsMaxWidth()
+    {
+        VerifyCommandBarSizing(CommandBarSizingOptions.SecondaryItemsMaxWidth);
+    }
+
+    [TestMethod]
+    public void VerifyCommandBarSizingSecondaryItemsMaxHeight()
+    {
+        VerifyCommandBarSizing(CommandBarSizingOptions.SecondaryItemsMaxHeight);
+    }
+
     private static CommandBarFlyoutCommandBar GetCommandBar(CommandBarFlyout commandBarFlyout)
     {
         var presenter = commandBarFlyout.GetPresenter();
@@ -92,6 +128,114 @@ public class CommandBarFlyoutApiTests
         var commandBar = presenter.Content as CommandBarFlyoutCommandBar;
         Assert.IsNotNull(commandBar);
         return commandBar!;
+    }
+
+    private static void VerifyCommandBarSizing(CommandBarSizingOptions sizingOptions)
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = CreateSizingFlyout(sizingOptions);
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 640, height: 520);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            try
+            {
+                var commandBar = GetCommandBar(commandBarFlyout);
+                commandBar.ApplyTemplate();
+                host.UpdateLayout();
+
+                var toolBar = FindDescendant<CommandBarFlyoutToolBar>(commandBar);
+
+                commandBar.IsOpen = false;
+                host.UpdateLayout();
+
+                var collapsedWidth = toolBar.FlyoutTemplateSettings.CurrentWidth;
+                var collapsedHeight = commandBar.ActualHeight;
+
+                commandBar.IsOpen = true;
+                host.UpdateLayout();
+                WpfTestHost.DoEvents();
+
+                var expandedWidth = toolBar.FlyoutTemplateSettings.CurrentWidth;
+                var overflowPresenter = FindDescendant<CommandBarOverflowPresenter>(commandBar);
+
+                if (sizingOptions == CommandBarSizingOptions.PrimaryItemsLarger ||
+                    sizingOptions == CommandBarSizingOptions.SecondaryItemsMaxHeight)
+                {
+                    Assert.AreEqual(collapsedWidth, expandedWidth, 0.5);
+                    Assert.AreEqual(expandedWidth, overflowPresenter.ActualWidth, 0.5);
+                }
+                else
+                {
+                    Assert.IsTrue(
+                        expandedWidth > collapsedWidth,
+                        $"Expected expanded width {expandedWidth} to be greater than collapsed width {collapsedWidth}.");
+                    Assert.AreEqual(expandedWidth, overflowPresenter.ActualWidth, 0.5);
+                }
+
+                Assert.AreEqual(collapsedHeight, commandBar.ActualHeight, 0.5);
+
+                if (sizingOptions == CommandBarSizingOptions.SecondaryItemsMaxWidth)
+                {
+                    Assert.AreEqual(commandBar.MaxWidth, expandedWidth, 0.5);
+                }
+                else if (sizingOptions == CommandBarSizingOptions.SecondaryItemsMaxHeight)
+                {
+                    Assert.AreEqual(overflowPresenter.MaxHeight, overflowPresenter.ActualHeight, 0.5);
+                }
+            }
+            finally
+            {
+                commandBarFlyout.Hide();
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    private static CommandBarFlyout CreateSizingFlyout(CommandBarSizingOptions sizingOptions)
+    {
+        var flyout = new CommandBarFlyout
+        {
+            Placement = FlyoutPlacementMode.Right
+        };
+
+        for (var i = 1; i <= 6; i++)
+        {
+            flyout.PrimaryCommands.Add(new AppBarButton { Label = $"Primary {i}" });
+        }
+
+        flyout.SecondaryCommands.Add(new AppBarButton { Label = "Undo" });
+        flyout.SecondaryCommands.Add(new AppBarButton { Label = "Redo" });
+        flyout.SecondaryCommands.Add(new AppBarButton { Label = "Select all" });
+
+        switch (sizingOptions)
+        {
+            case CommandBarSizingOptions.SecondaryItemsLarger:
+                flyout.SecondaryCommands.Add(new AppBarButton { Label = "Item with a label much wider than the primary command strip" });
+                break;
+
+            case CommandBarSizingOptions.SecondaryItemsMaxWidth:
+                flyout.SecondaryCommands.Add(new AppBarButton { Label = "Item with a really really really long label that will not fit in the space provided" });
+                break;
+
+            case CommandBarSizingOptions.SecondaryItemsMaxHeight:
+                for (var i = 0; i < 20; i++)
+                {
+                    flyout.SecondaryCommands.Add(new AppBarButton { Label = "Do another thing" });
+                }
+                break;
+        }
+
+        return flyout;
     }
 
     private static void VerifyCommandCollections(CommandBarFlyout commandBarFlyout, CommandBar commandBar)
@@ -106,6 +250,32 @@ public class CommandBarFlyoutApiTests
         for (var i = 0; i < commandBarFlyout.SecondaryCommands.Count; i++)
         {
             Assert.AreSame(commandBarFlyout.SecondaryCommands[i], commandBar.SecondaryCommands[i]);
+        }
+    }
+
+    private static T FindDescendant<T>(DependencyObject root)
+        where T : DependencyObject
+    {
+        return EnumerateDescendantsIncludingPopupChildren(root)
+            .OfType<T>()
+            .Single();
+    }
+
+    private static IEnumerable<DependencyObject> EnumerateDescendantsIncludingPopupChildren(DependencyObject root)
+    {
+        foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
+        {
+            yield return descendant;
+
+            if (descendant is Popup { Child: { } child })
+            {
+                yield return child;
+
+                foreach (var popupChildDescendant in EnumerateDescendantsIncludingPopupChildren(child))
+                {
+                    yield return popupChildDescendant;
+                }
+            }
         }
     }
 }
