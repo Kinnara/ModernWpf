@@ -542,9 +542,171 @@ public class NavigationViewApiTests
         });
     }
 
+    [TestMethod]
+    public void VerifyPaneDisplayModeAndDisplayModeMapping()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            using var host = CreateNavigationViewHost(out var navView);
+
+            Assert.AreEqual(ModernWpf.Controls.NavigationViewDisplayMode.Expanded, navView.DisplayMode);
+            Assert.IsTrue(navView.IsPaneOpen);
+
+            navView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top;
+            host.UpdateLayout();
+            Assert.AreEqual(ModernWpf.Controls.NavigationViewDisplayMode.Minimal, navView.DisplayMode);
+
+            navView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left;
+            host.UpdateLayout();
+            Assert.AreEqual(ModernWpf.Controls.NavigationViewDisplayMode.Expanded, navView.DisplayMode);
+
+            navView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftCompact;
+            host.UpdateLayout();
+            Assert.AreEqual(ModernWpf.Controls.NavigationViewDisplayMode.Compact, navView.DisplayMode);
+
+            navView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftMinimal;
+            host.UpdateLayout();
+            Assert.AreEqual(ModernWpf.Controls.NavigationViewDisplayMode.Minimal, navView.DisplayMode);
+
+            navView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto;
+            host.UpdateLayout();
+            Assert.AreEqual(ModernWpf.Controls.NavigationViewDisplayMode.Expanded, navView.DisplayMode);
+
+            navView.Width = navView.ExpandedModeThresholdWidth - 10.0;
+            host.UpdateLayout();
+            Assert.AreEqual(ModernWpf.Controls.NavigationViewDisplayMode.Compact, navView.DisplayMode);
+
+            navView.Width = navView.CompactModeThresholdWidth - 10.0;
+            host.UpdateLayout();
+            Assert.AreEqual(ModernWpf.Controls.NavigationViewDisplayMode.Minimal, navView.DisplayMode);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyPaneDisplayModeChangingPaneAccordingly()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            using var host = CreateNavigationViewHost(out var navView);
+
+            foreach (var value in Enum.GetValues(typeof(ModernWpf.Controls.NavigationViewPaneDisplayMode)))
+            {
+                var paneDisplayMode = (ModernWpf.Controls.NavigationViewPaneDisplayMode)value;
+
+                navView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftMinimal;
+                navView.IsPaneOpen = false;
+                navView.Width = navView.CompactModeThresholdWidth - 20;
+                host.UpdateLayout();
+
+                navView.PaneDisplayMode = paneDisplayMode;
+                host.UpdateLayout();
+
+                Assert.AreEqual(
+                    paneDisplayMode == ModernWpf.Controls.NavigationViewPaneDisplayMode.Left,
+                    navView.IsPaneOpen);
+            }
+        });
+    }
+
+    [TestMethod]
+    public void VerifyPaneDisplayModeAndIsPaneOpenInterplayOnNavViewLaunch()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            VerifyLaunchPaneState(ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftMinimal, true, false);
+            VerifyLaunchPaneState(ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftMinimal, false, false);
+            VerifyLaunchPaneState(ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftCompact, true, false);
+            VerifyLaunchPaneState(ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftCompact, false, false);
+            VerifyLaunchPaneState(ModernWpf.Controls.NavigationViewPaneDisplayMode.Left, true, true);
+            VerifyLaunchPaneState(ModernWpf.Controls.NavigationViewPaneDisplayMode.Left, false, false);
+            VerifyLaunchPaneState(
+                ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto,
+                true,
+                false,
+                ModernWpf.Controls.NavigationViewDisplayMode.Minimal);
+            VerifyLaunchPaneState(
+                ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto,
+                true,
+                false,
+                ModernWpf.Controls.NavigationViewDisplayMode.Compact);
+            VerifyLaunchPaneState(
+                ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto,
+                true,
+                true,
+                ModernWpf.Controls.NavigationViewDisplayMode.Expanded);
+            VerifyLaunchPaneState(
+                ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto,
+                false,
+                false,
+                ModernWpf.Controls.NavigationViewDisplayMode.Minimal);
+            VerifyLaunchPaneState(
+                ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto,
+                false,
+                false,
+                ModernWpf.Controls.NavigationViewDisplayMode.Compact);
+            VerifyLaunchPaneState(
+                ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto,
+                false,
+                false,
+                ModernWpf.Controls.NavigationViewDisplayMode.Expanded);
+        });
+
+        static void VerifyLaunchPaneState(
+            ModernWpf.Controls.NavigationViewPaneDisplayMode paneDisplayMode,
+            bool isPaneOpen,
+            bool expectedIsPaneOpen,
+            ModernWpf.Controls.NavigationViewDisplayMode displayMode = ModernWpf.Controls.NavigationViewDisplayMode.Expanded)
+        {
+            using var host = CreateNavigationViewHost(out var navView, paneDisplayMode, isPaneOpen, displayMode);
+            Assert.AreEqual(expectedIsPaneOpen, navView.IsPaneOpen);
+        }
+    }
+
     private static object GetToolTipContent(FrameworkElement element)
     {
         var toolTip = ToolTipService.GetToolTip(element);
         return toolTip is ToolTip toolTipElement ? toolTipElement.Content : toolTip;
+    }
+
+    private static TestWindowHost CreateNavigationViewHost(
+        out ModernWpf.Controls.NavigationView navView,
+        ModernWpf.Controls.NavigationViewPaneDisplayMode paneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto,
+        bool isPaneOpen = true,
+        ModernWpf.Controls.NavigationViewDisplayMode displayMode = ModernWpf.Controls.NavigationViewDisplayMode.Expanded)
+    {
+        navView = new ModernWpf.Controls.NavigationView
+        {
+            PaneTitle = "Title",
+            IsBackButtonVisible = ModernWpf.Controls.NavigationViewBackButtonVisible.Visible,
+            IsSettingsVisible = true,
+            PaneDisplayMode = paneDisplayMode,
+            IsPaneOpen = isPaneOpen,
+            OpenPaneLength = 120.0,
+            ExpandedModeThresholdWidth = 600.0,
+            CompactModeThresholdWidth = 400.0,
+            Width = 800.0,
+            Height = 600.0,
+            Content = "This is a simple test"
+        };
+        navView.MenuItems.Add(new ModernWpf.Controls.NavigationViewItem { Content = "Undo" });
+        navView.MenuItems.Add(new ModernWpf.Controls.NavigationViewItem { Content = "Cut" });
+
+        if (paneDisplayMode == ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto)
+        {
+            navView.Width = displayMode switch
+            {
+                ModernWpf.Controls.NavigationViewDisplayMode.Minimal => navView.CompactModeThresholdWidth - 10.0,
+                ModernWpf.Controls.NavigationViewDisplayMode.Compact => navView.ExpandedModeThresholdWidth - 10.0,
+                _ => navView.ExpandedModeThresholdWidth + 10.0
+            };
+        }
+
+        return new TestWindowHost(navView);
     }
 }
