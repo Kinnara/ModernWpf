@@ -13,7 +13,12 @@
                         <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
                         <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
-                    <Border Padding="{TemplateBinding Padding}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Padding="{TemplateBinding Padding}">
                         <Grid
                             Background="Transparent"
                             SnapsToDevicePixels="False">
@@ -26,10 +31,10 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                FontSize="12"
+                                FontSize="{DynamicResource ExpanderChevronGlyphSize}"
                                 Data="{StaticResource ChevronDown}"
                                 SnapsToDevicePixels="false"
-                                Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                Foreground="{DynamicResource ExpanderChevronForeground}" />
                             <ContentPresenter
                                 Grid.Column="1"
                                 Margin="8,0,0,0"
@@ -44,13 +49,19 @@
                             <Setter TargetName="arrow" Property="Data" Value="{StaticResource ChevronUp}" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseMediumBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
+                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
+                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderDisabledBorderBrush}" />
+                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -66,7 +77,12 @@
                         <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
                         <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
-                    <Border Padding="{TemplateBinding Padding}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Padding="{TemplateBinding Padding}">
                         <Grid
                             Background="Transparent"
                             SnapsToDevicePixels="False">
@@ -89,10 +105,10 @@
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    FontSize="12"
+                                    FontSize="{DynamicResource ExpanderChevronGlyphSize}"
                                     Data="{StaticResource ChevronDown}"
                                     SnapsToDevicePixels="false"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                    Foreground="{DynamicResource ExpanderChevronForeground}" />
                             </Grid>
                             <ContentPresenter
                                 Grid.Column="1"
@@ -108,13 +124,19 @@
                             <Setter TargetName="arrow" Property="Data" Value="{StaticResource ChevronUp}" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseMediumBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
+                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
+                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderDisabledBorderBrush}" />
+                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -130,7 +152,12 @@
                         <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
                         <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
-                    <Border Padding="{TemplateBinding Padding}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Padding="{TemplateBinding Padding}">
                         <Grid
                             Background="Transparent"
                             SnapsToDevicePixels="False">
@@ -153,10 +180,10 @@
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    FontSize="12"
+                                    FontSize="{DynamicResource ExpanderChevronGlyphSize}"
                                     Data="{StaticResource ChevronDown}"
                                     SnapsToDevicePixels="false"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                    Foreground="{DynamicResource ExpanderChevronForeground}" />
                             </Grid>
                             <ContentPresenter
                                 Grid.Row="1"
@@ -172,13 +199,19 @@
                             <Setter TargetName="arrow" Property="Data" Value="{StaticResource ChevronUp}" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseMediumBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
+                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
+                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderDisabledBorderBrush}" />
+                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -194,7 +227,12 @@
                         <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
                         <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
-                    <Border Padding="{TemplateBinding Padding}">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Padding="{TemplateBinding Padding}">
                         <Grid
                             Background="Transparent"
                             SnapsToDevicePixels="False">
@@ -217,10 +255,10 @@
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    FontSize="12"
+                                    FontSize="{DynamicResource ExpanderChevronGlyphSize}"
                                     Data="{StaticResource ChevronDown}"
                                     SnapsToDevicePixels="false"
-                                    Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+                                    Foreground="{DynamicResource ExpanderChevronForeground}" />
                             </Grid>
                             <ContentPresenter
                                 Grid.Row="1"
@@ -236,13 +274,19 @@
                             <Setter TargetName="arrow" Property="Data" Value="{StaticResource ChevronUp}" />
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseMediumBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
+                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
+                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderDisabledBorderBrush}" />
+                            <Setter TargetName="arrow" Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -252,15 +296,23 @@
 
     <Style x:Key="DefaultExpanderStyle" TargetType="Expander">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderForeground}" />
+        <Setter Property="Background" Value="{DynamicResource ExpanderContentBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ExpanderContentBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ExpanderContentDownBorderThickness}" />
+        <Setter Property="Padding" Value="{DynamicResource ExpanderContentPadding}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="MinWidth" Value="{DynamicResource FlyoutThemeMinWidth}" />
+        <Setter Property="MinHeight" Value="{DynamicResource ExpanderMinHeight}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Expander">
                     <Border
+                        x:Name="ExpanderBorder"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
@@ -270,11 +322,13 @@
                             <ToggleButton
                                 x:Name="HeaderSite"
                                 MinWidth="0"
-                                MinHeight="0"
-                                Margin="1"
-                                Padding="{TemplateBinding Padding}"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                MinHeight="{TemplateBinding MinHeight}"
+                                Padding="{DynamicResource ExpanderHeaderPadding}"
+                                Background="{DynamicResource ExpanderHeaderBackground}"
+                                BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}"
+                                BorderThickness="{DynamicResource ExpanderHeaderBorderThickness}"
+                                HorizontalContentAlignment="{DynamicResource ExpanderHeaderHorizontalContentAlignment}"
+                                VerticalContentAlignment="{DynamicResource ExpanderHeaderVerticalContentAlignment}"
                                 Content="{TemplateBinding Header}"
                                 ContentTemplate="{TemplateBinding HeaderTemplate}"
                                 ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
@@ -313,6 +367,7 @@
                             <Setter TargetName="ExpandSite" Property="DockPanel.Dock" Value="Top" />
                             <Setter TargetName="HeaderSite" Property="DockPanel.Dock" Value="Bottom" />
                             <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource ExpanderUpHeaderStyle}" />
+                            <Setter TargetName="ExpanderBorder" Property="BorderThickness" Value="{DynamicResource ExpanderContentUpBorderThickness}" />
                         </Trigger>
                         <Trigger Property="ExpandDirection" Value="Left">
                             <Setter TargetName="ExpandSite" Property="DockPanel.Dock" Value="Left" />
@@ -320,7 +375,7 @@
                             <Setter TargetName="HeaderSite" Property="Style" Value="{StaticResource ExpanderLeftHeaderStyle}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

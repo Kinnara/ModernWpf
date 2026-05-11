@@ -865,6 +865,42 @@
     <m:StaticResource x:Key="ContentDialogSeparatorBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
     <Thickness x:Key="ContentDialogBorderWidth">1</Thickness>
 
+    <!-- Resources for Expander -->
+    <m:StaticResource x:Key="ExpanderHeaderBackground" ResourceKey="CardBackgroundFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderForegroundPressed" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderPointerOverBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderPressedBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderDisabledForeground" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderDisabledBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+    <Thickness x:Key="ExpanderHeaderBorderThickness">1</Thickness>
+    <m:StaticResource x:Key="ExpanderChevronBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPointerOverBackground" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPressedBackground" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ExpanderChevronForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPointerOverForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPressedForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ExpanderChevronBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ExpanderChevronBorderPointerOverBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ExpanderChevronBorderPressedBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <Thickness x:Key="ExpanderChevronBorderThickness">0</Thickness>
+    <m:StaticResource x:Key="ExpanderContentBackground" ResourceKey="CardBackgroundFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ExpanderContentBorderBrush" ResourceKey="CardStrokeColorDefaultBrush" />
+    <sys:Double x:Key="ExpanderMinHeight">48</sys:Double>
+    <HorizontalAlignment x:Key="ExpanderHeaderHorizontalContentAlignment">Stretch</HorizontalAlignment>
+    <VerticalAlignment x:Key="ExpanderHeaderVerticalContentAlignment">Center</VerticalAlignment>
+    <Thickness x:Key="ExpanderHeaderPadding">16,0,0,0</Thickness>
+    <Thickness x:Key="ExpanderChevronMargin">20,0,8,0</Thickness>
+    <sys:String x:Key="ExpanderChevronUpGlyph">&#xE70E;</sys:String>
+    <sys:String x:Key="ExpanderChevronDownGlyph">&#xE70D;</sys:String>
+    <sys:Double x:Key="ExpanderChevronButtonSize">32</sys:Double>
+    <sys:Double x:Key="ExpanderChevronGlyphSize">12</sys:Double>
+    <Thickness x:Key="ExpanderContentPadding">16</Thickness>
+    <Thickness x:Key="ExpanderContentDownBorderThickness">1,0,1,1</Thickness>
+    <Thickness x:Key="ExpanderContentUpBorderThickness">1,1,1,0</Thickness>
+
     <!-- Resources for DataGrid -->
     <sys:Double x:Key="ListAccentLowOpacity">0.4</sys:Double>
     <sys:Double x:Key="ListAccentMediumOpacity">0.6</sys:Double>

@@ -850,6 +850,42 @@
     <m:StaticResource x:Key="ContentDialogSeparatorBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
     <Thickness x:Key="ContentDialogBorderWidth">2</Thickness>
 
+    <!-- Resources for Expander -->
+    <m:StaticResource x:Key="ExpanderHeaderBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderPointerOverBrush" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderBorderPressedBrush" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderDisabledForeground" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="ExpanderHeaderDisabledBorderBrush" ResourceKey="TextFillColorDisabledBrush" />
+    <Thickness x:Key="ExpanderHeaderBorderThickness">2</Thickness>
+    <m:StaticResource x:Key="ExpanderChevronBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPointerOverBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPressedBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ExpanderChevronForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPointerOverForeground" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderChevronPressedForeground" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderChevronBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="ExpanderChevronBorderPointerOverBrush" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ExpanderChevronBorderPressedBrush" ResourceKey="SystemColorHighlightColorBrush" />
+    <Thickness x:Key="ExpanderChevronBorderThickness">2</Thickness>
+    <m:StaticResource x:Key="ExpanderContentBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="ExpanderContentBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+    <sys:Double x:Key="ExpanderMinHeight">48</sys:Double>
+    <HorizontalAlignment x:Key="ExpanderHeaderHorizontalContentAlignment">Stretch</HorizontalAlignment>
+    <VerticalAlignment x:Key="ExpanderHeaderVerticalContentAlignment">Center</VerticalAlignment>
+    <Thickness x:Key="ExpanderHeaderPadding">16,0,0,0</Thickness>
+    <Thickness x:Key="ExpanderChevronMargin">20,0,8,0</Thickness>
+    <sys:String x:Key="ExpanderChevronUpGlyph">&#xE70E;</sys:String>
+    <sys:String x:Key="ExpanderChevronDownGlyph">&#xE70D;</sys:String>
+    <sys:Double x:Key="ExpanderChevronButtonSize">32</sys:Double>
+    <sys:Double x:Key="ExpanderChevronGlyphSize">12</sys:Double>
+    <Thickness x:Key="ExpanderContentPadding">16</Thickness>
+    <Thickness x:Key="ExpanderContentDownBorderThickness">1,0,1,1</Thickness>
+    <Thickness x:Key="ExpanderContentUpBorderThickness">1,1,1,0</Thickness>
+
     <!-- Resources for DataGrid -->
     <sys:Double x:Key="ListAccentLowOpacity">0.6</sys:Double>
     <sys:Double x:Key="ListAccentMediumOpacity">0.8</sys:Double>

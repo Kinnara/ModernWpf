@@ -2,8 +2,11 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -14,6 +17,105 @@ namespace ModernWpf.WinUI.Tests.Expander;
 [TestClass]
 public class ExpanderApiTests
 {
+    [TestMethod]
+    public void VerifyExpanderDefaultStyleAndWinUI2Resources()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var expander = new WpfExpander
+            {
+                Header = "Header",
+                Content = new Button { Content = "Content" },
+                IsExpanded = true
+            };
+
+            using var host = new TestWindowHost(expander, width: 400, height: 240);
+            host.UpdateLayout();
+
+            Assert.AreSame(expander.TryFindResource("ExpanderContentBackground"), expander.Background);
+            Assert.AreSame(expander.TryFindResource("ExpanderContentBorderBrush"), expander.BorderBrush);
+            Assert.AreEqual(expander.TryFindResource("ExpanderContentDownBorderThickness"), expander.BorderThickness);
+            Assert.AreEqual(expander.TryFindResource("ExpanderContentPadding"), expander.Padding);
+            Assert.AreEqual(HorizontalAlignment.Left, expander.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, expander.VerticalAlignment);
+            Assert.AreEqual(expander.TryFindResource("FlyoutThemeMinWidth"), expander.MinWidth);
+            Assert.AreEqual(expander.TryFindResource("ExpanderMinHeight"), expander.MinHeight);
+
+            var header = FindTemplateChild<ToggleButton>(expander, "HeaderSite");
+            Assert.AreSame(expander.TryFindResource("ExpanderHeaderBackground"), header.Background);
+            Assert.AreSame(expander.TryFindResource("ExpanderHeaderForeground"), header.Foreground);
+            Assert.AreSame(expander.TryFindResource("ExpanderHeaderBorderBrush"), header.BorderBrush);
+            Assert.AreEqual(expander.TryFindResource("ExpanderHeaderBorderThickness"), header.BorderThickness);
+            Assert.AreEqual(expander.TryFindResource("ExpanderHeaderPadding"), header.Padding);
+            Assert.AreEqual(expander.TryFindResource("ExpanderHeaderHorizontalContentAlignment"), header.HorizontalContentAlignment);
+            Assert.AreEqual(expander.TryFindResource("ExpanderHeaderVerticalContentAlignment"), header.VerticalContentAlignment);
+            Assert.AreEqual(expander.MinHeight, header.MinHeight);
+            Assert.IsTrue(FocusVisualHelper.GetUseSystemFocusVisuals(header));
+            Assert.AreEqual(new Thickness(-3), FocusVisualHelper.GetFocusVisualMargin(header));
+
+            var content = FindTemplateChild<ContentPresenter>(expander, "ExpandSite");
+            Assert.AreEqual(expander.TryFindResource("ExpanderContentPadding"), content.Margin);
+            Assert.AreEqual(Visibility.Visible, content.Visibility);
+
+            expander.IsExpanded = false;
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Collapsed, content.Visibility);
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "ExpanderHeaderBackground", "CardBackgroundFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderForegroundPointerOver", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderForegroundPressed", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderBorderBrush", "CardStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderBorderPointerOverBrush", "CardStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderBorderPressedBrush", "CardStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderDisabledForeground", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderDisabledBorderBrush", "CardStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronPointerOverBackground", "SubtleFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronPressedBackground", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronPointerOverForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronPressedForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronBorderBrush", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronBorderPointerOverBrush", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronBorderPressedBrush", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ExpanderContentBackground", "CardBackgroundFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderContentBorderBrush", "CardStrokeColorDefaultBrush");
+                AssertThemeResourceValue(themeName, "ExpanderHeaderBorderThickness", new Thickness(1));
+                AssertThemeResourceValue(themeName, "ExpanderChevronBorderThickness", new Thickness(0));
+                AssertSharedExpanderResourceValues(themeName);
+            }
+
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderBackground", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderForegroundPointerOver", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderForegroundPressed", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderBrush", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderPointerOverBrush", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderPressedBrush", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderDisabledForeground", "TextFillColorDisabledBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderDisabledBorderBrush", "TextFillColorDisabledBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronBackground", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronPointerOverBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronPressedBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronPointerOverForeground", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronPressedForeground", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronBorderBrush", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronBorderPointerOverBrush", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronBorderPressedBrush", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderContentBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderContentBorderBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceValue("HighContrast", "ExpanderHeaderBorderThickness", new Thickness(2));
+            AssertThemeResourceValue("HighContrast", "ExpanderChevronBorderThickness", new Thickness(2));
+            AssertSharedExpanderResourceValues("HighContrast");
+        });
+    }
+
     [TestMethod]
     public void ExpanderAutomationPeerTest()
     {
@@ -89,5 +191,43 @@ public class ExpanderApiTests
     private static bool IsControlElement(FrameworkElement element)
     {
         return FrameworkElementAutomationPeer.CreatePeerForElement(element)?.IsControlElement() == true;
+    }
+
+    private static T FindTemplateChild<T>(Control control, string name)
+        where T : FrameworkElement
+    {
+        return control.Template?.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Could not find template child '{name}'.");
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
+    }
+
+    private static void AssertSharedExpanderResourceValues(string themeName)
+    {
+        AssertThemeResourceValue(themeName, "ExpanderMinHeight", 48d);
+        AssertThemeResourceValue(themeName, "ExpanderHeaderHorizontalContentAlignment", HorizontalAlignment.Stretch);
+        AssertThemeResourceValue(themeName, "ExpanderHeaderVerticalContentAlignment", VerticalAlignment.Center);
+        AssertThemeResourceValue(themeName, "ExpanderHeaderPadding", new Thickness(16, 0, 0, 0));
+        AssertThemeResourceValue(themeName, "ExpanderChevronMargin", new Thickness(20, 0, 8, 0));
+        AssertThemeResourceValue(themeName, "ExpanderChevronUpGlyph", "\uE70E");
+        AssertThemeResourceValue(themeName, "ExpanderChevronDownGlyph", "\uE70D");
+        AssertThemeResourceValue(themeName, "ExpanderChevronButtonSize", 32d);
+        AssertThemeResourceValue(themeName, "ExpanderChevronGlyphSize", 12d);
+        AssertThemeResourceValue(themeName, "ExpanderContentPadding", new Thickness(16));
+        AssertThemeResourceValue(themeName, "ExpanderContentDownBorderThickness", new Thickness(1, 0, 1, 1));
+        AssertThemeResourceValue(themeName, "ExpanderContentUpBorderThickness", new Thickness(1, 1, 1, 0));
     }
 }
