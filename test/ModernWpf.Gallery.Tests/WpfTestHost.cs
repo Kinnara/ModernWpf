@@ -77,6 +77,20 @@ namespace ModernWpf.Gallery.Tests
             return result;
         }
 
+        public static void DoEvents()
+        {
+            var frame = new DispatcherFrame();
+            Dispatcher.CurrentDispatcher.BeginInvoke(
+                DispatcherPriority.Background,
+                new DispatcherOperationCallback(delegate
+                {
+                    frame.Continue = false;
+                    return null;
+                }),
+                null);
+            Dispatcher.PushFrame(frame);
+        }
+
         public static void Shutdown()
         {
             var dispatcher = _dispatcher;

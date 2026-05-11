@@ -85,7 +85,7 @@
                         <DataTemplate>
                             <TextBlock Margin="0,0,0,8">
                                 <Hyperlink NavigateUri="{Binding Uri}" RequestNavigate="OnDocumentationRequestNavigate">
-                                    <Run Text="{Binding Title}" />
+                                    <Run Text="{Binding Title, Mode=OneWay}" />
                                 </Hyperlink>
                             </TextBlock>
                         </DataTemplate>
@@ -107,7 +107,7 @@
                                     FontSize="12"
                                     HorizontalScrollBarVisibility="Auto"
                                     IsReadOnly="True"
-                                    Text="{Binding Text}"
+                                    Text="{Binding Text, Mode=OneWay}"
                                     TextWrapping="NoWrap"
                                     VerticalScrollBarVisibility="Auto" />
                             </Expander>

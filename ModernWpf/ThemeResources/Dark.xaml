@@ -1505,7 +1505,7 @@
     <!-- Resources for TabView -->
     <m:StaticResource x:Key="TabViewBackground"                                       ResourceKey="SolidBackgroundFillColorBaseBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackground"                             ResourceKey="SubtleFillColorTransparentBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderBackgroundSelected"                     ResourceKey="SolidBackgroundFillColorQuarternary" />
+    <m:StaticResource x:Key="TabViewItemHeaderBackgroundSelected"                     ResourceKey="SolidBackgroundFillColorQuarternaryBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundPointerOver"                  ResourceKey="SubtleFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundPressed"                      ResourceKey="SubtleFillColorTertiaryBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundDisabled"                     ResourceKey="SubtleFillColorTransparentBrush" />

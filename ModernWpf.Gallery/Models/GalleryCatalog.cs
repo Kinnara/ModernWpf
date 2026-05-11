@@ -54,7 +54,7 @@ namespace ModernWpf.Gallery.Models
             UniqueId = uniqueId;
             Title = title;
             Subtitle = subtitle;
-            ImagePath = imagePath;
+            ImagePath = GalleryAssetUri.Normalize(imagePath);
             IsSpecialSection = isSpecialSection;
             Items = items ?? Array.Empty<GalleryItem>();
         }
@@ -92,7 +92,7 @@ namespace ModernWpf.Gallery.Models
             UniqueId = uniqueId;
             Title = title;
             Subtitle = subtitle;
-            ImagePath = imagePath;
+            ImagePath = GalleryAssetUri.Normalize(imagePath);
             Description = description;
             ApiNamespace = apiNamespace;
             IsNew = isNew;
@@ -164,6 +164,42 @@ namespace ModernWpf.Gallery.Models
         private static bool Contains(string value, string token)
         {
             return !string.IsNullOrEmpty(value) && value.IndexOf(token, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+    }
+
+    internal static class GalleryAssetUri
+    {
+        private const string ApplicationPackPrefix = "pack://application:,,,/";
+        private const string GalleryPackPrefix = "pack://application:,,,/ModernWpf.Gallery;component/";
+        private const string MsAppxPrefix = "ms-appx:///";
+
+        public static string Normalize(string uri)
+        {
+            if (string.IsNullOrWhiteSpace(uri))
+            {
+                return uri;
+            }
+
+            if (uri.StartsWith(GalleryPackPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return uri;
+            }
+
+            if (uri.StartsWith(MsAppxPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                return GalleryPackPrefix + uri.Substring(MsAppxPrefix.Length);
+            }
+
+            if (uri.StartsWith(ApplicationPackPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                var path = uri.Substring(ApplicationPackPrefix.Length);
+                if (path.IndexOf(";component/", StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    return GalleryPackPrefix + path;
+                }
+            }
+
+            return uri;
         }
     }
 
