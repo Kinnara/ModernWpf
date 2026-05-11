@@ -37,6 +37,11 @@ namespace ModernWpf.Automation.Peers
             return AutomationControlType.SplitButton;
         }
 
+        protected override System.Collections.Generic.List<AutomationPeer> GetChildrenCore()
+        {
+            return null;
+        }
+
         private ToggleSplitButton GetImpl()
         {
             ToggleSplitButton impl = null;
