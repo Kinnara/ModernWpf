@@ -37,6 +37,14 @@
                     Text="{Binding Description}"
                     TextWrapping="Wrap" />
 
+                <TextBlock
+                    Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
+                    Text="WPF sample"
+                    Visibility="{Binding HasWpfSampleContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ContentControl
+                    Content="{Binding WpfSampleContent}"
+                    Visibility="{Binding HasWpfSampleContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                 <Grid Margin="0,24,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />

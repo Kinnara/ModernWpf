@@ -17,6 +17,7 @@ namespace ModernWpf.SampleApp.Pages
             InitializeComponent();
 
             _item = item ?? GalleryCatalog.Items.First();
+            WpfSampleContent = FundamentalsSampleFactory.Create(_item.UniqueId);
             SampleSnippets = LoadSampleSnippets(_item.UniqueId);
             RelatedItems = _item.RelatedControlIds
                 .Select(GalleryCatalog.FindItem)
@@ -70,6 +71,13 @@ namespace ModernWpf.SampleApp.Pages
         public IReadOnlyList<GalleryDocLink> Docs
         {
             get { return _item.Docs; }
+        }
+
+        public object WpfSampleContent { get; }
+
+        public bool HasWpfSampleContent
+        {
+            get { return WpfSampleContent != null; }
         }
 
         public IReadOnlyList<SampleSnippet> SampleSnippets { get; }
