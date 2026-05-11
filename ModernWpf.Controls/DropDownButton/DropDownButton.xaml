@@ -55,6 +55,7 @@
                                 Grid.Column="1"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 FontSize="8"
+                                Foreground="{DynamicResource DropDownButtonForegroundSecondary}"
                                 Data="{StaticResource ChevronDownSmall}"
                                 VerticalAlignment="Center"
                                 Padding="2,4,2,0"
@@ -68,6 +69,7 @@
                             <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
                             <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
                             <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ButtonForegroundPointerOver}" />
+                            <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource DropDownButtonForegroundSecondaryPointerOver}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ButtonBackgroundPressed}" />

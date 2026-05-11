@@ -1764,7 +1764,9 @@
     <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="Transparent" />
 
     <!-- Resources for DropDownButton -->
-    <m:StaticResource x:Key="DropDownButtonForegroundSecondaryPressed" ResourceKey="TextFillColorTertiaryBrush"/>
+    <m:StaticResource x:Key="DropDownButtonForegroundSecondary" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="DropDownButtonForegroundSecondaryPointerOver" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="DropDownButtonForegroundSecondaryPressed" ResourceKey="TextFillColorTertiaryBrush" />
 
     <sys:Boolean x:Key="IsApplicationFocusVisualKindReveal">False</sys:Boolean>
 
