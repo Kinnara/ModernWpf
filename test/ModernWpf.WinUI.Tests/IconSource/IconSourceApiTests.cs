@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
@@ -134,6 +135,140 @@ public class IconSourceApiTests
     }
 
     [TestMethod]
+    public void ImageIconSourceTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var imageSource = CreateTestImageSource(Brushes.Blue);
+            var updatedImageSource = CreateTestImageSource(Brushes.Green);
+            var iconSource = new ImageIconSource();
+            var imageIcon = (ImageIcon)iconSource.CreateIconElement();
+
+            Assert.IsNull(iconSource.Foreground);
+
+            var icon = new ImageIcon();
+            Assert.AreEqual(icon.Source, iconSource.ImageSource);
+            Assert.AreEqual(imageIcon.Source, iconSource.ImageSource);
+
+            iconSource.Foreground = Brushes.Red;
+            iconSource.ImageSource = imageSource;
+
+            Assert.AreSame(Brushes.Red, iconSource.Foreground);
+            Assert.AreSame(Brushes.Red, imageIcon.Foreground);
+            Assert.AreSame(imageSource, iconSource.ImageSource);
+            Assert.AreSame(imageSource, imageIcon.Source);
+
+            iconSource.ImageSource = updatedImageSource;
+
+            Assert.AreSame(updatedImageSource, iconSource.ImageSource);
+            Assert.AreSame(updatedImageSource, imageIcon.Source);
+        });
+    }
+
+    [TestMethod]
+    public void ImageIconTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var imageSource = CreateTestImageSource(Brushes.Blue);
+            var imageIcon = new ImageIcon
+            {
+                Foreground = Brushes.Red,
+                Source = imageSource
+            };
+
+            using var host = new TestWindowHost(imageIcon, width: 64, height: 64);
+
+            Assert.AreSame(Brushes.Red, imageIcon.Foreground);
+            Assert.AreSame(imageSource, imageIcon.Source);
+
+            var image = VisualTreeTestHelper.FindDescendant<Image>(imageIcon);
+            Assert.IsNotNull(image);
+            Assert.IsTrue(image!.IsLoaded);
+            Assert.AreSame(imageSource, image.Source);
+        });
+    }
+
+    [TestMethod]
+    public void CreateIconElementReturnsCorrectTypeTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            Assert.IsInstanceOfType(new BitmapIconSource().CreateIconElement(), typeof(BitmapIcon));
+            Assert.IsInstanceOfType(new FontIconSource().CreateIconElement(), typeof(FontIcon));
+            Assert.IsInstanceOfType(new SymbolIconSource().CreateIconElement(), typeof(SymbolIcon));
+            Assert.IsInstanceOfType(new PathIconSource().CreateIconElement(), typeof(PathIcon));
+            Assert.IsInstanceOfType(new ImageIconSource().CreateIconElement(), typeof(ImageIcon));
+        });
+    }
+
+    [TestMethod]
+    public void CreateIconElementForegroundTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var iconSourceWithForeground = new FontIconSource
+            {
+                Foreground = Brushes.Blue
+            };
+            var iconSourceWithoutForeground = new FontIconSource();
+
+            var iconWithForeground = (FontIcon)iconSourceWithForeground.CreateIconElement();
+            var iconWithoutForeground = (FontIcon)iconSourceWithoutForeground.CreateIconElement();
+
+            Assert.AreSame(Brushes.Blue, iconWithForeground.Foreground);
+            Assert.IsNotNull(iconWithoutForeground.Foreground);
+        });
+    }
+
+    [TestMethod]
+    public void PropertyChangePropagationToCreatedElements()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var iconSource = new FontIconSource();
+            var firstIcon = (FontIcon)iconSource.CreateIconElement();
+            var secondIcon = (FontIcon)iconSource.CreateIconElement();
+
+            Assert.IsNotNull(firstIcon.Foreground);
+            Assert.IsNotNull(secondIcon.Foreground);
+
+            iconSource.Foreground = Brushes.Red;
+            iconSource.Glyph = "\uE001";
+            iconSource.FontSize = 24;
+
+            Assert.AreSame(Brushes.Red, firstIcon.Foreground);
+            Assert.AreSame(Brushes.Red, secondIcon.Foreground);
+            Assert.AreEqual("\uE001", firstIcon.Glyph);
+            Assert.AreEqual("\uE001", secondIcon.Glyph);
+            Assert.AreEqual(24.0, firstIcon.FontSize);
+            Assert.AreEqual(24.0, secondIcon.FontSize);
+        });
+    }
+
+    [TestMethod]
+    public void CreateIconElementPreservesIconSourceProperties()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var fontIconSource = new FontIconSource
+            {
+                Glyph = "\uE001",
+                FontSize = 24,
+                FontFamily = new FontFamily("Segoe UI Symbol"),
+                Foreground = Brushes.Purple
+            };
+
+            var fontIcon = (FontIcon)fontIconSource.CreateIconElement();
+
+            Assert.AreEqual("\uE001", fontIcon.Glyph);
+            Assert.AreEqual(24.0, fontIcon.FontSize);
+            Assert.AreEqual("Segoe UI Symbol", fontIcon.FontFamily.Source);
+            Assert.AreSame(Brushes.Purple, fontIcon.Foreground);
+        });
+    }
+
+    [TestMethod]
     public void VerifyFontWeightPropertyMetadata()
     {
         WpfTestHost.Run(() =>
@@ -141,5 +276,14 @@ public class IconSourceApiTests
             Assert.AreEqual(typeof(FontWeight), FontIconSource.FontWeightProperty.PropertyType);
             Assert.AreEqual(typeof(ValueType), typeof(FontWeight).BaseType);
         });
+    }
+
+    private static DrawingImage CreateTestImageSource(Brush brush)
+    {
+        return new DrawingImage(
+            new GeometryDrawing(
+                brush,
+                null,
+                new RectangleGeometry(new Rect(0, 0, 16, 16))));
     }
 }
