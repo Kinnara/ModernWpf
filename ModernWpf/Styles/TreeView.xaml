@@ -6,7 +6,12 @@
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
-    <sys:Double x:Key="TreeViewItemMinHeight">32</sys:Double>
+    <sys:Double x:Key="TreeViewItemMinHeight">28</sys:Double>
+    <Thickness x:Key="TreeViewItemPresenterMargin">4,2</Thickness>
+    <Thickness x:Key="TreeViewItemPresenterPadding">0,3,0,5</Thickness>
+    <Thickness x:Key="TreeViewItemMultiSelectSelectedItemBorderMargin">0</Thickness>
+    <sys:Double x:Key="TreeViewItemMultiSelectCheckBoxMinHeight">28</sys:Double>
+    <sys:Double x:Key="TreeViewItemContentHeight">20</sys:Double>
 
     <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -29,7 +34,7 @@
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="Background" Value="{DynamicResource TreeViewItemBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource ListViewItemForeground}" />
+        <Setter Property="Foreground" Value="{DynamicResource TreeViewItemForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource TreeViewItemBorderThemeThickness}" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="Local" />
