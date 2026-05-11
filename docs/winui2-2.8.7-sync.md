@@ -40,7 +40,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | ComboBox helper/styles | Pending | Ported APITest slice | WPF ComboBox style/helper maps this surface; upstream open-dropdown corner-radius behavior is covered for standard and editable modes. Broader visual-tree/resource snapshots remain pending. |
 | CommandBar / AppBarButton / AppBarToggleButton / AppBarSeparator | Pending | Pending | Existing WPF port; sync resources and tests. |
 | CommandBarFlyout / TextCommandBarFlyout | Pending | Ported APITest slices | Existing WPF port; default command collection and command propagation API coverage are ported. Sizing, overflow, and popup interaction tests remain pending for WPF popup-host adaptation. |
-| CommonStyles and compact density resources | Pending | Ported initial API slice | `VerifyAllThemesContainSameResourceKeys`, `VerifyUseCompactResourcesAPI`, and `CornerRadiusFilterConverterTest` are ported; visual-tree and baseline resource tests remain pending. |
+| CommonStyles and compact density resources | Pending | Ported initial API + resource override slices | `VerifyAllThemesContainSameResourceKeys`, `VerifyUseCompactResourcesAPI`, `CornerRadiusFilterConverterTest`, and `ThemeResourcesTests.VerifyOverrides` are ported; visual-tree and baseline resource tests remain pending. |
 | ContentDialog | Pending | Pending | Existing WPF port; sync resources and behavior tests. |
 | DropDownButton | Pending | Ported interaction slice | Existing WPF port; upstream accessibility/expand-collapse interaction coverage is mapped through WPF automation peer and flyout open/close tests. Resource and broader popup/input tests remain pending. |
 | Expander | Pending | Ported interaction slice | WPF has stock Expander; WPF automation peer expand/collapse behavior is covered. ModernWpf styling, resource checks, and WinUI-specific accessibility-tree assertions remain pending. |
@@ -81,7 +81,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | `dev/*/APITests` | `ModernWpf.WinUI.Tests` | Pending | Port all tests for implemented or mapped controls. |
 | `dev/*/InteractionTests` | `ModernWpf.WinUI.Tests` + `ModernWpf.WinUI.TestApp` | Pending | Replace UWP input helpers with WPF dispatcher/window/input helpers. |
 | `dev/*/TestUI` pages | `ModernWpf.WinUI.TestApp` | Pending | Port pages for implemented controls; document excluded pages. |
-| `test/MUXControlsTestApp/ThemeResourcesTests.cs` | `ModernWpf.WinUI.Tests` | Pending | Must prove Light/Dark/HighContrast key parity. |
+| `test/MUXControlsTestApp/ThemeResourcesTests.cs` | `ModernWpf.WinUI.Tests` | Ported WPF-feasible slice | `VerifyOverrides` is ported for `RatingControlCaptionForeground` application-resource overrides; Light/Dark/HighContrast key parity is covered by `CommonStylesResourceTests`. |
 | Localization/resource tests | `ModernWpf.WinUI.Tests` | Pending | Port for resources that remain in ModernWpf. |
 | Leak and compositor tests | WPF equivalent or exclusion | Pending | Add concrete exclusions when no WPF behavior exists. |
 
