@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
+using ModernWpf;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 using CommandBarFlyout = ModernWpf.Controls.CommandBarFlyout;
 
@@ -118,6 +120,81 @@ public class CommandBarFlyoutApiTests
     public void VerifyCommandBarSizingSecondaryItemsMaxHeight()
     {
         VerifyCommandBarSizing(CommandBarSizingOptions.SecondaryItemsMaxHeight);
+    }
+
+    [TestMethod]
+    public void VerifyCommandBarFlyoutStyleAndWinUI2Resources()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right
+            };
+
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Label = "Copy" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Select all" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 420, height: 260);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            try
+            {
+                var commandBar = GetCommandBar(commandBarFlyout);
+                commandBar.ApplyTemplate();
+                host.UpdateLayout();
+
+                Assert.AreSame(commandBar.TryFindResource("CommandBarFlyoutBackground"), commandBar.Background);
+                Assert.AreSame(commandBar.TryFindResource("CommandBarFlyoutForeground"), commandBar.Foreground);
+                Assert.AreSame(commandBar.TryFindResource("CommandBarFlyoutBorderBrush"), commandBar.BorderBrush);
+                Assert.AreEqual(commandBar.TryFindResource("CommandBarFlyoutBorderThemeThickness"), commandBar.BorderThickness);
+                Assert.AreEqual(440d, commandBar.MaxWidth);
+                Assert.AreEqual(48d, commandBar.Height);
+                Assert.AreEqual(commandBar.TryFindResource("OverlayCornerRadius"), commandBar.CornerRadius);
+            }
+            finally
+            {
+                commandBarFlyout.Hide();
+                WpfTestHost.DoEvents();
+            }
+
+            AssertThemeResourceReference("Light", "CommandBarFlyoutBackground", "AcrylicInAppFillColorDefaultBrush");
+            AssertThemeResourceReference("Dark", "CommandBarFlyoutBackground", "AcrylicInAppFillColorDefaultBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarFlyoutBackground", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceValue("Light", "CommandBarFlyoutBorderThemeThickness", new Thickness(1));
+            AssertThemeResourceValue("Dark", "CommandBarFlyoutBorderThemeThickness", new Thickness(1));
+            AssertThemeResourceValue("HighContrast", "CommandBarFlyoutBorderThemeThickness", new Thickness(1));
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "CommandBarFlyoutAppBarButtonSubItemChevronPointerOverForeground", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "CommandBarFlyoutAppBarButtonSubItemChevronPressedForeground", "TextFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "CommandBarFlyoutAppBarButtonSubItemChevronSubMenuOpenedForeground", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "CommandBarFlyoutAppBarButtonSubItemChevronDisabledForeground", "TextFillColorDisabledBrush");
+            }
+
+            AssertThemeResourceReference("HighContrast", "CommandBarFlyoutAppBarButtonBackgroundPointerOver", "SystemControlHighlightListLowBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarFlyoutAppBarButtonBackgroundPressed", "SystemControlHighlightListMediumBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarFlyoutAppBarButtonForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarFlyoutAppBarButtonForegroundPressed", "SystemControlHighlightAltBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed", "SystemControlHighlightAltBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarFlyoutAppBarButtonSubItemChevronPointerOverForeground", "SystemControlHighlightAltBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarFlyoutAppBarButtonSubItemChevronPressedForeground", "SystemControlHighlightAltBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarFlyoutAppBarButtonSubItemChevronSubMenuOpenedForeground", "SystemControlHighlightAltBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "CommandBarFlyoutAppBarButtonSubItemChevronDisabledForeground", "SystemControlDisabledBaseMediumLowBrush");
+        });
     }
 
     private static CommandBarFlyoutCommandBar GetCommandBar(CommandBarFlyout commandBarFlyout)
@@ -251,6 +328,21 @@ public class CommandBarFlyoutApiTests
         {
             Assert.AreSame(commandBarFlyout.SecondaryCommands[i], commandBar.SecondaryCommands[i]);
         }
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
     }
 
     private static T FindDescendant<T>(DependencyObject root)
