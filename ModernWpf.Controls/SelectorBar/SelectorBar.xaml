@@ -1,0 +1,51 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style TargetType="local:SelectorBar">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SelectorBar">
+                    <ScrollViewer
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Disabled"
+                        Focusable="False">
+                        <StackPanel x:Name="PART_ItemsPanel" Orientation="Horizontal" />
+                    </ScrollViewer>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:SelectorBarItem">
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SelectorBarItem">
+                    <Button
+                        x:Name="PART_Button"
+                        Padding="{TemplateBinding Padding}"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Focusable="False"
+                        Foreground="{TemplateBinding Foreground}">
+                        <StackPanel Orientation="Horizontal">
+                            <ContentPresenter
+                                Margin="0,0,6,0"
+                                Content="{TemplateBinding Icon}"
+                                VerticalAlignment="Center" />
+                            <TextBlock
+                                Text="{TemplateBinding Text}"
+                                VerticalAlignment="Center" />
+                            <ContentPresenter
+                                Content="{TemplateBinding Child}"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
