@@ -39,7 +39,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | ColorPicker / ColorSpectrum | Pending | Pending | Add feasible WPF control port and color math tests. |
 | ComboBox helper/styles | Pending | Ported APITest slice | WPF ComboBox style/helper maps this surface; upstream open-dropdown corner-radius behavior is covered for standard and editable modes. Broader visual-tree/resource snapshots remain pending. |
 | CommandBar / AppBarButton / AppBarToggleButton / AppBarSeparator | Pending | Pending | Existing WPF port; sync resources and tests. |
-| CommandBarFlyout / TextCommandBarFlyout | Pending | Ported initial APITest slice | Existing WPF port; default command collection API coverage is ported. Command propagation, sizing, overflow, and popup interaction tests remain pending for WPF popup-host adaptation. |
+| CommandBarFlyout / TextCommandBarFlyout | Pending | Ported APITest slices | Existing WPF port; default command collection and command propagation API coverage are ported. Sizing, overflow, and popup interaction tests remain pending for WPF popup-host adaptation. |
 | CommonStyles and compact density resources | Pending | Ported initial API slice | `VerifyAllThemesContainSameResourceKeys`, `VerifyUseCompactResourcesAPI`, and `CornerRadiusFilterConverterTest` are ported; visual-tree and baseline resource tests remain pending. |
 | ContentDialog | Pending | Pending | Existing WPF port; sync resources and behavior tests. |
 | DropDownButton | Pending | Ported interaction slice | Existing WPF port; upstream accessibility/expand-collapse interaction coverage is mapped through WPF automation peer and flyout open/close tests. Resource and broader popup/input tests remain pending. |
