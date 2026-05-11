@@ -211,6 +211,7 @@ namespace ModernWpf.Controls
             m_indeterminateProgressBarIndicator = GetTemplateChild(s_IndeterminateProgressBarIndicatorName) as Rectangle;
             m_indeterminateProgressBarIndicator2 = GetTemplateChild(s_IndeterminateProgressBarIndicator2Name) as Rectangle;
 
+            UpdateResourceBasedTemplateSettings();
             UpdateStates();
 
             ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);
@@ -249,6 +250,12 @@ namespace ModernWpf.Controls
         private void OnIndicatorWidthComponentChanged()
         {
             SetProgressBarIndicatorWidth();
+        }
+
+        private void UpdateResourceBasedTemplateSettings()
+        {
+            var trackHeightResource = TryFindResource("ProgressBarTrackHeight");
+            TemplateSettings.TrackHeight = trackHeightResource is double trackHeight ? trackHeight : 1.0;
         }
 
         private void OnIsIndeterminatePropertyChanged(DependencyPropertyChangedEventArgs args)
