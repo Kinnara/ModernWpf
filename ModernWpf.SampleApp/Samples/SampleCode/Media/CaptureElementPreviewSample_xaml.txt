@@ -1,0 +1,10 @@
+<Grid RowDefinitions="Auto,*" ColumnDefinitions="*,100"  MinWidth="400" MinHeight="300" RowSpacing="10" ColumnSpacing="4">
+    <TextBlock x:Name="frameSourceName" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+    <MediaPlayerElement x:Name="captureElement" Grid.Row="1" Grid.Column="0" Stretch="Uniform" AutoPlay="True" />
+    <TextBlock x:Name="capturedText" Visibility="Collapsed" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="Captured:" />
+    <Grid x:Name="captureContainer" Grid.Row="1" Grid.Column="1">
+        <ScrollViewer VerticalScrollMode="Enabled">
+            <StackPanel x:Name="snapshots" Spacing="2"/>
+        </ScrollViewer>
+    </Grid>
+</Grid>

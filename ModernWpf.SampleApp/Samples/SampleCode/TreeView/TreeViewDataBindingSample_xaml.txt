@@ -1,0 +1,7 @@
+﻿<TreeView ItemsSource="{x:Bind DataSource}">
+   <TreeView.ItemTemplate>
+      <DataTemplate x:DataType="local:ExplorerItem">
+         <TreeViewItem ItemsSource="{x:Bind Children}" Content="{x:Bind Name}"/>
+      </DataTemplate>
+   </TreeView.ItemTemplate>
+</TreeView>

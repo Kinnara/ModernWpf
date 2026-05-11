@@ -1,0 +1,3 @@
+﻿<Button Name="ExampleButton1">
+    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE790;"/>
+</Button>

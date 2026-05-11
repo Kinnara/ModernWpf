@@ -1,0 +1,21 @@
+<NavigationView x:Name="nvSample8" Grid.Row="1" Height="460"
+                        PaneDisplayMode="$(PaneDisplay)" 
+                        IsTabStop="False" 
+                        SelectionChanged="NavigationView_SelectionChanged8">
+    <NavigationView.MenuItems>
+        <NavigationViewItem Content="Home" Icon="Home" ToolTipService.ToolTip="Home" Tag="SamplePage1"/>
+        <NavigationViewItem Content="Account" Icon="Contact" ToolTipService.ToolTip="Account" Tag="SamplePage2">
+            <NavigationViewItem.MenuItems>
+                <NavigationViewItem Content="Mail" Icon="Mail" ToolTipService.ToolTip="Mail" Tag="SamplePage3"/>
+                <NavigationViewItem Content="Calendar" Icon="Calendar" ToolTipService.ToolTip="Calendar" Tag="SamplePage4"/>
+            </NavigationViewItem.MenuItems>
+        </NavigationViewItem>
+        <NavigationViewItem Content="Document options" Icon="Page2" ToolTipService.ToolTip="Document options" SelectsOnInvoked="False">
+            <NavigationViewItem.MenuItems>
+                <NavigationViewItem Content="Create new" Icon="NewFolder" ToolTipService.ToolTip="Create new" Tag="SamplePage5"/>
+                <NavigationViewItem Content="Upload file" Icon="OpenLocal" ToolTipService.ToolTip="Upload file" Tag="SamplePage6"/>
+            </NavigationViewItem.MenuItems>
+        </NavigationViewItem>
+    </NavigationView.MenuItems>
+    <Frame x:Name="contentFrame8" />
+</NavigationView>

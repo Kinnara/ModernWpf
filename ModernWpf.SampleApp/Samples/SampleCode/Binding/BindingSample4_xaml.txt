@@ -1,0 +1,17 @@
+﻿<Page...
+    xmlns:c="using:YourNamespace">
+
+    <Page.Resources>
+        <!-- Declare the converter -->
+        <c:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter" />
+    </Page.Resources>
+
+    <StackPanel Spacing="8">
+        <!-- Input TextBox -->
+        <TextBox x:Name="InputTextBox" Header="Enter Text:" Width="300" />
+
+        <!-- TextBlock Visibility Depends on Input Text -->
+        <TextBlock Text="The input is not empty."
+                    Visibility="{Binding Text, ElementName=InputTextBox, Converter={StaticResource EmptyStringToVisibilityConverter}}" />
+    </StackPanel>
+</Page>

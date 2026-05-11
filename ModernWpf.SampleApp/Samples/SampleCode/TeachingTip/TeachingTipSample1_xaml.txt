@@ -1,0 +1,13 @@
+﻿<Button
+    x:Name="TestButton1"
+    Click="TestButton1Click"
+    Content="Show TeachingTip" />
+<TeachingTip
+    x:Name="TestButton1TeachingTip"
+    Title="This is the title"
+    Subtitle="And this is the subtitle"
+    Target="{x:Bind TestButton1}">
+    <TeachingTip.IconSource>
+        <SymbolIconSource Symbol="Refresh" />
+    </TeachingTip.IconSource>
+</TeachingTip>

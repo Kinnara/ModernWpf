@@ -1,0 +1,3 @@
+﻿<Button Name="Example1Button">
+    <PathIcon Data="F1 M 16,12 20,2L 20,16 1,16" HorizontalAlignment="Center"/>
+</Button>

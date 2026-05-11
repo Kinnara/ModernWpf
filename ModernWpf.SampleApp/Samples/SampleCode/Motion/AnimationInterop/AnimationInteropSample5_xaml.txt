@@ -1,0 +1,15 @@
+﻿<Grid HorizontalAlignment="Left" Margin="0,12,0,0">
+    <TextBlock x:Name="PopupTarget" 
+                Width="300" 
+                TextWrapping="WrapWholeWords" 
+                Margin="{x:Bind MarginSlider.Value, Converter={StaticResource doubleToThicknessConverter}, Mode=OneWay}" 
+                FontSize="{x:Bind FontSizeSlider.Value, Mode=OneWay}" 
+                Text="... lorem ipsum ..." />
+
+    <!-- Notice that the popup is a sibling to the target, not an ancestor. -->
+    <Popup x:Name="Popup" Margin="5">
+        <Grid MinWidth="50" MaxWidth="200" MinHeight="50" BorderBrush="LightGray" BorderThickness="2" Background="{ThemeResource FlyoutBackgroundThemeBrush}">
+            <TextBlock Text="I am always right aligned center to the target." TextWrapping="WrapWholeWords" Margin="6" FontSize="12" VerticalAlignment="Center" />
+        </Grid>
+    </Popup>
+</Grid>

@@ -1,0 +1,9 @@
+﻿<NavigationView SelectionChanged="NavigationView_SelectionChanged" x:Name="nvSample" PaneDisplayMode="Auto" >
+    <NavigationView.MenuItems>
+        <NavigationViewItem Icon="Play" Content="Menu Item1" Tag="SamplePage1" />
+        <NavigationViewItemSeparator/>
+        <NavigationViewItem Icon="Save" Content="Menu Item2" Tag="SamplePage2" />
+        <NavigationViewItem Icon="Refresh" Content="Menu Item3" Tag="SamplePage3" />
+    </NavigationView.MenuItems>
+    <Frame x:Name="contentFrame"/>
+</NavigationView>

@@ -1,0 +1,28 @@
+public class ListDetailItem
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Text { get; set; }
+    public DateTime DateCreated { get; set; }
+    public string DateCreatedFormatted => DateCreated.ToString("MMM d, yyyy h:mm tt");
+}
+
+// In your page class:
+public List<ListDetailItem> Items { get; set; }
+
+public MyPage()
+{
+    this.InitializeComponent();
+
+    Items = new List<ListDetailItem>
+    {
+        new ListDetailItem
+        {
+            Id = 0,
+            Title = "Item 1",
+            Text = "Lorem ipsum dolor sit amet...",
+            DateCreated = new DateTime(2025, 6, 15, 9, 30, 0)
+        },
+        // Add more items...
+    };
+}

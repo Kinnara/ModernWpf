@@ -1,0 +1,35 @@
+﻿<MenuBar>
+    <MenuBarItem Title="File">
+        <MenuFlyoutSubItem Text="New">
+            <MenuFlyoutItem Text="Plain Text Document"/>
+            <MenuFlyoutItem Text="Rich Text Document"/>
+            <MenuFlyoutItem Text="Other Formats..."/>
+        </MenuFlyoutSubItem>
+        <MenuFlyoutItem Text="Open..."/>
+        <MenuFlyoutItem Text="Save"/>
+        <MenuFlyoutSeparator />
+        <MenuFlyoutItem Text="Exit"/>
+    </MenuBarItem>
+
+    <MenuBarItem Title="Edit">
+        <MenuFlyoutItem Text="Undo"/>
+        <MenuFlyoutItem Text="Cut"/>
+        <MenuFlyoutItem Text="Copy"/>
+        <MenuFlyoutItem Text="Paste"/>
+    </MenuBarItem>
+
+    <MenuBarItem Title="View">
+        <MenuFlyoutItem Text="Output"/>
+        <MenuFlyoutSeparator/>
+        <RadioMenuFlyoutItem Text="Landscape" GroupName="OrientationGroup"/>
+        <RadioMenuFlyoutItem Text="Portrait" GroupName="OrientationGroup" IsChecked="True"/>
+        <MenuFlyoutSeparator/>
+        <RadioMenuFlyoutItem Text="Small icons" GroupName="SizeGroup"/>
+        <RadioMenuFlyoutItem Text="Medium icons" IsChecked="True" GroupName="SizeGroup"/>
+        <RadioMenuFlyoutItem Text="Large icons" GroupName="SizeGroup"/>
+    </MenuBarItem>
+                    
+    <MenuBarItem Title="Help">
+        <MenuFlyoutItem Text="About"/>
+    </MenuBarItem>
+</MenuBar>

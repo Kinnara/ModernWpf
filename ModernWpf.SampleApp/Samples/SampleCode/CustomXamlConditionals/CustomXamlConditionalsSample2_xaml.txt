@@ -1,0 +1,15 @@
+<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:cond="using:WinUIGallery.ControlPages"
+    xmlns:newExp="http://schemas.microsoft.com/winfx/2006/xaml/presentation?cond:FeatureFlagCondition(NewExperience)"
+    xmlns:legacy="http://schemas.microsoft.com/winfx/2006/xaml/presentation?cond:FeatureFlagCondition(LegacyMode)">
+
+    <!--
+        At most ONE of newExp:Background and legacy:Background may evaluate to true at a time.
+        If both conditions are true, the XAML parser throws at runtime.
+    -->
+    <Button Content="Background depends on the active flag"
+            newExp:Background="Green"
+            legacy:Background="Gray"
+            Foreground="White" />
+</Page>

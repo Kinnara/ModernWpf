@@ -1,0 +1,8 @@
+<Grid Width="300" Height="200">
+    <SystemBackdropElement CornerRadius="$(CornerRadius)">
+        <SystemBackdropElement.SystemBackdrop>
+            <DesktopAcrylicBackdrop />
+        </SystemBackdropElement.SystemBackdrop>
+    </SystemBackdropElement>
+    <Button Content="Button" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+</Grid>

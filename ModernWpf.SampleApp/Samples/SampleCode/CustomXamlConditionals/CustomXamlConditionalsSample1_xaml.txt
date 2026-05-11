@@ -1,0 +1,17 @@
+<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cond="using:WinUIGallery.ControlPages"
+    xmlns:newExp="http://schemas.microsoft.com/winfx/2006/xaml/presentation?cond:FeatureFlagCondition(NewExperience)"
+    xmlns:legacy="http://schemas.microsoft.com/winfx/2006/xaml/presentation?cond:FeatureFlagCondition(LegacyMode)">
+
+    <StackPanel Spacing="8">
+        <!-- Included only when FeatureFlagCondition.Evaluate("NewExperience") returns true. -->
+        <newExp:InfoBar Title="New experience" IsOpen="True" Severity="Success"
+                        Message="This InfoBar is included because the 'NewExperience' flag is true." />
+
+        <!-- Included only when FeatureFlagCondition.Evaluate("LegacyMode") returns true. -->
+        <legacy:InfoBar Title="Legacy mode" IsOpen="True" Severity="Warning"
+                        Message="This InfoBar is included because the 'LegacyMode' flag is true." />
+    </StackPanel>
+</Page>

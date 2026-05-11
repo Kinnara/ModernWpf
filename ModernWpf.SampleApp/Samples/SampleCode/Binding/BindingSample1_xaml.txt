@@ -1,0 +1,25 @@
+﻿<Grid ColumnSpacing="12">
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="auto" />
+        <ColumnDefinition Width="auto" />
+        <ColumnDefinition Width="auto" />
+    </Grid.ColumnDefinitions>
+
+    <StackPanel Spacing="8" Grid.Column="0">
+        <TextBlock Text="One-Way Binding" FontWeight="SemiBold" />
+        <!-- One-Way Binding: The target TextBox mirrors the text entered in the SourceTextBox, but any change in the target is not reflected back to the source -->
+        <TextBox x:Name="SourceTextBoxOneWay" Width="200" HorizontalAlignment="Left" PlaceholderText="Enter text here" />
+        <TextBox x:Name="TargetTextBoxOneWay" Width="200" HorizontalAlignment="Left" PlaceholderText="Mirrors above text"
+                 Text="{x:Bind SourceTextBoxOneWay.Text, Mode=OneWay}" />
+    </StackPanel>
+
+    <AppBarSeparator Grid.Column="1" />
+
+    <StackPanel Spacing="8" Grid.Column="2">
+        <TextBlock Text="Two-Way Binding" FontWeight="SemiBold" />
+        <!-- Two-Way Binding: Changes in the SourceTextBox are automatically reflected in the TargetTextBox, and vice versa -->
+        <TextBox x:Name="SourceTextBoxTwoWay" Width="200" HorizontalAlignment="Left" PlaceholderText="Enter text here" />
+        <TextBox x:Name="TargetTextBoxTwoWay" Width="200" HorizontalAlignment="Left" PlaceholderText="Mirrors and edits above text"
+                 Text="{x:Bind SourceTextBoxTwoWay.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+    </StackPanel>
+</Grid>

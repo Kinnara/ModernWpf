@@ -1,0 +1,28 @@
+﻿<StackPanel Spacing="8" Orientation="Horizontal">
+    <StackPanel.Resources>
+        <!-- Base Style -->
+        <Style x:Key="BaseBorderStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Background" Value="LightGray" />
+            <Setter Property="BorderBrush" Value="DarkGray" />
+        </Style>
+
+        <!-- Derived Style -->
+        <Style x:Key="HighlightBorderStyle" TargetType="Border" 
+               BasedOn="{StaticResource BaseBorderStyle}">
+            <Setter Property="Background" Value="Green" />
+            <Setter Property="BorderBrush" Value="DarkGreen" />
+        </Style>
+    </StackPanel.Resources>
+
+    <!-- Border using the base style -->
+    <Border Style="{StaticResource BaseBorderStyle}" Width="100" Height="100">
+        <Ellipse Fill="White" />
+    </Border>
+
+    <!-- Border using the derived style -->
+    <Border Style="{StaticResource HighlightBorderStyle}" Width="100" Height="100">
+        <Ellipse Fill="White" />
+    </Border>
+</StackPanel>

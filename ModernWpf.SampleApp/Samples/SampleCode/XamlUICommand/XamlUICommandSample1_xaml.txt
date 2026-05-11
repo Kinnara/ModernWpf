@@ -1,0 +1,17 @@
+﻿<Page.Resources>
+    <XamlUICommand x:Name="CustomXamlUICommand" ExecuteRequested="CustomXamlUICommand_ExecuteRequested" 
+	Description="This is a custom command" Label="Custom Command">
+        <XamlUICommand.IconSource>
+            <SymbolIconSource Symbol="Favorite" />
+        </XamlUICommand.IconSource>
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator Key="D" Modifiers="Control"/>
+        </XamlUICommand.KeyboardAccelerators>
+    </XamlUICommand>
+</Page.Resources>
+
+<RelativePanel Grid.Row="1">
+    <AppBarButton x:Name="CustomButton" Command="{StaticResource CustomXamlUICommand}"/>
+    <TextBlock x:Name="XamlUICommandOutput" Margin="8,0,0,0" FontFamily="Global User Interface" 
+                RelativePanel.RightOf="CustomButton" RelativePanel.AlignVerticalCenterWith="CustomButton" />
+</RelativePanel>

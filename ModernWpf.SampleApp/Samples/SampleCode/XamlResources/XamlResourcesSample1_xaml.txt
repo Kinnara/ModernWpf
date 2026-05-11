@@ -1,0 +1,38 @@
+﻿<!-- App.xaml -->
+<Application>
+    <Application.Resources>
+        <!-- Define an application-wide color resource -->
+        <Color x:Key="PrimaryColor">#0078D4</Color>
+    </Application.Resources>
+</Application>
+
+<!-- YourPage.xaml -->
+<Page>
+    <Page.Resources>
+        <!-- Define page-level solid color brushes -->
+        <SolidColorBrush x:Key="HighlightBrush" Color="#A94DC1" />
+        <SolidColorBrush x:Key="FontColor" Color="White" />
+    </Page.Resources>
+
+    <!-- StackPanel using the application-level resource 'PrimaryColor' -->
+    <StackPanel Background="{StaticResource PrimaryColor}" Padding="8">
+        <TextBlock Text="Using application-level resources" Foreground="White" FontSize="24" />
+
+        <!-- StackPanel using the page-level resource 'HighlightBrush' -->
+        <StackPanel Background="{StaticResource HighlightBrush}" Padding="8" Margin="8">
+            <TextBlock Text="Using page-level resources" Foreground="{StaticResource FontColor}" FontSize="18" />
+
+            <!-- StackPanel with control-level resources defined within its own Resources -->
+            <StackPanel Padding="8" Margin="8">
+                <StackPanel.Resources>
+                    <!-- Define control-level resources -->
+                    <Color x:Key="BackgroundColor">#E2241A</Color>
+                    <x:String x:Key="Description">Using control-level resources</x:String>
+                </StackPanel.Resources>
+                <Grid Background="{StaticResource BackgroundColor}" Padding="8">
+                    <TextBlock Text="{StaticResource Description}" Foreground="White"/>
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</Page>

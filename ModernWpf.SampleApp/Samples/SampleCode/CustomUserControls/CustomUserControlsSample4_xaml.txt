@@ -1,0 +1,24 @@
+﻿<!-- SynonymFinderControl.xaml -->
+<UserControl ...>
+    <Grid>
+        <StackPanel Spacing="8">
+            <TextBlock Text="{x:Bind Header, Mode=OneWay}" FontWeight="SemiBold" />
+            <StackPanel Orientation="Horizontal" Spacing="5">
+                <TextBox x:Name="InputTextBox" Width="200" PlaceholderText="Enter a word..." KeyDown="InputTextBox_KeyDown" />
+                <Button x:Name="FindButton" Click="FindButton_Click">
+                    <FontIcon Glyph="&#xE721;" />
+                </Button>
+            </StackPanel>
+            <ListView x:Name="SynonymsList" />
+        </StackPanel>
+    </Grid>
+</UserControl>
+
+<!-- YourPage.xaml -->
+<Page ...
+      xmlns:local="using:YourNamesapce">
+    <StackPanel Spacing="8">
+        <TextBlock Text="Try these words: happy, fast, smart" />
+        <local:SynonymFinderControl x:Name="SynonymFinder" Header="Find Synonyms" />
+    </StackPanel>
+</Page>

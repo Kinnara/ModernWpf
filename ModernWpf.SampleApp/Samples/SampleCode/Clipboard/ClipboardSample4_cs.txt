@@ -1,0 +1,15 @@
+// Show available formats on the clipboard
+var package = Clipboard.GetContent();
+foreach (var format in package.AvailableFormats)
+{
+    // Display each format
+}
+
+// Clear the clipboard
+Clipboard.Clear();
+
+// Register for clipboard content changes
+Clipboard.ContentChanged += (s, e) =>
+{
+    // Handle clipboard content change
+};

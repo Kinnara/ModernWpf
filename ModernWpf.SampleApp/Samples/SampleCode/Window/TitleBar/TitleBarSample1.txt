@@ -1,0 +1,4 @@
+﻿// C# code to set AppTitleBar uielement as titlebar
+Window window = App.MainWindow;
+window.ExtendsContentIntoTitleBar = true;  // enable custom titlebar
+window.SetTitleBar(AppTitleBar);      // set user ui element as titlebar

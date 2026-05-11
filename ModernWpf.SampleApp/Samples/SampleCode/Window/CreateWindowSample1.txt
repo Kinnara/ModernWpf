@@ -1,0 +1,20 @@
+﻿// Ensure you close the child window before closing the parent window to avoid application crash.
+var childWindow = new Window()
+{
+    ExtendsContentIntoTitleBar = true,
+    SystemBackdrop = new MicaBackdrop(),
+    Content = new Page()
+    {
+        Content = new TextBlock()
+        {
+            Text = "New child window!",
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+        },
+        // Get the theme from the parent.
+        RequestedTheme = this.ActualTheme,
+    }
+};
+
+childWindow.AppWindow.ResizeClient(new SizeInt32(500, 500));
+childWindow.Activate();

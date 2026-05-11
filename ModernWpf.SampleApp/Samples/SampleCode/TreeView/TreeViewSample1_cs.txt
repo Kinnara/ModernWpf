@@ -1,0 +1,27 @@
+﻿private void InitializeSampleTreeView(TreeView sampleTreeView)
+{
+    // Create a root node with initial content and set it to be expanded.
+    TreeViewNode workNode = new TreeViewNode() { Content = "Work Documents" };
+    workNode.IsExpanded = true;
+
+    // Add child nodes with content related to the root node.
+    workNode.Children.Add(new TreeViewNode() { Content = "XYZ Functional Spec" });
+    workNode.Children.Add(new TreeViewNode() { Content = "Feature Schedule" });
+
+    // Create another node with initial content and set it to be expanded.
+    TreeViewNode remodelNode = new TreeViewNode() { Content = "Home Remodel" };
+    remodelNode.IsExpanded = true;
+
+    // Add child nodes with specific content under this node.
+    remodelNode.Children.Add(new TreeViewNode() { Content = "Contractor Contact Info" });
+    remodelNode.Children.Add(new TreeViewNode() { Content = "Paint Color Scheme" });
+
+    // Create a node with broader content that includes the previous node as a child.
+    TreeViewNode personalNode = new TreeViewNode() { Content = "Personal Documents" };
+    personalNode.IsExpanded = true;
+    personalNode.Children.Add(remodelNode);
+
+    // Add the main nodes to the TreeView's root.
+    sampleTreeView.RootNodes.Add(workNode);
+    sampleTreeView.RootNodes.Add(personalNode);
+}

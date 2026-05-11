@@ -1,0 +1,29 @@
+﻿<Grid>
+    <Grid.Resources>
+        <ControlTemplate x:Key="CustomTextBoxTemplate" TargetType="TextBox">
+            <StackPanel Spacing="8">
+                <TextBlock Text="{TemplateBinding Header}" />
+                <Border
+                    MinWidth="200"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="2"
+                    CornerRadius="4">
+                    <StackPanel Margin="4" Orientation="Horizontal" Spacing="4">
+                        <SymbolIcon Symbol="Edit" />
+                        <ScrollViewer
+                            x:Name="ContentElement"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ControlTemplate>
+    </Grid.Resources>
+    <TextBox
+        Padding="8"
+        BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+        Header="Enter text here"
+        Template="{StaticResource CustomTextBoxTemplate}" />
+</Grid>

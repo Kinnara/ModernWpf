@@ -1,0 +1,11 @@
+private void CopyWithOptions_Click(object sender, RoutedEventArgs args)
+{
+    var package = new DataPackage();
+    package.SetText("Text with clipboard options");
+
+    var options = new ClipboardContentOptions();
+    options.IsAllowedInHistory = true;
+    options.IsRoamable = true;
+
+    Clipboard.SetContentWithOptions(package, options);
+}

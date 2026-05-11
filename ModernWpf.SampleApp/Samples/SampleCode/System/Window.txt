@@ -1,0 +1,14 @@
+﻿public partial class App : Application
+{
+    public static MainWindow MainWindow = new();
+
+    public App()
+    {
+        this.InitializeComponent();
+    }
+
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        MainWindow.Activate();
+    }
+}

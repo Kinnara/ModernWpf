@@ -1,0 +1,32 @@
+<!-- Unlike ListView/GridView, ItemsRepeater does not have built-in
+     ConnectedAnimation methods. Use ConnectedAnimationService directly. -->
+
+<ScrollViewer x:Name="scrollViewer">
+    <ItemsRepeater
+        x:Name="repeater"
+        ItemsSource="{x:Bind Items}">
+        <ItemsRepeater.Layout>
+            <UniformGridLayout
+                MinColumnSpacing="8"
+                MinItemHeight="120"
+                MinItemWidth="150"
+                MinRowSpacing="8" />
+        </ItemsRepeater.Layout>
+        <ItemsRepeater.ItemTemplate>
+            <DataTemplate x:DataType="local:CustomDataObject">
+                <Grid CornerRadius="4">
+                    <!-- The element named "connectedElement" will be animated -->
+                    <Image x:Name="connectedElement"
+                           Source="{x:Bind ImageLocation}"
+                           Stretch="UniformToFill" />
+                    <Border VerticalAlignment="Bottom"
+                            Background="{ThemeResource AcrylicBackgroundFillColorBaseBrush}"
+                            Padding="8,4">
+                        <TextBlock Text="{x:Bind Title}"
+                                   Style="{ThemeResource CaptionTextBlockStyle}" />
+                    </Border>
+                </Grid>
+            </DataTemplate>
+        </ItemsRepeater.ItemTemplate>
+    </ItemsRepeater>
+</ScrollViewer>

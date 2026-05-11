@@ -1,0 +1,19 @@
+<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:cond="using:WinUIGallery.ControlPages"
+    xmlns:newExp="http://schemas.microsoft.com/winfx/2006/xaml/presentation?cond:FeatureFlagCondition(NewExperience)"
+    xmlns:legacy="http://schemas.microsoft.com/winfx/2006/xaml/presentation?cond:FeatureFlagCondition(LegacyMode)">
+
+    <Page.Resources>
+        <Style x:Key="ConditionalHeadingStyle" TargetType="TextBlock">
+            <!-- Setters can also be qualified with a conditional namespace. -->
+            <newExp:Setter Property="FontWeight" Value="SemiBold" />
+            <newExp:Setter Property="FontSize" Value="28" />
+            <legacy:Setter Property="FontWeight" Value="Normal" />
+            <legacy:Setter Property="FontSize" Value="18" />
+        </Style>
+    </Page.Resources>
+
+    <TextBlock Text="Heading styled with conditional Setters"
+               Style="{StaticResource ConditionalHeadingStyle}" />
+</Page>

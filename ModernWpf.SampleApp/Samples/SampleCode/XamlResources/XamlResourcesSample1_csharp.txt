@@ -1,0 +1,9 @@
+﻿// Retrieve application-level resource
+var primaryColor = (Windows.UI.Color)Application.Current.Resources["PrimaryColor"];
+
+// Retrieve page-level resource
+var highlightBrush = (SolidColorBrush)this.Resources["HighlightBrush"];
+
+// Retrieve control-level resources
+var headerFontSize = (double)newGrid.Resources["HeaderFontSize"];
+var welcomeMessage = (string)newGrid.Resources["Description"];

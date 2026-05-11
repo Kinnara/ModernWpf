@@ -1,0 +1,14 @@
+<!-- Mica -->
+<Window.SystemBackdrop>
+    <MicaBackdrop/>
+</Window.SystemBackdrop>
+                    
+<!-- Mica Alt -->
+<Window.SystemBackdrop>
+    <MicaBackdrop Kind="BaseAlt"/>
+</Window.SystemBackdrop>
+
+<!-- Acrylic -->
+<Window.SystemBackdrop>
+    <DesktopAcrylicBackdrop/>
+<Window.SystemBackdrop>

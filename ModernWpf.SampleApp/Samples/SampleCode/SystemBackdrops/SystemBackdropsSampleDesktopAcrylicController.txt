@@ -1,0 +1,70 @@
+using System.Runtime.InteropServices;
+using WinRT;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Composition.SystemBackdrops;
+
+SystemBackdrops.DesktopAcrylicController acrylicController;
+SystemBackdrops.SystemBackdropConfiguration configurationSource;
+
+bool TrySetAcrylicBackdrop(bool useAcrylicThin)
+{
+    if (DesktopAcrylicController.IsSupported())
+    {
+        DispatcherQueue.EnsureSystemDispatcherQueue();
+
+        // Hooking up the policy object
+        configurationSource = new SystemBackdropConfiguration();
+        Activated += Window_Activated;
+        Closed += Window_Closed;
+        ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
+
+        // Initial configuration state.
+        configurationSource.IsInputActive = true;
+        SetConfigurationSourceTheme();
+
+        acrylicController = new DesktopAcrylicController();
+        acrylicController.Kind = useAcrylicThin ? DesktopAcrylicKind.Thin : DesktopAcrylicKind.Base;
+
+        // Enable the system backdrop.
+        acrylicController.AddSystemBackdropTarget(As<ICompositionSupportsSystemBackdrop>());
+        acrylicController.SetSystemBackdropConfiguration(configurationSource);
+        return true; // Succeeded.
+    }
+
+    return false; // Acrylic is not supported on this system.
+}
+
+private void Window_Activated(object sender, WindowActivatedEventArgs args)
+{
+    configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+}
+
+private void Window_Closed(object sender, WindowEventArgs args)
+{
+    // Make sure any Mica/Acrylic controller is disposed
+    if (acrylicController != null)
+    {
+        acrylicController.Dispose();
+        acrylicController = null;
+    }
+    Activated -= Window_Activated;
+    configurationSource = null;
+}
+
+private void Window_ThemeChanged(FrameworkElement sender, object args)
+{
+    if (configurationSource != null)
+    {
+        SetConfigurationSourceTheme();
+    }
+}
+
+private void SetConfigurationSourceTheme()
+{
+    switch (((FrameworkElement)this.Content).ActualTheme)
+    {
+        case ElementTheme.Dark:    configurationSource.Theme = SystemBackdropTheme.Dark; break;
+        case ElementTheme.Light:   configurationSource.Theme = SystemBackdropTheme.Light; break;
+        case ElementTheme.Default: configurationSource.Theme = SystemBackdropTheme.Default; break;
+    }
+}

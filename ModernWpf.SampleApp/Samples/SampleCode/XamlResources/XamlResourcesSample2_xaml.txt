@@ -1,0 +1,17 @@
+﻿<StackPanel>
+    <Grid Background="{StaticResource SolidBackgroundFillColorBaseBrush}">
+        <TextBlock
+            Text="StaticResource uses the value defined when the app starts and does not update when the theme changes."
+            Foreground="{StaticResource TextFillColorPrimaryBrush}"
+            FontSize="16"
+            TextWrapping="Wrap"/>
+    </Grid>
+
+    <Grid Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
+        <TextBlock
+            Text="ThemeResource adapts automatically to the current theme. If the app switches from Light to Dark, the color defined by ThemeResource changes."
+            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+            FontSize="16"
+            TextWrapping="Wrap"/>
+    </Grid>
+</StackPanel>

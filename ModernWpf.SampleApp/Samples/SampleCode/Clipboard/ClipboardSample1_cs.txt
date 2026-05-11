@@ -1,0 +1,22 @@
+private void CopyImage_Click(object sender, RoutedEventArgs args)
+{
+    var package = new DataPackage();
+    var imageUri = new Uri("ms-appx:///Assets/SampleMedia/rainier.jpg");
+    package.SetBitmap(RandomAccessStreamReference.CreateFromUri(imageUri));
+    Clipboard.SetContent(package);
+}
+
+private async void PasteImage_Click(object sender, RoutedEventArgs args)
+{
+    var package = Clipboard.GetContent();
+    if (package.Contains(StandardDataFormats.Bitmap))
+    {
+        var imageReference = await package.GetBitmapAsync();
+        using (var imageStream = await imageReference.OpenReadAsync())
+        {
+            var bitmapImage = new BitmapImage();
+            bitmapImage.SetSource(imageStream);
+            PastedImage.Source = bitmapImage;
+        }
+    }
+}

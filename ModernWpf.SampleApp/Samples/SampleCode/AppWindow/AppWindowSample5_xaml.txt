@@ -1,0 +1,16 @@
+﻿<Window ...>
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+        <TextBlock Text="Modal Window" Style="{ThemeResource TitleTextBlockStyle}" TextAlignment="Center" />
+
+        <TextBlock Text="This is a modal window created using AppWindow with OverlappedPresenter." Style="{ThemeResource BodyTextBlockStyle}" TextAlignment="Center" TextWrapping="Wrap" />
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+            <Button Content="OK" Width="80" Click="OKButton_Click" />
+            <Button Content="Cancel" Width="80" Click="CancelButton_Click" />
+        </StackPanel>
+    </StackPanel>
+</Window>

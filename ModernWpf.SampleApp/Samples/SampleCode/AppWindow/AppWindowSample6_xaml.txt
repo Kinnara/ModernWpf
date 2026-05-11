@@ -1,0 +1,26 @@
+﻿<Window ...>
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <StackPanel HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="8">
+        <TextBlock Text="This window is running in Fullscreen mode"
+                       Style="{ThemeResource TitleTextBlockStyle}"
+                       TextAlignment="Center" />
+        <Button x:Name="Close"
+                Click="Close_Click"
+                Width="200"
+                HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                <SymbolIcon Symbol="Cancel"
+                            Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                            Margin="0,0,4,0" />
+                <TextBlock Text="Close"
+                           Foreground="{ThemeResource SystemFillColorCriticalBrush}" />
+            </StackPanel>
+        </Button>
+    </StackPanel>
+</Window>

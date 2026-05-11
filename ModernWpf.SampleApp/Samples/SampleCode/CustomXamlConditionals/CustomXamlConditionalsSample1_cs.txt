@@ -1,0 +1,20 @@
+// Set the active feature flag(s) BEFORE InitializeComponent so the
+// XAML parser sees them when it evaluates the conditional elements.
+// In a real app these are typically set once at startup (e.g. from
+// App.OnLaunched) based on configuration, A/B test assignment, or
+// device capability detection. Once parsed, the result for each
+// (condition, argument) pair is cached for the lifetime of the
+// process - changing a flag later does NOT re-render markup that
+// was already parsed.
+public sealed partial class MyPage : Page
+{
+    public MyPage()
+    {
+        FeatureFlagCondition.FeatureFlags["NewExperience"] = true;
+        FeatureFlagCondition.FeatureFlags["LegacyMode"] = false;
+
+        this.InitializeComponent();
+    }
+}
+
+

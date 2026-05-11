@@ -1,0 +1,4 @@
+﻿// no UIElement is set for titlebar, default titlebar is created which extends to entire non client area
+Window window = App.MainWindow;
+window.ExtendsContentIntoTitleBar = true;
+// window.SetTitleBar(null);  // optional line as not setting any UIElement as titlebar is same as setting null as titlebar

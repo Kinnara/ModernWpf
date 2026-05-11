@@ -1,0 +1,70 @@
+using System.Runtime.InteropServices;
+using WinRT;
+using Microsoft.UI.Composition;
+using Microsoft.UI.Composition.SystemBackdrops;
+
+MicaController micaController;
+SystemBackdropConfiguration configurationSource;
+
+bool TrySetMicaBackdrop(bool useMicaAlt)
+{
+    if (MicaController.IsSupported())
+    {
+        DispatcherQueue.EnsureSystemDispatcherQueue();
+
+        // Hooking up the policy object
+        configurationSource = new SystemBackdropConfiguration();
+        Activated += Window_Activated;
+        Closed += Window_Closed;
+        ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
+
+        // Initial configuration state.
+        configurationSource.IsInputActive = true;
+        SetConfigurationSourceTheme();
+
+        micaController = new MicaController();
+        micaController.Kind = useMicaAlt ? MicaKind.BaseAlt : MicaKind.Base;
+
+        // Enable the system backdrop.
+        micaController.AddSystemBackdropTarget(this.As<ICompositionSupportsSystemBackdrop>());
+        micaController.SetSystemBackdropConfiguration(configurationSource);
+        return true; // Succeeded.
+    }
+
+    return false; // Mica is not supported on this system.
+}
+
+private void Window_Activated(object sender, WindowActivatedEventArgs args)
+{
+    configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+}
+
+private void Window_Closed(object sender, WindowEventArgs args)
+{
+    // Make sure any Mica/Acrylic controller is disposed
+    if (micaController != null)
+    {
+        micaController.Dispose();
+        micaController = null;
+    }
+    this.Activated -= Window_Activated;
+    configurationSource = null;
+}
+
+private void Window_ThemeChanged(FrameworkElement sender, object args)
+{
+    if (configurationSource != null)
+    {
+        SetConfigurationSourceTheme();
+    }
+}
+
+private void SetConfigurationSourceTheme()
+{
+    switch (((FrameworkElement)Content).ActualTheme)
+    {
+        case ElementTheme.Dark:    configurationSource.Theme = SystemBackdropTheme.Dark; break;
+        case ElementTheme.Light:   configurationSource.Theme = SystemBackdropTheme.Light; break;
+        case ElementTheme.Default: configurationSource.Theme = SystemBackdropTheme.Default; break;
+    }
+}

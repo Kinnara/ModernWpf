@@ -1,0 +1,28 @@
+﻿using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml;
+
+namespace YourNamespace
+{
+    public class EmptyStringToVisibilityConverter : IValueConverter
+    {
+        // Visibility value when the input string is empty or null
+        public Visibility EmptyValue { get; set; } = Visibility.Collapsed;
+
+        // Visibility value when the input string is non-empty
+        public Visibility NonEmptyValue { get; set; } = Visibility.Visible;
+
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            // Return EmptyValue if the input is null or empty, otherwise NonEmptyValue
+            return value is string stringValue && !string.IsNullOrEmpty(stringValue) 
+                ? NonEmptyValue 
+                : EmptyValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            // ConvertBack is not needed and not implemented in this case
+            throw new NotImplementedException();
+        }
+    }
+}

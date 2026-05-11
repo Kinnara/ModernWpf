@@ -1,0 +1,9 @@
+﻿<Window ...>
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+        <TextBlock Text="This window is set to CompactOverlay (Picture-in-Picture) mode." TextAlignment="Center" TextWrapping="Wrap" />
+    </StackPanel>
+</Window>

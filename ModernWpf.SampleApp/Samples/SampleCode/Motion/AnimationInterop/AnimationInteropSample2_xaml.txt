@@ -1,0 +1,10 @@
+﻿<StackPanel Height="200">
+    <Grid VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Rectangle x:Name="rectangle" Width="50" Height="50" Fill="{ThemeResource SystemAccentColor}" PointerEntered="element_PointerEntered" PointerExited="element_PointerExited" />
+        <Ellipse x:Name="ellipse" Grid.Column="1" Width="50" Height="50" Margin="55,0" Fill="{ThemeResource SystemAccentColor}"/>
+    </Grid>
+</StackPanel>

@@ -1,0 +1,107 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "Groups": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "UniqueId": {
+                        "type": "string",
+                        "description": "Globally unique id of this group",
+                        "uniqueItems": true
+                    },
+                    "Title": {
+                        "type": "string",
+                        "description": "The name of the control group. Will be displayed on the control group page and navigation"
+                    },
+                    "IconGlyph": {
+                        "type": "string",
+                        "description": "Glyph of this control group. Will be displayed as an icon for the NavigationViewItem of this control group"
+                    },
+                    "IsSpecialSection": {
+                        "type": "boolean",
+                        "description": "Indicates that this section is not a regular control section but is added to the navigation differently",
+                        "default": true
+                    },
+                    "Folder": {
+                        "type": "string",
+                        "description": "Use to indicate a special child item for this folder. Only used when IsSpecialSection is true"
+                    },
+                    "Items": {
+                        "type": "array",
+                        "description": "Individual control info",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "UniqueId": {
+                                    "type": "string",
+                                    "description": "Globally unique id of this control",
+                                    "uniqueItems": true
+                                },
+                                "Title": {
+                                    "type": "string",
+                                    "description": "Name of this control. Will be displayed in the overview card and on top of the control page of this control"
+                                },
+                                "ApiNamespace": {
+                                    "type": "string",
+                                    "description": "Namespace of this control will appear below the tile on the control's detail page'"
+                                },
+                                "Subtitle": {
+                                    "type": "string",
+                                    "description": "Brief usage of this control. Will be displayed on the overview card of this control"
+                                },
+                                "Description": {
+                                    "type": "string",
+                                    "description": "Description of this control. Will be displayed on the control page, below the Title of this control"
+                                },
+                                "ImagePath": {
+                                    "type": "string",
+                                    "description": "An image icon of this control. Will be displayed on the overriew card of this control. Should be a uri starts with ms-appx:///Assets/ControlImages/..."
+                                },
+                                "IsNew": {
+                                    "type": "boolean",
+                                    "default": true,
+                                    "description": "Whether this is a newly added control. If true, it will be displayed in the Recently Added Sample section on the main page and will have a dot on the overview card of this control"
+                                },
+                                "IsUpdated": {
+                                    "type": "boolean",
+                                    "default": true,
+                                    "description": "Whether the example page of this control has been updated lately. If true, it will be displayed in the Recently Updated Sample section on the main page and will have a dot on the overview card of this control"
+                                },
+                                "Docs": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "Title": {
+                                                "type": "string",
+                                                "description": "Link name that appears in the Documentation dropdown"
+                                            },
+                                            "Uri": {
+                                                "type": "string",
+                                                "description": "Documentation link url"
+                                            }
+                                        },
+                                        "required": [ "Title", "Uri" ]
+                                    },
+                                    "description": "Add a link to the doc in the Documentation dropdown on the detail page of this control"
+                                },
+                                "RelatedControls": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    },
+                                    "description": "UniqueIds of other controls that are conceptually related to this one. Used to surface 'Related controls' suggestions on the control's detail page."
+                                },
+                            },
+                            "required": [ "UniqueId", "Title"]
+                        }
+                    }
+                },
+                "required": [ "UniqueId", "Title", "Items" ]
+            }
+        }
+    }
+}

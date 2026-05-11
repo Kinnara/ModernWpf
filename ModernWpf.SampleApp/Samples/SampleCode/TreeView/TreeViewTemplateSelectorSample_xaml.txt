@@ -1,0 +1,37 @@
+﻿<Page ...
+      xmlns:local="using:YourNamespace" >
+
+    <Page.Resources>
+        <!-- DataTemplate for folders -->
+        <DataTemplate x:Key="FolderTemplate" x:DataType="local:ExplorerItem"> 
+            <TreeViewItem AutomationProperties.Name="{x:Bind Name}"
+                ItemsSource="{x:Bind Children}" IsExpanded="True">
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="20" Source="../Assets/SampleMedia/folder.png"/>
+                    <TextBlock Margin="0,0,10,0"/>
+                    <TextBlock Text="{x:Bind Name}" />
+                </StackPanel>
+            </TreeViewItem>
+        </DataTemplate>
+
+        <!-- DataTemplate for files -->
+        <DataTemplate x:Key="FileTemplate" x:DataType="local:ExplorerItem"> 
+            <TreeViewItem AutomationProperties.Name="{x:Bind Name}">
+                <StackPanel Orientation="Horizontal">
+                    <FontIcon Glyph="&#xE8A5;" />
+                    <TextBlock Margin="0,0,10,0"/>
+                    <TextBlock Text="{x:Bind Name}"/>
+                </StackPanel>
+            </TreeViewItem>
+        </DataTemplate>
+
+        <!-- Template selector for ExplorerItem types -->
+        <local:ExplorerItemTemplateSelector x:Key="ExplorerItemTemplateSelector"
+            FolderTemplate="{StaticResource FolderTemplate}"
+            FileTemplate="{StaticResource FileTemplate}" />
+    </Page.Resources>
+
+    <!-- TreeView bound to DataSource, using the ItemTemplateSelector -->
+    <TreeView ItemsSource="{x:Bind DataSource}"
+              ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}" />
+</Page>

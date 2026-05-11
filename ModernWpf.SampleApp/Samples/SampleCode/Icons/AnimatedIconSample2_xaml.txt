@@ -1,0 +1,16 @@
+﻿ <NavigationView>
+    <NavigationView.MenuItems>
+        <NavigationViewItem Content = "Game Settings">
+            <NavigationViewItem.Icon>
+                <AnimatedIcon x:Name='AnimatedIcon'>
+                    <AnimatedIcon.Source>
+                        <animatedvisuals:AnimatedSettingsVisualSource/>
+                    </AnimatedIcon.Source>
+                    <AnimatedIcon.FallbackIconSource>
+                        <FontIconSource Glyph="&#xE713;"/>
+                    </AnimatedIcon.FallbackIconSource>
+                </AnimatedIcon>
+            </NavigationViewItem.Icon>
+        </NavigationViewItem>
+    </NavigationView.MenuItems>
+</NavigationView>

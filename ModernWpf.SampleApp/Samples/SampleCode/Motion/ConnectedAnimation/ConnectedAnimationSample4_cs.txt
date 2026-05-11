@@ -1,0 +1,72 @@
+// ItemsRepeater does not have PrepareConnectedAnimation() or
+// TryStartConnectedAnimationAsync() like ListView/GridView.
+// Use ConnectedAnimationService.PrepareToAnimate() directly instead.
+
+private CustomDataObject _storedItem;
+private double _persistedScrollPosition;
+
+private void Repeater_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
+{
+    // Attach a Tapped handler to each item container.
+    args.Element.Tapped -= Item_Tapped;
+    args.Element.Tapped += Item_Tapped;
+}
+
+private void Item_Tapped(object sender, TappedRoutedEventArgs e)
+{
+    var element = sender as FrameworkElement;
+    _storedItem = repeater.ItemsSourceView.GetAt(
+        repeater.GetElementIndex(element)) as CustomDataObject;
+
+    // Find the named element in the DataTemplate and prepare the animation.
+    if (FindChildByName(element, "connectedElement") is UIElement source)
+    {
+        ConnectedAnimationService.GetForCurrentView()
+            .PrepareToAnimate("ForwardConnectedAnimation", source);
+    }
+
+    // Save scroll position for back navigation.
+    _persistedScrollPosition = scrollViewer.VerticalOffset;
+
+    Frame.Navigate(typeof(DetailPage), _storedItem,
+        new SuppressNavigationTransitionInfo());
+}
+
+protected override void OnNavigatedTo(NavigationEventArgs e)
+{
+    base.OnNavigatedTo(e);
+    if (_storedItem == null) return;
+
+    // Restore scroll position so the target element is visible.
+    scrollViewer.ChangeView(null, _persistedScrollPosition, null, true);
+    UpdateLayout();
+
+    var animation = ConnectedAnimationService.GetForCurrentView()
+        .GetAnimation("BackConnectedAnimation");
+    if (animation != null)
+    {
+        animation.Configuration = new DirectConnectedAnimationConfiguration();
+
+        int index = repeater.ItemsSourceView.IndexOf(_storedItem);
+        if (repeater.TryGetElement(index) is FrameworkElement container
+            && FindChildByName(container, "connectedElement") is UIElement target)
+        {
+            animation.TryStart(target);
+        }
+    }
+}
+
+// Helper to find a named element within a DataTemplate.
+private static UIElement FindChildByName(DependencyObject parent, string name)
+{
+    for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+    {
+        var child = VisualTreeHelper.GetChild(parent, i);
+        if (child is FrameworkElement fe && fe.Name == name)
+            return fe;
+        var result = FindChildByName(child, name);
+        if (result != null)
+            return result;
+    }
+    return null;
+}

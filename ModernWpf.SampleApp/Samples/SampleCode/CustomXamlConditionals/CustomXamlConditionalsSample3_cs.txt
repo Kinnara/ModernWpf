@@ -1,0 +1,16 @@
+// Conditional Setters inside a Style are evaluated when the Style
+// resource is first parsed. Set the flags before InitializeComponent
+// (or before the resource dictionary that contains the Style is
+// loaded) so the parser produces the Style you expect.
+public sealed partial class MyPage : Page
+{
+    public MyPage()
+    {
+        FeatureFlagCondition.FeatureFlags["NewExperience"] = true;
+        FeatureFlagCondition.FeatureFlags["LegacyMode"] = false;
+
+        this.InitializeComponent();
+    }
+}
+
+

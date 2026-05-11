@@ -1,0 +1,12 @@
+﻿<StackPanel Spacing="8">
+    <StackPanel.Resources>
+        <Style x:Key="CustomButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
+            <Setter Property="Background" Value="{ThemeResource AccentAcrylicBackgroundFillColorDefaultBrush}" />
+            <Setter Property="MinWidth" Value="200" />
+        </Style>
+    </StackPanel.Resources>
+    <Button Content="Default button" />
+    <Button Content="Styled button" Style="{StaticResource CustomButtonStyle}" />
+    <Button Content="Styled button (overridden)" Style="{StaticResource CustomButtonStyle}"
+            Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}" />
+</StackPanel>

@@ -1,0 +1,51 @@
+﻿mathEditor2.TextDocument.SetMathMode(RichEditMathMode.MathOnly);
+
+private void mathEditor2_TextChanged(object sender, RoutedEventArgs e)
+{
+    // Extracts the MathML content from the RichEditBox
+    string extractedMathML;
+    mathEditor2.Document.GetMathML(out extractedMathML);
+    
+    // If MathML content is available, format and display it in the MathML presenter
+    if (!string.IsNullOrEmpty(extractedMathML))
+    {
+        MathmlPresenter.Code = MathModeHelper.FormatMathML(extractedMathML);
+    }
+    else
+    {
+        // If no MathML content exists, display a placeholder comment
+        MathmlPresenter.Code = "<!-- No MathML content -->";
+    }
+}
+
+private void SetMathmlFormulaBtn_Click(object sender, RoutedEventArgs e)
+{
+    // Defines a formula in MathML format
+    string formulaMathML =
+        "<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\" display=\"block\">\r\n" +
+        "  <mml:mi mathcolor=\"#000000\">x</mml:mi>\r\n" +
+        "  <mml:mo mathcolor=\"#000000\">\u2208</mml:mo>\r\n" +
+        "  <mml:mi mathcolor=\"#000000\">P</mml:mi>\r\n" +
+        "  <mml:mfenced>\r\n" +
+        "    <mml:mrow>\r\n" +
+        "      <mml:mi mathcolor=\"#000000\">A</mml:mi>\r\n" +
+        "    </mml:mrow>\r\n" +
+        "  </mml:mfenced>\r\n" +
+        "  <mml:mo mathcolor=\"#000000\">\u2194</mml:mo>\r\n" +
+        "  <mml:mi mathcolor=\"#000000\">x</mml:mi>\r\n" +
+        "  <mml:mo mathcolor=\"#000000\">\u2286</mml:mo>\r\n" +
+        "  <mml:mi mathcolor=\"#000000\">A</mml:mi>\r\n" +
+        "</mml:math>";
+
+    // Adjusts text color based on the current app theme
+    if(mathEditor2.ActualTheme == ElementTheme.Dark)
+    {
+        // If in dark mode, set text color to white
+        mathEditor2.Document.SetMathML(formulaMathML.Replace("mathcolor=\"#000000\"", "mathcolor=\"#FFFFFF\""));
+    }
+    else
+    {
+        // If in light mode, set text color to black
+        mathEditor2.Document.SetMathML(formulaMathML.Replace("mathcolor=\"#FFFFFF\"", "mathcolor=\"#000000\""));
+    }
+}

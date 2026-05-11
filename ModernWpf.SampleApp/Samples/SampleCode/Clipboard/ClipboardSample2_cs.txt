@@ -1,0 +1,32 @@
+private async void CopyFiles_Click(object sender, RoutedEventArgs args)
+{
+    var filePicker = new FileOpenPicker
+    {
+        ViewMode = PickerViewMode.List,
+        FileTypeFilter = { "*" }
+    };
+
+    // Initialize the picker with the current window handle (required in WinUI 3)
+    var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+    WinRT.Interop.InitializeWithWindow.Initialize(filePicker, hwnd);
+
+    var storageItems = await filePicker.PickMultipleFilesAsync();
+    if (storageItems.Count > 0)
+    {
+        var package = new DataPackage();
+        package.SetStorageItems(storageItems);
+        package.RequestedOperation = DataPackageOperation.Copy;
+        Clipboard.SetContent(package);
+    }
+}
+
+private async void PasteFiles_Click(object sender, RoutedEventArgs args)
+{
+    var package = Clipboard.GetContent();
+    if (package.Contains(StandardDataFormats.StorageItems))
+    {
+        var storageItems = await package.GetStorageItemsAsync();
+        var operation = package.RequestedOperation;
+        // Display the file names and the requested operation
+    }
+}

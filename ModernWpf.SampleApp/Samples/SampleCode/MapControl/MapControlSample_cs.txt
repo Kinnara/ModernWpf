@@ -1,0 +1,24 @@
+
+BasicGeoposition centerPosition = new BasicGeoposition { Latitude = 0, Longitude = 0 };
+Geopoint centerPoint = new Geopoint(centerPosition);
+
+map1.Center = centerPoint;
+map1.ZoomLevel = 1;
+
+var myLandmarks = new List<MapElement>();
+BasicGeoposition position = new BasicGeoposition { Latitude = -30.034647, Longitude = -51.217659 };
+Geopoint point = new Geopoint(position);
+
+var icon = new MapIcon
+{
+    Location = point,
+};
+
+myLandmarks.Add(icon);
+
+var LandmarksLayer = new MapElementsLayer
+{
+    MapElements = myLandmarks
+};
+
+map1.Layers.Add(LandmarksLayer);

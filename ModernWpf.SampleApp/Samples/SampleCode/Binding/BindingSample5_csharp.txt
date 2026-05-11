@@ -1,0 +1,76 @@
+﻿using System.ComponentModel; // For INotifyPropertyChanged interface.
+using Microsoft.UI.Xaml.Controls; // For Page and other WinUI controls.
+
+namespace YourNamespace
+{
+    // Main page class
+    public sealed partial class YourPage : Page
+    {
+        // Property to hold the ViewModel instance.
+        public ExampleViewModel ViewModel { get; set; }
+
+        public YourPage()
+        {
+            this.InitializeComponent();
+
+            // Initialize the ViewModel with sample data.
+            ViewModel = new ExampleViewModel
+            {
+                Title = "Welcome to WinUI 3", // Set initial value for Title.
+                Description = "This is an example of binding to a view model.", // Set initial value for Description.
+            };
+
+            // Set the DataContext of the page to the ViewModel.
+            // This makes the ViewModel properties available for binding in XAML.
+            DataContext = ViewModel;
+        }
+    }
+
+    // ViewModel class implementing INotifyPropertyChanged for data binding.
+    public class ExampleViewModel : INotifyPropertyChanged
+    {
+        // Backing field for Title property.
+        private string _title = string.Empty;
+
+        // Backing field for Description property.
+        private string _description = string.Empty;
+
+        // Property for Title with change notification.
+        public string Title
+        {
+            get => _title; // Return the current value of _title.
+            set
+            {
+                if (_title != value) // Check if the new value is different.
+                {
+                    _title = value; // Update the backing field.
+                    OnPropertyChanged(nameof(Title)); // Notify the UI of the change.
+                }
+            }
+        }
+
+        // Property for Description with change notification.
+        public string Description
+        {
+            get => _description; // Return the current value of _description.
+            set
+            {
+                if (_description != value) // Check if the new value is different.
+                {
+                    _description = value; // Update the backing field.
+                    OnPropertyChanged(nameof(Description)); // Notify the UI of the change.
+                }
+            }
+        }
+
+        // Event to notify subscribers (UI elements) of property changes.
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        // Method to raise the PropertyChanged event.
+        // This notifies the UI to update the bound control.
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}

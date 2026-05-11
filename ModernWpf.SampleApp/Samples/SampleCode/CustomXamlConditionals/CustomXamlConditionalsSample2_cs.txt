@@ -1,0 +1,16 @@
+// Conditional attributes use the same setup. Make sure that, for any
+// given attribute, no more than one condition can evaluate to true at
+// the same time - if multiple are true the XAML parser will throw at
+// runtime.
+public sealed partial class MyPage : Page
+{
+    public MyPage()
+    {
+        FeatureFlagCondition.FeatureFlags["NewExperience"] = true;
+        FeatureFlagCondition.FeatureFlags["LegacyMode"] = false;
+
+        this.InitializeComponent();
+    }
+}
+
+

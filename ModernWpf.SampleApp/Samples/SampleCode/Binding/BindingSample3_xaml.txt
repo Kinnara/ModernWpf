@@ -1,0 +1,2 @@
+﻿<DatePicker x:Name="DatePickerControl" Header="Select a date" />
+<TextBlock Text="{x:Bind FormatDate(DatePickerControl.SelectedDate), Mode=OneWay}" />

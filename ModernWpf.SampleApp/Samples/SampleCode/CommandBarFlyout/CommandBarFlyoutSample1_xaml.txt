@@ -1,0 +1,16 @@
+﻿<Page.Resources>
+    <CommandBarFlyout Placement="Right" x:Name="CommandBarFlyout1">
+        <AppBarButton Label="Share" Icon="Share" ToolTipService.ToolTip="Share" Click="OnElementClicked" />
+        <AppBarButton Label="Save" Icon="Save" ToolTipService.ToolTip="Save" Click="OnElementClicked" />
+        <AppBarButton Label="Delete" Icon="Delete" ToolTipService.ToolTip="Delete" Click="OnElementClicked" />
+        <CommandBarFlyout.SecondaryCommands>
+            <AppBarButton x:Name="ResizeButton1" Label="Resize" Click="OnElementClicked" />
+            <AppBarButton x:Name="MoveButton1" Label="Move" Click="OnElementClicked" />
+        </CommandBarFlyout.SecondaryCommands>
+    </CommandBarFlyout>
+</Page.Resources>
+
+<Button x:Name="myImageButton" AutomationProperties.Name="mountain" Padding="0"
+    Click="MyImageButton_Click" ContextRequested="MyImageButton_ContextRequested" >
+    <Image x:Name="Image1" Height="300" Source="/Assets/SampleMedia/rainier.jpg"/>
+</Button>

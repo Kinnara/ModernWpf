@@ -1,0 +1,12 @@
+﻿<ListView>
+    <ListView.ItemsPanel>
+        <ItemsPanelTemplate>
+            <WrapGrid Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+    </ListView.ItemsPanel>
+                    
+    <ListViewItem>Item 01</ListViewItem>
+    <ListViewItem>Item 02</ListViewItem>
+    <!-- ... -->
+    <ListViewItem>Item 20</ListViewItem>
+</ListView>

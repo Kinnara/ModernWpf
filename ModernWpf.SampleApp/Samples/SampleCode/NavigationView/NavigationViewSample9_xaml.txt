@@ -1,0 +1,17 @@
+<NavigationView x:Name="nvSample9" 
+                            Header="This is Header Text" 
+                            PaneDisplayMode="$(PaneDisplay)" 
+                            SelectionChanged="NavigationView_SelectionChanged9"
+                            IsSettingsVisible="False">
+        <NavigationView.MenuItems>
+            <NavigationViewItem Content="Browse" Tag="SamplePage1" Icon="Library" />
+            <NavigationViewItem Content="Track an Order" Tag="SamplePage2" Icon="Map" />
+            <NavigationViewItem Content="Order History" Tag="SamplePage3" Icon="Tag" />
+        </NavigationView.MenuItems>
+        <NavigationView.FooterMenuItems>
+            <NavigationViewItem Content="Account" Tag="SamplePage4" Icon="Contact" />
+            <NavigationViewItem Content="Your Cart" Tag="SamplePage5" Icon="Shop" />
+            <NavigationViewItem Content="Help" Tag="SamplePage5" Icon="Help" />
+        </NavigationView.FooterMenuItems>
+    <Frame x:Name="contentFrame9" />
+</NavigationView>

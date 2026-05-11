@@ -1,0 +1,88 @@
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+
+namespace YourNamespace;
+
+// Enum defining the counter mode: Increment or Decrement
+public enum CounterMode
+{
+    Increment,
+    Decrement
+}
+
+// Custom control class that extends Control
+public sealed class CounterControl : Control
+{
+    // DependencyProperty for storing the count value
+    public static readonly DependencyProperty CountProperty =
+        DependencyProperty.Register(nameof(Count), typeof(int), typeof(CounterControl), new PropertyMetadata(0));
+
+    // DependencyProperty for determining the counter mode (Increment or Decrement)
+    public static readonly DependencyProperty ModeProperty =
+        DependencyProperty.Register(nameof(Mode), typeof(CounterMode), typeof(CounterControl), new PropertyMetadata(CounterMode.Increment));
+
+    // Constructor setting the default style key
+    public CounterControl()
+    {
+        this.DefaultStyleKey = typeof(CounterControl);
+    }
+
+    // Property to get and set the count value
+    public int Count
+    {
+        get => (int)GetValue(CountProperty);
+        set => SetValue(CountProperty, value);
+    }
+
+    // Property to get and set the counter mode
+    public CounterMode Mode
+    {
+        get => (CounterMode)GetValue(ModeProperty);
+        set => SetValue(ModeProperty, value);
+    }
+
+    // Fields for UI elements retrieved from the control template
+    private Button? ActionButton;
+    private TextBlock? CountText;
+
+    // Method executed when the control's template is applied
+    protected override void OnApplyTemplate()
+    {
+        base.OnApplyTemplate();
+
+        // Retrieve template elements
+        ActionButton = GetTemplateChild(nameof(ActionButton)) as Button;
+        CountText = GetTemplateChild(nameof(CountText)) as TextBlock;
+
+        // Attach event handler to button if it exists
+        if (ActionButton is not null)
+        {
+            ActionButton.Click += (sender, e) =>
+            {
+                Count = Mode == CounterMode.Increment ? Count + 1 : Count - 1;
+                UpdateUI();
+            };
+
+            UpdateButtonText();
+        }
+
+        UpdateUI();
+    }
+
+    private void UpdateUI()
+    {
+        if (CountText is not null)
+        {
+            CountText.Text = Count.ToString();
+        }
+    }
+
+    private void UpdateButtonText()
+    {
+        if (ActionButton is not null)
+        {
+            ActionButton.Content = Mode == CounterMode.Increment ? "Increase" : "Decrease";
+        }
+    }
+}
+

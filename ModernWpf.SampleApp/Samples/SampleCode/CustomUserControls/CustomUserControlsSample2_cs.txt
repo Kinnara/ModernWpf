@@ -1,0 +1,132 @@
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
+using System.Linq;
+using Windows.UI;
+
+namespace YourNamespace;
+
+// Custom control for a validated password box
+public sealed partial class ValidatedPasswordBox : Control
+{
+    // Register a dependency property for the Password value.
+    // Note: The PropertyMetadata includes a callback (OnPasswordChanged) so that the UI updates
+    // whenever the password or related properties change.
+    public static readonly DependencyProperty PasswordProperty =
+        DependencyProperty.Register(nameof(Password), typeof(string), typeof(ValidatedPasswordBox), new PropertyMetadata(string.Empty, OnPasswordChanged));
+
+    public static readonly DependencyProperty IsValidProperty =
+        DependencyProperty.Register(nameof(IsValid), typeof(bool), typeof(ValidatedPasswordBox), new PropertyMetadata(false));
+
+    public static readonly DependencyProperty MinLengthProperty =
+        DependencyProperty.Register(nameof(MinLength), typeof(int), typeof(ValidatedPasswordBox), new PropertyMetadata(8, OnPasswordChanged));
+
+    public static readonly DependencyProperty HeaderProperty =
+        DependencyProperty.Register(nameof(Header), typeof(string), typeof(ValidatedPasswordBox), new PropertyMetadata(string.Empty, OnPasswordChanged));
+
+    public static readonly DependencyProperty PlaceholderTextProperty =
+        DependencyProperty.Register(nameof(PlaceholderText), typeof(string), typeof(ValidatedPasswordBox), new PropertyMetadata(string.Empty, OnPasswordChanged));
+
+    public ValidatedPasswordBox()
+    {
+        this.DefaultStyleKey = typeof(ValidatedPasswordBox);
+    }
+
+    // CLR property wrappers
+    public string Password { get => (string)GetValue(PasswordProperty); set => SetValue(PasswordProperty, value); }
+    public bool IsValid { get => (bool)GetValue(IsValidProperty); set => SetValue(IsValidProperty, value); }
+    public int MinLength { get => (int)GetValue(MinLengthProperty); set => SetValue(MinLengthProperty, value); }
+    public string Header { get => (string)GetValue(HeaderProperty); set => SetValue(HeaderProperty, value); }
+    public string PlaceholderText { get => (string)GetValue(PlaceholderTextProperty); set => SetValue(PlaceholderTextProperty, value); }
+
+    // Template parts for password input and validation messages
+    private PasswordBox? PasswordInput { get; set; }
+    private RichTextBlock? ValidationRichText { get; set; }
+
+    protected override void OnApplyTemplate()
+    {
+        base.OnApplyTemplate();
+
+        PasswordInput = GetTemplateChild(nameof(PasswordInput)) as PasswordBox;
+        ValidationRichText = GetTemplateChild("ValidationRichText") as RichTextBlock;
+
+        if (PasswordInput != null)
+        {
+            PasswordInput.Header = Header;
+            PasswordInput.PlaceholderText = PlaceholderText;
+            PasswordInput.PasswordChanged += (_, _) => Password = PasswordInput.Password;
+        }
+
+        if (ValidationRichText != null)
+            ValidationRichText.ActualThemeChanged += (_, _) => UpdateValidationMessages();
+
+        UpdateValidationMessages();
+    }
+
+    private static void OnPasswordChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        ((ValidatedPasswordBox)d).UpdateValidationMessages();
+    }
+
+    // Update UI elements based on current password validation
+    private void UpdateValidationMessages()
+    {
+        bool hasMinLength = Password.Length >= MinLength;
+        bool hasUppercase = Password.Any(char.IsUpper);
+        bool hasNumber = Password.Any(char.IsDigit);
+
+        IsValid = hasMinLength && hasUppercase && hasNumber;
+
+        if (ValidationRichText is null)
+            return;
+
+        ValidationRichText.Visibility = string.IsNullOrEmpty(Password) ? Visibility.Collapsed : Visibility.Visible;
+
+        ValidationRichText.Blocks.Clear();
+
+        if (string.IsNullOrEmpty(Password))
+            return;
+
+        var paragraph = new Paragraph();
+
+        if (IsValid)
+        {
+            AddValidationLine(paragraph, "\uE930", "Password is valid", false);
+        }
+        else
+        {
+            if (!hasUppercase) AddValidationLine(paragraph, "\uEA39", "Missing uppercase", true);
+            if (!hasNumber) AddValidationLine(paragraph, "\uEA39", "Missing number", true);
+            if (!hasMinLength) AddValidationLine(paragraph, "\uEA39", "Too short!", true);
+        }
+
+        if (paragraph.Inlines.Count > 0)
+        {
+            ValidationRichText.Blocks.Add(paragraph);
+            (FrameworkElementAutomationPeer.FromElement(ValidationRichText)
+                 ?? FrameworkElementAutomationPeer.CreatePeerForElement(ValidationRichText))
+                .RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
+        }
+    }
+
+    private void AddValidationLine(Paragraph paragraph, string iconGlyph, string message, bool isCritical)
+    {
+        if (paragraph.Inlines.Any())
+            paragraph.Inlines.Add(new LineBreak());
+
+        var color = new SolidColorBrush(
+            isCritical
+                ? (ActualTheme == ElementTheme.Light ? Color.FromArgb(255, 196, 43, 28) : Color.FromArgb(255, 255, 153, 164))
+                : (ActualTheme == ElementTheme.Light ? Color.FromArgb(255, 15, 123, 15) : Color.FromArgb(255, 108, 203, 95)));
+
+        paragraph.Inlines.Add(new InlineUIContainer
+        {
+            Child = new FontIcon { Glyph = iconGlyph, FontSize = 14, Foreground = color }
+        });
+
+        paragraph.Inlines.Add(new Run { Text = " ", });
+        paragraph.Inlines.Add(new Run { Text = message, Foreground = color });
+    }
+}

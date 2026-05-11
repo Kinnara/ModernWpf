@@ -1,0 +1,23 @@
+<ListView
+    x:Name="ListDetailListView"
+    ItemsSource="{x:Bind Items}"
+    SelectedIndex="0"
+    SelectionMode="Single">
+    <ListView.ItemTemplate>
+        <DataTemplate x:DataType="local:ListDetailItem">
+            <StackPanel Padding="4" Spacing="2">
+                <TextBlock Text="{x:Bind Title}" FontWeight="SemiBold" />
+                <TextBlock Text="{x:Bind DateCreatedFormatted}"
+                    Style="{ThemeResource CaptionTextBlockStyle}" />
+            </StackPanel>
+        </DataTemplate>
+    </ListView.ItemTemplate>
+</ListView>
+
+<!-- Detail panel bound to the selected item -->
+<StackPanel DataContext="{x:Bind ListDetailListView.SelectedItem, Mode=OneWay}">
+    <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="SemiBold" />
+    <TextBlock Text="{Binding DateCreatedFormatted}"
+        Style="{ThemeResource CaptionTextBlockStyle}" />
+    <TextBlock Text="{Binding Text}" TextWrapping="Wrap" />
+</StackPanel>

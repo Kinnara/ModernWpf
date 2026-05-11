@@ -1,0 +1,32 @@
+﻿<Grid>
+    <Grid.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <SolidColorBrush x:Key="BackgroundBrush" Color="#EEE" />
+                    <SolidColorBrush x:Key="TextBrush" Color="#333" />
+                    <x:String x:Key="ThemeString">Light theme</x:String>
+                    <ImageSource x:Key="ImageSource">ms-appx:///Assets/SampleMedia/Light_Image.png</ImageSource>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="BackgroundBrush" Color="#333" />
+                    <SolidColorBrush x:Key="TextBrush" Color="#EEE" />
+                    <x:String x:Key="ThemeString">Dark theme</x:String>
+                    <ImageSource x:Key="ImageSource">ms-appx:///Assets/SampleMedia/Dark_Image.png</ImageSource>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Grid.Resources>
+    <StackPanel
+        MaxWidth="700"
+        Padding="8"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Background="{ThemeResource BackgroundBrush}">
+        <TextBlock
+            Foreground="{ThemeResource TextBrush}"
+            Style="{StaticResource SubtitleTextBlockStyle}"
+            Text="{ThemeResource ThemeString}" />
+        <Image Source="{ThemeResource ImageSource}" />
+    </StackPanel>
+</Grid>

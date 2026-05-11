@@ -1,75 +1,37 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net462;net8.0-windows7.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\Tiles\GalleryIcon.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
+    <Compile Remove="Assets\**" />
+    <Compile Remove="Navigation\**" />
+    <Compile Remove="Samples\**" />
+    <Page Remove="Navigation\**" />
+    <Page Remove="Samples\**" />
     <None Remove="Assets\**" />
+    <None Remove="Samples\Data\**" />
+    <None Remove="Samples\SampleCode\**" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
     <ProjectReference Include="..\ModernWpf\ModernWpf.csproj" />
-    <ProjectReference Include="..\samples\SamplesCommon\SamplesCommon.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Remove="Properties\DesignTimeResources.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Remove="Assets\SampleMedia\cliff.jpg" />
-    <Resource Remove="Assets\SampleMedia\rainier.jpg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Assets\SampleMedia\cliff.jpg">
+    <Content Include="Samples\Data\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\SampleMedia\rainier.jpg">
+    <Content Include="Samples\SampleCode\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Properties\DesignTimeResources.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <ContainsDesignTimeResources>True</ContainsDesignTimeResources>
-    </None>
   </ItemGroup>
 
 </Project>

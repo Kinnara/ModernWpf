@@ -1,0 +1,16 @@
+﻿<!-- TemperatureConverterControl.xaml -->
+<UserControl ...>
+    <StackPanel Spacing="8">
+        <TextBox Header="Enter Temperature in Celsius" x:Name="InputTextBox" Width="200" PlaceholderText="Celsius" />
+        <Button Content="Convert to Fahrenheit" Width="200" Click="Button_Click" />
+        <TextBlock x:Name="ResultTextBlock" FontWeight="SemiBold" />
+    </StackPanel>
+</UserControl>
+
+<!-- Yourpage.xaml -->
+<Page ...
+      xmlns:local="using:YourNamesapce">
+    <Grid>
+        <local:TemperatureConverterControl />
+    </Grid>
+</Page>

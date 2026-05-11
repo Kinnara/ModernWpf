@@ -1,0 +1,10 @@
+﻿<Button PointerEntered="Button_PointerEntered" PointerExited="Button_PointerExited" Width="75">
+    <AnimatedIcon x:Name="SearchAnimatedIcon">
+        <AnimatedIcon.Source>
+            <animatedvisuals:$(AnimatedVisualSourceKind)/>
+        </AnimatedIcon.Source>
+        <AnimatedIcon.FallbackIconSource>
+            <SymbolIconSource Symbol="Find"/>
+        </AnimatedIcon.FallbackIconSource>
+    </AnimatedIcon>
+</Button>

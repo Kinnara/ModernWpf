@@ -1,0 +1,68 @@
+﻿//Accordion Animation
+private void ScrollView_ScrollAnimationStarting(ScrollView sender, ScrollingScrollAnimationStartingEventArgs e)
+{
+    // Cast the animation from the event arguments to a Vector3KeyFrameAnimation.
+    Vector3KeyFrameAnimation stockKeyFrameAnimation = e.Animation as Vector3KeyFrameAnimation;
+
+    // Check if the animation is of the correct type.
+    if (stockKeyFrameAnimation != null)
+    {
+        // Calculate the target vertical offset for the scroll animation.
+        double targetVerticalOffset = GetTargetVerticalOffset();
+        float targetVerticalPosition = (float)targetVerticalOffset;
+
+        // Create a new Vector3KeyFrameAnimation for custom animation.
+        Vector3KeyFrameAnimation customKeyFrameAnimation = stockKeyFrameAnimation.Compositor.CreateVector3KeyFrameAnimation();
+
+        // Calculate the initial vertical offset change for the animation.
+        float deltaVerticalPosition = 0.1f * (float)(targetVerticalOffset - scrollView3.VerticalOffset);
+
+        // Define the animation steps with keyframes for a smooth transition.
+        for (int step = 0; step < 3; step++)
+        {
+            // Insert a keyframe at a specific time with a computed vertical position.
+            customKeyFrameAnimation.InsertKeyFrame(
+                1.0f - (0.4f / (float)Math.Pow(2, step)), // Time progress for the keyframe
+                new Vector3((float)scrollView3.HorizontalOffset, targetVerticalPosition + deltaVerticalPosition, 0.0f));
+            
+            // Adjust the deltaVerticalPosition for the next keyframe to create an "accordion" effect.
+            deltaVerticalPosition /= -2.0f;
+        }
+
+        // Insert the final keyframe with the target vertical position.
+        customKeyFrameAnimation.InsertKeyFrame(1.0f, new Vector3((float)scrollView3.HorizontalOffset, targetVerticalPosition, 0.0f));
+    
+        // Set the duration of the custom animation.
+        customKeyFrameAnimation.Duration = TimeSpan.FromMilliseconds(nbAnimationDuration.Value);
+
+        // Replace the default animation with the custom animation.
+        e.Animation = customKeyFrameAnimation;
+    }
+}
+
+// This function is triggered when the button is clicked to scroll with animation.
+private void BtnScrollWithAnimation_Click(object sender, RoutedEventArgs e)
+{
+    // Check if the ScrollView control is initialized.
+    if (scrollView3 != null)
+    {
+        // Initiate a scroll to the target vertical offset with animation enabled.
+        scrollView3.ScrollTo(scrollView3.HorizontalOffset, GetTargetVerticalOffset(), new ScrollingScrollOptions(ScrollingAnimationMode.Enabled, ScrollingSnapPointsMode.Ignore));
+    }
+}
+
+// This function calculates the target vertical offset based on the current vertical offset of the ScrollView.
+private double GetTargetVerticalOffset()
+{
+    // Determine if the current vertical offset is greater than half of the scrollable height.
+    if (scrollView3.VerticalOffset > scrollView3.ScrollableHeight / 2.0)
+    {
+        // If yes, return a lower target vertical offset.
+        return scrollView3.ScrollableHeight / 5.0;
+    }
+    else
+    {
+        // If no, return a higher target vertical offset.
+        return 4.0 * scrollView3.ScrollableHeight / 5.0;
+    }
+}

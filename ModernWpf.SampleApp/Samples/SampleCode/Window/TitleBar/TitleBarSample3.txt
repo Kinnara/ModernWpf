@@ -1,0 +1,22 @@
+﻿Window window = App.MainWindow;
+window.ExtendsContentIntoTitleBar = true;
+window.SetTitleBar(AppTitleBar);
+var nonClientInputSrc = InputNonClientPointerSource.GetForWindowId(window.AppWindow.Id);
+
+// textbox on titlebar area
+var txtBoxNonClientArea = UIHelper.FindElementByName(sender as UIElement, "AppTitleBarTextBox") as FrameworkElement;
+GeneralTransform transformTxtBox = txtBoxNonClientArea.TransformToVisual(null);
+Rect bounds = transformTxtBox.TransformBounds(new Rect(0, 0, txtBoxNonClientArea.ActualWidth, txtBoxNonClientArea.ActualHeight));
+
+// Windows.Graphics.RectInt32[] rects defines the area which allows click throughs in custom titlebar 
+// it is non dpi-aware client coordinates. Hence, we convert dpi aware coordinates to non-dpi coordinates
+var scale = WindowHelper.GetRasterizationScaleForElement(this);
+var transparentRect = new Windows.Graphics.RectInt32(
+    _X: (int)Math.Round(bounds.X * scale),
+    _Y: (int)Math.Round(bounds.Y * scale),
+    _Width: (int)Math.Round(bounds.Width * scale),
+    _Height: (int)Math.Round(bounds.Height * scale)
+);
+var rects = new Windows.Graphics.RectInt32[] { transparentRect };
+
+nonClientInputSrc.SetRegionRects(NonClientRegionKind.Passthrough, rects); // areas defined will be click through and can host button and textboxes

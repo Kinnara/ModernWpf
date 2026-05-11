@@ -1,0 +1,26 @@
+bool TrySetMicaBackdrop(bool useMicaAlt)
+{
+    if (SystemBackdrops.MicaController.IsSupported())
+    {
+        MicaBackdrop micaBackdrop = new MicaBackdrop();
+        micaBackdrop.Kind = useMicaAlt ? MicaKind.BaseAlt : MicaKind.Base;
+        SystemBackdrop = micaBackdrop;
+
+        return true; // Succeeded.
+    }
+
+    return false; // Mica is not supported on this system.
+}
+
+bool TrySetDesktopAcrylicBackdrop()
+{
+    if (DesktopAcrylicController.IsSupported())
+    {
+        DesktopAcrylicBackdrop DesktopAcrylicBackdrop = new DesktopAcrylicBackdrop();
+        SystemBackdrop = DesktopAcrylicBackdrop;
+
+        return true; // Succeeded.
+    }
+
+    return false; // DesktopAcrylic is not supported on this system.
+}

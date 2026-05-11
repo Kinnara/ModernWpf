@@ -1,0 +1,82 @@
+﻿using System.Collections.ObjectModel;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+
+namespace YourNamespace
+{
+    public sealed partial class YourPage : Page
+    {
+        // DataSource is the data collection that will be bound to the TreeView's ItemsSource.
+        public ObservableCollection<ExplorerItem> DataSource { get; set; }
+
+        public YourPage()
+        {
+            this.InitializeComponent();
+
+            // Initialize the data source with sample data and set it as the context for data binding.
+            DataSource = GetData();
+            this.DataContext = this; // Bind the DataContext of the page to itself for XAML bindings.
+        }
+
+        // Method to provide sample data for the TreeView.
+        private ObservableCollection<ExplorerItem> GetData()
+        {
+            return new ObservableCollection<ExplorerItem>
+            {
+                // Root folder with child files.
+                new ExplorerItem
+                {
+                    Name = "Documents",
+                    Type = ExplorerItem.ExplorerItemType.Folder,
+                    Children =
+                    {
+                        new ExplorerItem
+                        {
+                            Name = "ProjectProposal",
+                            Type = ExplorerItem.ExplorerItemType.File,
+                        },
+                        new ExplorerItem
+                        {
+                            Name = "BudgetReport",
+                            Type = ExplorerItem.ExplorerItemType.File,
+                        },
+                    },
+                },
+                // Another root folder with one child file.
+                new ExplorerItem
+                {
+                    Name = "Projects",
+                    Type = ExplorerItem.ExplorerItemType.Folder,
+                    Children =
+                    {
+                        new ExplorerItem
+                        {
+                            Name = "Project Plan",
+                            Type = ExplorerItem.ExplorerItemType.File,
+                        },
+                    },
+                },
+            };
+        }
+    }
+
+    // Class to represent items in the TreeView.
+    public class ExplorerItem
+    {
+        // Enum to define the type of the item: Folder or File.
+        public enum ExplorerItemType
+        {
+            Folder,
+            File,
+        }
+
+        // Name of the item (displayed in the TreeView).
+        public string Name { get; set; } = string.Empty;
+
+        // Type of the item (Folder or File).
+        public ExplorerItemType Type { get; set; }
+
+        // Collection of child items. Used for nested nodes in the TreeView.
+        public ObservableCollection<ExplorerItem> Children { get; set; } = new ObservableCollection<ExplorerItem>();
+    }
+}
