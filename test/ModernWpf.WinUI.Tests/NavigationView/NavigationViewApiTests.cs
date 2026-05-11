@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -128,6 +129,168 @@ public class NavigationViewApiTests
 
             navView.IsPaneOpen = true;
             Assert.IsTrue(navView.IsPaneOpen);
+        });
+    }
+
+    [TestMethod]
+    public void VerifySelectedItemIsNullWhenNoItemIsSelected()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Width = 1008
+            };
+            var menuItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 1"
+            };
+            navView.MenuItems.Add(menuItem);
+
+            using var host = new TestWindowHost(navView);
+
+            Assert.IsFalse(menuItem.IsSelected);
+            Assert.IsNull(navView.SelectedItem);
+
+            menuItem.IsSelected = true;
+            host.UpdateLayout();
+
+            Assert.IsTrue(menuItem.IsSelected);
+            Assert.AreSame(menuItem, navView.SelectedItem);
+
+            menuItem.IsSelected = false;
+            host.UpdateLayout();
+
+            Assert.IsFalse(menuItem.IsSelected);
+            Assert.IsNull(navView.SelectedItem);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyNavigationItemUIAType()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Width = 1008
+            };
+            var menuItem1 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 1"
+            };
+            var menuItem2 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 2"
+            };
+
+            navView.MenuItems.Add(menuItem1);
+            navView.MenuItems.Add(menuItem2);
+            using var host = new TestWindowHost(navView);
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(menuItem1);
+            Assert.IsNotNull(peer);
+            Assert.AreEqual(AutomationControlType.ListItem, peer!.GetAutomationControlType());
+            Assert.IsNull(peer.GetPattern(PatternInterface.Invoke));
+
+            navView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top;
+            host.UpdateLayout();
+
+            peer = FrameworkElementAutomationPeer.CreatePeerForElement(menuItem1);
+            Assert.IsNotNull(peer);
+            Assert.AreEqual(AutomationControlType.TabItem, peer!.GetAutomationControlType());
+            Assert.IsNull(peer.GetPattern(PatternInterface.Invoke));
+        });
+    }
+
+    [TestMethod]
+    public void VerifyAutomationPeerExpandCollapsePatternBehavior()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var menuItem1 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 1"
+            };
+            var menuItem2 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 2"
+            };
+            var menuItem3 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 3"
+            };
+            var menuItem4 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 4",
+                HasUnrealizedChildren = true
+            };
+
+            menuItem2.MenuItems.Add(menuItem3);
+
+            Assert.IsNull(FrameworkElementAutomationPeer
+                .CreatePeerForElement(menuItem1)!
+                .GetPattern(PatternInterface.ExpandCollapse));
+            Assert.IsNotNull(FrameworkElementAutomationPeer
+                .CreatePeerForElement(menuItem2)!
+                .GetPattern(PatternInterface.ExpandCollapse));
+            Assert.IsNotNull(FrameworkElementAutomationPeer
+                .CreatePeerForElement(menuItem4)!
+                .GetPattern(PatternInterface.ExpandCollapse));
+        });
+    }
+
+    [TestMethod]
+    public void VerifySettingsItemTagAndToolTip()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                IsSettingsVisible = true,
+                IsPaneOpen = true,
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left
+            };
+
+            using var host = new TestWindowHost(navView);
+            var settingsItem = navView.SettingsItem as ModernWpf.Controls.NavigationViewItem;
+            Assert.IsNotNull(settingsItem);
+            Assert.AreEqual("Settings", settingsItem!.Tag);
+            Assert.IsNull(ToolTipService.GetToolTip(settingsItem));
+
+            navView.IsPaneOpen = false;
+            host.UpdateLayout();
+
+            Assert.IsNotNull(ToolTipService.GetToolTip(settingsItem));
+        });
+    }
+
+    [TestMethod]
+    public void VerifyNavigationViewItemInFooterDoesNotCrash()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var footerItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Footer item"
+            };
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneFooter = footerItem,
+                Width = 1008
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            Assert.AreSame(footerItem, navView.PaneFooter);
         });
     }
 }
