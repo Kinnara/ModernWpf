@@ -47,6 +47,10 @@ namespace ModernWpf.Controls
             var winrtKey = key;
             var winrtOwner = owner;
             var winrtOwnerAsPanel = EnsureOwnerIsPanelOrNull(winrtOwner);
+            if (winrtOwnerAsPanel == null)
+            {
+                winrtOwnerAsPanel = (element as FrameworkElement)?.Parent as Panel;
+            }
 
             ElementInfo elementInfo = new ElementInfo(element, winrtOwnerAsPanel);
 
