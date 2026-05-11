@@ -26,7 +26,8 @@ namespace ModernWpf.SampleApp.Pages
                 ?? CollectionsSampleFactory.Create(_item.UniqueId)
                 ?? DateTimeSampleFactory.Create(_item.UniqueId)
                 ?? ScrollingSampleFactory.Create(_item.UniqueId)
-                ?? LayoutSampleFactory.Create(_item.UniqueId);
+                ?? LayoutSampleFactory.Create(_item.UniqueId)
+                ?? NavigationSampleFactory.Create(_item.UniqueId);
             SampleSnippets = LoadSampleSnippets(_item.UniqueId);
             RelatedItems = _item.RelatedControlIds
                 .Select(GalleryCatalog.FindItem)
