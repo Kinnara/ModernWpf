@@ -63,6 +63,35 @@ public class CommonStylesResourceTests
     }
 
     [TestMethod]
+    public void VerifyFinalWinUI2CompactResourceValues()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var resources = new XamlControlsResources
+            {
+                UseCompactResources = true
+            };
+
+            AssertResource(resources, "ControlContentThemeFontSize", 14.0);
+            AssertResource(resources, "ContentControlFontSize", 14.0);
+            AssertResource(resources, "TextControlThemeMinHeight", 24.0);
+            AssertResource(resources, "TextControlThemePadding", new Thickness(2, 2, 6, 1));
+            AssertResource(resources, "ListViewItemMinHeight", 32.0);
+            AssertResource(resources, "TreeViewItemMinHeight", 24.0);
+            AssertResource(resources, "TreeViewItemMultiSelectCheckBoxMinHeight", 24.0);
+            AssertResource(resources, "TreeViewItemPresenterMargin", 0.0);
+            AssertResource(resources, "TreeViewItemPresenterPadding", 0.0);
+            AssertResource(resources, "TimePickerHostPadding", new Thickness(0, 1, 0, 2));
+            AssertResource(resources, "DatePickerHostPadding", new Thickness(0, 1, 0, 2));
+            AssertResource(resources, "DatePickerHostMonthPadding", new Thickness(9, 0, 0, 1));
+            AssertResource(resources, "ComboBoxEditableTextPadding", new Thickness(10, 0, 30, 0));
+            AssertResource(resources, "ComboBoxMinHeight", 24.0);
+            AssertResource(resources, "ComboBoxPadding", new Thickness(12, 1, 0, 3));
+            AssertResource(resources, "NavigationViewItemOnLeftMinHeight", 32.0);
+        });
+    }
+
+    [TestMethod]
     public void CornerRadiusFilterConverterTest()
     {
         WpfTestHost.Run(() =>
@@ -93,6 +122,12 @@ public class CommonStylesResourceTests
             Assert.AreEqual(new CornerRadius(0, 0, 6, 6), ((Border)root.FindName("BottomRadiusBorder")).CornerRadius);
             Assert.AreEqual(new CornerRadius(6, 0, 0, 6), ((Border)root.FindName("LeftRadiusBorder")).CornerRadius);
         });
+    }
+
+    private static void AssertResource(ResourceDictionary resources, string key, object expected)
+    {
+        Assert.IsTrue(resources.Contains(key), $"Expected compact resource '{key}' to exist.");
+        Assert.AreEqual(expected, resources[key], $"Unexpected compact resource value for '{key}'.");
     }
 
     private static ResourceDictionaryEx CreateThemeResourceSnapshot()
