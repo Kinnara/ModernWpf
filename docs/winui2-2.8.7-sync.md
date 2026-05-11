@@ -37,7 +37,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | AutoSuggestBox | Pending | Pending | Existing WPF port; sync 2.8.7 resources, behavior fixes, API and interaction tests. |
 | BreadcrumbBar | Pending | Pending | Add feasible WPF control port. |
 | ColorPicker / ColorSpectrum | Pending | Pending | Add feasible WPF control port and color math tests. |
-| ComboBox helper/styles | Pending | Pending | Map to WPF ComboBox style/resource parity rather than a new control. |
+| ComboBox helper/styles | Pending | Ported APITest slice | WPF ComboBox style/helper maps this surface; upstream open-dropdown corner-radius behavior is covered for standard and editable modes. Broader visual-tree/resource snapshots remain pending. |
 | CommandBar / AppBarButton / AppBarToggleButton / AppBarSeparator | Pending | Pending | Existing WPF port; sync resources and tests. |
 | CommandBarFlyout / TextCommandBarFlyout | Pending | Ported initial APITest slice | Existing WPF port; default command collection API coverage is ported. Command propagation, sizing, overflow, and popup interaction tests remain pending for WPF popup-host adaptation. |
 | CommonStyles and compact density resources | Pending | Ported initial API slice | `VerifyAllThemesContainSameResourceKeys`, `VerifyUseCompactResourcesAPI`, and `CornerRadiusFilterConverterTest` are ported; visual-tree and baseline resource tests remain pending. |
