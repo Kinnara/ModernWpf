@@ -671,6 +671,19 @@ namespace ModernWpf.Controls
 
             VisualStateManager.GoToState(this, isUpButtonEnabled ? "UpSpinButtonEnabled" : "UpSpinButtonDisabled", false);
             VisualStateManager.GoToState(this, isDownButtonEnabled ? "DownSpinButtonEnabled" : "DownSpinButtonDisabled", false);
+
+            SetSpinButtonEnabled(c_numberBoxUpButtonName, isUpButtonEnabled);
+            SetSpinButtonEnabled(c_numberBoxPopupUpButtonName, isUpButtonEnabled);
+            SetSpinButtonEnabled(c_numberBoxDownButtonName, isDownButtonEnabled);
+            SetSpinButtonEnabled(c_numberBoxPopupDownButtonName, isDownButtonEnabled);
+        }
+
+        private void SetSpinButtonEnabled(string templatePartName, bool isEnabled)
+        {
+            if (GetTemplateChild(templatePartName) is UIElement spinButton)
+            {
+                spinButton.SetCurrentValue(IsEnabledProperty, isEnabled);
+            }
         }
 
         private bool IsInBounds(double value)

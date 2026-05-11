@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -355,6 +356,41 @@ public class RadioButtonsInteractionTests
         });
     }
 
+    [TestMethod]
+    public void UIAProperties()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var radioButtons = CreateRadioButtons(10);
+            using var host = new TestWindowHost(radioButtons, width: 520, height: 420);
+
+            SelectItem(radioButtons, 1);
+            AssertSelectedAutomationPosition(radioButtons, positionInSet: 2, sizeOfSet: 10);
+
+            radioButtons.MaxColumns = 3;
+            host.UpdateLayout();
+            AssertSelectedAutomationPosition(radioButtons, positionInSet: 2, sizeOfSet: 10);
+
+            InsertEnabledRadioButton(radioButtons, 0);
+            host.UpdateLayout();
+            Assert.AreEqual(2, radioButtons.SelectedIndex);
+            AssertSelectedAutomationPosition(radioButtons, positionInSet: 3, sizeOfSet: 11);
+
+            InsertEnabledRadioButton(radioButtons, 10);
+            host.UpdateLayout();
+            Assert.AreEqual(2, radioButtons.SelectedIndex);
+            AssertSelectedAutomationPosition(radioButtons, positionInSet: 3, sizeOfSet: 12);
+
+            SelectItem(radioButtons, 10);
+            AssertSelectedAutomationPosition(radioButtons, positionInSet: 11, sizeOfSet: 12);
+
+            SetNumberOfItems(radioButtons, 17);
+            host.UpdateLayout();
+            SelectItem(radioButtons, 16);
+            AssertSelectedAutomationPosition(radioButtons, positionInSet: 17, sizeOfSet: 17);
+        });
+    }
+
     private static ModernWpf.Controls.RadioButtons CreateRadioButtons(int itemCount, bool compactContent = false)
     {
         var radioButtons = new ModernWpf.Controls.RadioButtons();
@@ -449,6 +485,16 @@ public class RadioButtonsInteractionTests
         Assert.AreEqual(rows, ModernWpf.Controls.RadioButtonsTestHooks.GetRows(radioButtons));
         Assert.AreEqual(columns, ModernWpf.Controls.RadioButtonsTestHooks.GetColumns(radioButtons));
         Assert.AreEqual(largerColumns, ModernWpf.Controls.RadioButtonsTestHooks.GetLargerColumns(radioButtons));
+    }
+
+    private static void AssertSelectedAutomationPosition(
+        ModernWpf.Controls.RadioButtons radioButtons,
+        int positionInSet,
+        int sizeOfSet)
+    {
+        var item = GetRadioButton(radioButtons, radioButtons.SelectedIndex);
+        Assert.AreEqual(positionInSet, item.GetValue(AutomationProperties.PositionInSetProperty));
+        Assert.AreEqual(sizeOfSet, item.GetValue(AutomationProperties.SizeOfSetProperty));
     }
 
     private static void AssertSelectedFocusedIndex(ModernWpf.Controls.RadioButtons radioButtons, int index)
