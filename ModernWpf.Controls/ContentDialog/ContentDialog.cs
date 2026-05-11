@@ -429,6 +429,31 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region OpenInPlaceDialog
+
+        private static readonly DependencyProperty OpenInPlaceDialogProperty =
+            DependencyProperty.RegisterAttached(
+                "OpenInPlaceDialog",
+                typeof(ContentDialog),
+                typeof(ContentDialog));
+
+        private static ContentDialog GetOpenInPlaceDialog(DependencyObject element)
+        {
+            return (ContentDialog)element.GetValue(OpenInPlaceDialogProperty);
+        }
+
+        private static void SetOpenInPlaceDialog(DependencyObject element, ContentDialog value)
+        {
+            element.SetValue(OpenInPlaceDialogProperty, value);
+        }
+
+        private static void ClearOpenInPlaceDialog(DependencyObject element)
+        {
+            element.ClearValue(OpenInPlaceDialogProperty);
+        }
+
+        #endregion
+
         public Window Owner { get; set; }
 
         private Window ActualOwner => Owner ?? SharedHelpers.GetActiveWindow();
@@ -466,6 +491,16 @@ namespace ModernWpf.Controls
                         if (m_isShowingInPlace)
                         {
                             m_isShowingInPlace = false;
+
+                            if (m_openInPlaceDialogHost != null)
+                            {
+                                if (GetOpenInPlaceDialog(m_openInPlaceDialogHost) == this)
+                                {
+                                    ClearOpenInPlaceDialog(m_openInPlaceDialogHost);
+                                }
+
+                                m_openInPlaceDialogHost = null;
+                            }
                         }
                         else if (m_openDialogOwner != null)
                         {
@@ -567,7 +602,20 @@ namespace ModernWpf.Controls
                 {
                     ThrowAlreadyOpenException();
                 }
+
+                var inPlaceHost = Parent as DependencyObject;
+                if (inPlaceHost != null && GetOpenInPlaceDialog(inPlaceHost) != null)
+                {
+                    ThrowAlreadyOpenException();
+                }
+
                 RemovePopup();
+                if (inPlaceHost != null)
+                {
+                    SetOpenInPlaceDialog(inPlaceHost, this);
+                    m_openInPlaceDialogHost = inPlaceHost;
+                }
+
                 IsShowing = true;
                 m_isShowingInPlace = true;
                 return CreateAsyncOperation();
@@ -1237,6 +1285,7 @@ namespace ModernWpf.Controls
         private bool m_opening;
         private bool m_isShowing;
         private bool m_isShowingInPlace;
+        private DependencyObject m_openInPlaceDialogHost;
         private Window m_openDialogOwner;
         private ContentDialogResult m_result;
         private readonly DispatcherTimer m_closeTimer;
