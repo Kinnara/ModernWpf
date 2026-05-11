@@ -32,7 +32,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 
 | Upstream WinUI 2.8.7 area | ModernWpf status | Test status | Notes |
 | --- | --- | --- | --- |
-| AnnotatedScrollBar | Pending | Pending | No current ModernWpf surface. Evaluate a WPF ScrollBar/adorner-style port before adding tests. |
+| AnnotatedScrollBar | Ported WPF-feasible API surface | Ported WPF-feasible APITest slice | Added `AnnotatedScrollBar`, label/event argument types, default non-null labels collection, label templates, small-change property, and a simple WPF template. The WinUI `IScrollController`/`ScrollPresenter` contract, panning info, compositor animation sources, hover detail labels, and full ItemsView integration tests remain unsupported or pending because WPF has no matching primitive. |
 | AnimatedIcon | Excluded | Excluded | Depends on WinUI animated icon source infrastructure and compositor animation semantics not present in WPF. |
 | AnimatedVisualPlayer | Excluded | Excluded | Depends on WinUI visual/lottie animation pipeline; do not add as ModernWpf core surface. |
 | AutoSuggestBox | Pending | Ported APITest + interaction slices | Existing WPF port; upstream suggestion-popup corner-radius behavior and suggestion-selection interaction are covered. Visual-tree snapshots, resource refresh, and accessibility scan coverage remain pending. |
