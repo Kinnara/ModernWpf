@@ -110,6 +110,30 @@ public class SelectionModelApiTests
     }
 
     [TestMethod]
+    public void ValidateOneLevelMultipleSelection()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var selectionModel = new SelectionModel();
+            selectionModel.Source = Enumerable.Range(0, 10).ToList();
+
+            Select(selectionModel, 4, true);
+            ValidateSelection(selectionModel, [Path(4)], [Path()]);
+            SelectRangeFromAnchor(selectionModel, 8, true);
+            ValidateSelection(selectionModel, [Path(4), Path(5), Path(6), Path(7), Path(8)], [Path()]);
+
+            ClearSelection(selectionModel);
+            SetAnchorIndex(selectionModel, 6);
+            SelectRangeFromAnchor(selectionModel, 3, true);
+            ValidateSelection(selectionModel, [Path(3), Path(4), Path(5), Path(6)], [Path()]);
+
+            SetAnchorIndex(selectionModel, 4);
+            SelectRangeFromAnchor(selectionModel, 5, false);
+            ValidateSelection(selectionModel, [Path(3), Path(6)], [Path()]);
+        });
+    }
+
+    [TestMethod]
     public void AlreadySelectedDoesNotRaiseEvent()
     {
         WpfTestHost.Run(() =>
@@ -262,6 +286,28 @@ public class SelectionModelApiTests
         {
             manager.DeselectAt(index);
         }
+    }
+
+    private static void SelectRangeFromAnchor(SelectionModel manager, int index, bool select)
+    {
+        if (select)
+        {
+            manager.SelectRangeFromAnchor(index);
+        }
+        else
+        {
+            manager.DeselectRangeFromAnchor(index);
+        }
+    }
+
+    private static void ClearSelection(SelectionModel manager)
+    {
+        manager.ClearSelection();
+    }
+
+    private static void SetAnchorIndex(SelectionModel manager, int index)
+    {
+        manager.SetAnchorIndex(index);
     }
 
     private static void ValidateSelection(
