@@ -33,7 +33,8 @@ namespace ModernWpf.SampleApp.Pages
                 ?? TextSampleFactory.Create(_item.UniqueId)
                 ?? MotionSampleFactory.Create(_item.UniqueId)
                 ?? WindowingSampleFactory.Create(_item.UniqueId)
-                ?? SystemSampleFactory.Create(_item.UniqueId);
+                ?? SystemSampleFactory.Create(_item.UniqueId)
+                ?? ShellSampleFactory.Create(_item.UniqueId);
             SampleSnippets = LoadSampleSnippets(_item.UniqueId);
             RelatedItems = _item.RelatedControlIds
                 .Select(GalleryCatalog.FindItem)
