@@ -1259,15 +1259,16 @@
 
     <!-- Resources for PersonPicture -->
     <m:StaticResource x:Key="PersonPictureForegroundThemeBrush" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <SolidColorBrush x:Key="PersonPictureEllipseBadgeForegroundThemeBrush" Color="{StaticResource SystemBaseHighColor}" />
-    <SolidColorBrush x:Key="PersonPictureEllipseBadgeFillThemeBrush" Color="{StaticResource SystemChromeDisabledHighColor}" />
-    <SolidColorBrush x:Key="PersonPictureEllipseBadgeStrokeThemeBrush" Color="{StaticResource SystemListMediumColor}" />
+    <m:StaticResource x:Key="PersonPictureEllipseBadgeForegroundThemeBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="PersonPictureEllipseBadgeFillThemeBrush" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="PersonPictureEllipseBadgeStrokeThemeBrush" ResourceKey="SystemColorButtonTextColorBrush" />
     <m:StaticResource x:Key="PersonPictureEllipseFillThemeBrush" ResourceKey="SystemColorHighlightTextColorBrush" />
     <m:StaticResource x:Key="PersonPictureEllipseFillStrokeBrush" ResourceKey="CardStrokeColorDefaultBrush" />
-    <sys:Double x:Key="PersonPictureEllipseBadgeStrokeOpacity">0.8</sys:Double>
+    <sys:Double x:Key="PersonPictureEllipseBadgeStrokeOpacity">1</sys:Double>
     <sys:Double x:Key="PersonPictureEllipseBadgeImageSourceStrokeOpacity">1.0</sys:Double>
-    <sys:Double x:Key="PersonPictureEllipseStrokeThickness">0</sys:Double>
+    <sys:Double x:Key="PersonPictureEllipseStrokeThickness">1</sys:Double>
     <sys:Double x:Key="PersonPictureEllipseBadgeStrokeThickness">2</sys:Double>
+    <Thickness x:Key="PersonPictureBadgeGridMargin">0,-4,-4,0</Thickness>
 
     <!-- Resources for Pivot -->
     <sys:Double x:Key="PivotHeaderItemFontSize">24</sys:Double>

@@ -6,6 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.PersonPicture;
@@ -245,11 +247,120 @@ public class PersonPictureApiTests
         });
     }
 
+    [TestMethod]
+    public void VerifyFinalWinUI2PersonPictureResources()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var personPicture = new ModernWpf.Controls.PersonPicture
+            {
+                Initials = "MW"
+            };
+
+            using var host = new TestWindowHost(personPicture);
+            host.UpdateLayout();
+
+            Assert.AreEqual(96.0, personPicture.Width);
+            Assert.AreEqual(96.0, personPicture.Height);
+            AssertBrushEquals((Brush)personPicture.TryFindResource("PersonPictureForegroundThemeBrush"), personPicture.Foreground);
+            Assert.AreEqual(
+                ((FontFamily)personPicture.TryFindResource("ContentControlThemeFontFamily")).Source,
+                personPicture.FontFamily.Source);
+            Assert.AreEqual(FontWeights.SemiBold, personPicture.FontWeight);
+            Assert.IsFalse(personPicture.IsTabStop);
+
+            var initialsTextBlock = FindNamedDescendant<TextBlock>(personPicture, "InitialsTextBlock");
+            Assert.AreEqual(40.0, initialsTextBlock.FontSize, 0.5);
+            Assert.AreEqual(personPicture.FontFamily.Source, initialsTextBlock.FontFamily.Source);
+            AssertBrushEquals(personPicture.Foreground, initialsTextBlock.Foreground);
+            Assert.AreEqual(personPicture.FontWeight, initialsTextBlock.FontWeight);
+
+            var personPictureEllipse = FindNamedDescendant<Ellipse>(personPicture, "PersonPictureEllipse");
+            Assert.AreEqual(FlowDirection.LeftToRight, personPictureEllipse.FlowDirection);
+
+            var badgeGrid = FindNamedDescendant<Grid>(personPicture, "BadgeGrid");
+            Assert.AreEqual(Visibility.Collapsed, badgeGrid.Visibility);
+            Assert.AreEqual(VerticalAlignment.Top, badgeGrid.VerticalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Right, badgeGrid.HorizontalAlignment);
+            Assert.AreEqual(new Thickness(0, -4, -4, 0), badgeGrid.Margin);
+
+            var badgingBackgroundEllipse = FindNamedDescendant<Ellipse>(personPicture, "BadgingBackgroundEllipse");
+            Assert.AreEqual((double)personPicture.TryFindResource("PersonPictureEllipseBadgeStrokeOpacity"), badgingBackgroundEllipse.Opacity);
+            AssertBrushEquals((Brush)personPicture.TryFindResource("PersonPictureEllipseBadgeFillThemeBrush"), badgingBackgroundEllipse.Fill);
+            AssertBrushEquals((Brush)personPicture.TryFindResource("PersonPictureEllipseBadgeStrokeThemeBrush"), badgingBackgroundEllipse.Stroke);
+            Assert.AreEqual((double)personPicture.TryFindResource("PersonPictureEllipseBadgeStrokeThickness"), badgingBackgroundEllipse.StrokeThickness);
+
+            var badgingEllipse = FindNamedDescendant<Ellipse>(personPicture, "BadgingEllipse");
+            Assert.AreEqual(0.0, badgingEllipse.Opacity);
+            Assert.AreEqual(FlowDirection.LeftToRight, badgingEllipse.FlowDirection);
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "PersonPictureForegroundThemeBrush", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "PersonPictureEllipseBadgeForegroundThemeBrush", "TextOnAccentFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "PersonPictureEllipseBadgeFillThemeBrush", "AccentFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "PersonPictureEllipseBadgeStrokeThemeBrush", "ControlFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "PersonPictureEllipseFillThemeBrush", "ControlAltFillColorQuarternaryBrush");
+                AssertThemeResourceReference(themeName, "PersonPictureEllipseFillStrokeBrush", "CardStrokeColorDefaultBrush");
+                AssertCommonFinalResourceValues(themeName);
+            }
+
+            AssertThemeResourceReference("HighContrast", "PersonPictureForegroundThemeBrush", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "PersonPictureEllipseBadgeForegroundThemeBrush", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "PersonPictureEllipseBadgeFillThemeBrush", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "PersonPictureEllipseBadgeStrokeThemeBrush", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "PersonPictureEllipseFillThemeBrush", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "PersonPictureEllipseFillStrokeBrush", "CardStrokeColorDefaultBrush");
+            AssertCommonFinalResourceValues("HighContrast");
+        });
+    }
+
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
         where T : FrameworkElement
     {
         return VisualTreeTestHelper.EnumerateDescendants(root)
             .OfType<T>()
             .Single(element => element.Name == name);
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
+    }
+
+    private static void AssertCommonFinalResourceValues(string themeName)
+    {
+        AssertThemeResourceValue(themeName, "PersonPictureEllipseBadgeStrokeOpacity", 1.0);
+        AssertThemeResourceValue(themeName, "PersonPictureEllipseBadgeImageSourceStrokeOpacity", 1.0);
+        AssertThemeResourceValue(themeName, "PersonPictureEllipseStrokeThickness", 1.0);
+        AssertThemeResourceValue(themeName, "PersonPictureEllipseBadgeStrokeThickness", 2.0);
+        AssertThemeResourceValue(themeName, "PersonPictureBadgeGridMargin", new Thickness(0, -4, -4, 0));
+    }
+
+    private static void AssertBrushEquals(Brush expected, Brush actual)
+    {
+        Assert.IsNotNull(expected);
+        Assert.IsNotNull(actual);
+
+        if (expected is SolidColorBrush expectedSolid && actual is SolidColorBrush actualSolid)
+        {
+            Assert.AreEqual(expectedSolid.Color, actualSolid.Color);
+            Assert.AreEqual(expectedSolid.Opacity, actualSolid.Opacity);
+            return;
+        }
+
+        Assert.AreEqual(expected.ToString(), actual.ToString());
     }
 }
