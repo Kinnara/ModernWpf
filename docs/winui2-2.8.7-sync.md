@@ -51,7 +51,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | Materials / Acrylic / Reveal / Lights / Effects | Excluded | Excluded | UWP/WinUI compositor material system; keep ModernWpf's existing WPF material behavior separate. |
 | MenuBar | Pending | Pending | Add feasible WPF control/style port or map to WPF Menu when API parity is not practical. |
 | NavigationView | Pending | Pending | Existing WPF port; sync 2.8.7 behavior, top mode, selection, pane, and resource tests. |
-| NumberBox | Pending | Ported APITests | WinUI 2.8.7 API tests for text alignment, input scope, enabled visual state, and UIA name forwarding are ported; parser and interaction coverage remain pending. |
+| NumberBox | Pending | Ported APITests + interaction slices | WinUI 2.8.7 API tests for text alignment, input scope, enabled visual state, and UIA name forwarding are ported. Interaction coverage now includes spin buttons, spin-button enabled state, value/text sync, min/max coercion, and validation-disabled range behavior. Parser, keyboard, scroll, custom formatter, and accessibility scan coverage remain pending. |
 | PagerControl | Pending | Pending | Add feasible WPF control port if distinct from PipsPager. |
 | ParallaxView | Pending | Pending | Feasibility depends on WPF scroll/transform equivalent; document exclusions for compositor-only behavior. |
 | PersonPicture | Pending | Ported WPF-feasible APITests | Existing WPF port; upstream defaults, automation name, small-size safety, initials/group visual states, and visual-tree smoke coverage are ported. WinUI `Contact`, `PreferSmallImage`, XAML metadata provider, and pixel-baseline verification remain excluded/pending for WPF feasibility review. |
