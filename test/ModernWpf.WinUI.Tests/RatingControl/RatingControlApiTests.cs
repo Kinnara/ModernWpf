@@ -1,7 +1,12 @@
 using System;
+using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -13,6 +18,131 @@ public class RatingControlApiTests
 {
     private const string FontSizeForRenderingResourceKey = "RatingControlFontSizeForRendering";
     private const string ItemSpacingResourceKey = "RatingControlItemSpacing";
+
+    [TestMethod]
+    public void VerifyDefaultStyleAndWinUI2Resources()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var ratingControl = new ModernWpf.Controls.RatingControl
+            {
+                Caption = "Rating API Test Caption"
+            };
+
+            using var host = new TestWindowHost(ratingControl, width: 420, height: 180);
+            host.UpdateLayout();
+
+            Assert.AreEqual(32.0, ratingControl.Height);
+            AssertBrushEquals((Brush)ratingControl.TryFindResource("RatingControlCaptionForeground"), ratingControl.Foreground);
+            Assert.AreEqual(ratingControl.TryFindResource("UseSystemFocusVisuals"), ratingControl.UseSystemFocusVisuals);
+            Assert.AreEqual(
+                ((FontFamily)ratingControl.TryFindResource("SymbolThemeFontFamily")).Source,
+                ratingControl.FontFamily.Source);
+
+            AssertRatingFontInfo(ratingControl.ItemInfo, "\uE735", "\uE734");
+            AssertRatingFontInfo(ratingControl.TryFindResource("MUX_RatingControlDefaultFontInfo"), "\uE735", "\uE734");
+            AssertRatingFontInfo(ratingControl.TryFindResource("RatingControlDefaultFontInfo"), "\uE735", "\uE734");
+            Assert.IsInstanceOfType(ratingControl.TryFindResource("RatingControlDefaultPathInfo"), typeof(RatingItemPathInfo));
+
+            var layoutRoot = FindNamedDescendant<Grid>(ratingControl, "LayoutRoot");
+            var commonStatesGroup = VisualStateManager.GetVisualStateGroups(layoutRoot)
+                .Cast<VisualStateGroup>()
+                .Single(group => group.Name == "CommonStates");
+            CollectionAssert.AreEquivalent(
+                new[]
+                {
+                    "Disabled",
+                    "Placeholder",
+                    "PointerOverPlaceholder",
+                    "PointerOverUnselected",
+                    "Set",
+                    "PointerOverSet"
+                },
+                commonStatesGroup.States.Cast<VisualState>().Select(state => state.Name).ToArray());
+
+            var caption = FindNamedDescendant<TextBlock>(ratingControl, "Caption");
+            Assert.AreEqual(32.0, caption.Height);
+            Assert.AreEqual(4.0, caption.Margin.Left);
+            Assert.AreEqual(20.0, caption.Margin.Right);
+            AssertBrushEquals((Brush)caption.TryFindResource("RatingControlCaptionForeground"), caption.Foreground);
+            Assert.AreEqual(VerticalAlignment.Center, caption.VerticalAlignment);
+            Assert.IsFalse(caption.IsHitTestVisible);
+            Assert.AreEqual("RatingCaption", AutomationProperties.GetName(caption));
+            Assert.AreEqual("Rating API Test Caption", caption.Text);
+
+            var backgroundStackPanel = FindNamedDescendant<StackPanel>(ratingControl, "RatingBackgroundStackPanel");
+            Assert.AreEqual(Orientation.Horizontal, backgroundStackPanel.Orientation);
+            AssertBrushEquals(Brushes.Transparent, backgroundStackPanel.Background);
+            Assert.AreEqual(new Thickness(20, 20, 0, 20), backgroundStackPanel.Margin);
+            Assert.AreEqual(5, backgroundStackPanel.Children.Count);
+
+            var foregroundContentPresenter = FindNamedDescendant<ContentPresenter>(ratingControl, "ForegroundContentPresenter");
+            Assert.IsFalse(foregroundContentPresenter.IsHitTestVisible);
+
+            var foregroundStackPanel = FindNamedDescendant<StackPanel>(ratingControl, "RatingForegroundStackPanel");
+            Assert.AreEqual(Orientation.Horizontal, foregroundStackPanel.Orientation);
+            Assert.IsFalse(foregroundStackPanel.IsHitTestVisible);
+            Assert.AreEqual(new Thickness(40), foregroundStackPanel.Margin);
+            Assert.AreEqual(5, foregroundStackPanel.Children.Count);
+
+            AssertDefaultTextRatingItem(backgroundStackPanel.Children[0], "\uE734", ratingControl.FontFamily, ratingControl);
+            AssertDefaultTextRatingItem(foregroundStackPanel.Children[0], "\uE735", ratingControl.FontFamily, ratingControl);
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "RatingControlUnselectedForeground", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "RatingControlSelectedForeground", "AccentFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "RatingControlPlaceholderForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "RatingControlPointerOverPlaceholderForeground", "ControlAltFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "RatingControlPointerOverUnselectedForeground", "ControlAltFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "RatingControlPointerOverSelectedForeground", "AccentFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "RatingControlDisabledSelectedForeground", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "RatingControlCaptionForeground", "TextFillColorSecondaryBrush");
+                AssertThemeResourceValue(themeName, FontSizeForRenderingResourceKey, 32.0);
+                AssertThemeResourceValue(themeName, ItemSpacingResourceKey, 8.0);
+                AssertThemeRatingFontInfo(themeName, "MUX_RatingControlDefaultFontInfo");
+                AssertThemeRatingFontInfo(themeName, "RatingControlDefaultFontInfo");
+                AssertThemeResourceType<RatingItemPathInfo>(themeName, "RatingControlDefaultPathInfo");
+            }
+
+            AssertThemeResourceReference("HighContrast", "RatingControlUnselectedForeground", "SystemControlForegroundBaseLowBrush");
+            AssertThemeResourceReference("HighContrast", "RatingControlSelectedForeground", "SystemControlHighlightAccentBrush");
+            AssertThemeResourceReference("HighContrast", "RatingControlPlaceholderForeground", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "RatingControlPointerOverPlaceholderForeground", "SystemControlForegroundBaseMediumBrush");
+            AssertThemeResourceReference("HighContrast", "RatingControlPointerOverUnselectedForeground", "SystemControlForegroundBaseMediumBrush");
+            AssertThemeResourceReference("HighContrast", "RatingControlPointerOverSelectedForeground", "SystemControlHighlightAccentBrush");
+            AssertThemeSolidColorBrushReference("HighContrast", "RatingControlDisabledSelectedForeground", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "RatingControlCaptionForeground", "TextFillColorSecondaryBrush");
+            AssertThemeResourceValue("HighContrast", FontSizeForRenderingResourceKey, 32.0);
+            AssertThemeResourceValue("HighContrast", ItemSpacingResourceKey, 8.0);
+            AssertThemeRatingFontInfo("HighContrast", "MUX_RatingControlDefaultFontInfo");
+            AssertThemeRatingFontInfo("HighContrast", "RatingControlDefaultFontInfo");
+            AssertThemeResourceType<RatingItemPathInfo>("HighContrast", "RatingControlDefaultPathInfo");
+        });
+    }
+
+    [TestMethod]
+    public void VerifyWpfPathItemInfoFallbackStillRenders()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var ratingControl = new ModernWpf.Controls.RatingControl();
+            var pathInfo = (RatingItemPathInfo)ratingControl.TryFindResource("RatingControlDefaultPathInfo");
+            ratingControl.ItemInfo = pathInfo;
+
+            using var host = new TestWindowHost(ratingControl, width: 420, height: 180);
+            host.UpdateLayout();
+
+            var backgroundStackPanel = FindNamedDescendant<StackPanel>(ratingControl, "RatingBackgroundStackPanel");
+            var foregroundStackPanel = FindNamedDescendant<StackPanel>(ratingControl, "RatingForegroundStackPanel");
+            AssertDefaultPathRatingItem(backgroundStackPanel.Children[0], ratingControl);
+            AssertDefaultPathRatingItem(foregroundStackPanel.Children[0], ratingControl);
+        });
+    }
 
     [TestMethod]
     public void VerifyDefaultsAndBasicSetting()
@@ -174,5 +304,109 @@ public class RatingControlApiTests
         {
             resources.Remove(key);
         }
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
+    }
+
+    private static void AssertThemeResourceType<T>(string themeName, string resourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsInstanceOfType(themeDictionary[resourceKey], typeof(T));
+    }
+
+    private static void AssertThemeSolidColorBrushReference(string themeName, string resourceKey, object expectedBrushKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedBrushKey), $"{themeName} is missing {expectedBrushKey}.");
+        var brush = (SolidColorBrush)themeDictionary[resourceKey];
+        var expectedBrush = (SolidColorBrush)themeDictionary[expectedBrushKey];
+        Assert.AreEqual(expectedBrush.Color, brush.Color, $"{themeName}:{resourceKey}");
+        Assert.AreEqual(expectedBrush.Opacity, brush.Opacity, $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeRatingFontInfo(string themeName, string resourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        AssertRatingFontInfo(themeDictionary[resourceKey], "\uE735", "\uE734");
+    }
+
+    private static void AssertRatingFontInfo(object itemInfo, string expectedGlyph, string expectedUnsetGlyph)
+    {
+        Assert.IsInstanceOfType(itemInfo, typeof(RatingItemFontInfo));
+        var fontInfo = (RatingItemFontInfo)itemInfo;
+        Assert.AreEqual(expectedGlyph, fontInfo.Glyph);
+        Assert.AreEqual(expectedUnsetGlyph, fontInfo.UnsetGlyph);
+    }
+
+    private static void AssertDefaultTextRatingItem(UIElement item, string expectedText, FontFamily expectedFontFamily, FrameworkElement resourceOwner)
+    {
+        Assert.IsInstanceOfType(item, typeof(TextBlock));
+        var textBlock = (TextBlock)item;
+        Assert.AreEqual(new Thickness(-8, -8, 0, 0), textBlock.Margin);
+        Assert.AreEqual(32.0, textBlock.FontSize);
+        Assert.AreEqual(expectedText, textBlock.Text);
+        Assert.AreEqual(expectedFontFamily.Source, textBlock.FontFamily.Source);
+
+        if (expectedText == "\uE734")
+        {
+            AssertBrushEquals((Brush)resourceOwner.TryFindResource("RatingControlUnselectedForeground"), textBlock.Foreground);
+        }
+    }
+
+    private static void AssertDefaultPathRatingItem(UIElement item, FrameworkElement resourceOwner)
+    {
+        Assert.IsInstanceOfType(item, typeof(FontIconFallback));
+        var pathItem = (FontIconFallback)item;
+        Assert.AreEqual(new Thickness(-8, -8, 0, 0), pathItem.Margin);
+        Assert.AreEqual(32.0, pathItem.FontSize);
+        Assert.AreEqual(HorizontalAlignment.Left, pathItem.HorizontalContentAlignment);
+        Assert.AreEqual(VerticalAlignment.Top, pathItem.VerticalContentAlignment);
+        Assert.IsNotNull(pathItem.Data);
+        AssertBrushEquals((Brush)resourceOwner.TryFindResource("RatingControlUnselectedForeground"), pathItem.Foreground);
+    }
+
+    private static void AssertBrushEquals(Brush expected, Brush actual)
+    {
+        Assert.IsNotNull(expected);
+        Assert.IsNotNull(actual);
+
+        if (expected is SolidColorBrush expectedSolid && actual is SolidColorBrush actualSolid)
+        {
+            Assert.AreEqual(expectedSolid.Color, actualSolid.Color);
+            Assert.AreEqual(expectedSolid.Opacity, actualSolid.Opacity);
+            return;
+        }
+
+        Assert.AreEqual(expected.ToString(), actual.ToString());
+    }
+
+    private static T FindNamedDescendant<T>(DependencyObject root, string name)
+        where T : FrameworkElement
+    {
+        foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
+        {
+            if (descendant is T element && element.Name == name)
+            {
+                return element;
+            }
+        }
+
+        throw new InvalidOperationException($"Could not find descendant named '{name}'.");
     }
 }
