@@ -64,7 +64,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | RatingControl | Pending | Ported APITests | Existing WPF port; upstream API defaults, image item assignment, collapsed value set, and value coercion are now covered. Precision, automation, and input behavior still pending. |
 | Repeater / ItemsRepeater layouts | Pending | Pending | Existing WPF port; sync layout, recycle, selection, and viewport tests. |
 | ScrollPresenter / ScrollView | Excluded | Excluded | Large WinUI scrolling primitive; WPF ScrollViewer remains the platform primitive. Port only resource/style implications. |
-| SplitButton | Pending | Pending | Existing WPF port; sync behavior and tests. |
+| SplitButton | Pending | Ported APITests | Existing WPF port; upstream default/setter coverage and ToggleSplitButton IsChecked API are now covered. Interaction and visual-state tests still pending. |
 | SplitView | Pending | Pending | Existing WPF port; sync resource/style behavior and TestUI coverage. |
 | SwipeControl | Pending | Pending | Add feasible WPF control port. |
 | TabView | Pending | Pending | Add feasible WPF control port or complete WPF TabControl-compatible API mapping. |
