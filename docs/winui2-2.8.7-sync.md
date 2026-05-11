@@ -81,7 +81,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | TreeView | Pending | Pending | WPF has stock TreeView; add WinUI-style node/control parity where feasible. |
 | TwoPaneView | Pending | Pending | Add feasible WPF layout control port. |
 | WebView2 | Optional | Pending | Use `Microsoft.Web.WebView2.Wpf` only in docs/gallery samples; no core ModernWpf dependency. |
-| WrapPanel | Pending | Pending | WPF has a platform `WrapPanel`, but final WinUI adds Padding, ItemSpacing, LineSpacing, and ItemsStretch APIs. Add a dedicated WPF-compatible port before upstream layout tests can be used. |
+| WrapPanel | Ported | Ported APITests | Dedicated WPF-compatible port added for WinUI Padding, ItemSpacing, LineSpacing, Orientation, and ItemsStretch behavior. Upstream layout tests for padding offset, horizontal/vertical wrapping, spacing, collapsed children, dynamic orientation changes, variable child sizes, and last-item stretch are ported. |
 
 ## Test Port Matrix
 
