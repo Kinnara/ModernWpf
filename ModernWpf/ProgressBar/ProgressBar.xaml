@@ -228,7 +228,6 @@
 
                         <Border
                             x:Name="ProgressBarRoot"
-                            Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
@@ -252,7 +251,6 @@
 
                                     <Rectangle
                                         x:Name="DeterminateProgressBarIndicator"
-                                        Margin="{TemplateBinding Padding}"
                                         Fill="{TemplateBinding Foreground}"
                                         HorizontalAlignment="Left"
                                         RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
@@ -264,7 +262,6 @@
 
                                     <Rectangle
                                         x:Name="IndeterminateProgressBarIndicator"
-                                        Margin="{TemplateBinding Padding}"
                                         Fill="{TemplateBinding Foreground}"
                                         HorizontalAlignment="Left"
                                         Opacity="0"
@@ -277,7 +274,6 @@
 
                                     <Rectangle
                                         x:Name="IndeterminateProgressBarIndicator2"
-                                        Margin="{TemplateBinding Padding}"
                                         Fill="{TemplateBinding Foreground}"
                                         HorizontalAlignment="Left"
                                         Opacity="0"
