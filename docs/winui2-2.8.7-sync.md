@@ -47,7 +47,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | IconSource / ImageIcon | Pending | Ported WPF-feasible APITests | Existing Symbol/Font/Bitmap/Path IconSource API propagation is covered. `ImageIconSource`, `AnimatedIconSource`, text-scale/mirroring APIs, and WinUI XAML metadata provider tests are not present in the current WPF surface and remain pending/excluded for feasibility review. |
 | InfoBadge | Pending | Pending | Add feasible WPF control port. |
 | InfoBar | Pending | Pending | Add feasible WPF control port. |
-| LayoutPanel | Pending | Pending | Existing WPF port; sync tests. |
+| LayoutPanel | Pending | Ported APITests | Existing WPF port; upstream padding/border layout-offset, dynamic layout switching, and custom non-virtualizing layout APITests are ported. Interaction with broader ItemsRepeater layout coverage remains pending. |
 | Materials / Acrylic / Reveal / Lights / Effects | Excluded | Excluded | UWP/WinUI compositor material system; keep ModernWpf's existing WPF material behavior separate. |
 | MenuBar | Pending | Pending | Add feasible WPF control/style port or map to WPF Menu when API parity is not practical. |
 | NavigationView | Pending | Pending | Existing WPF port; sync 2.8.7 behavior, top mode, selection, pane, and resource tests. |

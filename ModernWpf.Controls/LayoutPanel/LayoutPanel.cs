@@ -5,6 +5,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace ModernWpf.Controls
 {
@@ -13,6 +14,59 @@ namespace ModernWpf.Controls
         public LayoutPanel()
         {
         }
+
+        #region BorderBrush
+
+        public static readonly DependencyProperty BorderBrushProperty =
+            Border.BorderBrushProperty.AddOwner(
+                typeof(LayoutPanel),
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public Brush BorderBrush
+        {
+            get => (Brush)GetValue(BorderBrushProperty);
+            set => SetValue(BorderBrushProperty, value);
+        }
+
+        #endregion
+
+        #region BorderThickness
+
+        public static readonly DependencyProperty BorderThicknessProperty =
+            Border.BorderThicknessProperty.AddOwner(
+                typeof(LayoutPanel),
+                new FrameworkPropertyMetadata(
+                    new Thickness(),
+                    FrameworkPropertyMetadataOptions.AffectsMeasure |
+                    FrameworkPropertyMetadataOptions.AffectsArrange |
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public Thickness BorderThickness
+        {
+            get => (Thickness)GetValue(BorderThicknessProperty);
+            set => SetValue(BorderThicknessProperty, value);
+        }
+
+        #endregion
+
+        #region CornerRadius
+
+        public static readonly DependencyProperty CornerRadiusProperty =
+            Border.CornerRadiusProperty.AddOwner(
+                typeof(LayoutPanel),
+                new FrameworkPropertyMetadata(
+                    new CornerRadius(),
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
 
         #region Layout
 
@@ -62,8 +116,9 @@ namespace ModernWpf.Controls
             Size desiredSize;
 
             var padding = Padding;
-            var effectiveHorizontalPadding = padding.Left + padding.Right;
-            var effectiveVerticalPadding = padding.Top + padding.Bottom;
+            var borderThickness = BorderThickness;
+            var effectiveHorizontalPadding = padding.Left + padding.Right + borderThickness.Left + borderThickness.Right;
+            var effectiveVerticalPadding = padding.Top + padding.Bottom + borderThickness.Top + borderThickness.Bottom;
 
             var adjustedSize = availableSize;
             adjustedSize.Width -= effectiveHorizontalPadding;
@@ -101,11 +156,12 @@ namespace ModernWpf.Controls
             Size result = finalSize;
 
             var padding = Padding;
+            var borderThickness = BorderThickness;
 
-            var effectiveHorizontalPadding = padding.Left + padding.Right;
-            var effectiveVerticalPadding = padding.Top + padding.Bottom;
-            var leftAdjustment = padding.Left;
-            var topAdjustment = padding.Top;
+            var effectiveHorizontalPadding = padding.Left + padding.Right + borderThickness.Left + borderThickness.Right;
+            var effectiveVerticalPadding = padding.Top + padding.Bottom + borderThickness.Top + borderThickness.Bottom;
+            var leftAdjustment = padding.Left + borderThickness.Left;
+            var topAdjustment = padding.Top + borderThickness.Top;
 
             var adjustedSize = finalSize;
             adjustedSize.Width -= effectiveHorizontalPadding;
