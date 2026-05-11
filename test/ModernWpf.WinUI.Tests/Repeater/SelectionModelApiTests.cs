@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
@@ -203,6 +204,99 @@ public class SelectionModelApiTests
             ValidateSelection(selectionModel, [nextPath], [Path(), Path(0), Path(0, 0), Path(0, 0, 1)]);
 
             Select(selectionModel, nextPath, false);
+            ValidateSelection(selectionModel, []);
+        });
+    }
+
+    [TestMethod]
+    public void ValidateInserts()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var data = new ObservableCollection<int>(Enumerable.Range(0, 10));
+            var selectionModel = new SelectionModel { Source = data };
+
+            selectionModel.Select(3);
+            selectionModel.Select(4);
+            selectionModel.Select(5);
+            ValidateSelection(selectionModel, [Path(3), Path(4), Path(5)], [Path()]);
+
+            data.Insert(4, 41);
+            data.Insert(4, 42);
+            data.Insert(4, 43);
+            ValidateSelection(selectionModel, [Path(3), Path(7), Path(8)], [Path()]);
+
+            data.Insert(0, 100);
+            data.Insert(0, 101);
+            data.Insert(0, 102);
+            ValidateSelection(selectionModel, [Path(6), Path(10), Path(11)], [Path()]);
+
+            data.Insert(12, 1000);
+            data.Insert(12, 1001);
+            data.Insert(12, 1002);
+            ValidateSelection(selectionModel, [Path(6), Path(10), Path(11)], [Path()]);
+        });
+    }
+
+    [TestMethod]
+    public void ValidateRemoves()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var data = new ObservableCollection<int>(Enumerable.Range(0, 10));
+            var selectionModel = new SelectionModel { Source = data };
+
+            selectionModel.Select(6);
+            selectionModel.Select(7);
+            selectionModel.Select(8);
+            ValidateSelection(selectionModel, [Path(6), Path(7), Path(8)], [Path()]);
+
+            data.RemoveAt(0);
+            ValidateSelection(selectionModel, [Path(5), Path(6), Path(7)], [Path()]);
+
+            data.RemoveAt(3);
+            data.RemoveAt(3);
+            data.RemoveAt(3);
+            ValidateSelection(selectionModel, [Path(3), Path(4)], [Path()]);
+
+            data.RemoveAt(5);
+            ValidateSelection(selectionModel, [Path(3), Path(4)], [Path()]);
+        });
+    }
+
+    [TestMethod]
+    public void CanReplaceItem()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var data = new ObservableCollection<int>(Enumerable.Range(0, 10));
+            var selectionModel = new SelectionModel { Source = data };
+
+            selectionModel.Select(3);
+            selectionModel.Select(4);
+            selectionModel.Select(5);
+            ValidateSelection(selectionModel, [Path(3), Path(4), Path(5)], [Path()]);
+
+            data[3] = 300;
+            data[4] = 400;
+            ValidateSelection(selectionModel, [Path(5)], [Path()]);
+        });
+    }
+
+    [TestMethod]
+    public void ValidateClear()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var data = new ObservableCollection<int>(Enumerable.Range(0, 10));
+            var selectionModel = new SelectionModel { Source = data };
+
+            selectionModel.Select(3);
+            selectionModel.Select(4);
+            selectionModel.Select(5);
+            ValidateSelection(selectionModel, [Path(3), Path(4), Path(5)], [Path()]);
+
+            data.Clear();
             ValidateSelection(selectionModel, []);
         });
     }
