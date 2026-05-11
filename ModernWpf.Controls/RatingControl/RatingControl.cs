@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
@@ -37,8 +38,10 @@ namespace ModernWpf.Controls
         const double c_horizontalScaleAnimationCenterPoint = 0.5;
         const double c_verticalScaleAnimationCenterPoint = 0.8;
         static readonly Thickness c_focusVisualMargin = new Thickness(-8, -7, -8, 0);
-        const int c_defaultRatingFontSizeForRendering = 32; // (32 = 2 * [default fontsize] -- because of double size rendering), remove when MSFT #10030063 is done
-        const int c_defaultItemSpacing = 8;
+        const double c_defaultRatingFontSizeForRendering = 32; // (32 = 2 * [default fontsize] -- because of double size rendering), remove when MSFT #10030063 is done
+        const double c_defaultItemSpacing = 8;
+        const string c_fontSizeForRenderingKey = "RatingControlFontSizeForRendering";
+        const string c_itemSpacingKey = "RatingControlItemSpacing";
 
         // 22 = 20(compensate for the -20 margin on StackPanel) + 2(magic number makes the text and star center-aligned)
         const double c_defaultCaptionTopMargin = 22;
@@ -55,11 +58,11 @@ namespace ModernWpf.Controls
         {
         }
 
-        double RenderingRatingFontSize => c_defaultRatingFontSizeForRendering;
+        double RenderingRatingFontSize => GetResourceDouble(c_fontSizeForRenderingKey, c_defaultRatingFontSizeForRendering);
 
         double ActualRatingFontSize => RenderingRatingFontSize / 2;
 
-        double ItemSpacing => c_defaultItemSpacing;
+        double ItemSpacing => GetResourceDouble(c_itemSpacingKey, c_defaultItemSpacing);
 
         void UpdateCaptionMargins()
         {
@@ -289,8 +292,8 @@ namespace ModernWpf.Controls
 
             transform.ScaleX = 0.5;
             transform.ScaleY = 0.5;
-            transform.CenterX = c_defaultRatingFontSizeForRendering * c_horizontalScaleAnimationCenterPoint;
-            transform.CenterY = c_defaultRatingFontSizeForRendering * c_verticalScaleAnimationCenterPoint;
+            transform.CenterX = RenderingRatingFontSize * c_horizontalScaleAnimationCenterPoint;
+            transform.CenterY = RenderingRatingFontSize * c_verticalScaleAnimationCenterPoint;
         }
 
         void PopulateStackPanelWithItems(string templateName, StackPanel stackPanel, RatingControlStates state)
@@ -490,6 +493,22 @@ namespace ModernWpf.Controls
         {
             double newWidth = CalculateTotalRatingControlWidth();
             Width = newWidth;
+        }
+
+        double GetResourceDouble(string resourceKey, double fallbackValue)
+        {
+            object value = TryFindResource(resourceKey) ?? Application.Current?.TryFindResource(resourceKey);
+            if (value is double doubleValue)
+            {
+                return doubleValue;
+            }
+
+            if (value is IConvertible convertible)
+            {
+                return convertible.ToDouble(CultureInfo.InvariantCulture);
+            }
+
+            return fallbackValue;
         }
 
         void ChangeRatingBy(double change, bool originatedFromMouse)

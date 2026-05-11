@@ -1367,6 +1367,8 @@
     <m:StaticResource x:Key="RatingControlDisabledSelectedForeground" ResourceKey="TextFillColorDisabledBrush"/>
     <!-- If this Foreground property is removed/renamed, please update ThemeResourcesTests::VerifyOverrides: -->
     <m:StaticResource x:Key="RatingControlCaptionForeground" ResourceKey="TextFillColorSecondaryBrush"/>
+    <sys:Double x:Key="RatingControlFontSizeForRendering">32</sys:Double>
+    <sys:Double x:Key="RatingControlItemSpacing">8</sys:Double>
     <local:RatingItemFontInfo x:Key="RatingControlDefaultFontInfo" Glyph="&#xE735;" UnsetGlyph="&#xE734;" />
     <local:RatingItemPathInfo
         x:Key="RatingControlDefaultPathInfo"

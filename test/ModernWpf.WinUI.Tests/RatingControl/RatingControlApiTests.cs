@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.RatingControl;
@@ -10,6 +11,9 @@ namespace ModernWpf.WinUI.Tests.RatingControl;
 [TestClass]
 public class RatingControlApiTests
 {
+    private const string FontSizeForRenderingResourceKey = "RatingControlFontSizeForRendering";
+    private const string ItemSpacingResourceKey = "RatingControlItemSpacing";
+
     [TestMethod]
     public void VerifyDefaultsAndBasicSetting()
     {
@@ -102,5 +106,73 @@ public class RatingControlApiTests
             Assert.AreEqual(1.0, ratingControl.PlaceholderValue, "Should coerce set PlaceholderValue above MaxRating back to MaxRating");
             Assert.AreEqual(1.0, ratingControl.Value, "Should coerce set Value above MaxRating back to MaxRating");
         });
+    }
+
+    [TestMethod]
+    public void VerifySizeIsChangeableFromResource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var appResources = TestApplication.EnsureInitialized().Resources;
+            var hadFontSizeOverride = appResources.Contains(FontSizeForRenderingResourceKey);
+            var hadItemSpacingOverride = appResources.Contains(ItemSpacingResourceKey);
+            var originalFontSizeOverride = hadFontSizeOverride ? appResources[FontSizeForRenderingResourceKey] : null;
+            var originalItemSpacingOverride = hadItemSpacingOverride ? appResources[ItemSpacingResourceKey] : null;
+
+            try
+            {
+                appResources.Remove(FontSizeForRenderingResourceKey);
+                appResources.Remove(ItemSpacingResourceKey);
+                var originalWidth = MeasureRatingWidth();
+
+                appResources[FontSizeForRenderingResourceKey] = 20.0;
+                var smallerFontWidth = MeasureRatingWidth();
+                Assert.IsTrue(
+                    smallerFontWidth < originalWidth,
+                    $"Expected a smaller font rendering resource to reduce width. Original={originalWidth}, new={smallerFontWidth}");
+
+                appResources[ItemSpacingResourceKey] = 20.0;
+                var widerSpacingWidth = MeasureRatingWidth();
+                Assert.IsTrue(
+                    widerSpacingWidth > smallerFontWidth,
+                    $"Expected a larger item spacing resource to increase width. Previous={smallerFontWidth}, new={widerSpacingWidth}");
+
+                appResources[FontSizeForRenderingResourceKey] = 48.0;
+                appResources.Remove(ItemSpacingResourceKey);
+                var largerFontWidth = MeasureRatingWidth();
+                Assert.IsTrue(
+                    largerFontWidth > originalWidth,
+                    $"Expected a larger font rendering resource to exceed default width. Original={originalWidth}, new={largerFontWidth}");
+                Assert.IsTrue(
+                    largerFontWidth > widerSpacingWidth,
+                    $"Expected the larger font rendering resource to exceed the spacing-only width. Previous={widerSpacingWidth}, new={largerFontWidth}");
+            }
+            finally
+            {
+                RestoreResource(appResources, FontSizeForRenderingResourceKey, hadFontSizeOverride, originalFontSizeOverride);
+                RestoreResource(appResources, ItemSpacingResourceKey, hadItemSpacingOverride, originalItemSpacingOverride);
+            }
+        });
+    }
+
+    private static double MeasureRatingWidth()
+    {
+        var ratingControl = new ModernWpf.Controls.RatingControl();
+
+        using var host = new TestWindowHost(ratingControl, width: 420, height: 180);
+        host.UpdateLayout();
+        return ratingControl.ActualWidth;
+    }
+
+    private static void RestoreResource(ResourceDictionary resources, string key, bool hadOriginalValue, object? originalValue)
+    {
+        if (hadOriginalValue)
+        {
+            resources[key] = originalValue;
+        }
+        else
+        {
+            resources.Remove(key);
+        }
     }
 }
