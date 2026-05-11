@@ -293,7 +293,7 @@ namespace ModernWpf.Controls
                             }
 
                             // On RS3+ Selection follows focus unless control is held down.
-                            else if ((args.KeyboardDevice.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                            else if ((RadioButtonsTestHooks.GetKeyboardModifiers(args.KeyboardDevice) & ModifierKeys.Control) != ModifierKeys.Control)
                             {
                                 if (args.NewFocus is UIElement newFocusedElementAsUIE)
                                 {
@@ -334,6 +334,8 @@ namespace ModernWpf.Controls
 
         void OnChildPreviewKeyDown(object sender, KeyEventArgs args)
         {
+            var modifiers = RadioButtonsTestHooks.GetKeyboardModifiers(args.KeyboardDevice);
+
             switch (args.Key)
             {
                 case Key.Down:
@@ -354,7 +356,7 @@ namespace ModernWpf.Controls
                     break;
                 case Key.Right:
                     {
-                        if (MoveFocusHorizontally(1))
+                        if (MoveFocusHorizontally(1, modifiers))
                         {
                             args.Handled = true;
                             return;
@@ -368,7 +370,7 @@ namespace ModernWpf.Controls
                     break;
                 case Key.Left:
                     {
-                        if (MoveFocusHorizontally(-1))
+                        if (MoveFocusHorizontally(-1, modifiers))
                         {
                             args.Handled = true;
                             return;
@@ -647,7 +649,7 @@ namespace ModernWpf.Controls
             return false;
         }
 
-        bool MoveFocusHorizontally(int direction)
+        bool MoveFocusHorizontally(int direction, ModifierKeys modifiers)
         {
             var repeater = m_repeater;
             if (repeater != null &&
@@ -703,7 +705,8 @@ namespace ModernWpf.Controls
                 {
                     if (bestControl.Focus())
                     {
-                        if (bestControl is ToggleButton toggleButton)
+                        if ((modifiers & ModifierKeys.Control) != ModifierKeys.Control &&
+                            bestControl is ToggleButton toggleButton)
                         {
                             toggleButton.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
                         }

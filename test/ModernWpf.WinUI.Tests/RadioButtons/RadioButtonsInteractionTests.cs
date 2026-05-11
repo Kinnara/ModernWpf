@@ -303,6 +303,76 @@ public class RadioButtonsInteractionTests
     }
 
     [TestMethod]
+    public void ControlKeyKeyboardTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var radioButtons = CreateRadioButtons(10);
+            using var host = new TestWindowHost(radioButtons, width: 320, height: 360);
+
+            SelectItem(radioButtons, 3);
+            AssertSelectedFocusedIndex(radioButtons, 3);
+
+            try
+            {
+                ModernWpf.Controls.RadioButtonsTestHooks.SetKeyboardModifiersOverride(ModifierKeys.Control);
+                RaiseKey(GetRadioButton(radioButtons, 3), Key.Down);
+            }
+            finally
+            {
+                ModernWpf.Controls.RadioButtonsTestHooks.SetKeyboardModifiersOverride(null);
+            }
+
+            Assert.AreEqual(3, radioButtons.SelectedIndex);
+            Assert.AreSame(GetRadioButton(radioButtons, 3), radioButtons.SelectedItem);
+            AssertFocusedIndex(radioButtons, 4);
+            Assert.AreEqual(true, GetRadioButton(radioButtons, 3).IsChecked);
+            Assert.AreEqual(false, GetRadioButton(radioButtons, 4).IsChecked);
+        });
+    }
+
+    [TestMethod]
+    public void ScrollViewerSettingSelectionDoesNotMoveFocus()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var radioButtons = CreateRadioButtons(10);
+            var stackPanel = new StackPanel();
+            stackPanel.Children.Add(radioButtons);
+            stackPanel.Children.Add(new TextBlock
+            {
+                Text = "Focus target",
+                Focusable = true
+            });
+
+            var scrollViewer = new ScrollViewer
+            {
+                Content = stackPanel
+            };
+
+            using var host = new TestWindowHost(scrollViewer, width: 320, height: 360);
+
+            radioButtons.SelectedIndex = 3;
+            host.UpdateLayout();
+
+            Assert.AreEqual(3, radioButtons.SelectedIndex);
+            Assert.IsFalse(radioButtons.IsKeyboardFocusWithin);
+
+            Keyboard.ClearFocus();
+            WpfTestHost.DoEvents();
+
+            GetRadioButton(radioButtons, 0).Focus();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(3, radioButtons.SelectedIndex);
+            AssertFocusedIndex(radioButtons, 0);
+
+            RaiseKey(GetRadioButton(radioButtons, 0), Key.Down);
+            AssertSelectedFocusedIndex(radioButtons, 1);
+        });
+    }
+
+    [TestMethod]
     public void InsertedCheckedRadioButtonGetsSelection()
     {
         WpfTestHost.Run(() =>
@@ -503,6 +573,12 @@ public class RadioButtonsInteractionTests
         Assert.AreEqual(index, radioButtons.SelectedIndex);
         Assert.AreSame(item, radioButtons.SelectedItem);
         Assert.AreEqual(true, item.IsChecked);
+        Assert.IsTrue(item.IsKeyboardFocused, $"Expected item {index} to have keyboard focus.");
+    }
+
+    private static void AssertFocusedIndex(ModernWpf.Controls.RadioButtons radioButtons, int index)
+    {
+        var item = GetRadioButton(radioButtons, index);
         Assert.IsTrue(item.IsKeyboardFocused, $"Expected item {index} to have keyboard focus.");
     }
 
