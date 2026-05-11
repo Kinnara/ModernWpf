@@ -62,7 +62,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | RadioButtons | Pending | Ported APITests | Existing WPF port; upstream custom item-template wrapping and IsEnabled visual-state coverage are now ported. Layout/focus tests still pending. |
 | RadioMenuFlyoutItem | Pending | Pending | Existing RadioMenuItem maps this surface; sync API/resource tests. |
 | RatingControl | Pending | Ported APITests | Existing WPF port; upstream API defaults, image item assignment, collapsed value set, and value coercion are now covered. Precision, automation, and input behavior still pending. |
-| Repeater / ItemsRepeater layouts | Pending | Pending | Existing WPF port; sync layout, recycle, selection, and viewport tests. |
+| Repeater / ItemsRepeater layouts | Pending | Ported initial APITest slice | Existing WPF port; upstream `IndexPath` API coverage is ported. Layout, recycle, selection, viewport, phasing, focus, data source, and visual tests remain pending. |
 | ScrollPresenter / ScrollView | Excluded | Excluded | Large WinUI scrolling primitive; WPF ScrollViewer remains the platform primitive. Port only resource/style implications. |
 | SplitButton | Pending | Ported APITests | Existing WPF port; upstream default/setter coverage and ToggleSplitButton IsChecked API are now covered. Interaction and visual-state tests still pending. |
 | SplitView | Pending | Pending | Existing WPF port; sync resource/style behavior and TestUI coverage. |
