@@ -209,6 +209,109 @@ public class SelectionModelApiTests
     }
 
     [TestMethod]
+    public void ValidateNestedMultipleSelection()
+    {
+        ValidateNestedMultipleSelection(handleChildrenRequested: true);
+        ValidateNestedMultipleSelection(handleChildrenRequested: false);
+    }
+
+    private static void ValidateNestedMultipleSelection(bool handleChildrenRequested)
+    {
+        WpfTestHost.Run(() =>
+        {
+            var selectionModel = new SelectionModel();
+            var sourcePaths = new List<IndexPath>();
+            selectionModel.Source = CreateNestedData(levels: 3, groupsAtLevel: 2, countAtLeaf: 4);
+            if (handleChildrenRequested)
+            {
+                selectionModel.ChildrenRequested += (sender, args) =>
+                {
+                    sourcePaths.Add(args.SourceIndex);
+                    args.Children = args.Source is IEnumerable ? args.Source : null;
+                };
+            }
+
+            var startPath = Path(1, 0, 1, 0);
+            Select(selectionModel, startPath, true);
+            ValidateSelection(selectionModel, [startPath], [Path(), Path(1), Path(1, 0), Path(1, 0, 1)]);
+
+            var endPath = Path(1, 1, 1, 0);
+            SelectRangeFromAnchor(selectionModel, endPath, true);
+
+            if (handleChildrenRequested)
+            {
+                AssertIndexPathsEqual(
+                    [
+                        Path(1),
+                        Path(1, 0),
+                        Path(1, 0, 1),
+                        Path(1, 1),
+                        Path(1, 0, 1, 3),
+                        Path(1, 0, 1, 2),
+                        Path(1, 0, 1, 1),
+                        Path(1, 0, 1, 0),
+                        Path(1, 1, 1),
+                        Path(1, 1, 0),
+                        Path(1, 1, 0, 3),
+                        Path(1, 1, 0, 2),
+                        Path(1, 1, 0, 1),
+                        Path(1, 1, 0, 0),
+                        Path(1, 1, 1, 0)
+                    ],
+                    sourcePaths);
+            }
+
+            ValidateSelection(
+                selectionModel,
+                [
+                    Path(1, 0, 1, 0),
+                    Path(1, 0, 1, 1),
+                    Path(1, 0, 1, 2),
+                    Path(1, 0, 1, 3),
+                    Path(1, 0, 1),
+                    Path(1, 1, 0, 0),
+                    Path(1, 1, 0, 1),
+                    Path(1, 1, 0, 2),
+                    Path(1, 1, 0, 3),
+                    Path(1, 1, 0),
+                    Path(1, 1, 1, 0)
+                ],
+                [Path(), Path(1), Path(1, 0), Path(1, 1), Path(1, 1, 1)],
+                selectedInnerNodes: 2);
+
+            ClearSelection(selectionModel);
+            ValidateSelection(selectionModel, []);
+
+            startPath = Path(0, 1, 0, 2);
+            SetAnchorIndex(selectionModel, startPath);
+            endPath = Path(0, 0, 0, 2);
+            SelectRangeFromAnchor(selectionModel, endPath, true);
+            ValidateSelection(
+                selectionModel,
+                [
+                    Path(0, 0, 0, 2),
+                    Path(0, 0, 0, 3),
+                    Path(0, 0, 1, 0),
+                    Path(0, 0, 1, 1),
+                    Path(0, 0, 1, 2),
+                    Path(0, 0, 1, 3),
+                    Path(0, 0, 1),
+                    Path(0, 1, 0, 0),
+                    Path(0, 1, 0, 1),
+                    Path(0, 1, 0, 2)
+                ],
+                [Path(), Path(0), Path(0, 0), Path(0, 0, 0), Path(0, 1), Path(0, 1, 0)],
+                selectedInnerNodes: 1);
+
+            startPath = Path(0, 1, 0, 2);
+            SetAnchorIndex(selectionModel, startPath);
+            endPath = Path(0, 0, 0, 2);
+            SelectRangeFromAnchor(selectionModel, endPath, false);
+            ValidateSelection(selectionModel, []);
+        });
+    }
+
+    [TestMethod]
     public void ValidateInserts()
     {
         WpfTestHost.Run(() =>
@@ -666,6 +769,18 @@ public class SelectionModelApiTests
         }
     }
 
+    private static void SelectRangeFromAnchor(SelectionModel manager, IndexPath index, bool select)
+    {
+        if (select)
+        {
+            manager.SelectRangeFromAnchorTo(index);
+        }
+        else
+        {
+            manager.DeselectRangeFromAnchorTo(index);
+        }
+    }
+
     private static void ClearSelection(SelectionModel manager)
     {
         manager.ClearSelection();
@@ -679,6 +794,11 @@ public class SelectionModelApiTests
     private static void SetAnchorIndex(SelectionModel manager, int groupIndex, int itemIndex)
     {
         manager.SetAnchorIndex(groupIndex, itemIndex);
+    }
+
+    private static void SetAnchorIndex(SelectionModel manager, IndexPath index)
+    {
+        manager.AnchorIndex = index;
     }
 
     private static void ValidateSelection(
@@ -797,6 +917,15 @@ public class SelectionModelApiTests
     {
         Assert.IsNotNull(actual);
         Assert.AreEqual(0, expected.CompareTo(actual));
+    }
+
+    private static void AssertIndexPathsEqual(IReadOnlyList<IndexPath> expected, IReadOnlyList<IndexPath> actual)
+    {
+        Assert.AreEqual(expected.Count, actual.Count);
+        for (var i = 0; i < expected.Count; i++)
+        {
+            AssertIndexPathEqual(expected[i], actual[i]);
+        }
     }
 
     private static IndexPath Path(params int[] path)
