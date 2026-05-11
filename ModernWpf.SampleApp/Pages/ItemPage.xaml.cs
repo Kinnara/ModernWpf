@@ -17,7 +17,8 @@ namespace ModernWpf.SampleApp.Pages
             InitializeComponent();
 
             _item = item ?? GalleryCatalog.Items.First();
-            WpfSampleContent = FundamentalsSampleFactory.Create(_item.UniqueId);
+            WpfSampleContent = FundamentalsSampleFactory.Create(_item.UniqueId)
+                ?? BasicInputSampleFactory.Create(_item.UniqueId);
             SampleSnippets = LoadSampleSnippets(_item.UniqueId);
             RelatedItems = _item.RelatedControlIds
                 .Select(GalleryCatalog.FindItem)
