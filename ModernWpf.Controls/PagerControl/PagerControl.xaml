@@ -1,0 +1,43 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style x:Key="DefaultPagerControlNavigationButtonStyle" TargetType="Button">
+        <Setter Property="MinWidth" Value="28" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="Padding" Value="4,2" />
+    </Style>
+
+    <Style TargetType="local:PagerControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PagerControl">
+                    <StackPanel x:Name="PART_RootPanel" Orientation="Horizontal">
+                        <Button
+                            x:Name="PART_FirstButton"
+                            Content="|&lt;"
+                            Style="{StaticResource DefaultPagerControlNavigationButtonStyle}"
+                            AutomationProperties.Name="First page" />
+                        <Button
+                            x:Name="PART_PreviousButton"
+                            Content="&lt;"
+                            Style="{StaticResource DefaultPagerControlNavigationButtonStyle}"
+                            AutomationProperties.Name="Previous page" />
+                        <StackPanel x:Name="PART_NumberPanel" Orientation="Horizontal" />
+                        <Button
+                            x:Name="PART_NextButton"
+                            Content="&gt;"
+                            Style="{StaticResource DefaultPagerControlNavigationButtonStyle}"
+                            AutomationProperties.Name="Next page" />
+                        <Button
+                            x:Name="PART_LastButton"
+                            Content="&gt;|"
+                            Style="{StaticResource DefaultPagerControlNavigationButtonStyle}"
+                            AutomationProperties.Name="Last page" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

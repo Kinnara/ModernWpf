@@ -22,6 +22,7 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/MenuFlyout/MenuFlyout.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/NavigationView/NavigationView.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/NumberBox/NumberBox.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/PagerControl/PagerControl.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/PersonPicture/PersonPicture.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/PipsPager/PipsPager.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ProgressRing/ProgressRing.xaml" />
