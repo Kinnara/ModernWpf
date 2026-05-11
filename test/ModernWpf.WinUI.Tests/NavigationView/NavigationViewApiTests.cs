@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -775,10 +776,117 @@ public class NavigationViewApiTests
         });
     }
 
+    [TestMethod]
+    public void VerifyFinalWinUI2NavigationViewBackButtonStyle()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView();
+            using var host = new TestWindowHost(navView);
+
+            Assert.AreEqual(40.0, navView.TryFindResource("NavigationBackButtonWidth"));
+            Assert.AreEqual(36.0, navView.TryFindResource("NavigationBackButtonHeight"));
+
+            var normalStyle = AssertStyleResource(navView, "NavigationBackButtonNormalStyle");
+            AssertDynamicResourceSetter(normalStyle, Control.BackgroundProperty, "NavigationViewBackButtonBackground");
+            AssertDynamicResourceSetter(normalStyle, Control.ForegroundProperty, "NavigationViewItemForeground");
+            AssertDynamicResourceSetter(normalStyle, FrameworkElement.HeightProperty, "NavigationBackButtonHeight");
+            AssertDynamicResourceSetter(normalStyle, FrameworkElement.WidthProperty, "NavigationBackButtonWidth");
+            AssertSetterValue(normalStyle, Control.FontSizeProperty, 16.0);
+            AssertSetterValue(normalStyle, FrameworkElement.MarginProperty, new Thickness(4, 2, 4, 2));
+
+            var smallStyle = AssertStyleResource(navView, "NavigationBackButtonSmallStyle");
+            Assert.AreSame(normalStyle, smallStyle.BasedOn);
+            AssertSetterValue(smallStyle, FrameworkElement.MarginProperty, new Thickness(4, 2, 0, 2));
+            AssertNoLocalSetter(smallStyle, Control.FontSizeProperty);
+            AssertNoLocalSetter(smallStyle, FrameworkElement.HeightProperty);
+            AssertNoLocalSetter(smallStyle, FrameworkElement.WidthProperty);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyFinalWinUI2NavigationViewThemeResources()
+    {
+        WpfTestHost.Run(() =>
+        {
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "NavigationViewDefaultPaneBackground", "SolidBackgroundFillColorBaseBrush");
+                AssertThemeResourceReference(themeName, "NavigationViewTopPaneBackground", "ControlFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "NavigationViewItemBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "NavigationViewItemBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "NavigationViewItemBackgroundPressed", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "NavigationViewItemBackgroundSelected", "SubtleFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "NavigationViewItemBackgroundSelectedPointerOver", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "NavigationViewItemForeground", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "NavigationViewItemForegroundSelected", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "NavigationViewSelectionIndicatorForeground", "AccentFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "TopNavigationViewItemForegroundSelectedPressed", "TextFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "NavigationViewBackButtonBackground", "SubtleFillColorTransparentBrush");
+            }
+
+            AssertThemeResourceReference("HighContrast", "NavigationViewDefaultPaneBackground", "AcrylicInAppFillColorDefaultBrush");
+            AssertThemeResourceReference("HighContrast", "NavigationViewTopPaneBackground", "AcrylicInAppFillColorDefaultBrush");
+            AssertThemeResourceReference("HighContrast", "NavigationViewItemBackground", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceReference("HighContrast", "NavigationViewItemBackgroundPointerOver", "SystemControlHighlightListLowRevealBackgroundBrush");
+            AssertThemeResourceReference("HighContrast", "NavigationViewItemBackgroundPressed", "SystemControlHighlightListMediumRevealBackgroundBrush");
+            AssertThemeResourceReference("HighContrast", "NavigationViewItemForeground", "SystemControlForegroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "NavigationViewItemForegroundSelected", "SystemControlHighlightAltBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "NavigationViewSelectionIndicatorForeground", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TopNavigationViewItemForeground", "NavigationViewItemForeground");
+            AssertThemeResourceReference("HighContrast", "NavigationViewBackButtonBackground", "SystemControlBackgroundBaseLowBrush");
+        });
+    }
+
     private static object GetToolTipContent(FrameworkElement element)
     {
         var toolTip = ToolTipService.GetToolTip(element);
         return toolTip is ToolTip toolTipElement ? toolTipElement.Content : toolTip;
+    }
+
+    private static Style AssertStyleResource(FrameworkElement element, object resourceKey)
+    {
+        var style = element.TryFindResource(resourceKey) as Style;
+        Assert.IsNotNull(style, $"Expected style resource '{resourceKey}'.");
+        return style!;
+    }
+
+    private static void AssertDynamicResourceSetter(Style style, DependencyProperty property, object expectedResourceKey)
+    {
+        var setter = GetLocalSetter(style, property);
+        var dynamicResource = setter.Value as DynamicResourceExtension;
+        Assert.IsNotNull(dynamicResource, $"Expected {property.Name} to use a dynamic resource.");
+        Assert.AreEqual(expectedResourceKey, dynamicResource!.ResourceKey);
+    }
+
+    private static void AssertSetterValue<T>(Style style, DependencyProperty property, T expectedValue)
+    {
+        var setter = GetLocalSetter(style, property);
+        Assert.AreEqual(expectedValue, setter.Value);
+    }
+
+    private static void AssertNoLocalSetter(Style style, DependencyProperty property)
+    {
+        Assert.IsFalse(
+            style.Setters.OfType<Setter>().Any(setter => setter.Property == property),
+            $"Expected no local setter for {property.Name}.");
+    }
+
+    private static Setter GetLocalSetter(Style style, DependencyProperty property)
+    {
+        var setter = style.Setters.OfType<Setter>().SingleOrDefault(setter => setter.Property == property);
+        Assert.IsNotNull(setter, $"Expected local setter for {property.Name}.");
+        return setter!;
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
