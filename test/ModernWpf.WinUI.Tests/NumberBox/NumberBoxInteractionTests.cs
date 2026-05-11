@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation.Peers;
@@ -192,6 +193,70 @@ public class NumberBoxInteractionTests
             provider.SetValue(150);
             host.UpdateLayout();
             Assert.AreEqual(150.0, provider.Value);
+        });
+    }
+
+    [TestMethod]
+    public void ScrollTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var numberBox = new ModernWpf.Controls.NumberBox
+            {
+                Width = 180,
+                Value = 0,
+                SmallChange = 1,
+                ValidationMode = NumberBoxValidationMode.Disabled
+            };
+            var focusTarget = new Button { Content = "Focus target" };
+            var root = new StackPanel();
+            root.Children.Add(focusTarget);
+            root.Children.Add(numberBox);
+
+            using var host = new TestWindowHost(root, width: 320, height: 220);
+
+            var inputBox = FindTemplatePart<TextBox>(numberBox, "InputBox");
+
+            focusTarget.Focus();
+            WpfTestHost.DoEvents();
+            RaiseMouseWheel(inputBox, 120);
+            Assert.AreEqual(0.0, numberBox.Value);
+
+            inputBox.Focus();
+            WpfTestHost.DoEvents();
+            Assert.IsTrue(inputBox.IsFocused, "NumberBox input should accept focus before mouse wheel stepping.");
+
+            RaiseMouseWheel(inputBox, 120);
+            RaiseMouseWheel(inputBox, 120);
+            Assert.AreEqual(2.0, numberBox.Value);
+
+            RaiseMouseWheel(inputBox, -120);
+            RaiseMouseWheel(inputBox, -120);
+            RaiseMouseWheel(inputBox, -120);
+            Assert.AreEqual(-1.0, numberBox.Value);
+        });
+    }
+
+    [TestMethod]
+    public void CustomFormatterTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var numberBox = CreateNumberBox();
+            numberBox.Value = 8;
+
+            using var host = new TestWindowHost(numberBox, width: 320, height: 180);
+
+            var inputBox = FindTemplatePart<TextBox>(numberBox, "InputBox");
+            Assert.AreEqual("8", inputBox.Text);
+
+            numberBox.NumberFormatter = new CommaDecimalFormatter();
+            host.UpdateLayout();
+            Assert.AreEqual("8,00", inputBox.Text);
+
+            EnterText(inputBox, "7,45");
+            Assert.AreEqual(7.45, numberBox.Value);
+            Assert.AreEqual("7,45", inputBox.Text);
         });
     }
 
@@ -427,6 +492,20 @@ public class NumberBoxInteractionTests
         WpfTestHost.DoEvents();
     }
 
+    private static void RaiseMouseWheel(UIElement element, int delta)
+    {
+        var args = new MouseWheelEventArgs(
+            Mouse.PrimaryDevice,
+            Environment.TickCount,
+            delta)
+        {
+            RoutedEvent = UIElement.MouseWheelEvent
+        };
+
+        element.RaiseEvent(args);
+        WpfTestHost.DoEvents();
+    }
+
     private static void RaiseKey(UIElement element, RoutedEvent routedEvent, Key key)
     {
         var args = new KeyEventArgs(
@@ -479,5 +558,24 @@ public class NumberBoxInteractionTests
         return VisualTreeTestHelper.EnumerateDescendants(control)
             .OfType<T>()
             .Single(element => element.Name == name && ReferenceEquals(element.TemplatedParent, control));
+    }
+
+    private sealed class CommaDecimalFormatter : INumberBoxNumberFormatter
+    {
+        public string FormatDouble(double value)
+        {
+            return value.ToString("0.00", CultureInfo.InvariantCulture).Replace('.', ',');
+        }
+
+        public double? ParseDouble(string text)
+        {
+            return double.TryParse(
+                text.Replace(',', '.'),
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out var value)
+                ? value
+                : null;
+        }
     }
 }
