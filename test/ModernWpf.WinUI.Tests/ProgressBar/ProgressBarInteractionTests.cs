@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
+using System.Windows.Markup;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.WinUI.TestInfra;
@@ -134,6 +136,93 @@ public class ProgressBarInteractionTests
     }
 
     [TestMethod]
+    public void ChangeStateTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var progressBar = CreateProgressBar(width: 100);
+
+            using var host = new TestWindowHost(progressBar, width: 320, height: 180);
+
+            AssertCurrentState(progressBar, "Determinate");
+
+            progressBar.ShowPaused = true;
+            host.UpdateLayout();
+            AssertCurrentState(progressBar, "Paused");
+
+            progressBar.IsIndeterminate = true;
+            host.UpdateLayout();
+            AssertCurrentState(progressBar, "IndeterminatePaused");
+
+            progressBar.ShowPaused = false;
+            host.UpdateLayout();
+            AssertCurrentState(progressBar, "Indeterminate");
+
+            progressBar.ShowError = true;
+            host.UpdateLayout();
+            AssertCurrentState(progressBar, "IndeterminateError");
+
+            progressBar.IsIndeterminate = false;
+            host.UpdateLayout();
+            AssertCurrentState(progressBar, "Error");
+        });
+    }
+
+    [TestMethod]
+    public void RetemplateUpdateIndicatorWidthTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var progressBar = CreateProgressBar(width: 100);
+            progressBar.Template = CreateRetemplate();
+
+            using var host = new TestWindowHost(progressBar, width: 320, height: 180);
+
+            progressBar.Value = 50;
+            host.UpdateLayout();
+            AssertIndicatorWidth(progressBar, 50.0);
+
+            progressBar.Width = 200;
+            host.UpdateLayout();
+            AssertIndicatorWidth(progressBar, 100.0);
+
+            progressBar.Minimum = 10;
+            progressBar.Maximum = 16;
+            progressBar.Value = 13;
+            host.UpdateLayout();
+            AssertIndicatorWidth(progressBar, 100.0);
+        });
+    }
+
+    [TestMethod]
+    public void RetemplateChangeStateTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var progressBar = CreateProgressBar(width: 100);
+            progressBar.Template = CreateRetemplate();
+
+            using var host = new TestWindowHost(progressBar, width: 320, height: 180);
+
+            AssertCurrentState(progressBar, "Determinate");
+
+            progressBar.ShowPaused = true;
+            host.UpdateLayout();
+            AssertCurrentState(progressBar, "Paused");
+
+            progressBar.ShowPaused = false;
+            progressBar.IsIndeterminate = true;
+            host.UpdateLayout();
+            AssertCurrentState(progressBar, "Indeterminate");
+
+            progressBar.IsIndeterminate = false;
+            progressBar.ShowError = true;
+            host.UpdateLayout();
+            AssertCurrentState(progressBar, "Error");
+        });
+    }
+
+    [TestMethod]
     public void IndeterminateProgressBarDoesNotImplementRangeValuePattern()
     {
         WpfTestHost.Run(() =>
@@ -175,10 +264,68 @@ public class ProgressBarInteractionTests
         throw new InvalidOperationException();
     }
 
+    private static void AssertCurrentState(ProgressBar progressBar, string expectedStateName)
+    {
+        var commonStatesGroup = GetCommonStatesGroup(progressBar);
+        Assert.IsNotNull(commonStatesGroup.CurrentState);
+        Assert.AreEqual(expectedStateName, commonStatesGroup.CurrentState.Name);
+    }
+
+    private static VisualStateGroup GetCommonStatesGroup(ProgressBar progressBar)
+    {
+        var layoutRoot = FindNamedDescendant<Grid>(progressBar, "LayoutRoot");
+        return VisualStateManager.GetVisualStateGroups(layoutRoot)
+            .OfType<VisualStateGroup>()
+            .First(group => group.Name == "CommonStates");
+    }
+
     private static void AssertIndicatorWidth(ProgressBar progressBar, double expected)
     {
         var indicator = FindNamedDescendant<Rectangle>(progressBar, "DeterminateProgressBarIndicator");
         Assert.AreEqual(expected, indicator.Width, 0.5);
+    }
+
+    private static ControlTemplate CreateRetemplate()
+    {
+        const string templateXaml =
+            """
+            <ControlTemplate
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf"
+                TargetType="{x:Type controls:ProgressBar}">
+                <Grid x:Name="LayoutRoot">
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Determinate" />
+                            <VisualState x:Name="Updating" />
+                            <VisualState x:Name="UpdatingError" />
+                            <VisualState x:Name="Error" />
+                            <VisualState x:Name="Paused" />
+                            <VisualState x:Name="Indeterminate" />
+                            <VisualState x:Name="IndeterminateError" />
+                            <VisualState x:Name="IndeterminatePaused" />
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+                    <Rectangle
+                        x:Name="DeterminateProgressBarIndicator"
+                        Fill="{TemplateBinding Foreground}"
+                        HorizontalAlignment="Left" />
+                    <Rectangle
+                        x:Name="IndeterminateProgressBarIndicator"
+                        Fill="{TemplateBinding Foreground}"
+                        HorizontalAlignment="Left"
+                        Opacity="0" />
+                    <Rectangle
+                        x:Name="IndeterminateProgressBarIndicator2"
+                        Fill="{TemplateBinding Foreground}"
+                        HorizontalAlignment="Left"
+                        Opacity="0" />
+                </Grid>
+            </ControlTemplate>
+            """;
+
+        return (ControlTemplate)XamlReader.Parse(templateXaml);
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
