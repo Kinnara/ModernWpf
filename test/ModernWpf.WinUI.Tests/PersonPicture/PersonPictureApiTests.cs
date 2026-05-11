@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.WinUI.TestInfra;
 
@@ -143,6 +144,83 @@ public class PersonPictureApiTests
             Assert.AreEqual(Visibility.Collapsed, initialsTextBlock.Visibility);
             Assert.AreEqual(Visibility.Visible, placeholderIcon.Visibility);
             Assert.AreSame(placeholderIcon.FindResource("People"), placeholderIcon.Data);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyRenderedInitialsAndBadgeNumber()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var personPicture = new ModernWpf.Controls.PersonPicture();
+            using var host = new TestWindowHost(personPicture);
+
+            var initialsTextBlock = FindNamedDescendant<TextBlock>(personPicture, "InitialsTextBlock");
+            var badgeNumberTextBlock = FindNamedDescendant<TextBlock>(personPicture, "BadgeNumberTextBlock");
+
+            personPicture.Initials = "AS";
+            host.UpdateLayout();
+            Assert.AreEqual("AS", initialsTextBlock.Text);
+
+            personPicture.Initials = string.Empty;
+            personPicture.DisplayName = "Some Name";
+            host.UpdateLayout();
+            Assert.AreEqual("SN", initialsTextBlock.Text);
+
+            personPicture.DisplayName = "Another Name (OSG)";
+            host.UpdateLayout();
+            Assert.AreEqual("AN", initialsTextBlock.Text);
+
+            personPicture.BadgeNumber = 1;
+            host.UpdateLayout();
+            Assert.AreEqual("1", badgeNumberTextBlock.Text);
+
+            personPicture.BadgeNumber = 125;
+            host.UpdateLayout();
+            Assert.AreEqual("99+", badgeNumberTextBlock.Text);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyInitialsDisplayNameAndImagePriority()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var personPicture = new ModernWpf.Controls.PersonPicture
+            {
+                Initials = "AL",
+                DisplayName = "Some Name"
+            };
+
+            using var host = new TestWindowHost(personPicture);
+
+            var initialsTextBlock = FindNamedDescendant<TextBlock>(personPicture, "InitialsTextBlock");
+            var placeholderIcon = FindNamedDescendant<ModernWpf.Controls.FontIconFallback>(personPicture, "PlaceholderIcon");
+            var personPictureEllipse = FindNamedDescendant<Ellipse>(personPicture, "PersonPictureEllipse");
+
+            Assert.AreEqual("AL", initialsTextBlock.Text);
+
+            personPicture.Initials = string.Empty;
+            host.UpdateLayout();
+            Assert.AreEqual("SN", initialsTextBlock.Text);
+
+            var imageSource = new DrawingImage(
+                new GeometryDrawing(Brushes.Red, null, new RectangleGeometry(new Rect(0, 0, 1, 1))));
+            personPicture.ProfilePicture = imageSource;
+            host.UpdateLayout();
+
+            var imageBrush = personPictureEllipse.Fill as ImageBrush;
+            Assert.IsNotNull(imageBrush);
+            Assert.AreSame(imageSource, imageBrush!.ImageSource);
+
+            personPicture.ProfilePicture = null;
+            personPicture.DisplayName = string.Empty;
+            host.UpdateLayout();
+
+            Assert.AreEqual(Visibility.Collapsed, initialsTextBlock.Visibility);
+            Assert.AreEqual(Visibility.Visible, placeholderIcon.Visibility);
+            Assert.AreSame(placeholderIcon.FindResource("Contact"), placeholderIcon.Data);
+            Assert.IsNull(personPictureEllipse.Fill);
         });
     }
 

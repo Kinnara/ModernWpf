@@ -461,7 +461,9 @@ namespace ModernWpf.Controls
         /// <returns>A vector of pieces from the source string, separated by delimiter</returns>
         static string[] Split(string source, char delim, int maxIterations = 25)
         {
-            return source.Split(new[] { delim }, maxIterations);
+            return source.Split(new[] { delim }, maxIterations)
+                .Where(static token => token.Length != 0)
+                .ToArray();
         }
 
         /// <summary>
