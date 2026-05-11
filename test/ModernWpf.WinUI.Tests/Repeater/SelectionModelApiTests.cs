@@ -403,6 +403,79 @@ public class SelectionModelApiTests
     }
 
     [TestMethod]
+    public void ValidatePropertyChangedEventIsRaised()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var selectionModel = new SelectionModel();
+            selectionModel.Source = Enumerable.Range(0, 10).ToList();
+
+            var changedProperties = new HashSet<string>();
+            selectionModel.PropertyChanged += (sender, args) =>
+            {
+                switch (args.PropertyName)
+                {
+                    case "SelectedIndex":
+                    case "SelectedIndices":
+                    case "SelectedItem":
+                    case "SelectedItems":
+                    case "AnchorIndex":
+                        changedProperties.Add(args.PropertyName);
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Unexpected property change: {args.PropertyName}");
+                }
+            };
+
+            Select(selectionModel, 3, true);
+
+            CollectionAssert.AreEquivalent(
+                new[] { "SelectedIndex", "SelectedIndices", "SelectedItem", "SelectedItems", "AnchorIndex" },
+                changedProperties.ToArray());
+        });
+    }
+
+    [TestMethod]
+    public void CanExtendSelectionModelINPC()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var selectionModel = new CustomSelectionModel();
+            var intPropertyChanged = false;
+            selectionModel.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(CustomSelectionModel.IntProperty))
+                {
+                    intPropertyChanged = true;
+                }
+            };
+
+            selectionModel.IntProperty = 5;
+            Assert.IsTrue(intPropertyChanged);
+        });
+    }
+
+    [TestMethod]
+    public void SelectRangeRegressionTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var selectionModel = new SelectionModel
+            {
+                Source = CreateNestedData(levels: 1, groupsAtLevel: 2, countAtLeaf: 3)
+            };
+
+            selectionModel.SelectRange(Path(0), Path(1, 1));
+
+            ValidateSelection(
+                selectionModel,
+                [Path(0, 0), Path(0, 1), Path(0, 2), Path(0), Path(1, 0), Path(1, 1)],
+                [Path(), Path(1)],
+                selectedInnerNodes: 1);
+        });
+    }
+
+    [TestMethod]
     public void AlreadySelectedDoesNotRaiseEvent()
     {
         WpfTestHost.Run(() =>
@@ -770,6 +843,21 @@ public class SelectionModelApiTests
     }
 
     private static int _nextData;
+
+    private sealed class CustomSelectionModel : SelectionModel
+    {
+        public int IntProperty
+        {
+            get => _intProperty;
+            set
+            {
+                _intProperty = value;
+                OnPropertyChanged(nameof(IntProperty));
+            }
+        }
+
+        private int _intProperty;
+    }
 
     private readonly struct TreeWalkNodeInfo
     {
