@@ -34,7 +34,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | --- | --- | --- | --- |
 | AnimatedIcon | Excluded | Excluded | Depends on WinUI animated icon source infrastructure and compositor animation semantics not present in WPF. |
 | AnimatedVisualPlayer | Excluded | Excluded | Depends on WinUI visual/lottie animation pipeline; do not add as ModernWpf core surface. |
-| AutoSuggestBox | Pending | Ported APITest slice | Existing WPF port; upstream suggestion-popup corner-radius behavior is covered. Visual-tree snapshots, resource refresh, and broader interaction tests remain pending. |
+| AutoSuggestBox | Pending | Ported APITest + interaction slices | Existing WPF port; upstream suggestion-popup corner-radius behavior and suggestion-selection interaction are covered. Visual-tree snapshots, resource refresh, and accessibility scan coverage remain pending. |
 | BreadcrumbBar | Pending | Pending | Add feasible WPF control port. |
 | ColorPicker / ColorSpectrum | Pending | Pending | Add feasible WPF control port and color math tests. |
 | ComboBox helper/styles | Pending | Ported APITest slice | WPF ComboBox style/helper maps this surface; upstream open-dropdown corner-radius behavior is covered for standard and editable modes. Broader visual-tree/resource snapshots remain pending. |
