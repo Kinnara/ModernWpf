@@ -43,7 +43,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | CommonStyles and compact density resources | Pending | Ported initial API slice | `VerifyAllThemesContainSameResourceKeys`, `VerifyUseCompactResourcesAPI`, and `CornerRadiusFilterConverterTest` are ported; visual-tree and baseline resource tests remain pending. |
 | ContentDialog | Pending | Pending | Existing WPF port; sync resources and behavior tests. |
 | DropDownButton | Pending | Ported interaction slice | Existing WPF port; upstream accessibility/expand-collapse interaction coverage is mapped through WPF automation peer and flyout open/close tests. Resource and broader popup/input tests remain pending. |
-| Expander | Pending | Pending | WPF has stock Expander; align ModernWpf styling and WinUI resource/API expectations where feasible. |
+| Expander | Pending | Ported interaction slice | WPF has stock Expander; WPF automation peer expand/collapse behavior is covered. ModernWpf styling, resource checks, and WinUI-specific accessibility-tree assertions remain pending. |
 | IconSource / ImageIcon | Pending | Ported WPF-feasible APITests | Existing Symbol/Font/Bitmap/Path IconSource API propagation is covered. `ImageIconSource`, `AnimatedIconSource`, text-scale/mirroring APIs, and WinUI XAML metadata provider tests are not present in the current WPF surface and remain pending/excluded for feasibility review. |
 | InfoBadge | Pending | Pending | Add feasible WPF control port. |
 | InfoBar | Pending | Pending | Add feasible WPF control port. |
