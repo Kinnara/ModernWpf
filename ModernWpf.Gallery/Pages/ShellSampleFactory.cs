@@ -400,7 +400,7 @@ namespace ModernWpf.Gallery.Pages
 
         private static string ResourceUri(string path)
         {
-            return "pack://application:,,,/" + path;
+            return "pack://application:,,,/ModernWpf.Gallery;component/" + path;
         }
 
         private static SolidColorBrush CreateBrush(string color)

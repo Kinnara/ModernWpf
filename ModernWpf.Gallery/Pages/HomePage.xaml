@@ -21,7 +21,7 @@
                 <Image
                     MaxHeight="220"
                     HorizontalAlignment="Stretch"
-                    Source="pack://application:,,,/Assets/GalleryHeaderImage.png"
+                    Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/GalleryHeaderImage.png"
                     Stretch="UniformToFill" />
 
                 <TextBlock
