@@ -206,18 +206,6 @@
                         <DatePickerEx CornerRadius="{Binding ControlCornerRadius, Mode=OneWay}"/>
                     </Grid>
 
-                    <TextBlock Grid.Row="10" Text="TimePicker" Style="{StaticResource SideHeader}"/>
-                    <Grid Grid.Row="10" Style="{StaticResource LeftColumn}">
-                        <Grid.Resources>
-                            <CornerRadius x:Key="ControlCornerRadius">0,0,0,0</CornerRadius>
-                            <CornerRadius x:Key="OverlayCornerRadius">0,0,0,0</CornerRadius>
-                        </Grid.Resources>
-                        <TimePicker/>
-                    </Grid>
-                    <Grid Grid.Row="10" Style="{StaticResource RightColumn}">
-                        <TimePicker CornerRadius="{Binding ControlCornerRadius, Mode=OneWay}"/>
-                    </Grid>
-
                     <TextBlock Grid.Row="11" Text="CommandBar" Style="{StaticResource SideHeader}"/>
                     <Grid Grid.Row="11" Style="{StaticResource LeftColumn}">
                         <CommandBar>
@@ -647,26 +635,6 @@
                     <Grid Grid.Row="38" Style="{StaticResource RightColumn}">
                         <RichEditBox CornerRadius="{Binding ControlCornerRadius, Mode=OneWay}"/>
                     </Grid>
-                    <TextBlock Grid.Row="39" Text="FlipView" Style="{StaticResource SideHeader}"/>
-                    <Grid Grid.Row="39" Style="{StaticResource LeftColumn}" Width="200" Height="200">
-                        <Grid.Resources>
-                            <CornerRadius x:Key="ControlCornerRadius">0,0,0,0</CornerRadius>
-                            <CornerRadius x:Key="OverlayCornerRadius">0,0,0,0</CornerRadius>
-                        </Grid.Resources>
-                        <FlipView>
-                            <Grid Background="Red"/>
-                            <Grid Background="Green"/>
-                            <Grid Background="Blue"/>
-                        </FlipView>
-                    </Grid>
-                    <Grid Grid.Row="39" Style="{StaticResource RightColumn}" Width="200" Height="200">
-                        <FlipView CornerRadius="{Binding ControlCornerRadius, Mode=OneWay}">
-                            <Grid Background="Red"/>
-                            <Grid Background="Green"/>
-                            <Grid Background="Blue"/>
-                        </FlipView>
-                    </Grid>
-
                     <TextBlock Grid.Row="40" Text="RadioButton" Style="{StaticResource SideHeader}"/>
                     <Grid Grid.Row="40" Style="{StaticResource LeftColumn}">
                         <StackPanel Orientation="Vertical">

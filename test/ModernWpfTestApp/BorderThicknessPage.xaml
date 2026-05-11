@@ -192,42 +192,6 @@
             </Grid>-->
 
             <TextBlock
-                Grid.Row="3"
-                Text="TimePicker"
-                Style="{StaticResource SideHeader}" />
-            <Grid
-                Grid.Column="1"
-                Grid.Row="3"
-                Style="{StaticResource LeftColumn}">
-                <controls:SimpleTimePicker controls:ThemeManager.HasThemeResources="True">
-                    <controls:SimpleTimePicker.Resources>
-                        <controls:ResourceDictionaryEx>
-                            <controls:ResourceDictionaryEx.ThemeDictionaries>
-                                <ResourceDictionary x:Key="Dark">
-                                    <sys:Double x:Key="TimePickerSpacerThemeWidth">2</sys:Double>
-                                    <Thickness x:Key="TimePickerBorderThemeThickness">2</Thickness>
-                                </ResourceDictionary>
-                                <ResourceDictionary x:Key="HighContrast">
-                                    <sys:Double x:Key="TimePickerSpacerThemeWidth">2</sys:Double>
-                                    <Thickness x:Key="TimePickerBorderThemeThickness">2</Thickness>
-                                </ResourceDictionary>
-                                <ResourceDictionary x:Key="Light">
-                                    <sys:Double x:Key="TimePickerSpacerThemeWidth">2</sys:Double>
-                                    <Thickness x:Key="TimePickerBorderThemeThickness">2</Thickness>
-                                </ResourceDictionary>
-                            </controls:ResourceDictionaryEx.ThemeDictionaries>
-                        </controls:ResourceDictionaryEx>
-                    </controls:SimpleTimePicker.Resources>
-                </controls:SimpleTimePicker>
-            </Grid>
-            <Grid
-                Grid.Column="2"
-                Grid.Row="3"
-                Style="{StaticResource RightColumn}">
-                <controls:SimpleTimePicker />
-            </Grid>
-
-            <TextBlock
                 Grid.Row="4"
                 Text="CheckBox"
                 Style="{StaticResource SideHeader}" />

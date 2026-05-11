@@ -12,7 +12,6 @@
         <ResourceDictionary Source="Styles/NavigationView.xaml" />
         <ResourceDictionary Source="Styles/Pivot.xaml" />
         <ResourceDictionary Source="Styles/RatingControl.xaml" />
-        <ResourceDictionary Source="Styles/TimePicker.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <m:StaticResource x:Key="ContentControlThemeFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
