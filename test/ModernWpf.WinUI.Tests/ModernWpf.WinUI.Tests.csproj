@@ -24,4 +24,8 @@
     <ProjectReference Include="..\ModernWpf.WinUI.TestInfra\ModernWpf.WinUI.TestInfra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Assets\rating_set.png" />
+  </ItemGroup>
+
 </Project>
