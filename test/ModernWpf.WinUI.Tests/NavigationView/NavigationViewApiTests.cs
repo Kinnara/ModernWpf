@@ -1,3 +1,5 @@
+using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
@@ -292,5 +294,257 @@ public class NavigationViewApiTests
 
             Assert.AreSame(footerItem, navView.PaneFooter);
         });
+    }
+
+    [TestMethod]
+    public void VerifyMenuItemAndContainerMappingMenuItemsSource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                MenuItemsSource = new ObservableCollection<string> { "Item 1", "Item 2" },
+                Width = 1008
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            var menuItem = "Item 2";
+            var itemContainer = navView.ContainerFromMenuItem(menuItem) as ModernWpf.Controls.NavigationViewItem;
+            Assert.IsNotNull(itemContainer);
+            Assert.AreEqual(menuItem, itemContainer!.Content as string);
+
+            var returnedItem = navView.MenuItemFromContainer(itemContainer) as string;
+            Assert.AreEqual(menuItem, returnedItem);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyMenuItemAndContainerMappingMenuItems()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Width = 1008
+            };
+            var menuItem1 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 1"
+            };
+            var menuItem2 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 2"
+            };
+            navView.MenuItems.Add(menuItem1);
+            navView.MenuItems.Add(menuItem2);
+
+            using var host = new TestWindowHost(navView);
+
+            var itemContainer = navView.ContainerFromMenuItem(menuItem2) as ModernWpf.Controls.NavigationViewItem;
+            Assert.AreSame(menuItem2, itemContainer);
+
+            var returnedItem = navView.MenuItemFromContainer(menuItem2) as ModernWpf.Controls.NavigationViewItem;
+            Assert.AreSame(menuItem2, returnedItem);
+
+            var menuItem3 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 3"
+            };
+            Assert.IsNull(navView.MenuItemFromContainer(menuItem3));
+        });
+    }
+
+    [TestMethod]
+    public void VerifyClearingItemsCollectionDoesNotCrashWhenItemSelectedOnTopNav()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navViewItem1 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "MenuItem 1"
+            };
+            var navViewItem2 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "MenuItem 2"
+            };
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top
+            };
+            navView.MenuItems.Add(navViewItem1);
+            navView.MenuItems.Add(navViewItem2);
+
+            using var host = new TestWindowHost(navView);
+
+            navView.SelectedItem = navViewItem1;
+            host.UpdateLayout();
+            Assert.AreSame(navViewItem1, navView.SelectedItem);
+
+            navView.MenuItems.Clear();
+            host.UpdateLayout();
+
+            var itemsSource = new ObservableCollection<ModernWpf.Controls.NavigationViewItem>
+            {
+                navViewItem1,
+                navViewItem2
+            };
+            navView.MenuItemsSource = itemsSource;
+            host.UpdateLayout();
+
+            navView.SelectedItem = navViewItem1;
+            host.UpdateLayout();
+            Assert.AreSame(navViewItem1, navView.SelectedItem);
+
+            itemsSource.Clear();
+            host.UpdateLayout();
+        });
+    }
+
+    [TestMethod]
+    public void VerifyHierarchicalNavigationTopModeMenuItemsSourceDoesNotCrash()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var childItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 1.1"
+            };
+            var parentItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 1",
+                MenuItemsSource = new ObservableCollection<ModernWpf.Controls.NavigationViewItem> { childItem }
+            };
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top,
+                MenuItemsSource = new ObservableCollection<ModernWpf.Controls.NavigationViewItem> { parentItem }
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            Assert.AreSame(parentItem, navView.ContainerFromMenuItem(parentItem));
+        });
+    }
+
+    [TestMethod]
+    public void VerifyNavigationViewItemToolTipCreation()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var menuItem1 = new ModernWpf.Controls.NavigationViewItem();
+            var menuItem2 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = string.Empty
+            };
+            var menuItem3 = new ModernWpf.Controls.NavigationViewItem();
+            ToolTipService.SetToolTip(menuItem3, "Custom tooltip");
+            var menuItem4 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 4"
+            };
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left,
+                IsPaneOpen = false
+            };
+            navView.MenuItems.Add(menuItem1);
+            navView.MenuItems.Add(menuItem2);
+            navView.MenuItems.Add(menuItem3);
+            navView.MenuItems.Add(menuItem4);
+
+            using var host = new TestWindowHost(navView);
+
+            Assert.IsNull(GetToolTipContent(menuItem1));
+            Assert.IsNull(GetToolTipContent(menuItem2));
+            Assert.AreEqual("Custom tooltip", GetToolTipContent(menuItem3));
+            Assert.AreEqual("Item 4", GetToolTipContent(menuItem4));
+        });
+    }
+
+    [TestMethod]
+    public void VerifyNavigationViewItemToolTipPaneDisplayMode()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var menuItem1 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 1"
+            };
+            var menuItem2 = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item 2"
+            };
+            ToolTipService.SetToolTip(menuItem2, "Custom tooltip");
+
+            var navView = new ModernWpf.Controls.NavigationView();
+            navView.MenuItems.Add(menuItem1);
+            navView.MenuItems.Add(menuItem2);
+
+            using var host = new TestWindowHost(navView);
+
+            SetPaneConfigAndVerifyToolTips(ModernWpf.Controls.NavigationViewPaneDisplayMode.Left, false, "Item 1", "Custom tooltip");
+            SetPaneConfigAndVerifyToolTips(ModernWpf.Controls.NavigationViewPaneDisplayMode.Left, true, null, "Custom tooltip");
+            SetPaneConfigAndVerifyToolTips(ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftCompact, false, "Item 1", "Custom tooltip");
+            SetPaneConfigAndVerifyToolTips(ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftCompact, true, null, "Custom tooltip");
+            SetPaneConfigAndVerifyToolTips(ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftMinimal, true, null, "Custom tooltip");
+            SetPaneConfigAndVerifyToolTips(ModernWpf.Controls.NavigationViewPaneDisplayMode.Top, false, null, "Custom tooltip");
+            SetPaneConfigAndVerifyToolTips(ModernWpf.Controls.NavigationViewPaneDisplayMode.Top, true, null, "Custom tooltip");
+
+            void SetPaneConfigAndVerifyToolTips(
+                ModernWpf.Controls.NavigationViewPaneDisplayMode paneDisplayMode,
+                bool isPaneOpen,
+                string? expectedDefaultToolTip,
+                string? expectedCustomToolTip)
+            {
+                navView.PaneDisplayMode = paneDisplayMode;
+                navView.IsPaneOpen = isPaneOpen;
+                host.UpdateLayout();
+
+                Assert.AreEqual(expectedDefaultToolTip, GetToolTipContent(menuItem1));
+                Assert.AreEqual(expectedCustomToolTip, GetToolTipContent(menuItem2));
+            }
+        });
+    }
+
+    [TestMethod]
+    public void VerifyNavigationViewItemOutlivingNavigationViewDoesNotCrash()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView();
+            var menuItem = new ModernWpf.Controls.NavigationViewItem();
+            navView.MenuItems.Add(menuItem);
+
+            using var host = new TestWindowHost(navView);
+
+            navView.MenuItems.Clear();
+            host.Window.Content = menuItem;
+            host.UpdateLayout();
+
+            GC.Collect();
+            menuItem.IsSelected = !menuItem.IsSelected;
+        });
+    }
+
+    private static object GetToolTipContent(FrameworkElement element)
+    {
+        var toolTip = ToolTipService.GetToolTip(element);
+        return toolTip is ToolTip toolTipElement ? toolTipElement.Content : toolTip;
     }
 }
