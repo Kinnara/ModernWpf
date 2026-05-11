@@ -22,7 +22,8 @@ namespace ModernWpf.SampleApp.Pages
                 ?? StatusInfoSampleFactory.Create(_item.UniqueId)
                 ?? DialogsFlyoutsSampleFactory.Create(_item.UniqueId)
                 ?? DesignAccessibilitySampleFactory.Create(_item.UniqueId)
-                ?? MenusToolbarsSampleFactory.Create(_item.UniqueId);
+                ?? MenusToolbarsSampleFactory.Create(_item.UniqueId)
+                ?? CollectionsSampleFactory.Create(_item.UniqueId);
             SampleSnippets = LoadSampleSnippets(_item.UniqueId);
             RelatedItems = _item.RelatedControlIds
                 .Select(GalleryCatalog.FindItem)
