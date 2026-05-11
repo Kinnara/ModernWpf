@@ -18,11 +18,13 @@
     <Style x:Key="NumberBoxSpinButtonStyle" TargetType="RepeatButton" BasedOn="{StaticResource DefaultRepeatButtonStyle}">
         <Style.Setters>
             <Setter Property="IsTabStop" Value="False" />
-            <Setter Property="MinWidth" Value="34" />
+            <Setter Property="MinWidth" Value="32" />
+            <Setter Property="Padding" Value="0" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
             <Setter Property="Background" Value="{DynamicResource TextControlBackground}" />
             <Setter Property="BorderBrush" Value="{DynamicResource TextControlBorderBrush}" />
             <Setter Property="BorderThickness" Value="{DynamicResource NumberBoxSpinButtonBorderThickness}" />
+            <Setter Property="FontSize" Value="12" />
             <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
             <Setter Property="ContentTemplate">
                 <Setter.Value>
@@ -37,9 +39,12 @@
     <Style x:Key="NumberBoxPopupSpinButtonStyle" TargetType="RepeatButton" BasedOn="{StaticResource DefaultRepeatButtonStyle}">
         <Style.Setters>
             <Setter Property="Focusable" Value="False" />
-            <Setter Property="Width" Value="40" />
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Padding" Value="0" />
             <Setter Property="Background" Value="{DynamicResource NumberBoxPopupSpinButtonBackground}" />
             <Setter Property="BorderThickness" Value="{DynamicResource NumberBoxPopupSpinButtonBorderThickness}" />
+            <Setter Property="FontSize" Value="16" />
             <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
             <Setter Property="ContentTemplate">
                 <Setter.Value>
@@ -391,9 +396,10 @@
                                 IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
                                 <Border
                                     x:Name="PopupContentRoot"
-                                Background="{DynamicResource NumberBoxPopupBackground}"
-                                BorderBrush="{DynamicResource NumberBoxPopupBorderBrush}"
-                                BorderThickness="{DynamicResource NumberBoxPopupBorderThickness}"
+                                    Padding="6"
+                                    Background="{DynamicResource NumberBoxPopupBackground}"
+                                    BorderBrush="{DynamicResource NumberBoxPopupBorderBrush}"
+                                    BorderThickness="{DynamicResource NumberBoxPopupBorderThickness}"
                                     CornerRadius="{DynamicResource OverlayCornerRadius}">
                                     <Grid>
 
@@ -405,6 +411,7 @@
                                         <RepeatButton
                                             x:Name="PopupUpSpinButton"
                                             Style="{StaticResource NumberBoxPopupSpinButtonStyle}"
+                                            Margin="0,0,0,4"
                                             Content="{StaticResource ChevronUp}" />
 
                                         <RepeatButton
@@ -456,6 +463,7 @@
                         <Trigger Property="SpinButtonPlacementMode" Value="Inline">
                             <Setter TargetName="DownSpinButton" Property="Visibility" Value="Visible" />
                             <Setter TargetName="UpSpinButton" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="InputBox" Property="MinWidth" Value="{DynamicResource NumberBoxMinWidth}" />
                             <Setter TargetName="InputBox" Property="ui:ControlHelper.CornerRadius" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
                         </Trigger>
                         <!-- SpinButtonsPopup -->

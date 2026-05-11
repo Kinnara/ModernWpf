@@ -3,9 +3,13 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
+using ModernWpf.Controls.Primitives;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.NumberBox;
@@ -120,6 +124,77 @@ public class NumberBoxApiTests
         });
     }
 
+    [TestMethod]
+    public void VerifyFinalWinUI2ResourcesAndTemplateMetrics()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var numberBox = new ModernWpf.Controls.NumberBox
+            {
+                SpinButtonPlacementMode = ModernWpf.Controls.NumberBoxSpinButtonPlacementMode.Inline
+            };
+
+            using var host = new TestWindowHost(numberBox, width: 320, height: 180);
+            host.UpdateLayout();
+
+            var inputBox = FindTemplatePart<TextBox>(numberBox, "InputBox");
+            Assert.AreEqual(120.0, inputBox.MinWidth);
+
+            var upButton = FindTemplatePart<RepeatButton>(numberBox, "UpSpinButton");
+            var downButton = FindTemplatePart<RepeatButton>(numberBox, "DownSpinButton");
+            AssertInlineSpinButtonMetrics(upButton, numberBox.FontSize);
+            AssertInlineSpinButtonMetrics(downButton, numberBox.FontSize);
+
+            numberBox.SpinButtonPlacementMode = ModernWpf.Controls.NumberBoxSpinButtonPlacementMode.Compact;
+            host.UpdateLayout();
+
+            var popup = FindTemplatePart<Popup>(numberBox, "UpDownPopup");
+            Assert.AreEqual(-21.0, popup.HorizontalOffset);
+            Assert.AreEqual(-27.0, popup.VerticalOffset);
+
+            var chrome = popup.Child as ThemeShadowChrome;
+            Assert.IsNotNull(chrome);
+            Assert.AreEqual(16.0, chrome!.Depth);
+
+            var popupRoot = chrome.Child as Border;
+            Assert.IsNotNull(popupRoot);
+            Assert.AreEqual(new Thickness(6), popupRoot!.Padding);
+            Assert.AreEqual(new Thickness(1), popupRoot.BorderThickness);
+
+            var popupUpButton = FindTemplatePart<RepeatButton>(popupRoot, "PopupUpSpinButton");
+            var popupDownButton = FindTemplatePart<RepeatButton>(popupRoot, "PopupDownSpinButton");
+            AssertPopupSpinButtonMetrics(popupUpButton, new Thickness(0, 0, 0, 4));
+            AssertPopupSpinButtonMetrics(popupDownButton, new Thickness(0));
+
+            AssertGlobalResourceValue(numberBox, "NumberBoxSpinButtonBorderThickness", new Thickness(0, 1, 1, 1));
+            AssertGlobalResourceValue(numberBox, "NumberBoxIconMargin", new Thickness(10, 0, 0, 0));
+            AssertGlobalResourceValue(numberBox, "NumberBoxPopupHorizonalOffset", -21.0);
+            AssertGlobalResourceValue(numberBox, "NumberBoxPopupVerticalOffset", -27.0);
+            AssertGlobalResourceValue(numberBox, "NumberBoxPopupShadowDepth", 16.0);
+            AssertGlobalResourceValue(numberBox, "NumberBoxMinWidth", 120.0);
+            AssertGlobalResourceValue(numberBox, "NumberBoxPopupIndicatorMargin", new Thickness(0, 0, 8, 0));
+
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "NumberBoxPopupIndicatorForeground", "TextFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "NumberBoxPopupBackground", "AcrylicBackgroundFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "NumberBoxPopupBorderBrush", "SurfaceStrokeColorFlyoutBrush");
+                AssertThemeResourceReference(themeName, "NumberBoxPopupSpinButtonBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceValue(themeName, "NumberBoxPopupBorderThickness", new Thickness(1));
+                AssertThemeResourceValue(themeName, "NumberBoxPopupSpinButtonBorderThickness", new Thickness(0));
+            }
+
+            AssertThemeResourceReference("HighContrast", "NumberBoxPopupIndicatorForeground", "SystemControlForegroundBaseMediumBrush");
+            AssertThemeResourceReference("HighContrast", "NumberBoxPopupBackground", "SystemControlBackgroundBaseHighBrush");
+            AssertThemeResourceReference("HighContrast", "NumberBoxPopupBorderBrush", "SystemControlTransientBorderBrush");
+            AssertThemeResourceReference("HighContrast", "NumberBoxPopupSpinButtonBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceValue("HighContrast", "NumberBoxPopupBorderThickness", new Thickness(1));
+            AssertThemeResourceValue("HighContrast", "NumberBoxPopupSpinButtonBorderThickness", new Thickness(2));
+        });
+    }
+
     private static T FindTemplatePart<T>(DependencyObject root, string name)
         where T : FrameworkElement
     {
@@ -132,6 +207,44 @@ public class NumberBoxApiTests
     {
         return textBox.InputScope.Names[0] as InputScopeName
             ?? throw new AssertFailedException("Expected an InputScopeName entry.");
+    }
+
+    private static void AssertInlineSpinButtonMetrics(RepeatButton button, double expectedFontSize)
+    {
+        Assert.AreEqual(32.0, button.MinWidth);
+        Assert.AreEqual(new Thickness(0), button.Padding);
+        Assert.AreEqual(expectedFontSize, button.FontSize);
+        Assert.AreEqual(new Thickness(0, 1, 1, 1), button.BorderThickness);
+    }
+
+    private static void AssertPopupSpinButtonMetrics(RepeatButton button, Thickness expectedMargin)
+    {
+        Assert.IsFalse(button.Focusable);
+        Assert.AreEqual(36.0, button.Width);
+        Assert.AreEqual(36.0, button.Height);
+        Assert.AreEqual(new Thickness(0), button.Padding);
+        Assert.AreEqual(expectedMargin, button.Margin);
+        Assert.AreEqual(16.0, button.FontSize);
+    }
+
+    private static void AssertGlobalResourceValue<T>(FrameworkElement element, object resourceKey, T expectedValue)
+    {
+        Assert.AreEqual(expectedValue, element.TryFindResource(resourceKey), resourceKey.ToString());
+    }
+
+    private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
+        Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertThemeResourceValue<T>(string themeName, string resourceKey, T expectedValue)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
     }
 
     private static void VerifyUIAName(FrameworkElement element, string expectedName)

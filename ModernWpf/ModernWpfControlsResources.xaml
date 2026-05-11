@@ -24,9 +24,11 @@
     <sys:Double x:Key="GridViewItemMinHeight">44</sys:Double>
     <sys:Double x:Key="ListViewItemMinWidth">88</sys:Double>
     <sys:Double x:Key="ListViewItemMinHeight">40</sys:Double>
-    <sys:Double x:Key="NumberBoxPopupHorizonalOffset">-20</sys:Double>
-    <sys:Double x:Key="NumberBoxPopupVerticalOffset">-16</sys:Double>
+    <sys:Double x:Key="NumberBoxPopupHorizonalOffset">-21</sys:Double>
+    <sys:Double x:Key="NumberBoxPopupVerticalOffset">-27</sys:Double>
     <sys:Double x:Key="NumberBoxPopupShadowDepth">16</sys:Double>
+    <sys:Double x:Key="NumberBoxMinWidth">120</sys:Double>
+    <Thickness x:Key="NumberBoxPopupIndicatorMargin">0,0,8,0</Thickness>
 
     <!--#region RadioButtons-->
     <sys:Double x:Key="RadioButtonsColumnSpacing">7</sys:Double>
