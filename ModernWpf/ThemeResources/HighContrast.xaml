@@ -1780,6 +1780,17 @@
     <!-- Resources for Window -->
     <SolidColorBrush x:Key="WindowBorder" Color="{m:ThemeResource SystemColorActiveCaptionColor}" />
     <SolidColorBrush x:Key="WindowBorderInactive" Color="{m:ThemeResource SystemColorInactiveCaptionTextColor}" />
+    <m:StaticResource x:Key="TitleBarForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="TitleBarDeactivatedForegroundBrush" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="TitleBarButtonForegroundColor" ResourceKey="TextFillColorPrimary" />
+    <m:StaticResource x:Key="TitleBarButtonHoverForegroundColor" ResourceKey="TextFillColorPrimary" />
+    <m:StaticResource x:Key="TitleBarButtonPressedForegroundColor" ResourceKey="TextFillColorSecondary" />
+    <m:StaticResource x:Key="TitleBarButtonInactiveForegroundColor" ResourceKey="TextFillColorTertiary" />
+    <m:StaticResource x:Key="TitleBarButtonBackgroundColor" ResourceKey="SubtleFillColorTransparent" />
+    <m:StaticResource x:Key="TitleBarButtonHoverBackgroundColor" ResourceKey="SubtleFillColorSecondary" />
+    <m:StaticResource x:Key="TitleBarButtonPressedBackgroundColor" ResourceKey="SubtleFillColorTertiary" />
+    <sys:Double x:Key="TitleBarCompactHeight">32</sys:Double>
+    <sys:Double x:Key="TitleBarExpandedHeight">48</sys:Double>
     <SolidColorBrush x:Key="TitleBarButtonBackground" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
     <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
 

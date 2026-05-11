@@ -1803,6 +1803,17 @@
     <!-- Resources for Window -->
     <SolidColorBrush x:Key="WindowBorder" Color="#FF707070" />
     <SolidColorBrush x:Key="WindowBorderInactive" Color="#FF555555" />
+    <m:StaticResource x:Key="TitleBarForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="TitleBarDeactivatedForegroundBrush" ResourceKey="TextFillColorTertiaryBrush" />
+    <Color x:Key="TitleBarButtonForegroundColor">#FFFFFF</Color>
+    <Color x:Key="TitleBarButtonHoverForegroundColor">#FFFFFF</Color>
+    <Color x:Key="TitleBarButtonPressedForegroundColor">#CFCFCF</Color>
+    <Color x:Key="TitleBarButtonInactiveForegroundColor">#717171</Color>
+    <m:StaticResource x:Key="TitleBarButtonBackgroundColor" ResourceKey="SubtleFillColorTransparent" />
+    <m:StaticResource x:Key="TitleBarButtonHoverBackgroundColor" ResourceKey="SubtleFillColorSecondary" />
+    <m:StaticResource x:Key="TitleBarButtonPressedBackgroundColor" ResourceKey="SubtleFillColorTertiary" />
+    <sys:Double x:Key="TitleBarCompactHeight">32</sys:Double>
+    <sys:Double x:Key="TitleBarExpandedHeight">48</sys:Double>
     <SolidColorBrush x:Key="TitleBarButtonBackground" Color="Transparent" />
     <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="Transparent" />
 
