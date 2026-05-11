@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.WinUI.TestInfra;
@@ -48,6 +49,38 @@ public class RadioMenuFlyoutItemInteractionTests
 
             Check(items["Date"]);
             VerifySelectedItems(items, "Date");
+        });
+    }
+
+    [TestMethod]
+    public void SubMenuCheckStateVisualTracksCheckedChildren()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var items = CreateSubMenuItems(out var radioSubMenu);
+            RadioMenuItem.SetAreCheckStatesEnabled(radioSubMenu, true);
+
+            var menu = CreateNestedMenu(new object[] { items["Name"], items["Date"], items["Size"], radioSubMenu }, out var rootMenuItem);
+
+            using var host = new TestWindowHost(menu);
+            rootMenuItem.SetCurrentValue(MenuItem.IsSubmenuOpenProperty, true);
+            host.UpdateLayout();
+
+            Assert.IsTrue(RadioMenuItem.GetAreCheckStatesEnabled(radioSubMenu));
+            Assert.IsFalse(radioSubMenu.IsChecked);
+            AssertSubMenuCheckGlyph(radioSubMenu, Visibility.Collapsed, 0.0);
+
+            Check(items["ArtistName"]);
+            host.UpdateLayout();
+
+            Assert.IsTrue(radioSubMenu.IsChecked);
+            AssertSubMenuCheckGlyph(radioSubMenu, Visibility.Visible, 1.0);
+
+            Check(items["Date"]);
+            host.UpdateLayout();
+
+            Assert.IsFalse(radioSubMenu.IsChecked);
+            AssertSubMenuCheckGlyph(radioSubMenu, Visibility.Collapsed, 0.0);
         });
     }
 
@@ -110,6 +143,20 @@ public class RadioMenuFlyoutItemInteractionTests
         return menu;
     }
 
+    private static Menu CreateNestedMenu(IEnumerable<object> items, out MenuItem rootMenuItem)
+    {
+        var menu = new Menu();
+        rootMenuItem = new MenuItem { Header = "Root" };
+
+        foreach (var item in items)
+        {
+            rootMenuItem.Items.Add(item);
+        }
+
+        menu.Items.Add(rootMenuItem);
+        return menu;
+    }
+
     private static void Check(RadioMenuItem item)
     {
         item.SetCurrentValue(MenuItem.IsCheckedProperty, true);
@@ -128,5 +175,15 @@ public class RadioMenuFlyoutItemInteractionTests
         {
             Assert.AreEqual(selected.Contains(item.Key), item.Value.IsChecked, item.Key);
         }
+    }
+
+    private static void AssertSubMenuCheckGlyph(MenuItem subMenu, Visibility expectedVisibility, double expectedOpacity)
+    {
+        subMenu.ApplyTemplate();
+
+        var checkGlyph = subMenu.Template.FindName("CheckGlyph", subMenu) as UIElement;
+        Assert.IsNotNull(checkGlyph, "Submenu headers should expose a check glyph visual.");
+        Assert.AreEqual(expectedVisibility, checkGlyph!.Visibility);
+        Assert.AreEqual(expectedOpacity, checkGlyph.Opacity);
     }
 }

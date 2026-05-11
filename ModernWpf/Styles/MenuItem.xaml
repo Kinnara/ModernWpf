@@ -263,6 +263,7 @@
     <!-- DefaultMenuFlyoutItemStyle -->
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuHeaderTemplateKey}" TargetType="MenuItem">
         <ControlTemplate.Resources>
+            <StreamGeometry x:Key="CheckMark">F1 M 17.939453 5.439453 L 7.5 15.888672 L 2.060547 10.439453 L 2.939453 9.560547 L 7.5 14.111328 L 17.060547 4.560547 Z</StreamGeometry>
             <StreamGeometry x:Key="ChevronRight">M 5.029297 19.091797 L 14.111328 10 L 5.029297 0.908203 L 5.908203 0.029297 L 15.888672 10 L 5.908203 19.970703 Z</StreamGeometry>
         </ControlTemplate.Resources>
         <Border
@@ -282,6 +283,15 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
+                <local:FontIconFallback
+                    x:Name="CheckGlyph"
+                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                    Data="{StaticResource CheckMark}"
+                    FontSize="12"
+                    Foreground="{DynamicResource ToggleMenuFlyoutItemCheckGlyphForeground}"
+                    Opacity="0"
+                    Margin="0,0,16,0"
+                    Visibility="Collapsed" />
                 <Viewbox
                     x:Name="IconRoot"
                     Grid.Column="1"
@@ -369,27 +379,35 @@
             <Trigger Property="Icon" Value="{x:Null}">
                 <Setter Property="Visibility" TargetName="IconRoot" Value="Collapsed" />
             </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
+                <Setter TargetName="CheckGlyph" Property="Visibility" Value="Visible" />
+            </Trigger>
             <Trigger Property="IsHighlighted" Value="True">
                 <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPointerOver}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
+                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
                 <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronPointerOver}" />
                 <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
                 <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPressed}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
+                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
                 <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronPressed}" />
                 <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
             </Trigger>
             <Trigger Property="IsSubmenuOpen" Value="True">
                 <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundSubMenuOpened}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
+                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
                 <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronSubMenuOpened}" />
                 <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundDisabled}" />
                 <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
+                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
                 <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronDisabled}" />
                 <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
             </Trigger>

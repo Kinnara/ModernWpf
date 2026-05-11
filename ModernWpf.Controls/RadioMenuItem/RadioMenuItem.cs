@@ -3,6 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using ModernWpf.Controls.Primitives;
@@ -53,6 +55,57 @@ namespace ModernWpf.Controls
             get => (bool)GetValue(UseSystemFocusVisualsProperty);
             set => SetValue(UseSystemFocusVisualsProperty, value);
         }
+
+        #region AreCheckStatesEnabled
+
+        public static readonly DependencyProperty AreCheckStatesEnabledProperty =
+            DependencyProperty.RegisterAttached(
+                "AreCheckStatesEnabled",
+                typeof(bool),
+                typeof(RadioMenuItem),
+                new PropertyMetadata(false, OnAreCheckStatesEnabledChanged));
+
+        public static bool GetAreCheckStatesEnabled(MenuItem element)
+        {
+            if (element == null)
+            {
+                throw new ArgumentNullException(nameof(element));
+            }
+
+            return (bool)element.GetValue(AreCheckStatesEnabledProperty);
+        }
+
+        public static void SetAreCheckStatesEnabled(MenuItem element, bool value)
+        {
+            if (element == null)
+            {
+                throw new ArgumentNullException(nameof(element));
+            }
+
+            element.SetValue(AreCheckStatesEnabledProperty, value);
+        }
+
+        private static void OnAreCheckStatesEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is MenuItem menuItem)
+            {
+                if ((bool)e.NewValue)
+                {
+                    menuItem.Loaded += OnSubMenuLoaded;
+                    menuItem.Unloaded += OnSubMenuUnloaded;
+                    HookSubMenu(menuItem);
+                }
+                else
+                {
+                    menuItem.Loaded -= OnSubMenuLoaded;
+                    menuItem.Unloaded -= OnSubMenuUnloaded;
+                    UnhookSubMenu(menuItem);
+                    menuItem.SetCurrentValue(IsCheckedProperty, false);
+                }
+            }
+        }
+
+        #endregion
 
         #region CornerRadius
 
@@ -128,6 +181,127 @@ namespace ModernWpf.Controls
             {
                 s_selectionMap.Remove(groupName);
             }
+        }
+
+        private static void OnSubMenuLoaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem)
+            {
+                HookSubMenu(menuItem);
+                UpdateSubMenuCheckState(menuItem);
+            }
+        }
+
+        private static void OnSubMenuUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem)
+            {
+                UnhookSubMenu(menuItem);
+                menuItem.SetCurrentValue(IsCheckedProperty, false);
+            }
+        }
+
+        private static void HookSubMenu(MenuItem menuItem)
+        {
+            UnhookSubMenu(menuItem);
+
+            var hookedItems = new List<RadioMenuItem>();
+            foreach (var radioItem in menuItem.Items.OfType<RadioMenuItem>())
+            {
+                radioItem.Checked += OnSubMenuRadioItemCheckedChanged;
+                radioItem.Unchecked += OnSubMenuRadioItemCheckedChanged;
+                hookedItems.Add(radioItem);
+            }
+
+            SetHookedRadioItems(menuItem, hookedItems);
+
+            if (menuItem.Items is INotifyCollectionChanged notifyCollectionChanged)
+            {
+                NotifyCollectionChangedEventHandler handler = (sender, args) =>
+                {
+                    HookSubMenu(menuItem);
+                    UpdateSubMenuCheckState(menuItem);
+                };
+
+                notifyCollectionChanged.CollectionChanged += handler;
+                SetCollectionChangedHandler(menuItem, handler);
+            }
+
+            UpdateSubMenuCheckState(menuItem);
+        }
+
+        private static void UnhookSubMenu(MenuItem menuItem)
+        {
+            if (GetHookedRadioItems(menuItem) is List<RadioMenuItem> hookedItems)
+            {
+                foreach (var radioItem in hookedItems)
+                {
+                    radioItem.Checked -= OnSubMenuRadioItemCheckedChanged;
+                    radioItem.Unchecked -= OnSubMenuRadioItemCheckedChanged;
+                }
+
+                menuItem.ClearValue(HookedRadioItemsProperty);
+            }
+
+            if (GetCollectionChangedHandler(menuItem) is NotifyCollectionChangedEventHandler handler &&
+                menuItem.Items is INotifyCollectionChanged notifyCollectionChanged)
+            {
+                notifyCollectionChanged.CollectionChanged -= handler;
+                menuItem.ClearValue(CollectionChangedHandlerProperty);
+            }
+        }
+
+        private static void OnSubMenuRadioItemCheckedChanged(object sender, RoutedEventArgs e)
+        {
+            if (sender is RadioMenuItem radioItem &&
+                ItemsControl.ItemsControlFromItemContainer(radioItem) is MenuItem menuItem &&
+                GetAreCheckStatesEnabled(menuItem))
+            {
+                UpdateSubMenuCheckState(menuItem);
+            }
+        }
+
+        private static void UpdateSubMenuCheckState(MenuItem menuItem)
+        {
+            bool isAnyItemChecked = menuItem.Items
+                .OfType<RadioMenuItem>()
+                .Any(item => item.IsChecked);
+
+            menuItem.SetCurrentValue(IsCheckedProperty, isAnyItemChecked);
+        }
+
+        private static readonly DependencyProperty HookedRadioItemsProperty =
+            DependencyProperty.RegisterAttached(
+                "HookedRadioItems",
+                typeof(List<RadioMenuItem>),
+                typeof(RadioMenuItem),
+                new PropertyMetadata(null));
+
+        private static List<RadioMenuItem> GetHookedRadioItems(DependencyObject element)
+        {
+            return (List<RadioMenuItem>)element.GetValue(HookedRadioItemsProperty);
+        }
+
+        private static void SetHookedRadioItems(DependencyObject element, List<RadioMenuItem> value)
+        {
+            element.SetValue(HookedRadioItemsProperty, value);
+        }
+
+        private static readonly DependencyProperty CollectionChangedHandlerProperty =
+            DependencyProperty.RegisterAttached(
+                "CollectionChangedHandler",
+                typeof(NotifyCollectionChangedEventHandler),
+                typeof(RadioMenuItem),
+                new PropertyMetadata(null));
+
+        private static NotifyCollectionChangedEventHandler GetCollectionChangedHandler(DependencyObject element)
+        {
+            return (NotifyCollectionChangedEventHandler)element.GetValue(CollectionChangedHandlerProperty);
+        }
+
+        private static void SetCollectionChangedHandler(DependencyObject element, NotifyCollectionChangedEventHandler value)
+        {
+            element.SetValue(CollectionChangedHandlerProperty, value);
         }
 
         private static readonly Dictionary<string, WeakReference<RadioMenuItem>> s_selectionMap = new Dictionary<string, WeakReference<RadioMenuItem>>();
