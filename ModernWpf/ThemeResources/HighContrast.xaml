@@ -530,7 +530,7 @@
     <Thickness x:Key="AutoSuggestListPadding">-1,0,-1,0</Thickness>
     <Thickness x:Key="AutoSuggestListViewItemMargin">10,11,0,13</Thickness>
     <m:StaticResource x:Key="AutoSuggestBoxSuggestionsListBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
-    <m:StaticResource x:Key="AutoSuggestBoxSuggestionsListBorderBrush" ResourceKey="SystemControlForegroundChromeHighBrush" />
+    <m:StaticResource x:Key="AutoSuggestBoxSuggestionsListBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
     <m:StaticResource x:Key="AutoSuggestBoxLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
     <sys:Double x:Key="AutoSuggestBoxIconFontSize">12</sys:Double>
 
