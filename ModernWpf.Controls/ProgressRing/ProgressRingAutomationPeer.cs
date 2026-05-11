@@ -39,6 +39,11 @@ namespace ModernWpf.Automation.Peers
             return AutomationControlType.ProgressBar;
         }
 
+        protected override bool IsControlElementCore()
+        {
+            return Owner is ProgressRing progressRing && progressRing.IsActive;
+        }
+
         protected override string GetLocalizedControlTypeCore()
         {
             return ResourceAccessor.GetLocalizedStringResource(SR_ProgressRingName);

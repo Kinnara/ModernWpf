@@ -57,7 +57,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | PersonPicture | Pending | Ported WPF-feasible APITests | Existing WPF port; upstream defaults, automation name, small-size safety, initials/group visual states, and visual-tree smoke coverage are ported. WinUI `Contact`, `PreferSmallImage`, XAML metadata provider, and pixel-baseline verification remain excluded/pending for WPF feasibility review. |
 | PipsPager | Pending | Pending | Add feasible WPF control port. |
 | ProgressBar resources | Pending | Pending | Map to WPF ProgressBar style/resource parity. |
-| ProgressRing | Pending | Pending | Existing WPF port; sync determinate/indeterminate behavior and tests. |
+| ProgressRing | Pending | Ported APITests | Existing WPF port; upstream inactive accessibility/raw-view behavior is mapped through the WPF automation peer. Visual behavior tests still pending. |
 | PullToRefresh / RefreshContainer | Pending | Pending | Add feasible WPF interaction port where input semantics can be represented. |
 | RadioButtons | Pending | Ported APITests | Existing WPF port; upstream custom item-template wrapping and IsEnabled visual-state coverage are now ported. Layout/focus tests still pending. |
 | RadioMenuFlyoutItem | Pending | Pending | Existing RadioMenuItem maps this surface; sync API/resource tests. |
