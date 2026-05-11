@@ -79,7 +79,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | TeachingTip | Pending | Pending | Add feasible WPF popup/teaching surface port. |
 | TitleBar | Mapped | Pending | ModernWpf has WPF title bar helpers; map WinUI TitleBar tests to WPF window chrome behavior. |
 | TreeView | Pending | Pending | WPF has stock TreeView; add WinUI-style node/control parity where feasible. |
-| TwoPaneView | Pending | Pending | Add feasible WPF layout control port. |
+| TwoPaneView | Ported | Ported APITest + layout slices | Added WPF layout control with Pane1/Pane2, pane lengths, priority, mode configuration, read-only Mode, and ModeChanged behavior. Tests cover upstream defaults/basic setters plus WPF deterministic wide/tall/single-pane layout. Foldable display-region spanning behavior remains excluded because WPF has no WinUI display-region API. |
 | WebView2 | Optional | Pending | Use `Microsoft.Web.WebView2.Wpf` only in docs/gallery samples; no core ModernWpf dependency. |
 | WrapPanel | Ported | Ported APITests | Dedicated WPF-compatible port added for WinUI Padding, ItemSpacing, LineSpacing, Orientation, and ItemsStretch behavior. Upstream layout tests for padding offset, horizontal/vertical wrapping, spacing, collapsed children, dynamic orientation changes, variable child sizes, and last-item stretch are ported. |
 
