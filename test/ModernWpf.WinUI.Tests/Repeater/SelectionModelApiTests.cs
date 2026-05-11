@@ -134,6 +134,80 @@ public class SelectionModelApiTests
     }
 
     [TestMethod]
+    public void ValidateTwoLevelSingleSelection()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var selectionModel = new SelectionModel();
+            selectionModel.Source = CreateNestedData(levels: 1, groupsAtLevel: 2, countAtLeaf: 2);
+
+            Select(selectionModel, 1, 1, true);
+            ValidateSelection(selectionModel, [Path(1, 1)], [Path(), Path(1)]);
+            Select(selectionModel, 1, 1, false);
+            ValidateSelection(selectionModel, []);
+        });
+    }
+
+    [TestMethod]
+    public void ValidateTwoLevelMultipleSelection()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var selectionModel = new SelectionModel();
+            selectionModel.Source = CreateNestedData(levels: 1, groupsAtLevel: 3, countAtLeaf: 3);
+
+            Select(selectionModel, 1, 2, true);
+            ValidateSelection(selectionModel, [Path(1, 2)], [Path(), Path(1)]);
+            SelectRangeFromAnchor(selectionModel, 2, 2, true);
+            ValidateSelection(
+                selectionModel,
+                [Path(1, 2), Path(2), Path(2, 0), Path(2, 1), Path(2, 2)],
+                [Path(), Path(1)],
+                selectedInnerNodes: 1);
+
+            ClearSelection(selectionModel);
+            SetAnchorIndex(selectionModel, 2, 1);
+            SelectRangeFromAnchor(selectionModel, 0, 1, true);
+            ValidateSelection(
+                selectionModel,
+                [Path(0, 1), Path(0, 2), Path(1, 0), Path(1, 1), Path(1, 2), Path(1), Path(2, 0), Path(2, 1)],
+                [Path(), Path(0), Path(2)],
+                selectedInnerNodes: 1);
+
+            SetAnchorIndex(selectionModel, 1, 1);
+            SelectRangeFromAnchor(selectionModel, 2, 0, false);
+            ValidateSelection(
+                selectionModel,
+                [Path(0, 1), Path(0, 2), Path(1, 0), Path(2, 1)],
+                [Path(), Path(1), Path(0), Path(2)]);
+
+            ClearSelection(selectionModel);
+            ValidateSelection(selectionModel, []);
+        });
+    }
+
+    [TestMethod]
+    public void ValidateNestedSingleSelection()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var selectionModel = new SelectionModel { SingleSelect = true };
+            selectionModel.Source = CreateNestedData(levels: 3, groupsAtLevel: 2, countAtLeaf: 2);
+
+            var path = Path(1, 0, 1, 1);
+            Select(selectionModel, path, true);
+            ValidateSelection(selectionModel, [path], [Path(), Path(1), Path(1, 0), Path(1, 0, 1)]);
+
+            var nextPath = Path(0, 0, 1, 0);
+            Select(selectionModel, nextPath, true);
+            ValidateSelection(selectionModel, [nextPath], [Path(), Path(0), Path(0, 0), Path(0, 0, 1)]);
+
+            Select(selectionModel, nextPath, false);
+            ValidateSelection(selectionModel, []);
+        });
+    }
+
+    [TestMethod]
     public void AlreadySelectedDoesNotRaiseEvent()
     {
         WpfTestHost.Run(() =>
@@ -276,6 +350,18 @@ public class SelectionModelApiTests
         }
     }
 
+    private static void Select(SelectionModel manager, int groupIndex, int itemIndex, bool select)
+    {
+        if (select)
+        {
+            manager.Select(groupIndex, itemIndex);
+        }
+        else
+        {
+            manager.Deselect(groupIndex, itemIndex);
+        }
+    }
+
     private static void Select(SelectionModel manager, IndexPath index, bool select)
     {
         if (select)
@@ -300,6 +386,18 @@ public class SelectionModelApiTests
         }
     }
 
+    private static void SelectRangeFromAnchor(SelectionModel manager, int groupIndex, int itemIndex, bool select)
+    {
+        if (select)
+        {
+            manager.SelectRangeFromAnchor(groupIndex, itemIndex);
+        }
+        else
+        {
+            manager.DeselectRangeFromAnchor(groupIndex, itemIndex);
+        }
+    }
+
     private static void ClearSelection(SelectionModel manager)
     {
         manager.ClearSelection();
@@ -310,23 +408,33 @@ public class SelectionModelApiTests
         manager.SetAnchorIndex(index);
     }
 
+    private static void SetAnchorIndex(SelectionModel manager, int groupIndex, int itemIndex)
+    {
+        manager.SetAnchorIndex(groupIndex, itemIndex);
+    }
+
     private static void ValidateSelection(
         SelectionModel selectionModel,
         IReadOnlyList<IndexPath> expectedSelected,
-        IReadOnlyList<IndexPath>? expectedPartialSelected = null)
+        IReadOnlyList<IndexPath>? expectedPartialSelected = null,
+        int selectedInnerNodes = 0)
     {
-        if (selectionModel.Source is IList source)
+        if (selectionModel.Source != null)
         {
-            for (var i = 0; i < source.Count; i++)
+            foreach (var index in GetIndexPathsInSource(selectionModel.Source))
             {
-                var index = Path(i);
                 var isSelected = selectionModel.IsSelectedAt(index);
                 if (Contains(expectedSelected, index))
                 {
                     Assert.IsTrue(isSelected!.Value, $"{index} is selected.");
                 }
+                else if (expectedPartialSelected != null && Contains(expectedPartialSelected, index))
+                {
+                    Assert.IsNull(isSelected, $"{index} is partially selected.");
+                }
                 else
                 {
+                    Assert.IsNotNull(isSelected, $"{index} has an explicit unselected state.");
                     Assert.IsFalse(isSelected!.Value, $"{index} is not selected.");
                 }
             }
@@ -339,14 +447,6 @@ public class SelectionModelApiTests
             }
         }
 
-        if (expectedPartialSelected != null)
-        {
-            foreach (var index in expectedPartialSelected)
-            {
-                Assert.IsNull(selectionModel.IsSelectedAt(index), $"{index} is partially selected.");
-            }
-        }
-
         if (expectedSelected.Count > 0)
         {
             AssertIndexPathEqual(expectedSelected[0], selectionModel.SelectedIndex);
@@ -356,8 +456,8 @@ public class SelectionModelApiTests
                 Assert.AreEqual(GetData(selectionModel, expectedSelected[0]), selectionModel.SelectedItem);
             }
 
-            Assert.AreEqual(selectionModel.Source != null ? expectedSelected.Count : 0, selectionModel.SelectedItems.Count);
-            Assert.AreEqual(expectedSelected.Count, selectionModel.SelectedIndices.Count);
+            Assert.AreEqual(selectionModel.Source != null ? expectedSelected.Count - selectedInnerNodes : 0, selectionModel.SelectedItems.Count);
+            Assert.AreEqual(expectedSelected.Count - selectedInnerNodes, selectionModel.SelectedIndices.Count);
         }
         else
         {
@@ -382,6 +482,44 @@ public class SelectionModelApiTests
         return data;
     }
 
+    private static IReadOnlyList<IndexPath> GetIndexPathsInSource(object source)
+    {
+        var paths = new List<IndexPath>();
+        Traverse(source, nodeInfo =>
+        {
+            if (!Contains(paths, nodeInfo.Path))
+            {
+                paths.Add(nodeInfo.Path);
+            }
+        });
+
+        return paths;
+    }
+
+    private static void Traverse(object root, Action<TreeWalkNodeInfo> nodeAction)
+    {
+        var pendingNodes = new Stack<TreeWalkNodeInfo>();
+        pendingNodes.Push(new TreeWalkNodeInfo(root, Path()));
+
+        while (pendingNodes.Count > 0)
+        {
+            var currentNode = pendingNodes.Pop();
+            if (currentNode.Current is IList list)
+            {
+                for (var i = list.Count - 1; i >= 0; i--)
+                {
+                    var child = list[i];
+                    if (child != null)
+                    {
+                        pendingNodes.Push(new TreeWalkNodeInfo(child, Append(currentNode.Path, i)));
+                    }
+                }
+            }
+
+            nodeAction(currentNode);
+        }
+    }
+
     private static bool Contains(IEnumerable<IndexPath> list, IndexPath index)
     {
         return list.Any(item => item.CompareTo(index) == 0);
@@ -398,8 +536,56 @@ public class SelectionModelApiTests
         return IndexPath.CreateFromIndices(path);
     }
 
+    private static IndexPath Append(IndexPath path, int index)
+    {
+        var indices = new List<int>();
+        for (var i = 0; i < path.GetSize(); i++)
+        {
+            indices.Add(path.GetAt(i));
+        }
+
+        indices.Add(index);
+        return IndexPath.CreateFromIndices(indices);
+    }
+
+    private static List<object> CreateNestedData(int levels = 3, int groupsAtLevel = 5, int countAtLeaf = 10)
+    {
+        var data = new List<object>();
+        if (levels != 0)
+        {
+            for (var i = 0; i < groupsAtLevel; i++)
+            {
+                data.Add(CreateNestedData(levels - 1, groupsAtLevel, countAtLeaf));
+            }
+        }
+        else
+        {
+            for (var i = 0; i < countAtLeaf; i++)
+            {
+                data.Add(_nextData++);
+            }
+        }
+
+        return data;
+    }
+
     private static void ThrowIfRaisedSelectionChanged(SelectionModel sender, SelectionModelSelectionChangedEventArgs args)
     {
         throw new InvalidOperationException("SelectionChanged was raised when selection did not change.");
+    }
+
+    private static int _nextData;
+
+    private readonly struct TreeWalkNodeInfo
+    {
+        public TreeWalkNodeInfo(object current, IndexPath path)
+        {
+            Current = current;
+            Path = path;
+        }
+
+        public object Current { get; }
+
+        public IndexPath Path { get; }
     }
 }
