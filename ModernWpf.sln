@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32519.379
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModernWpf.SampleApp", "ModernWpf.SampleApp\ModernWpf.SampleApp.csproj", "{4AB31DB2-4024-49E6-A522-F5418371A264}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModernWpf.Gallery", "ModernWpf.Gallery\ModernWpf.Gallery.csproj", "{4AB31DB2-4024-49E6-A522-F5418371A264}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModernWpf", "ModernWpf\ModernWpf.csproj", "{26077890-EB28-4B1F-9805-490479DC720F}"
 EndProject

@@ -1,0 +1,31 @@
+<UserControl
+    x:Class="ModernWpf.Gallery.Shell.NavigationRootPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    d:DesignHeight="820"
+    d:DesignWidth="1180"
+    mc:Ignorable="d">
+
+    <ui:NavigationView
+        x:Name="Navigation"
+        IsBackButtonVisible="Auto"
+        IsSettingsVisible="False"
+        ItemInvoked="OnNavigationItemInvoked"
+        PaneDisplayMode="Left"
+        PaneTitle="ModernWPF Gallery">
+        <ui:NavigationView.PaneCustomContent>
+            <ui:AutoSuggestBox
+                x:Name="SearchBox"
+                Margin="12,4,12,12"
+                PlaceholderText="Search controls"
+                QueryIcon="Find"
+                QuerySubmitted="OnSearchQuerySubmitted"
+                TextChanged="OnSearchTextChanged" />
+        </ui:NavigationView.PaneCustomContent>
+
+        <ContentControl x:Name="ContentHost" />
+    </ui:NavigationView>
+</UserControl>
