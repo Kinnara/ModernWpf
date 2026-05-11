@@ -1489,37 +1489,37 @@
     <m:StaticResource x:Key="SliderInlineTickBarFill" ResourceKey="SystemControlBackgroundAltHighBrush" />
 
     <!-- Resources for SplitButton -->
-    <m:StaticResource x:Key="SplitButtonBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="SplitButtonBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
     <m:StaticResource x:Key="SplitButtonBackgroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
     <m:StaticResource x:Key="SplitButtonBackgroundPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
-    <m:StaticResource x:Key="SplitButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="SplitButtonBackgroundChecked" ResourceKey="SystemControlHighlightAccentBrush" />
+    <m:StaticResource x:Key="SplitButtonBackgroundDisabled" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBackgroundChecked" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="SplitButtonBackgroundCheckedPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
-    <m:StaticResource x:Key="SplitButtonBackgroundCheckedPressed" ResourceKey="SystemColorButtonTextColorBrush" />
-    <m:StaticResource x:Key="SplitButtonBackgroundCheckedDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="SplitButtonBackgroundCheckedPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBackgroundCheckedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
     <m:StaticResource x:Key="SplitButtonForeground" ResourceKey="SystemColorButtonTextColorBrush" />
     <m:StaticResource x:Key="SplitButtonForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="SplitButtonForegroundPressed" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="SplitButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="SplitButtonForegroundChecked" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundChecked" ResourceKey="SystemColorHighlightTextColorBrush" />
     <m:StaticResource x:Key="SplitButtonForegroundCheckedPointerOver" ResourceKey="SystemColorButtonFaceColorBrush" />
     <m:StaticResource x:Key="SplitButtonForegroundCheckedPressed" ResourceKey="SystemColorButtonTextColorBrush" />
-    <m:StaticResource x:Key="SplitButtonForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="SplitButtonForegroundCheckedDisabled" ResourceKey="SystemColorWindowColorBrush" />
     <m:StaticResource x:Key="SplitButtonForegroundSecondary" ResourceKey="SystemColorButtonTextColorBrush" />
     <m:StaticResource x:Key="SplitButtonForegroundSecondaryPressed" ResourceKey="SystemColorHighlightColorBrush" />
     <m:StaticResource x:Key="SplitButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushPressed" ResourceKey="SystemColorButtonTextColorBrush" />
     <m:StaticResource x:Key="SplitButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushDivider" ResourceKey="SystemControlForegroundTransparentBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushChecked" ResourceKey="SystemControlHighlightAltTransparentBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushDivider" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushChecked" ResourceKey="SystemColorButtonTextColorBrush" />
     <m:StaticResource x:Key="SplitButtonBorderBrushCheckedPointerOver" ResourceKey="SystemColorButtonTextColorBrush" />
     <m:StaticResource x:Key="SplitButtonBorderBrushCheckedPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
-    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedDivider" ResourceKey="SystemControlHighlightAltTransparentBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="SplitButtonBorderBrushCheckedDivider" ResourceKey="SystemColorHighlightTextColorBrush" />
     <Thickness x:Key="SplitButtonBorderThemeThickness">1</Thickness>
 
-    <m:StaticResource x:Key="SplitButtonInAppBarUnfocusedPointerOver" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="SplitButtonInAppBarUnfocusedPointerOver" ResourceKey="SystemColorButtonFaceColorBrush" />
 
     <!-- Resources for SplitView -->
     <sys:Double x:Key="SplitViewOpenPaneThemeLength">320</sys:Double>
