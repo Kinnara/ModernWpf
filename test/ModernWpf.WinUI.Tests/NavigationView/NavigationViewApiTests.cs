@@ -1,8 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.WinUI.TestApp;
@@ -668,10 +670,130 @@ public class NavigationViewApiTests
         }
     }
 
+    [TestMethod]
+    public void VerifyClosedCompactVisualState()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var menuItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Item"
+            };
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftCompact,
+                IsPaneOpen = false,
+                IsSettingsVisible = false
+            };
+            navView.MenuItems.Add(menuItem);
+
+            using var host = new TestWindowHost(navView);
+
+            var presenter = VisualTreeTestHelper.FindDescendant<ModernWpf.Controls.Primitives.NavigationViewItemPresenter>(menuItem);
+            Assert.IsNotNull(presenter);
+            var presenterLayoutRoot = VisualTreeHelper.GetChild(presenter!, 0) as FrameworkElement;
+            Assert.IsNotNull(presenterLayoutRoot);
+
+            var stateName = VisualStateManager.GetVisualStateGroups(presenterLayoutRoot!)
+                .OfType<VisualStateGroup>()
+                .Single(group => group.Name == "PaneAndTopLevelItemStates")
+                .CurrentState
+                .Name;
+
+            Assert.AreEqual("ClosedCompactAndTopLevelItem", stateName);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyExpandCollapseChevronVisibility()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var children = new ObservableCollection<string>();
+            var parentItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "ParentItem",
+                MenuItemsSource = children
+            };
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Width = 1008
+            };
+            navView.MenuItems.Add(parentItem);
+
+            using var host = new TestWindowHost(navView);
+
+            var chevron = FindNamedDescendant<FrameworkElement>(parentItem, "ExpandCollapseChevron");
+            Assert.AreEqual(Visibility.Collapsed, chevron.Visibility);
+
+            children.Add("Child 1");
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, chevron.Visibility);
+
+            children.Clear();
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Collapsed, chevron.Visibility);
+
+            children.Add("Child 2");
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, chevron.Visibility);
+
+            parentItem.MenuItemsSource = null;
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Collapsed, chevron.Visibility);
+
+            parentItem.MenuItems.Add(new ModernWpf.Controls.NavigationViewItem { Content = "Child 3" });
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, chevron.Visibility);
+
+            parentItem.MenuItems.Clear();
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Collapsed, chevron.Visibility);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyOverflowButtonToolTip()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            var overflowButton = FindNamedDescendant<Button>(navView, "TopNavOverflowButton");
+            Assert.AreEqual("More", GetToolTipContent(overflowButton));
+        });
+    }
+
     private static object GetToolTipContent(FrameworkElement element)
     {
         var toolTip = ToolTipService.GetToolTip(element);
         return toolTip is ToolTip toolTipElement ? toolTipElement.Content : toolTip;
+    }
+
+    private static T FindNamedDescendant<T>(DependencyObject root, string name)
+        where T : FrameworkElement
+    {
+        foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
+        {
+            if (descendant is T match && match.Name == name)
+            {
+                return match;
+            }
+        }
+
+        Assert.Fail($"Could not find descendant named '{name}'.");
+        throw new InvalidOperationException();
     }
 
     private static TestWindowHost CreateNavigationViewHost(
