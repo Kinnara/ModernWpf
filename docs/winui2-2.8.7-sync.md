@@ -54,7 +54,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | NumberBox | Pending | Ported APITests | WinUI 2.8.7 API tests for text alignment, input scope, enabled visual state, and UIA name forwarding are ported; parser and interaction coverage remain pending. |
 | PagerControl | Pending | Pending | Add feasible WPF control port if distinct from PipsPager. |
 | ParallaxView | Pending | Pending | Feasibility depends on WPF scroll/transform equivalent; document exclusions for compositor-only behavior. |
-| PersonPicture | Pending | Pending | Existing WPF port; sync initials/badge behavior and tests. |
+| PersonPicture | Pending | Ported WPF-feasible APITests | Existing WPF port; upstream defaults, automation name, small-size safety, initials/group visual states, and visual-tree smoke coverage are ported. WinUI `Contact`, `PreferSmallImage`, XAML metadata provider, and pixel-baseline verification remain excluded/pending for WPF feasibility review. |
 | PipsPager | Pending | Pending | Add feasible WPF control port. |
 | ProgressBar resources | Pending | Pending | Map to WPF ProgressBar style/resource parity. |
 | ProgressRing | Pending | Pending | Existing WPF port; sync determinate/indeterminate behavior and tests. |
