@@ -9,6 +9,21 @@ namespace ModernWpf.WinUI.Tests.ProgressRing;
 public class ProgressRingApiTests
 {
     [TestMethod]
+    public void VerifyDefaults()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var progressRing = new ModernWpf.Controls.ProgressRing();
+
+            Assert.IsTrue(progressRing.IsActive);
+            Assert.IsTrue(progressRing.IsIndeterminate);
+            Assert.AreEqual(0.0, progressRing.Minimum);
+            Assert.AreEqual(100.0, progressRing.Maximum);
+            Assert.AreEqual(0.0, progressRing.Value);
+        });
+    }
+
+    [TestMethod]
     public void VerifyAccessibilityView()
     {
         WpfTestHost.Run(() =>
