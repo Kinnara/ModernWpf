@@ -44,7 +44,7 @@ The old test projects remain on disk for reference while porting, but are no lon
 | ContentDialog | Pending | Pending | Existing WPF port; sync resources and behavior tests. |
 | DropDownButton | Pending | Pending | Existing WPF port; sync resources and tests. |
 | Expander | Pending | Pending | WPF has stock Expander; align ModernWpf styling and WinUI resource/API expectations where feasible. |
-| IconSource / ImageIcon | Pending | Pending | Existing IconElement/IconSource surface; sync WinUI 2.8.7 API/resource behavior where feasible. |
+| IconSource / ImageIcon | Pending | Ported WPF-feasible APITests | Existing Symbol/Font/Bitmap/Path IconSource API propagation is covered. `ImageIconSource`, `AnimatedIconSource`, text-scale/mirroring APIs, and WinUI XAML metadata provider tests are not present in the current WPF surface and remain pending/excluded for feasibility review. |
 | InfoBadge | Pending | Pending | Add feasible WPF control port. |
 | InfoBar | Pending | Pending | Add feasible WPF control port. |
 | LayoutPanel | Pending | Pending | Existing WPF port; sync tests. |
