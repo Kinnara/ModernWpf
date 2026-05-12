@@ -282,6 +282,171 @@ public class TeachingTipApiTests
     }
 
     [TestMethod]
+    public void TeachingTipOpensInPopupWithTargetedPlacement()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button
+            {
+                Width = 80,
+                Height = 24,
+                Content = "Target",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(120, 16, 0, 0)
+            };
+            var teachingTip = new TeachingTipControl
+            {
+                IsOpen = true,
+                Target = target,
+                PreferredPlacement = TeachingTipPlacementMode.Bottom,
+                PlacementMargin = new Thickness(0, 8, 0, 0),
+                Content = "Targeted tip"
+            };
+            var root = new Grid
+            {
+                Width = 320,
+                Height = 200,
+                Children =
+                {
+                    target,
+                    teachingTip
+                }
+            };
+
+            using var host = new TestWindowHost(root, width: 360, height: 240);
+            var popup = FindNamedDescendant<Popup>(teachingTip, "Popup");
+            var placements = popup.CustomPopupPlacementCallback(new Size(140, 80), new Size(80, 24), default);
+
+            Assert.IsTrue(popup.IsOpen);
+            Assert.AreSame(target, popup.PlacementTarget);
+            Assert.AreEqual(PlacementMode.Custom, popup.Placement);
+            Assert.IsNotNull(popup.Child);
+            Assert.AreEqual(8 + 24, placements[0].Point.Y);
+        });
+    }
+
+    [TestMethod]
+    public void TeachingTipPlacementFallsBackInsideRootBounds()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var root = new Grid
+            {
+                Width = 320,
+                Height = 160
+            };
+            var target = new Button
+            {
+                Width = 80,
+                Height = 24,
+                Content = "Target",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Margin = new Thickness(120, 0, 0, 4)
+            };
+            var teachingTip = new TeachingTipControl
+            {
+                IsOpen = true,
+                Target = target,
+                PreferredPlacement = TeachingTipPlacementMode.Bottom,
+                Content = "Targeted tip"
+            };
+
+            root.Children.Add(target);
+            root.Children.Add(teachingTip);
+
+            using var host = new TestWindowHost(root, width: 360, height: 220);
+            var popup = FindNamedDescendant<Popup>(teachingTip, "Popup");
+            var placements = popup.CustomPopupPlacementCallback(new Size(140, 80), new Size(80, 24), default);
+
+            Assert.IsTrue(placements[0].Point.Y < 0, "Bottom placement should fall back above the target when it would exceed the root bounds.");
+        });
+    }
+
+    [TestMethod]
+    public void TeachingTipLightDismissClosesWithReason()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button { Width = 80, Height = 24, Content = "Target" };
+            var outside = new Button { Width = 80, Height = 24, Content = "Outside" };
+            var teachingTip = new TeachingTipControl
+            {
+                IsOpen = true,
+                IsLightDismissEnabled = true,
+                Target = target,
+                Content = "Targeted tip"
+            };
+            var root = new StackPanel
+            {
+                Children =
+                {
+                    target,
+                    outside,
+                    teachingTip
+                }
+            };
+            TeachingTipCloseReason? closeReason = null;
+            teachingTip.Closed += (_, args) => closeReason = args.Reason;
+
+            using var host = new TestWindowHost(root, width: 360, height: 240);
+            var popup = FindNamedDescendant<Popup>(teachingTip, "Popup");
+
+            outside.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Left)
+            {
+                RoutedEvent = UIElement.PreviewMouseDownEvent,
+                Source = outside
+            });
+            host.UpdateLayout();
+
+            Assert.IsFalse(teachingTip.IsOpen);
+            Assert.IsFalse(popup.IsOpen);
+            Assert.AreEqual(TeachingTipCloseReason.LightDismiss, closeReason);
+        });
+    }
+
+    [TestMethod]
+    public void TeachingTipClosesWhenTargetUnloads()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var root = new StackPanel();
+            var target = new Button { Width = 80, Height = 24, Content = "Target" };
+            var teachingTip = new TeachingTipControl
+            {
+                IsOpen = true,
+                Target = target,
+                Content = "Targeted tip"
+            };
+            TeachingTipCloseReason? closeReason = null;
+            teachingTip.Closed += (_, args) => closeReason = args.Reason;
+
+            root.Children.Add(target);
+            root.Children.Add(teachingTip);
+
+            using var host = new TestWindowHost(root, width: 360, height: 240);
+            var popup = FindNamedDescendant<Popup>(teachingTip, "Popup");
+            Assert.IsTrue(popup.IsOpen);
+
+            root.Children.Remove(target);
+            host.UpdateLayout();
+
+            Assert.IsFalse(teachingTip.IsOpen);
+            Assert.IsFalse(popup.IsOpen);
+            Assert.AreEqual(TeachingTipCloseReason.Programmatic, closeReason);
+        });
+    }
+
+    [TestMethod]
     public void FinalWinUI2TeachingTipThemeResources()
     {
         WpfTestHost.Run(() =>
@@ -352,7 +517,7 @@ public class TeachingTipApiTests
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
         where T : FrameworkElement
     {
-        foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
+        foreach (var descendant in EnumerateDescendantsIncludingPopupChildren(root))
         {
             if (descendant is T element && element.Name == name)
             {
@@ -361,6 +526,24 @@ public class TeachingTipApiTests
         }
 
         throw new InvalidOperationException($"Could not find descendant named '{name}'.");
+    }
+
+    private static IEnumerable<DependencyObject> EnumerateDescendantsIncludingPopupChildren(DependencyObject root)
+    {
+        foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
+        {
+            yield return descendant;
+
+            if (descendant is Popup { Child: { } child })
+            {
+                yield return child;
+
+                foreach (var popupChildDescendant in EnumerateDescendantsIncludingPopupChildren(child))
+                {
+                    yield return popupChildDescendant;
+                }
+            }
+        }
     }
 
     private sealed class RecordingCommand : ICommand

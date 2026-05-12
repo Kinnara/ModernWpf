@@ -64,145 +64,153 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:TeachingTip">
-                    <Border
-                        x:Name="Container"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Background="Transparent"
-                        Visibility="Collapsed">
-                        <Grid
-                            MinHeight="{StaticResource TeachingTipMinHeight}"
-                            MinWidth="{StaticResource TeachingTipMinWidth}"
-                            MaxHeight="{StaticResource TeachingTipMaxHeight}"
-                            MaxWidth="{StaticResource TeachingTipMaxWidth}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="{StaticResource TeachingTipTailShortSideLength}" />
-                                <ColumnDefinition Width="{StaticResource TeachingTipTailMargin}" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="{StaticResource TeachingTipTailMargin}" />
-                                <ColumnDefinition Width="{StaticResource TeachingTipTailShortSideLength}" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="{StaticResource TeachingTipTailShortSideLength}" />
-                                <RowDefinition Height="{StaticResource TeachingTipTailMargin}" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="{StaticResource TeachingTipTailMargin}" />
-                                <RowDefinition Height="{StaticResource TeachingTipTailShortSideLength}" />
-                            </Grid.RowDefinitions>
-
+                    <Grid>
+                        <Popup
+                            x:Name="Popup"
+                            AllowsTransparency="True"
+                            PopupAnimation="Fade"
+                            StaysOpen="True">
                             <Border
-                                x:Name="ContentRootGrid"
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Grid.RowSpan="3"
-                                Grid.ColumnSpan="3"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="{TemplateBinding CornerRadius}">
-                                <Grid>
+                                x:Name="Container"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Background="Transparent"
+                                Visibility="Collapsed">
+                                <Grid
+                                    MinHeight="{StaticResource TeachingTipMinHeight}"
+                                    MinWidth="{StaticResource TeachingTipMinWidth}"
+                                    MaxHeight="{StaticResource TeachingTipMaxHeight}"
+                                    MaxWidth="{StaticResource TeachingTipMaxWidth}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="{StaticResource TeachingTipTailShortSideLength}" />
+                                        <ColumnDefinition Width="{StaticResource TeachingTipTailMargin}" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="{StaticResource TeachingTipTailMargin}" />
+                                        <ColumnDefinition Width="{StaticResource TeachingTipTailShortSideLength}" />
+                                    </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="{StaticResource TeachingTipTailShortSideLength}" />
+                                        <RowDefinition Height="{StaticResource TeachingTipTailMargin}" />
                                         <RowDefinition Height="*" />
-                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="{StaticResource TeachingTipTailMargin}" />
+                                        <RowDefinition Height="{StaticResource TeachingTipTailShortSideLength}" />
                                     </Grid.RowDefinitions>
 
                                     <Border
-                                        x:Name="HeroContentBorder"
-                                        Grid.Row="0"
+                                        x:Name="ContentRootGrid"
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Grid.RowSpan="3"
+                                        Grid.ColumnSpan="3"
                                         Background="{TemplateBinding Background}"
-                                        Visibility="Collapsed">
-                                        <ContentPresenter Content="{TemplateBinding HeroContent}" />
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{TemplateBinding CornerRadius}">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <Border
+                                                x:Name="HeroContentBorder"
+                                                Grid.Row="0"
+                                                Background="{TemplateBinding Background}"
+                                                Visibility="Collapsed">
+                                                <ContentPresenter Content="{TemplateBinding HeroContent}" />
+                                            </Border>
+
+                                            <Grid x:Name="NonHeroContentRootGrid" Grid.Row="1">
+                                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                                    <StackPanel Margin="{StaticResource TeachingTipContentMargin}">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <ContentPresenter
+                                                                x:Name="IconPresenter"
+                                                                Grid.Column="0"
+                                                                Margin="{StaticResource TeachingTipIconPresenterMarginWithIcon}"
+                                                                Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}"
+                                                                Visibility="Collapsed" />
+                                                            <StackPanel
+                                                                x:Name="TitlesStackPanel"
+                                                                Grid.Column="1"
+                                                                Margin="{StaticResource TeachingTipTitleStackPanelMarginWithHeaderCloseButton}">
+                                                                <TextBlock
+                                                                    x:Name="TitleTextBlock"
+                                                                    Text="{TemplateBinding Title}"
+                                                                    TextWrapping="Wrap"
+                                                                    Foreground="{DynamicResource TeachingTipTitleForegroundBrush}"
+                                                                    FontFamily="{TemplateBinding FontFamily}"
+                                                                    FontWeight="SemiBold"
+                                                                    Visibility="Collapsed" />
+                                                                <TextBlock
+                                                                    x:Name="SubtitleTextBlock"
+                                                                    Text="{TemplateBinding Subtitle}"
+                                                                    TextWrapping="Wrap"
+                                                                    Foreground="{DynamicResource TeachingTipSubtitleForegroundBrush}"
+                                                                    FontFamily="{TemplateBinding FontFamily}"
+                                                                    Visibility="Collapsed" />
+                                                            </StackPanel>
+                                                        </Grid>
+
+                                                        <Border
+                                                            x:Name="MainContentPresenter"
+                                                            Margin="{StaticResource TeachingTipMainContentPresentMargin}"
+                                                            Background="{TemplateBinding Background}"
+                                                            TextElement.FontFamily="{TemplateBinding FontFamily}"
+                                                            TextElement.FontSize="{TemplateBinding FontSize}"
+                                                            TextElement.FontStretch="{TemplateBinding FontStretch}"
+                                                            TextElement.FontStyle="{TemplateBinding FontStyle}"
+                                                            TextElement.FontWeight="{TemplateBinding FontWeight}"
+                                                            TextElement.Foreground="{TemplateBinding Foreground}">
+                                                            <ContentPresenter
+                                                                Content="{TemplateBinding Content}"
+                                                                ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                                        </Border>
+
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <Button
+                                                                x:Name="ActionButton"
+                                                                HorizontalAlignment="Stretch"
+                                                                Style="{TemplateBinding ActionButtonStyle}"
+                                                                Content="{TemplateBinding ActionButtonContent}"
+                                                                Visibility="Collapsed" />
+                                                            <Button
+                                                                x:Name="CloseButton"
+                                                                Grid.Column="1"
+                                                                HorizontalAlignment="Stretch"
+                                                                Style="{TemplateBinding CloseButtonStyle}"
+                                                                Content="{TemplateBinding CloseButtonContent}"
+                                                                Visibility="Collapsed" />
+                                                        </Grid>
+                                                    </StackPanel>
+                                                </ScrollViewer>
+
+                                                <Button
+                                                    x:Name="AlternateCloseButton"
+                                                    Style="{StaticResource TeachingTipAlternateCloseButtonStyle}" />
+                                            </Grid>
+                                        </Grid>
                                     </Border>
 
-                                    <Grid x:Name="NonHeroContentRootGrid" Grid.Row="1">
-                                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                            <StackPanel Margin="{StaticResource TeachingTipContentMargin}">
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <ContentPresenter
-                                                        x:Name="IconPresenter"
-                                                        Grid.Column="0"
-                                                        Margin="{StaticResource TeachingTipIconPresenterMarginWithIcon}"
-                                                        Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}"
-                                                        Visibility="Collapsed" />
-                                                    <StackPanel
-                                                        x:Name="TitlesStackPanel"
-                                                        Grid.Column="1"
-                                                        Margin="{StaticResource TeachingTipTitleStackPanelMarginWithHeaderCloseButton}">
-                                                        <TextBlock
-                                                            x:Name="TitleTextBlock"
-                                                            Text="{TemplateBinding Title}"
-                                                            TextWrapping="Wrap"
-                                                            Foreground="{DynamicResource TeachingTipTitleForegroundBrush}"
-                                                            FontFamily="{TemplateBinding FontFamily}"
-                                                            FontWeight="SemiBold"
-                                                            Visibility="Collapsed" />
-                                                        <TextBlock
-                                                            x:Name="SubtitleTextBlock"
-                                                            Text="{TemplateBinding Subtitle}"
-                                                            TextWrapping="Wrap"
-                                                            Foreground="{DynamicResource TeachingTipSubtitleForegroundBrush}"
-                                                            FontFamily="{TemplateBinding FontFamily}"
-                                                            Visibility="Collapsed" />
-                                                    </StackPanel>
-                                                </Grid>
-
-                                                <Border
-                                                    x:Name="MainContentPresenter"
-                                                    Margin="{StaticResource TeachingTipMainContentPresentMargin}"
-                                                    Background="{TemplateBinding Background}"
-                                                    TextElement.FontFamily="{TemplateBinding FontFamily}"
-                                                    TextElement.FontSize="{TemplateBinding FontSize}"
-                                                    TextElement.FontStretch="{TemplateBinding FontStretch}"
-                                                    TextElement.FontStyle="{TemplateBinding FontStyle}"
-                                                    TextElement.FontWeight="{TemplateBinding FontWeight}"
-                                                    TextElement.Foreground="{TemplateBinding Foreground}">
-                                                    <ContentPresenter
-                                                        Content="{TemplateBinding Content}"
-                                                        ContentTemplate="{TemplateBinding ContentTemplate}" />
-                                                </Border>
-
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <Button
-                                                        x:Name="ActionButton"
-                                                        HorizontalAlignment="Stretch"
-                                                        Style="{TemplateBinding ActionButtonStyle}"
-                                                        Content="{TemplateBinding ActionButtonContent}"
-                                                        Visibility="Collapsed" />
-                                                    <Button
-                                                        x:Name="CloseButton"
-                                                        Grid.Column="1"
-                                                        HorizontalAlignment="Stretch"
-                                                        Style="{TemplateBinding CloseButtonStyle}"
-                                                        Content="{TemplateBinding CloseButtonContent}"
-                                                        Visibility="Collapsed" />
-                                                </Grid>
-                                            </StackPanel>
-                                        </ScrollViewer>
-
-                                        <Button
-                                            x:Name="AlternateCloseButton"
-                                            Style="{StaticResource TeachingTipAlternateCloseButtonStyle}" />
-                                    </Grid>
+                                    <Polygon
+                                        x:Name="TailPolygon"
+                                        Fill="{TemplateBinding Background}"
+                                        Stroke="{TemplateBinding BorderBrush}"
+                                        StrokeThickness="{StaticResource TeachingTipBorderThickness}"
+                                        Visibility="Collapsed" />
                                 </Grid>
                             </Border>
-
-                            <Polygon
-                                x:Name="TailPolygon"
-                                Fill="{TemplateBinding Background}"
-                                Stroke="{TemplateBinding BorderBrush}"
-                                StrokeThickness="{StaticResource TeachingTipBorderThickness}"
-                                Visibility="Collapsed" />
-                        </Grid>
-                    </Border>
+                        </Popup>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

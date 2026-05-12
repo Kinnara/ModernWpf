@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -10,6 +11,7 @@ namespace ModernWpf.Controls
 {
     public class TeachingTip : ContentControl
     {
+        private const string PopupName = "Popup";
         private const string ContainerName = "Container";
         private const string ContentRootGridName = "ContentRootGrid";
         private const string HeroContentBorderName = "HeroContentBorder";
@@ -30,6 +32,8 @@ namespace ModernWpf.Controls
         public TeachingTip()
         {
             SetValue(TemplateSettingsPropertyKey, new TeachingTipTemplateSettings());
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
         public static readonly DependencyProperty TitleProperty =
@@ -76,7 +80,7 @@ namespace ModernWpf.Controls
                 nameof(Target),
                 typeof(FrameworkElement),
                 typeof(TeachingTip),
-                new PropertyMetadata(null, OnVisualStatePropertyChanged));
+                new PropertyMetadata(null, OnTargetPropertyChanged));
 
         public FrameworkElement Target
         {
@@ -213,7 +217,7 @@ namespace ModernWpf.Controls
                 nameof(ShouldConstrainToRootBounds),
                 typeof(bool),
                 typeof(TeachingTip),
-                new PropertyMetadata(true));
+                new PropertyMetadata(true, OnVisualStatePropertyChanged));
 
         public bool ShouldConstrainToRootBounds
         {
@@ -321,9 +325,12 @@ namespace ModernWpf.Controls
         public override void OnApplyTemplate()
         {
             UnhookButtonEvents();
+            UpdateLightDismissHook(null);
+            UpdateRepositionHooks(null, null);
 
             base.OnApplyTemplate();
 
+            _popup = GetTemplateChild(PopupName) as Popup;
             _container = GetTemplateChild(ContainerName) as FrameworkElement;
             _contentRootGrid = GetTemplateChild(ContentRootGridName) as Border;
             _heroContentBorder = GetTemplateChild(HeroContentBorderName) as Border;
@@ -337,6 +344,7 @@ namespace ModernWpf.Controls
             _tailPolygon = GetTemplateChild(TailPolygonName) as Polygon;
 
             HookButtonEvents();
+            ConfigurePopup();
             UpdateIcon();
             UpdateVisualState();
         }
@@ -372,11 +380,36 @@ namespace ModernWpf.Controls
             ((TeachingTip)d).UpdateVisualState();
         }
 
+        private static void OnTargetPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var teachingTip = (TeachingTip)d;
+            teachingTip.UpdateTargetUnloadHook((FrameworkElement)e.NewValue);
+            teachingTip.UpdateVisualState();
+        }
+
         private static void OnIconSourcePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var teachingTip = (TeachingTip)d;
             teachingTip.UpdateIcon();
             teachingTip.UpdateVisualState();
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            UpdateTargetUnloadHook(Target);
+            UpdateVisualState();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            UpdateTargetUnloadHook(null);
+            UpdateLightDismissHook(null);
+            UpdateRepositionHooks(null, null);
+
+            if (_popup != null)
+            {
+                _popup.SetCurrentValue(Popup.IsOpenProperty, false);
+            }
         }
 
         private void HookButtonEvents()
@@ -423,6 +456,18 @@ namespace ModernWpf.Controls
             {
                 _alternateCloseButton.Click -= OnCloseButtonClick;
             }
+        }
+
+        private void ConfigurePopup()
+        {
+            if (_popup == null)
+            {
+                return;
+            }
+
+            _popup.StaysOpen = true;
+            _popup.Placement = PlacementMode.Custom;
+            _popup.CustomPopupPlacementCallback = PositionPopup;
         }
 
         private void OnActionButtonClick(object sender, RoutedEventArgs e)
@@ -521,7 +566,7 @@ namespace ModernWpf.Controls
             if (_container != null)
             {
                 _container.Visibility = IsOpen ? Visibility.Visible : Visibility.Collapsed;
-                _container.Margin = PlacementMargin;
+                _container.Margin = default;
             }
 
             if (_titleTextBlock != null)
@@ -543,6 +588,37 @@ namespace ModernWpf.Controls
             UpdateHeroContentPlacement();
             UpdateTailPlacement();
             UpdateBackgroundResources();
+            UpdatePopupState();
+        }
+
+        private void UpdatePopupState()
+        {
+            if (_popup == null)
+            {
+                return;
+            }
+
+            var placementTarget = GetPopupPlacementTarget();
+            _popup.Placement = PlacementMode.Custom;
+            _popup.CustomPopupPlacementCallback = PositionPopup;
+
+            if (!ReferenceEquals(_popup.PlacementTarget, placementTarget))
+            {
+                _popup.PlacementTarget = placementTarget;
+            }
+
+            if (_popup.IsOpen != IsOpen)
+            {
+                _popup.SetCurrentValue(Popup.IsOpenProperty, IsOpen);
+            }
+
+            if (IsOpen)
+            {
+                RepositionPopup();
+            }
+
+            UpdateLightDismissHook(IsOpen && IsLightDismissEnabled ? Window.GetWindow(placementTarget) : null);
+            UpdateRepositionHooks(IsOpen ? placementTarget : null, IsOpen ? Window.GetWindow(placementTarget) : null);
         }
 
         private void UpdateButtons()
@@ -601,11 +677,7 @@ namespace ModernWpf.Controls
 
             _tailPolygon.Visibility = Visibility.Visible;
 
-            var placement = PreferredPlacement == TeachingTipPlacementMode.Auto
-                ? TeachingTipPlacementMode.Bottom
-                : PreferredPlacement;
-
-            ApplyTailPlacement(placement);
+            ApplyTailPlacement(GetEffectivePlacement());
         }
 
         private void ApplyTailPlacement(TeachingTipPlacementMode placement)
@@ -647,6 +719,221 @@ namespace ModernWpf.Controls
             _tailPolygon.Margin = GetThicknessResource(marginResourceKey);
         }
 
+        private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)
+        {
+            var fallbackPlacements = GetPlacementFallbacks(GetEffectivePlacement());
+            var placements = new CustomPopupPlacement[ShouldConstrainToRootBounds ? fallbackPlacements.Length : 1];
+
+            for (var i = 0; i < placements.Length; i++)
+            {
+                placements[i] = CreatePopupPlacement(fallbackPlacements[i], popupSize, targetSize);
+            }
+
+            if (ShouldConstrainToRootBounds && placements.Length > 1)
+            {
+                var fittingIndex = FindFirstPlacementWithinRootBounds(placements, popupSize);
+                if (fittingIndex > 0)
+                {
+                    var fittingPlacement = placements[fittingIndex];
+                    for (var i = fittingIndex; i > 0; i--)
+                    {
+                        placements[i] = placements[i - 1];
+                    }
+
+                    placements[0] = fittingPlacement;
+                }
+                else if (fittingIndex < 0)
+                {
+                    placements[0] = new CustomPopupPlacement(
+                        ClampPlacementToRootBounds(placements[0].Point, popupSize),
+                        placements[0].PrimaryAxis);
+                }
+            }
+
+            return placements;
+        }
+
+        private CustomPopupPlacement CreatePopupPlacement(TeachingTipPlacementMode placement, Size popupSize, Size targetSize)
+        {
+            return new CustomPopupPlacement(
+                GetPopupPoint(placement, popupSize, targetSize),
+                GetPopupPrimaryAxis(placement));
+        }
+
+        private Point GetPopupPoint(TeachingTipPlacementMode placement, Size popupSize, Size targetSize)
+        {
+            var margin = PlacementMargin;
+            var centeredX = (targetSize.Width - popupSize.Width) / 2 + margin.Left - margin.Right;
+            var centeredY = (targetSize.Height - popupSize.Height) / 2 + margin.Top - margin.Bottom;
+            var topY = -popupSize.Height - margin.Bottom;
+            var bottomY = targetSize.Height + margin.Top;
+            var leftX = -popupSize.Width - margin.Right;
+            var rightX = targetSize.Width + margin.Left;
+
+            switch (placement)
+            {
+                case TeachingTipPlacementMode.Top:
+                    return new Point(centeredX, topY);
+                case TeachingTipPlacementMode.TopLeft:
+                    return new Point(margin.Left, topY);
+                case TeachingTipPlacementMode.TopRight:
+                    return new Point(targetSize.Width - popupSize.Width - margin.Right, topY);
+                case TeachingTipPlacementMode.Left:
+                    return new Point(leftX, centeredY);
+                case TeachingTipPlacementMode.LeftTop:
+                    return new Point(leftX, margin.Top);
+                case TeachingTipPlacementMode.LeftBottom:
+                    return new Point(leftX, targetSize.Height - popupSize.Height - margin.Bottom);
+                case TeachingTipPlacementMode.Right:
+                    return new Point(rightX, centeredY);
+                case TeachingTipPlacementMode.RightTop:
+                    return new Point(rightX, margin.Top);
+                case TeachingTipPlacementMode.RightBottom:
+                    return new Point(rightX, targetSize.Height - popupSize.Height - margin.Bottom);
+                case TeachingTipPlacementMode.Center:
+                    return new Point(centeredX, centeredY);
+                case TeachingTipPlacementMode.BottomLeft:
+                    return new Point(margin.Left, bottomY);
+                case TeachingTipPlacementMode.BottomRight:
+                    return new Point(targetSize.Width - popupSize.Width - margin.Right, bottomY);
+                default:
+                    return new Point(centeredX, bottomY);
+            }
+        }
+
+        private static PopupPrimaryAxis GetPopupPrimaryAxis(TeachingTipPlacementMode placement)
+        {
+            switch (placement)
+            {
+                case TeachingTipPlacementMode.Left:
+                case TeachingTipPlacementMode.LeftTop:
+                case TeachingTipPlacementMode.LeftBottom:
+                case TeachingTipPlacementMode.Right:
+                case TeachingTipPlacementMode.RightTop:
+                case TeachingTipPlacementMode.RightBottom:
+                    return PopupPrimaryAxis.Horizontal;
+
+                case TeachingTipPlacementMode.Center:
+                    return PopupPrimaryAxis.None;
+
+                default:
+                    return PopupPrimaryAxis.Vertical;
+            }
+        }
+
+        private TeachingTipPlacementMode GetEffectivePlacement()
+        {
+            if (PreferredPlacement == TeachingTipPlacementMode.Auto)
+            {
+                return Target == null ? TeachingTipPlacementMode.Center : TeachingTipPlacementMode.Bottom;
+            }
+
+            return PreferredPlacement;
+        }
+
+        private static TeachingTipPlacementMode[] GetPlacementFallbacks(TeachingTipPlacementMode placement)
+        {
+            switch (placement)
+            {
+                case TeachingTipPlacementMode.Top:
+                    return new[] { TeachingTipPlacementMode.Top, TeachingTipPlacementMode.Bottom, TeachingTipPlacementMode.Right, TeachingTipPlacementMode.Left };
+                case TeachingTipPlacementMode.TopLeft:
+                    return new[] { TeachingTipPlacementMode.TopLeft, TeachingTipPlacementMode.BottomLeft, TeachingTipPlacementMode.TopRight, TeachingTipPlacementMode.BottomRight };
+                case TeachingTipPlacementMode.TopRight:
+                    return new[] { TeachingTipPlacementMode.TopRight, TeachingTipPlacementMode.BottomRight, TeachingTipPlacementMode.TopLeft, TeachingTipPlacementMode.BottomLeft };
+                case TeachingTipPlacementMode.Left:
+                    return new[] { TeachingTipPlacementMode.Left, TeachingTipPlacementMode.Right, TeachingTipPlacementMode.Bottom, TeachingTipPlacementMode.Top };
+                case TeachingTipPlacementMode.LeftTop:
+                    return new[] { TeachingTipPlacementMode.LeftTop, TeachingTipPlacementMode.RightTop, TeachingTipPlacementMode.LeftBottom, TeachingTipPlacementMode.RightBottom };
+                case TeachingTipPlacementMode.LeftBottom:
+                    return new[] { TeachingTipPlacementMode.LeftBottom, TeachingTipPlacementMode.RightBottom, TeachingTipPlacementMode.LeftTop, TeachingTipPlacementMode.RightTop };
+                case TeachingTipPlacementMode.Right:
+                    return new[] { TeachingTipPlacementMode.Right, TeachingTipPlacementMode.Left, TeachingTipPlacementMode.Bottom, TeachingTipPlacementMode.Top };
+                case TeachingTipPlacementMode.RightTop:
+                    return new[] { TeachingTipPlacementMode.RightTop, TeachingTipPlacementMode.LeftTop, TeachingTipPlacementMode.RightBottom, TeachingTipPlacementMode.LeftBottom };
+                case TeachingTipPlacementMode.RightBottom:
+                    return new[] { TeachingTipPlacementMode.RightBottom, TeachingTipPlacementMode.LeftBottom, TeachingTipPlacementMode.RightTop, TeachingTipPlacementMode.LeftTop };
+                case TeachingTipPlacementMode.Center:
+                    return new[] { TeachingTipPlacementMode.Center };
+                case TeachingTipPlacementMode.BottomLeft:
+                    return new[] { TeachingTipPlacementMode.BottomLeft, TeachingTipPlacementMode.TopLeft, TeachingTipPlacementMode.BottomRight, TeachingTipPlacementMode.TopRight };
+                case TeachingTipPlacementMode.BottomRight:
+                    return new[] { TeachingTipPlacementMode.BottomRight, TeachingTipPlacementMode.TopRight, TeachingTipPlacementMode.BottomLeft, TeachingTipPlacementMode.TopLeft };
+                default:
+                    return new[] { TeachingTipPlacementMode.Bottom, TeachingTipPlacementMode.Top, TeachingTipPlacementMode.Right, TeachingTipPlacementMode.Left };
+            }
+        }
+
+        private int FindFirstPlacementWithinRootBounds(CustomPopupPlacement[] placements, Size popupSize)
+        {
+            for (var i = 0; i < placements.Length; i++)
+            {
+                if (IsPlacementWithinRootBounds(placements[i].Point, popupSize))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        private bool IsPlacementWithinRootBounds(Point popupPoint, Size popupSize)
+        {
+            if (!TryGetRootRelativePopupBounds(popupPoint, popupSize, out var popupBounds, out var rootBounds))
+            {
+                return false;
+            }
+
+            return popupBounds.Left >= rootBounds.Left &&
+                popupBounds.Top >= rootBounds.Top &&
+                popupBounds.Right <= rootBounds.Right &&
+                popupBounds.Bottom <= rootBounds.Bottom;
+        }
+
+        private Point ClampPlacementToRootBounds(Point popupPoint, Size popupSize)
+        {
+            if (!TryGetRootRelativePopupBounds(popupPoint, popupSize, out var popupBounds, out var rootBounds))
+            {
+                return popupPoint;
+            }
+
+            var clampedLeft = Math.Max(rootBounds.Left, Math.Min(popupBounds.Left, Math.Max(rootBounds.Left, rootBounds.Right - popupSize.Width)));
+            var clampedTop = Math.Max(rootBounds.Top, Math.Min(popupBounds.Top, Math.Max(rootBounds.Top, rootBounds.Bottom - popupSize.Height)));
+
+            return new Point(
+                popupPoint.X + clampedLeft - popupBounds.Left,
+                popupPoint.Y + clampedTop - popupBounds.Top);
+        }
+
+        private bool TryGetRootRelativePopupBounds(Point popupPoint, Size popupSize, out Rect popupBounds, out Rect rootBounds)
+        {
+            popupBounds = default;
+            rootBounds = default;
+
+            var placementTarget = GetPopupPlacementTarget();
+            var root = GetPopupRoot();
+            if (placementTarget == null || root == null || root.ActualWidth <= 0 || root.ActualHeight <= 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                var targetOrigin = placementTarget.TranslatePoint(new Point(), root);
+                popupBounds = new Rect(
+                    targetOrigin.X + popupPoint.X,
+                    targetOrigin.Y + popupPoint.Y,
+                    popupSize.Width,
+                    popupSize.Height);
+                rootBounds = new Rect(0, 0, root.ActualWidth, root.ActualHeight);
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+        }
+
         private void UpdateBackgroundResources()
         {
             if (IsLightDismissEnabled)
@@ -683,6 +970,171 @@ namespace ModernWpf.Controls
             element?.SetBinding(property, new System.Windows.Data.Binding(nameof(Background)) { Source = this });
         }
 
+        private FrameworkElement GetPopupPlacementTarget()
+        {
+            if (Target != null)
+            {
+                return Target;
+            }
+
+            return GetPopupRoot() ?? this;
+        }
+
+        private FrameworkElement GetPopupRoot()
+        {
+            var window = Window.GetWindow(Target ?? this);
+            return window?.Content as FrameworkElement ?? this;
+        }
+
+        private void CloseWithReason(TeachingTipCloseReason reason)
+        {
+            _lastCloseReason = reason;
+            SetCurrentValue(IsOpenProperty, false);
+        }
+
+        private void UpdateTargetUnloadHook(FrameworkElement target)
+        {
+            if (ReferenceEquals(_unloadHookedTarget, target))
+            {
+                return;
+            }
+
+            if (_unloadHookedTarget != null)
+            {
+                _unloadHookedTarget.Unloaded -= OnTargetUnloaded;
+            }
+
+            _unloadHookedTarget = target;
+
+            if (_unloadHookedTarget != null)
+            {
+                _unloadHookedTarget.Unloaded += OnTargetUnloaded;
+            }
+        }
+
+        private void OnTargetUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (IsOpen)
+            {
+                CloseWithReason(TeachingTipCloseReason.Programmatic);
+            }
+        }
+
+        private void UpdateLightDismissHook(Window window)
+        {
+            if (ReferenceEquals(_lightDismissWindow, window))
+            {
+                return;
+            }
+
+            if (_lightDismissWindow != null)
+            {
+                _lightDismissWindow.PreviewMouseDown -= OnWindowPreviewMouseDown;
+            }
+
+            _lightDismissWindow = window;
+
+            if (_lightDismissWindow != null)
+            {
+                _lightDismissWindow.PreviewMouseDown += OnWindowPreviewMouseDown;
+            }
+        }
+
+        private void OnWindowPreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!IsOpen || !IsLightDismissEnabled)
+            {
+                return;
+            }
+
+            if (IsMouseWithinElement(e, Target))
+            {
+                return;
+            }
+
+            CloseWithReason(TeachingTipCloseReason.LightDismiss);
+            e.Handled = true;
+        }
+
+        private static bool IsMouseWithinElement(MouseEventArgs e, FrameworkElement element)
+        {
+            if (element == null || !element.IsVisible)
+            {
+                return false;
+            }
+
+            try
+            {
+                var position = e.GetPosition(element);
+                return position.X >= 0 &&
+                    position.Y >= 0 &&
+                    position.X <= element.ActualWidth &&
+                    position.Y <= element.ActualHeight;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+        }
+
+        private void UpdateRepositionHooks(FrameworkElement target, Window window)
+        {
+            if (!ReferenceEquals(_repositionTarget, target))
+            {
+                if (_repositionTarget != null)
+                {
+                    _repositionTarget.LayoutUpdated -= OnPlacementTargetLayoutUpdated;
+                }
+
+                _repositionTarget = target;
+
+                if (_repositionTarget != null)
+                {
+                    _repositionTarget.LayoutUpdated += OnPlacementTargetLayoutUpdated;
+                }
+            }
+
+            if (!ReferenceEquals(_repositionWindow, window))
+            {
+                if (_repositionWindow != null)
+                {
+                    _repositionWindow.LocationChanged -= OnPlacementWindowLocationChanged;
+                    _repositionWindow.SizeChanged -= OnPlacementWindowSizeChanged;
+                }
+
+                _repositionWindow = window;
+
+                if (_repositionWindow != null)
+                {
+                    _repositionWindow.LocationChanged += OnPlacementWindowLocationChanged;
+                    _repositionWindow.SizeChanged += OnPlacementWindowSizeChanged;
+                }
+            }
+        }
+
+        private void OnPlacementTargetLayoutUpdated(object sender, EventArgs e)
+        {
+            RepositionPopup();
+        }
+
+        private void OnPlacementWindowLocationChanged(object sender, EventArgs e)
+        {
+            RepositionPopup();
+        }
+
+        private void OnPlacementWindowSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RepositionPopup();
+        }
+
+        private void RepositionPopup()
+        {
+            if (_popup?.IsOpen == true)
+            {
+                _popup.Reposition();
+            }
+        }
+
         private Thickness GetThicknessResource(object key)
         {
             return TryFindResource(key) is Thickness thickness ? thickness : new Thickness();
@@ -690,6 +1142,11 @@ namespace ModernWpf.Controls
 
         private TeachingTipCloseReason _lastCloseReason = TeachingTipCloseReason.Programmatic;
         private bool _isCompletingClose;
+        private Popup _popup;
+        private FrameworkElement _unloadHookedTarget;
+        private FrameworkElement _repositionTarget;
+        private Window _repositionWindow;
+        private Window _lightDismissWindow;
         private FrameworkElement _container;
         private Border _contentRootGrid;
         private Border _heroContentBorder;
