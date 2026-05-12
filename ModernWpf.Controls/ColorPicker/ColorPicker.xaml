@@ -1,0 +1,182 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <CornerRadius x:Key="ColorPickerSliderCornerRadius">6</CornerRadius>
+    <sys:Double x:Key="ColorPickerSliderInnerThumbWidth">10</sys:Double>
+    <sys:Double x:Key="ColorPickerSliderInnerThumbHeight">10</sys:Double>
+    <sys:Double x:Key="ColorPickerVerticalOrientationMinWidth">312</sys:Double>
+    <sys:Double x:Key="ColorPickerVerticalOrientationMaxWidth">392</sys:Double>
+    <sys:Double x:Key="ColorPickerVerticalOrientationMinHeight">312</sys:Double>
+    <sys:Double x:Key="ColorPickerVerticalOrientationMaxHeight">392</sys:Double>
+    <sys:Double x:Key="ColorPickerTextInputHorizontalOrientationMargin">122</sys:Double>
+
+    <Style x:Key="ColorPickerBorderStyle" TargetType="Shape">
+        <Setter Property="Stroke" Value="{DynamicResource ColorPickerBorderBrush}" />
+        <Setter Property="StrokeThickness" Value="2" />
+    </Style>
+
+    <Style x:Key="ColorPickerSliderStyle" TargetType="primitives:ColorPickerSlider">
+        <Setter Property="Minimum" Value="0" />
+        <Setter Property="Maximum" Value="100" />
+        <Setter Property="Margin" Value="0,8,0,0" />
+    </Style>
+
+    <Style TargetType="primitives:ColorSpectrum">
+        <Setter Property="MinWidth" Value="{StaticResource ColorPickerVerticalOrientationMinWidth}" />
+        <Setter Property="MinHeight" Value="{StaticResource ColorPickerVerticalOrientationMinHeight}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="primitives:ColorSpectrum">
+                    <Border
+                        BorderBrush="{DynamicResource ColorPickerBorderBrush}"
+                        BorderThickness="2"
+                        CornerRadius="{StaticResource ColorPickerSliderCornerRadius}"
+                        ClipToBounds="True">
+                        <Canvas Background="Transparent">
+                            <Rectangle x:Name="SpectrumRectangle" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="Red" Offset="0" />
+                                        <GradientStop Color="Yellow" Offset="0.17" />
+                                        <GradientStop Color="Lime" Offset="0.34" />
+                                        <GradientStop Color="Cyan" Offset="0.50" />
+                                        <GradientStop Color="Blue" Offset="0.67" />
+                                        <GradientStop Color="Magenta" Offset="0.84" />
+                                        <GradientStop Color="Red" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Rectangle
+                                x:Name="SpectrumOverlayRectangle"
+                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+                                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
+                                IsHitTestVisible="False">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00FFFFFF" Offset="0" />
+                                        <GradientStop Color="#AA000000" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Ellipse
+                                x:Name="SpectrumEllipse"
+                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+                                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
+                                Fill="{Binding ElementName=SpectrumRectangle, Path=Fill}"
+                                IsHitTestVisible="False"
+                                Visibility="Collapsed" />
+                            <Ellipse
+                                x:Name="SpectrumOverlayEllipse"
+                                Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+                                Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
+                                Fill="{Binding ElementName=SpectrumOverlayRectangle, Path=Fill}"
+                                IsHitTestVisible="False"
+                                Visibility="Collapsed" />
+                            <Grid
+                                x:Name="SelectionEllipsePanel"
+                                Width="18"
+                                Height="18">
+                                <Ellipse
+                                    x:Name="SelectionEllipse"
+                                    Fill="Transparent"
+                                    Stroke="White"
+                                    StrokeThickness="2" />
+                            </Grid>
+                        </Canvas>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:ColorPicker">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ColorPicker">
+                    <StackPanel
+                        x:Name="RootPanel"
+                        Orientation="{TemplateBinding Orientation}"
+                        MinWidth="{StaticResource ColorPickerVerticalOrientationMinWidth}"
+                        MaxWidth="{StaticResource ColorPickerVerticalOrientationMaxWidth}">
+                        <primitives:ColorSpectrum
+                            x:Name="ColorSpectrum"
+                            MinHue="{TemplateBinding MinHue}"
+                            MaxHue="{TemplateBinding MaxHue}"
+                            MinSaturation="{TemplateBinding MinSaturation}"
+                            MaxSaturation="{TemplateBinding MaxSaturation}"
+                            MinValue="{TemplateBinding MinValue}"
+                            MaxValue="{TemplateBinding MaxValue}"
+                            Shape="{TemplateBinding ColorSpectrumShape}"
+                            Components="{TemplateBinding ColorSpectrumComponents}" />
+
+                        <Grid x:Name="PreviewGrid" Height="36" Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Rectangle
+                                x:Name="PreviousColorRectangle"
+                                Grid.Column="0"
+                                Style="{StaticResource ColorPickerBorderStyle}"
+                                Visibility="Collapsed" />
+                            <Rectangle
+                                x:Name="ColorPreviewRectangle"
+                                Grid.Column="1"
+                                Style="{StaticResource ColorPickerBorderStyle}" />
+                        </Grid>
+
+                        <primitives:ColorPickerSlider
+                            x:Name="ThirdDimensionSlider"
+                            ColorChannel="Value"
+                            Orientation="Horizontal"
+                            Style="{StaticResource ColorPickerSliderStyle}" />
+
+                        <primitives:ColorPickerSlider
+                            x:Name="AlphaSlider"
+                            ColorChannel="Alpha"
+                            Orientation="Horizontal"
+                            Style="{StaticResource ColorPickerSliderStyle}" />
+
+                        <ToggleButton
+                            x:Name="MoreButton"
+                            Width="36"
+                            Height="32"
+                            Margin="0,8,0,0"
+                            Content="..."
+                            HorizontalAlignment="Left"
+                            Visibility="Collapsed" />
+
+                        <Grid x:Name="TextInputGrid" Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBox x:Name="RedTextBox" Grid.Row="0" Grid.Column="0" Margin="0,0,4,4" />
+                            <TextBox x:Name="GreenTextBox" Grid.Row="0" Grid.Column="1" Margin="0,0,4,4" />
+                            <TextBox x:Name="BlueTextBox" Grid.Row="0" Grid.Column="2" Margin="0,0,4,4" />
+                            <TextBox x:Name="AlphaTextBox" Grid.Row="0" Grid.Column="3" Margin="0,0,0,4" />
+
+                            <TextBox x:Name="HueTextBox" Grid.Row="1" Grid.Column="0" Margin="0,0,4,4" />
+                            <TextBox x:Name="SaturationTextBox" Grid.Row="1" Grid.Column="1" Margin="0,0,4,4" />
+                            <TextBox x:Name="ValueTextBox" Grid.Row="1" Grid.Column="2" Margin="0,0,4,4" />
+
+                            <TextBox x:Name="HexTextBox" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" />
+                        </Grid>
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

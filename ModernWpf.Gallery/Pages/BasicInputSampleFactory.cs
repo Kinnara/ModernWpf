@@ -2,7 +2,6 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Media;
 using Mux = ModernWpf.Controls;
 
 namespace ModernWpf.Gallery.Pages
@@ -187,24 +186,14 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateColorPickerSample()
         {
-            var panel = CreateSamplePanel("ModernWpf does not currently expose WinUI ColorPicker; this WPF sample uses RGB sliders and a live preview.");
-            var preview = CreatePreviewSwatch();
-            var red = CreateColorSlider("Red", 51);
-            var green = CreateColorSlider("Green", 102);
-            var blue = CreateColorSlider("Blue", 204);
-            RoutedPropertyChangedEventHandler<double> update = delegate
+            var panel = CreateSamplePanel("ColorPicker lets users inspect and adjust a color value with spectrum, slider, preview, and text input surfaces.");
+            panel.Children.Add(new Mux.ColorPicker
             {
-                preview.Background = new SolidColorBrush(Color.FromRgb((byte)red.Value, (byte)green.Value, (byte)blue.Value));
-            };
-            red.ValueChanged += update;
-            green.ValueChanged += update;
-            blue.ValueChanged += update;
-            update(null, null);
-
-            panel.Children.Add(preview);
-            panel.Children.Add(red);
-            panel.Children.Add(green);
-            panel.Children.Add(blue);
+                Color = System.Windows.Media.Color.FromRgb(51, 102, 204),
+                IsAlphaEnabled = true,
+                PreviousColor = System.Windows.Media.Colors.White,
+                HorizontalAlignment = HorizontalAlignment.Left
+            });
             return panel;
         }
 
@@ -321,30 +310,5 @@ namespace ModernWpf.Gallery.Pages
             };
         }
 
-        private static Border CreatePreviewSwatch()
-        {
-            return new Border
-            {
-                Width = 160,
-                Height = 72,
-                Margin = new Thickness(0, 0, 0, 12),
-                HorizontalAlignment = HorizontalAlignment.Left
-            };
-        }
-
-        private static Slider CreateColorSlider(string name, double value)
-        {
-            return new Slider
-            {
-                Minimum = 0,
-                Maximum = 255,
-                Value = value,
-                Width = 320,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                AutoToolTipPlacement = AutoToolTipPlacement.TopLeft,
-                Margin = new Thickness(0, 0, 0, 8),
-                ToolTip = name
-            };
-        }
     }
 }

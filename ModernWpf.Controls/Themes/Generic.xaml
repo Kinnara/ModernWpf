@@ -6,6 +6,7 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/AnnotatedScrollBar/AnnotatedScrollBar.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/AutoSuggestBox/AutoSuggestBox.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/BreadcrumbBar/BreadcrumbBar.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/ColorPicker/ColorPicker.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ContentDialog/ContentDialog.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/CommandBar/AppBarToggleButton.xaml" />

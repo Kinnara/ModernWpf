@@ -787,6 +787,15 @@
     <m:StaticResource x:Key="ComboBoxItemPillFillBrush" ResourceKey="SystemControlHighlightListAccentLowBrush"/>
     <Thickness x:Key="ComboBoxDropdownBorderPadding">0</Thickness>
 
+    <!-- Resources for ColorPicker -->
+    <m:StaticResource x:Key="ColorPickerSliderThumbBackground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="ColorPickerSliderThumbBackgroundPointerOver" ResourceKey="SystemControlHighlightChromeAltLowBrush" />
+    <m:StaticResource x:Key="ColorPickerSliderThumbBackgroundPressed" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="ColorPickerSliderThumbBackgroundDisabled" ResourceKey="SystemControlDisabledChromeDisabledHighBrush" />
+    <m:StaticResource x:Key="ColorPickerSliderTrackFillDisabled" ResourceKey="SystemControlDisabledBaseLowBrush" />
+    <m:StaticResource x:Key="ColorPickerHeaderContentDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="ColorPickerBorderBrush" ResourceKey="SystemControlForegroundListLowBrush" />
+
     <!-- Resources for CommandBar -->
     <sys:Double x:Key="CommandBarOverflowMinWidth">160</sys:Double>
     <sys:Double x:Key="CommandBarOverflowTouchMinWidth">240</sys:Double>
