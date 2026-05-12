@@ -33,6 +33,94 @@ namespace ModernWpf.Gallery.Shell
             Navigate(_backStack.Pop(), false);
         }
 
+        public void NavigateTo(string navigationValue)
+        {
+            var target = ResolveNavigationTarget(navigationValue);
+            if (target != null)
+            {
+                Navigate(target, false);
+            }
+        }
+
+        internal static NavigationTarget ResolveNavigationTarget(string navigationValue)
+        {
+            if (string.IsNullOrWhiteSpace(navigationValue))
+            {
+                return NavigationTarget.Home();
+            }
+
+            var normalized = NormalizeNavigationValue(navigationValue.Trim(), out var linkKind);
+            if (string.IsNullOrWhiteSpace(normalized))
+            {
+                return NavigationTarget.Home();
+            }
+
+            if (string.Equals(normalized, "AllControls", StringComparison.OrdinalIgnoreCase))
+            {
+                return NavigationTarget.AllControls();
+            }
+
+            if (string.Equals(normalized, "NewControls", StringComparison.OrdinalIgnoreCase))
+            {
+                return NavigationTarget.Home();
+            }
+
+            if (linkKind != NavigationLinkKind.Item && GalleryCatalog.FindGroup(normalized) != null)
+            {
+                return NavigationTarget.Group(normalized);
+            }
+
+            if (linkKind != NavigationLinkKind.Category && GalleryCatalog.FindItem(normalized) != null)
+            {
+                return NavigationTarget.Item(normalized);
+            }
+
+            return null;
+        }
+
+        private static string NormalizeNavigationValue(string value, out NavigationLinkKind linkKind)
+        {
+            linkKind = NavigationLinkKind.Unknown;
+
+            if (Uri.TryCreate(value, UriKind.Absolute, out var uri))
+            {
+                var host = uri.Host;
+                var path = Uri.UnescapeDataString(uri.AbsolutePath.Trim('/'));
+
+                if (string.Equals(host, "item", StringComparison.OrdinalIgnoreCase))
+                {
+                    linkKind = NavigationLinkKind.Item;
+                    return path;
+                }
+
+                if (string.Equals(host, "category", StringComparison.OrdinalIgnoreCase))
+                {
+                    linkKind = NavigationLinkKind.Category;
+                    return path;
+                }
+
+                return string.IsNullOrEmpty(path) ? host : path;
+            }
+
+            var parts = value.Trim('/').Split(new[] { '/', '\\' }, 2, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 2)
+            {
+                if (string.Equals(parts[0], "item", StringComparison.OrdinalIgnoreCase))
+                {
+                    linkKind = NavigationLinkKind.Item;
+                    return parts[1];
+                }
+
+                if (string.Equals(parts[0], "category", StringComparison.OrdinalIgnoreCase))
+                {
+                    linkKind = NavigationLinkKind.Category;
+                    return parts[1];
+                }
+            }
+
+            return value.Trim('/');
+        }
+
         private void BuildNavigationMenu()
         {
             Navigation.MenuItems.Add(CreateNavigationItem("Home", NavigationTarget.Home(), Symbol.Home));
@@ -188,6 +276,13 @@ namespace ModernWpf.Gallery.Shell
         Home,
         AllControls,
         Group,
+        Item
+    }
+
+    internal enum NavigationLinkKind
+    {
+        Unknown,
+        Category,
         Item
     }
 

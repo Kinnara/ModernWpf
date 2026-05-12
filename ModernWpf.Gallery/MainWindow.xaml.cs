@@ -19,5 +19,10 @@ namespace ModernWpf.Gallery
         {
             TitleBar.SetIsBackButtonVisible(this, isVisible);
         }
+
+        internal void NavigateTo(string uniqueId)
+        {
+            RootPage.NavigateTo(uniqueId);
+        }
     }
 }
