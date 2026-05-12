@@ -27,6 +27,7 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/PersonPicture/PersonPicture.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/PipsPager/PipsPager.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ProgressRing/ProgressRing.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/PullToRefresh/PullToRefresh.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/RatingControl/RatingControl.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/SelectorBar/SelectorBar.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/SplitButton/SplitButton.xaml" />

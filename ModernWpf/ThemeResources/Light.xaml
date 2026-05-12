@@ -1360,6 +1360,12 @@
     <m:StaticResource x:Key="ProgressRingBackgroundThemeBrush" ResourceKey="ControlFillColorTransparentBrush" />
     <sys:Double x:Key="ProgressRingStrokeThickness">4</sys:Double>
 
+    <!-- Resources for PullToRefresh / RefreshContainer -->
+    <SolidColorBrush x:Key="RefreshContainerForegroundBrush" Color="Black" />
+    <SolidColorBrush x:Key="RefreshContainerBackgroundBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="RefreshVisualizerForeground" Color="Black" />
+    <SolidColorBrush x:Key="RefreshVisualizerBackground" Color="Transparent" />
+
     <!-- Resources for RadioButton -->
     <sys:Double x:Key="RadioButtonBorderThemeThickness">1</sys:Double>
     <m:StaticResource x:Key="RadioButtonForeground" ResourceKey="TextFillColorPrimaryBrush" />
