@@ -21,6 +21,8 @@ public class SyncMatrixTests
         StringAssert.Contains(matrix, "ModernWpf.WinUI.Tests");
         StringAssert.Contains(matrix, "Retired Local Tests");
         Assert.IsFalse(matrix.Contains("| Pending |"), "Sync matrix still has a table row whose status is Pending.");
+        Assert.IsFalse(matrix.Contains("remain pending", StringComparison.OrdinalIgnoreCase), "Sync matrix still has unresolved pending wording.");
+        Assert.IsFalse(matrix.Contains("pending/excluded", StringComparison.OrdinalIgnoreCase), "Sync matrix should document exclusions directly instead of using pending/excluded wording.");
     }
 
     public TestContext? TestContext { get; set; }
