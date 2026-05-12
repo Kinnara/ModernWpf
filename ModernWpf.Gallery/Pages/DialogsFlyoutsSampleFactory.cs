@@ -109,15 +109,24 @@ namespace ModernWpf.Gallery.Pages
         private static UIElement CreateTeachingTipSample()
         {
             var panel = CreateSamplePanel("TeachingTip explains a new or important capability near the relevant control.");
-            var tip = CreateSurface(
-                "Try compact mode",
-                "This WPF port renders TeachingTip as an inline teaching surface because ModernWpf does not currently expose TeachingTip.");
-            tip.Visibility = Visibility.Collapsed;
-
             var button = CreateButton("Show TeachingTip");
+            var tip = new Mux.TeachingTip
+            {
+                Target = button,
+                Title = "Try compact mode",
+                Subtitle = "Teaching tips provide lightweight guidance without blocking the workflow.",
+                IconSource = new Mux.SymbolIconSource { Symbol = Mux.Symbol.Help },
+                CloseButtonContent = "Got it",
+                Margin = new Thickness(0, 12, 0, 0),
+                Content = new TextBlock
+                {
+                    Text = "Use a TeachingTip to introduce important UI or explain the next useful action.",
+                    TextWrapping = TextWrapping.Wrap
+                }
+            };
             button.Click += delegate
             {
-                tip.Visibility = tip.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                tip.IsOpen = true;
             };
 
             panel.Children.Add(button);
