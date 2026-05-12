@@ -8,46 +8,46 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SwipeControl">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                    <Grid
+                        x:Name="PART_Root"
+                        Background="Transparent"
+                        ClipToBounds="True">
+                        <Grid x:Name="PART_ItemsRoot">
+                            <StackPanel
+                                x:Name="PART_TopItemsPanel"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Top"
+                                Orientation="Horizontal"
+                                Visibility="Collapsed" />
+                            <StackPanel
+                                x:Name="PART_LeftItemsPanel"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Stretch"
+                                Orientation="Horizontal"
+                                Visibility="Collapsed" />
+                            <StackPanel
+                                x:Name="PART_RightItemsPanel"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Orientation="Horizontal"
+                                Visibility="Collapsed" />
+                            <StackPanel
+                                x:Name="PART_BottomItemsPanel"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Bottom"
+                                Orientation="Horizontal"
+                                Visibility="Collapsed" />
+                        </Grid>
 
-                        <StackPanel
-                            x:Name="PART_TopItemsPanel"
-                            Grid.Column="1"
-                            Orientation="Horizontal"
-                            Visibility="Collapsed" />
-                        <StackPanel
-                            x:Name="PART_LeftItemsPanel"
-                            Grid.Row="1"
-                            Orientation="Horizontal"
-                            Visibility="Collapsed" />
                         <ContentPresenter
-                            Grid.Row="1"
-                            Grid.Column="1"
+                            x:Name="PART_ContentPresenter"
                             Content="{TemplateBinding Content}"
                             ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}" />
-                        <StackPanel
-                            x:Name="PART_RightItemsPanel"
-                            Grid.Row="1"
-                            Grid.Column="2"
-                            Orientation="Horizontal"
-                            Visibility="Collapsed" />
-                        <StackPanel
-                            x:Name="PART_BottomItemsPanel"
-                            Grid.Row="2"
-                            Grid.Column="1"
-                            Orientation="Horizontal"
-                            Visibility="Collapsed" />
+                            ContentTemplate="{TemplateBinding ContentTemplate}">
+                            <ContentPresenter.RenderTransform>
+                                <TranslateTransform x:Name="PART_ContentTransform" />
+                            </ContentPresenter.RenderTransform>
+                        </ContentPresenter>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

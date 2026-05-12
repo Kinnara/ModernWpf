@@ -214,6 +214,149 @@ public class SwipeControlApiTests
         });
     }
 
+    [TestMethod]
+    public void DragRevealsRightItemsAndCloseResetsOffset()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var swipeControl = new ModernWpf.Controls.SwipeControl
+            {
+                Content = new Border { Width = 200, Height = 48, Background = Brushes.Green },
+                RightItems = new SwipeItems
+                {
+                    new SwipeItem { Text = "Delete" }
+                }
+            };
+
+            using var host = new TestWindowHost(swipeControl, width: 260, height: 120);
+
+            swipeControl.DragForTesting(-96, 0, complete: true);
+            host.UpdateLayout();
+
+            Assert.IsTrue(swipeControl.IsOpenForTesting);
+            Assert.AreEqual(SwipeItemsPlacement.Right, swipeControl.OpenedItemsPlacementForTesting);
+            Assert.IsTrue(swipeControl.HorizontalOffsetForTesting < 0);
+
+            swipeControl.Close();
+            host.UpdateLayout();
+
+            Assert.IsFalse(swipeControl.IsOpenForTesting);
+            Assert.AreEqual(0d, swipeControl.HorizontalOffsetForTesting);
+        });
+    }
+
+    [TestMethod]
+    public void ExecuteSwipeInvokesSingleItemAndCloses()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var command = new TestCommand();
+            var swipeItem = new SwipeItem
+            {
+                Text = "Delete",
+                Command = command,
+                CommandParameter = "row"
+            };
+            var invoked = false;
+            swipeItem.Invoked += (_, _) => invoked = true;
+            var executeItems = new SwipeItems { Mode = SwipeMode.Execute };
+            executeItems.Add(swipeItem);
+            var swipeControl = new ModernWpf.Controls.SwipeControl
+            {
+                Content = new Border { Width = 200, Height = 48, Background = Brushes.Green },
+                RightItems = executeItems
+            };
+
+            using var host = new TestWindowHost(swipeControl, width: 260, height: 120);
+
+            swipeControl.DragForTesting(-96, 0, complete: true);
+            host.UpdateLayout();
+
+            Assert.IsTrue(invoked);
+            Assert.AreEqual("row", command.ExecutedParameter);
+            Assert.IsFalse(swipeControl.IsOpenForTesting);
+            Assert.AreEqual(0d, swipeControl.HorizontalOffsetForTesting);
+        });
+    }
+
+    [TestMethod]
+    public void OutsideTapDismissesOpenSwipe()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var outside = new Button { Content = "Outside", Width = 80, Height = 24 };
+            var swipeControl = new ModernWpf.Controls.SwipeControl
+            {
+                Content = new Border { Width = 200, Height = 48, Background = Brushes.Green },
+                RightItems = new SwipeItems
+                {
+                    new SwipeItem { Text = "Delete" }
+                }
+            };
+            var root = new StackPanel
+            {
+                Children =
+                {
+                    swipeControl,
+                    outside
+                }
+            };
+
+            using var host = new TestWindowHost(root, width: 260, height: 160);
+
+            swipeControl.DragForTesting(-96, 0, complete: true);
+            Assert.IsTrue(swipeControl.IsOpenForTesting);
+
+            outside.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Left)
+            {
+                RoutedEvent = UIElement.PreviewMouseDownEvent,
+                Source = outside
+            });
+            host.UpdateLayout();
+
+            Assert.IsFalse(swipeControl.IsOpenForTesting);
+            Assert.AreEqual(0d, swipeControl.HorizontalOffsetForTesting);
+        });
+    }
+
+    [TestMethod]
+    public void RevealedButtonInvokesAndAutoCloses()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var command = new TestCommand();
+            var swipeItem = new SwipeItem
+            {
+                Text = "Delete",
+                Command = command,
+                CommandParameter = "row"
+            };
+            var swipeControl = new ModernWpf.Controls.SwipeControl
+            {
+                Content = new Border { Width = 200, Height = 48, Background = Brushes.Green },
+                RightItems = new SwipeItems { swipeItem }
+            };
+
+            using var host = new TestWindowHost(swipeControl, width: 260, height: 120);
+
+            swipeControl.DragForTesting(-96, 0, complete: true);
+            Assert.IsTrue(swipeControl.IsOpenForTesting);
+
+            var button = VisualTreeTestHelper
+                .EnumerateDescendants(swipeControl)
+                .OfType<Button>()
+                .FirstOrDefault(candidate => candidate.Tag == swipeItem);
+
+            Assert.IsNotNull(button);
+            button!.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            host.UpdateLayout();
+
+            Assert.AreEqual("row", command.ExecutedParameter);
+            Assert.IsFalse(swipeControl.IsOpenForTesting);
+            Assert.AreEqual(0d, swipeControl.HorizontalOffsetForTesting);
+        });
+    }
+
     private sealed class TestCommand : ICommand
     {
         public event EventHandler? CanExecuteChanged;
