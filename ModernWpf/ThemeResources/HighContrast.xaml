@@ -240,6 +240,9 @@
     <SolidColorBrush x:Key="LayerFillColorAltBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="LayerOnAcrylicFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="LayerOnAccentAcrylicFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
+    <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorSecondaryBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorTransparentBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
     <SolidColorBrush x:Key="SolidBackgroundFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SolidBackgroundFillColorSecondaryBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
@@ -1532,46 +1535,66 @@
     <m:StaticResource x:Key="SplitViewLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
 
     <!-- Resources for TabView -->
-    <m:StaticResource x:Key="TabViewBackground"                                       ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderBackground"                             ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderBackgroundSelected"                     ResourceKey="SystemControlHighlightChromeHighBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderBackgroundPointerOver"                  ResourceKey="SystemControlHighlightChromeHighBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderBackgroundPressed"                      ResourceKey="SystemControlHighlightChromeHighBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderBackgroundDisabled"                     ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderForeground"                             ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderForegroundPressed"                      ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderForegroundSelected"                     ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderForegroundPointerOver"                  ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderForegroundDisabled"                     ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="TabViewItemIconForeground"                               ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="TabViewItemIconForegroundPressed"                        ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="TabViewItemIconForegroundSelected"                       ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="TabViewItemIconForegroundPointerOver"                    ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="TabViewItemIconForegroundDisabled"                       ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="TabViewButtonBackground"                                 ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TabViewButtonBackgroundPressed"                          ResourceKey="SystemControlHighlightChromeHighBrush" />
-    <m:StaticResource x:Key="TabViewButtonBackgroundPointerOver"                      ResourceKey="SystemControlHighlightChromeHighBrush" />
-    <m:StaticResource x:Key="TabViewButtonBackgroundDisabled"                         ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TabViewButtonForeground"                                 ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="TabViewButtonForegroundPressed"                          ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="TabViewButtonForegroundPointerOver"                      ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="TabViewButtonForegroundDisabled"                         ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="TabViewScrollButtonBackground"                           ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TabViewItemSeparator"                                    ResourceKey="SystemControlForegroundBaseLowBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBackground"                  ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBackgroundPressed"           ResourceKey="SystemControlBackgroundListMediumBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBackgroundPointerOver"       ResourceKey="SystemControlBackgroundListLowBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderPressedCloseButtonBackground"           ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderPointerOverCloseButtonBackground"       ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderSelectedCloseButtonBackground"          ResourceKey="SystemControlTransparentBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderDisabledCloseButtonBackground"          ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonForeground"                  ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonForegroundPressed"           ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonForegroundPointerOver"       ResourceKey="SystemControlForegroundBaseMediumHighBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderPressedCloseButtonForeground"           ResourceKey="SystemControlBackgroundBaseMediumBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderPointerOverCloseButtonForeground"       ResourceKey="SystemControlBackgroundBaseMediumBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderSelectedCloseButtonForeground"          ResourceKey="SystemControlBackgroundBaseMediumBrush" />
-    <m:StaticResource x:Key="TabViewItemHeaderDisabledCloseButtonForeground"          ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="TabViewBackground"                                       ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderBackground"                             ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderBackgroundSelected"                     ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderBackgroundPointerOver"                  ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderBackgroundPressed"                      ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderBackgroundDisabled"                     ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderForeground"                             ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderForegroundPressed"                      ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderForegroundSelected"                     ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderForegroundPointerOver"                  ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderForegroundDisabled"                     ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemIconForeground"                               ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemIconForegroundPressed"                        ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemIconForegroundSelected"                       ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewItemIconForegroundPointerOver"                    ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemIconForegroundDisabled"                       ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TabViewButtonBackground"                                 ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TabViewButtonBackgroundPressed"                          ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewButtonBackgroundPointerOver"                      ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewButtonBackgroundDisabled"                         ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TabViewButtonForeground"                                 ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TabViewButtonForegroundPressed"                          ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TabViewButtonForegroundPointerOver"                      ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TabViewButtonForegroundDisabled"                         ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TabViewButtonBorderBrush"                                ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TabViewButtonBorderBrushPressed"                         ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewButtonBorderBrushPointerOver"                     ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewButtonBorderBrushDisabled"                        ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TabViewScrollButtonBackground"                           ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TabViewScrollButtonBackgroundPressed"                    ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewScrollButtonBackgroundPointerOver"                ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewScrollButtonBackgroundDisabled"                   ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TabViewScrollButtonForeground"                           ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TabViewScrollButtonForegroundPressed"                    ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TabViewScrollButtonForegroundPointerOver"                ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TabViewScrollButtonForegroundDisabled"                   ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TabViewScrollButtonBorderBrush"                          ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TabViewScrollButtonBorderBrushPressed"                   ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewScrollButtonBorderBrushPointerOver"               ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewScrollButtonBorderBrushDisabled"                  ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemSeparator"                                    ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBackground"                  ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBackgroundPressed"           ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBackgroundPointerOver"       ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderPressedCloseButtonBackground"           ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderPointerOverCloseButtonBackground"       ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderSelectedCloseButtonBackground"          ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderDisabledCloseButtonBackground"          ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonForeground"                  ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonForegroundPressed"           ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonForegroundPointerOver"       ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderPressedCloseButtonForeground"           ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderPointerOverCloseButtonForeground"       ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderSelectedCloseButtonForeground"          ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderDisabledCloseButtonForeground"          ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBorderBrush"                 ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBorderBrushPointerOver"      ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBorderBrushPressed"          ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBorderBrushSelected"         ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBorderBrushDisabled"         ResourceKey="SubtleFillColorTransparentBrush" />
 
     <!-- Resources for Thumb -->
     <m:StaticResource x:Key="ThumbBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />

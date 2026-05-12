@@ -5,13 +5,15 @@
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <Thickness x:Key="TabViewTopHeaderPadding">8,8,0,0</Thickness>
+    <Thickness x:Key="TabViewTopHeaderPadding">0,8,0,0</Thickness>
     <Thickness x:Key="TabViewBottomHeaderPadding">8,0,0,8</Thickness>
     <Thickness x:Key="TabViewLeftHeaderPadding">8,8,0,8</Thickness>
     <Thickness x:Key="TabViewRightHeaderPadding">0,8,8,8</Thickness>
-    <Thickness x:Key="TabViewHeaderPadding">8,8,0,0</Thickness>
-    <Thickness x:Key="TabViewItemHeaderPadding">12,8,10,8</Thickness>
+    <Thickness x:Key="TabViewHeaderPadding">0,8,0,0</Thickness>
+    <Thickness x:Key="TabViewItemHeaderPadding">8,3,4,3</Thickness>
+    <Thickness x:Key="TabViewSelectedItemHeaderPadding">9,3,5,4</Thickness>
 
+    <sys:Double x:Key="TabViewItemMinHeight">32</sys:Double>
     <sys:Double x:Key="TabViewItemMaxWidth">240</sys:Double>
     <sys:Double x:Key="TabViewItemMinWidth">100</sys:Double>
 
@@ -19,17 +21,31 @@
     <sys:Double x:Key="TabViewItemHeaderIconSize">16</sys:Double>
     <Thickness x:Key="TabViewItemHeaderIconMargin">0,0,10,0</Thickness>
 
+    <sys:Double x:Key="TabViewItemHeaderCloseButtonHeight">24</sys:Double>
+    <sys:Double x:Key="TabViewItemHeaderCloseButtonWidth">32</sys:Double>
     <sys:Double x:Key="TabViewItemHeaderCloseButtonSize">16</sys:Double>
     <sys:Double x:Key="TabViewItemHeaderCloseFontSize">12</sys:Double>
-    <Thickness x:Key="TabViewItemHeaderCloseMargin">10,0,0,0</Thickness>
+    <Thickness x:Key="TabViewItemHeaderCloseMargin">4,0,0,0</Thickness>
 
-    <sys:Double x:Key="TabViewItemScrollButtonWidth">29</sys:Double>
-    <sys:Double x:Key="TabViewItemScrollButtonHeight">29</sys:Double>
-    <Thickness x:Key="TabViewItemScrollButtonPadding">6,4,10,5</Thickness>
+    <sys:Double x:Key="TabViewItemScrollButtonWidth">32</sys:Double>
+    <sys:Double x:Key="TabViewItemScrollButtonHeight">24</sys:Double>
+    <sys:Double x:Key="TabViewItemScrollButonFontSize">8</sys:Double>
+    <Thickness x:Key="TabViewItemScrollButtonPadding">7,3,7,3</Thickness>
+    <Thickness x:Key="TabViewItemLeftScrollButtonContainerPadding">8,0,3,3</Thickness>
+    <Thickness x:Key="TabViewItemRightScrollButtonContainerPadding">3,0,8,3</Thickness>
+
+    <sys:Double x:Key="TabViewItemAddButtonWidth">32</sys:Double>
+    <sys:Double x:Key="TabViewItemAddButtonHeight">24</sys:Double>
+    <sys:Double x:Key="TabViewItemAddButtonFontSize">12</sys:Double>
+    <Thickness x:Key="TabViewItemAddButtonContainerPadding">3,0,0,3</Thickness>
 
     <sys:Double x:Key="TabViewShadowDepth">16</sys:Double>
 
-    <Thickness x:Key="TabViewItemSeparatorMargin">0,6,0,6</Thickness>
+    <Thickness x:Key="TabViewItemSeparatorMargin">0,8,0,8</Thickness>
+
+    <Thickness x:Key="TabViewItemBorderThickness">1</Thickness>
+    <Thickness x:Key="TabViewSelectedItemBorderThickness">1,1,1,0</Thickness>
+    <Thickness x:Key="TabViewSelectedItemHeaderMargin">-1,0,-1,0</Thickness>
 
     <primitives:CornerRadiusFilterConverter x:Key="TopCornerRadiusFilterConverter" Filter="Top" />
     <primitives:CornerRadiusFilterConverter x:Key="RightCornerRadiusFilterConverter" Filter="Right" />
@@ -40,6 +56,9 @@
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="MinHeight" Value="{DynamicResource TabViewItemMinHeight}" />
+        <Setter Property="MaxWidth" Value="{DynamicResource TabViewItemMaxWidth}" />
+        <Setter Property="MinWidth" Value="{DynamicResource TabViewItemMinWidth}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
