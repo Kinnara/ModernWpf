@@ -17,10 +17,22 @@ Run the local visual pass:
 .\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Reference InstalledWinUI3Gallery
 ```
 
+Pass `-Theme Light` or `-Theme Dark` to match the installed WinUI Gallery theme before comparing image deltas.
+
+Run the TeachingTip interaction pass:
+
+```powershell
+.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls TeachingTip -Reference InstalledWinUI3Gallery -IncludeInteractions
+```
+
 The script launches ModernWpf Gallery with `--visual-test`, `--route`, `--theme`, and `--visual-artifact-dir`. In that mode the Gallery exposes hidden UIA fields:
 
 - `GalleryVisualTestCurrentRoute`
 - `GalleryVisualTestReadyState`
 - `GalleryVisualTestLastException`
 
-The visual pass intentionally does not make strict screenshot diffs a default CI gate. It fails on blank captures, wrong or missing required sample elements, and Gallery exceptions; image deltas are reported for manual review and can be made strict with `-FailOnDifference` once the harness is stable across machines.
+With `-IncludeInteractions`, the TeachingTip pass captures a closed baseline, invokes the sample button, then captures 0ms, 150ms, 300ms, and 450ms screen-rect frames. Screen capture is used for those frames so WPF `Popup` content is included. The interaction probe records both UIA evidence, when available, and the open-vs-closed image delta.
+
+Static window captures use `PrintWindow` first and fall back to an activated screen-rect capture when `PrintWindow` returns a blank image.
+
+The visual pass intentionally does not make strict screenshot diffs a default CI gate. It fails on blank captures, wrong or missing required sample elements, failed TeachingTip interaction probes, and Gallery exceptions; image deltas are reported for manual review and can be made strict with `-FailOnDifference` once the harness is stable across machines.

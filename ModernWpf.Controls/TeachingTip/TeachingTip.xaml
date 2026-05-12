@@ -106,6 +106,8 @@
                                         Grid.Column="1"
                                         Grid.RowSpan="3"
                                         Grid.ColumnSpan="3"
+                                        AutomationProperties.AutomationId="ContentRootGrid"
+                                        AutomationProperties.Name="{TemplateBinding Title}"
                                         Background="{TemplateBinding Background}"
                                         BorderBrush="{TemplateBinding BorderBrush}"
                                         BorderThickness="{TemplateBinding BorderThickness}"

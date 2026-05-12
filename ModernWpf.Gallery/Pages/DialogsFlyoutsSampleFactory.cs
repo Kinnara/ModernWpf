@@ -117,16 +117,9 @@ namespace ModernWpf.Gallery.Pages
             var tip = new Mux.TeachingTip
             {
                 Target = button,
-                Title = "Try compact mode",
-                Subtitle = "Teaching tips provide lightweight guidance without blocking the workflow.",
-                IconSource = new Mux.SymbolIconSource { Symbol = Mux.Symbol.Help },
-                CloseButtonContent = "Got it",
-                Margin = new Thickness(0, 12, 0, 0),
-                Content = new TextBlock
-                {
-                    Text = "Use a TeachingTip to introduce important UI or explain the next useful action.",
-                    TextWrapping = TextWrapping.Wrap
-                }
+                Title = "This is the title",
+                Subtitle = "And this is the subtitle",
+                IconSource = new Mux.SymbolIconSource { Symbol = Mux.Symbol.Refresh }
             };
             GalleryAutomation.WithAutomationId(tip, GalleryAutomation.SampleElementId("TeachingTip", "TeachingTip"));
             button.Click += delegate

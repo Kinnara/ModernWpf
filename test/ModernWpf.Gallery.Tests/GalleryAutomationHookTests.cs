@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
+using TeachingTipControl = ModernWpf.Controls.TeachingTip;
 
 namespace ModernWpf.Gallery.Tests
 {
@@ -50,6 +52,50 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(FindByAutomationId(page, "GallerySampleHost"), "Sample host AutomationId is missing.");
                     Assert.IsNotNull(FindByAutomationId(page, rootAutomationId), rootAutomationId + " is missing.");
                     Assert.IsNotNull(FindByAutomationId(page, primaryAutomationId), primaryAutomationId + " is missing.");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void TeachingTipSampleButtonOpensTip()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("TeachingTip"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var button = (ButtonBase)FindByAutomationId(page, "GallerySample_TeachingTip_ShowButton");
+                    var teachingTip = (TeachingTipControl)FindByAutomationId(page, "GallerySample_TeachingTip_TeachingTip");
+
+                    Assert.IsNotNull(button);
+                    Assert.IsNotNull(teachingTip);
+
+                    button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsTrue(teachingTip.IsOpen);
                 }
                 finally
                 {

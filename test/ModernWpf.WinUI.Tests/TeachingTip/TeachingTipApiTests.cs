@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -285,6 +286,44 @@ public class TeachingTipApiTests
             Assert.IsNotNull(scaleTransform, "TeachingTip should animate the tip scale like WinUI instead of using PopupAnimation.");
             Assert.AreEqual(tailOcclusionGrid.ActualWidth / 2.0, scaleTransform!.CenterX, 0.5);
             Assert.AreEqual(8.0, scaleTransform.CenterY, 0.5);
+        });
+    }
+
+    [TestMethod]
+    public void TeachingTipExpandAnimationStartsAtContractedWinUISize()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button { Width = 80, Height = 24, Content = "Target" };
+            var teachingTip = new TeachingTipControl
+            {
+                IsOpen = true,
+                Target = target,
+                PreferredPlacement = TeachingTipPlacementMode.Bottom,
+                Content = "Targeted tip"
+            };
+            var root = new StackPanel
+            {
+                Children =
+                {
+                    target,
+                    teachingTip
+                }
+            };
+
+            using var host = new TestWindowHost(root, width: 360, height: 240);
+            var tailOcclusionGrid = FindNamedDescendant<Grid>(teachingTip, "TailOcclusionGrid");
+            var method = typeof(TeachingTipControl).GetMethod("GetExpandStartScale", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            Assert.IsNotNull(method);
+
+            var startScale = (Size)method!.Invoke(teachingTip, null)!;
+
+            Assert.AreEqual(20.0 / tailOcclusionGrid.ActualWidth, startScale.Width, 0.005);
+            Assert.AreEqual(20.0 / tailOcclusionGrid.ActualHeight, startScale.Height, 0.005);
+            Assert.IsTrue(startScale.Width > 0.01, "TeachingTip should expand from the WinUI contracted size, not from a nearly invisible point.");
         });
     }
 

@@ -1319,8 +1319,8 @@ namespace ModernWpf.Controls
             var height = GetAnimationHeight();
 
             return new Size(
-                Math.Min(0.01, ContractedTipSize / width),
-                Math.Min(0.01, ContractedTipSize / height));
+                Math.Max(0.01, ContractedTipSize / width),
+                Math.Max(0.01, ContractedTipSize / height));
         }
 
         private Size GetContractEndScale()

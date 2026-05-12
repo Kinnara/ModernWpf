@@ -11,6 +11,7 @@ param(
     [int]$TimeoutSeconds = 30,
     [int]$ModernWpfRetries = 1,
     [switch]$Build,
+    [switch]$IncludeInteractions,
     [switch]$FailOnDifference
 )
 
@@ -68,10 +69,46 @@ public static class GalleryVisualNative
     [DllImport("user32.dll")]
     public static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, uint flags);
 
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr insertAfter, int x, int y, int cx, int cy, uint flags);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetCursorPos(int x, int y);
+
+    [DllImport("user32.dll")]
+    private static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extraInfo);
+
+    [DllImport("user32.dll")]
+    private static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, UIntPtr extraInfo);
+
     public static bool Move(IntPtr hWnd, int x, int y, int width, int height)
     {
         ShowWindow(hWnd, 9);
         return MoveWindow(hWnd, x, y, width, height, true);
+    }
+
+    public static void Activate(IntPtr hWnd)
+    {
+        ShowWindow(hWnd, 9);
+        SetWindowPos(hWnd, new IntPtr(-1), 0, 0, 0, 0, 0x0043);
+        SetForegroundWindow(hWnd);
+        SetWindowPos(hWnd, new IntPtr(-2), 0, 0, 0, 0, 0x0043);
+    }
+
+    public static void Click(int x, int y)
+    {
+        SetCursorPos(x, y);
+        mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
+        mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
+    }
+
+    public static void PressSpace()
+    {
+        keybd_event(0x20, 0, 0, UIntPtr.Zero);
+        keybd_event(0x20, 0, 0x0002, UIntPtr.Zero);
     }
 
     public static RECT GetRect(IntPtr hWnd)
@@ -147,6 +184,43 @@ function Find-DescendantByName($root, [string]$name) {
         [System.Windows.Automation.AutomationElement]::NameProperty,
         $name)
     return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-DescendantButtonByName($root, [string]$name) {
+    $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::NameProperty,
+        $name)
+    $buttonCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        [System.Windows.Automation.ControlType]::Button)
+    $condition = New-Object System.Windows.Automation.AndCondition($nameCondition, $buttonCondition)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-DescendantByAnyName($root, [string[]]$names) {
+    foreach ($name in $names) {
+        $element = Find-DescendantByName $root $name
+        if ($null -ne $element) {
+            return $element
+        }
+    }
+
+    return $null
+}
+
+function Find-ElementByNameInProcess([int]$processId, [string[]]$names) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        $match = Find-DescendantByAnyName $window $names
+        if ($null -ne $match) {
+            return $match
+        }
+    }
+
+    return $null
 }
 
 function Wait-Until([scriptblock]$Probe, [int]$timeoutSeconds, [string]$description) {
@@ -241,19 +315,23 @@ function Write-UiaTree($element, [string]$path, [int]$maxDepth) {
     Set-Content -Path $path -Value $lines -Encoding UTF8
 }
 
+function Test-BitmapNotBlank([System.Drawing.Bitmap]$bitmap) {
+    $colors = New-Object "System.Collections.Generic.HashSet[int]"
+    $stepX = [Math]::Max(1, [int]($bitmap.Width / 32))
+    $stepY = [Math]::Max(1, [int]($bitmap.Height / 32))
+    for ($x = 0; $x -lt $bitmap.Width; $x += $stepX) {
+        for ($y = 0; $y -lt $bitmap.Height; $y += $stepY) {
+            [void]$colors.Add($bitmap.GetPixel($x, $y).ToArgb())
+        }
+    }
+
+    return $colors.Count -gt 4
+}
+
 function Test-ImageNotBlank([string]$path) {
     $bitmap = [System.Drawing.Bitmap]::FromFile($path)
     try {
-        $colors = New-Object "System.Collections.Generic.HashSet[int]"
-        $stepX = [Math]::Max(1, [int]($bitmap.Width / 32))
-        $stepY = [Math]::Max(1, [int]($bitmap.Height / 32))
-        for ($x = 0; $x -lt $bitmap.Width; $x += $stepX) {
-            for ($y = 0; $y -lt $bitmap.Height; $y += $stepY) {
-                [void]$colors.Add($bitmap.GetPixel($x, $y).ToArgb())
-            }
-        }
-
-        return $colors.Count -gt 4
+        return Test-BitmapNotBlank $bitmap
     }
     finally {
         $bitmap.Dispose()
@@ -261,6 +339,8 @@ function Test-ImageNotBlank([string]$path) {
 }
 
 function Capture-Window([IntPtr]$hwnd, [string]$path) {
+    [GalleryVisualNative]::Activate($hwnd)
+    Start-Sleep -Milliseconds 100
     $rect = [GalleryVisualNative]::GetRect($hwnd)
     $width = [Math]::Max(1, $rect.Right - $rect.Left)
     $height = [Math]::Max(1, $rect.Bottom - $rect.Top)
@@ -276,10 +356,26 @@ function Capture-Window([IntPtr]$hwnd, [string]$path) {
             $graphics.ReleaseHdc($hdc)
         }
 
-        if (!$printed) {
+        if (!$printed -or !(Test-BitmapNotBlank $bitmap)) {
             $graphics.CopyFromScreen($rect.Left, $rect.Top, 0, 0, [System.Drawing.Size]::new($width, $height))
         }
 
+        $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+    }
+    finally {
+        $graphics.Dispose()
+        $bitmap.Dispose()
+    }
+}
+
+function Capture-ScreenRect([IntPtr]$hwnd, [string]$path) {
+    $rect = [GalleryVisualNative]::GetRect($hwnd)
+    $width = [Math]::Max(1, $rect.Right - $rect.Left)
+    $height = [Math]::Max(1, $rect.Bottom - $rect.Top)
+    $bitmap = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+    try {
+        $graphics.CopyFromScreen($rect.Left, $rect.Top, 0, 0, [System.Drawing.Size]::new($width, $height))
         $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
     }
     finally {
@@ -325,6 +421,106 @@ function Compare-Images([string]$leftPath, [string]$rightPath) {
     }
 }
 
+function Invoke-Element($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    $invoked = $false
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $rect = $element.Current.BoundingRectangle
+    if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+        [GalleryVisualNative]::Click(
+            [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+            [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+        $invoked = $true
+        Start-Sleep -Milliseconds 50
+    }
+
+    try {
+        $element.SetFocus()
+        [GalleryVisualNative]::PressSpace()
+        $invoked = $true
+        Start-Sleep -Milliseconds 50
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            $invoked = $true
+        }
+    }
+    catch {
+    }
+
+    return $invoked
+}
+
+function Capture-TeachingTipInteraction([string]$app, [string]$control, [string]$caseDir, $window, $showButton, [string[]]$openNames) {
+    if (!$IncludeInteractions -or $control -ne "TeachingTip") {
+        return $null
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 250
+    $baselinePath = Join-Path $caseDir ("{0}-{1}-closed.png" -f $app.ToLowerInvariant(), $control)
+    Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    $invoked = Invoke-Element $window $showButton
+    $frames = New-Object System.Collections.Generic.List[object]
+    $frameDelays = @(0, 150, 300, 450)
+    $previousDelay = 0
+
+    foreach ($delay in $frameDelays) {
+        if ($delay -gt $previousDelay) {
+            Start-Sleep -Milliseconds ($delay - $previousDelay)
+        }
+        $previousDelay = $delay
+
+        $framePath = Join-Path $caseDir ("{0}-{1}-open-{2:D3}ms.png" -f $app.ToLowerInvariant(), $control, $delay)
+        Capture-ScreenRect $window.Current.NativeWindowHandle $framePath
+        $frames.Add([ordered]@{
+            DelayMs = $delay
+            Screenshot = $framePath
+            NonBlank = Test-ImageNotBlank $framePath
+        })
+    }
+
+    $openElement = Find-ElementByNameInProcess $window.Current.ProcessId $openNames
+    if ($null -ne $openElement) {
+        $treePath = Join-Path $caseDir ("{0}-{1}-open.uia.txt" -f $app.ToLowerInvariant(), $control)
+        Write-UiaTree $openElement $treePath 3
+    }
+    else {
+        $treePath = ""
+    }
+
+    $openDelta = $null
+    $visualOpened = $false
+    if ($frames.Count -gt 0) {
+        $lastFrame = $frames[$frames.Count - 1]
+        $openDelta = Compare-Images $baselinePath $lastFrame.Screenshot
+        $visualOpened = $openDelta.Comparable -and $openDelta.MeanDelta -gt 1.0
+    }
+
+    $status = if (!$invoked) { "Failed" } elseif ($null -ne $openElement -or $visualOpened) { "Passed" } else { "Failed" }
+    $notes = if (!$invoked) { "Could not invoke the TeachingTip sample button." } elseif ($null -eq $openElement -and !$visualOpened) { "TeachingTip did not produce UIA or visual evidence of opening." } elseif ($null -eq $openElement) { "TeachingTip open content was not found in UIA; visual delta verified." } else { "" }
+
+    return [ordered]@{
+        Status = $status
+        Invoked = $invoked
+        BaselineScreenshot = $baselinePath
+        OpenElementFound = $null -ne $openElement
+        OpenElementName = $(if ($null -ne $openElement) { $openElement.Current.Name } else { "" })
+        UiaTree = $treePath
+        Frames = $frames.ToArray()
+        OpenDelta = $openDelta
+        Notes = $notes
+    }
+}
+
 function Close-AutomationWindow($window) {
     try {
         $pattern = $window.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
@@ -356,18 +552,23 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $title = Get-AutomationText $window "GalleryItemPageTitle"
         $requiredSampleAutomationId = Get-RequiredSampleAutomationId $control
         $sample = Find-DescendantByAutomationId $window $requiredSampleAutomationId
+        $interaction = Capture-TeachingTipInteraction "ModernWpf" $control $caseDir $window $sample @("This is the title", "Try compact mode", "And this is the subtitle")
         $screenshot = Join-Path $caseDir "modernwpf-$control.png"
         $treePath = Join-Path $caseDir "modernwpf-$control.uia.txt"
 
         Capture-Window $window.Current.NativeWindowHandle $screenshot
         Write-UiaTree $window $treePath 6
         $notBlank = Test-ImageNotBlank $screenshot
+        $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($null -eq $sample) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
+        if ($null -ne $interaction -and $interaction.Status -ne "Passed" -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = $interaction.Notes
+        }
 
         return [ordered]@{
             App = "ModernWpf"
             Control = $control
             Route = $route
-            Status = $(if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($null -eq $sample) { "Failed" } else { "Passed" })
+            Status = $status
             Title = $title
             Screenshot = $screenshot
             UiaTree = $treePath
@@ -375,6 +576,7 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
             NonBlank = $notBlank
             RequiredSampleAutomationId = $requiredSampleAutomationId
             RequiredSampleElementFound = $null -ne $sample
+            Interaction = $interaction
         }
     }
     finally {
@@ -405,6 +607,8 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         Find-DescendantByName $window $control
     } | Out-Null
 
+    $showButton = if ($control -eq "TeachingTip") { Find-DescendantButtonByName $window "Show TeachingTip" } else { $null }
+    $interaction = Capture-TeachingTipInteraction "WinUI3" $control $caseDir $window $showButton @("This is the title", "And this is the subtitle")
     $screenshot = Join-Path $caseDir "winui3-$control.png"
     $treePath = Join-Path $caseDir "winui3-$control.uia.txt"
     Capture-Window $window.Current.NativeWindowHandle $screenshot
@@ -417,14 +621,15 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         App = "WinUI3Gallery"
         Control = $control
         Route = $route
-        Status = $(if ($notBlank) { "Passed" } else { "Failed" })
+        Status = $(if (!$notBlank) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
         Title = $control
         Screenshot = $screenshot
         UiaTree = $treePath
-        LastException = ""
+        LastException = $(if ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
         NonBlank = $notBlank
         RequiredSampleAutomationId = ""
         RequiredSampleElementFound = $true
+        Interaction = $interaction
     }
 }
 
@@ -504,6 +709,16 @@ foreach ($control in $Controls) {
             $modern["LastException"] = "Mean pixel delta $($comparison.MeanDelta) exceeded visual threshold 24."
         }
     }
+    if ($null -ne $modern -and $null -ne $referenceCapture -and
+        $modern.Contains("Interaction") -and $referenceCapture.Contains("Interaction") -and
+        $null -ne $modern.Interaction -and $null -ne $referenceCapture.Interaction -and
+        $modern.Interaction.Frames.Count -gt 0 -and $referenceCapture.Interaction.Frames.Count -gt 0) {
+        $modernFrame = $modern.Interaction.Frames[$modern.Interaction.Frames.Count - 1]
+        $referenceFrame = $referenceCapture.Interaction.Frames[$referenceCapture.Interaction.Frames.Count - 1]
+        if ($modernFrame.Screenshot -and $referenceFrame.Screenshot) {
+            $modern["InteractionReferenceComparison"] = Compare-Images $modernFrame.Screenshot $referenceFrame.Screenshot
+        }
+    }
 }
 
 $reportJson = Join-Path $runDir "report.json"
@@ -523,6 +738,12 @@ foreach ($result in $results) {
     $notes = $result.LastException
     if ($result.Contains("ReferenceComparison")) {
         $notes = "Mean delta: " + $result.ReferenceComparison.MeanDelta
+    }
+    if ($result.Contains("InteractionReferenceComparison")) {
+        $notes = "$notes; interaction delta: " + $result.InteractionReferenceComparison.MeanDelta
+    }
+    if ($result.Contains("Interaction") -and $null -ne $result.Interaction -and $result.Interaction.Status -ne "Passed") {
+        $notes = "$notes; interaction: " + $result.Interaction.Notes
     }
 
     $markdown.Add("| $($result.App) | $($result.Control) | $($result.Status) | $($result.NonBlank) | $($result.RequiredSampleElementFound) | $notes |")
