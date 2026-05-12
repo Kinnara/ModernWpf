@@ -7,7 +7,9 @@
     d:DesignHeight="760"
     d:DesignWidth="900"
     mc:Ignorable="d">
-    <Grid Style="{StaticResource GalleryPageRootStyle}">
+    <Grid
+        AutomationProperties.AutomationId="GalleryItemPageRoot"
+        Style="{StaticResource GalleryPageRootStyle}">
         <ScrollViewer>
             <StackPanel Margin="40,32,40,48">
                 <DockPanel>
@@ -25,6 +27,8 @@
                     </Border>
                     <StackPanel>
                         <TextBlock
+                            x:Name="TitleTextBlock"
+                            AutomationProperties.AutomationId="GalleryItemPageTitle"
                             Style="{StaticResource GalleryTitleTextBlockStyle}"
                             Text="{Binding Title}" />
                         <TextBlock
@@ -42,6 +46,7 @@
                     Text="WPF sample"
                     Visibility="{Binding HasWpfSampleContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <ContentControl
+                    AutomationProperties.AutomationId="GallerySampleHost"
                     Content="{Binding WpfSampleContent}"
                     Visibility="{Binding HasWpfSampleContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
 

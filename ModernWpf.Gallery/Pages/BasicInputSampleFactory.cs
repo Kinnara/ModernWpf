@@ -48,6 +48,7 @@ namespace ModernWpf.Gallery.Pages
         private static UIElement CreateButtonSample()
         {
             var panel = CreateSamplePanel("Trigger an immediate action from a standard WPF Button styled by ModernWpf resources.");
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("Button"));
             var output = CreateOutput("Button has not been clicked.");
             var count = 0;
             var button = new Button
@@ -56,6 +57,7 @@ namespace ModernWpf.Gallery.Pages
                 Padding = new Thickness(18, 8, 18, 8),
                 HorizontalAlignment = HorizontalAlignment.Left
             };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("Button", "PrimaryButton"));
             button.Click += delegate
             {
                 count++;
@@ -200,6 +202,7 @@ namespace ModernWpf.Gallery.Pages
         private static UIElement CreateComboBoxSample()
         {
             var panel = CreateSamplePanel("ComboBox lets users choose one item from a compact list.");
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ComboBox"));
             var output = CreateOutput("Selected: Medium");
             var comboBox = new ComboBox
             {
@@ -208,6 +211,7 @@ namespace ModernWpf.Gallery.Pages
                 ItemsSource = new[] { "Small", "Medium", "Large" },
                 SelectedIndex = 1
             };
+            GalleryAutomation.WithAutomationId(comboBox, GalleryAutomation.SampleElementId("ComboBox", "ComboBox"));
             comboBox.SelectionChanged += delegate
             {
                 output.Text = "Selected: " + comboBox.SelectedItem;

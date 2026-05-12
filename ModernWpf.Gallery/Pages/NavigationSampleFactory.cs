@@ -93,6 +93,7 @@ namespace ModernWpf.Gallery.Pages
         private static UIElement CreateNavigationViewSample()
         {
             var panel = CreateSamplePanel("NavigationView provides a collapsible navigation menu for top-level app areas.");
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("NavigationView"));
             var content = new TextBlock
             {
                 Text = "Home page",
@@ -112,6 +113,7 @@ namespace ModernWpf.Gallery.Pages
                     Child = content
                 }
             };
+            GalleryAutomation.WithAutomationId(navigationView, GalleryAutomation.SampleElementId("NavigationView", "NavigationView"));
 
             var home = CreateNavigationItem("Home");
             var apps = CreateNavigationItem("Apps");

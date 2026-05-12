@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Threading;
 using ModernWpf.Controls;
+using ModernWpf.Gallery.Testing;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
 
@@ -146,12 +149,14 @@ namespace ModernWpf.Gallery.Shell
 
         private static NavigationViewItem CreateNavigationItem(string title, NavigationTarget target, Symbol symbol)
         {
-            return new NavigationViewItem
+            var item = new NavigationViewItem
             {
                 Content = title,
                 Icon = new SymbolIcon(symbol),
                 Tag = target
             };
+            AutomationProperties.SetAutomationId(item, "GalleryNav_" + FormatRoute(target).Replace("/", "_"));
+            return item;
         }
 
         private void OnNavigationItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
@@ -196,15 +201,37 @@ namespace ModernWpf.Gallery.Shell
 
         private void Navigate(NavigationTarget target, bool addBackEntry)
         {
-            if (_currentTarget != null && addBackEntry && !_currentTarget.Equals(target))
-            {
-                _backStack.Push(_currentTarget);
-            }
+            var route = FormatRoute(target);
+            SetVisualTestState(route, "Navigating:" + route);
 
-            _currentTarget = target;
-            ContentHost.Content = CreatePage(target);
-            SelectNavigationItem(target);
-            UpdateBackButton();
+            try
+            {
+                if (_currentTarget != null && addBackEntry && !_currentTarget.Equals(target))
+                {
+                    _backStack.Push(_currentTarget);
+                }
+
+                _currentTarget = target;
+                ContentHost.Content = CreatePage(target);
+                SelectNavigationItem(target);
+                UpdateBackButton();
+
+                Dispatcher.BeginInvoke(
+                    DispatcherPriority.ContextIdle,
+                    new Action(() =>
+                    {
+                        if (_currentTarget != null && _currentTarget.Equals(target))
+                        {
+                            SetVisualTestState(route, "Ready:" + route);
+                        }
+                    }));
+            }
+            catch (Exception ex)
+            {
+                GalleryDiagnostics.RecordException(ex);
+                SetVisualTestState(route, "Failed:" + route);
+                throw;
+            }
         }
 
         private object CreatePage(NavigationTarget target)
@@ -268,6 +295,36 @@ namespace ModernWpf.Gallery.Shell
             {
                 window.SetBackButtonVisible(canGoBack);
             }
+        }
+
+        private void SetVisualTestState(string route, string readyState)
+        {
+            GalleryDiagnostics.RecordRoute(route);
+            GalleryDiagnostics.SetReadyState(readyState);
+
+            VisualTestCurrentRouteText.Text = GalleryDiagnostics.CurrentRoute;
+            VisualTestReadyStateText.Text = GalleryDiagnostics.ReadyState;
+            VisualTestLastExceptionText.Text = GalleryDiagnostics.LastException;
+        }
+
+        internal static string FormatRoute(NavigationTarget target)
+        {
+            if (target == null || target.Kind == NavigationTargetKind.Home)
+            {
+                return "home";
+            }
+
+            if (target.Kind == NavigationTargetKind.AllControls)
+            {
+                return "AllControls";
+            }
+
+            if (target.Kind == NavigationTargetKind.Group)
+            {
+                return "category/" + target.UniqueId;
+            }
+
+            return "item/" + target.UniqueId;
         }
     }
 

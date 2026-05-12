@@ -43,7 +43,9 @@ namespace ModernWpf.Gallery.Pages
         private static UIElement CreateInfoBarSample()
         {
             var panel = CreateSamplePanel("InfoBar presents inline app status without blocking the current task.");
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("InfoBar"));
             var host = new StackPanel();
+            GalleryAutomation.WithAutomationId(host, GalleryAutomation.SampleElementId("InfoBar", "Host"));
             var infoBar = CreateInlineMessage(
                 "Sync complete",
                 "Your settings were saved and will be used the next time the app starts.",
@@ -59,6 +61,7 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 12, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Left
             };
+            GalleryAutomation.WithAutomationId(reset, GalleryAutomation.SampleElementId("InfoBar", "ShowButton"));
             reset.Click += delegate
             {
                 host.Children.Clear();

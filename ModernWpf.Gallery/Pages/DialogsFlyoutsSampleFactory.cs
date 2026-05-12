@@ -30,8 +30,10 @@ namespace ModernWpf.Gallery.Pages
         private static UIElement CreateContentDialogSample()
         {
             var panel = CreateSamplePanel("ContentDialog asks the user to confirm a focused decision before continuing.");
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ContentDialog"));
             var output = CreateOutput("Dialog result: none.");
             var button = CreateButton("Show ContentDialog");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("ContentDialog", "ShowButton"));
             button.Click += async delegate
             {
                 var dialog = new Mux.ContentDialog
@@ -109,7 +111,9 @@ namespace ModernWpf.Gallery.Pages
         private static UIElement CreateTeachingTipSample()
         {
             var panel = CreateSamplePanel("TeachingTip explains a new or important capability near the relevant control.");
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("TeachingTip"));
             var button = CreateButton("Show TeachingTip");
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("TeachingTip", "ShowButton"));
             var tip = new Mux.TeachingTip
             {
                 Target = button,
@@ -124,6 +128,7 @@ namespace ModernWpf.Gallery.Pages
                     TextWrapping = TextWrapping.Wrap
                 }
             };
+            GalleryAutomation.WithAutomationId(tip, GalleryAutomation.SampleElementId("TeachingTip", "TeachingTip"));
             button.Click += delegate
             {
                 tip.IsOpen = true;
