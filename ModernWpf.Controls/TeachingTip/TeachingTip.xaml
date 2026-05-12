@@ -68,7 +68,7 @@
                         <Popup
                             x:Name="Popup"
                             AllowsTransparency="True"
-                            PopupAnimation="Fade"
+                            PopupAnimation="None"
                             StaysOpen="True">
                             <Border
                                 x:Name="Container"
@@ -77,10 +77,14 @@
                                 Background="Transparent"
                                 Visibility="Collapsed">
                                 <Grid
+                                    x:Name="TailOcclusionGrid"
                                     MinHeight="{StaticResource TeachingTipMinHeight}"
                                     MinWidth="{StaticResource TeachingTipMinWidth}"
                                     MaxHeight="{StaticResource TeachingTipMaxHeight}"
                                     MaxWidth="{StaticResource TeachingTipMaxWidth}">
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform x:Name="TailOcclusionScaleTransform" />
+                                    </Grid.RenderTransform>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="{StaticResource TeachingTipTailShortSideLength}" />
                                         <ColumnDefinition Width="{StaticResource TeachingTipTailMargin}" />

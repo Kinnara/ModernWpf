@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using ModernWpf.Controls.Primitives;
 
@@ -13,6 +14,8 @@ namespace ModernWpf.Controls
     {
         private const string PopupName = "Popup";
         private const string ContainerName = "Container";
+        private const string TailOcclusionGridName = "TailOcclusionGrid";
+        private const string TailOcclusionScaleTransformName = "TailOcclusionScaleTransform";
         private const string ContentRootGridName = "ContentRootGrid";
         private const string HeroContentBorderName = "HeroContentBorder";
         private const string MainContentPresenterName = "MainContentPresenter";
@@ -23,6 +26,14 @@ namespace ModernWpf.Controls
         private const string CloseButtonName = "CloseButton";
         private const string AlternateCloseButtonName = "AlternateCloseButton";
         private const string TailPolygonName = "TailPolygon";
+        private const double DefaultTipHeightAndWidth = 320.0;
+        private const double ContractedTipSize = 20.0;
+        private static readonly TimeSpan ExpandAnimationDuration = TimeSpan.FromMilliseconds(300);
+        private static readonly TimeSpan ContractAnimationDuration = TimeSpan.FromMilliseconds(200);
+        private static readonly Point ExpandAnimationEasingControlPoint1 = new Point(0.1, 0.9);
+        private static readonly Point ExpandAnimationEasingControlPoint2 = new Point(0.2, 1.0);
+        private static readonly Point ContractAnimationEasingControlPoint1 = new Point(0.7, 0.0);
+        private static readonly Point ContractAnimationEasingControlPoint2 = new Point(1.0, 0.5);
 
         static TeachingTip()
         {
@@ -324,6 +335,7 @@ namespace ModernWpf.Controls
 
         public override void OnApplyTemplate()
         {
+            StopTipAnimation();
             UnhookButtonEvents();
             UpdateLightDismissHook(null);
             UpdateRepositionHooks(null, null);
@@ -332,6 +344,8 @@ namespace ModernWpf.Controls
 
             _popup = GetTemplateChild(PopupName) as Popup;
             _container = GetTemplateChild(ContainerName) as FrameworkElement;
+            _tailOcclusionGrid = GetTemplateChild(TailOcclusionGridName) as Grid;
+            _tailOcclusionScaleTransform = GetTemplateChild(TailOcclusionScaleTransformName) as ScaleTransform;
             _contentRootGrid = GetTemplateChild(ContentRootGridName) as Border;
             _heroContentBorder = GetTemplateChild(HeroContentBorderName) as Border;
             _mainContentPresenter = GetTemplateChild(MainContentPresenterName) as Border;
@@ -347,6 +361,11 @@ namespace ModernWpf.Controls
             ConfigurePopup();
             UpdateIcon();
             UpdateVisualState();
+
+            if (IsOpen)
+            {
+                StartOpenAnimation();
+            }
         }
 
         private static void OnIsOpenPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -354,15 +373,27 @@ namespace ModernWpf.Controls
             var teachingTip = (TeachingTip)d;
             if ((bool)e.NewValue)
             {
+                var suppressOpenAnimation = teachingTip._suppressNextOpenAnimation;
+                teachingTip._suppressNextOpenAnimation = false;
+                teachingTip._isClosingAnimationActive = false;
+                teachingTip.StopTipAnimation();
                 teachingTip._lastCloseReason = TeachingTipCloseReason.Programmatic;
                 teachingTip.UpdateVisualState();
+
+                if (suppressOpenAnimation)
+                {
+                    teachingTip.SetTipScale(1.0, 1.0);
+                }
+                else
+                {
+                    teachingTip.StartOpenAnimation();
+                }
             }
             else if ((bool)e.OldValue)
             {
                 if (teachingTip._isCompletingClose)
                 {
-                    teachingTip.UpdateVisualState();
-                    teachingTip.Closed?.Invoke(teachingTip, new TeachingTipClosedEventArgs(teachingTip._lastCloseReason));
+                    teachingTip.StartCloseAnimationOrClose(teachingTip._lastCloseReason);
                 }
                 else
                 {
@@ -402,6 +433,8 @@ namespace ModernWpf.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            StopTipAnimation();
+            _isClosingAnimationActive = false;
             UpdateTargetUnloadHook(null);
             UpdateLightDismissHook(null);
             UpdateRepositionHooks(null, null);
@@ -466,6 +499,7 @@ namespace ModernWpf.Controls
             }
 
             _popup.StaysOpen = true;
+            _popup.PopupAnimation = PopupAnimation.None;
             _popup.Placement = PlacementMode.Custom;
             _popup.CustomPopupPlacementCallback = PositionPopup;
         }
@@ -527,6 +561,7 @@ namespace ModernWpf.Controls
 
         private void RestoreOpenState()
         {
+            _suppressNextOpenAnimation = true;
             SetCurrentValue(IsOpenProperty, true);
             UpdateVisualState();
         }
@@ -549,11 +584,8 @@ namespace ModernWpf.Controls
             }
             else
             {
-                UpdateVisualState();
-                Closed?.Invoke(this, new TeachingTipClosedEventArgs(reason));
+                StartCloseAnimationOrClose(reason);
             }
-
-            _lastCloseReason = TeachingTipCloseReason.Programmatic;
         }
 
         private void UpdateIcon()
@@ -565,7 +597,7 @@ namespace ModernWpf.Controls
         {
             if (_container != null)
             {
-                _container.Visibility = IsOpen ? Visibility.Visible : Visibility.Collapsed;
+                _container.Visibility = ShouldKeepPopupOpen ? Visibility.Visible : Visibility.Collapsed;
                 _container.Margin = default;
             }
 
@@ -598,6 +630,7 @@ namespace ModernWpf.Controls
                 return;
             }
 
+            var shouldKeepPopupOpen = ShouldKeepPopupOpen;
             var placementTarget = GetPopupPlacementTarget();
             _popup.Placement = PlacementMode.Custom;
             _popup.CustomPopupPlacementCallback = PositionPopup;
@@ -607,12 +640,12 @@ namespace ModernWpf.Controls
                 _popup.PlacementTarget = placementTarget;
             }
 
-            if (_popup.IsOpen != IsOpen)
+            if (_popup.IsOpen != shouldKeepPopupOpen)
             {
-                _popup.SetCurrentValue(Popup.IsOpenProperty, IsOpen);
+                _popup.SetCurrentValue(Popup.IsOpenProperty, shouldKeepPopupOpen);
             }
 
-            if (IsOpen)
+            if (shouldKeepPopupOpen)
             {
                 RepositionPopup();
             }
@@ -682,6 +715,8 @@ namespace ModernWpf.Controls
 
         private void ApplyTailPlacement(TeachingTipPlacementMode placement)
         {
+            UpdateAnimationCenterPoint(placement);
+
             switch (placement)
             {
                 case TeachingTipPlacementMode.Top:
@@ -1135,6 +1170,302 @@ namespace ModernWpf.Controls
             }
         }
 
+        private bool ShouldKeepPopupOpen => IsOpen || _isClosingAnimationActive;
+
+        private void StartOpenAnimation()
+        {
+            if (_tailOcclusionScaleTransform == null)
+            {
+                return;
+            }
+
+            UpdateAnimationCenterPoint(GetEffectivePlacement());
+
+            if (!SharedHelpers.IsAnimationsEnabled)
+            {
+                SetTipScale(1.0, 1.0);
+                return;
+            }
+
+            var startScale = GetExpandStartScale();
+            AnimateTipScale(
+                startScale.Width,
+                startScale.Height,
+                1.0,
+                1.0,
+                ExpandAnimationDuration,
+                ExpandAnimationEasingControlPoint1,
+                ExpandAnimationEasingControlPoint2,
+                () => SetTipScale(1.0, 1.0));
+        }
+
+        private void StartCloseAnimationOrClose(TeachingTipCloseReason reason)
+        {
+            if (_isClosingAnimationActive)
+            {
+                _lastCloseReason = reason;
+                return;
+            }
+
+            _isClosingAnimationActive = true;
+            UpdateVisualState();
+            UpdateAnimationCenterPoint(GetEffectivePlacement());
+
+            if (_tailOcclusionScaleTransform == null || !SharedHelpers.IsAnimationsEnabled)
+            {
+                FinishClose(reason);
+                return;
+            }
+
+            var endScale = GetContractEndScale();
+            AnimateTipScale(
+                _tailOcclusionScaleTransform.ScaleX,
+                _tailOcclusionScaleTransform.ScaleY,
+                endScale.Width,
+                endScale.Height,
+                ContractAnimationDuration,
+                ContractAnimationEasingControlPoint1,
+                ContractAnimationEasingControlPoint2,
+                () => FinishClose(reason));
+        }
+
+        private void FinishClose(TeachingTipCloseReason reason)
+        {
+            _isClosingAnimationActive = false;
+            StopTipAnimation();
+            SetTipScale(1.0, 1.0);
+            UpdateVisualState();
+            Closed?.Invoke(this, new TeachingTipClosedEventArgs(reason));
+            _lastCloseReason = TeachingTipCloseReason.Programmatic;
+        }
+
+        private void AnimateTipScale(
+            double fromScaleX,
+            double fromScaleY,
+            double toScaleX,
+            double toScaleY,
+            TimeSpan duration,
+            Point easingControlPoint1,
+            Point easingControlPoint2,
+            Action completed)
+        {
+            if (_tailOcclusionScaleTransform == null)
+            {
+                completed?.Invoke();
+                return;
+            }
+
+            StopTipAnimation();
+            SetTipScale(fromScaleX, fromScaleY);
+
+            var generation = ++_tipAnimationGeneration;
+            var scaleXAnimation = CreateScaleAnimation(toScaleX, duration, easingControlPoint1, easingControlPoint2);
+            var scaleYAnimation = CreateScaleAnimation(toScaleY, duration, easingControlPoint1, easingControlPoint2);
+            scaleYAnimation.Completed += (sender, args) =>
+            {
+                if (generation == _tipAnimationGeneration)
+                {
+                    completed?.Invoke();
+                }
+            };
+
+            _tailOcclusionScaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, scaleXAnimation, HandoffBehavior.SnapshotAndReplace);
+            _tailOcclusionScaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, scaleYAnimation, HandoffBehavior.SnapshotAndReplace);
+        }
+
+        private static DoubleAnimationUsingKeyFrames CreateScaleAnimation(
+            double toValue,
+            TimeSpan duration,
+            Point easingControlPoint1,
+            Point easingControlPoint2)
+        {
+            var animation = new DoubleAnimationUsingKeyFrames
+            {
+                Duration = new Duration(duration),
+                FillBehavior = FillBehavior.HoldEnd
+            };
+
+            animation.KeyFrames.Add(new SplineDoubleKeyFrame(
+                toValue,
+                KeyTime.FromTimeSpan(duration),
+                new KeySpline(easingControlPoint1, easingControlPoint2)));
+
+            return animation;
+        }
+
+        private void StopTipAnimation()
+        {
+            _tipAnimationGeneration++;
+
+            if (_tailOcclusionScaleTransform != null)
+            {
+                _tailOcclusionScaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+                _tailOcclusionScaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, null);
+            }
+        }
+
+        private void SetTipScale(double scaleX, double scaleY)
+        {
+            if (_tailOcclusionScaleTransform != null)
+            {
+                _tailOcclusionScaleTransform.ScaleX = scaleX;
+                _tailOcclusionScaleTransform.ScaleY = scaleY;
+            }
+        }
+
+        private Size GetExpandStartScale()
+        {
+            var width = GetAnimationWidth();
+            var height = GetAnimationHeight();
+
+            return new Size(
+                Math.Min(0.01, ContractedTipSize / width),
+                Math.Min(0.01, ContractedTipSize / height));
+        }
+
+        private Size GetContractEndScale()
+        {
+            return new Size(
+                ContractedTipSize / GetAnimationWidth(),
+                ContractedTipSize / GetAnimationHeight());
+        }
+
+        private double GetAnimationWidth()
+        {
+            return GetActualOrDefault(_tailOcclusionGrid?.ActualWidth, DefaultTipHeightAndWidth);
+        }
+
+        private double GetAnimationHeight()
+        {
+            return GetActualOrDefault(_tailOcclusionGrid?.ActualHeight, DefaultTipHeightAndWidth);
+        }
+
+        private static double GetActualOrDefault(double? actualValue, double defaultValue)
+        {
+            return actualValue.HasValue && actualValue.Value > 0.0 ? actualValue.Value : defaultValue;
+        }
+
+        private void UpdateAnimationCenterPoint(TeachingTipPlacementMode placement)
+        {
+            if (_tailOcclusionGrid == null || _tailOcclusionScaleTransform == null)
+            {
+                return;
+            }
+
+            _tailOcclusionGrid.UpdateLayout();
+
+            var width = GetAnimationWidth();
+            var height = GetAnimationHeight();
+            var firstColumnWidth = GetColumnWidth(0, GetGridLengthResourceValue("TeachingTipTailShortSideLength", 8.0));
+            var secondColumnWidth = GetColumnWidth(1, GetGridLengthResourceValue("TeachingTipTailMargin", 10.0));
+            var nextToLastColumnWidth = GetColumnWidth(Math.Max(0, _tailOcclusionGrid.ColumnDefinitions.Count - 2), secondColumnWidth);
+            var lastColumnWidth = GetColumnWidth(_tailOcclusionGrid.ColumnDefinitions.Count - 1, firstColumnWidth);
+            var firstRowHeight = GetRowHeight(0, GetGridLengthResourceValue("TeachingTipTailShortSideLength", 8.0));
+            var secondRowHeight = GetRowHeight(1, GetGridLengthResourceValue("TeachingTipTailMargin", 10.0));
+            var nextToLastRowHeight = GetRowHeight(Math.Max(0, _tailOcclusionGrid.RowDefinitions.Count - 2), secondRowHeight);
+            var lastRowHeight = GetRowHeight(_tailOcclusionGrid.RowDefinitions.Count - 1, firstRowHeight);
+
+            var centerX = width / 2.0;
+            var centerY = height / 2.0;
+
+            switch (placement)
+            {
+                case TeachingTipPlacementMode.Top:
+                    centerY = height - lastRowHeight;
+                    break;
+
+                case TeachingTipPlacementMode.Bottom:
+                    centerY = firstRowHeight;
+                    break;
+
+                case TeachingTipPlacementMode.Left:
+                    centerX = width - lastColumnWidth;
+                    break;
+
+                case TeachingTipPlacementMode.Right:
+                    centerX = firstColumnWidth;
+                    break;
+
+                case TeachingTipPlacementMode.TopRight:
+                    centerX = firstColumnWidth + secondColumnWidth + 1.0;
+                    centerY = height - lastRowHeight;
+                    break;
+
+                case TeachingTipPlacementMode.TopLeft:
+                    centerX = width - (nextToLastColumnWidth + lastColumnWidth + 1.0);
+                    centerY = height - lastRowHeight;
+                    break;
+
+                case TeachingTipPlacementMode.BottomRight:
+                    centerX = firstColumnWidth + secondColumnWidth + 1.0;
+                    centerY = firstRowHeight;
+                    break;
+
+                case TeachingTipPlacementMode.BottomLeft:
+                    centerX = width - (nextToLastColumnWidth + lastColumnWidth + 1.0);
+                    centerY = firstRowHeight;
+                    break;
+
+                case TeachingTipPlacementMode.LeftTop:
+                    centerX = width - lastColumnWidth;
+                    centerY = height - (nextToLastRowHeight + lastRowHeight + 1.0);
+                    break;
+
+                case TeachingTipPlacementMode.LeftBottom:
+                    centerX = width - lastColumnWidth;
+                    centerY = firstRowHeight + secondRowHeight + 1.0;
+                    break;
+
+                case TeachingTipPlacementMode.RightTop:
+                    centerX = firstColumnWidth;
+                    centerY = height - (nextToLastRowHeight + lastRowHeight + 1.0);
+                    break;
+
+                case TeachingTipPlacementMode.RightBottom:
+                    centerX = firstColumnWidth;
+                    centerY = firstRowHeight + secondRowHeight + 1.0;
+                    break;
+
+                case TeachingTipPlacementMode.Center:
+                    centerY = height - lastRowHeight;
+                    break;
+            }
+
+            _tailOcclusionScaleTransform.CenterX = centerX;
+            _tailOcclusionScaleTransform.CenterY = centerY;
+        }
+
+        private double GetColumnWidth(int index, double fallback)
+        {
+            if (_tailOcclusionGrid != null &&
+                index >= 0 &&
+                index < _tailOcclusionGrid.ColumnDefinitions.Count &&
+                _tailOcclusionGrid.ColumnDefinitions[index].ActualWidth > 0.0)
+            {
+                return _tailOcclusionGrid.ColumnDefinitions[index].ActualWidth;
+            }
+
+            return fallback;
+        }
+
+        private double GetRowHeight(int index, double fallback)
+        {
+            if (_tailOcclusionGrid != null &&
+                index >= 0 &&
+                index < _tailOcclusionGrid.RowDefinitions.Count &&
+                _tailOcclusionGrid.RowDefinitions[index].ActualHeight > 0.0)
+            {
+                return _tailOcclusionGrid.RowDefinitions[index].ActualHeight;
+            }
+
+            return fallback;
+        }
+
+        private double GetGridLengthResourceValue(object key, double fallback)
+        {
+            return TryFindResource(key) is GridLength gridLength ? gridLength.Value : fallback;
+        }
+
         private Thickness GetThicknessResource(object key)
         {
             return TryFindResource(key) is Thickness thickness ? thickness : new Thickness();
@@ -1142,12 +1473,17 @@ namespace ModernWpf.Controls
 
         private TeachingTipCloseReason _lastCloseReason = TeachingTipCloseReason.Programmatic;
         private bool _isCompletingClose;
+        private bool _isClosingAnimationActive;
+        private bool _suppressNextOpenAnimation;
+        private int _tipAnimationGeneration;
         private Popup _popup;
         private FrameworkElement _unloadHookedTarget;
         private FrameworkElement _repositionTarget;
         private Window _repositionWindow;
         private Window _lightDismissWindow;
         private FrameworkElement _container;
+        private Grid _tailOcclusionGrid;
+        private ScaleTransform _tailOcclusionScaleTransform;
         private Border _contentRootGrid;
         private Border _heroContentBorder;
         private Border _mainContentPresenter;

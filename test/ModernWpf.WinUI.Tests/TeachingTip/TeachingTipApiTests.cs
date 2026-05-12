@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -188,6 +189,7 @@ public class TeachingTipApiTests
             actionButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
             closeButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
             host.UpdateLayout();
+            WaitFor(() => events.Contains("Closed: CloseButton"), "TeachingTip close animation did not complete.");
 
             CollectionAssert.AreEqual(
                 new[] { "ActionButtonClick", "CloseButtonClick", "Closing: CloseButton", "Closed: CloseButton" },
@@ -242,10 +244,47 @@ public class TeachingTipApiTests
 
             deferral!.Complete();
             host.UpdateLayout();
+            WaitFor(() => events.Contains("Closed: Programmatic"), "TeachingTip deferred close animation did not complete.");
 
             CollectionAssert.AreEqual(new[] { "Closing: Programmatic", "Closed: Programmatic" }, events);
             Assert.IsFalse(teachingTip.IsOpen);
             Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<FrameworkElement>(teachingTip, "Container").Visibility);
+        });
+    }
+
+    [TestMethod]
+    public void TeachingTipUsesWinUIScaleAnimationTemplate()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button { Width = 80, Height = 24, Content = "Target" };
+            var teachingTip = new TeachingTipControl
+            {
+                IsOpen = true,
+                Target = target,
+                PreferredPlacement = TeachingTipPlacementMode.Bottom,
+                Content = "Targeted tip"
+            };
+            var root = new StackPanel
+            {
+                Children =
+                {
+                    target,
+                    teachingTip
+                }
+            };
+
+            using var host = new TestWindowHost(root, width: 360, height: 240);
+            var popup = FindNamedDescendant<Popup>(teachingTip, "Popup");
+            var tailOcclusionGrid = FindNamedDescendant<Grid>(teachingTip, "TailOcclusionGrid");
+            var scaleTransform = tailOcclusionGrid.RenderTransform as ScaleTransform;
+
+            Assert.AreEqual(PopupAnimation.None, popup.PopupAnimation);
+            Assert.IsNotNull(scaleTransform, "TeachingTip should animate the tip scale like WinUI instead of using PopupAnimation.");
+            Assert.AreEqual(tailOcclusionGrid.ActualWidth / 2.0, scaleTransform!.CenterX, 0.5);
+            Assert.AreEqual(8.0, scaleTransform.CenterY, 0.5);
         });
     }
 
@@ -405,6 +444,7 @@ public class TeachingTipApiTests
                 Source = outside
             });
             host.UpdateLayout();
+            WaitFor(() => !popup.IsOpen && closeReason == TeachingTipCloseReason.LightDismiss, "TeachingTip light-dismiss close animation did not complete.");
 
             Assert.IsFalse(teachingTip.IsOpen);
             Assert.IsFalse(popup.IsOpen);
@@ -439,6 +479,7 @@ public class TeachingTipApiTests
 
             root.Children.Remove(target);
             host.UpdateLayout();
+            WaitFor(() => !popup.IsOpen && closeReason == TeachingTipCloseReason.Programmatic, "TeachingTip target-unload close animation did not complete.");
 
             Assert.IsFalse(teachingTip.IsOpen);
             Assert.IsFalse(popup.IsOpen);
@@ -526,6 +567,19 @@ public class TeachingTipApiTests
         }
 
         throw new InvalidOperationException($"Could not find descendant named '{name}'.");
+    }
+
+    private static void WaitFor(Func<bool> predicate, string failureMessage, int timeoutMilliseconds = 1500)
+    {
+        var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMilliseconds);
+
+        while (!predicate() && DateTime.UtcNow < deadline)
+        {
+            Thread.Sleep(10);
+            WpfTestHost.DoEvents();
+        }
+
+        Assert.IsTrue(predicate(), failureMessage);
     }
 
     private static IEnumerable<DependencyObject> EnumerateDescendantsIncludingPopupChildren(DependencyObject root)
