@@ -24,11 +24,11 @@ public class SyncMatrixTests
         Assert.IsFalse(matrix.Contains("remain pending", StringComparison.OrdinalIgnoreCase), "Sync matrix still has unresolved pending wording.");
         Assert.IsFalse(matrix.Contains("pending/excluded", StringComparison.OrdinalIgnoreCase), "Sync matrix should document exclusions directly instead of using pending/excluded wording.");
 
-        AssertControlStatus(matrix, "TeachingTip", "Functional subset in progress");
-        AssertControlStatus(matrix, "SwipeControl", "API/template shell");
-        AssertControlStatus(matrix, "PullToRefresh / RefreshContainer", "API/template shell");
+        AssertControlStatus(matrix, "TeachingTip", "Functional subset");
+        AssertControlStatus(matrix, "SwipeControl", "Functional subset");
+        AssertControlStatus(matrix, "PullToRefresh / RefreshContainer", "Functional subset");
         AssertControlStatus(matrix, "ColorPicker / ColorSpectrum", "Functional subset");
-        AssertControlStatus(matrix, "AnnotatedScrollBar", "API/template shell");
+        AssertControlStatus(matrix, "AnnotatedScrollBar", "Functional subset");
     }
 
     public TestContext? TestContext { get; set; }

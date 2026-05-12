@@ -114,4 +114,56 @@ public class AnnotatedScrollBarApiTests
             Assert.AreEqual(3, itemsControl.Items.Count);
         });
     }
+
+    [TestMethod]
+    public void VerifyRailRatioMapsToScrollOffsets()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var labels = new ObservableCollection<AnnotatedScrollBarLabel>
+            {
+                new AnnotatedScrollBarLabel("Start", 10),
+                new AnnotatedScrollBarLabel("End", 110)
+            };
+            var annotatedScrollBar = new ModernWpf.Controls.AnnotatedScrollBar
+            {
+                Labels = labels
+            };
+            AnnotatedScrollBarScrollingEventArgs? eventArgs = null;
+            annotatedScrollBar.Scrolling += (_, args) => eventArgs = args;
+
+            annotatedScrollBar.ScrollToRatioForTesting(0.5, AnnotatedScrollBarScrollingEventKind.Drag);
+
+            Assert.IsNotNull(eventArgs);
+            Assert.AreEqual(60d, eventArgs!.ScrollOffset);
+            Assert.AreEqual(AnnotatedScrollBarScrollingEventKind.Drag, eventArgs.ScrollingEventKind);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyDetailLabelUsesNearestLabelAndCanBeOverridden()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var annotatedScrollBar = new ModernWpf.Controls.AnnotatedScrollBar
+            {
+                Labels = new ObservableCollection<AnnotatedScrollBarLabel>
+                {
+                    new AnnotatedScrollBarLabel("Start", 0),
+                    new AnnotatedScrollBarLabel("Middle", 50),
+                    new AnnotatedScrollBarLabel("End", 100)
+                }
+            };
+
+            var defaultArgs = annotatedScrollBar.RequestDetailLabelForRatioForTesting(0.5);
+            Assert.AreEqual("Middle", defaultArgs.Content);
+
+            annotatedScrollBar.DetailLabelRequested += (_, args) => args.Content = "Offset " + args.ScrollOffset;
+
+            var args = annotatedScrollBar.RequestDetailLabelForRatioForTesting(0.5);
+
+            Assert.AreEqual(50d, args.ScrollOffset);
+            Assert.AreEqual("Offset 50", args.Content);
+        });
+    }
 }

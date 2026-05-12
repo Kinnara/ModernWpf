@@ -264,6 +264,82 @@ public class ColorPickerApiTests
     }
 
     [TestMethod]
+    public void RingSpectrumHitTestingUsesAngleAndRadius()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var colorSpectrum = new ColorSpectrum
+            {
+                Width = 200,
+                Height = 200,
+                Shape = ColorSpectrumShape.Ring,
+                Components = ColorSpectrumComponents.HueSaturation
+            };
+
+            using var host = new TestWindowHost(colorSpectrum, width: 260, height: 260);
+            var spectrumEllipse = FindNamedDescendant<Ellipse>(colorSpectrum, "SpectrumEllipse");
+
+            colorSpectrum.SetColorFromPointForTesting(new Point(spectrumEllipse.ActualWidth, spectrumEllipse.ActualHeight / 2));
+
+            AssertClose(0, colorSpectrum.HsvColor.X, 0.5);
+            AssertClose(1, colorSpectrum.HsvColor.Y, 0.01);
+
+            colorSpectrum.SetColorFromPointForTesting(new Point(spectrumEllipse.ActualWidth / 2, spectrumEllipse.ActualHeight / 2));
+
+            AssertClose(0, colorSpectrum.HsvColor.Y, 0.01);
+        });
+    }
+
+    [TestMethod]
+    public void KeyboardAdjustmentFollowsConfiguredComponents()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var colorSpectrum = new ColorSpectrum
+            {
+                HsvColor = new Vector4(10, 0.50f, 0.50f, 1)
+            };
+
+            colorSpectrum.AdjustColorForTesting(1, 1);
+
+            AssertClose(11, colorSpectrum.HsvColor.X, 0.01);
+            AssertClose(0.51, colorSpectrum.HsvColor.Y, 0.01);
+
+            colorSpectrum.Components = ColorSpectrumComponents.ValueHue;
+            colorSpectrum.HsvColor = new Vector4(20, 0.50f, 0.50f, 1);
+            colorSpectrum.AdjustColorForTesting(1, 1);
+
+            AssertClose(21, colorSpectrum.HsvColor.X, 0.01);
+            AssertClose(0.51, colorSpectrum.HsvColor.Z, 0.01);
+        });
+    }
+
+    [TestMethod]
+    public void SelectionRingHasContrastStrokeAndSpectrumIsFocusable()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var colorSpectrum = new ColorSpectrum
+            {
+                Width = 200,
+                Height = 200
+            };
+
+            using var host = new TestWindowHost(colorSpectrum, width: 260, height: 260);
+
+            var outerRing = FindNamedDescendant<Ellipse>(colorSpectrum, "SelectionEllipseOuter");
+
+            Assert.IsTrue(colorSpectrum.Focusable);
+            Assert.AreEqual(Colors.Black, ((SolidColorBrush)outerRing.Stroke).Color);
+            Assert.AreEqual(4.0, outerRing.StrokeThickness);
+        });
+    }
+
+    [TestMethod]
     public void ClearingTextInputFieldsDoesNotCrash()
     {
         WpfTestHost.Run(() =>

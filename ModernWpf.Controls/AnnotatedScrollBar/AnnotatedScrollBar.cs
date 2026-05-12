@@ -1,15 +1,20 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace ModernWpf.Controls
 {
     [TemplatePart(Name = LabelsHostName, Type = typeof(ItemsControl))]
+    [TemplatePart(Name = RailName, Type = typeof(FrameworkElement))]
     public class AnnotatedScrollBar : Control
     {
         private const string LabelsHostName = "PART_LabelsHost";
+        private const string RailName = "PART_Rail";
 
         static AnnotatedScrollBar()
         {
@@ -83,9 +88,23 @@ namespace ModernWpf.Controls
 
         public override void OnApplyTemplate()
         {
+            if (_rail != null)
+            {
+                _rail.MouseLeftButtonDown -= OnRailMouseLeftButtonDown;
+                _rail.MouseMove -= OnRailMouseMove;
+            }
+
             base.OnApplyTemplate();
 
             _labelsHost = GetTemplateChild(LabelsHostName) as ItemsControl;
+            _rail = GetTemplateChild(RailName) as FrameworkElement;
+
+            if (_rail != null)
+            {
+                _rail.MouseLeftButtonDown += OnRailMouseLeftButtonDown;
+                _rail.MouseMove += OnRailMouseMove;
+            }
+
             UpdateLabelsHost();
         }
 
@@ -101,8 +120,21 @@ namespace ModernWpf.Controls
         internal AnnotatedScrollBarDetailLabelRequestedEventArgs RaiseDetailLabelRequested(double scrollOffset)
         {
             var args = new AnnotatedScrollBarDetailLabelRequestedEventArgs(scrollOffset);
+            args.Content = GetNearestLabelContent(scrollOffset);
             DetailLabelRequested?.Invoke(this, args);
             return args;
+        }
+
+        internal AnnotatedScrollBarScrollingEventArgs ScrollToRatioForTesting(
+            double ratio,
+            AnnotatedScrollBarScrollingEventKind eventKind)
+        {
+            return RaiseScrolling(MapRatioToOffset(ratio), eventKind);
+        }
+
+        internal AnnotatedScrollBarDetailLabelRequestedEventArgs RequestDetailLabelForRatioForTesting(double ratio)
+        {
+            return RaiseDetailLabelRequested(MapRatioToOffset(ratio));
         }
 
         private static void OnLabelsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -138,6 +170,63 @@ namespace ModernWpf.Controls
             }
         }
 
+        private void OnRailMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (_rail == null)
+            {
+                return;
+            }
+
+            var ratio = GetRailRatio(e.GetPosition(_rail));
+            RaiseScrolling(MapRatioToOffset(ratio), AnnotatedScrollBarScrollingEventKind.Click);
+            e.Handled = true;
+        }
+
+        private void OnRailMouseMove(object sender, MouseEventArgs e)
+        {
+            if (_rail == null)
+            {
+                return;
+            }
+
+            var ratio = GetRailRatio(e.GetPosition(_rail));
+            RaiseDetailLabelRequested(MapRatioToOffset(ratio));
+        }
+
+        private double GetRailRatio(Point point)
+        {
+            var height = Math.Max(1, _rail?.ActualHeight ?? ActualHeight);
+            return Math.Max(0, Math.Min(1, point.Y / height));
+        }
+
+        private double MapRatioToOffset(double ratio)
+        {
+            ratio = Math.Max(0, Math.Min(1, ratio));
+
+            if (Labels == null || Labels.Count == 0)
+            {
+                return ratio * 100;
+            }
+
+            var min = Labels.Min(label => label.ScrollOffset);
+            var max = Labels.Max(label => label.ScrollOffset);
+            return min + ratio * Math.Max(0, max - min);
+        }
+
+        private object GetNearestLabelContent(double scrollOffset)
+        {
+            if (Labels == null || Labels.Count == 0)
+            {
+                return null;
+            }
+
+            return Labels
+                .OrderBy(label => Math.Abs(label.ScrollOffset - scrollOffset))
+                .First()
+                .Content;
+        }
+
         private ItemsControl _labelsHost;
+        private FrameworkElement _rail;
     }
 }

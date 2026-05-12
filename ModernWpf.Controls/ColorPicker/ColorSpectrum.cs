@@ -23,6 +23,11 @@ namespace ModernWpf.Controls.Primitives
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ColorSpectrum), new FrameworkPropertyMetadata(typeof(ColorSpectrum)));
         }
 
+        public ColorSpectrum()
+        {
+            Focusable = true;
+        }
+
         public static readonly DependencyProperty ColorProperty =
             DependencyProperty.Register(
                 nameof(Color),
@@ -157,11 +162,8 @@ namespace ModernWpf.Controls.Primitives
 
         public override void OnApplyTemplate()
         {
-            if (_spectrumRectangle != null)
-            {
-                _spectrumRectangle.MouseLeftButtonDown -= OnSpectrumMouseLeftButtonDown;
-                _spectrumRectangle.MouseMove -= OnSpectrumMouseMove;
-            }
+            UnhookSpectrumInput(_spectrumRectangle);
+            UnhookSpectrumInput(_spectrumEllipse);
 
             base.OnApplyTemplate();
 
@@ -172,14 +174,21 @@ namespace ModernWpf.Controls.Primitives
             _selectionEllipsePanel = GetTemplateChild(SelectionEllipsePanelName) as FrameworkElement;
             _selectionEllipse = GetTemplateChild(SelectionEllipseName) as Ellipse;
 
-            if (_spectrumRectangle != null)
-            {
-                _spectrumRectangle.MouseLeftButtonDown += OnSpectrumMouseLeftButtonDown;
-                _spectrumRectangle.MouseMove += OnSpectrumMouseMove;
-            }
+            HookSpectrumInput(_spectrumRectangle);
+            HookSpectrumInput(_spectrumEllipse);
 
             UpdateShapeVisibility();
             UpdateSelection();
+        }
+
+        internal void SetColorFromPointForTesting(Point point)
+        {
+            SetColorFromPoint(point, Shape == ColorSpectrumShape.Ring ? (FrameworkElement)_spectrumEllipse : _spectrumRectangle);
+        }
+
+        internal void AdjustColorForTesting(int horizontalSteps, int verticalSteps)
+        {
+            AdjustColorFromKeyboard(horizontalSteps, verticalSteps);
         }
 
         private static void OnColorPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -250,42 +259,105 @@ namespace ModernWpf.Controls.Primitives
             colorSpectrum.UpdateSelection();
         }
 
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+
+            switch (e.Key)
+            {
+                case Key.Left:
+                    AdjustColorFromKeyboard(-1, 0);
+                    e.Handled = true;
+                    break;
+
+                case Key.Right:
+                    AdjustColorFromKeyboard(1, 0);
+                    e.Handled = true;
+                    break;
+
+                case Key.Up:
+                    AdjustColorFromKeyboard(0, 1);
+                    e.Handled = true;
+                    break;
+
+                case Key.Down:
+                    AdjustColorFromKeyboard(0, -1);
+                    e.Handled = true;
+                    break;
+            }
+        }
+
+        private void HookSpectrumInput(FrameworkElement element)
+        {
+            if (element != null)
+            {
+                element.MouseLeftButtonDown += OnSpectrumMouseLeftButtonDown;
+                element.MouseMove += OnSpectrumMouseMove;
+            }
+        }
+
+        private void UnhookSpectrumInput(FrameworkElement element)
+        {
+            if (element != null)
+            {
+                element.MouseLeftButtonDown -= OnSpectrumMouseLeftButtonDown;
+                element.MouseMove -= OnSpectrumMouseMove;
+            }
+        }
+
         private void OnSpectrumMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (_spectrumRectangle == null)
+            if (sender is not FrameworkElement source)
             {
                 return;
             }
 
-            _spectrumRectangle.CaptureMouse();
-            SetColorFromPoint(e.GetPosition(_spectrumRectangle));
+            Focus();
+            source.CaptureMouse();
+            SetColorFromPoint(e.GetPosition(source), source);
             e.Handled = true;
         }
 
         private void OnSpectrumMouseMove(object sender, MouseEventArgs e)
         {
-            if (_spectrumRectangle?.IsMouseCaptured == true && e.LeftButton == MouseButtonState.Pressed)
-            {
-                SetColorFromPoint(e.GetPosition(_spectrumRectangle));
-                e.Handled = true;
-            }
-            else if (_spectrumRectangle?.IsMouseCaptured == true)
-            {
-                _spectrumRectangle.ReleaseMouseCapture();
-            }
-        }
-
-        private void SetColorFromPoint(Point point)
-        {
-            if (_spectrumRectangle == null)
+            if (sender is not FrameworkElement source)
             {
                 return;
             }
 
-            var width = Math.Max(1, _spectrumRectangle.ActualWidth);
-            var height = Math.Max(1, _spectrumRectangle.ActualHeight);
+            if (source.IsMouseCaptured && e.LeftButton == MouseButtonState.Pressed)
+            {
+                SetColorFromPoint(e.GetPosition(source), source);
+                e.Handled = true;
+            }
+            else if (source.IsMouseCaptured)
+            {
+                source.ReleaseMouseCapture();
+            }
+        }
+
+        private void SetColorFromPoint(Point point, FrameworkElement source)
+        {
+            if (source == null)
+            {
+                return;
+            }
+
+            if (Shape == ColorSpectrumShape.Ring && ReferenceEquals(source, _spectrumEllipse))
+            {
+                SetRingColorFromPoint(point, source);
+                return;
+            }
+
+            var width = Math.Max(1, source.ActualWidth);
+            var height = Math.Max(1, source.ActualHeight);
             var x = Clamp01(point.X / width);
             var y = Clamp01(1 - point.Y / height);
+            SetColorFromNormalizedPoint(x, y);
+        }
+
+        private void SetColorFromNormalizedPoint(double x, double y)
+        {
             var hsv = HsvColor;
 
             switch (Components)
@@ -324,6 +396,20 @@ namespace ModernWpf.Controls.Primitives
             SetCurrentValue(HsvColorProperty, hsv);
         }
 
+        private void SetRingColorFromPoint(Point point, FrameworkElement source)
+        {
+            var width = Math.Max(1, source.ActualWidth);
+            var height = Math.Max(1, source.ActualHeight);
+            var radius = Math.Max(1, Math.Min(width, height) / 2);
+            var center = new Point(width / 2, height / 2);
+            var dx = point.X - center.X;
+            var dy = center.Y - point.Y;
+            var angle = (Math.Atan2(dy, dx) * 180 / Math.PI + 360) % 360;
+            var radial = Clamp01(Math.Sqrt(dx * dx + dy * dy) / radius);
+
+            SetColorFromNormalizedPoint(angle / 359.0, radial);
+        }
+
         private void UpdateSelection()
         {
             if (_selectionEllipse == null || _selectionEllipsePanel == null || _spectrumRectangle == null)
@@ -332,6 +418,12 @@ namespace ModernWpf.Controls.Primitives
             }
 
             var hsv = HsvColor;
+            if (Shape == ColorSpectrumShape.Ring)
+            {
+                UpdateRingSelection(hsv);
+                return;
+            }
+
             var x = MaxHue == MinHue ? 0 : (hsv.X - MinHue) / (MaxHue - MinHue);
             var y = MaxSaturation == MinSaturation ? 0 : (hsv.Y - MinSaturation / 100f) / ((MaxSaturation - MinSaturation) / 100f);
 
@@ -366,6 +458,94 @@ namespace ModernWpf.Controls.Primitives
             Canvas.SetTop(_selectionEllipsePanel, (1 - Clamp01(y)) * Math.Max(0, _spectrumRectangle.ActualHeight) - _selectionEllipsePanel.Height / 2);
         }
 
+        private void UpdateRingSelection(Vector4 hsv)
+        {
+            var hueRatio = MaxHue == MinHue ? 0 : Clamp01((hsv.X - MinHue) / (MaxHue - MinHue));
+            var radialRatio = GetVerticalComponent() == HsvComponent.Value
+                ? MaxValue == MinValue ? 0 : Clamp01((hsv.Z - MinValue / 100f) / ((MaxValue - MinValue) / 100f))
+                : MaxSaturation == MinSaturation ? 0 : Clamp01((hsv.Y - MinSaturation / 100f) / ((MaxSaturation - MinSaturation) / 100f));
+
+            var width = Math.Max(0, _spectrumRectangle.ActualWidth);
+            var height = Math.Max(0, _spectrumRectangle.ActualHeight);
+            var radius = Math.Min(width, height) / 2 * radialRatio;
+            var angle = hueRatio * 359 * Math.PI / 180;
+            var centerX = width / 2;
+            var centerY = height / 2;
+
+            Canvas.SetLeft(_selectionEllipsePanel, centerX + Math.Cos(angle) * radius - _selectionEllipsePanel.Width / 2);
+            Canvas.SetTop(_selectionEllipsePanel, centerY - Math.Sin(angle) * radius - _selectionEllipsePanel.Height / 2);
+        }
+
+        private void AdjustColorFromKeyboard(int horizontalSteps, int verticalSteps)
+        {
+            if (horizontalSteps == 0 && verticalSteps == 0)
+            {
+                return;
+            }
+
+            var hsv = HsvColor;
+            ApplyComponentStep(ref hsv, GetHorizontalComponent(), horizontalSteps);
+            ApplyComponentStep(ref hsv, GetVerticalComponent(), verticalSteps);
+            SetCurrentValue(HsvColorProperty, hsv);
+        }
+
+        private void ApplyComponentStep(ref Vector4 hsv, HsvComponent component, int steps)
+        {
+            if (steps == 0)
+            {
+                return;
+            }
+
+            switch (component)
+            {
+                case HsvComponent.Hue:
+                    hsv.X = (float)Math.Max(MinHue, Math.Min(MaxHue, hsv.X + steps));
+                    break;
+
+                case HsvComponent.Saturation:
+                    hsv.Y = (float)Math.Max(MinSaturation / 100.0, Math.Min(MaxSaturation / 100.0, hsv.Y + steps / 100.0));
+                    break;
+
+                case HsvComponent.Value:
+                    hsv.Z = (float)Math.Max(MinValue / 100.0, Math.Min(MaxValue / 100.0, hsv.Z + steps / 100.0));
+                    break;
+            }
+        }
+
+        private HsvComponent GetHorizontalComponent()
+        {
+            switch (Components)
+            {
+                case ColorSpectrumComponents.ValueHue:
+                case ColorSpectrumComponents.ValueSaturation:
+                    return HsvComponent.Value;
+
+                case ColorSpectrumComponents.SaturationHue:
+                case ColorSpectrumComponents.SaturationValue:
+                    return HsvComponent.Saturation;
+
+                default:
+                    return HsvComponent.Hue;
+            }
+        }
+
+        private HsvComponent GetVerticalComponent()
+        {
+            switch (Components)
+            {
+                case ColorSpectrumComponents.HueValue:
+                case ColorSpectrumComponents.SaturationValue:
+                    return HsvComponent.Value;
+
+                case ColorSpectrumComponents.ValueHue:
+                case ColorSpectrumComponents.SaturationHue:
+                    return HsvComponent.Hue;
+
+                default:
+                    return HsvComponent.Saturation;
+            }
+        }
+
         private void UpdateShapeVisibility()
         {
             var boxVisible = Shape == ColorSpectrumShape.Box;
@@ -396,5 +576,12 @@ namespace ModernWpf.Controls.Primitives
         private Ellipse _spectrumOverlayEllipse;
         private FrameworkElement _selectionEllipsePanel;
         private Ellipse _selectionEllipse;
+
+        private enum HsvComponent
+        {
+            Hue,
+            Saturation,
+            Value
+        }
     }
 }

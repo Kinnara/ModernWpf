@@ -67,7 +67,6 @@
                                 Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
                                 Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
                                 Fill="{Binding ElementName=SpectrumRectangle, Path=Fill}"
-                                IsHitTestVisible="False"
                                 Visibility="Collapsed" />
                             <Ellipse
                                 x:Name="SpectrumOverlayEllipse"
@@ -80,6 +79,11 @@
                                 x:Name="SelectionEllipsePanel"
                                 Width="18"
                                 Height="18">
+                                <Ellipse
+                                    x:Name="SelectionEllipseOuter"
+                                    Fill="Transparent"
+                                    Stroke="Black"
+                                    StrokeThickness="4" />
                                 <Ellipse
                                     x:Name="SelectionEllipse"
                                     Fill="Transparent"
