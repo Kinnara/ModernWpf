@@ -33,18 +33,15 @@ the platform Fluent theme on new WPF runtimes.
 | --- | --- | --- |
 | Stage 2 resource entry cleanup | `FluentControlsResources` has explicit, duplicate-safe net10+ platform Fluent composition and unchanged legacy `XamlControlsResources` behavior. | Unit tests for dictionary source shape, duplicate detection, compact resources, and legacy path shape. |
 | Stage 3 ThemeMode bridge | A small net10+ platform adapter maps ModernWpf application/window theme state to official WPF `ThemeMode`. | Tests for ApplicationTheme null/Light/Dark, Window RequestedTheme Default/Light/Dark, and element RequestedTheme Light/Dark. |
-| Stage 4 backport sync | Older target resources are compared with official WPF Fluent in small batches. | Documented differences and focused resource tests for each synced batch. |
-| Stage 5 Gallery/test coverage | Gallery and WinUI test app exercise the recommended resource entry. | Gallery runtime smoke tests and WinUI-derived control resource-resolution tests under `FluentControlsResources`. |
+| Stage 4 backport sync | Older target resources are compared with official WPF Fluent in small batches. | `docs/official-fluent-backport-sync.md` records synced values and retained differences; focused tests cover the synced icon font alias. |
+| Stage 5 Gallery/test coverage | Gallery exercises the recommended resource entry. | `ModernWpf.Gallery.Tests` runs against `net8.0-windows7.0` and `net10.0-windows7.0`, including app resource-entry checks and runtime item-page smoke tests. |
 | Stage 6 docs/final validation | README/roadmap document the layered model and ThemeMode scope. | Release build, full tests, Gallery smoke tests, and `git diff --check`. |
 
 ## Known Current Gaps
 
-- `ModernWpf.Gallery\App.xaml` still uses `<ui:XamlControlsResources />`; it
-  should move to the recommended `<ui:FluentControlsResources />` entry after
-  Gallery smoke coverage is updated for the official Fluent stock-control layer.
 - `test\ModernWpf.WinUI.TestApp\App.xaml` intentionally still uses
   `<ui:XamlControlsResources />` because the broad WinUI-derived suite asserts
   ModernWpf backport stock-control styles. The recommended entry is covered by
-  `ModernWpf.Theme.Tests` on net8 and net10.
-- The older-framework backport has not yet been compared in a recorded batch
-  against the current official WPF Fluent source.
+  `ModernWpf.Theme.Tests` and `ModernWpf.Gallery.Tests` on net8 and net10.
+- Only the first older-framework backport comparison batch has been recorded.
+  Continue the same batch log for future stock-control template/resource syncs.

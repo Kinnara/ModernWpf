@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.WinUI.TestInfra;
@@ -82,6 +83,21 @@ public class FluentControlsResourcesTests
             Assert.AreEqual(0, CountPlatformFluentThemeDictionaries(resources));
             AssertHasMergedSource(resources, "ControlsResources.xaml");
             AssertHasMergedDictionaryType(resources, "UISettingsResources");
+        });
+    }
+
+    [TestMethod]
+    public void SymbolThemeFontFamilyMatchesOfficialFluentFallback()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var element = new Border();
+            element.Resources.MergedDictionaries.Add(new ModernWpf.ThemeResources());
+            element.Resources.MergedDictionaries.Add(new FluentControlsResources());
+
+            var fontFamily = (FontFamily)element.FindResource("SymbolThemeFontFamily");
+
+            Assert.AreEqual("Segoe Fluent Icons, Segoe MDL2 Assets", fontFamily.Source);
         });
     }
 

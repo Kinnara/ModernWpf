@@ -55,6 +55,11 @@ The NuGet package name remains `ModernWpfUI`. The first 1.x maintenance release 
 ```
 
 `FluentControlsResources` uses the official WPF Fluent theme on `net10.0-windows7.0` and the ModernWpf Fluent backport on older supported targets.
+On `net10.0-windows7.0`, `ThemeManager.ApplicationTheme` and window
+`ThemeManager.RequestedTheme` are also bridged to the official WPF
+`ThemeMode` APIs. Element-level theme islands continue to use ModernWpf's
+WinUI-compatible resource dictionaries so existing per-control theme scopes keep
+working on every supported target.
 
 For existing 0.9.x applications, the old resource entry remains supported:
 ```xaml

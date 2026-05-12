@@ -16,7 +16,9 @@ This is a public draft for the 1.x maintenance reboot. It intentionally starts s
 - Add `<ui:FluentControlsResources UseCompactResources="False" />` as the recommended 1.x entry.
 - Use the official WPF `PresentationFramework.Fluent` theme for stock WPF controls on `net10.0-windows7.0`.
 - Use the ModernWpf Fluent backport for stock WPF controls on `net462` and `net8.0-windows7.0`.
+- Bridge ModernWpf application/window theme preferences to official WPF `ThemeMode` on `net10.0-windows7.0`.
 - Keep ModernWpf-specific WinUI-like controls and compatibility helpers in ModernWpf.
+- Keep element-level `RequestedTheme` scopes implemented through ModernWpf resource dictionaries for WinUI-compatible theme islands.
 - Do not carry the MahApps adapter into the 1.x line; the old `ModernWpfUI.MahApps` package remains part of the 0.9.x legacy line.
 
 ## First Milestone
