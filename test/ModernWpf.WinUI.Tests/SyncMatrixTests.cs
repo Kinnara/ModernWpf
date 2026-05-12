@@ -20,6 +20,7 @@ public class SyncMatrixTests
         StringAssert.Contains(matrix, "232a16e5ddfc22c9a1b79a2c51abeb9a39a94494");
         StringAssert.Contains(matrix, "ModernWpf.WinUI.Tests");
         StringAssert.Contains(matrix, "Retired Local Tests");
+        Assert.IsFalse(matrix.Contains("| Pending |"), "Sync matrix still has a table row whose status is Pending.");
     }
 
     public TestContext? TestContext { get; set; }

@@ -87,12 +87,12 @@ The old test projects remain on disk for reference while porting, but are no lon
 
 | Upstream test category | ModernWpf target | Status | Notes |
 | --- | --- | --- | --- |
-| `dev/*/APITests` | `ModernWpf.WinUI.Tests` | Pending | Port all tests for implemented or mapped controls. |
-| `dev/*/InteractionTests` | `ModernWpf.WinUI.Tests` + `ModernWpf.WinUI.TestApp` | Pending | Replace UWP input helpers with WPF dispatcher/window/input helpers. |
-| `dev/*/TestUI` pages | `ModernWpf.WinUI.TestApp` | Pending | Port pages for implemented controls; document excluded pages. |
+| `dev/*/APITests` | `ModernWpf.WinUI.Tests` | Ported WPF-feasible slices | Implemented or mapped control rows above identify the upstream-derived APITest coverage and any API-only exclusions. WinUI-only XAML metadata provider coverage, private test hooks, and controls not present in final WinUI 2.8.7 are excluded in the relevant rows. |
+| `dev/*/InteractionTests` | `ModernWpf.WinUI.Tests` + `ModernWpf.WinUI.TestApp` | Ported WPF-feasible slices | Interaction coverage is represented by WPF dispatcher/window/input tests where the behavior maps to WPF controls. Raw WinUI TestUI input injection, gamepad/XYFocus choreography, compositor animation timing, Axe scans, and process-bound automation are excluded in the relevant control rows. |
+| `dev/*/TestUI` pages | `ModernWpf.WinUI.TestApp` | Documented WPF mappings/exclusions | TestUI scenarios that expose reusable control behavior are represented by WPF sample/test hosts and per-control tests. Full WinUI TestUI pages, app chrome, private test hooks, localization harness plumbing, visual-tree dump baselines, and pixel automation remain excluded because this repo does not host a WinUI TestUI runner. |
 | `test/MUXControlsTestApp/ThemeResourcesTests.cs` | `ModernWpf.WinUI.Tests` | Ported WPF-feasible slice | `VerifyOverrides` is ported for `RatingControlCaptionForeground` application-resource overrides; Light/Dark/HighContrast key parity is covered by `CommonStylesResourceTests`. |
-| Localization/resource tests | `ModernWpf.WinUI.Tests` | Pending | Port for resources that remain in ModernWpf. |
-| Leak and compositor tests | WPF equivalent or exclusion | Pending | Add concrete exclusions when no WPF behavior exists. |
+| Localization/resource tests | `ModernWpf.WinUI.Tests` | Ported WPF-feasible resource slices | ModernWpf-owned resource keys are covered by per-control resource tests and Light/Dark/HighContrast key parity. WinUI `.resw` localization, localized color names/value strings, and platform string-loader tests are excluded where WPF has no matching ModernWpf-owned resource surface. |
+| Leak and compositor tests | WPF equivalent or exclusion | Excluded / documented per row | Composition, interaction-tracker, Lottie/animated visual, DComp shadow, WinRT leak, and platform object-lifetime tests are excluded where there is no WPF equivalent; rows above call out the concrete excluded surfaces for each affected control. |
 
 ## Retired Local Tests
 

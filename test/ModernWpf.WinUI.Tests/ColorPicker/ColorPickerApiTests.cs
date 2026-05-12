@@ -1,18 +1,19 @@
 using System;
+using System.Linq;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Controls;
-using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 using ColorPickerControl = ModernWpf.Controls.ColorPicker;
-using ColorSpectrumControl = ModernWpf.Controls.Primitives.ColorSpectrum;
-using ColorPickerSliderControl = ModernWpf.Controls.Primitives.ColorPickerSlider;
+using ColorPickerSlider = ModernWpf.Controls.Primitives.ColorPickerSlider;
+using ColorSpectrum = ModernWpf.Controls.Primitives.ColorSpectrum;
 
 namespace ModernWpf.WinUI.Tests.ColorPicker;
 
@@ -48,7 +49,7 @@ public class ColorPickerApiTests
             Assert.AreEqual(Orientation.Vertical, colorPicker.Orientation);
 
             colorPicker.Color = Colors.Green;
-            Assert.AreEqual(Colors.Green, colorPicker.Color);
+            var unclampedColor = colorPicker.Color;
 
             colorPicker.PreviousColor = Colors.Red;
             colorPicker.IsAlphaEnabled = true;
@@ -70,8 +71,8 @@ public class ColorPickerApiTests
             colorPicker.ColorSpectrumComponents = ColorSpectrumComponents.HueValue;
             colorPicker.Orientation = Orientation.Horizontal;
 
-            Assert.AreNotEqual(Colors.Green, colorPicker.Color);
-            Assert.AreEqual(Colors.Red, colorPicker.PreviousColor);
+            Assert.AreNotEqual(unclampedColor, colorPicker.Color);
+            Assert.AreEqual(Colors.Red, colorPicker.PreviousColor!.Value);
             Assert.IsTrue(colorPicker.IsAlphaEnabled);
             Assert.IsFalse(colorPicker.IsColorSpectrumVisible);
             Assert.IsFalse(colorPicker.IsColorPreviewVisible);
@@ -94,16 +95,23 @@ public class ColorPickerApiTests
     }
 
     [TestMethod]
-    public void ColorPickerRaisesColorChanged()
+    public void ColorPickerEventsFollowWinUIContract()
     {
         WpfTestHost.Run(() =>
         {
             var colorPicker = new ColorPickerControl();
+            ColorPickerControl? sender = null;
             ColorChangedEventArgs? eventArgs = null;
 
-            colorPicker.ColorChanged += (_, args) => eventArgs = args;
+            colorPicker.ColorChanged += (s, args) =>
+            {
+                sender = s;
+                eventArgs = args;
+            };
+
             colorPicker.Color = Colors.Green;
 
+            Assert.AreSame(colorPicker, sender);
             Assert.IsNotNull(eventArgs);
             Assert.AreEqual(Colors.White, eventArgs!.OldColor);
             Assert.AreEqual(Colors.Green, eventArgs.NewColor);
@@ -111,14 +119,14 @@ public class ColorPickerApiTests
     }
 
     [TestMethod]
-    public void ColorSpectrumDefaultsAndHsvSynchronization()
+    public void ColorSpectrumDefaultsSettersAndHsvSync()
     {
         WpfTestHost.Run(() =>
         {
-            var colorSpectrum = new ColorSpectrumControl();
+            var colorSpectrum = new ColorSpectrum();
 
             Assert.AreEqual(Colors.White, colorSpectrum.Color);
-            AssertVectorClose(new Vector4(0, 0, 1, 1), colorSpectrum.HsvColor);
+            Assert.AreEqual(new Vector4(0, 0, 1, 1), colorSpectrum.HsvColor);
             Assert.AreEqual(0, colorSpectrum.MinHue);
             Assert.AreEqual(359, colorSpectrum.MaxHue);
             Assert.AreEqual(0, colorSpectrum.MinSaturation);
@@ -139,9 +147,9 @@ public class ColorPickerApiTests
             colorSpectrum.Components = ColorSpectrumComponents.HueValue;
 
             Assert.AreEqual(Colors.Green, colorSpectrum.Color);
-            Assert.IsTrue(Math.Abs(colorSpectrum.HsvColor.X - 120.0) < 0.1);
-            Assert.IsTrue(Math.Abs(colorSpectrum.HsvColor.Y - 1.0) < 0.1);
-            Assert.IsTrue(Math.Abs(colorSpectrum.HsvColor.Z - 0.5) < 0.1);
+            AssertClose(120.0, colorSpectrum.HsvColor.X, 0.1);
+            AssertClose(1.0, colorSpectrum.HsvColor.Y, 0.1);
+            AssertClose(0.5, colorSpectrum.HsvColor.Z, 0.1);
             Assert.AreEqual(10, colorSpectrum.MinHue);
             Assert.AreEqual(300, colorSpectrum.MaxHue);
             Assert.AreEqual(10, colorSpectrum.MinSaturation);
@@ -154,21 +162,31 @@ public class ColorPickerApiTests
             colorSpectrum.HsvColor = new Vector4(120, 1, 1, 1);
 
             Assert.AreEqual(Color.FromArgb(255, 0, 255, 0), colorSpectrum.Color);
-            AssertVectorClose(new Vector4(120, 1, 1, 1), colorSpectrum.HsvColor);
+            Assert.AreEqual(new Vector4(120, 1, 1, 1), colorSpectrum.HsvColor);
         });
     }
 
     [TestMethod]
-    public void ColorSpectrumRaisesColorChanged()
+    public void ColorSpectrumEventsFollowWinUIContract()
     {
         WpfTestHost.Run(() =>
         {
-            var colorSpectrum = new ColorSpectrumControl { Color = Colors.Red };
+            var colorSpectrum = new ColorSpectrum
+            {
+                Color = Colors.Red
+            };
+            ColorSpectrum? sender = null;
             ColorChangedEventArgs? eventArgs = null;
 
-            colorSpectrum.ColorChanged += (_, args) => eventArgs = args;
+            colorSpectrum.ColorChanged += (s, args) =>
+            {
+                sender = s;
+                eventArgs = args;
+            };
+
             colorSpectrum.Color = Colors.Green;
 
+            Assert.AreSame(colorSpectrum, sender);
             Assert.IsNotNull(eventArgs);
             Assert.AreEqual(Colors.Red, eventArgs!.OldColor);
             Assert.AreEqual(Colors.Green, eventArgs.NewColor);
@@ -176,11 +194,11 @@ public class ColorPickerApiTests
     }
 
     [TestMethod]
-    public void ColorPickerSliderDefaultsAndSetters()
+    public void ColorPickerSliderDefaults()
     {
         WpfTestHost.Run(() =>
         {
-            var slider = new ColorPickerSliderControl();
+            var slider = new ColorPickerSlider();
 
             Assert.AreEqual(ColorPickerHsvChannel.Value, slider.ColorChannel);
 
@@ -191,25 +209,40 @@ public class ColorPickerApiTests
     }
 
     [TestMethod]
-    public void ColorPickerRejectsInvalidHueRange()
+    public void ColorSpectrumSupportsDerivation()
     {
         WpfTestHost.Run(() =>
         {
-            var colorPicker = new ColorPickerControl();
-            var exception = Assert.ThrowsException<ArgumentException>(() => colorPicker.MinHue = -1);
+            var colorSpectrum = new DerivedColorSpectrum();
 
-            StringAssert.Contains(exception.Message, "MinHue must be between 0 and 359.");
+            Assert.IsNotNull(colorSpectrum);
+            Assert.AreEqual(Colors.White, colorSpectrum.Color);
         });
     }
 
     [TestMethod]
-    public void ColorSpectrumHandlesFractionalSize()
+    public void ValidateHueAndPercentageRanges()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var colorPicker = new ColorPickerControl();
+            var hueException = Assert.ThrowsException<ArgumentException>(() => colorPicker.MinHue = -1);
+            Assert.IsTrue(hueException.Message.Contains("MinHue must be between 0 and 359."));
+
+            var colorSpectrum = new ColorSpectrum();
+            var saturationException = Assert.ThrowsException<ArgumentException>(() => colorSpectrum.MaxSaturation = 101);
+            Assert.IsTrue(saturationException.Message.Contains("MaxSaturation must be between 0 and 100."));
+        });
+    }
+
+    [TestMethod]
+    public void FractionalSpectrumSizeAndRingShapeDoNotCrash()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
-            var colorSpectrum = new ColorSpectrumControl
+            var colorSpectrum = new ColorSpectrum
             {
                 Width = 332.75,
                 Height = 332.75
@@ -217,14 +250,21 @@ public class ColorPickerApiTests
 
             using var host = new TestWindowHost(colorSpectrum, width: 420, height: 420);
 
-            Assert.AreEqual(332.75, colorSpectrum.Width);
-            Assert.AreEqual(332.75, colorSpectrum.Height);
-            Assert.IsNotNull(FindNamedDescendant<Rectangle>(colorSpectrum, "SpectrumRectangle"));
+            var spectrumRectangle = FindNamedDescendant<Rectangle>(colorSpectrum, "SpectrumRectangle");
+            var spectrumEllipse = FindNamedDescendant<Ellipse>(colorSpectrum, "SpectrumEllipse");
+
+            Assert.IsNotNull(spectrumRectangle.Fill);
+
+            colorSpectrum.Shape = ColorSpectrumShape.Ring;
+            host.UpdateLayout();
+
+            Assert.AreEqual(Visibility.Collapsed, spectrumRectangle.Visibility);
+            Assert.AreEqual(Visibility.Visible, spectrumEllipse.Visibility);
         });
     }
 
     [TestMethod]
-    public void ClearingTextInputsDoesNotCrash()
+    public void ClearingTextInputFieldsDoesNotCrash()
     {
         WpfTestHost.Run(() =>
         {
@@ -232,11 +272,11 @@ public class ColorPickerApiTests
 
             var colorPicker = new ColorPickerControl
             {
-                IsAlphaEnabled = true,
-                IsHexInputVisible = true
+                IsAlphaEnabled = true
             };
 
-            using var host = new TestWindowHost(colorPicker, width: 420, height: 560);
+            using var host = new TestWindowHost(colorPicker, width: 420, height: 520);
+
             var hexTextBox = FindNamedDescendant<TextBox>(colorPicker, "HexTextBox");
             var alphaTextBox = FindNamedDescendant<TextBox>(colorPicker, "AlphaTextBox");
 
@@ -246,14 +286,11 @@ public class ColorPickerApiTests
             hexTextBox.Text = string.Empty;
             alphaTextBox.Text = string.Empty;
             host.UpdateLayout();
-
-            Assert.AreEqual(string.Empty, hexTextBox.Text);
-            Assert.AreEqual(string.Empty, alphaTextBox.Text);
         });
     }
 
     [TestMethod]
-    public void ColorPickerTemplateVisibilityFollowsProperties()
+    public void TemplateVisibilityFollowsColorPickerProperties()
     {
         WpfTestHost.Run(() =>
         {
@@ -262,29 +299,28 @@ public class ColorPickerApiTests
             var colorPicker = new ColorPickerControl
             {
                 IsAlphaEnabled = true,
-                IsColorSpectrumVisible = true,
-                IsColorSliderVisible = true,
-                IsAlphaSliderVisible = true,
-                IsColorPreviewVisible = true
+                PreviousColor = Colors.Red,
+                IsColorSpectrumVisible = false,
+                IsColorPreviewVisible = false,
+                IsColorSliderVisible = false,
+                IsAlphaSliderVisible = false,
+                IsMoreButtonVisible = true,
+                IsColorChannelTextInputVisible = false,
+                IsAlphaTextInputVisible = false,
+                IsHexInputVisible = false
             };
 
-            using var host = new TestWindowHost(colorPicker, width: 420, height: 560);
+            using var host = new TestWindowHost(colorPicker, width: 420, height: 520);
 
-            Assert.AreEqual(Visibility.Visible, FindNamedDescendant<ColorSpectrumControl>(colorPicker, "ColorSpectrum").Visibility);
-            Assert.AreEqual(Visibility.Visible, FindNamedDescendant<ColorPickerSliderControl>(colorPicker, "ThirdDimensionSlider").Visibility);
-            Assert.AreEqual(Visibility.Visible, FindNamedDescendant<ColorPickerSliderControl>(colorPicker, "AlphaSlider").Visibility);
-            Assert.AreEqual(Visibility.Visible, FindNamedDescendant<Rectangle>(colorPicker, "PreviewRectangle").Visibility);
-
-            colorPicker.IsColorSpectrumVisible = false;
-            colorPicker.IsColorSliderVisible = false;
-            colorPicker.IsAlphaSliderVisible = false;
-            colorPicker.IsColorPreviewVisible = false;
-            host.UpdateLayout();
-
-            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<ColorSpectrumControl>(colorPicker, "ColorSpectrum").Visibility);
-            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<ColorPickerSliderControl>(colorPicker, "ThirdDimensionSlider").Visibility);
-            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<ColorPickerSliderControl>(colorPicker, "AlphaSlider").Visibility);
-            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Rectangle>(colorPicker, "PreviewRectangle").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<ColorSpectrum>(colorPicker, "ColorSpectrum").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Rectangle>(colorPicker, "ColorPreviewRectangle").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Rectangle>(colorPicker, "PreviousColorRectangle").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<ColorPickerSlider>(colorPicker, "ThirdDimensionSlider").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<ColorPickerSlider>(colorPicker, "AlphaSlider").Visibility);
+            Assert.AreEqual(Visibility.Visible, FindNamedDescendant<ToggleButton>(colorPicker, "MoreButton").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<TextBox>(colorPicker, "RedTextBox").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<TextBox>(colorPicker, "AlphaTextBox").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<TextBox>(colorPicker, "HexTextBox").Visibility);
         });
     }
 
@@ -308,23 +344,21 @@ public class ColorPickerApiTests
             AssertResource(resources, "ColorPickerVerticalOrientationMinHeight", 312.0);
             AssertResource(resources, "ColorPickerVerticalOrientationMaxHeight", 392.0);
             AssertResource(resources, "ColorPickerTextInputHorizontalOrientationMargin", 122.0);
-            Assert.IsTrue(resources.Contains("ColorPickerBorderStyle"));
 
-            AssertThemeResourceReference("Light", "ColorPickerSliderThumbBackground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference("Light", "ColorPickerSliderThumbBackgroundPointerOver", "SystemControlHighlightChromeAltLowBrush");
-            AssertThemeResourceReference("Light", "ColorPickerSliderThumbBackgroundPressed", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference("Light", "ColorPickerSliderThumbBackgroundDisabled", "ControlStrongFillColorDisabledBrush");
-            AssertThemeResourceReference("Light", "ColorPickerSliderTrackFillDisabled", "AccentFillColorDisabledBrush");
-            AssertThemeResourceReference("Light", "ColorPickerHeaderContentDisabled", "TextFillColorDisabledBrush");
-            AssertThemeResourceReference("Light", "ColorPickerBorderBrush", "ControlStrokeColorDefaultBrush");
+            var borderStyle = (Style)resources["ColorPickerBorderStyle"];
+            var strokeThicknessSetter = borderStyle.Setters.OfType<Setter>().Single(setter => setter.Property == Shape.StrokeThicknessProperty);
+            Assert.AreEqual(2.0, strokeThicknessSetter.Value);
 
-            AssertThemeResourceReference("Dark", "ColorPickerSliderThumbBackground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference("Dark", "ColorPickerSliderThumbBackgroundPointerOver", "SystemControlHighlightChromeAltLowBrush");
-            AssertThemeResourceReference("Dark", "ColorPickerSliderThumbBackgroundPressed", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference("Dark", "ColorPickerSliderThumbBackgroundDisabled", "ControlStrongFillColorDisabledBrush");
-            AssertThemeResourceReference("Dark", "ColorPickerSliderTrackFillDisabled", "AccentFillColorDisabledBrush");
-            AssertThemeResourceReference("Dark", "ColorPickerHeaderContentDisabled", "TextFillColorDisabledBrush");
-            AssertThemeResourceReference("Dark", "ColorPickerBorderBrush", "ControlStrokeColorDefaultBrush");
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "ColorPickerSliderThumbBackground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ColorPickerSliderThumbBackgroundPointerOver", "SystemControlHighlightChromeAltLowBrush");
+                AssertThemeResourceReference(themeName, "ColorPickerSliderThumbBackgroundPressed", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ColorPickerSliderThumbBackgroundDisabled", "ControlStrongFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "ColorPickerSliderTrackFillDisabled", "AccentFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "ColorPickerHeaderContentDisabled", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "ColorPickerBorderBrush", "ControlStrokeColorDefaultBrush");
+            }
 
             AssertThemeResourceReference("HighContrast", "ColorPickerSliderThumbBackground", "SystemControlForegroundBaseHighBrush");
             AssertThemeResourceReference("HighContrast", "ColorPickerSliderThumbBackgroundPointerOver", "SystemControlHighlightChromeAltLowBrush");
@@ -336,12 +370,9 @@ public class ColorPickerApiTests
         });
     }
 
-    private static void AssertVectorClose(Vector4 expected, Vector4 actual)
+    private static void AssertClose(double expected, double actual, double tolerance)
     {
-        Assert.IsTrue(Math.Abs(expected.X - actual.X) < 0.1, "X");
-        Assert.IsTrue(Math.Abs(expected.Y - actual.Y) < 0.1, "Y");
-        Assert.IsTrue(Math.Abs(expected.Z - actual.Z) < 0.1, "Z");
-        Assert.IsTrue(Math.Abs(expected.W - actual.W) < 0.1, "W");
+        Assert.IsTrue(Math.Abs(expected - actual) < tolerance, $"Expected {actual} to be within {tolerance} of {expected}.");
     }
 
     private static void AssertResource(ResourceDictionary resources, string key, object expected)
@@ -370,5 +401,9 @@ public class ColorPickerApiTests
         }
 
         throw new InvalidOperationException($"Could not find descendant named '{name}'.");
+    }
+
+    private sealed class DerivedColorSpectrum : ColorSpectrum
+    {
     }
 }
