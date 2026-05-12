@@ -23,6 +23,12 @@ public class SyncMatrixTests
         Assert.IsFalse(matrix.Contains("| Pending |"), "Sync matrix still has a table row whose status is Pending.");
         Assert.IsFalse(matrix.Contains("remain pending", StringComparison.OrdinalIgnoreCase), "Sync matrix still has unresolved pending wording.");
         Assert.IsFalse(matrix.Contains("pending/excluded", StringComparison.OrdinalIgnoreCase), "Sync matrix should document exclusions directly instead of using pending/excluded wording.");
+
+        AssertControlStatus(matrix, "TeachingTip", "Functional subset in progress");
+        AssertControlStatus(matrix, "SwipeControl", "API/template shell");
+        AssertControlStatus(matrix, "PullToRefresh / RefreshContainer", "API/template shell");
+        AssertControlStatus(matrix, "ColorPicker / ColorSpectrum", "Functional subset");
+        AssertControlStatus(matrix, "AnnotatedScrollBar", "API/template shell");
     }
 
     public TestContext? TestContext { get; set; }
@@ -43,5 +49,11 @@ public class SyncMatrixTests
 
         Assert.Fail("Could not locate ModernWpf.sln from the test output directory.");
         return string.Empty;
+    }
+
+    private static void AssertControlStatus(string matrix, string controlName, string expectedStatus)
+    {
+        var expectedPrefix = $"| {controlName} | {expectedStatus} |";
+        StringAssert.Contains(matrix, expectedPrefix, $"{controlName} should use the audited parity status.");
     }
 }
