@@ -14,7 +14,11 @@ namespace ModernWpf.Controls
         public FluentControlsResources()
         {
 #if NET10_0_OR_GREATER
-            MergedDictionaries.Add(PlatformFluentResources);
+            ModernWpf.ThemeManager.Current.EnablePlatformFluentTheme();
+            if (DesignMode.DesignModeEnabled)
+            {
+                MergedDictionaries.Add(PlatformFluentResources);
+            }
             MergedDictionaries.Add(ModernWpfControlsResources);
 #else
             MergedDictionaries.Add(XamlControlsResources.ControlsResources);
