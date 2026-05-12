@@ -93,6 +93,31 @@ namespace ModernWpf.Controls
             }
         }
 
+        internal void UpdatePullProgress(double executionRatio)
+        {
+            if (State == RefreshVisualizerState.Refreshing)
+            {
+                return;
+            }
+
+            if (executionRatio <= 0)
+            {
+                SetState(RefreshVisualizerState.Idle);
+            }
+            else if (executionRatio >= 1)
+            {
+                SetState(RefreshVisualizerState.Pending);
+            }
+            else if (executionRatio >= 0.5)
+            {
+                SetState(RefreshVisualizerState.Interacting);
+            }
+            else
+            {
+                SetState(RefreshVisualizerState.Peeking);
+            }
+        }
+
         private void SetState(RefreshVisualizerState newState)
         {
             var oldState = State;

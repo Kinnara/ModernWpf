@@ -1,5 +1,8 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ModernWpf.Controls
 {
@@ -8,10 +11,20 @@ namespace ModernWpf.Controls
     {
         private const string RefreshVisualizerPresenterName = "RefreshVisualizerPresenter";
         private const double DefaultPullDimensionSize = 100;
+        private const double PullStartThreshold = 8;
+        private const double PullExecutionThreshold = 80;
 
         static RefreshContainer()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RefreshContainer), new FrameworkPropertyMetadata(typeof(RefreshContainer)));
+        }
+
+        public RefreshContainer()
+        {
+            PreviewMouseLeftButtonDown += OnPreviewMouseLeftButtonDown;
+            PreviewMouseMove += OnPreviewMouseMove;
+            PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
+            LostMouseCapture += OnLostMouseCapture;
         }
 
         public static readonly DependencyProperty VisualizerProperty =
@@ -47,6 +60,7 @@ namespace ModernWpf.Controls
             if (_visualizer != null)
             {
                 _visualizer.RefreshRequested -= OnVisualizerRefreshRequested;
+                _visualizer.RefreshStateChanged -= OnVisualizerRefreshStateChanged;
             }
 
             base.OnApplyTemplate();
@@ -60,11 +74,133 @@ namespace ModernWpf.Controls
 
             AttachVisualizer();
             UpdatePullDirection();
+            UpdateVisualizerPresenterState();
         }
 
         public void RequestRefresh()
         {
             Visualizer?.RequestRefresh();
+        }
+
+        internal double PullRatioForTesting => _pullRatio;
+
+        internal bool CanStartPullForTesting => IsAtPullBoundary();
+
+        internal void PullForTesting(double delta, bool complete)
+        {
+            StartPull(new Point());
+            UpdatePull(delta);
+
+            if (complete)
+            {
+                CompletePull();
+            }
+        }
+
+        private void OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            StartPull(e.GetPosition(this));
+        }
+
+        private void OnPreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (!_isPointerDown)
+            {
+                return;
+            }
+
+            var position = e.GetPosition(this);
+            var delta = GetDirectedDelta(position.X - _pullStartPoint.X, position.Y - _pullStartPoint.Y);
+            UpdatePull(delta);
+
+            if (_isPulling)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!_isPointerDown)
+            {
+                return;
+            }
+
+            ReleaseMouseCapture();
+            CompletePull();
+        }
+
+        private void OnLostMouseCapture(object sender, MouseEventArgs e)
+        {
+            if (_isPointerDown)
+            {
+                CompletePull();
+            }
+        }
+
+        private void StartPull(Point position)
+        {
+            _isPointerDown = IsAtPullBoundary();
+            _isPulling = false;
+            _pullStartPoint = position;
+        }
+
+        private void UpdatePull(double delta)
+        {
+            if (!_isPointerDown || delta <= 0 || Visualizer == null)
+            {
+                return;
+            }
+
+            if (!_isPulling)
+            {
+                if (delta < PullStartThreshold)
+                {
+                    return;
+                }
+
+                _isPulling = true;
+                CaptureMouse();
+            }
+
+            _pullRatio = Math.Min(1, delta / PullExecutionThreshold);
+            Visualizer.UpdatePullProgress(_pullRatio);
+            UpdateVisualizerPresenterState();
+        }
+
+        private void CompletePull()
+        {
+            var shouldRefresh = _isPulling && _pullRatio >= 1;
+
+            _isPointerDown = false;
+            _isPulling = false;
+            _pullRatio = 0;
+
+            if (shouldRefresh)
+            {
+                RequestRefresh();
+            }
+            else
+            {
+                Visualizer?.UpdatePullProgress(0);
+            }
+
+            UpdateVisualizerPresenterState();
+        }
+
+        private double GetDirectedDelta(double horizontalDelta, double verticalDelta)
+        {
+            switch (PullDirection)
+            {
+                case RefreshPullDirection.LeftToRight:
+                    return horizontalDelta;
+                case RefreshPullDirection.RightToLeft:
+                    return -horizontalDelta;
+                case RefreshPullDirection.BottomToTop:
+                    return -verticalDelta;
+                default:
+                    return verticalDelta;
+            }
         }
 
         private static void OnVisualizerPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -82,11 +218,13 @@ namespace ModernWpf.Controls
             if (oldVisualizer != null)
             {
                 oldVisualizer.RefreshRequested -= OnVisualizerRefreshRequested;
+                oldVisualizer.RefreshStateChanged -= OnVisualizerRefreshStateChanged;
             }
 
             _visualizer = newVisualizer;
             AttachVisualizer();
             UpdatePullDirection();
+            UpdateVisualizerPresenterState();
         }
 
         private void AttachVisualizer()
@@ -104,6 +242,8 @@ namespace ModernWpf.Controls
             {
                 _visualizer.RefreshRequested -= OnVisualizerRefreshRequested;
                 _visualizer.RefreshRequested += OnVisualizerRefreshRequested;
+                _visualizer.RefreshStateChanged -= OnVisualizerRefreshStateChanged;
+                _visualizer.RefreshStateChanged += OnVisualizerRefreshStateChanged;
             }
         }
 
@@ -151,6 +291,68 @@ namespace ModernWpf.Controls
             }
         }
 
+        private bool IsAtPullBoundary()
+        {
+            var scrollViewer = FindScrollViewer(Content as DependencyObject);
+            if (scrollViewer == null)
+            {
+                return true;
+            }
+
+            switch (PullDirection)
+            {
+                case RefreshPullDirection.LeftToRight:
+                    return scrollViewer.HorizontalOffset <= 0;
+                case RefreshPullDirection.RightToLeft:
+                    return scrollViewer.HorizontalOffset >= scrollViewer.ScrollableWidth;
+                case RefreshPullDirection.BottomToTop:
+                    return scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight;
+                default:
+                    return scrollViewer.VerticalOffset <= 0;
+            }
+        }
+
+        private static ScrollViewer FindScrollViewer(DependencyObject root)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            if (root is ScrollViewer scrollViewer)
+            {
+                return scrollViewer;
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var match = FindScrollViewer(VisualTreeHelper.GetChild(root, i));
+                if (match != null)
+                {
+                    return match;
+                }
+            }
+
+            return null;
+        }
+
+        private void OnVisualizerRefreshStateChanged(RefreshVisualizer sender, RefreshStateChangedEventArgs args)
+        {
+            UpdateVisualizerPresenterState();
+        }
+
+        private void UpdateVisualizerPresenterState()
+        {
+            if (_refreshVisualizerPresenter == null || _visualizer == null)
+            {
+                return;
+            }
+
+            _refreshVisualizerPresenter.Opacity =
+                _visualizer.State == RefreshVisualizerState.Idle ? _pullRatio : 1;
+        }
+
         private void OnVisualizerRefreshRequested(RefreshVisualizer sender, RefreshRequestedEventArgs args)
         {
             var visualizerDeferral = args.GetDeferral();
@@ -162,5 +364,9 @@ namespace ModernWpf.Controls
 
         private Panel _refreshVisualizerPresenter;
         private RefreshVisualizer _visualizer;
+        private Point _pullStartPoint;
+        private double _pullRatio;
+        private bool _isPointerDown;
+        private bool _isPulling;
     }
 }

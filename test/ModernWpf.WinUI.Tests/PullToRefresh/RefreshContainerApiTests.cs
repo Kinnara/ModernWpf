@@ -170,6 +170,104 @@ public class RefreshContainerApiTests
     }
 
     [TestMethod]
+    public void PullFromScrollViewerBoundaryRequestsRefreshAndHonorsDeferral()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var scrollViewer = new ScrollViewer
+            {
+                Height = 80,
+                Content = CreateTallContent()
+            };
+            var container = new RefreshContainer
+            {
+                Content = scrollViewer
+            };
+            RefreshDeferral? deferral = null;
+            var states = new List<RefreshVisualizerState>();
+
+            using var host = new TestWindowHost(container, width: 240, height: 140);
+
+            container.Visualizer.RefreshStateChanged += (_, args) => states.Add(args.NewState);
+            container.RefreshRequested += (_, args) => deferral = args.GetDeferral();
+
+            Assert.IsTrue(container.CanStartPullForTesting);
+
+            container.PullForTesting(120, complete: true);
+            host.UpdateLayout();
+
+            Assert.IsNotNull(deferral);
+            CollectionAssert.Contains(states, RefreshVisualizerState.Pending);
+            CollectionAssert.Contains(states, RefreshVisualizerState.Refreshing);
+            Assert.AreEqual(RefreshVisualizerState.Refreshing, container.Visualizer.State);
+
+            deferral!.Complete();
+            host.UpdateLayout();
+
+            Assert.AreEqual(RefreshVisualizerState.Idle, container.Visualizer.State);
+        });
+    }
+
+    [TestMethod]
+    public void PullBelowThresholdReturnsIdleWithoutRefresh()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var container = new RefreshContainer
+            {
+                Content = new ScrollViewer
+                {
+                    Height = 80,
+                    Content = CreateTallContent()
+                }
+            };
+            var requestCount = 0;
+
+            using var host = new TestWindowHost(container, width: 240, height: 140);
+            container.RefreshRequested += (_, _) => requestCount++;
+
+            container.PullForTesting(32, complete: true);
+            host.UpdateLayout();
+
+            Assert.AreEqual(0, requestCount);
+            Assert.AreEqual(0d, container.PullRatioForTesting);
+            Assert.AreEqual(RefreshVisualizerState.Idle, container.Visualizer.State);
+        });
+    }
+
+    [TestMethod]
+    public void PullDoesNotStartAwayFromScrollViewerBoundary()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var scrollViewer = new ScrollViewer
+            {
+                Height = 80,
+                Content = CreateTallContent()
+            };
+            var container = new RefreshContainer
+            {
+                Content = scrollViewer
+            };
+            var requestCount = 0;
+
+            using var host = new TestWindowHost(container, width: 240, height: 140);
+            container.RefreshRequested += (_, _) => requestCount++;
+
+            scrollViewer.ScrollToVerticalOffset(40);
+            host.UpdateLayout();
+
+            Assert.IsFalse(container.CanStartPullForTesting);
+
+            container.PullForTesting(120, complete: true);
+            host.UpdateLayout();
+
+            Assert.AreEqual(0, requestCount);
+            Assert.AreEqual(RefreshVisualizerState.Idle, container.Visualizer.State);
+        });
+    }
+
+    [TestMethod]
     public void VerifyFinalWinUI2RefreshThemeResources()
     {
         WpfTestHost.Run(() =>
@@ -221,5 +319,20 @@ public class RefreshContainerApiTests
         }
 
         throw new InvalidOperationException($"Could not find descendant named '{name}'.");
+    }
+
+    private static FrameworkElement CreateTallContent()
+    {
+        var panel = new StackPanel();
+        for (var i = 0; i < 20; i++)
+        {
+            panel.Children.Add(new TextBlock
+            {
+                Height = 24,
+                Text = "Item " + i
+            });
+        }
+
+        return panel;
     }
 }
