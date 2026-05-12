@@ -284,8 +284,44 @@ public class TeachingTipApiTests
 
             Assert.AreEqual(PopupAnimation.None, popup.PopupAnimation);
             Assert.IsNotNull(scaleTransform, "TeachingTip should animate the tip scale like WinUI instead of using PopupAnimation.");
-            Assert.AreEqual(tailOcclusionGrid.ActualWidth / 2.0, scaleTransform!.CenterX, 0.5);
+            Assert.AreEqual(Math.Max(tailOcclusionGrid.ActualWidth, tailOcclusionGrid.MinWidth) / 2.0, scaleTransform!.CenterX, 0.5);
             Assert.AreEqual(8.0, scaleTransform.CenterY, 0.5);
+        });
+    }
+
+    [TestMethod]
+    public void TeachingTipContentMarginFollowsContentState()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button { Width = 80, Height = 24, Content = "Target" };
+            var teachingTip = new TeachingTipControl
+            {
+                IsOpen = true,
+                Target = target,
+                Title = "This is the title",
+                Subtitle = "And this is the subtitle"
+            };
+            var root = new StackPanel
+            {
+                Children =
+                {
+                    target,
+                    teachingTip
+                }
+            };
+
+            using var host = new TestWindowHost(root, width: 360, height: 240);
+            var mainContentPresenter = FindNamedDescendant<FrameworkElement>(teachingTip, "MainContentPresenter");
+
+            Assert.AreEqual(new Thickness(0), mainContentPresenter.Margin);
+
+            teachingTip.Content = "Details";
+            host.UpdateLayout();
+
+            Assert.AreEqual(new Thickness(0, 12, 0, 0), mainContentPresenter.Margin);
         });
     }
 
@@ -324,6 +360,33 @@ public class TeachingTipApiTests
             Assert.AreEqual(20.0 / tailOcclusionGrid.ActualWidth, startScale.Width, 0.005);
             Assert.AreEqual(20.0 / tailOcclusionGrid.ActualHeight, startScale.Height, 0.005);
             Assert.IsTrue(startScale.Width > 0.01, "TeachingTip should expand from the WinUI contracted size, not from a nearly invisible point.");
+        });
+    }
+
+    [TestMethod]
+    public void TeachingTipAutoPlacementUsesWinUIPriorities()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var method = typeof(TeachingTipControl).GetMethod("GetEffectivePlacement", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            Assert.IsNotNull(method);
+
+            var target = new Button { Content = "Target" };
+            var targetedTeachingTip = new TeachingTipControl
+            {
+                Target = target
+            };
+            var untargetedTeachingTip = new TeachingTipControl();
+
+            Assert.AreEqual(
+                TeachingTipPlacementMode.Top,
+                (TeachingTipPlacementMode)method!.Invoke(targetedTeachingTip, null)!,
+                "WinUI targeted Auto placement starts with Top when it fits.");
+            Assert.AreEqual(
+                TeachingTipPlacementMode.Bottom,
+                (TeachingTipPlacementMode)method.Invoke(untargetedTeachingTip, null)!,
+                "WinUI untargeted Auto placement starts with Bottom when it fits.");
         });
     }
 

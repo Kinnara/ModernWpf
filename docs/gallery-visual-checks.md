@@ -31,7 +31,7 @@ The script launches ModernWpf Gallery with `--visual-test`, `--route`, `--theme`
 - `GalleryVisualTestReadyState`
 - `GalleryVisualTestLastException`
 
-With `-IncludeInteractions`, the TeachingTip pass captures a closed baseline, invokes the sample button, then captures 0ms, 150ms, 300ms, and 450ms screen-rect frames. Screen capture is used for those frames so WPF `Popup` content is included. The interaction probe records both UIA evidence, when available, and the open-vs-closed image delta.
+With `-IncludeInteractions`, the TeachingTip pass captures a closed baseline, invokes the sample button, then captures 0ms, 150ms, 300ms, and 450ms screen-rect frames. Screen capture is used for those frames so WPF `Popup` content is included. The interaction probe records both UIA evidence, when available, and the open-vs-closed image delta. It also writes an opened-tip crop based on the `ContentRootGrid` UIA element when possible, falling back to the largest changed image region, and reports normalized crop delta and crop size differences against the reference Gallery.
 
 Static window captures use `PrintWindow` first and fall back to an activated screen-rect capture when `PrintWindow` returns a blank image.
 

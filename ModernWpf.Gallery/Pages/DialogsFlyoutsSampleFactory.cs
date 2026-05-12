@@ -112,6 +112,8 @@ namespace ModernWpf.Gallery.Pages
         {
             var panel = CreateSamplePanel("TeachingTip explains a new or important capability near the relevant control.");
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("TeachingTip"));
+            panel.Resources["TeachingTipMinWidth"] = 48.0;
+
             var button = CreateButton("Show TeachingTip");
             GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("TeachingTip", "ShowButton"));
             var tip = new Mux.TeachingTip

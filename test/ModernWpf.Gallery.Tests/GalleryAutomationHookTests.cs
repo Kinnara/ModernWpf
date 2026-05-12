@@ -91,11 +91,15 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.IsNotNull(button);
                     Assert.IsNotNull(teachingTip);
+                    Assert.AreEqual(48.0, teachingTip.TryFindResource("TeachingTipMinWidth"));
 
                     button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                     WpfTestHost.DoEvents();
 
                     Assert.IsTrue(teachingTip.IsOpen);
+                    var popupRoot = teachingTip.Template.FindName("TailOcclusionGrid", teachingTip) as FrameworkElement;
+                    Assert.IsNotNull(popupRoot);
+                    Assert.AreEqual(48.0, popupRoot.MinWidth);
                 }
                 finally
                 {

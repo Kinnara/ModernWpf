@@ -223,6 +223,21 @@ function Find-ElementByNameInProcess([int]$processId, [string[]]$names) {
     return $null
 }
 
+function Find-ElementByAutomationIdInProcess([int]$processId, [string]$automationId) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        $match = Find-DescendantByAutomationId $window $automationId
+        if ($null -ne $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
 function Wait-Until([scriptblock]$Probe, [int]$timeoutSeconds, [string]$description) {
     $deadline = (Get-Date).AddSeconds($timeoutSeconds)
     do {
@@ -384,6 +399,320 @@ function Capture-ScreenRect([IntPtr]$hwnd, [string]$path) {
     }
 }
 
+function Find-DifferenceBounds([string]$beforePath, [string]$afterPath, [int]$threshold = 32, [int]$step = 2) {
+    $before = [System.Drawing.Bitmap]::FromFile($beforePath)
+    $after = [System.Drawing.Bitmap]::FromFile($afterPath)
+    try {
+        if ($before.Width -ne $after.Width -or $before.Height -ne $after.Height) {
+            return [ordered]@{
+                Found = $false
+                Reason = "Image dimensions differ."
+                X = 0
+                Y = 0
+                Width = 0
+                Height = 0
+                ChangedSamples = 0
+            }
+        }
+
+        $gridWidth = [int][Math]::Ceiling($before.Width / [double]$step)
+        $gridHeight = [int][Math]::Ceiling($before.Height / [double]$step)
+        $changed = New-Object 'bool[,]' $gridWidth, $gridHeight
+
+        for ($gridX = 0; $gridX -lt $gridWidth; $gridX++) {
+            for ($gridY = 0; $gridY -lt $gridHeight; $gridY++) {
+                $x = [Math]::Min($before.Width - 1, $gridX * $step)
+                $y = [Math]::Min($before.Height - 1, $gridY * $step)
+                $a = $before.GetPixel($x, $y)
+                $b = $after.GetPixel($x, $y)
+                $delta = [Math]::Abs($a.R - $b.R) + [Math]::Abs($a.G - $b.G) + [Math]::Abs($a.B - $b.B)
+                if ($delta -gt $threshold) {
+                    $changed[$gridX, $gridY] = $true
+                }
+            }
+        }
+
+        $visited = New-Object 'bool[,]' $gridWidth, $gridHeight
+        $components = New-Object System.Collections.Generic.List[object]
+        $queueX = New-Object System.Collections.Generic.Queue[int]
+        $queueY = New-Object System.Collections.Generic.Queue[int]
+
+        for ($startX = 0; $startX -lt $gridWidth; $startX++) {
+            for ($startY = 0; $startY -lt $gridHeight; $startY++) {
+                if (!$changed[$startX, $startY] -or $visited[$startX, $startY]) {
+                    continue
+                }
+
+                $visited[$startX, $startY] = $true
+                $queueX.Enqueue($startX)
+                $queueY.Enqueue($startY)
+                $minGridX = $startX
+                $maxGridX = $startX
+                $minGridY = $startY
+                $maxGridY = $startY
+                $componentSamples = 0
+
+                while ($queueX.Count -gt 0) {
+                    $currentX = $queueX.Dequeue()
+                    $currentY = $queueY.Dequeue()
+                    $componentSamples++
+                    if ($currentX -lt $minGridX) { $minGridX = $currentX }
+                    if ($currentX -gt $maxGridX) { $maxGridX = $currentX }
+                    if ($currentY -lt $minGridY) { $minGridY = $currentY }
+                    if ($currentY -gt $maxGridY) { $maxGridY = $currentY }
+
+                    for ($offsetX = -1; $offsetX -le 1; $offsetX++) {
+                        for ($offsetY = -1; $offsetY -le 1; $offsetY++) {
+                            if ($offsetX -eq 0 -and $offsetY -eq 0) {
+                                continue
+                            }
+
+                            $nextX = $currentX + $offsetX
+                            $nextY = $currentY + $offsetY
+                            if ($nextX -lt 0 -or $nextY -lt 0 -or $nextX -ge $gridWidth -or $nextY -ge $gridHeight) {
+                                continue
+                            }
+
+                            if ($changed[$nextX, $nextY] -and !$visited[$nextX, $nextY]) {
+                                $visited[$nextX, $nextY] = $true
+                                $queueX.Enqueue($nextX)
+                                $queueY.Enqueue($nextY)
+                            }
+                        }
+                    }
+                }
+
+                $componentX = $minGridX * $step
+                $componentY = $minGridY * $step
+                $componentRight = [Math]::Min($before.Width, ($maxGridX + 1) * $step)
+                $componentBottom = [Math]::Min($before.Height, ($maxGridY + 1) * $step)
+                $components.Add([pscustomobject]@{
+                    X = $componentX
+                    Y = $componentY
+                    Width = $componentRight - $componentX
+                    Height = $componentBottom - $componentY
+                    Right = $componentRight
+                    Bottom = $componentBottom
+                    Count = $componentSamples
+                    Merged = $false
+                })
+            }
+        }
+
+        if ($components.Count -eq 0) {
+            return [ordered]@{
+                Found = $false
+                Reason = "No changed pixels exceeded threshold $threshold."
+                X = 0
+                Y = 0
+                Width = 0
+                Height = 0
+                ChangedSamples = 0
+            }
+        }
+
+        $primary = $components | Sort-Object Count -Descending | Select-Object -First 1
+        $primary.Merged = $true
+        $clusterX = $primary.X
+        $clusterY = $primary.Y
+        $clusterRight = $primary.Right
+        $clusterBottom = $primary.Bottom
+        $changedSamples = $primary.Count
+        $mergeGap = 36
+        $mergedAny = $true
+
+        while ($mergedAny) {
+            $mergedAny = $false
+            foreach ($component in $components) {
+                if ($component.Merged) {
+                    continue
+                }
+
+                $horizontalGap = if ($component.X -gt $clusterRight) {
+                    $component.X - $clusterRight
+                }
+                elseif ($clusterX -gt $component.Right) {
+                    $clusterX - $component.Right
+                }
+                else {
+                    0
+                }
+
+                $verticalGap = if ($component.Y -gt $clusterBottom) {
+                    $component.Y - $clusterBottom
+                }
+                elseif ($clusterY -gt $component.Bottom) {
+                    $clusterY - $component.Bottom
+                }
+                else {
+                    0
+                }
+
+                if ($horizontalGap -le $mergeGap -and $verticalGap -le $mergeGap) {
+                    $component.Merged = $true
+                    $clusterX = [Math]::Min($clusterX, $component.X)
+                    $clusterY = [Math]::Min($clusterY, $component.Y)
+                    $clusterRight = [Math]::Max($clusterRight, $component.Right)
+                    $clusterBottom = [Math]::Max($clusterBottom, $component.Bottom)
+                    $changedSamples += $component.Count
+                    $mergedAny = $true
+                }
+            }
+        }
+
+        return [ordered]@{
+            Found = $true
+            Reason = ""
+            X = $clusterX
+            Y = $clusterY
+            Width = $clusterRight - $clusterX
+            Height = $clusterBottom - $clusterY
+            ChangedSamples = $changedSamples
+        }
+    }
+    finally {
+        $before.Dispose()
+        $after.Dispose()
+    }
+}
+
+function Expand-Bounds($bounds, [int]$imageWidth, [int]$imageHeight, [int]$padding) {
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return $bounds
+    }
+
+    $x = [Math]::Max(0, $bounds.X - $padding)
+    $y = [Math]::Max(0, $bounds.Y - $padding)
+    $right = [Math]::Min($imageWidth, $bounds.X + $bounds.Width + $padding)
+    $bottom = [Math]::Min($imageHeight, $bounds.Y + $bounds.Height + $padding)
+    return [ordered]@{
+        Found = $true
+        Reason = ""
+        X = $x
+        Y = $y
+        Width = [Math]::Max(1, $right - $x)
+        Height = [Math]::Max(1, $bottom - $y)
+        ChangedSamples = $bounds.ChangedSamples
+    }
+}
+
+function Trim-DifferenceBoundsToContentRoot($bounds, $targetBounds, [int]$tailLength = 8) {
+    if ($null -eq $bounds -or !$bounds.Found -or $null -eq $targetBounds -or !$targetBounds.Found) {
+        return $bounds
+    }
+
+    $x = [int]$bounds.X
+    $y = [int]$bounds.Y
+    $width = [int]$bounds.Width
+    $height = [int]$bounds.Height
+    $centerX = $x + ($width / 2.0)
+    $centerY = $y + ($height / 2.0)
+    $targetCenterX = [int]$targetBounds.X + ([int]$targetBounds.Width / 2.0)
+    $targetCenterY = [int]$targetBounds.Y + ([int]$targetBounds.Height / 2.0)
+
+    if ([Math]::Abs($targetCenterY - $centerY) -ge [Math]::Abs($targetCenterX - $centerX)) {
+        if ($height -gt ($tailLength * 2) -and $targetCenterY -gt $centerY) {
+            $height -= $tailLength
+        }
+        elseif ($height -gt ($tailLength * 2) -and $targetCenterY -lt $centerY) {
+            $y += $tailLength
+            $height -= $tailLength
+        }
+    }
+    else {
+        if ($width -gt ($tailLength * 2) -and $targetCenterX -gt $centerX) {
+            $width -= $tailLength
+        }
+        elseif ($width -gt ($tailLength * 2) -and $targetCenterX -lt $centerX) {
+            $x += $tailLength
+            $width -= $tailLength
+        }
+    }
+
+    return [ordered]@{
+        Found = $true
+        Reason = ""
+        X = $x
+        Y = $y
+        Width = [Math]::Max(1, $width)
+        Height = [Math]::Max(1, $height)
+        ChangedSamples = $bounds.ChangedSamples
+    }
+}
+
+function Save-Crop([string]$sourcePath, $bounds, [string]$path) {
+    $source = [System.Drawing.Bitmap]::FromFile($sourcePath)
+    try {
+        $expandedBounds = Expand-Bounds $bounds $source.Width $source.Height 12
+        $rectangle = [System.Drawing.Rectangle]::new(
+            [int]$expandedBounds.X,
+            [int]$expandedBounds.Y,
+            [int]$expandedBounds.Width,
+            [int]$expandedBounds.Height)
+        $crop = $source.Clone($rectangle, $source.PixelFormat)
+        try {
+            $crop.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+        }
+        finally {
+            $crop.Dispose()
+        }
+
+        return $expandedBounds
+    }
+    finally {
+        $source.Dispose()
+    }
+}
+
+function Get-ElementWindowBounds($window, $element) {
+    if ($null -eq $window -or $null -eq $element) {
+        return $null
+    }
+
+    $windowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+    $windowUiaRect = $window.Current.BoundingRectangle
+    $rect = $element.Current.BoundingRectangle
+    $x = [double]$rect.X
+    $y = [double]$rect.Y
+    $width = [double]$rect.Width
+    $height = [double]$rect.Height
+
+    if ([double]::IsInfinity($x) -or [double]::IsInfinity($y) -or
+        [double]::IsInfinity($width) -or [double]::IsInfinity($height) -or
+        [double]::IsNaN($x) -or [double]::IsNaN($y) -or
+        [double]::IsNaN($width) -or [double]::IsNaN($height) -or
+        $width -le 0 -or $height -le 0) {
+        return $null
+    }
+
+    $nativeWidth = [Math]::Max(1, $windowRect.Right - $windowRect.Left)
+    $nativeHeight = [Math]::Max(1, $windowRect.Bottom - $windowRect.Top)
+    $windowUiaWidth = [double]$windowUiaRect.Width
+    $windowUiaHeight = [double]$windowUiaRect.Height
+    $scaleX = if ($windowUiaWidth -gt 0 -and ![double]::IsInfinity($windowUiaWidth) -and ![double]::IsNaN($windowUiaWidth)) {
+        $nativeWidth / $windowUiaWidth
+    }
+    else {
+        1.0
+    }
+    $scaleY = if ($windowUiaHeight -gt 0 -and ![double]::IsInfinity($windowUiaHeight) -and ![double]::IsNaN($windowUiaHeight)) {
+        $nativeHeight / $windowUiaHeight
+    }
+    else {
+        1.0
+    }
+
+    return [ordered]@{
+        Found = $true
+        Reason = ""
+        X = [Math]::Max(0, [int][Math]::Round(($x - $windowUiaRect.X) * $scaleX))
+        Y = [Math]::Max(0, [int][Math]::Round(($y - $windowUiaRect.Y) * $scaleY))
+        Width = [Math]::Max(1, [int][Math]::Round($width * $scaleX))
+        Height = [Math]::Max(1, [int][Math]::Round($height * $scaleY))
+        ChangedSamples = 0
+    }
+}
+
 function Compare-Images([string]$leftPath, [string]$rightPath) {
     $left = [System.Drawing.Bitmap]::FromFile($leftPath)
     $right = [System.Drawing.Bitmap]::FromFile($rightPath)
@@ -413,6 +742,56 @@ function Compare-Images([string]$leftPath, [string]$rightPath) {
             Comparable = $true
             Reason = ""
             MeanDelta = [Math]::Round($delta / [Math]::Max(1, $samples), 2)
+        }
+    }
+    finally {
+        $left.Dispose()
+        $right.Dispose()
+    }
+}
+
+function Compare-ImagesNormalized([string]$leftPath, [string]$rightPath) {
+    $left = [System.Drawing.Bitmap]::FromFile($leftPath)
+    $right = [System.Drawing.Bitmap]::FromFile($rightPath)
+    try {
+        $width = [Math]::Max(1, [Math]::Max($left.Width, $right.Width))
+        $height = [Math]::Max(1, [Math]::Max($left.Height, $right.Height))
+        $leftNormalized = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+        $rightNormalized = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+        $leftGraphics = [System.Drawing.Graphics]::FromImage($leftNormalized)
+        $rightGraphics = [System.Drawing.Graphics]::FromImage($rightNormalized)
+        try {
+            $leftGraphics.Clear([System.Drawing.Color]::Transparent)
+            $rightGraphics.Clear([System.Drawing.Color]::Transparent)
+            $leftGraphics.DrawImage($left, 0, 0, $width, $height)
+            $rightGraphics.DrawImage($right, 0, 0, $width, $height)
+
+            $samples = 0
+            $delta = 0.0
+            $stepX = [Math]::Max(1, [int]($width / 80))
+            $stepY = [Math]::Max(1, [int]($height / 80))
+            for ($x = 0; $x -lt $width; $x += $stepX) {
+                for ($y = 0; $y -lt $height; $y += $stepY) {
+                    $a = $leftNormalized.GetPixel($x, $y)
+                    $b = $rightNormalized.GetPixel($x, $y)
+                    $delta += ([Math]::Abs($a.R - $b.R) + [Math]::Abs($a.G - $b.G) + [Math]::Abs($a.B - $b.B)) / 3.0
+                    $samples++
+                }
+            }
+
+            return [ordered]@{
+                Comparable = $true
+                Reason = ""
+                MeanDelta = [Math]::Round($delta / [Math]::Max(1, $samples), 2)
+                NormalizedWidth = $width
+                NormalizedHeight = $height
+            }
+        }
+        finally {
+            $leftGraphics.Dispose()
+            $rightGraphics.Dispose()
+            $leftNormalized.Dispose()
+            $rightNormalized.Dispose()
         }
     }
     finally {
@@ -467,7 +846,7 @@ function Capture-TeachingTipInteraction([string]$app, [string]$control, [string]
     [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
     Start-Sleep -Milliseconds 250
     $baselinePath = Join-Path $caseDir ("{0}-{1}-closed.png" -f $app.ToLowerInvariant(), $control)
-    Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    Capture-Window $window.Current.NativeWindowHandle $baselinePath
     $invoked = Invoke-Element $window $showButton
     $frames = New-Object System.Collections.Generic.List[object]
     $frameDelays = @(0, 150, 300, 450)
@@ -492,16 +871,66 @@ function Capture-TeachingTipInteraction([string]$app, [string]$control, [string]
     if ($null -ne $openElement) {
         $treePath = Join-Path $caseDir ("{0}-{1}-open.uia.txt" -f $app.ToLowerInvariant(), $control)
         Write-UiaTree $openElement $treePath 3
+        $cropElement = Find-DescendantByAutomationId $openElement "ContentRootGrid"
+        if ($null -eq $cropElement) {
+            $cropElement = $openElement
+        }
     }
     else {
         $treePath = ""
+        $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "ContentRootGrid"
     }
 
     $openDelta = $null
     $visualOpened = $false
+    $crop = $null
     if ($frames.Count -gt 0) {
         $lastFrame = $frames[$frames.Count - 1]
         $openDelta = Compare-Images $baselinePath $lastFrame.Screenshot
+        $elementBounds = Get-ElementWindowBounds $window $cropElement
+        if ($null -ne $elementBounds -and $elementBounds.Found) {
+            $cropPath = Join-Path $caseDir ("{0}-{1}-open-crop.png" -f $app.ToLowerInvariant(), $control)
+            $expandedBounds = Save-Crop $lastFrame.Screenshot $elementBounds $cropPath
+            $crop = [ordered]@{
+                Found = $true
+                Screenshot = $cropPath
+                Bounds = $expandedBounds
+                Width = $expandedBounds.Width
+                Height = $expandedBounds.Height
+                ChangedSamples = 0
+                Source = "UIA"
+            }
+        }
+        else {
+            $differenceBounds = Find-DifferenceBounds $baselinePath $lastFrame.Screenshot
+            if ($differenceBounds.Found) {
+                $targetBounds = Get-ElementWindowBounds $window $showButton
+                $differenceBounds = Trim-DifferenceBoundsToContentRoot $differenceBounds $targetBounds
+                $cropPath = Join-Path $caseDir ("{0}-{1}-open-crop.png" -f $app.ToLowerInvariant(), $control)
+                $expandedBounds = Save-Crop $lastFrame.Screenshot $differenceBounds $cropPath
+                $crop = [ordered]@{
+                    Found = $true
+                    Screenshot = $cropPath
+                    Bounds = $expandedBounds
+                    Width = $expandedBounds.Width
+                    Height = $expandedBounds.Height
+                    ChangedSamples = $differenceBounds.ChangedSamples
+                    Source = "Difference"
+                }
+            }
+            else {
+                $crop = [ordered]@{
+                    Found = $false
+                    Screenshot = ""
+                    Bounds = $differenceBounds
+                    Width = 0
+                    Height = 0
+                    ChangedSamples = 0
+                    Source = "None"
+                }
+            }
+        }
+
         $visualOpened = $openDelta.Comparable -and $openDelta.MeanDelta -gt 1.0
     }
 
@@ -517,6 +946,7 @@ function Capture-TeachingTipInteraction([string]$app, [string]$control, [string]
         UiaTree = $treePath
         Frames = $frames.ToArray()
         OpenDelta = $openDelta
+        Crop = $crop
         Notes = $notes
     }
 }
@@ -718,6 +1148,17 @@ foreach ($control in $Controls) {
         if ($modernFrame.Screenshot -and $referenceFrame.Screenshot) {
             $modern["InteractionReferenceComparison"] = Compare-Images $modernFrame.Screenshot $referenceFrame.Screenshot
         }
+
+        if ($null -ne $modern.Interaction.Crop -and $null -ne $referenceCapture.Interaction.Crop -and
+            $modern.Interaction.Crop.Found -and $referenceCapture.Interaction.Crop.Found) {
+            $modern["InteractionCropReferenceComparison"] = Compare-ImagesNormalized $modern.Interaction.Crop.Screenshot $referenceCapture.Interaction.Crop.Screenshot
+            $modern["InteractionCropSize"] = [ordered]@{
+                ModernWpfWidth = $modern.Interaction.Crop.Width
+                ModernWpfHeight = $modern.Interaction.Crop.Height
+                ReferenceWidth = $referenceCapture.Interaction.Crop.Width
+                ReferenceHeight = $referenceCapture.Interaction.Crop.Height
+            }
+        }
     }
 }
 
@@ -741,6 +1182,12 @@ foreach ($result in $results) {
     }
     if ($result.Contains("InteractionReferenceComparison")) {
         $notes = "$notes; interaction delta: " + $result.InteractionReferenceComparison.MeanDelta
+    }
+    if ($result.Contains("InteractionCropReferenceComparison")) {
+        $notes = "$notes; crop delta: " + $result.InteractionCropReferenceComparison.MeanDelta
+    }
+    if ($result.Contains("InteractionCropSize")) {
+        $notes = "$notes; crop sizes: $($result.InteractionCropSize.ModernWpfWidth)x$($result.InteractionCropSize.ModernWpfHeight) vs $($result.InteractionCropSize.ReferenceWidth)x$($result.InteractionCropSize.ReferenceHeight)"
     }
     if ($result.Contains("Interaction") -and $null -ne $result.Interaction -and $result.Interaction.Status -ne "Passed") {
         $notes = "$notes; interaction: " + $result.Interaction.Notes

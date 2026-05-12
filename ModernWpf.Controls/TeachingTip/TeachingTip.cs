@@ -333,6 +333,12 @@ namespace ModernWpf.Controls
 
         public event TypedEventHandler<TeachingTip, TeachingTipClosedEventArgs> Closed;
 
+        protected override void OnContentChanged(object oldContent, object newContent)
+        {
+            base.OnContentChanged(oldContent, newContent);
+            UpdateVisualState();
+        }
+
         public override void OnApplyTemplate()
         {
             StopTipAnimation();
@@ -357,6 +363,7 @@ namespace ModernWpf.Controls
             _alternateCloseButton = GetTemplateChild(AlternateCloseButtonName) as Button;
             _tailPolygon = GetTemplateChild(TailPolygonName) as Polygon;
 
+            ApplySizeResources();
             HookButtonEvents();
             ConfigurePopup();
             UpdateIcon();
@@ -366,6 +373,47 @@ namespace ModernWpf.Controls
             {
                 StartOpenAnimation();
             }
+        }
+
+        private void ApplySizeResources()
+        {
+            if (_tailOcclusionGrid == null)
+            {
+                return;
+            }
+
+            _tailOcclusionGrid.MinHeight = GetDoubleResource("TeachingTipMinHeight", _tailOcclusionGrid.MinHeight);
+            _tailOcclusionGrid.MinWidth = GetDoubleResource("TeachingTipMinWidth", _tailOcclusionGrid.MinWidth);
+            _tailOcclusionGrid.MaxHeight = GetDoubleResource("TeachingTipMaxHeight", _tailOcclusionGrid.MaxHeight);
+            _tailOcclusionGrid.MaxWidth = GetDoubleResource("TeachingTipMaxWidth", _tailOcclusionGrid.MaxWidth);
+        }
+
+        private double GetDoubleResource(string resourceKey, double fallback)
+        {
+            var resource = TryFindResource(resourceKey);
+            if (resource is double value)
+            {
+                return value;
+            }
+
+            if (resource is IConvertible convertible)
+            {
+                try
+                {
+                    return convertible.ToDouble(null);
+                }
+                catch (FormatException)
+                {
+                }
+                catch (InvalidCastException)
+                {
+                }
+                catch (OverflowException)
+                {
+                }
+            }
+
+            return fallback;
         }
 
         private static void OnIsOpenPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -617,6 +665,7 @@ namespace ModernWpf.Controls
             }
 
             UpdateButtons();
+            UpdateMainContent();
             UpdateHeroContentPlacement();
             UpdateTailPlacement();
             UpdateBackgroundResources();
@@ -679,6 +728,19 @@ namespace ModernWpf.Controls
             {
                 _alternateCloseButton.Visibility = hasCloseButton ? Visibility.Collapsed : Visibility.Visible;
             }
+        }
+
+        private void UpdateMainContent()
+        {
+            if (_mainContentPresenter == null)
+            {
+                return;
+            }
+
+            var hasContent = !ControlHelper.IsNullOrEmptyString(Content);
+            _mainContentPresenter.Margin = hasContent
+                ? GetThicknessResource("TeachingTipMainContentPresentMargin", new Thickness(0, 12, 0, 0))
+                : GetThicknessResource("TeachingTipMainContentAbsentMargin", new Thickness());
         }
 
         private void UpdateHeroContentPlacement()
@@ -860,7 +922,7 @@ namespace ModernWpf.Controls
         {
             if (PreferredPlacement == TeachingTipPlacementMode.Auto)
             {
-                return Target == null ? TeachingTipPlacementMode.Center : TeachingTipPlacementMode.Bottom;
+                return Target == null ? TeachingTipPlacementMode.Bottom : TeachingTipPlacementMode.Top;
             }
 
             return PreferredPlacement;
@@ -1468,7 +1530,12 @@ namespace ModernWpf.Controls
 
         private Thickness GetThicknessResource(object key)
         {
-            return TryFindResource(key) is Thickness thickness ? thickness : new Thickness();
+            return GetThicknessResource(key, new Thickness());
+        }
+
+        private Thickness GetThicknessResource(object key, Thickness fallback)
+        {
+            return TryFindResource(key) is Thickness thickness ? thickness : fallback;
         }
 
         private TeachingTipCloseReason _lastCloseReason = TeachingTipCloseReason.Programmatic;
