@@ -9,6 +9,7 @@ namespace ModernWpf.Gallery.Testing
         }
 
         public bool VisualTestMode { get; private set; }
+        public bool OpenInteractions { get; private set; }
         public string ArtifactDirectory { get; private set; }
         public string InitialRoute { get; private set; }
         public string Theme { get; private set; }
@@ -33,6 +34,12 @@ namespace ModernWpf.Gallery.Testing
                 if (IsFlag(arg, "--visual-test"))
                 {
                     options.VisualTestMode = true;
+                    continue;
+                }
+
+                if (IsFlag(arg, "--open-interactions"))
+                {
+                    options.OpenInteractions = true;
                     continue;
                 }
 

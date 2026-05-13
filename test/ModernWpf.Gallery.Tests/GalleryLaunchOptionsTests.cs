@@ -21,12 +21,14 @@ namespace ModernWpf.Gallery.Tests
             var options = GalleryLaunchOptions.Parse(new[]
             {
                 "--visual-test",
+                "--open-interactions",
                 "--route", "category/DialogsAndFlyouts",
                 "--theme=Dark",
                 "--visual-artifact-dir", "artifacts/visual-checks/run"
             });
 
             Assert.IsTrue(options.VisualTestMode);
+            Assert.IsTrue(options.OpenInteractions);
             Assert.AreEqual("category/DialogsAndFlyouts", options.InitialRoute);
             Assert.AreEqual("Dark", options.Theme);
             Assert.AreEqual("artifacts/visual-checks/run", options.ArtifactDirectory);

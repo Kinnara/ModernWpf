@@ -326,7 +326,7 @@ public class TeachingTipApiTests
     }
 
     [TestMethod]
-    public void TeachingTipExpandAnimationStartsAtContractedWinUISize()
+    public void TeachingTipExpandAnimationStartsAtWinUIMinimumScale()
     {
         WpfTestHost.Run(() =>
         {
@@ -357,9 +357,9 @@ public class TeachingTipApiTests
 
             var startScale = (Size)method!.Invoke(teachingTip, null)!;
 
-            Assert.AreEqual(20.0 / tailOcclusionGrid.ActualWidth, startScale.Width, 0.005);
-            Assert.AreEqual(20.0 / tailOcclusionGrid.ActualHeight, startScale.Height, 0.005);
-            Assert.IsTrue(startScale.Width > 0.01, "TeachingTip should expand from the WinUI contracted size, not from a nearly invisible point.");
+            Assert.AreEqual(Math.Min(0.01, 20.0 / tailOcclusionGrid.ActualWidth), startScale.Width, 0.005);
+            Assert.AreEqual(Math.Min(0.01, 20.0 / tailOcclusionGrid.ActualHeight), startScale.Height, 0.005);
+            Assert.AreEqual(0.01, startScale.Width, 0.005, "WinUI starts the expand scale from its minimum expression value.");
         });
     }
 

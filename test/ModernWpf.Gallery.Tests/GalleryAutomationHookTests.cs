@@ -302,6 +302,62 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
+        [TestMethod]
+        public void TeachingTipInteractionModeWritesOpenContentArtifact()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var artifactDirectory = Path.Combine(Path.GetTempPath(), "ModernWpfGalleryTests", Path.GetRandomFileName());
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--open-interactions", "--visual-artifact-dir", artifactDirectory }));
+
+                var page = new ItemPage(GalleryCatalog.FindItem("TeachingTip"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var teachingTip = (TeachingTipControl)FindByAutomationId(page, "GallerySample_TeachingTip_TeachingTip");
+                    Assert.IsNotNull(teachingTip);
+
+                    GalleryDiagnostics.PrepareInteractiveVisualState(page);
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+                    GalleryDiagnostics.WriteVisualArtifacts(page);
+
+                    Assert.IsTrue(teachingTip.IsOpen);
+                    var openContentArtifact = Path.Combine(artifactDirectory, "ContentRootGrid.png");
+                    Assert.IsTrue(File.Exists(openContentArtifact), openContentArtifact + " was not written.");
+                    Assert.IsTrue(new FileInfo(openContentArtifact).Length > 0);
+                    Assert.IsTrue(HasVisibleRgbPixels(openContentArtifact), openContentArtifact + " has no visible RGB content.");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    if (Directory.Exists(artifactDirectory))
+                    {
+                        Directory.Delete(artifactDirectory, recursive: true);
+                    }
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
         private static DependencyObject FindByAutomationId(DependencyObject root, string automationId)
         {
             if (root == null)

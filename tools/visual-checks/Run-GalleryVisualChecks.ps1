@@ -1294,8 +1294,25 @@ function Capture-TeachingTipInteraction([string]$app, [string]$control, [string]
         $visualOpened = $openDelta.Comparable -and $openDelta.MeanDelta -gt 1.0
     }
 
+    if ($app -eq "ModernWpf" -and $null -eq $crop) {
+        $artifactCropPath = Join-Path $caseDir "modernwpf-artifacts\ContentRootGrid.png"
+        $artifactCrop = New-RenderedArtifactCrop $artifactCropPath "ContentRootGrid" ([ordered]@{
+            Found = $true
+            Reason = ""
+            X = 0
+            Y = 0
+            Width = 0
+            Height = 0
+            ChangedSamples = 0
+        })
+        if ($null -ne $artifactCrop -and $artifactCrop.NonBlank) {
+            $crop = $artifactCrop
+            $visualOpened = $true
+        }
+    }
+
     $status = if (!$invoked) { "Failed" } elseif ($null -ne $openElement -or $visualOpened) { "Passed" } else { "Failed" }
-    $notes = if (!$invoked) { "Could not invoke the TeachingTip sample button." } elseif ($null -eq $openElement -and !$visualOpened) { "TeachingTip did not produce UIA or visual evidence of opening." } elseif ($null -eq $openElement) { "TeachingTip open content was not found in UIA; visual delta verified." } else { "" }
+    $notes = if (!$invoked) { "Could not invoke the TeachingTip sample button." } elseif ($null -eq $openElement -and !$visualOpened) { "TeachingTip did not produce UIA or visual evidence of opening." } elseif ($null -eq $openElement -and $null -ne $crop -and $crop.Source -eq "ContentRootGrid") { "TeachingTip open content was verified from the in-app rendered artifact." } elseif ($null -eq $openElement) { "TeachingTip open content was not found in UIA; visual delta verified." } else { "" }
 
     return [ordered]@{
         Status = $status
@@ -1337,6 +1354,9 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
     New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
 
     $args = @("--visual-test", "--route", $route, "--theme", $Theme, "--visual-artifact-dir", $artifactDir)
+    if ($IncludeInteractions) {
+        $args += "--open-interactions"
+    }
     $process = Start-Process -FilePath $GalleryExe -ArgumentList $args -PassThru
     try {
         $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf Gallery window" -Probe {

@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
 
 namespace ModernWpf.Gallery.Testing
 {
@@ -13,6 +15,7 @@ namespace ModernWpf.Gallery.Testing
         private static readonly object Gate = new object();
 
         public static bool IsEnabled { get; private set; }
+        public static bool OpenInteractions { get; private set; }
         public static string ArtifactDirectory { get; private set; }
         public static string Theme { get; private set; }
         public static string CurrentRoute { get; private set; } = "home";
@@ -29,6 +32,7 @@ namespace ModernWpf.Gallery.Testing
             lock (Gate)
             {
                 IsEnabled = options.VisualTestMode;
+                OpenInteractions = options.OpenInteractions;
                 ArtifactDirectory = options.ArtifactDirectory;
                 Theme = options.Theme;
                 CurrentRoute = "home";
@@ -42,6 +46,7 @@ namespace ModernWpf.Gallery.Testing
             lock (Gate)
             {
                 IsEnabled = false;
+                OpenInteractions = false;
                 ArtifactDirectory = null;
                 Theme = null;
                 CurrentRoute = "home";
@@ -103,6 +108,28 @@ namespace ModernWpf.Gallery.Testing
             }
         }
 
+        public static void PrepareInteractiveVisualState(DependencyObject root)
+        {
+            if (!IsEnabled || !OpenInteractions || root == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var teachingTipButton = FindByAutomationId(root, "GallerySample_TeachingTip_ShowButton") as ButtonBase;
+                if (teachingTipButton != null)
+                {
+                    teachingTipButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    root.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+            }
+        }
+
         private static string FormatException(Exception exception)
         {
             var builder = new StringBuilder();
@@ -142,10 +169,15 @@ namespace ModernWpf.Gallery.Testing
             if (element != null)
             {
                 var automationId = AutomationProperties.GetAutomationId(element);
-                if (!string.IsNullOrEmpty(automationId) &&
-                    automationId.StartsWith("GallerySample_", StringComparison.Ordinal))
+                if (ShouldWriteVisualArtifact(automationId))
                 {
                     WriteElementPng(element, Path.Combine(ArtifactDirectory, SanitizeFileName(automationId) + ".png"));
+                }
+
+                var popup = element as Popup;
+                if (popup?.Child != null)
+                {
+                    WriteVisualArtifactsCore(popup.Child);
                 }
             }
 
@@ -188,6 +220,34 @@ namespace ModernWpf.Gallery.Testing
             {
                 encoder.Save(stream);
             }
+        }
+
+        private static bool ShouldWriteVisualArtifact(string automationId)
+        {
+            return !string.IsNullOrEmpty(automationId) &&
+                (automationId.StartsWith("GallerySample_", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "ContentRootGrid", StringComparison.Ordinal));
+        }
+
+        private static DependencyObject FindByAutomationId(DependencyObject root, string automationId)
+        {
+            var element = root as UIElement;
+            if (element != null && AutomationProperties.GetAutomationId(element) == automationId)
+            {
+                return root;
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var result = FindByAutomationId(VisualTreeHelper.GetChild(root, i), automationId);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
         }
 
         private static Color GetArtifactBackgroundColor()
