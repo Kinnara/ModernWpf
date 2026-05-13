@@ -648,21 +648,6 @@ function Capture-ScreenRect([IntPtr]$hwnd, [string]$path) {
     }
 }
 
-function Capture-WindowScreenFirst([IntPtr]$hwnd, [string]$path) {
-    [GalleryVisualNative]::Activate($hwnd)
-    Start-Sleep -Milliseconds 300
-    try {
-        Capture-ScreenRect $hwnd $path
-        if (Test-ImageNotBlank $path) {
-            return
-        }
-    }
-    catch {
-    }
-
-    Capture-Window $hwnd $path
-}
-
 function Find-DifferenceBounds([string]$beforePath, [string]$afterPath, [int]$threshold = 32, [int]$step = 2) {
     $before = [System.Drawing.Bitmap]::FromFile($beforePath)
     $after = [System.Drawing.Bitmap]::FromFile($afterPath)
@@ -1543,7 +1528,7 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
                 Start-Sleep -Milliseconds (400 * $captureAttempt)
             }
 
-            Capture-WindowScreenFirst $window.Current.NativeWindowHandle $screenshot
+            Capture-Window $window.Current.NativeWindowHandle $screenshot
             $staticCrops = Capture-StaticCrops "WinUI3" $control $caseDir $window $screenshot
             $notBlank = Test-ImageNotBlank $screenshot
             $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
@@ -1607,7 +1592,7 @@ function Ensure-WinUIReferenceTheme([string]$control, [string]$caseDir, $window)
 
     $probeScreenshot = Join-Path $caseDir ("winui3-$control-theme-probe.png")
     $probeCropPath = Join-Path $caseDir ("winui3-$control-theme-probe-crop.png")
-    Capture-WindowScreenFirst $window.Current.NativeWindowHandle $probeScreenshot
+    Capture-Window $window.Current.NativeWindowHandle $probeScreenshot
     $probeCrop = Save-ElementCrop $window $probeScreenshot $probeCropPath $primaryElement $primarySource 0
     if (!$probeCrop.Found -or !$probeCrop.NonBlank) {
         return [ordered]@{
