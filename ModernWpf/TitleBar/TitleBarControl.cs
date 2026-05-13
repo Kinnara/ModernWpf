@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
@@ -407,7 +406,6 @@ namespace ModernWpf.Controls.Primitives
         {
             base.OnRenderSizeChanged(sizeInfo);
 
-            Debug.Assert(TemplatedParent is Window);
             if (TemplatedParent is Window window)
             {
                 TitleBar.SetHeight(window, sizeInfo.NewSize.Height);
@@ -434,7 +432,6 @@ namespace ModernWpf.Controls.Primitives
 
         private void UpdateSystemOverlayLeftInset(double value)
         {
-            Debug.Assert(TemplatedParent is Window);
             if (TemplatedParent is Window window)
             {
                 TitleBar.SetSystemOverlayLeftInset(window, value);
@@ -443,7 +440,6 @@ namespace ModernWpf.Controls.Primitives
 
         private void UpdateSystemOverlayRightInset(double value)
         {
-            Debug.Assert(TemplatedParent is Window);
             if (TemplatedParent is Window window)
             {
                 TitleBar.SetSystemOverlayRightInset(window, value);
