@@ -1287,6 +1287,15 @@ function Close-AutomationWindow($window) {
     }
 }
 
+function Stop-WinUIReferenceProcesses {
+    try {
+        Get-Process -Name "WinUIGallery" -ErrorAction SilentlyContinue | Stop-Process -Force
+        Start-Sleep -Milliseconds 300
+    }
+    catch {
+    }
+}
+
 function Capture-ModernWpf([string]$control, [string]$caseDir) {
     $route = "item/$control"
     $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
@@ -1370,6 +1379,7 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
 
 function Capture-WinUIReference([string]$control, [string]$caseDir) {
     $route = "winui3gallery://item/$control"
+    Stop-WinUIReferenceProcesses
     Start-Process $route
 
     $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "installed WinUI 3 Gallery window for $control" -Probe {

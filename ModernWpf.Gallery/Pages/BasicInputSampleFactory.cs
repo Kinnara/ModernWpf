@@ -47,21 +47,20 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateButtonSample()
         {
-            var panel = CreateSamplePanel("Trigger an immediate action from a standard WPF Button styled by ModernWpf resources.");
+            var panel = CreateSamplePanel("A simple Button with text content.");
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("Button"));
-            var output = CreateOutput("Button has not been clicked.");
+            var output = CreateOutput("");
             var count = 0;
             var button = new Button
             {
-                Content = "Click me",
-                Padding = new Thickness(18, 8, 18, 8),
+                Content = "Standard XAML button",
                 HorizontalAlignment = HorizontalAlignment.Left
             };
             GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("Button", "PrimaryButton"));
             button.Click += delegate
             {
                 count++;
-                output.Text = "Button clicked " + count + " times.";
+                output.Text = "You clicked: Button1";
             };
             panel.Children.Add(button);
             panel.Children.Add(output);
