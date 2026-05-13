@@ -193,8 +193,8 @@ namespace ModernWpf.Gallery.Testing
         private static Color GetArtifactBackgroundColor()
         {
             return string.Equals(Theme, "Dark", StringComparison.OrdinalIgnoreCase)
-                ? Colors.Black
-                : Colors.White;
+                ? Color.FromRgb(0x20, 0x20, 0x20)
+                : Color.FromRgb(0xF3, 0xF3, 0xF3);
         }
 
         private static string SanitizeFileName(string value)

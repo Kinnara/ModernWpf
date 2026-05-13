@@ -452,6 +452,34 @@ function Get-ImageSize([string]$path) {
     }
 }
 
+function Get-ImageMeanLuminance([string]$path, [int]$step = 3) {
+    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
+    try {
+        $sum = 0.0
+        $samples = 0
+        for ($y = 0; $y -lt $bitmap.Height; $y += $step) {
+            for ($x = 0; $x -lt $bitmap.Width; $x += $step) {
+                $pixel = $bitmap.GetPixel($x, $y)
+                if ($pixel.A -le 16) {
+                    continue
+                }
+
+                $sum += (0.2126 * $pixel.R) + (0.7152 * $pixel.G) + (0.0722 * $pixel.B)
+                $samples++
+            }
+        }
+
+        if ($samples -eq 0) {
+            return $null
+        }
+
+        return [Math]::Round($sum / $samples, 2)
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
 function Capture-Window([IntPtr]$hwnd, [string]$path) {
     [GalleryVisualNative]::Activate($hwnd)
     Start-Sleep -Milliseconds 300
@@ -495,6 +523,15 @@ function Capture-Window([IntPtr]$hwnd, [string]$path) {
         if ($copied -and (Test-BitmapNotBlank $bitmap)) {
             $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
             return
+        }
+
+        try {
+            Capture-ScreenRect $hwnd $path
+            if (Test-ImageNotBlank $path) {
+                return
+            }
+        }
+        catch {
         }
 
         throw "PrintWindow did not produce a valid app-content capture for window handle $hwnd."
@@ -1048,6 +1085,64 @@ function Invoke-Element($window, $element) {
     return $invoked
 }
 
+function Invoke-ElementOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $rect = $element.Current.BoundingRectangle
+    if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+        [GalleryVisualNative]::Click(
+            [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+            [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+        Start-Sleep -Milliseconds 50
+        return $true
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            Start-Sleep -Milliseconds 50
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Invoke-ElementPatternOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            Start-Sleep -Milliseconds 50
+            return $true
+        }
+    }
+    catch {
+    }
+
+    $rect = $element.Current.BoundingRectangle
+    if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+        [GalleryVisualNative]::Click(
+            [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+            [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+        Start-Sleep -Milliseconds 50
+        return $true
+    }
+
+    return $false
+}
+
 function Capture-TeachingTipInteraction([string]$app, [string]$control, [string]$caseDir, $window, $showButton, [string[]]$openNames) {
     if (!$IncludeInteractions -or $control -ne "TeachingTip") {
         return $null
@@ -1056,7 +1151,12 @@ function Capture-TeachingTipInteraction([string]$app, [string]$control, [string]
     [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
     Start-Sleep -Milliseconds 250
     $baselinePath = Join-Path $caseDir ("{0}-{1}-closed.png" -f $app.ToLowerInvariant(), $control)
-    Capture-Window $window.Current.NativeWindowHandle $baselinePath
+    try {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    }
+    catch {
+        Capture-Window $window.Current.NativeWindowHandle $baselinePath
+    }
     $invoked = Invoke-Element $window $showButton
     $frames = New-Object System.Collections.Generic.List[object]
     $frameDelays = @(0, 150, 300, 450)
@@ -1069,11 +1169,18 @@ function Capture-TeachingTipInteraction([string]$app, [string]$control, [string]
         $previousDelay = $delay
 
         $framePath = Join-Path $caseDir ("{0}-{1}-open-{2:D3}ms.png" -f $app.ToLowerInvariant(), $control, $delay)
-        Capture-ScreenRect $window.Current.NativeWindowHandle $framePath
+        $frameError = ""
+        try {
+            Capture-ScreenRect $window.Current.NativeWindowHandle $framePath
+        }
+        catch {
+            $frameError = $_.Exception.Message
+        }
         $frames.Add([ordered]@{
             DelayMs = $delay
-            Screenshot = $framePath
-            NonBlank = Test-ImageNotBlank $framePath
+            Screenshot = $(if (Test-Path $framePath) { $framePath } else { "" })
+            NonBlank = $(if (Test-Path $framePath) { Test-ImageNotBlank $framePath } else { $false })
+            Error = $frameError
         })
     }
 
@@ -1094,11 +1201,19 @@ function Capture-TeachingTipInteraction([string]$app, [string]$control, [string]
     $openDelta = $null
     $visualOpened = $false
     $crop = $null
-    if ($frames.Count -gt 0) {
-        $lastFrame = $frames[$frames.Count - 1]
+    $usableFrames = @($frames.ToArray() | Where-Object { $_.NonBlank -and ![string]::IsNullOrEmpty($_.Screenshot) })
+    if ($usableFrames.Count -gt 0) {
+        $lastFrame = $usableFrames[$usableFrames.Count - 1]
         $openDelta = Compare-Images $baselinePath $lastFrame.Screenshot
         $elementBounds = Get-ElementWindowBounds $window $cropElement
-        if ($null -ne $elementBounds -and $elementBounds.Found) {
+        $windowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+        $windowWidth = [Math]::Max(1, $windowRect.Right - $windowRect.Left)
+        $windowHeight = [Math]::Max(1, $windowRect.Bottom - $windowRect.Top)
+        $elementBoundsUsable = $null -ne $elementBounds -and
+            $elementBounds.Found -and
+            $elementBounds.Width -lt ($windowWidth * 0.75) -and
+            $elementBounds.Height -lt ($windowHeight * 0.75)
+        if ($elementBoundsUsable) {
             $cropPath = Join-Path $caseDir ("{0}-{1}-open-crop.png" -f $app.ToLowerInvariant(), $control)
             $expandedBounds = Save-Crop $lastFrame.Screenshot $elementBounds $cropPath
             $crop = [ordered]@{
@@ -1262,11 +1377,12 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
     }
 
     try {
-        [void][GalleryVisualNative]::Move($window.Current.NativeWindowHandle, 1280, 60, $Width, $Height)
+        [void][GalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
         Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "WinUI 3 Gallery page title '$control'" -Probe {
             Find-DescendantByName $window $control
         } | Out-Null
         Start-Sleep -Milliseconds 600
+        $themeProbe = Ensure-WinUIReferenceTheme $control $caseDir $window
 
         $showButton = if ($control -eq "TeachingTip") { Find-DescendantButtonByName $window "Show TeachingTip" } else { $null }
         $interaction = Capture-TeachingTipInteraction "WinUI3" $control $caseDir $window $showButton @("This is the title", "And this is the subtitle")
@@ -1292,10 +1408,98 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
             RequiredSampleElementFound = $true
             StaticCrops = $staticCrops
             Interaction = $interaction
+            ThemeProbe = $themeProbe
         }
     }
     finally {
         Close-AutomationWindow $window
+    }
+}
+
+function Ensure-WinUIReferenceTheme([string]$control, [string]$caseDir, $window) {
+    if ($Theme -eq "Default") {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $null
+            Toggled = $false
+            Reason = "Default theme requested."
+        }
+    }
+
+    $primarySource = Get-ReferencePrimaryAutomationId $control
+    if ([string]::IsNullOrEmpty($primarySource)) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $null
+            Toggled = $false
+            Reason = "No reference primary element is configured."
+        }
+    }
+
+    $primaryElement = Find-DescendantByAutomationId $window $primarySource
+    if ($null -eq $primaryElement) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $null
+            Toggled = $false
+            Reason = "Reference primary element '$primarySource' was not found."
+        }
+    }
+
+    $probeScreenshot = Join-Path $caseDir ("winui3-$control-theme-probe.png")
+    $probeCropPath = Join-Path $caseDir ("winui3-$control-theme-probe-crop.png")
+    Capture-Window $window.Current.NativeWindowHandle $probeScreenshot
+    $probeCrop = Save-ElementCrop $window $probeScreenshot $probeCropPath $primaryElement $primarySource 0
+    if (!$probeCrop.Found -or !$probeCrop.NonBlank) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $null
+            Toggled = $false
+            Reason = "Reference theme probe crop was unavailable or blank."
+        }
+    }
+
+    $mean = Get-ImageMeanLuminance $probeCropPath
+    if ($null -eq $mean) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $null
+            Toggled = $false
+            Reason = "Reference theme probe had no visible pixels."
+        }
+    }
+
+    $isDark = [double]$mean -lt 128.0
+    $wantsDark = $Theme -eq "Dark"
+    if ($isDark -eq $wantsDark) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $mean
+            Toggled = $false
+            Reason = "Reference sample theme already matched."
+        }
+    }
+
+    $themeButton = Find-DescendantByAutomationId $window "ThemeButton"
+    if ($null -eq $themeButton) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $mean
+            Toggled = $false
+            Reason = "ThemeButton was not found."
+        }
+    }
+
+    $toggled = Invoke-ElementPatternOnce $window $themeButton
+    if ($toggled) {
+        Start-Sleep -Milliseconds 700
+    }
+
+    return [ordered]@{
+        RequestedTheme = $Theme
+        MeanLuminance = $mean
+        Toggled = $toggled
+        Reason = $(if ($toggled) { "Reference sample theme toggled to match requested theme." } else { "ThemeButton did not invoke." })
     }
 }
 
