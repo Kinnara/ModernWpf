@@ -400,6 +400,23 @@
     <SolidColorBrush x:Key="SystemFillColorCriticalBackgroundBrush" Color="{StaticResource SystemFillColorCriticalBackground}" />
     <SolidColorBrush x:Key="SystemFillColorNeutralBackgroundBrush" Color="{StaticResource SystemFillColorNeutralBackground}" />
 
+    <SolidColorBrush x:Key="InfoBarBorderBrush" Color="{StaticResource CardStrokeColorDefault}" />
+    <SolidColorBrush x:Key="InfoBarTitleForeground" Color="{StaticResource TextFillColorPrimary}" />
+    <SolidColorBrush x:Key="InfoBarMessageForeground" Color="{StaticResource TextFillColorPrimary}" />
+    <SolidColorBrush x:Key="InfoBarHyperlinkButtonForeground" Color="{m:DynamicColor SystemAccentColorLight3}" />
+    <SolidColorBrush x:Key="InfoBarErrorSeverityBackgroundBrush" Color="{StaticResource SystemFillColorCriticalBackground}" />
+    <SolidColorBrush x:Key="InfoBarWarningSeverityBackgroundBrush" Color="{StaticResource SystemFillColorCautionBackground}" />
+    <SolidColorBrush x:Key="InfoBarSuccessSeverityBackgroundBrush" Color="{StaticResource SystemFillColorSuccessBackground}" />
+    <SolidColorBrush x:Key="InfoBarInformationalSeverityBackgroundBrush" Color="{StaticResource SystemFillColorAttentionBackground}" />
+    <SolidColorBrush x:Key="InfoBarErrorSeverityIconBackground" Color="{StaticResource SystemFillColorCritical}" />
+    <SolidColorBrush x:Key="InfoBarWarningSeverityIconBackground" Color="{StaticResource SystemFillColorCaution}" />
+    <SolidColorBrush x:Key="InfoBarSuccessSeverityIconBackground" Color="{StaticResource SystemFillColorSuccess}" />
+    <SolidColorBrush x:Key="InfoBarInformationalSeverityIconBackground" Color="{m:DynamicColor SystemAccentColor}" />
+    <SolidColorBrush x:Key="InfoBarErrorSeverityIconForeground" Color="{StaticResource TextFillColorInverse}" />
+    <SolidColorBrush x:Key="InfoBarWarningSeverityIconForeground" Color="{StaticResource TextFillColorInverse}" />
+    <SolidColorBrush x:Key="InfoBarSuccessSeverityIconForeground" Color="{StaticResource TextFillColorInverse}" />
+    <SolidColorBrush x:Key="InfoBarInformationalSeverityIconForeground" Color="{StaticResource TextFillColorInverse}" />
+
     <m:StaticResource x:Key="DefaultTextForegroundThemeBrush" ResourceKey="TextFillColorPrimaryBrush" />
     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
 

@@ -222,6 +222,8 @@ namespace ModernWpf.Gallery.Shell
                     {
                         if (_currentTarget != null && _currentTarget.Equals(target))
                         {
+                            ContentHost.UpdateLayout();
+                            GalleryDiagnostics.WriteVisualArtifacts(ContentHost);
                             SetVisualTestState(route, "Ready:" + route);
                         }
                     }));

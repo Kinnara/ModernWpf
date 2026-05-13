@@ -1,6 +1,10 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace ModernWpf.Gallery.Testing
 {
@@ -10,6 +14,7 @@ namespace ModernWpf.Gallery.Testing
 
         public static bool IsEnabled { get; private set; }
         public static string ArtifactDirectory { get; private set; }
+        public static string Theme { get; private set; }
         public static string CurrentRoute { get; private set; } = "home";
         public static string ReadyState { get; private set; } = "Starting";
         public static string LastException { get; private set; } = string.Empty;
@@ -25,6 +30,7 @@ namespace ModernWpf.Gallery.Testing
             {
                 IsEnabled = options.VisualTestMode;
                 ArtifactDirectory = options.ArtifactDirectory;
+                Theme = options.Theme;
                 CurrentRoute = "home";
                 ReadyState = "Starting";
                 LastException = string.Empty;
@@ -37,6 +43,7 @@ namespace ModernWpf.Gallery.Testing
             {
                 IsEnabled = false;
                 ArtifactDirectory = null;
+                Theme = null;
                 CurrentRoute = "home";
                 ReadyState = "Starting";
                 LastException = string.Empty;
@@ -78,6 +85,24 @@ namespace ModernWpf.Gallery.Testing
             }
         }
 
+        public static void WriteVisualArtifacts(DependencyObject root)
+        {
+            if (!IsEnabled || string.IsNullOrWhiteSpace(ArtifactDirectory) || root == null)
+            {
+                return;
+            }
+
+            try
+            {
+                Directory.CreateDirectory(ArtifactDirectory);
+                WriteVisualArtifactsCore(root);
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+            }
+        }
+
         private static string FormatException(Exception exception)
         {
             var builder = new StringBuilder();
@@ -109,6 +134,79 @@ namespace ModernWpf.Gallery.Testing
             {
                 // Diagnostics must not create new Gallery failures.
             }
+        }
+
+        private static void WriteVisualArtifactsCore(DependencyObject root)
+        {
+            var element = root as FrameworkElement;
+            if (element != null)
+            {
+                var automationId = AutomationProperties.GetAutomationId(element);
+                if (!string.IsNullOrEmpty(automationId) &&
+                    automationId.StartsWith("GallerySample_", StringComparison.Ordinal))
+                {
+                    WriteElementPng(element, Path.Combine(ArtifactDirectory, SanitizeFileName(automationId) + ".png"));
+                }
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                WriteVisualArtifactsCore(VisualTreeHelper.GetChild(root, i));
+            }
+        }
+
+        private static void WriteElementPng(FrameworkElement element, string path)
+        {
+            element.UpdateLayout();
+            var width = (int)Math.Ceiling(element.ActualWidth);
+            var height = (int)Math.Ceiling(element.ActualHeight);
+            if (width <= 0 || height <= 0)
+            {
+                return;
+            }
+
+            var drawingVisual = new DrawingVisual();
+            using (var drawingContext = drawingVisual.RenderOpen())
+            {
+                drawingContext.DrawRectangle(
+                    new SolidColorBrush(GetArtifactBackgroundColor()),
+                    null,
+                    new Rect(0, 0, width, height));
+                drawingContext.DrawRectangle(
+                    new VisualBrush(element),
+                    null,
+                    new Rect(0, 0, width, height));
+            }
+
+            var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(drawingVisual);
+
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmap));
+            using (var stream = File.Create(path))
+            {
+                encoder.Save(stream);
+            }
+        }
+
+        private static Color GetArtifactBackgroundColor()
+        {
+            return string.Equals(Theme, "Dark", StringComparison.OrdinalIgnoreCase)
+                ? Colors.Black
+                : Colors.White;
+        }
+
+        private static string SanitizeFileName(string value)
+        {
+            var invalid = Path.GetInvalidFileNameChars();
+            var builder = new StringBuilder(value.Length);
+            foreach (var ch in value)
+            {
+                builder.Append(Array.IndexOf(invalid, ch) >= 0 ? '_' : ch);
+            }
+
+            return builder.ToString();
         }
     }
 }

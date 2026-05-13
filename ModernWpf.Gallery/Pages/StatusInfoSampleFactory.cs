@@ -46,12 +46,16 @@ namespace ModernWpf.Gallery.Pages
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("InfoBar"));
             var host = new StackPanel();
             GalleryAutomation.WithAutomationId(host, GalleryAutomation.SampleElementId("InfoBar", "Host"));
-            var infoBar = CreateInlineMessage(
-                "Sync complete",
-                "Your settings were saved and will be used the next time the app starts.",
-                "#E6F2FB",
-                "#005FB8",
-                host);
+            var infoBar = new Mux.InfoBar
+            {
+                IsOpen = true,
+                Severity = Mux.InfoBarSeverity.Informational,
+                Title = "Title",
+                Message = "Essential app message for your users to be informed of, acknowledge, or take action on.",
+                Width = 560,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            GalleryAutomation.WithAutomationId(infoBar, GalleryAutomation.SampleElementId("InfoBar", "InfoBar"));
             host.Children.Add(infoBar);
 
             var reset = new Button
@@ -64,14 +68,7 @@ namespace ModernWpf.Gallery.Pages
             GalleryAutomation.WithAutomationId(reset, GalleryAutomation.SampleElementId("InfoBar", "ShowButton"));
             reset.Click += delegate
             {
-                host.Children.Clear();
-                host.Children.Add(CreateInlineMessage(
-                    "Sync complete",
-                    "Your settings were saved and will be used the next time the app starts.",
-                    "#E6F2FB",
-                    "#005FB8",
-                    host));
-                host.Children.Add(reset);
+                infoBar.IsOpen = true;
             };
             host.Children.Add(reset);
             panel.Children.Add(host);
@@ -134,52 +131,6 @@ namespace ModernWpf.Gallery.Pages
             return panel;
         }
 
-        private static Border CreateInlineMessage(string title, string message, string background, string accent, Panel host)
-        {
-            var grid = new Grid();
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-            var textPanel = new StackPanel();
-            textPanel.Children.Add(new TextBlock
-            {
-                Text = title,
-                FontWeight = FontWeights.SemiBold,
-                Margin = new Thickness(0, 0, 0, 2)
-            });
-            textPanel.Children.Add(new TextBlock
-            {
-                Text = message,
-                TextWrapping = TextWrapping.Wrap
-            });
-
-            var close = new Button
-            {
-                Content = "Close",
-                Padding = new Thickness(12, 4, 12, 4),
-                Margin = new Thickness(16, 0, 0, 0),
-                VerticalAlignment = VerticalAlignment.Top
-            };
-            close.Click += delegate
-            {
-                host.Children.Remove((UIElement)grid.Parent);
-            };
-
-            Grid.SetColumn(textPanel, 0);
-            Grid.SetColumn(close, 1);
-            grid.Children.Add(textPanel);
-            grid.Children.Add(close);
-
-            return new Border
-            {
-                Background = CreateBrush(background),
-                BorderBrush = CreateBrush(accent),
-                BorderThickness = new Thickness(4, 0, 0, 0),
-                Padding = new Thickness(14, 12, 12, 12),
-                Child = grid
-            };
-        }
-
         private static Border CreateBadge(string text, string background, string toolTip)
         {
             return new Border
@@ -205,7 +156,7 @@ namespace ModernWpf.Gallery.Pages
 
         private static StackPanel CreateSamplePanel(string description)
         {
-            var panel = new StackPanel
+            var panel = new GallerySamplePanel
             {
                 Margin = new Thickness(0, 0, 0, 12)
             };

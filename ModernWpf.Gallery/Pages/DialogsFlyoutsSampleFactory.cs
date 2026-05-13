@@ -163,7 +163,7 @@ namespace ModernWpf.Gallery.Pages
 
         private static StackPanel CreateSamplePanel(string description)
         {
-            var panel = new StackPanel
+            var panel = new GallerySamplePanel
             {
                 Margin = new Thickness(0, 0, 0, 12)
             };

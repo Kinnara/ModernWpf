@@ -260,6 +260,23 @@
     <SolidColorBrush x:Key="SystemFillColorCriticalBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
     <SolidColorBrush x:Key="SystemFillColorNeutralBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
+    <SolidColorBrush x:Key="InfoBarBorderBrush" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="InfoBarTitleForeground" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="InfoBarMessageForeground" Color="{m:ThemeResource SystemColorButtonTextColor}" />
+    <SolidColorBrush x:Key="InfoBarHyperlinkButtonForeground" Color="{m:ThemeResource SystemColorHotlightColor}" />
+    <SolidColorBrush x:Key="InfoBarErrorSeverityBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="InfoBarWarningSeverityBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="InfoBarSuccessSeverityBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="InfoBarInformationalSeverityBackgroundBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
+    <SolidColorBrush x:Key="InfoBarErrorSeverityIconBackground" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="InfoBarWarningSeverityIconBackground" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="InfoBarSuccessSeverityIconBackground" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="InfoBarInformationalSeverityIconBackground" Color="{m:ThemeResource SystemColorHighlightColor}" />
+    <SolidColorBrush x:Key="InfoBarErrorSeverityIconForeground" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="InfoBarWarningSeverityIconForeground" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="InfoBarSuccessSeverityIconForeground" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+    <SolidColorBrush x:Key="InfoBarInformationalSeverityIconForeground" Color="{m:ThemeResource SystemColorHighlightTextColor}" />
+
     <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="{m:ThemeResource SystemColorWindowColor}" />
 
     <m:StaticResource x:Key="DefaultTextForegroundThemeBrush" ResourceKey="TextFillColorPrimaryBrush" />

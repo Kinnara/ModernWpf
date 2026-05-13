@@ -79,6 +79,15 @@ public static class GalleryVisualNative
     private static extern bool SetCursorPos(int x, int y);
 
     [DllImport("user32.dll")]
+    private static extern IntPtr GetWindowDC(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern int ReleaseDC(IntPtr hWnd, IntPtr hdc);
+
+    [DllImport("gdi32.dll")]
+    private static extern bool BitBlt(IntPtr hdcDest, int xDest, int yDest, int width, int height, IntPtr hdcSrc, int xSrc, int ySrc, int rop);
+
+    [DllImport("user32.dll")]
     private static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extraInfo);
 
     [DllImport("user32.dll")]
@@ -120,6 +129,24 @@ public static class GalleryVisualNative
         }
 
         return rect;
+    }
+
+    public static bool CopyWindowSurface(IntPtr hWnd, IntPtr hdcDest, int width, int height)
+    {
+        IntPtr hdcSource = GetWindowDC(hWnd);
+        if (hdcSource == IntPtr.Zero)
+        {
+            return false;
+        }
+
+        try
+        {
+            return BitBlt(hdcDest, 0, 0, width, height, hdcSource, 0, 0, 0x00CC0020);
+        }
+        finally
+        {
+            ReleaseDC(hWnd, hdcSource);
+        }
     }
 }
 "@
@@ -288,6 +315,29 @@ function Get-RequiredSampleAutomationId([string]$control) {
     }
 }
 
+function Get-SampleRootAutomationId([string]$control) {
+    return "GallerySample_${control}_Root"
+}
+
+function Get-ModernPrimaryCropAutomationId([string]$control) {
+    switch ($control) {
+        "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
+        default { return Get-RequiredSampleAutomationId $control }
+    }
+}
+
+function Get-ReferencePrimaryAutomationId([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return "TestButton1" }
+        "Button" { return "Button1" }
+        "ComboBox" { return "Combo1" }
+        "InfoBar" { return "TestInfoBar1" }
+        "NavigationView" { return "nvSample5" }
+        "ContentDialog" { return "ShowDialog" }
+        default { return "" }
+    }
+}
+
 function Write-UiaTree($element, [string]$path, [int]$maxDepth) {
     $lines = New-Object System.Collections.Generic.List[string]
     $walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
@@ -332,15 +382,51 @@ function Write-UiaTree($element, [string]$path, [int]$maxDepth) {
 
 function Test-BitmapNotBlank([System.Drawing.Bitmap]$bitmap) {
     $colors = New-Object "System.Collections.Generic.HashSet[int]"
+    $visibleSamples = 0
+    $nonBlackSamples = 0
     $stepX = [Math]::Max(1, [int]($bitmap.Width / 32))
     $stepY = [Math]::Max(1, [int]($bitmap.Height / 32))
     for ($x = 0; $x -lt $bitmap.Width; $x += $stepX) {
         for ($y = 0; $y -lt $bitmap.Height; $y += $stepY) {
-            [void]$colors.Add($bitmap.GetPixel($x, $y).ToArgb())
+            $pixel = $bitmap.GetPixel($x, $y)
+            if ($pixel.A -gt 16) {
+                $visibleSamples++
+                [void]$colors.Add(($pixel.R -shl 16) -bor ($pixel.G -shl 8) -bor $pixel.B)
+                if (($pixel.R + $pixel.G + $pixel.B) -gt 36) {
+                    $nonBlackSamples++
+                }
+            }
         }
     }
 
-    return $colors.Count -gt 4
+    return $colors.Count -gt 4 -and $visibleSamples -gt 0 -and $nonBlackSamples -gt 0
+}
+
+function Test-BitmapHasClientContent([System.Drawing.Bitmap]$bitmap) {
+    if (!(Test-BitmapNotBlank $bitmap)) {
+        return $false
+    }
+
+    $colors = New-Object "System.Collections.Generic.HashSet[int]"
+    $sampleCount = 0
+    $nonBlackCount = 0
+    $startY = [Math]::Min($bitmap.Height - 1, 48)
+    $endY = [Math]::Max($startY, $bitmap.Height - 12)
+    $stepX = [Math]::Max(1, [int]($bitmap.Width / 40))
+    $stepY = [Math]::Max(1, [int](($endY - $startY + 1) / 32))
+
+    for ($x = 8; $x -lt ($bitmap.Width - 8); $x += $stepX) {
+        for ($y = $startY; $y -lt $endY; $y += $stepY) {
+            $pixel = $bitmap.GetPixel($x, $y)
+            [void]$colors.Add($pixel.ToArgb())
+            $sampleCount++
+            if (($pixel.R + $pixel.G + $pixel.B) -gt 36) {
+                $nonBlackCount++
+            }
+        }
+    }
+
+    return $colors.Count -gt 8 -and $sampleCount -gt 0 -and ($nonBlackCount / [double]$sampleCount) -gt 0.015
 }
 
 function Test-ImageNotBlank([string]$path) {
@@ -353,29 +439,65 @@ function Test-ImageNotBlank([string]$path) {
     }
 }
 
+function Get-ImageSize([string]$path) {
+    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
+    try {
+        return [ordered]@{
+            Width = $bitmap.Width
+            Height = $bitmap.Height
+        }
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
 function Capture-Window([IntPtr]$hwnd, [string]$path) {
     [GalleryVisualNative]::Activate($hwnd)
-    Start-Sleep -Milliseconds 100
+    Start-Sleep -Milliseconds 300
     $rect = [GalleryVisualNative]::GetRect($hwnd)
     $width = [Math]::Max(1, $rect.Right - $rect.Left)
     $height = [Math]::Max(1, $rect.Bottom - $rect.Top)
     $bitmap = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
     try {
+        foreach ($attempt in 1..5) {
+            foreach ($flags in @(2, 0)) {
+                $graphics.Clear([System.Drawing.Color]::Transparent)
+                $hdc = $graphics.GetHdc()
+                $printed = $false
+                try {
+                    $printed = [GalleryVisualNative]::PrintWindow($hwnd, $hdc, [uint32]$flags)
+                }
+                finally {
+                    $graphics.ReleaseHdc($hdc)
+                }
+
+                if ($printed -and (Test-BitmapNotBlank $bitmap)) {
+                    $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+                    return
+                }
+            }
+
+            Start-Sleep -Milliseconds 250
+        }
+
+        $graphics.Clear([System.Drawing.Color]::Transparent)
         $hdc = $graphics.GetHdc()
-        $printed = $false
+        $copied = $false
         try {
-            $printed = [GalleryVisualNative]::PrintWindow($hwnd, $hdc, 2)
+            $copied = [GalleryVisualNative]::CopyWindowSurface($hwnd, $hdc, $width, $height)
         }
         finally {
             $graphics.ReleaseHdc($hdc)
         }
 
-        if (!$printed -or !(Test-BitmapNotBlank $bitmap)) {
-            $graphics.CopyFromScreen($rect.Left, $rect.Top, 0, 0, [System.Drawing.Size]::new($width, $height))
+        if ($copied -and (Test-BitmapNotBlank $bitmap)) {
+            $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+            return
         }
 
-        $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+        throw "PrintWindow did not produce a valid app-content capture for window handle $hwnd."
     }
     finally {
         $graphics.Dispose()
@@ -640,10 +762,10 @@ function Trim-DifferenceBoundsToContentRoot($bounds, $targetBounds, [int]$tailLe
     }
 }
 
-function Save-Crop([string]$sourcePath, $bounds, [string]$path) {
+function Save-Crop([string]$sourcePath, $bounds, [string]$path, [int]$padding = 12) {
     $source = [System.Drawing.Bitmap]::FromFile($sourcePath)
     try {
-        $expandedBounds = Expand-Bounds $bounds $source.Width $source.Height 12
+        $expandedBounds = Expand-Bounds $bounds $source.Width $source.Height $padding
         $rectangle = [System.Drawing.Rectangle]::new(
             [int]$expandedBounds.X,
             [int]$expandedBounds.Y,
@@ -661,6 +783,94 @@ function Save-Crop([string]$sourcePath, $bounds, [string]$path) {
     }
     finally {
         $source.Dispose()
+    }
+}
+
+function Save-ElementCrop($window, [string]$screenshot, [string]$path, $element, [string]$source, [int]$padding = 8) {
+    $bounds = Get-ElementWindowBounds $window $element
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = $source
+            Screenshot = ""
+            Bounds = $bounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    $expandedBounds = Save-Crop $screenshot $bounds $path $padding
+    return [ordered]@{
+        Found = $true
+        Source = $source
+        Screenshot = $path
+        Bounds = $expandedBounds
+        Width = $expandedBounds.Width
+        Height = $expandedBounds.Height
+        NonBlank = Test-ImageNotBlank $path
+    }
+}
+
+function New-RenderedArtifactCrop([string]$path, [string]$source, $bounds) {
+    if (!(Test-Path $path)) {
+        return $null
+    }
+
+    $size = Get-ImageSize $path
+    return [ordered]@{
+        Found = $true
+        Source = $source
+        Screenshot = $path
+        Bounds = $bounds
+        Width = $size.Width
+        Height = $size.Height
+        NonBlank = Test-ImageNotBlank $path
+    }
+}
+
+function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $window, [string]$screenshot) {
+    $primaryElement = $null
+    $primarySource = ""
+    $sampleElement = $null
+    $sampleSource = ""
+
+    if ($app -eq "ModernWpf") {
+        $primarySource = Get-ModernPrimaryCropAutomationId $control
+        $primaryElement = Find-DescendantByAutomationId $window $primarySource
+        $sampleSource = Get-SampleRootAutomationId $control
+        $sampleElement = Find-DescendantByAutomationId $window $sampleSource
+    }
+    else {
+        $primarySource = Get-ReferencePrimaryAutomationId $control
+        if (![string]::IsNullOrEmpty($primarySource)) {
+            $primaryElement = Find-DescendantByAutomationId $window $primarySource
+        }
+        $sampleSource = "svPanel"
+        $sampleElement = Find-DescendantByAutomationId $window $sampleSource
+    }
+
+    $primaryPath = Join-Path $caseDir ("{0}-{1}-primary-crop.png" -f $app.ToLowerInvariant(), $control)
+    $samplePath = Join-Path $caseDir ("{0}-{1}-sample-crop.png" -f $app.ToLowerInvariant(), $control)
+    $primaryBounds = Get-ElementWindowBounds $window $primaryElement
+    $sampleBounds = Get-ElementWindowBounds $window $sampleElement
+
+    if ($app -eq "ModernWpf") {
+        $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
+        $primaryArtifact = Join-Path $artifactDir ($primarySource + ".png")
+        $sampleArtifact = Join-Path $artifactDir ($sampleSource + ".png")
+        $primaryCrop = New-RenderedArtifactCrop $primaryArtifact $primarySource $primaryBounds
+        $sampleCrop = New-RenderedArtifactCrop $sampleArtifact $sampleSource $sampleBounds
+
+        return [ordered]@{
+            Primary = $(if ($null -ne $primaryCrop) { $primaryCrop } else { Save-ElementCrop $window $screenshot $primaryPath $primaryElement $primarySource 0 })
+            Sample = $(if ($null -ne $sampleCrop) { $sampleCrop } else { Save-ElementCrop $window $screenshot $samplePath $sampleElement $sampleSource 10 })
+        }
+    }
+
+    return [ordered]@{
+        Primary = Save-ElementCrop $window $screenshot $primaryPath $primaryElement $primarySource 0
+        Sample = Save-ElementCrop $window $screenshot $samplePath $sampleElement $sampleSource 10
     }
 }
 
@@ -977,6 +1187,7 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
 
         [void][GalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
         Wait-ModernWpfReady $window $route | Out-Null
+        Start-Sleep -Milliseconds 600
 
         $lastException = Get-AutomationText $window "GalleryVisualTestLastException"
         $title = Get-AutomationText $window "GalleryItemPageTitle"
@@ -986,13 +1197,29 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $screenshot = Join-Path $caseDir "modernwpf-$control.png"
         $treePath = Join-Path $caseDir "modernwpf-$control.uia.txt"
 
-        Capture-Window $window.Current.NativeWindowHandle $screenshot
         Write-UiaTree $window $treePath 6
-        $notBlank = Test-ImageNotBlank $screenshot
-        $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($null -eq $sample) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
+        $windowCaptureError = ""
+        try {
+            Capture-Window $window.Current.NativeWindowHandle $screenshot
+        }
+        catch {
+            $windowCaptureError = $_.Exception.Message
+        }
+        $staticCrops = Capture-StaticCrops "ModernWpf" $control $caseDir $window $screenshot
+        $hasRenderedCrops = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and $staticCrops.Primary.NonBlank
+        $notBlank = if (Test-Path $screenshot) { Test-ImageNotBlank $screenshot } elseif ($hasRenderedCrops) { $true } else { $false }
+        $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
+        $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($null -eq $sample) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
+        if ($primaryCropBlank -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = "Primary crop '$($staticCrops.Primary.Source)' was blank."
+        }
+        if (!$notBlank -and ![string]::IsNullOrEmpty($windowCaptureError) -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = $windowCaptureError
+        }
         if ($null -ne $interaction -and $interaction.Status -ne "Passed" -and [string]::IsNullOrEmpty($lastException)) {
             $lastException = $interaction.Notes
         }
+        $screenshotResult = if (Test-Path $screenshot) { $screenshot } else { "" }
 
         return [ordered]@{
             App = "ModernWpf"
@@ -1000,13 +1227,15 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
             Route = $route
             Status = $status
             Title = $title
-            Screenshot = $screenshot
+            Screenshot = $screenshotResult
             UiaTree = $treePath
             LastException = $lastException
             NonBlank = $notBlank
             RequiredSampleAutomationId = $requiredSampleAutomationId
             RequiredSampleElementFound = $null -ne $sample
+            StaticCrops = $staticCrops
             Interaction = $interaction
+            WindowCaptureError = $windowCaptureError
         }
     }
     finally {
@@ -1032,34 +1261,41 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         Find-WindowByTitle @("WinUI 3 Gallery", "WinUI Gallery")
     }
 
-    [void][GalleryVisualNative]::Move($window.Current.NativeWindowHandle, 1280, 60, $Width, $Height)
-    Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "WinUI 3 Gallery page title '$control'" -Probe {
-        Find-DescendantByName $window $control
-    } | Out-Null
+    try {
+        [void][GalleryVisualNative]::Move($window.Current.NativeWindowHandle, 1280, 60, $Width, $Height)
+        Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "WinUI 3 Gallery page title '$control'" -Probe {
+            Find-DescendantByName $window $control
+        } | Out-Null
+        Start-Sleep -Milliseconds 600
 
-    $showButton = if ($control -eq "TeachingTip") { Find-DescendantButtonByName $window "Show TeachingTip" } else { $null }
-    $interaction = Capture-TeachingTipInteraction "WinUI3" $control $caseDir $window $showButton @("This is the title", "And this is the subtitle")
-    $screenshot = Join-Path $caseDir "winui3-$control.png"
-    $treePath = Join-Path $caseDir "winui3-$control.uia.txt"
-    Capture-Window $window.Current.NativeWindowHandle $screenshot
-    Write-UiaTree $window $treePath 6
-    $notBlank = Test-ImageNotBlank $screenshot
+        $showButton = if ($control -eq "TeachingTip") { Find-DescendantButtonByName $window "Show TeachingTip" } else { $null }
+        $interaction = Capture-TeachingTipInteraction "WinUI3" $control $caseDir $window $showButton @("This is the title", "And this is the subtitle")
+        $screenshot = Join-Path $caseDir "winui3-$control.png"
+        $treePath = Join-Path $caseDir "winui3-$control.uia.txt"
+        Write-UiaTree $window $treePath 6
+        Capture-Window $window.Current.NativeWindowHandle $screenshot
+        $staticCrops = Capture-StaticCrops "WinUI3" $control $caseDir $window $screenshot
+        $notBlank = Test-ImageNotBlank $screenshot
+        $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
 
-    Close-AutomationWindow $window
-
-    return [ordered]@{
-        App = "WinUI3Gallery"
-        Control = $control
-        Route = $route
-        Status = $(if (!$notBlank) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
-        Title = $control
-        Screenshot = $screenshot
-        UiaTree = $treePath
-        LastException = $(if ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
-        NonBlank = $notBlank
-        RequiredSampleAutomationId = ""
-        RequiredSampleElementFound = $true
-        Interaction = $interaction
+        return [ordered]@{
+            App = "WinUI3Gallery"
+            Control = $control
+            Route = $route
+            Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
+            Title = $control
+            Screenshot = $screenshot
+            UiaTree = $treePath
+            LastException = $(if ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
+            NonBlank = $notBlank
+            RequiredSampleAutomationId = ""
+            RequiredSampleElementFound = $true
+            StaticCrops = $staticCrops
+            Interaction = $interaction
+        }
+    }
+    finally {
+        Close-AutomationWindow $window
     }
 }
 
@@ -1140,6 +1376,18 @@ foreach ($control in $Controls) {
         }
     }
     if ($null -ne $modern -and $null -ne $referenceCapture -and
+        $modern.Contains("StaticCrops") -and $referenceCapture.Contains("StaticCrops") -and
+        $null -ne $modern.StaticCrops -and $null -ne $referenceCapture.StaticCrops -and
+        $modern.StaticCrops.Primary.Found -and $referenceCapture.StaticCrops.Primary.Found) {
+        $modern["PrimaryCropReferenceComparison"] = Compare-ImagesNormalized $modern.StaticCrops.Primary.Screenshot $referenceCapture.StaticCrops.Primary.Screenshot
+        $modern["PrimaryCropSize"] = [ordered]@{
+            ModernWpfWidth = $modern.StaticCrops.Primary.Width
+            ModernWpfHeight = $modern.StaticCrops.Primary.Height
+            ReferenceWidth = $referenceCapture.StaticCrops.Primary.Width
+            ReferenceHeight = $referenceCapture.StaticCrops.Primary.Height
+        }
+    }
+    if ($null -ne $modern -and $null -ne $referenceCapture -and
         $modern.Contains("Interaction") -and $referenceCapture.Contains("Interaction") -and
         $null -ne $modern.Interaction -and $null -ne $referenceCapture.Interaction -and
         $modern.Interaction.Frames.Count -gt 0 -and $referenceCapture.Interaction.Frames.Count -gt 0) {
@@ -1173,12 +1421,60 @@ $markdown.Add("- Theme: $Theme")
 $markdown.Add("- Size: ${Width}x${Height}")
 $markdown.Add("- Reference: $Reference")
 $markdown.Add("")
+
+$controlScores = @{}
+foreach ($result in $results) {
+    if ($result.App -ne "ModernWpf") {
+        continue
+    }
+
+    $score = 0.0
+    if ($result.Contains("PrimaryCropReferenceComparison") -and $result.PrimaryCropReferenceComparison.Comparable) {
+        $score = [Math]::Max($score, [double]$result.PrimaryCropReferenceComparison.MeanDelta)
+    }
+    if ($result.Contains("PrimaryCropSize")) {
+        $sizeDelta = [Math]::Abs([int]$result.PrimaryCropSize.ModernWpfWidth - [int]$result.PrimaryCropSize.ReferenceWidth) +
+            [Math]::Abs([int]$result.PrimaryCropSize.ModernWpfHeight - [int]$result.PrimaryCropSize.ReferenceHeight)
+        $score += ($sizeDelta / 10.0)
+    }
+    if ($result.Contains("InteractionCropReferenceComparison") -and $result.InteractionCropReferenceComparison.Comparable) {
+        $score = [Math]::Max($score, [double]$result.InteractionCropReferenceComparison.MeanDelta)
+    }
+
+    $controlScores[$result.Control] = [Math]::Round($score, 2)
+}
+
+$rankedModernResults = @(
+    $results |
+        Where-Object { $_.App -eq "ModernWpf" } |
+        Sort-Object -Property @{ Expression = { if ($controlScores.ContainsKey($_.Control)) { -1.0 * [double]$controlScores[$_.Control] } else { 0 } } }, Control
+)
+
+$markdown.Add("## Crop Ranking")
+$markdown.Add("")
+$markdown.Add("| Control | Score | Primary crop delta | Primary crop sizes | Interaction crop delta |")
+$markdown.Add("| --- | ---: | ---: | --- | ---: |")
+foreach ($result in $rankedModernResults) {
+    $score = if ($controlScores.ContainsKey($result.Control)) { $controlScores[$result.Control] } else { "" }
+    $primaryDelta = if ($result.Contains("PrimaryCropReferenceComparison")) { $result.PrimaryCropReferenceComparison.MeanDelta } else { "" }
+    $primarySize = if ($result.Contains("PrimaryCropSize")) { "$($result.PrimaryCropSize.ModernWpfWidth)x$($result.PrimaryCropSize.ModernWpfHeight) vs $($result.PrimaryCropSize.ReferenceWidth)x$($result.PrimaryCropSize.ReferenceHeight)" } else { "" }
+    $interactionDelta = if ($result.Contains("InteractionCropReferenceComparison")) { $result.InteractionCropReferenceComparison.MeanDelta } else { "" }
+    $markdown.Add("| $($result.Control) | $score | $primaryDelta | $primarySize | $interactionDelta |")
+}
+$markdown.Add("")
+
 $markdown.Add("| App | Control | Status | Nonblank | Required sample element | Notes |")
 $markdown.Add("| --- | --- | --- | --- | --- | --- |")
-foreach ($result in $results) {
+foreach ($result in ($results | Sort-Object -Property @{ Expression = { if ($controlScores.ContainsKey($_.Control)) { -1.0 * [double]$controlScores[$_.Control] } else { 0 } } }, Control, @{ Expression = { if ($_.App -eq "ModernWpf") { 0 } else { 1 } } })) {
     $notes = $result.LastException
     if ($result.Contains("ReferenceComparison")) {
         $notes = "Mean delta: " + $result.ReferenceComparison.MeanDelta
+    }
+    if ($result.Contains("PrimaryCropReferenceComparison")) {
+        $notes = "$notes; primary crop delta: " + $result.PrimaryCropReferenceComparison.MeanDelta
+    }
+    if ($result.Contains("PrimaryCropSize")) {
+        $notes = "$notes; primary crop sizes: $($result.PrimaryCropSize.ModernWpfWidth)x$($result.PrimaryCropSize.ModernWpfHeight) vs $($result.PrimaryCropSize.ReferenceWidth)x$($result.PrimaryCropSize.ReferenceHeight)"
     }
     if ($result.Contains("InteractionReferenceComparison")) {
         $notes = "$notes; interaction delta: " + $result.InteractionReferenceComparison.MeanDelta
