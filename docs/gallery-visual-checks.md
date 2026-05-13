@@ -50,6 +50,6 @@ Findings:
 
 - `InfoBar` is the current control/resource fix baseline. Primary crop delta is about `9.8` in Dark and `9.66` in Light, with only a 3 px height difference against WinUI Gallery.
 - `Button` sample parity is fixed in the current branch. Focused checks now report `165x32` vs `166x32`, with primary crop deltas of `10.18` in Dark (`artifacts/visual-checks/20260513-021319/report.md`) and `10.08` in Light (`artifacts/visual-checks/20260513-021337/report.md`).
-- `ComboBox` is primarily a Gallery sample or crop-target mismatch. WinUI Gallery `Combo1` is exposed as `208x64`, while ModernWpf currently crops only the `220x32` combo surface.
+- `ComboBox` sample parity is fixed in the current branch. Focused checks now report `200x59` vs `208x64`, with primary crop deltas of `6.22` in Dark (`artifacts/visual-checks/20260513-022103/report.md`) and `6.1` in Light (`artifacts/visual-checks/20260513-022005/report.md`).
 - `NavigationView` is a larger sample mismatch and remains the highest-ranked static gap: ModernWpf `520x320` vs WinUI Gallery `745x460`.
 - `ContentDialog` and `TeachingTip` static primary crops are still mostly sample-button sizing mismatches. TeachingTip interaction capture remains a harness gap for ModernWpf because external UIA can verify the WinUI popup crop, but the WPF sample button does not reliably open through the same external automation path.

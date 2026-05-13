@@ -2,6 +2,9 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using ModernWpf.Controls.Primitives;
 using Mux = ModernWpf.Controls;
 
 namespace ModernWpf.Gallery.Pages
@@ -200,20 +203,30 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateComboBoxSample()
         {
-            var panel = CreateSamplePanel("ComboBox lets users choose one item from a compact list.");
+            var panel = CreateSamplePanel("A ComboBox with items defined inline and its width set.");
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ComboBox"));
-            var output = CreateOutput("Selected: Medium");
+            var output = new Rectangle
+            {
+                Width = 100,
+                Height = 30,
+                Margin = new Thickness(0, 8, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
             var comboBox = new ComboBox
             {
-                Width = 220,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                ItemsSource = new[] { "Small", "Medium", "Large" },
-                SelectedIndex = 1
+                Width = 200,
+                HorizontalAlignment = HorizontalAlignment.Left
             };
+            ControlHelper.SetHeader(comboBox, "Colors");
+            ControlHelper.SetPlaceholderText(comboBox, "Pick a color");
+            comboBox.Items.Add("Blue");
+            comboBox.Items.Add("Green");
+            comboBox.Items.Add("Red");
+            comboBox.Items.Add("Yellow");
             GalleryAutomation.WithAutomationId(comboBox, GalleryAutomation.SampleElementId("ComboBox", "ComboBox"));
             comboBox.SelectionChanged += delegate
             {
-                output.Text = "Selected: " + comboBox.SelectedItem;
+                output.Fill = CreateColorBrush(Convert.ToString(comboBox.SelectedItem));
             };
             panel.Children.Add(comboBox);
             panel.Children.Add(output);
@@ -313,5 +326,21 @@ namespace ModernWpf.Gallery.Pages
             };
         }
 
+        private static Brush CreateColorBrush(string colorName)
+        {
+            switch (colorName)
+            {
+                case "Yellow":
+                    return Brushes.Yellow;
+                case "Green":
+                    return Brushes.Green;
+                case "Blue":
+                    return Brushes.Blue;
+                case "Red":
+                    return Brushes.Red;
+                default:
+                    return Brushes.Transparent;
+            }
+        }
     }
 }

@@ -1391,7 +1391,7 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "WinUI 3 Gallery page title '$control'" -Probe {
             Find-DescendantByName $window $control
         } | Out-Null
-        Start-Sleep -Milliseconds 600
+        Start-Sleep -Milliseconds 1200
         $themeProbe = Ensure-WinUIReferenceTheme $control $caseDir $window
 
         $showButton = if ($control -eq "TeachingTip") { Find-DescendantButtonByName $window "Show TeachingTip" } else { $null }
@@ -1469,13 +1469,13 @@ function Ensure-WinUIReferenceTheme([string]$control, [string]$caseDir, $window)
         }
     }
 
-    $mean = Get-ImageMeanLuminance $probeCropPath
+    $mean = Get-ImageMeanLuminance $probeScreenshot
     if ($null -eq $mean) {
         return [ordered]@{
             RequestedTheme = $Theme
             MeanLuminance = $null
             Toggled = $false
-            Reason = "Reference theme probe had no visible pixels."
+            Reason = "Reference theme probe screenshot had no visible pixels."
         }
     }
 
