@@ -55,3 +55,14 @@ Findings:
 - `NavigationView` header parity is fixed in the current branch. Manual inspection found the valid WinUI reference crop in `artifacts/visual-checks/20260513-030925/NavigationView/winui3-NavigationView-primary-crop.png` showing `Sample Page 1`, while the ModernWpf crop from that run still showed `This is Header Text`. The sample now selects the first item after the `SelectionChanged` handler is attached, matching the WinUI Gallery source behavior. Current installed-reference verification passes with `745x460` crops in Dark (`artifacts/visual-checks/20260513-040058/report.md`) and Light (`artifacts/visual-checks/20260513-040225/report.md`).
 - `TeachingTip` expand animation now uses WinUI's final 2.8.7 minimum start scale expression, and ModernWpf interaction verification passes through the in-app rendered open-content artifact: Dark `artifacts/visual-checks/20260513-040451/report.md`, Light `artifacts/visual-checks/20260513-040526/report.md`.
 - The current local execution context cannot always produce reliable installed WinUI Gallery XAML pixels through direct screen capture, DWM thumbnail capture, or Windows Graphics Capture experiments; these paths can return backdrop/wallpaper or black client content instead of XAML. The harness keeps `PrintWindow` first and fails invalid installed-reference captures instead of reporting false parity. Example rejected reports: `artifacts/visual-checks/20260513-023339/report.md`, `artifacts/visual-checks/20260513-032310/report.md`, and the screen-first experiment in `artifacts/visual-checks/20260513-035440/report.md`.
+
+Current mismatch classification:
+
+| Control | Classification | Current evidence |
+| --- | --- | --- |
+| `Button` | Gallery sample mismatch fixed; remaining difference is a 1 px crop-width/text rendering difference. | Dark `10.18`, `165x32` vs `166x32`; Light `10.08`, `165x32` vs `166x32`. |
+| `InfoBar` | Control/resource parity improved; remaining difference is a small height/text rendering difference. | Dark `9.8`, `560x92` vs `560x95`; Light `9.66`, `560x92` vs `560x95`. |
+| `ComboBox` | Gallery sample mismatch fixed; remaining difference is WPF-vs-WinUI control metric/rendering drift. | Dark `6.22`, `200x59` vs `208x64`; Light `6.1`, `200x59` vs `208x64`. |
+| `ContentDialog` | Gallery sample mismatch fixed; remaining difference is a 1 px crop-width/text rendering difference. | Dark `8.32`, `100x32` vs `101x32`; Light `8.4`, `100x32` vs `101x32`. |
+| `NavigationView` | Gallery sample event-order mismatch fixed; remaining difference is WPF-vs-WinUI rendering drift with matching crop size and header text. | Dark `7.41`, `745x460` vs `745x460`; Light `7.55`, `745x460` vs `745x460`. |
+| `TeachingTip` | Control animation/template parity fixed and interaction checks pass; remaining static button difference is rendering drift. | Dark `3.65`, `135x32` vs `135x32`; Light `5.34`, `135x32` vs `135x32`. |
