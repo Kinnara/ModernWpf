@@ -122,7 +122,6 @@ namespace ModernWpf.Gallery.Pages
             navigationView.MenuItems.Add(CreateNavigationItem("Menu Item2", Mux.Symbol.Save, "SamplePage2"));
             navigationView.MenuItems.Add(CreateNavigationItem("Menu Item3", Mux.Symbol.Refresh, "SamplePage3"));
             navigationView.MenuItems.Add(CreateNavigationItem("Menu Item4", Mux.Symbol.Download, "SamplePage4"));
-            navigationView.SelectedItem = item1;
             navigationView.SelectionChanged += delegate(Mux.NavigationView sender, Mux.NavigationViewSelectionChangedEventArgs args)
             {
                 var item = args.SelectedItemContainer as Mux.NavigationViewItem;
@@ -135,6 +134,7 @@ namespace ModernWpf.Gallery.Pages
                     }
                 }
             };
+            navigationView.SelectedItem = item1;
 
             root.Children.Add(navigationView);
             panel.Children.Add(root);

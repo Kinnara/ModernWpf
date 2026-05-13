@@ -188,7 +188,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(navigationView);
                     Assert.AreEqual(745.0, navigationView.Width);
                     Assert.AreEqual(460.0, navigationView.Height);
-                    Assert.AreEqual("This is Header Text", navigationView.Header);
+                    Assert.AreEqual("Sample Page 1", navigationView.Header);
                     Assert.AreEqual(ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto, navigationView.PaneDisplayMode);
                     Assert.AreEqual(4, navigationView.MenuItems.Count);
 

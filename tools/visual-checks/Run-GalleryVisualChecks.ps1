@@ -279,6 +279,23 @@ function Wait-Until([scriptblock]$Probe, [int]$timeoutSeconds, [string]$descript
     throw "Timed out waiting for $description."
 }
 
+function Get-ToggleStateName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return $pattern.Current.ToggleState.ToString()
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
 function Wait-ModernWpfReady($window, [string]$route) {
     return Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf route '$route' to become ready" -Probe {
         $readyElement = Find-DescendantByAutomationId $window "GalleryVisualTestReadyState"
@@ -292,6 +309,39 @@ function Wait-ModernWpfReady($window, [string]$route) {
 
         return $null
     }
+}
+
+function Wait-WinUIReferenceReady($window, [string]$control) {
+    Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "WinUI 3 Gallery test content for '$control' to load" -Probe {
+        $loadedElement = Find-DescendantByAutomationId $window "__TestContentLoadedCheckBox"
+        if ($null -eq $loadedElement) {
+            return $true
+        }
+
+        if ((Get-ToggleStateName $loadedElement) -eq "On") {
+            return $loadedElement
+        }
+
+        return $null
+    } | Out-Null
+
+    $idleInvoker = Find-DescendantByAutomationId $window "__WaitForIdleInvoker"
+    if ($null -eq $idleInvoker -or !(Invoke-ElementPatternOnce $window $idleInvoker)) {
+        return
+    }
+
+    Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "WinUI 3 Gallery idle state for '$control'" -Probe {
+        $idleElement = Find-DescendantByAutomationId $window "__IdleStateEnteredCheckBox"
+        if ($null -eq $idleElement) {
+            return $true
+        }
+
+        if ((Get-ToggleStateName $idleElement) -eq "On") {
+            return $idleElement
+        }
+
+        return $null
+    } | Out-Null
 }
 
 function Get-AutomationText($root, [string]$automationId) {
@@ -317,6 +367,13 @@ function Get-RequiredSampleAutomationId([string]$control) {
 
 function Get-SampleRootAutomationId([string]$control) {
     return "GallerySample_${control}_Root"
+}
+
+function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
+    switch ($control) {
+        "NavigationView" { return 45.0 }
+        default { return 6.0 }
+    }
 }
 
 function Get-ModernPrimaryCropAutomationId([string]$control) {
@@ -589,6 +646,21 @@ function Capture-ScreenRect([IntPtr]$hwnd, [string]$path) {
         $graphics.Dispose()
         $bitmap.Dispose()
     }
+}
+
+function Capture-WindowScreenFirst([IntPtr]$hwnd, [string]$path) {
+    [GalleryVisualNative]::Activate($hwnd)
+    Start-Sleep -Milliseconds 300
+    try {
+        Capture-ScreenRect $hwnd $path
+        if (Test-ImageNotBlank $path) {
+            return
+        }
+    }
+    catch {
+    }
+
+    Capture-Window $hwnd $path
 }
 
 function Find-DifferenceBounds([string]$beforePath, [string]$afterPath, [int]$threshold = 32, [int]$step = 2) {
@@ -1388,13 +1460,14 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $hasRenderedCrops = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and $staticCrops.Primary.NonBlank
         $notBlank = if (Test-Path $screenshot) { Test-ImageNotBlank $screenshot } elseif ($hasRenderedCrops) { $true } else { $false }
         $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
-        $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt 6.0
+        $primaryCropMinimumVisibleStdDev = Get-PrimaryCropMinimumVisibleStdDev $control
+        $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt $primaryCropMinimumVisibleStdDev
         $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($null -eq $sample) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
         if ($primaryCropBlank -and [string]::IsNullOrEmpty($lastException)) {
             $lastException = "Primary crop '$($staticCrops.Primary.Source)' was blank."
         }
         if ($primaryCropLowVariation -and [string]::IsNullOrEmpty($lastException)) {
-            $lastException = "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev))."
+            $lastException = "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)."
         }
         if (!$notBlank -and ![string]::IsNullOrEmpty($windowCaptureError) -and [string]::IsNullOrEmpty($lastException)) {
             $lastException = $windowCaptureError
@@ -1450,6 +1523,7 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "WinUI 3 Gallery page title '$control'" -Probe {
             Find-DescendantByName $window $control
         } | Out-Null
+        Wait-WinUIReferenceReady $window $control
         Start-Sleep -Milliseconds 1200
         $themeProbe = Ensure-WinUIReferenceTheme $control $caseDir $window
 
@@ -1462,17 +1536,18 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         $notBlank = $false
         $primaryCropBlank = $false
         $primaryCropLowVariation = $false
+        $primaryCropMinimumVisibleStdDev = Get-PrimaryCropMinimumVisibleStdDev $control
         foreach ($captureAttempt in 1..3) {
             if ($captureAttempt -gt 1) {
                 [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
                 Start-Sleep -Milliseconds (400 * $captureAttempt)
             }
 
-            Capture-Window $window.Current.NativeWindowHandle $screenshot
+            Capture-WindowScreenFirst $window.Current.NativeWindowHandle $screenshot
             $staticCrops = Capture-StaticCrops "WinUI3" $control $caseDir $window $screenshot
             $notBlank = Test-ImageNotBlank $screenshot
             $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
-            $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt 6.0
+            $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt $primaryCropMinimumVisibleStdDev
             if ($notBlank -and !$primaryCropBlank -and !$primaryCropLowVariation) {
                 break
             }
@@ -1486,7 +1561,7 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
             Title = $control
             Screenshot = $screenshot
             UiaTree = $treePath
-            LastException = $(if ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev))." } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
+            LastException = $(if ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)." } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
             NonBlank = $notBlank
             RequiredSampleAutomationId = ""
             RequiredSampleElementFound = $true
@@ -1532,7 +1607,7 @@ function Ensure-WinUIReferenceTheme([string]$control, [string]$caseDir, $window)
 
     $probeScreenshot = Join-Path $caseDir ("winui3-$control-theme-probe.png")
     $probeCropPath = Join-Path $caseDir ("winui3-$control-theme-probe-crop.png")
-    Capture-Window $window.Current.NativeWindowHandle $probeScreenshot
+    Capture-WindowScreenFirst $window.Current.NativeWindowHandle $probeScreenshot
     $probeCrop = Save-ElementCrop $window $probeScreenshot $probeCropPath $primaryElement $primarySource 0
     if (!$probeCrop.Found -or !$probeCrop.NonBlank) {
         return [ordered]@{
@@ -1662,7 +1737,7 @@ foreach ($control in $Controls) {
                 App = "WinUI3Gallery"
                 Control = $control
                 Route = "winui3gallery://item/$control"
-                Status = "Skipped"
+                Status = "Failed"
                 Title = ""
                 Screenshot = ""
                 UiaTree = ""
