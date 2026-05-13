@@ -452,6 +452,39 @@ function Get-ImageSize([string]$path) {
     }
 }
 
+function Get-ImageVisibleStdDev([string]$path, [int]$step = 3) {
+    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
+    try {
+        $sum = 0.0
+        $sumSquared = 0.0
+        $samples = 0
+        for ($y = 0; $y -lt $bitmap.Height; $y += $step) {
+            for ($x = 0; $x -lt $bitmap.Width; $x += $step) {
+                $pixel = $bitmap.GetPixel($x, $y)
+                if ($pixel.A -le 16) {
+                    continue
+                }
+
+                $luminance = (0.2126 * $pixel.R) + (0.7152 * $pixel.G) + (0.0722 * $pixel.B)
+                $sum += $luminance
+                $sumSquared += $luminance * $luminance
+                $samples++
+            }
+        }
+
+        if ($samples -eq 0) {
+            return 0.0
+        }
+
+        $mean = $sum / $samples
+        $variance = ($sumSquared / $samples) - ($mean * $mean)
+        return [Math]::Round([Math]::Sqrt([Math]::Max(0.0, $variance)), 2)
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
 function Get-ImageMeanLuminance([string]$path, [int]$step = 3) {
     $bitmap = [System.Drawing.Bitmap]::FromFile($path)
     try {
@@ -510,6 +543,15 @@ function Capture-Window([IntPtr]$hwnd, [string]$path) {
             Start-Sleep -Milliseconds 250
         }
 
+        try {
+            Capture-ScreenRect $hwnd $path
+            if (Test-ImageNotBlank $path) {
+                return
+            }
+        }
+        catch {
+        }
+
         $graphics.Clear([System.Drawing.Color]::Transparent)
         $hdc = $graphics.GetHdc()
         $copied = $false
@@ -523,15 +565,6 @@ function Capture-Window([IntPtr]$hwnd, [string]$path) {
         if ($copied -and (Test-BitmapNotBlank $bitmap)) {
             $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
             return
-        }
-
-        try {
-            Capture-ScreenRect $hwnd $path
-            if (Test-ImageNotBlank $path) {
-                return
-            }
-        }
-        catch {
         }
 
         throw "PrintWindow did not produce a valid app-content capture for window handle $hwnd."
@@ -846,6 +879,7 @@ function Save-ElementCrop($window, [string]$screenshot, [string]$path, $element,
         Width = $expandedBounds.Width
         Height = $expandedBounds.Height
         NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
     }
 }
 
@@ -863,6 +897,7 @@ function New-RenderedArtifactCrop([string]$path, [string]$source, $bounds) {
         Width = $size.Width
         Height = $size.Height
         NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
     }
 }
 
@@ -1333,9 +1368,13 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $hasRenderedCrops = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and $staticCrops.Primary.NonBlank
         $notBlank = if (Test-Path $screenshot) { Test-ImageNotBlank $screenshot } elseif ($hasRenderedCrops) { $true } else { $false }
         $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
-        $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($null -eq $sample) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
+        $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt 6.0
+        $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($null -eq $sample) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
         if ($primaryCropBlank -and [string]::IsNullOrEmpty($lastException)) {
             $lastException = "Primary crop '$($staticCrops.Primary.Source)' was blank."
+        }
+        if ($primaryCropLowVariation -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev))."
         }
         if (!$notBlank -and ![string]::IsNullOrEmpty($windowCaptureError) -and [string]::IsNullOrEmpty($lastException)) {
             $lastException = $windowCaptureError
@@ -1399,20 +1438,35 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         $screenshot = Join-Path $caseDir "winui3-$control.png"
         $treePath = Join-Path $caseDir "winui3-$control.uia.txt"
         Write-UiaTree $window $treePath 6
-        Capture-Window $window.Current.NativeWindowHandle $screenshot
-        $staticCrops = Capture-StaticCrops "WinUI3" $control $caseDir $window $screenshot
-        $notBlank = Test-ImageNotBlank $screenshot
-        $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
+        $staticCrops = $null
+        $notBlank = $false
+        $primaryCropBlank = $false
+        $primaryCropLowVariation = $false
+        foreach ($captureAttempt in 1..3) {
+            if ($captureAttempt -gt 1) {
+                [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+                Start-Sleep -Milliseconds (400 * $captureAttempt)
+            }
+
+            Capture-Window $window.Current.NativeWindowHandle $screenshot
+            $staticCrops = Capture-StaticCrops "WinUI3" $control $caseDir $window $screenshot
+            $notBlank = Test-ImageNotBlank $screenshot
+            $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
+            $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt 6.0
+            if ($notBlank -and !$primaryCropBlank -and !$primaryCropLowVariation) {
+                break
+            }
+        }
 
         return [ordered]@{
             App = "WinUI3Gallery"
             Control = $control
             Route = $route
-            Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
+            Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
             Title = $control
             Screenshot = $screenshot
             UiaTree = $treePath
-            LastException = $(if ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
+            LastException = $(if ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev))." } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
             NonBlank = $notBlank
             RequiredSampleAutomationId = ""
             RequiredSampleElementFound = $true
@@ -1558,11 +1612,32 @@ foreach ($control in $Controls) {
     $results.Add($modernResult)
 
     if ($Reference -eq "InstalledWinUI3Gallery") {
-        try {
-            $referenceResult = Capture-WinUIReference $control $caseDir
+        $referenceResult = $null
+        $lastReferenceError = ""
+        foreach ($referenceAttempt in 1..3) {
+            try {
+                $referenceResult = Capture-WinUIReference $control $caseDir
+                if (!$referenceResult.Contains("Attempt")) {
+                    $referenceResult.Add("Attempt", $referenceAttempt)
+                }
+                if ($referenceResult.Status -eq "Passed") {
+                    break
+                }
+
+                $lastReferenceError = $referenceResult.LastException
+                Start-Sleep -Milliseconds (500 * $referenceAttempt)
+            }
+            catch {
+                $lastReferenceError = $_.Exception.Message
+                $referenceResult = $null
+                Start-Sleep -Milliseconds (500 * $referenceAttempt)
+            }
+        }
+
+        if ($null -ne $referenceResult) {
             $results.Add($referenceResult)
         }
-        catch {
+        else {
             $results.Add([ordered]@{
                 App = "WinUI3Gallery"
                 Control = $control
@@ -1571,7 +1646,7 @@ foreach ($control in $Controls) {
                 Title = ""
                 Screenshot = ""
                 UiaTree = ""
-                LastException = $_.Exception.Message
+                LastException = $lastReferenceError
                 NonBlank = $false
                 RequiredSampleAutomationId = ""
                 RequiredSampleElementFound = $false

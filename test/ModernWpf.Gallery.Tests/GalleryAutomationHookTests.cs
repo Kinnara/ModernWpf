@@ -102,6 +102,7 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.IsNotNull(button);
                     Assert.IsNotNull(teachingTip);
+                    Assert.AreSame(DependencyProperty.UnsetValue, ((Control)button).ReadLocalValue(Control.PaddingProperty));
                     Assert.AreEqual(48.0, teachingTip.TryFindResource("TeachingTipMinWidth"));
 
                     button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
@@ -111,6 +112,91 @@ namespace ModernWpf.Gallery.Tests
                     var popupRoot = teachingTip.Template.FindName("TailOcclusionGrid", teachingTip) as FrameworkElement;
                     Assert.IsNotNull(popupRoot);
                     Assert.AreEqual(48.0, popupRoot.MinWidth);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void ContentDialogSampleMatchesWinUIGalleryFirstExampleButton()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("ContentDialog"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var button = (Button)FindByAutomationId(page, "GallerySample_ContentDialog_ShowButton");
+                    Assert.IsNotNull(button);
+                    Assert.AreEqual("Show dialog", button.Content);
+                    Assert.AreSame(DependencyProperty.UnsetValue, button.ReadLocalValue(Control.PaddingProperty));
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void NavigationViewSampleMatchesWinUIGalleryFirstExampleShape()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("NavigationView"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var navigationView = (ModernWpf.Controls.NavigationView)FindByAutomationId(page, "GallerySample_NavigationView_NavigationView");
+                    Assert.IsNotNull(navigationView);
+                    Assert.AreEqual(745.0, navigationView.Width);
+                    Assert.AreEqual(460.0, navigationView.Height);
+                    Assert.AreEqual("This is Header Text", navigationView.Header);
+                    Assert.AreEqual(ModernWpf.Controls.NavigationViewPaneDisplayMode.Auto, navigationView.PaneDisplayMode);
+                    Assert.AreEqual(4, navigationView.MenuItems.Count);
+
+                    var firstItem = (ModernWpf.Controls.NavigationViewItem)navigationView.MenuItems[0];
+                    Assert.AreEqual("Menu Item1", firstItem.Content);
+                    Assert.AreEqual("SamplePage1", firstItem.Tag);
+                    Assert.AreEqual(ModernWpf.Controls.Symbol.Play, ((ModernWpf.Controls.SymbolIcon)firstItem.Icon).Symbol);
+                    Assert.AreSame(firstItem, navigationView.SelectedItem);
                 }
                 finally
                 {

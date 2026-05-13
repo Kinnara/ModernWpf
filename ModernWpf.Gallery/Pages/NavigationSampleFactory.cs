@@ -92,49 +92,52 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateNavigationViewSample()
         {
-            var panel = CreateSamplePanel("NavigationView provides a collapsible navigation menu for top-level app areas.");
+            var panel = CreateSamplePanel("NavigationView with default PaneDisplayMode");
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("NavigationView"));
-            var content = new TextBlock
+            var root = new Grid();
+            root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            root.Children.Add(new TextBlock
             {
-                Text = "Home page",
-                Margin = new Thickness(18),
+                Text = "If you have five or more equally important navigation categories that should prominently appear on larger window widths, consider using a left navigation pane.",
+                Margin = new Thickness(0, 0, 0, 12),
                 TextWrapping = TextWrapping.Wrap
-            };
+            });
+
             var navigationView = new Mux.NavigationView
             {
-                Width = 520,
-                Height = 320,
-                Header = "Home",
+                Width = 745,
+                Height = 460,
+                Header = "This is Header Text",
                 IsBackButtonVisible = Mux.NavigationViewBackButtonVisible.Collapsed,
-                PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Left,
-                Content = new Border
-                {
-                    Padding = new Thickness(12),
-                    Child = content
-                }
+                IsTabStop = false,
+                PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Auto,
+                Content = CreateNavigationSampleContent()
             };
+            Grid.SetRow(navigationView, 1);
             GalleryAutomation.WithAutomationId(navigationView, GalleryAutomation.SampleElementId("NavigationView", "NavigationView"));
 
-            var home = CreateNavigationItem("Home");
-            var apps = CreateNavigationItem("Apps");
-            var controls = CreateNavigationItem("Controls");
-            var design = CreateNavigationItem("Design");
-            navigationView.MenuItems.Add(home);
-            navigationView.MenuItems.Add(apps);
-            navigationView.MenuItems.Add(controls);
-            navigationView.MenuItems.Add(design);
-            navigationView.SelectedItem = home;
+            var item1 = CreateNavigationItem("Menu Item1", Mux.Symbol.Play, "SamplePage1");
+            navigationView.MenuItems.Add(item1);
+            navigationView.MenuItems.Add(CreateNavigationItem("Menu Item2", Mux.Symbol.Save, "SamplePage2"));
+            navigationView.MenuItems.Add(CreateNavigationItem("Menu Item3", Mux.Symbol.Refresh, "SamplePage3"));
+            navigationView.MenuItems.Add(CreateNavigationItem("Menu Item4", Mux.Symbol.Download, "SamplePage4"));
+            navigationView.SelectedItem = item1;
             navigationView.SelectionChanged += delegate(Mux.NavigationView sender, Mux.NavigationViewSelectionChangedEventArgs args)
             {
                 var item = args.SelectedItemContainer as Mux.NavigationViewItem;
                 if (item != null)
                 {
-                    sender.Header = item.Content;
-                    content.Text = item.Content + " page";
+                    var selectedItemTag = item.Tag as string;
+                    if (!string.IsNullOrEmpty(selectedItemTag))
+                    {
+                        sender.Header = "Sample Page " + selectedItemTag.Substring(selectedItemTag.Length - 1);
+                    }
                 }
             };
 
-            panel.Children.Add(navigationView);
+            root.Children.Add(navigationView);
+            panel.Children.Add(root);
             return panel;
         }
 
@@ -257,11 +260,73 @@ namespace ModernWpf.Gallery.Pages
             return panel;
         }
 
-        private static Mux.NavigationViewItem CreateNavigationItem(string content)
+        private static UIElement CreateNavigationSampleContent()
+        {
+            var grid = new Grid();
+            grid.Resources["TileHeight"] = 150.0;
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+
+            AddNavigationTile(grid, 1, 1, 1, 1, CreateBrush("#A9A9A9"), 0);
+            AddNavigationTile(grid, 1, 2, 1, 1, CreateBrush("#D3D3D3"), 0);
+            AddNavigationTile(grid, 2, 1, 1, 1, CreateBrush("#D3D3D3"), 0);
+            AddNavigationTile(grid, 2, 2, 1, 1, CreateBrush("#A9A9A9"), 0);
+            AddNavigationTile(grid, 1, 0, 2, 1, CreateBrush("#0078D4"), 250);
+
+            var text = new TextBlock
+            {
+                Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                TextWrapping = TextWrapping.Wrap
+            };
+            var textHost = new Grid
+            {
+                Margin = new Thickness(6, 12, 6, 12)
+            };
+            textHost.Children.Add(text);
+            Grid.SetRow(textHost, 3);
+            Grid.SetColumnSpan(textHost, 3);
+            grid.Children.Add(textHost);
+
+            return new ScrollViewer
+            {
+                Content = grid
+            };
+        }
+
+        private static void AddNavigationTile(Grid grid, int row, int column, int rowSpan, int columnSpan, Brush background, double minWidth)
+        {
+            var tile = new Grid
+            {
+                MinWidth = minWidth,
+                MinHeight = 150,
+                Margin = new Thickness(column == 0 ? 5 : 6),
+                Background = background
+            };
+            Grid.SetRow(tile, row);
+            Grid.SetColumn(tile, column);
+            if (rowSpan > 1)
+            {
+                Grid.SetRowSpan(tile, rowSpan);
+            }
+            if (columnSpan > 1)
+            {
+                Grid.SetColumnSpan(tile, columnSpan);
+            }
+            grid.Children.Add(tile);
+        }
+
+        private static Mux.NavigationViewItem CreateNavigationItem(string content, Mux.Symbol symbol, string tag)
         {
             return new Mux.NavigationViewItem
             {
-                Content = content
+                Content = content,
+                Icon = new Mux.SymbolIcon(symbol),
+                Tag = tag
             };
         }
 

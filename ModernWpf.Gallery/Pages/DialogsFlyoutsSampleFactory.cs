@@ -29,31 +29,68 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateContentDialogSample()
         {
-            var panel = CreateSamplePanel("ContentDialog asks the user to confirm a focused decision before continuing.");
+            var panel = CreateSamplePanel("A basic content dialog with content.");
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ContentDialog"));
-            var output = CreateOutput("Dialog result: none.");
-            var button = CreateButton("Show ContentDialog");
+            var row = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            var output = new TextBlock
+            {
+                Margin = new Thickness(12, 0, 0, 0),
+                TextWrapping = TextWrapping.Wrap,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var button = new Button
+            {
+                Content = "Show dialog"
+            };
             GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("ContentDialog", "ShowButton"));
             button.Click += async delegate
             {
                 var dialog = new Mux.ContentDialog
                 {
-                    Title = "Delete item?",
-                    Content = new TextBlock
+                    Title = "Save your work?",
+                    Content = new StackPanel
                     {
-                        Text = "This action removes the selected item from the list.",
-                        TextWrapping = TextWrapping.Wrap
+                        VerticalAlignment = VerticalAlignment.Stretch,
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        Children =
+                        {
+                            new TextBlock
+                            {
+                                Text = "Lorem ipsum dolor sit amet, adipisicing elit.",
+                                TextWrapping = TextWrapping.Wrap
+                            },
+                            new CheckBox
+                            {
+                                Content = "Upload your content to the cloud."
+                            }
+                        }
                     },
-                    PrimaryButtonText = "Delete",
-                    SecondaryButtonText = "Cancel",
-                    DefaultButton = Mux.ContentDialogButton.Secondary
+                    PrimaryButtonText = "Save",
+                    SecondaryButtonText = "Don't Save",
+                    CloseButtonText = "Cancel",
+                    DefaultButton = Mux.ContentDialogButton.Primary
                 };
                 var result = await dialog.ShowAsync();
-                output.Text = "Dialog result: " + result + ".";
+                if (result == Mux.ContentDialogResult.Primary)
+                {
+                    output.Text = "User saved their work";
+                }
+                else if (result == Mux.ContentDialogResult.Secondary)
+                {
+                    output.Text = "User did not save their work";
+                }
+                else
+                {
+                    output.Text = "User cancelled the dialog";
+                }
             };
 
-            panel.Children.Add(button);
-            panel.Children.Add(output);
+            row.Children.Add(button);
+            row.Children.Add(output);
+            panel.Children.Add(row);
             return panel;
         }
 
@@ -114,7 +151,11 @@ namespace ModernWpf.Gallery.Pages
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("TeachingTip"));
             panel.Resources["TeachingTipMinWidth"] = 48.0;
 
-            var button = CreateButton("Show TeachingTip");
+            var button = new Button
+            {
+                Content = "Show TeachingTip",
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
             GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("TeachingTip", "ShowButton"));
             var tip = new Mux.TeachingTip
             {
