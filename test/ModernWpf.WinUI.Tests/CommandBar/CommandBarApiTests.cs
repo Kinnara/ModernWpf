@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -198,6 +199,36 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void SplitButtonCommandBarStyleUsesWinUIPrimaryPresenter()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = CreateCommandBarResources();
+            var transitions = new ModernWpf.Media.Animation.TransitionCollection();
+            var splitButton = new ModernWpf.Controls.SplitButton
+            {
+                Style = (Style)resources["SplitButtonCommandBarStyle"],
+                Content = "Accept",
+                ContentTransitions = transitions
+            };
+
+            var root = CreateTemplateHost(splitButton, resources);
+            using var host = new TestWindowHost(root, width: 180, height: 120);
+            host.UpdateLayout();
+
+            var primaryButton = FindTemplateChild<Button>(splitButton, "PrimaryButton");
+            var presenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(primaryButton)
+                ?? throw new AssertFailedException("Expected SplitButtonCommandBarStyle primary button to use ContentPresenterEx.");
+
+            Assert.AreEqual("Accept", presenter.Content);
+            Assert.AreSame(transitions, presenter.ContentTransitions);
+            Assert.AreEqual(splitButton.Foreground, presenter.Foreground);
+        });
+    }
+
+    [TestMethod]
     public void AppBarSeparatorMapsOverflowState()
     {
         WpfTestHost.Run(() =>
@@ -214,6 +245,22 @@ public class CommandBarApiTests
             Assert.IsTrue(separator.IsCompact);
             Assert.IsTrue(separator.IsInOverflow);
         });
+    }
+
+    private static ResourceDictionary CreateCommandBarResources()
+    {
+        return new ResourceDictionary
+        {
+            Source = new Uri("/ModernWpf.Controls;component/CommandBar/CommandBar.xaml", UriKind.Relative)
+        };
+    }
+
+    private static FrameworkElement CreateTemplateHost(UIElement child, ResourceDictionary resources)
+    {
+        var root = new Grid();
+        root.Resources.MergedDictionaries.Add(resources);
+        root.Children.Add(child);
+        return root;
     }
 
     private static T FindTemplateChild<T>(Control control, string name)
