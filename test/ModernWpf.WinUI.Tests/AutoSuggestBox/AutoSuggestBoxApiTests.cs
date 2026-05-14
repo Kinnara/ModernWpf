@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -47,6 +48,43 @@ public class AutoSuggestBoxApiTests
             AssertThemeResourceValue("Light", "AutoSuggestBoxIconFontSize", 12d);
             AssertThemeResourceValue("Dark", "AutoSuggestBoxIconFontSize", 12d);
             AssertThemeResourceValue("HighContrast", "AutoSuggestBoxIconFontSize", 12d);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyAutoSuggestBoxQueryButtonUsesWinUIContentPresenterShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var transitions = new ModernWpf.Media.Animation.TransitionCollection();
+            var queryIcon = new SymbolIcon(Symbol.Find);
+            var autoSuggestBox = new MuxAutoSuggestBox
+            {
+                QueryIcon = queryIcon,
+                Width = 400
+            };
+
+            using var host = new TestWindowHost(autoSuggestBox, width: 460, height: 120);
+            host.UpdateLayout();
+
+            var textBox = FindTemplateChild<TextBox>(autoSuggestBox, "TextBox");
+            var queryButton = FindTemplateChild<Button>(textBox, "QueryButton");
+            ControlHelper.SetBackgroundSizing(queryButton, BackgroundSizing.OuterBorderEdge);
+            ControlHelper.SetContentTransitions(queryButton, transitions);
+
+            host.UpdateLayout();
+
+            var presenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(queryButton)
+                ?? throw new AssertFailedException("Expected AutoSuggestBox query button template to use ContentPresenterEx.");
+
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
+            Assert.AreSame(queryIcon, presenter.Content);
+            Assert.AreSame(transitions, presenter.ContentTransitions);
+            Assert.AreEqual(queryButton.Padding, presenter.Padding);
+            Assert.AreEqual(ControlHelper.GetCornerRadius(queryButton), presenter.CornerRadius);
+            Assert.AreEqual(12d, presenter.FontSize);
         });
     }
 

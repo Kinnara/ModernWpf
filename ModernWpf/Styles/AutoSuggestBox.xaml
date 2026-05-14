@@ -105,35 +105,37 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="Button">
-                                        <Border
-                                            x:Name="Border"
+                                        <local:ContentPresenterEx
+                                            x:Name="ContentPresenter"
                                             Background="{DynamicResource TextControlButtonBackground}"
+                                            BackgroundSizing="{TemplateBinding primitives:ControlHelper.BackgroundSizing}"
                                             BorderBrush="{DynamicResource TextControlButtonBorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                            ContentTransitions="{TemplateBinding primitives:ControlHelper.ContentTransitions}"
+                                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
                                             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                                            FontSize="{DynamicResource AutoSuggestBoxIconFontSize}"
+                                            Foreground="{TemplateBinding Foreground}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                             Margin="{DynamicResource AutoSuggestBoxInnerButtonMargin}"
-                                            Padding="{TemplateBinding Padding}">
-                                            <ContentPresenter
-                                                x:Name="ContentPresenter"
-                                                Content="{TemplateBinding Content}"
-                                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                TextElement.FontSize="{DynamicResource AutoSuggestBoxIconFontSize}"
-                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                        </Border>
+                                            Padding="{TemplateBinding Padding}" />
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource TextControlButtonBackgroundPointerOver}" />
-                                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource TextControlButtonBorderBrushPointerOver}" />
-                                                <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TextControlButtonForegroundPointerOver}" />
+                                                <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource TextControlButtonBackgroundPointerOver}" />
+                                                <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource TextControlButtonBorderBrushPointerOver}" />
+                                                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TextControlButtonForegroundPointerOver}" />
                                             </Trigger>
                                             <Trigger Property="IsPressed" Value="True">
-                                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource TextControlButtonBackgroundPressed}" />
-                                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource TextControlButtonBorderBrushPressed}" />
-                                                <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TextControlButtonForegroundPressed}" />
+                                                <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource TextControlButtonBackgroundPressed}" />
+                                                <Setter TargetName="ContentPresenter" Property="BorderBrush" Value="{DynamicResource TextControlButtonBorderBrushPressed}" />
+                                                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TextControlButtonForegroundPressed}" />
                                             </Trigger>
                                             <Trigger Property="IsEnabled" Value="False">
-                                                <Setter TargetName="Border" Property="Opacity" Value="0" />
+                                                <Setter TargetName="ContentPresenter" Property="Opacity" Value="0" />
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
