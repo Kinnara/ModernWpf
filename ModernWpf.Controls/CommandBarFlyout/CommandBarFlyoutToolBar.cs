@@ -13,6 +13,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using ModernWpf;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -75,6 +76,7 @@ namespace ModernWpf.Controls.Primitives
 
             Unloaded += delegate
             {
+                CancelAsyncPostLayoutUpdate();
                 StopOpenAnimation();
                 SetOpacity(1);
             };
@@ -113,6 +115,7 @@ namespace ModernWpf.Controls.Primitives
 
             PrimaryCommands.CollectionChanged += delegate
             {
+                AttachItemEventHandlers();
                 UpdateFlowsFromAndFlowsTo();
                 UpdateUI();
             };
@@ -120,6 +123,7 @@ namespace ModernWpf.Controls.Primitives
             SecondaryCommands.CollectionChanged += delegate
             {
                 m_secondaryItemsRootSized = false;
+                AttachItemEventHandlers();
                 UpdateFlowsFromAndFlowsTo();
                 UpdateUI();
             };
@@ -162,6 +166,7 @@ namespace ModernWpf.Controls.Primitives
             m_layoutRoot = GetTemplateChild("LayoutRoot") as FrameworkElement;
             m_primaryItemsRoot = GetTemplateChild("PrimaryItemsRoot") as FrameworkElement;
             m_secondaryItemsRoot = GetTemplateChild("OverflowContentRoot") as FrameworkElement;
+            m_secondaryItemsControl = GetTemplateChild("SecondaryItemsControl") as CommandBarOverflowPresenter;
             m_moreButton = GetTemplateChild("MoreButton") as ButtonBase;
 
             if (m_layoutRoot != null)
@@ -193,6 +198,7 @@ namespace ModernWpf.Controls.Primitives
             }
 
             AttachEventHandlers();
+            AttachItemEventHandlers();
             UpdateFlowsFromAndFlowsTo();
             UpdateUI(false /* useTransitions */);
         }
@@ -247,6 +253,9 @@ namespace ModernWpf.Controls.Primitives
 
         void DetachEventHandlers()
         {
+            CancelAsyncPostLayoutUpdate();
+            DetachItemEventHandlers();
+
             if (m_secondaryItemsRoot != null)
             {
                 m_secondaryItemsRoot.PreviewKeyDown -= SecondaryItemsRootPreviewKeyDown;
@@ -268,6 +277,80 @@ namespace ModernWpf.Controls.Primitives
                 m_closingStoryboard.CurrentStateInvalidated -= ClosingStoryboardCurrentStateInvalidated;
                 m_closingStoryboardState = null;
             }
+        }
+
+        void AttachItemEventHandlers()
+        {
+            DetachItemEventHandlers();
+
+            AttachItemEventHandlers(PrimaryCommands, true /*isPrimaryItem*/);
+            AttachItemEventHandlers(SecondaryCommands, false /*isPrimaryItem*/);
+        }
+
+        void AttachItemEventHandlers(IEnumerable<ICommandBarElement> commands, bool isPrimaryItem)
+        {
+            if (commands == null)
+            {
+                return;
+            }
+
+            foreach (var command in commands)
+            {
+                if (command is FrameworkElement commandAsElement)
+                {
+                    RoutedEventHandler loadedHandler = (sender, args) =>
+                    {
+                        UpdateItemVisualState(sender as Control, isPrimaryItem);
+                        QueuePostLayoutUpdate();
+                    };
+                    m_itemLoadedRevokers.Add(new RoutedEventHandlerRevoker(
+                        commandAsElement,
+                        LoadedEvent,
+                        loadedHandler));
+
+                    SizeChangedEventHandler sizeChangedHandler = (sender, args) =>
+                    {
+                        UpdateItemVisualState(sender as Control, isPrimaryItem);
+                        QueuePostLayoutUpdate();
+                    };
+                    commandAsElement.SizeChanged += sizeChangedHandler;
+                    m_itemSizeChangedHandlers.Add((commandAsElement, sizeChangedHandler));
+                }
+            }
+        }
+
+        void DetachItemEventHandlers()
+        {
+            foreach (var revoker in m_itemLoadedRevokers)
+            {
+                revoker.Revoke();
+            }
+            m_itemLoadedRevokers.Clear();
+
+            foreach (var handler in m_itemSizeChangedHandlers)
+            {
+                handler.Element.SizeChanged -= handler.Handler;
+            }
+            m_itemSizeChangedHandlers.Clear();
+        }
+
+        void UpdateItemVisualState(Control item, bool isPrimaryItem)
+        {
+            (item as IAppBarElement)?.UpdateApplicationViewState();
+        }
+
+        void QueuePostLayoutUpdate()
+        {
+            if (m_asyncPostLayoutUpdate != null)
+            {
+                return;
+            }
+
+            m_asyncPostLayoutUpdate = Dispatcher.BeginInvoke(() =>
+            {
+                m_asyncPostLayoutUpdate = null;
+                UpdateUI(false);
+            }, DispatcherPriority.Render);
         }
 
         internal bool HasOpenAnimation()
@@ -529,8 +612,16 @@ namespace ModernWpf.Controls.Primitives
 
                 if (m_secondaryItemsRoot != null)
                 {
+                    m_secondaryItemsControl ??= m_secondaryItemsRoot.FindDescendant<CommandBarOverflowPresenter>();
                     m_secondaryItemsRoot.Measure(infiniteSize);
                     var overflowPopupSize = m_secondaryItemsRoot.DesiredSize;
+                    if (m_secondaryItemsControl != null)
+                    {
+                        m_secondaryItemsControl.Measure(infiniteSize);
+                        var secondaryItemsSize = m_secondaryItemsControl.DesiredSize;
+                        overflowPopupSize.Width = Math.Max(overflowPopupSize.Width, Math.Max(secondaryItemsSize.Width, m_secondaryItemsControl.ActualWidth));
+                        overflowPopupSize.Height = Math.Max(overflowPopupSize.Height, secondaryItemsSize.Height);
+                    }
 
                     flyoutTemplateSettings.ExpandedWidth = Math.Min(maxWidth, Math.Max(collapsedWidth, overflowPopupSize.Width));
                     flyoutTemplateSettings.ExpandUpOverflowVerticalPosition = -overflowPopupSize.Height;
@@ -1074,6 +1165,7 @@ namespace ModernWpf.Controls.Primitives
         {
             //m_secondaryItemsRootSized = true;
             UpdateUI();
+            QueuePostLayoutUpdate();
         }
 
         private void SecondaryItemsRootPreviewKeyDown(object sender, KeyEventArgs args)
@@ -1214,6 +1306,15 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
+        private void CancelAsyncPostLayoutUpdate()
+        {
+            if (m_asyncPostLayoutUpdate != null)
+            {
+                m_asyncPostLayoutUpdate.Abort();
+                m_asyncPostLayoutUpdate = null;
+            }
+        }
+
         private void StopOpenAnimation()
         {
             CancelAsyncOpenAnimation();
@@ -1272,8 +1373,11 @@ namespace ModernWpf.Controls.Primitives
         FrameworkElement m_layoutRoot;
         FrameworkElement m_primaryItemsRoot;
         FrameworkElement m_secondaryItemsRoot;
+        CommandBarOverflowPresenter m_secondaryItemsControl;
         ButtonBase m_moreButton;
         RoutedEventHandlerRevoker m_firstItemLoadedRevoker;
+        readonly List<RoutedEventHandlerRevoker> m_itemLoadedRevokers = new();
+        readonly List<(FrameworkElement Element, SizeChangedEventHandler Handler)> m_itemSizeChangedHandlers = new();
 
         // We need to manually connect the end element of the primary items to the start element of the secondary items
         // for the purposes of UIA items navigation. To ensure that we only have the current start and end elements registered
@@ -1291,5 +1395,6 @@ namespace ModernWpf.Controls.Primitives
 
         bool m_openAnimationPending;
         DispatcherOperation m_asyncOpenAnimation;
+        DispatcherOperation m_asyncPostLayoutUpdate;
     }
 }
