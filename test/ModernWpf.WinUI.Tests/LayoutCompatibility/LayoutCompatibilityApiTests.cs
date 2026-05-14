@@ -136,6 +136,21 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void BorderExRoundedCornerClipAppliesToChildContent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            AssertRoundedChildRenderClip(new BorderEx
+            {
+                Width = 30,
+                Height = 30,
+                CornerRadius = new CornerRadius(12, 0, 0, 0),
+                Child = CreateRedChildBox()
+            });
+        });
+    }
+
+    [TestMethod]
     public void ContentPresenterExOffsetsContentByChrome()
     {
         WpfTestHost.Run(() =>
@@ -278,6 +293,21 @@ public class LayoutCompatibilityApiTests
                 Height = 30,
                 Background = Brushes.Red,
                 CornerRadius = new CornerRadius(12, 0, 0, 0)
+            });
+        });
+    }
+
+    [TestMethod]
+    public void ContentPresenterExRoundedCornerClipAppliesToChildContent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            AssertRoundedChildRenderClip(new ContentPresenterEx
+            {
+                Width = 30,
+                Height = 30,
+                CornerRadius = new CornerRadius(12, 0, 0, 0),
+                Content = CreateRedChildBox()
             });
         });
     }
@@ -843,6 +873,23 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void StackPanelExRoundedCornerClipAppliesToChildContent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var panel = new ModernStackPanelEx
+            {
+                Width = 30,
+                Height = 30,
+                CornerRadius = new CornerRadius(12, 0, 0, 0)
+            };
+            panel.Children.Add(CreateRedChildBox());
+
+            AssertRoundedChildRenderClip(panel);
+        });
+    }
+
+    [TestMethod]
     public void GridExSupportsSpacingSpansAndChrome()
     {
         WpfTestHost.Run(() =>
@@ -1206,6 +1253,23 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void GridExRoundedCornerClipAppliesToChildContent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var grid = new ModernGridEx
+            {
+                Width = 30,
+                Height = 30,
+                CornerRadius = new CornerRadius(12, 0, 0, 0)
+            };
+            grid.Children.Add(CreateRedChildBox());
+
+            AssertRoundedChildRenderClip(grid);
+        });
+    }
+
+    [TestMethod]
     public void GridExAllowsNegativeSpacing()
     {
         WpfTestHost.Run(() =>
@@ -1287,6 +1351,18 @@ public class LayoutCompatibilityApiTests
             Width = width ?? double.NaN,
             Height = height ?? double.NaN,
             Background = Brushes.Transparent,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch
+        };
+    }
+
+    private static System.Windows.Controls.Border CreateRedChildBox()
+    {
+        return new System.Windows.Controls.Border
+        {
+            Width = 30,
+            Height = 30,
+            Background = Brushes.Red,
             HorizontalAlignment = HorizontalAlignment.Stretch,
             VerticalAlignment = VerticalAlignment.Stretch
         };
@@ -1390,6 +1466,15 @@ public class LayoutCompatibilityApiTests
 
         Assert.IsNull(VisualTreeHelper.HitTest(element, new Point(1, 1)), "Top-left point should be clipped by the rounded chrome.");
         Assert.IsNotNull(VisualTreeHelper.HitTest(element, new Point(15, 15)), "Center point should hit inside the rounded chrome.");
+    }
+
+    private static void AssertRoundedChildRenderClip(FrameworkElement element)
+    {
+        var clippedCorner = RenderElementPixel(element, 1, 1, 30, 30);
+        var center = RenderElementPixel(element, 15, 15, 30, 30);
+
+        Assert.IsTrue(clippedCorner.A < 30, $"Expected child content to be clipped out of the rounded corner. Pixel={clippedCorner}");
+        Assert.IsTrue(center.R > 200 && center.A > 200, $"Expected child content to render inside the rounded clip. Pixel={center}");
     }
 
     private static Color RenderElementPixel(FrameworkElement element, int x, int y, int width, int height)

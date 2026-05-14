@@ -199,6 +199,14 @@ namespace ModernWpf.Controls
         {
         }
 
+        protected override Geometry GetLayoutClip(Size layoutSlotSize)
+        {
+            return LayoutChromeHelper.CreateRoundedLayoutClip(
+                layoutSlotSize,
+                CornerRadius,
+                base.GetLayoutClip(layoutSlotSize));
+        }
+
         protected override UIElementCollection CreateUIElementCollection(FrameworkElement logicalParent)
         {
             return _itemsHost.Children;

@@ -62,12 +62,10 @@ namespace ModernWpf.Controls
 
         protected override Geometry GetLayoutClip(Size layoutSlotSize)
         {
-            if (ClipToBounds)
-            {
-                return LayoutChromeHelper.CreateRoundedRectangleGeometry(new Rect(layoutSlotSize), CornerRadius);
-            }
-
-            return base.GetLayoutClip(layoutSlotSize);
+            return LayoutChromeHelper.CreateRoundedLayoutClip(
+                layoutSlotSize,
+                CornerRadius,
+                base.GetLayoutClip(layoutSlotSize));
         }
 
         protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)

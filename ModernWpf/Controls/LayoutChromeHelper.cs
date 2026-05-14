@@ -83,6 +83,17 @@ namespace ModernWpf.Controls
             return CreateRoundedRectangleGeometry(rect, cornerRadius, new Thickness(), false);
         }
 
+        public static Geometry CreateRoundedLayoutClip(Size layoutSlotSize, CornerRadius cornerRadius, Geometry baseClip)
+        {
+            Geometry roundedClip = null;
+            if (HasNonZeroCornerRadius(cornerRadius) && layoutSlotSize.Width > 0 && layoutSlotSize.Height > 0)
+            {
+                roundedClip = CreateRoundedRectangleGeometry(new Rect(layoutSlotSize), cornerRadius);
+            }
+
+            return roundedClip ?? baseClip;
+        }
+
         public static Geometry CreateRoundedRectangleGeometry(Rect rect, CornerRadius cornerRadius, Thickness borderThickness, bool isOuter)
         {
             var points = CalculateRoundedCornersRectangle(rect, cornerRadius, borderThickness, isOuter);
@@ -116,6 +127,14 @@ namespace ModernWpf.Controls
             }
 
             return CreateRoundedRectangleGeometry(new Rect(renderSize), cornerRadius).FillContains(point);
+        }
+
+        public static bool HasNonZeroCornerRadius(CornerRadius cornerRadius)
+        {
+            return cornerRadius.TopLeft != 0 ||
+                cornerRadius.TopRight != 0 ||
+                cornerRadius.BottomRight != 0 ||
+                cornerRadius.BottomLeft != 0;
         }
 
         public static Rect Deflate(Rect rect, Thickness thickness)
@@ -439,6 +458,14 @@ namespace ModernWpf.Controls
                 BorderBrush,
                 BorderThickness,
                 CornerRadius);
+        }
+
+        protected override Geometry GetLayoutClip(Size layoutSlotSize)
+        {
+            return LayoutChromeHelper.CreateRoundedLayoutClip(
+                layoutSlotSize,
+                CornerRadius,
+                base.GetLayoutClip(layoutSlotSize));
         }
 
         protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)

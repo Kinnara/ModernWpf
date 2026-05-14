@@ -526,6 +526,14 @@ namespace ModernWpf.Controls
             base.OnRender(drawingContext);
         }
 
+        protected override Geometry GetLayoutClip(Size layoutSlotSize)
+        {
+            return LayoutChromeHelper.CreateRoundedLayoutClip(
+                layoutSlotSize,
+                CornerRadius,
+                base.GetLayoutClip(layoutSlotSize));
+        }
+
         protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
         {
             if (!LayoutChromeHelper.FillContainsRoundedRectangle(RenderSize, CornerRadius, hitTestParameters.HitPoint))
