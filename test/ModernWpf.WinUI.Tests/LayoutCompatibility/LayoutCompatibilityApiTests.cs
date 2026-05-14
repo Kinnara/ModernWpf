@@ -722,6 +722,27 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void StackPanelExAcceptsWinUISnapPointSurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var panel = new ModernStackPanelEx
+            {
+                AreScrollSnapPointsRegular = true
+            };
+
+            Assert.IsTrue(panel.AreScrollSnapPointsRegular);
+            Assert.IsTrue(panel.AreVerticalSnapPointsRegular);
+            Assert.IsFalse(panel.AreHorizontalSnapPointsRegular);
+
+            panel.Orientation = Orientation.Horizontal;
+
+            Assert.IsTrue(panel.AreHorizontalSnapPointsRegular);
+            Assert.IsFalse(panel.AreVerticalSnapPointsRegular);
+        });
+    }
+
+    [TestMethod]
     public void StackPanelExHorizontalSpacingSkipsCollapsedChildren()
     {
         WpfTestHost.Run(() =>
@@ -819,6 +840,7 @@ public class LayoutCompatibilityApiTests
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf"
+                    AreScrollSnapPointsRegular="True"
                     Spacing="4"
                     Padding="2"
                     CornerRadius="3"
@@ -829,6 +851,7 @@ public class LayoutCompatibilityApiTests
 
             var panel = (ModernStackPanelEx)XamlReader.Parse(xaml);
 
+            Assert.IsTrue(panel.AreScrollSnapPointsRegular);
             Assert.AreEqual(4, panel.Spacing);
             Assert.AreEqual(new Thickness(2), panel.Padding);
             Assert.AreEqual(new CornerRadius(3), panel.CornerRadius);

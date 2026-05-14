@@ -54,6 +54,25 @@ namespace ModernWpf.Controls
             set => SetValue(SpacingProperty, value);
         }
 
+        public static readonly DependencyProperty AreScrollSnapPointsRegularProperty =
+            DependencyProperty.Register(
+                nameof(AreScrollSnapPointsRegular),
+                typeof(bool),
+                typeof(StackPanelEx),
+                new PropertyMetadata(false));
+
+        public bool AreScrollSnapPointsRegular
+        {
+            get => (bool)GetValue(AreScrollSnapPointsRegularProperty);
+            set => SetValue(AreScrollSnapPointsRegularProperty, value);
+        }
+
+        public bool AreHorizontalSnapPointsRegular =>
+            Orientation == System.Windows.Controls.Orientation.Horizontal && AreScrollSnapPointsRegular;
+
+        public bool AreVerticalSnapPointsRegular =>
+            Orientation == System.Windows.Controls.Orientation.Vertical && AreScrollSnapPointsRegular;
+
         public static readonly DependencyProperty BackgroundSizingProperty =
             DependencyProperty.Register(
                 nameof(BackgroundSizing),
