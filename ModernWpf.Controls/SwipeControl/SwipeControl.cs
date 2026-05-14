@@ -6,6 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using ModernWpf.Controls.Primitives;
+using ModernWpf.Media.Animation;
 
 namespace ModernWpf.Controls
 {
@@ -40,6 +42,24 @@ namespace ModernWpf.Controls
             PreviewMouseLeftButtonUp += OnPreviewMouseLeftButtonUp;
             LostMouseCapture += OnLostMouseCapture;
             Unloaded += OnUnloaded;
+        }
+
+        public static readonly DependencyProperty ContentTransitionsProperty =
+            ControlHelper.ContentTransitionsProperty.AddOwner(typeof(SwipeControl));
+
+        public TransitionCollection ContentTransitions
+        {
+            get => (TransitionCollection)GetValue(ContentTransitionsProperty);
+            set => SetValue(ContentTransitionsProperty, value);
+        }
+
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(SwipeControl));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
         }
 
         public static readonly DependencyProperty LeftItemsProperty =

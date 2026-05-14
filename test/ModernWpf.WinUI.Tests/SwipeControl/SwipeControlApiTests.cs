@@ -8,6 +8,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.Media.Animation;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.SwipeControl;
@@ -94,6 +95,61 @@ public class SwipeControlApiTests
             Assert.IsFalse(swipeControl.IsTabStop);
             Assert.IsNotNull(swipeControl.LeftItems);
             Assert.IsNotNull(swipeControl.RightItems);
+        });
+    }
+
+    [TestMethod]
+    public void SwipeControlAcceptsWinUIContentPresenterSurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var transitions = new TransitionCollection();
+            var swipeControl = new ModernWpf.Controls.SwipeControl
+            {
+                CornerRadius = new CornerRadius(4),
+                ContentTransitions = transitions
+            };
+
+            Assert.AreEqual(new CornerRadius(4), swipeControl.CornerRadius);
+            Assert.AreSame(transitions, swipeControl.ContentTransitions);
+        });
+    }
+
+    [TestMethod]
+    public void SwipeControlTemplateUsesWinUIContentPresenter()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var content = new Border { Width = 80, Height = 24 };
+            var transitions = new TransitionCollection();
+            var background = new SolidColorBrush(Colors.Red);
+            var borderBrush = new SolidColorBrush(Colors.Blue);
+            var swipeControl = new ModernWpf.Controls.SwipeControl
+            {
+                Content = content,
+                Background = background,
+                BorderBrush = borderBrush,
+                BorderThickness = new Thickness(1, 2, 3, 4),
+                CornerRadius = new CornerRadius(5),
+                Padding = new Thickness(6),
+                ContentTransitions = transitions
+            };
+
+            using var host = new TestWindowHost(swipeControl, width: 240, height: 120);
+
+            var presenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(swipeControl)
+                ?? throw new AssertFailedException("Expected SwipeControl template to use ContentPresenterEx.");
+
+            Assert.AreSame(content, presenter.Content);
+            Assert.AreSame(background, presenter.Background);
+            Assert.AreSame(borderBrush, presenter.BorderBrush);
+            Assert.AreEqual(new Thickness(1, 2, 3, 4), presenter.BorderThickness);
+            Assert.AreEqual(new CornerRadius(5), presenter.CornerRadius);
+            Assert.AreEqual(new Thickness(6), presenter.Padding);
+            Assert.AreSame(transitions, presenter.ContentTransitions);
+            Assert.AreEqual(HorizontalAlignment.Stretch, presenter.HorizontalContentAlignment);
+            Assert.AreEqual(VerticalAlignment.Stretch, presenter.VerticalContentAlignment);
+            Assert.IsInstanceOfType(presenter.RenderTransform, typeof(TranslateTransform));
         });
     }
 
