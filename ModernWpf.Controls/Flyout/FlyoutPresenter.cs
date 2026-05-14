@@ -4,6 +4,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Media.Animation;
 
 namespace ModernWpf.Controls
 {
@@ -27,6 +28,19 @@ namespace ModernWpf.Controls
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
             set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
+
+        #region ContentTransitions
+
+        public static readonly DependencyProperty ContentTransitionsProperty =
+            ControlHelper.ContentTransitionsProperty.AddOwner(typeof(FlyoutPresenter));
+
+        public TransitionCollection ContentTransitions
+        {
+            get => (TransitionCollection)GetValue(ContentTransitionsProperty);
+            set => SetValue(ContentTransitionsProperty, value);
         }
 
         #endregion
