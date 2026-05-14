@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,18 +23,27 @@ public class DropDownButtonApiTests
                     Text = "Flyout content"
                 }
             };
+            var transitions = new ModernWpf.Media.Animation.TransitionCollection();
             var button = new ModernWpf.Controls.DropDownButton
             {
+                BackgroundSizing = BackgroundSizing.OuterBorderEdge,
+                CharacterSpacing = 17,
                 Content = "Options",
+                ContentTransitions = transitions,
                 Flyout = flyout,
                 CornerRadius = new CornerRadius(4),
+                IsTextScaleFactorEnabled = false,
                 UseSystemFocusVisuals = true,
                 FocusVisualMargin = new Thickness(2)
             };
 
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, button.BackgroundSizing);
+            Assert.AreEqual(17, button.CharacterSpacing);
             Assert.AreEqual("Options", button.Content);
+            Assert.AreSame(transitions, button.ContentTransitions);
             Assert.AreSame(flyout, button.Flyout);
             Assert.AreEqual(new CornerRadius(4), button.CornerRadius);
+            Assert.IsFalse(button.IsTextScaleFactorEnabled);
             Assert.IsTrue(button.UseSystemFocusVisuals);
             Assert.AreEqual(new Thickness(2), button.FocusVisualMargin);
 
@@ -72,6 +82,44 @@ public class DropDownButtonApiTests
             Assert.IsNotNull(chevron);
             Assert.AreEqual("ChevronIcon", chevron!.Name);
             Assert.IsNotNull(chevron.Foreground);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyDropDownButtonTemplateUsesWinUIContentPresenterShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var transitions = new ModernWpf.Media.Animation.TransitionCollection();
+            var button = new ModernWpf.Controls.DropDownButton
+            {
+                Width = 140,
+                Height = 44,
+                BackgroundSizing = BackgroundSizing.OuterBorderEdge,
+                CharacterSpacing = 23,
+                Content = "Options",
+                ContentTransitions = transitions,
+                IsTextScaleFactorEnabled = false
+            };
+
+            using var host = new TestWindowHost(button, width: 220, height: 120);
+            host.UpdateLayout();
+
+            var rootGrid = VisualTreeTestHelper.FindDescendant<GridEx>(button)
+                ?? throw new AssertFailedException("Expected DropDownButton template root to use GridEx chrome.");
+            var presenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(button)
+                ?? throw new AssertFailedException("Expected DropDownButton template to use ContentPresenterEx.");
+
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, rootGrid.BackgroundSizing);
+            Assert.IsNotNull(rootGrid.BackgroundTransition);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(83), rootGrid.BackgroundTransition.Duration);
+            Assert.AreEqual(23, presenter.CharacterSpacing);
+            Assert.AreEqual("Options", presenter.Content);
+            Assert.AreSame(transitions, presenter.ContentTransitions);
+            Assert.IsFalse(presenter.IsTextScaleFactorEnabled);
+            Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentControlEx>(button));
         });
     }
 }

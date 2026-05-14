@@ -7,6 +7,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Media.Animation;
 
 namespace ModernWpf.Controls
 {
@@ -21,6 +22,45 @@ namespace ModernWpf.Controls
         {
         }
 
+        #region BackgroundSizing
+
+        public static readonly DependencyProperty BackgroundSizingProperty =
+            ControlHelper.BackgroundSizingProperty.AddOwner(typeof(DropDownButton));
+
+        public BackgroundSizing BackgroundSizing
+        {
+            get => (BackgroundSizing)GetValue(BackgroundSizingProperty);
+            set => SetValue(BackgroundSizingProperty, value);
+        }
+
+        #endregion
+
+        #region CharacterSpacing
+
+        public static readonly DependencyProperty CharacterSpacingProperty =
+            ControlHelper.CharacterSpacingProperty.AddOwner(typeof(DropDownButton));
+
+        public int CharacterSpacing
+        {
+            get => (int)GetValue(CharacterSpacingProperty);
+            set => SetValue(CharacterSpacingProperty, value);
+        }
+
+        #endregion
+
+        #region ContentTransitions
+
+        public static readonly DependencyProperty ContentTransitionsProperty =
+            ControlHelper.ContentTransitionsProperty.AddOwner(typeof(DropDownButton));
+
+        public TransitionCollection ContentTransitions
+        {
+            get => (TransitionCollection)GetValue(ContentTransitionsProperty);
+            set => SetValue(ContentTransitionsProperty, value);
+        }
+
+        #endregion
+
         #region CornerRadius
 
         public static readonly DependencyProperty CornerRadiusProperty =
@@ -30,6 +70,19 @@ namespace ModernWpf.Controls
         {
             get => (CornerRadius)GetValue(CornerRadiusProperty);
             set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
+
+        #region IsTextScaleFactorEnabled
+
+        public static readonly DependencyProperty IsTextScaleFactorEnabledProperty =
+            ControlHelper.IsTextScaleFactorEnabledProperty.AddOwner(typeof(DropDownButton));
+
+        public bool IsTextScaleFactorEnabled
+        {
+            get => (bool)GetValue(IsTextScaleFactorEnabledProperty);
+            set => SetValue(IsTextScaleFactorEnabledProperty, value);
         }
 
         #endregion
