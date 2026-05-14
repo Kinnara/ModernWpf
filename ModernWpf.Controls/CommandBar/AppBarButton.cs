@@ -78,6 +78,19 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region BackgroundSizing
+
+        public static readonly DependencyProperty BackgroundSizingProperty =
+            ControlHelper.BackgroundSizingProperty.AddOwner(typeof(AppBarButton));
+
+        public BackgroundSizing BackgroundSizing
+        {
+            get => (BackgroundSizing)GetValue(BackgroundSizingProperty);
+            set => SetValue(BackgroundSizingProperty, value);
+        }
+
+        #endregion
+
         #region Flyout
 
         public static readonly DependencyProperty FlyoutProperty =

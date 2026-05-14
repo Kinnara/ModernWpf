@@ -81,6 +81,19 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region BackgroundSizing
+
+        public static readonly DependencyProperty BackgroundSizingProperty =
+            ControlHelper.BackgroundSizingProperty.AddOwner(typeof(AppBarToggleButton));
+
+        public BackgroundSizing BackgroundSizing
+        {
+            get => (BackgroundSizing)GetValue(BackgroundSizingProperty);
+            set => SetValue(BackgroundSizingProperty, value);
+        }
+
+        #endregion
+
         #region Icon
 
         public static readonly DependencyProperty IconProperty =

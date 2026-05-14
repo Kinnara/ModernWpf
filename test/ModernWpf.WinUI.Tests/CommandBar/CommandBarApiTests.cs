@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.CommandBars;
@@ -116,6 +117,35 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void AppBarButtonTemplateUsesWinUIInnerChrome()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var icon = new SymbolIcon(Symbol.Accept);
+            var button = new AppBarButton
+            {
+                Icon = icon,
+                Label = "Accept",
+                BackgroundSizing = BackgroundSizing.OuterBorderEdge
+            };
+
+            using var host = new TestWindowHost(button, width: 160, height: 120);
+            host.UpdateLayout();
+
+            var innerBorder = FindTemplateChild<BorderEx>(button, "AppBarButtonInnerBorder");
+            var content = FindTemplateChild<ContentPresenterEx>(button, "Content");
+
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, button.BackgroundSizing);
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, innerBorder.BackgroundSizing);
+            Assert.AreEqual(button.CornerRadius, innerBorder.CornerRadius);
+            Assert.AreSame(icon, content.Content);
+            Assert.AreEqual(button.Foreground, content.Foreground);
+        });
+    }
+
+    [TestMethod]
     public void AppBarToggleButtonDefaultsAndSetters()
     {
         WpfTestHost.Run(() =>
@@ -140,6 +170,34 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void AppBarToggleButtonTemplateUsesWinUIInnerChrome()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var icon = new SymbolIcon(Symbol.Accept);
+            var toggleButton = new AppBarToggleButton
+            {
+                Icon = icon,
+                Label = "Pin",
+                IsChecked = true
+            };
+
+            using var host = new TestWindowHost(toggleButton, width: 160, height: 120);
+            host.UpdateLayout();
+
+            var innerBorder = FindTemplateChild<BorderEx>(toggleButton, "AppBarToggleButtonInnerBorder");
+            var content = FindTemplateChild<ContentPresenterEx>(toggleButton, "Content");
+
+            Assert.AreEqual(BackgroundSizing.InnerBorderEdge, toggleButton.BackgroundSizing);
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, innerBorder.BackgroundSizing);
+            Assert.AreEqual(toggleButton.CornerRadius, innerBorder.CornerRadius);
+            Assert.AreSame(icon, content.Content);
+        });
+    }
+
+    [TestMethod]
     public void AppBarSeparatorMapsOverflowState()
     {
         WpfTestHost.Run(() =>
@@ -156,5 +214,14 @@ public class CommandBarApiTests
             Assert.IsTrue(separator.IsCompact);
             Assert.IsTrue(separator.IsInOverflow);
         });
+    }
+
+    private static T FindTemplateChild<T>(Control control, string name)
+        where T : DependencyObject
+    {
+        control.ApplyTemplate();
+
+        return control.Template?.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected template child '{name}' to be {typeof(T).Name}.");
     }
 }
