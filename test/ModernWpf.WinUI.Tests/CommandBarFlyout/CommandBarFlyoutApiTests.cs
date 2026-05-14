@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -197,6 +198,67 @@ public class CommandBarFlyoutApiTests
         });
     }
 
+    [TestMethod]
+    public void AppBarButtonFlyoutTemplateUsesWinUIInnerChrome()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var icon = new SymbolIcon(Symbol.Accept);
+            var resources = CreateCommandBarFlyoutResources();
+            var button = new AppBarButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarButtonStyle"],
+                Icon = icon,
+                Label = "Accept",
+                BackgroundSizing = BackgroundSizing.OuterBorderEdge
+            };
+
+            var root = CreateTemplateHost(button, resources);
+            using var host = new TestWindowHost(root, width: 180, height: 120);
+            host.UpdateLayout();
+
+            var innerBorder = FindTemplateChild<BorderEx>(button, "AppBarButtonInnerBorder");
+            var content = FindTemplateChild<ContentPresenterEx>(button, "Content");
+
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, innerBorder.BackgroundSizing);
+            Assert.AreEqual(button.CornerRadius, innerBorder.CornerRadius);
+            Assert.AreSame(icon, content.Content);
+            Assert.AreEqual(button.Foreground, content.Foreground);
+        });
+    }
+
+    [TestMethod]
+    public void AppBarToggleButtonFlyoutTemplateUsesWinUIInnerChrome()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var icon = new SymbolIcon(Symbol.Accept);
+            var resources = CreateCommandBarFlyoutResources();
+            var button = new AppBarToggleButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarToggleButtonStyle"],
+                Icon = icon,
+                Label = "Accept",
+                BackgroundSizing = BackgroundSizing.OuterBorderEdge
+            };
+
+            var root = CreateTemplateHost(button, resources);
+            using var host = new TestWindowHost(root, width: 180, height: 120);
+            host.UpdateLayout();
+
+            var innerBorder = FindTemplateChild<BorderEx>(button, "AppBarButtonInnerBorder");
+            var content = FindTemplateChild<ContentPresenterEx>(button, "Content");
+
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, innerBorder.BackgroundSizing);
+            Assert.AreSame(icon, content.Content);
+            Assert.AreEqual(button.Foreground, content.Foreground);
+        });
+    }
+
     private static CommandBarFlyoutCommandBar GetCommandBar(CommandBarFlyout commandBarFlyout)
     {
         var presenter = commandBarFlyout.GetPresenter();
@@ -328,6 +390,31 @@ public class CommandBarFlyoutApiTests
         {
             Assert.AreSame(commandBarFlyout.SecondaryCommands[i], commandBar.SecondaryCommands[i]);
         }
+    }
+
+    private static ResourceDictionary CreateCommandBarFlyoutResources()
+    {
+        return new ResourceDictionary
+        {
+            Source = new Uri("/ModernWpf.Controls;component/CommandBarFlyout/CommandBarFlyout.xaml", UriKind.Relative)
+        };
+    }
+
+    private static FrameworkElement CreateTemplateHost(UIElement child, ResourceDictionary resources)
+    {
+        var root = new System.Windows.Controls.Grid();
+        root.Resources.MergedDictionaries.Add(resources);
+        root.Children.Add(child);
+        return root;
+    }
+
+    private static T FindTemplateChild<T>(System.Windows.Controls.Control control, string name)
+        where T : DependencyObject
+    {
+        control.ApplyTemplate();
+
+        return control.Template?.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected template child '{name}' to be {typeof(T).Name}.");
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
