@@ -6,6 +6,69 @@ namespace ModernWpf.Controls.Primitives
 {
     public static class ControlHelper
     {
+        #region BackgroundSizing
+
+        public static BackgroundSizing GetBackgroundSizing(Control control)
+        {
+            return (BackgroundSizing)control.GetValue(BackgroundSizingProperty);
+        }
+
+        public static void SetBackgroundSizing(Control control, BackgroundSizing value)
+        {
+            control.SetValue(BackgroundSizingProperty, value);
+        }
+
+        public static readonly DependencyProperty BackgroundSizingProperty =
+            DependencyProperty.RegisterAttached(
+                "BackgroundSizing",
+                typeof(BackgroundSizing),
+                typeof(ControlHelper),
+                new FrameworkPropertyMetadata(BackgroundSizing.InnerBorderEdge));
+
+        #endregion
+
+        #region CharacterSpacing
+
+        public static int GetCharacterSpacing(Control control)
+        {
+            return (int)control.GetValue(CharacterSpacingProperty);
+        }
+
+        public static void SetCharacterSpacing(Control control, int value)
+        {
+            control.SetValue(CharacterSpacingProperty, value);
+        }
+
+        public static readonly DependencyProperty CharacterSpacingProperty =
+            DependencyProperty.RegisterAttached(
+                "CharacterSpacing",
+                typeof(int),
+                typeof(ControlHelper),
+                new FrameworkPropertyMetadata(0));
+
+        #endregion
+
+        #region ContentTransitions
+
+        public static ModernWpf.Media.Animation.TransitionCollection GetContentTransitions(Control control)
+        {
+            return (ModernWpf.Media.Animation.TransitionCollection)control.GetValue(ContentTransitionsProperty);
+        }
+
+        public static void SetContentTransitions(Control control, ModernWpf.Media.Animation.TransitionCollection value)
+        {
+            control.SetValue(ContentTransitionsProperty, value);
+        }
+
+        public static readonly DependencyProperty ContentTransitionsProperty =
+            DependencyProperty.RegisterAttached(
+                "ContentTransitions",
+                typeof(ModernWpf.Media.Animation.TransitionCollection),
+                typeof(ControlHelper),
+                new PropertyMetadata(null));
+
+        #endregion
+
         #region CornerRadius
 
         /// <summary>
@@ -40,6 +103,27 @@ namespace ModernWpf.Controls.Primitives
                 typeof(CornerRadius),
                 typeof(ControlHelper),
                 null);
+
+        #endregion
+
+        #region IsTextScaleFactorEnabled
+
+        public static bool GetIsTextScaleFactorEnabled(Control control)
+        {
+            return (bool)control.GetValue(IsTextScaleFactorEnabledProperty);
+        }
+
+        public static void SetIsTextScaleFactorEnabled(Control control, bool value)
+        {
+            control.SetValue(IsTextScaleFactorEnabledProperty, value);
+        }
+
+        public static readonly DependencyProperty IsTextScaleFactorEnabledProperty =
+            DependencyProperty.RegisterAttached(
+                "IsTextScaleFactorEnabled",
+                typeof(bool),
+                typeof(ControlHelper),
+                new FrameworkPropertyMetadata(true));
 
         #endregion
 

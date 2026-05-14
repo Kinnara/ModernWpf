@@ -13,6 +13,7 @@
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Foreground" Value="{DynamicResource ToolTipForegroundBrush}" />
         <Setter Property="Background" Value="{DynamicResource ToolTipBackgroundBrush}" />
+        <Setter Property="primitives:ControlHelper.BackgroundSizing" Value="InnerBorderEdge" />
         <Setter Property="BorderBrush" Value="{DynamicResource ToolTipBorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ToolTipBorderThemeThickness}" />
         <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.StatusFontFamilyKey}}" />
@@ -33,16 +34,25 @@
                         MaxWidth="{TemplateBinding MaxWidth}"
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <Border
+                        <local:ContentPresenterEx
+                            x:Name="LayoutRoot"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}"
+                            BackgroundSizing="{TemplateBinding primitives:ControlHelper.BackgroundSizing}"
                             BorderBrush="{TemplateBinding BorderBrush}"
+                            CharacterSpacing="{TemplateBinding primitives:ControlHelper.CharacterSpacing}"
+                            Content="{TemplateBinding Content}"
+                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                            ContentTransitions="{TemplateBinding primitives:ControlHelper.ContentTransitions}"
+                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                            Foreground="{TemplateBinding Foreground}"
+                            IsTextScaleFactorEnabled="{TemplateBinding primitives:ControlHelper.IsTextScaleFactorEnabled}"
+                            MaxWidth="{TemplateBinding MaxWidth}"
                             Padding="{TemplateBinding Padding}"
-                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}">
-                            <local:ContentPresenterEx
-                                TextWrapping="Wrap"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </Border>
+                            TextWrapping="Wrap"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </primitives:ThemeShadowChrome>
                 </ControlTemplate>
             </Setter.Value>

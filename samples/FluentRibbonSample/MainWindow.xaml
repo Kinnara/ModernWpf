@@ -35,7 +35,7 @@
             </Fluent:RibbonTabItem>
         </Fluent:Ribbon>
 
-        <ui:SimpleStackPanel
+        <ui:StackPanelEx
             Grid.Row="1"
             Spacing="12"
             Margin="12">
@@ -46,6 +46,6 @@
                 Content="Show content dialog"
                 Click="ShowContentDialog" />
             <Calendar />
-        </ui:SimpleStackPanel>
+        </ui:StackPanelEx>
     </Grid>
 </Fluent:RibbonWindow>

@@ -370,8 +370,8 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateStackPanelSample()
         {
-            var panel = CreateSamplePanel("StackPanel arranges children in one direction; ModernWpf SimpleStackPanel adds a spacing property.");
-            var stack = new Mux.SimpleStackPanel
+            var panel = CreateSamplePanel("StackPanel arranges children in one direction; ModernWpf StackPanelEx adds WinUI-style spacing and chrome.");
+            var stack = new Mux.StackPanelEx
             {
                 Orientation = Orientation.Vertical,
                 Spacing = 8
