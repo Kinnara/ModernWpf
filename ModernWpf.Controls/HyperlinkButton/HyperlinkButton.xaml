@@ -8,6 +8,7 @@
 
     <Style TargetType="local:HyperlinkButton">
         <Setter Property="Background" Value="{DynamicResource HyperlinkButtonBackground}" />
+        <Setter Property="ui:ControlHelper.BackgroundSizing" Value="OuterBorderEdge" />
         <Setter Property="Foreground" Value="{DynamicResource HyperlinkButtonForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource HyperlinkButtonBorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource HyperlinkButtonBorderThemeThickness}" />
@@ -23,28 +24,30 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:HyperlinkButton">
-                    <ui:ContentControlEx
+                    <ui:ContentPresenterEx
                         x:Name="ContentPresenter"
                         Background="{TemplateBinding Background}"
+                        BackgroundSizing="{TemplateBinding ui:ControlHelper.BackgroundSizing}"
                         Foreground="{TemplateBinding Foreground}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
+                        CharacterSpacing="{TemplateBinding ui:ControlHelper.CharacterSpacing}"
                         Content="{TemplateBinding Content}"
                         ContentTemplate="{TemplateBinding ContentTemplate}"
                         ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                        ContentTransitions="{TemplateBinding ui:ControlHelper.ContentTransitions}"
                         ContentStringFormat="{TemplateBinding ContentStringFormat}"
                         Padding="{TemplateBinding Padding}"
                         CornerRadius="{TemplateBinding ui:ControlHelper.CornerRadius}"
                         HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        IsTextScaleFactorEnabled="{TemplateBinding ui:ControlHelper.IsTextScaleFactorEnabled}"
                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                         RecognizesAccessKey="True"
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                            <!-- TODO
-                            <contract7Present:ContentPresenter.BackgroundTransition>
-                                <contract7Present:BrushTransition Duration="0:0:0.083" />
-                            </contract7Present:ContentPresenter.BackgroundTransition>
-                            -->
-                    </ui:ContentControlEx>
+                        <ui:ContentPresenterEx.BackgroundTransition>
+                            <ui:BrushTransition Duration="0:0:0.083" />
+                        </ui:ContentPresenterEx.BackgroundTransition>
+                    </ui:ContentPresenterEx>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource HyperlinkButtonForegroundPointerOver}" />

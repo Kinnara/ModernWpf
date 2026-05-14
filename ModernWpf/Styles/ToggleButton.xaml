@@ -28,7 +28,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
-                    <local:ContentControlEx
+                    <local:ContentPresenterEx
                         x:Name="ContentPresenter"
                         Background="{TemplateBinding Background}"
                         BackgroundSizing="{TemplateBinding primitives:ControlHelper.BackgroundSizing}"
@@ -48,10 +48,10 @@
                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                         RecognizesAccessKey="True"
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                        <local:ContentControlEx.BackgroundTransition>
+                        <local:ContentPresenterEx.BackgroundTransition>
                             <local:BrushTransition Duration="0:0:0.083" />
-                        </local:ContentControlEx.BackgroundTransition>
-                    </local:ContentControlEx>
+                        </local:ContentPresenterEx.BackgroundTransition>
+                    </local:ContentPresenterEx>
                     <ControlTemplate.Triggers>
                         <!-- PointerOver -->
                         <MultiTrigger>

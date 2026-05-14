@@ -28,29 +28,29 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
-                    <local:ContentControlEx x:Name="ContentPresenter"
-                                            Background="{TemplateBinding Background}"
-                                            BackgroundSizing="{TemplateBinding primitives:ControlHelper.BackgroundSizing}"
-                                            Foreground="{TemplateBinding Foreground}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            CharacterSpacing="{TemplateBinding primitives:ControlHelper.CharacterSpacing}"
-                                            Content="{TemplateBinding Content}"
-                                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                            ContentTransitions="{TemplateBinding primitives:ControlHelper.ContentTransitions}"
-                                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                                            CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
-                                            Padding="{TemplateBinding Padding}"
-                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            IsTextScaleFactorEnabled="{TemplateBinding primitives:ControlHelper.IsTextScaleFactorEnabled}"
-                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                            RecognizesAccessKey="True"
-                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                        <local:ContentControlEx.BackgroundTransition>
+                    <local:ContentPresenterEx x:Name="ContentPresenter"
+                                              Background="{TemplateBinding Background}"
+                                              BackgroundSizing="{TemplateBinding primitives:ControlHelper.BackgroundSizing}"
+                                              Foreground="{TemplateBinding Foreground}"
+                                              BorderBrush="{TemplateBinding BorderBrush}"
+                                              BorderThickness="{TemplateBinding BorderThickness}"
+                                              CharacterSpacing="{TemplateBinding primitives:ControlHelper.CharacterSpacing}"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                              ContentTransitions="{TemplateBinding primitives:ControlHelper.ContentTransitions}"
+                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                              CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
+                                              Padding="{TemplateBinding Padding}"
+                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              IsTextScaleFactorEnabled="{TemplateBinding primitives:ControlHelper.IsTextScaleFactorEnabled}"
+                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              RecognizesAccessKey="True"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        <local:ContentPresenterEx.BackgroundTransition>
                             <local:BrushTransition Duration="0:0:0.083" />
-                        </local:ContentControlEx.BackgroundTransition>
-                    </local:ContentControlEx>
+                        </local:ContentPresenterEx.BackgroundTransition>
+                    </local:ContentPresenterEx>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ContentPresenter" Property="Background" Value="{DynamicResource RepeatButtonBackgroundPointerOver}" />

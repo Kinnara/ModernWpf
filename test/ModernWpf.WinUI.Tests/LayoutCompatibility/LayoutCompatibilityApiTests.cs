@@ -455,17 +455,9 @@ public class LayoutCompatibilityApiTests
 
             using var host = new TestWindowHost(button, width: 140, height: 80);
 
-            var contentHost = FindVisualChild<ModernContentControlEx>(button)
-                ?? throw new AssertFailedException("Expected Button template to use ContentControlEx.");
-            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, contentHost.BackgroundSizing);
-            Assert.AreEqual(18, contentHost.CharacterSpacing);
-            Assert.AreSame(transitions, contentHost.ContentTransitions);
-            Assert.IsFalse(contentHost.IsTextScaleFactorEnabled);
-            Assert.IsNotNull(contentHost.BackgroundTransition);
-            Assert.AreEqual(TimeSpan.FromMilliseconds(83), contentHost.BackgroundTransition.Duration);
-
             var presenter = FindVisualChild<ContentPresenterEx>(button)
-                ?? throw new AssertFailedException("Expected ContentControlEx template to use ContentPresenterEx.");
+                ?? throw new AssertFailedException("Expected Button template to use ContentPresenterEx directly.");
+            Assert.IsNull(FindVisualChild<ModernContentControlEx>(button));
             Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
             Assert.AreEqual(18, presenter.CharacterSpacing);
             Assert.AreSame(transitions, presenter.ContentTransitions);
@@ -490,9 +482,41 @@ public class LayoutCompatibilityApiTests
 
             using var host = new TestWindowHost(button, width: 140, height: 80);
 
-            var contentHost = FindVisualChild<ModernContentControlEx>(button)
-                ?? throw new AssertFailedException("Expected AccentButtonStyle to use ContentControlEx.");
-            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, contentHost.BackgroundSizing);
+            var presenter = FindVisualChild<ContentPresenterEx>(button)
+                ?? throw new AssertFailedException("Expected AccentButtonStyle to use ContentPresenterEx directly.");
+            Assert.IsNull(FindVisualChild<ModernContentControlEx>(button));
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
+        });
+    }
+
+    [TestMethod]
+    public void RepeatButtonTemplateUsesContentPresenterExDirectly()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var transitions = new ModernWpf.Media.Animation.TransitionCollection();
+            var repeatButton = new RepeatButton
+            {
+                Width = 100,
+                Height = 40,
+                Content = "Repeat"
+            };
+            ControlHelper.SetBackgroundSizing(repeatButton, BackgroundSizing.OuterBorderEdge);
+            ControlHelper.SetCharacterSpacing(repeatButton, 19);
+            ControlHelper.SetContentTransitions(repeatButton, transitions);
+            ControlHelper.SetIsTextScaleFactorEnabled(repeatButton, false);
+
+            using var host = new TestWindowHost(repeatButton, width: 140, height: 80);
+
+            var presenter = FindVisualChild<ContentPresenterEx>(repeatButton)
+                ?? throw new AssertFailedException("Expected RepeatButton template to use ContentPresenterEx directly.");
+            Assert.IsNull(FindVisualChild<ModernContentControlEx>(repeatButton));
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
+            Assert.AreEqual(19, presenter.CharacterSpacing);
+            Assert.AreSame(transitions, presenter.ContentTransitions);
+            Assert.IsFalse(presenter.IsTextScaleFactorEnabled);
+            Assert.IsNotNull(presenter.BackgroundTransition);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(83), presenter.BackgroundTransition.Duration);
         });
     }
 
@@ -511,9 +535,40 @@ public class LayoutCompatibilityApiTests
 
             using var host = new TestWindowHost(toggleButton, width: 140, height: 80);
 
-            var contentHost = FindVisualChild<ModernContentControlEx>(toggleButton)
-                ?? throw new AssertFailedException("Expected ToggleButton template to use ContentControlEx.");
-            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, contentHost.BackgroundSizing);
+            var presenter = FindVisualChild<ContentPresenterEx>(toggleButton)
+                ?? throw new AssertFailedException("Expected ToggleButton template to use ContentPresenterEx directly.");
+            Assert.IsNull(FindVisualChild<ModernContentControlEx>(toggleButton));
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
+        });
+    }
+
+    [TestMethod]
+    public void HyperlinkButtonTemplateUsesWinUIContentPresenterShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var transitions = new ModernWpf.Media.Animation.TransitionCollection();
+            var hyperlinkButton = new HyperlinkButton
+            {
+                Width = 120,
+                Height = 40,
+                Content = "Link"
+            };
+            ControlHelper.SetCharacterSpacing(hyperlinkButton, 21);
+            ControlHelper.SetContentTransitions(hyperlinkButton, transitions);
+            ControlHelper.SetIsTextScaleFactorEnabled(hyperlinkButton, false);
+
+            using var host = new TestWindowHost(hyperlinkButton, width: 160, height: 80);
+
+            var presenter = FindVisualChild<ContentPresenterEx>(hyperlinkButton)
+                ?? throw new AssertFailedException("Expected HyperlinkButton template to use ContentPresenterEx directly.");
+            Assert.IsNull(FindVisualChild<ModernContentControlEx>(hyperlinkButton));
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
+            Assert.AreEqual(21, presenter.CharacterSpacing);
+            Assert.AreSame(transitions, presenter.ContentTransitions);
+            Assert.IsFalse(presenter.IsTextScaleFactorEnabled);
+            Assert.IsNotNull(presenter.BackgroundTransition);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(83), presenter.BackgroundTransition.Duration);
         });
     }
 
