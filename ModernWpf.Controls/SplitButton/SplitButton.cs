@@ -10,6 +10,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Media.Animation;
 using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Controls
@@ -105,6 +106,19 @@ namespace ModernWpf.Controls
         {
             get => (IInputElement)GetValue(CommandTargetProperty);
             set => SetValue(CommandTargetProperty, value);
+        }
+
+        #endregion
+
+        #region ContentTransitions
+
+        public static readonly DependencyProperty ContentTransitionsProperty =
+            ControlHelper.ContentTransitionsProperty.AddOwner(typeof(SplitButton));
+
+        public TransitionCollection ContentTransitions
+        {
+            get => (TransitionCollection)GetValue(ContentTransitionsProperty);
+            set => SetValue(ContentTransitionsProperty, value);
         }
 
         #endregion

@@ -46,6 +46,8 @@ public class SplitButtonApiTests
             var secondaryButton = FindTemplatePart<System.Windows.Controls.Button>(splitButton, "SecondaryButton");
             var primaryColumn = FindTemplatePart<System.Windows.Controls.ColumnDefinition>(splitButton, "PrimaryButtonColumn");
             var secondaryColumn = FindTemplatePart<System.Windows.Controls.ColumnDefinition>(splitButton, "SecondaryButtonColumn");
+            var rootGrid = VisualTreeTestHelper.FindDescendant<GridEx>(splitButton)
+                ?? throw new AssertFailedException("Expected SplitButton template root to use GridEx chrome.");
 
             Assert.AreSame(splitButton.Background, primaryButton.Background);
             Assert.AreSame(splitButton.Foreground, primaryButton.Foreground);
@@ -53,6 +55,7 @@ public class SplitButtonApiTests
             Assert.AreSame(splitButton.TryFindResource("SplitButtonForegroundSecondary"), secondaryButton.Foreground);
             Assert.AreEqual(35d, primaryColumn.MinWidth);
             Assert.AreEqual(new GridLength(35d), secondaryColumn.Width);
+            Assert.AreEqual(splitButton.CornerRadius, rootGrid.CornerRadius);
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {
@@ -128,6 +131,7 @@ public class SplitButtonApiTests
         {
             var flyout = new Flyout();
             var command = new TestCommand();
+            var transitions = new ModernWpf.Media.Animation.TransitionCollection();
             const int parameter = 0;
 
             var splitButton = new ModernWpf.Controls.SplitButton();
@@ -136,16 +140,48 @@ public class SplitButtonApiTests
             Assert.IsNull(splitButton.Flyout);
             Assert.IsNull(splitButton.Command);
             Assert.IsNull(splitButton.CommandParameter);
+            Assert.IsNull(splitButton.ContentTransitions);
 
             splitButton.Flyout = flyout;
             splitButton.Command = command;
             splitButton.CommandParameter = parameter;
+            splitButton.ContentTransitions = transitions;
 
             WpfTestHost.DoEvents();
 
             Assert.AreSame(flyout, splitButton.Flyout);
             Assert.AreSame(command, splitButton.Command);
             Assert.AreEqual(parameter, splitButton.CommandParameter);
+            Assert.AreSame(transitions, splitButton.ContentTransitions);
+        });
+    }
+
+    [TestMethod]
+    public void VerifySplitButtonTemplateUsesWinUIContentPresenterShape()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var transitions = new ModernWpf.Media.Animation.TransitionCollection();
+            var splitButton = new ModernWpf.Controls.SplitButton
+            {
+                Content = "Split",
+                ContentTransitions = transitions,
+                Width = 220,
+                Height = 40
+            };
+
+            using var host = new TestWindowHost(splitButton, width: 360, height: 180);
+            host.UpdateLayout();
+
+            var primaryButton = FindTemplatePart<System.Windows.Controls.Button>(splitButton, "PrimaryButton");
+            var presenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(primaryButton)
+                ?? throw new AssertFailedException("Expected SplitButton primary button template to use ContentPresenterEx.");
+
+            Assert.AreEqual("Split", presenter.Content);
+            Assert.AreSame(transitions, presenter.ContentTransitions);
+            Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentControlEx>(primaryButton));
         });
     }
 
