@@ -199,6 +199,37 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void AppBarElementContainerTemplateUsesWinUIContentPresenter()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var transitions = new ModernWpf.Media.Animation.TransitionCollection();
+            var container = new AppBarElementContainer
+            {
+                Content = "Custom content",
+                ContentTransitions = transitions,
+                Padding = new Thickness(3, 4, 5, 6),
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Bottom
+            };
+
+            using var host = new TestWindowHost(container, width: 180, height: 120);
+            host.UpdateLayout();
+
+            var presenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(container)
+                ?? throw new AssertFailedException("Expected AppBarElementContainer template to use ContentPresenterEx.");
+
+            Assert.AreEqual("Custom content", presenter.Content);
+            Assert.AreSame(transitions, presenter.ContentTransitions);
+            Assert.AreEqual(container.Padding, presenter.Margin);
+            Assert.AreEqual(HorizontalAlignment.Center, presenter.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Bottom, presenter.VerticalAlignment);
+        });
+    }
+
+    [TestMethod]
     public void SplitButtonCommandBarStyleUsesWinUIPrimaryPresenter()
     {
         WpfTestHost.Run(() =>

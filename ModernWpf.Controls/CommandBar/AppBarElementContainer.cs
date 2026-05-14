@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using ModernWpf.Controls.Primitives;
+using ModernWpf.Media.Animation;
 
 namespace ModernWpf.Controls
 {
@@ -17,6 +19,19 @@ namespace ModernWpf.Controls
         public AppBarElementContainer()
         {
         }
+
+        #region ContentTransitions
+
+        public static readonly DependencyProperty ContentTransitionsProperty =
+            ControlHelper.ContentTransitionsProperty.AddOwner(typeof(AppBarElementContainer));
+
+        public TransitionCollection ContentTransitions
+        {
+            get => (TransitionCollection)GetValue(ContentTransitionsProperty);
+            set => SetValue(ContentTransitionsProperty, value);
+        }
+
+        #endregion
 
         #region IsCompact
 
