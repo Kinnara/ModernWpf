@@ -15,6 +15,8 @@ using ModernWpf.WinUI.TestInfra;
 using ModernCanvasEx = ModernWpf.Controls.CanvasEx;
 using ModernContentControlEx = ModernWpf.Controls.ContentControlEx;
 using ModernGridEx = ModernWpf.Controls.GridEx;
+using ModernItemsStackPanel = ModernWpf.Controls.ItemsStackPanel;
+using ModernItemsWrapGrid = ModernWpf.Controls.ItemsWrapGrid;
 using ModernRelativePanel = ModernWpf.Controls.RelativePanel;
 using ModernStackPanelEx = ModernWpf.Controls.StackPanelEx;
 using ModernVariableSizedWrapGrid = ModernWpf.Controls.VariableSizedWrapGrid;
@@ -96,6 +98,13 @@ public class LayoutCompatibilityApiTests
                 control => control.EffectiveBackground);
 
             AssertTransitionBrush(
+                new ModernItemsStackPanel(),
+                (control, brush) => control.Background = brush,
+                (control, transition) => control.BackgroundTransition = transition,
+                control => control.ClearValue(ModernItemsStackPanel.BackgroundTransitionProperty),
+                control => control.EffectiveBackground);
+
+            AssertTransitionBrush(
                 new ModernVariableSizedWrapGrid(),
                 (control, brush) => control.Background = brush,
                 (control, transition) => control.BackgroundTransition = transition,
@@ -107,6 +116,13 @@ public class LayoutCompatibilityApiTests
                 (control, brush) => control.Background = brush,
                 (control, transition) => control.BackgroundTransition = transition,
                 control => control.ClearValue(ModernWrapGrid.BackgroundTransitionProperty),
+                control => control.EffectiveBackground);
+
+            AssertTransitionBrush(
+                new ModernItemsWrapGrid(),
+                (control, brush) => control.Background = brush,
+                (control, transition) => control.BackgroundTransition = transition,
+                control => control.ClearValue(ModernItemsWrapGrid.BackgroundTransitionProperty),
                 control => control.EffectiveBackground);
         });
     }
@@ -435,6 +451,262 @@ public class LayoutCompatibilityApiTests
             Assert.AreEqual(2, panel.MaximumRowsOrColumns);
             Assert.AreEqual(HorizontalAlignment.Center, panel.HorizontalChildrenAlignment);
             Assert.AreEqual(VerticalAlignment.Bottom, panel.VerticalChildrenAlignment);
+            Assert.IsNotNull(panel.BackgroundTransition);
+            Assert.IsNotNull(panel.ChildrenTransitions);
+            Assert.AreEqual(1, panel.Children.Count);
+        });
+    }
+
+    [TestMethod]
+    public void ItemsStackPanelAcceptsWinUILayoutSurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var defaultPanel = new ModernItemsStackPanel();
+
+            Assert.AreEqual(Orientation.Vertical, defaultPanel.Orientation);
+            Assert.AreEqual(new Thickness(), defaultPanel.GroupPadding);
+            Assert.AreEqual(GroupHeaderPlacement.Top, defaultPanel.GroupHeaderPlacement);
+            Assert.AreEqual(ItemsUpdatingScrollMode.KeepItemsInView, defaultPanel.ItemsUpdatingScrollMode);
+            Assert.AreEqual(0.0, defaultPanel.CacheLength);
+            Assert.IsTrue(defaultPanel.AreStickyGroupHeadersEnabled);
+            Assert.AreEqual(-1, defaultPanel.FirstCacheIndex);
+            Assert.AreEqual(-1, defaultPanel.FirstVisibleIndex);
+            Assert.AreEqual(-1, defaultPanel.LastVisibleIndex);
+            Assert.AreEqual(-1, defaultPanel.LastCacheIndex);
+            Assert.AreEqual(PanelScrollingDirection.None, defaultPanel.ScrollingDirection);
+
+            var backgroundTransition = new BrushTransition { Duration = TimeSpan.FromMilliseconds(70) };
+            var childrenTransitions = new ModernWpf.Media.Animation.TransitionCollection();
+            var panel = new ModernItemsStackPanel
+            {
+                GroupPadding = new Thickness(1, 2, 3, 4),
+                Orientation = Orientation.Horizontal,
+                GroupHeaderPlacement = GroupHeaderPlacement.Left,
+                ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView,
+                CacheLength = 2.5,
+                AreStickyGroupHeadersEnabled = false,
+                BackgroundTransition = backgroundTransition,
+                ChildrenTransitions = childrenTransitions
+            };
+
+            Assert.AreEqual(new Thickness(1, 2, 3, 4), panel.GroupPadding);
+            Assert.AreEqual(Orientation.Horizontal, panel.Orientation);
+            Assert.AreEqual(GroupHeaderPlacement.Left, panel.GroupHeaderPlacement);
+            Assert.AreEqual(ItemsUpdatingScrollMode.KeepLastItemInView, panel.ItemsUpdatingScrollMode);
+            Assert.AreEqual(2.5, panel.CacheLength);
+            Assert.IsFalse(panel.AreStickyGroupHeadersEnabled);
+            Assert.AreSame(backgroundTransition, panel.BackgroundTransition);
+            Assert.AreSame(childrenTransitions, panel.ChildrenTransitions);
+        });
+    }
+
+    [TestMethod]
+    public void ItemsStackPanelStacksChildrenAndReportsRealizedRange()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var horizontalPanel = CreateItemsStackPanel(Orientation.Horizontal, 3);
+            AssertItemsStackPanelPositions(
+                horizontalPanel,
+                new[]
+                {
+                    new Point(0, 100),
+                    new Point(100, 100),
+                    new Point(200, 100)
+                });
+
+            Assert.AreEqual(0, horizontalPanel.FirstCacheIndex);
+            Assert.AreEqual(0, horizontalPanel.FirstVisibleIndex);
+            Assert.AreEqual(2, horizontalPanel.LastVisibleIndex);
+            Assert.AreEqual(2, horizontalPanel.LastCacheIndex);
+            Assert.AreEqual(PanelScrollingDirection.None, horizontalPanel.ScrollingDirection);
+
+            var verticalPanel = CreateItemsStackPanel(Orientation.Vertical, 3);
+            AssertItemsStackPanelPositions(
+                verticalPanel,
+                new[]
+                {
+                    new Point(100, 0),
+                    new Point(100, 100),
+                    new Point(100, 200)
+                });
+        });
+    }
+
+    [TestMethod]
+    public void ItemsStackPanelParsesTemplateCompatibilityXaml()
+    {
+        WpfTestHost.Run(() =>
+        {
+            const string xaml =
+                """
+                <controls:ItemsStackPanel
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf"
+                    xmlns:animation="clr-namespace:ModernWpf.Media.Animation;assembly=ModernWpf"
+                    GroupPadding="1,2,3,4"
+                    Orientation="Horizontal"
+                    GroupHeaderPlacement="Left"
+                    ItemsUpdatingScrollMode="KeepLastItemInView"
+                    CacheLength="2"
+                    AreStickyGroupHeadersEnabled="False">
+                    <controls:ItemsStackPanel.BackgroundTransition>
+                        <controls:BrushTransition Duration="0:0:0.083" />
+                    </controls:ItemsStackPanel.BackgroundTransition>
+                    <controls:ItemsStackPanel.ChildrenTransitions>
+                        <animation:TransitionCollection />
+                    </controls:ItemsStackPanel.ChildrenTransitions>
+                    <Border Width="10" Height="10" Background="Red" />
+                </controls:ItemsStackPanel>
+                """;
+
+            var panel = (ModernItemsStackPanel)XamlReader.Parse(xaml);
+
+            Assert.AreEqual(new Thickness(1, 2, 3, 4), panel.GroupPadding);
+            Assert.AreEqual(Orientation.Horizontal, panel.Orientation);
+            Assert.AreEqual(GroupHeaderPlacement.Left, panel.GroupHeaderPlacement);
+            Assert.AreEqual(ItemsUpdatingScrollMode.KeepLastItemInView, panel.ItemsUpdatingScrollMode);
+            Assert.AreEqual(2.0, panel.CacheLength);
+            Assert.IsFalse(panel.AreStickyGroupHeadersEnabled);
+            Assert.IsNotNull(panel.BackgroundTransition);
+            Assert.IsNotNull(panel.ChildrenTransitions);
+            Assert.AreEqual(1, panel.Children.Count);
+        });
+    }
+
+    [TestMethod]
+    public void ItemsWrapGridAcceptsWinUILayoutSurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var defaultPanel = new ModernItemsWrapGrid();
+
+            Assert.AreEqual(Orientation.Vertical, defaultPanel.Orientation);
+            Assert.AreEqual(-1, defaultPanel.MaximumRowsOrColumns);
+            Assert.IsTrue(double.IsNaN(defaultPanel.ItemWidth));
+            Assert.IsTrue(double.IsNaN(defaultPanel.ItemHeight));
+            Assert.AreEqual(new Thickness(), defaultPanel.GroupPadding);
+            Assert.AreEqual(GroupHeaderPlacement.Top, defaultPanel.GroupHeaderPlacement);
+            Assert.AreEqual(0.0, defaultPanel.CacheLength);
+            Assert.IsTrue(defaultPanel.AreStickyGroupHeadersEnabled);
+            Assert.AreEqual(-1, defaultPanel.FirstCacheIndex);
+            Assert.AreEqual(-1, defaultPanel.FirstVisibleIndex);
+            Assert.AreEqual(-1, defaultPanel.LastVisibleIndex);
+            Assert.AreEqual(-1, defaultPanel.LastCacheIndex);
+            Assert.AreEqual(PanelScrollingDirection.None, defaultPanel.ScrollingDirection);
+
+            var backgroundTransition = new BrushTransition { Duration = TimeSpan.FromMilliseconds(70) };
+            var childrenTransitions = new ModernWpf.Media.Animation.TransitionCollection();
+            var panel = new ModernItemsWrapGrid
+            {
+                GroupPadding = new Thickness(1, 2, 3, 4),
+                Orientation = Orientation.Horizontal,
+                MaximumRowsOrColumns = 3,
+                ItemWidth = 50,
+                ItemHeight = 40,
+                GroupHeaderPlacement = GroupHeaderPlacement.Left,
+                CacheLength = 2.5,
+                AreStickyGroupHeadersEnabled = false,
+                BackgroundTransition = backgroundTransition,
+                ChildrenTransitions = childrenTransitions
+            };
+
+            Assert.AreEqual(new Thickness(1, 2, 3, 4), panel.GroupPadding);
+            Assert.AreEqual(Orientation.Horizontal, panel.Orientation);
+            Assert.AreEqual(3, panel.MaximumRowsOrColumns);
+            Assert.AreEqual(50, panel.ItemWidth);
+            Assert.AreEqual(40, panel.ItemHeight);
+            Assert.AreEqual(GroupHeaderPlacement.Left, panel.GroupHeaderPlacement);
+            Assert.AreEqual(2.5, panel.CacheLength);
+            Assert.IsFalse(panel.AreStickyGroupHeadersEnabled);
+            Assert.AreSame(backgroundTransition, panel.BackgroundTransition);
+            Assert.AreSame(childrenTransitions, panel.ChildrenTransitions);
+        });
+    }
+
+    [TestMethod]
+    public void ItemsWrapGridWrapsChildrenAndReportsRealizedRange()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var horizontalPanel = CreateItemsWrapGrid(Orientation.Horizontal, 7);
+            AssertVariableSizedWrapGridPositions(
+                horizontalPanel,
+                new[]
+                {
+                    new Point(0, 0),
+                    new Point(100, 0),
+                    new Point(200, 0),
+                    new Point(0, 100),
+                    new Point(100, 100),
+                    new Point(200, 100),
+                    new Point(0, 200)
+                });
+
+            Assert.AreEqual(0, horizontalPanel.FirstCacheIndex);
+            Assert.AreEqual(0, horizontalPanel.FirstVisibleIndex);
+            Assert.AreEqual(6, horizontalPanel.LastVisibleIndex);
+            Assert.AreEqual(6, horizontalPanel.LastCacheIndex);
+            Assert.AreEqual(PanelScrollingDirection.None, horizontalPanel.ScrollingDirection);
+
+            var verticalPanel = CreateItemsWrapGrid(Orientation.Vertical, 7);
+            AssertVariableSizedWrapGridPositions(
+                verticalPanel,
+                new[]
+                {
+                    new Point(0, 0),
+                    new Point(0, 100),
+                    new Point(0, 200),
+                    new Point(100, 0),
+                    new Point(100, 100),
+                    new Point(100, 200),
+                    new Point(200, 0)
+                });
+        });
+    }
+
+    [TestMethod]
+    public void ItemsWrapGridParsesTemplateCompatibilityXaml()
+    {
+        WpfTestHost.Run(() =>
+        {
+            const string xaml =
+                """
+                <controls:ItemsWrapGrid
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf"
+                    xmlns:animation="clr-namespace:ModernWpf.Media.Animation;assembly=ModernWpf"
+                    GroupPadding="1,2,3,4"
+                    ItemWidth="40"
+                    ItemHeight="30"
+                    Orientation="Horizontal"
+                    MaximumRowsOrColumns="2"
+                    GroupHeaderPlacement="Left"
+                    CacheLength="2"
+                    AreStickyGroupHeadersEnabled="False">
+                    <controls:ItemsWrapGrid.BackgroundTransition>
+                        <controls:BrushTransition Duration="0:0:0.083" />
+                    </controls:ItemsWrapGrid.BackgroundTransition>
+                    <controls:ItemsWrapGrid.ChildrenTransitions>
+                        <animation:TransitionCollection />
+                    </controls:ItemsWrapGrid.ChildrenTransitions>
+                    <Border Width="10" Height="10" Background="Red" />
+                </controls:ItemsWrapGrid>
+                """;
+
+            var panel = (ModernItemsWrapGrid)XamlReader.Parse(xaml);
+
+            Assert.AreEqual(new Thickness(1, 2, 3, 4), panel.GroupPadding);
+            Assert.AreEqual(40, panel.ItemWidth);
+            Assert.AreEqual(30, panel.ItemHeight);
+            Assert.AreEqual(Orientation.Horizontal, panel.Orientation);
+            Assert.AreEqual(2, panel.MaximumRowsOrColumns);
+            Assert.AreEqual(GroupHeaderPlacement.Left, panel.GroupHeaderPlacement);
+            Assert.AreEqual(2.0, panel.CacheLength);
+            Assert.IsFalse(panel.AreStickyGroupHeadersEnabled);
             Assert.IsNotNull(panel.BackgroundTransition);
             Assert.IsNotNull(panel.ChildrenTransitions);
             Assert.AreEqual(1, panel.Children.Count);
@@ -2796,6 +3068,72 @@ public class LayoutCompatibilityApiTests
         }
 
         return panel;
+    }
+
+    private static ModernItemsStackPanel CreateItemsStackPanel(Orientation orientation, int itemCount)
+    {
+        var panel = new ModernItemsStackPanel
+        {
+            Width = 300,
+            Height = 300,
+            Orientation = orientation
+        };
+
+        for (int i = 0; i < itemCount; i++)
+        {
+            panel.Children.Add(new Border
+            {
+                Width = 100,
+                Height = 100,
+                Background = i % 2 == 0 ? Brushes.Red : Brushes.Blue,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            });
+        }
+
+        return panel;
+    }
+
+    private static ModernItemsWrapGrid CreateItemsWrapGrid(Orientation orientation, int itemCount)
+    {
+        var panel = new ModernItemsWrapGrid
+        {
+            Width = 300,
+            Height = 300,
+            ItemWidth = 100,
+            ItemHeight = 100,
+            Orientation = orientation
+        };
+
+        for (int i = 0; i < itemCount; i++)
+        {
+            panel.Children.Add(new Border
+            {
+                Width = 100,
+                Height = 100,
+                Background = i % 2 == 0 ? Brushes.Red : Brushes.Blue,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            });
+        }
+
+        return panel;
+    }
+
+    private static void AssertItemsStackPanelPositions(ModernItemsStackPanel panel, IReadOnlyList<Point> expectedPositions)
+    {
+        panel.Measure(new Size(panel.Width, panel.Height));
+        panel.Arrange(new Rect(0, 0, panel.Width, panel.Height));
+        panel.UpdateLayout();
+
+        Assert.AreEqual(expectedPositions.Count, panel.Children.Count);
+
+        for (int i = 0; i < expectedPositions.Count; i++)
+        {
+            var actual = ((UIElement)panel.Children[i]).TranslatePoint(new Point(), panel);
+            Assert.AreEqual(expectedPositions[i].X, actual.X, 0.1, $"Unexpected X position for item {i}.");
+            Assert.AreEqual(expectedPositions[i].Y, actual.Y, 0.1, $"Unexpected Y position for item {i}.");
+        }
     }
 
     private static void AssertVariableSizedWrapGridPositions(ModernVariableSizedWrapGrid panel, IReadOnlyList<Point> expectedPositions)
