@@ -133,7 +133,7 @@ namespace ModernWpf.Controls
                 nameof(BackgroundTransition),
                 typeof(BrushTransition),
                 typeof(StackPanelEx),
-                new PropertyMetadata(null));
+                new PropertyMetadata(null, OnBorderPropertyChanged));
 
         public BrushTransition BackgroundTransition
         {
@@ -374,6 +374,8 @@ namespace ModernWpf.Controls
             return 0.0f;
         }
 
+        internal Brush EffectiveBackground => _border?.EffectiveBackground ?? Background;
+
         private static void OnBackgroundPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((StackPanelEx)d).UpdateBorder();
@@ -418,6 +420,7 @@ namespace ModernWpf.Controls
                 return;
             }
 
+            _border.BackgroundTransition = BackgroundTransition;
             _border.Background = Background;
             _border.BackgroundSizing = BackgroundSizing;
             _border.BorderBrush = BorderBrush;

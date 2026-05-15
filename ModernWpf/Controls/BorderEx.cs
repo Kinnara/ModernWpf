@@ -7,6 +7,16 @@ namespace ModernWpf.Controls
 {
     public class BorderEx : Border
     {
+        static BorderEx()
+        {
+            BackgroundProperty.OverrideMetadata(
+                typeof(BorderEx),
+                new FrameworkPropertyMetadata(
+                    null,
+                    FrameworkPropertyMetadataOptions.AffectsRender,
+                    OnBackgroundPropertyChanged));
+        }
+
         public static readonly DependencyProperty BackgroundSizingProperty =
             DependencyProperty.Register(
                 nameof(BackgroundSizing),
@@ -27,7 +37,7 @@ namespace ModernWpf.Controls
                 nameof(BackgroundTransition),
                 typeof(BrushTransition),
                 typeof(BorderEx),
-                new PropertyMetadata(null));
+                new PropertyMetadata(null, OnBackgroundTransitionPropertyChanged));
 
         public BrushTransition BackgroundTransition
         {
@@ -53,7 +63,7 @@ namespace ModernWpf.Controls
             LayoutChromeHelper.DrawChrome(
                 drawingContext,
                 RenderSize,
-                Background,
+                GetEffectiveBackground(),
                 BackgroundSizing,
                 BorderBrush,
                 BorderThickness,
@@ -77,5 +87,34 @@ namespace ModernWpf.Controls
 
             return base.HitTestCore(hitTestParameters);
         }
+
+        internal Brush EffectiveBackground => GetEffectiveBackground();
+
+        private static void OnBackgroundPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var border = (BorderEx)d;
+            if (border.BackgroundTransition != null || border._backgroundTransitionHelper?.IsTransitioning == true)
+            {
+                border.BackgroundTransitionHelper.OnBrushChanged(
+                    (Brush)e.OldValue,
+                    (Brush)e.NewValue,
+                    border.BackgroundTransition);
+            }
+        }
+
+        private static void OnBackgroundTransitionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((BorderEx)d)._backgroundTransitionHelper?.OnTransitionChanged((BrushTransition)e.NewValue);
+        }
+
+        private Brush GetEffectiveBackground()
+        {
+            return _backgroundTransitionHelper?.GetEffectiveBrush(Background) ?? Background;
+        }
+
+        private BrushTransitionHelper BackgroundTransitionHelper =>
+            _backgroundTransitionHelper ?? (_backgroundTransitionHelper = new BrushTransitionHelper(InvalidateVisual));
+
+        private BrushTransitionHelper _backgroundTransitionHelper;
     }
 }

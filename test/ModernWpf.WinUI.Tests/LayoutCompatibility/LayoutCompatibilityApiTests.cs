@@ -40,6 +40,82 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void LayoutChromeControlsUseBackgroundTransitionBrush()
+    {
+        WpfTestHost.Run(() =>
+        {
+            if (!Helper.IsAnimationsEnabled)
+            {
+                return;
+            }
+
+            AssertTransitionBrush(
+                new BorderEx(),
+                (control, brush) => control.Background = brush,
+                (control, transition) => control.BackgroundTransition = transition,
+                control => control.ClearValue(BorderEx.BackgroundTransitionProperty),
+                control => control.EffectiveBackground);
+
+            AssertTransitionBrush(
+                new ContentPresenterEx(),
+                (control, brush) => control.Background = brush,
+                (control, transition) => control.BackgroundTransition = transition,
+                control => control.ClearValue(ContentPresenterEx.BackgroundTransitionProperty),
+                control => control.EffectiveBackground);
+
+            AssertTransitionBrush(
+                new ModernGridEx(),
+                (control, brush) => control.Background = brush,
+                (control, transition) => control.BackgroundTransition = transition,
+                control => control.ClearValue(ModernGridEx.BackgroundTransitionProperty),
+                control => control.EffectiveBackground);
+
+            AssertTransitionBrush(
+                new ModernStackPanelEx(),
+                (control, brush) => control.Background = brush,
+                (control, transition) => control.BackgroundTransition = transition,
+                control => control.ClearValue(ModernStackPanelEx.BackgroundTransitionProperty),
+                control => control.EffectiveBackground);
+        });
+    }
+
+    [TestMethod]
+    public void BrushTransitionHelperUsesWinUISolidColorRules()
+    {
+        WpfTestHost.Run(() =>
+        {
+            if (!ModernWpf.Helper.IsAnimationsEnabled)
+            {
+                Assert.Inconclusive("BrushTransition follows the shared animation-enabled switch.");
+            }
+
+            var invalidations = 0;
+            var helper = new BrushTransitionHelper(() => invalidations++);
+            var transition = new BrushTransition { Duration = TimeSpan.FromHours(1) };
+            var red = new SolidColorBrush(Colors.Red);
+
+            helper.OnBrushChanged(null, red, transition);
+
+            var fadeInBrush = AssertSolidColorBrush(helper.GetEffectiveBrush(red), Color.FromArgb(0, 255, 0, 0));
+            Assert.AreNotSame(red, fadeInBrush);
+            Assert.IsTrue(helper.IsTransitioning);
+
+            var blue = new SolidColorBrush(Colors.Blue);
+            helper.OnBrushChanged(red, blue, transition);
+
+            Assert.AreSame(fadeInBrush, helper.GetEffectiveBrush(blue));
+            Assert.IsTrue(helper.IsTransitioning);
+
+            var gradient = new LinearGradientBrush(Colors.Red, Colors.Blue, 0);
+            helper.OnBrushChanged(blue, gradient, transition);
+
+            Assert.AreSame(gradient, helper.GetEffectiveBrush(gradient));
+            Assert.IsFalse(helper.IsTransitioning);
+            Assert.IsTrue(invalidations >= 3);
+        });
+    }
+
+    [TestMethod]
     public void CoreTextInputDescriptionPresentersUseWinUIPresenterSlot()
     {
         WpfTestHost.Run(() =>
@@ -1797,6 +1873,47 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void GridExDefinitionChangesInvalidateLayout()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var grid = new ModernGridEx
+            {
+                Width = 220,
+                Height = 50,
+                UseLayoutRounding = false,
+                ColumnSpacing = 10
+            };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(50) });
+
+            var first = CreateStretchButton();
+            var second = CreateStretchButton();
+            Grid.SetColumn(second, 1);
+            grid.Children.Add(first);
+            grid.Children.Add(second);
+
+            using var host = new TestWindowHost(grid, width: 240, height: 80);
+            host.UpdateLayout();
+
+            AssertBoundsRelativeTo(first, grid, new Rect(0, 0, 100, 50));
+            AssertBoundsRelativeTo(second, grid, new Rect(0, 0, 100, 50));
+
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+            host.UpdateLayout();
+
+            AssertBoundsRelativeTo(first, grid, new Rect(0, 0, 100, 50));
+            AssertBoundsRelativeTo(second, grid, new Rect(110, 0, 100, 50));
+
+            grid.ColumnDefinitions[0].Width = new GridLength(80);
+            host.UpdateLayout();
+
+            AssertBoundsRelativeTo(first, grid, new Rect(0, 0, 80, 50));
+            AssertBoundsRelativeTo(second, grid, new Rect(90, 0, 100, 50));
+        });
+    }
+
+    [TestMethod]
     public void GridExOuterBackgroundSizingUsesWinUIChromeGeometry()
     {
         WpfTestHost.Run(() =>
@@ -1981,6 +2098,26 @@ public class LayoutCompatibilityApiTests
         Assert.AreEqual(expected.Height, actual.Height, 2.0, "Height");
     }
 
+    private static void AssertTransitionBrush<T>(
+        T control,
+        Action<T, Brush> setBackground,
+        Action<T, BrushTransition> setTransition,
+        Action<T> clearTransition,
+        Func<T, Brush> getEffectiveBackground)
+    {
+        var targetBrush = new SolidColorBrush(Colors.Blue);
+
+        setBackground(control, Brushes.Red);
+        setTransition(control, new BrushTransition { Duration = TimeSpan.FromSeconds(1) });
+        setBackground(control, targetBrush);
+
+        Assert.AreNotSame(targetBrush, getEffectiveBackground(control));
+
+        clearTransition(control);
+
+        Assert.AreSame(targetBrush, getEffectiveBackground(control));
+    }
+
     private static void AssertStackAxisOffsetRelativeTo(FrameworkElement element, Visual ancestor, Orientation orientation, double expected)
     {
         var actual = element.TransformToAncestor(ancestor).Transform(new Point());
@@ -1994,6 +2131,14 @@ public class LayoutCompatibilityApiTests
         {
             Assert.AreEqual(expected[i], actual[i], 0.001f, $"Snap point {i}");
         }
+    }
+
+    private static SolidColorBrush AssertSolidColorBrush(Brush brush, Color expectedColor)
+    {
+        var solidColorBrush = brush as SolidColorBrush
+            ?? throw new AssertFailedException("Expected a SolidColorBrush.");
+        Assert.AreEqual(expectedColor, solidColorBrush.Color);
+        return solidColorBrush;
     }
 
     private static T? FindVisualChild<T>(DependencyObject root)

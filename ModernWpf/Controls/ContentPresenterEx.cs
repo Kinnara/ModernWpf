@@ -24,7 +24,8 @@ namespace ModernWpf.Controls
                 typeof(ContentPresenterEx),
                 new FrameworkPropertyMetadata(
                     null,
-                    FrameworkPropertyMetadataOptions.AffectsRender));
+                    FrameworkPropertyMetadataOptions.AffectsRender,
+                    OnBackgroundPropertyChanged));
 
         public Brush Background
         {
@@ -52,7 +53,7 @@ namespace ModernWpf.Controls
                 nameof(BackgroundTransition),
                 typeof(BrushTransition),
                 typeof(ContentPresenterEx),
-                new PropertyMetadata(null));
+                new PropertyMetadata(null, OnBackgroundTransitionPropertyChanged));
 
         public BrushTransition BackgroundTransition
         {
@@ -574,6 +575,8 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        internal Brush EffectiveBackground => GetEffectiveBackground();
+
         private void ApplyTextProperties()
         {
             if (_textBlock != null)
@@ -648,7 +651,7 @@ namespace ModernWpf.Controls
             LayoutChromeHelper.DrawChrome(
                 drawingContext,
                 renderSize,
-                Background,
+                GetEffectiveBackground(),
                 BackgroundSizing,
                 BorderBrush,
                 borderThickness,
@@ -700,5 +703,32 @@ namespace ModernWpf.Controls
                     return 0;
             }
         }
+
+        private static void OnBackgroundPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var presenter = (ContentPresenterEx)d;
+            if (presenter.BackgroundTransition != null || presenter._backgroundTransitionHelper?.IsTransitioning == true)
+            {
+                presenter.BackgroundTransitionHelper.OnBrushChanged(
+                    (Brush)e.OldValue,
+                    (Brush)e.NewValue,
+                    presenter.BackgroundTransition);
+            }
+        }
+
+        private static void OnBackgroundTransitionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ContentPresenterEx)d)._backgroundTransitionHelper?.OnTransitionChanged((BrushTransition)e.NewValue);
+        }
+
+        private Brush GetEffectiveBackground()
+        {
+            return _backgroundTransitionHelper?.GetEffectiveBrush(Background) ?? Background;
+        }
+
+        private BrushTransitionHelper BackgroundTransitionHelper =>
+            _backgroundTransitionHelper ?? (_backgroundTransitionHelper = new BrushTransitionHelper(InvalidateVisual));
+
+        private BrushTransitionHelper _backgroundTransitionHelper;
     }
 }

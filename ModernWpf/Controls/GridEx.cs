@@ -23,7 +23,7 @@ namespace ModernWpf.Controls
 
         public GridEx()
         {
-            _definitionsHost = new Grid();
+            _definitionsHost = new DefinitionsHost(this);
             _itemsHost = new ItemsHost(this);
             _border = new LayoutChromeDecorator { Child = _itemsHost };
             UpdateBorder();
@@ -51,7 +51,7 @@ namespace ModernWpf.Controls
                 nameof(BackgroundTransition),
                 typeof(BrushTransition),
                 typeof(GridEx),
-                new PropertyMetadata(null));
+                new PropertyMetadata(null, OnBorderPropertyChanged));
 
         public BrushTransition BackgroundTransition
         {
@@ -186,6 +186,7 @@ namespace ModernWpf.Controls
         protected override Size MeasureOverride(Size availableSize)
         {
             _border.Measure(availableSize);
+            ValidateDefinitionsHost();
             return _border.DesiredSize;
         }
 
@@ -211,6 +212,8 @@ namespace ModernWpf.Controls
         {
             return _itemsHost.Children;
         }
+
+        internal Brush EffectiveBackground => _border?.EffectiveBackground ?? Background;
 
         private static bool IsValidSpacing(object value)
         {
@@ -240,6 +243,7 @@ namespace ModernWpf.Controls
                 return;
             }
 
+            _border.BackgroundTransition = BackgroundTransition;
             _border.Background = Background;
             _border.BackgroundSizing = BackgroundSizing;
             _border.BorderBrush = BorderBrush;
@@ -248,9 +252,45 @@ namespace ModernWpf.Controls
             _border.Padding = Padding;
         }
 
-        private readonly Grid _definitionsHost;
+        private void OnDefinitionsHostMeasureInvalidated()
+        {
+            _itemsHost?.InvalidateMeasure();
+            InvalidateMeasure();
+        }
+
+        private void ValidateDefinitionsHost()
+        {
+            if (!_definitionsHost.IsMeasureValid)
+            {
+                _definitionsHost.Measure(new Size());
+            }
+        }
+
+        private readonly DefinitionsHost _definitionsHost;
         private readonly LayoutChromeDecorator _border;
         private readonly ItemsHost _itemsHost;
+
+        private sealed class DefinitionsHost : Grid
+        {
+            public DefinitionsHost(GridEx owner)
+            {
+                _owner = owner;
+            }
+
+            protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+            {
+                base.OnPropertyChanged(e);
+
+                if (e.Property.Name == nameof(IsMeasureValid) &&
+                    e.NewValue is bool isMeasureValid &&
+                    !isMeasureValid)
+                {
+                    _owner.OnDefinitionsHostMeasureInvalidated();
+                }
+            }
+
+            private readonly GridEx _owner;
+        }
 
         private class ItemsHost : Grid
         {

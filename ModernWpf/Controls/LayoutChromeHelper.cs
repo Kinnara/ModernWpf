@@ -360,10 +360,31 @@ namespace ModernWpf.Controls
             get => _background;
             set
             {
-                if (!Equals(_background, value))
+                if (!ReferenceEquals(_background, value))
                 {
+                    var oldValue = _background;
                     _background = value;
-                    InvalidateVisual();
+                    if (BackgroundTransition != null || _backgroundTransitionHelper?.IsTransitioning == true)
+                    {
+                        BackgroundTransitionHelper.OnBrushChanged(oldValue, value, BackgroundTransition);
+                    }
+                    else
+                    {
+                        InvalidateVisual();
+                    }
+                }
+            }
+        }
+
+        public BrushTransition BackgroundTransition
+        {
+            get => _backgroundTransition;
+            set
+            {
+                if (!ReferenceEquals(_backgroundTransition, value))
+                {
+                    _backgroundTransition = value;
+                    _backgroundTransitionHelper?.OnTransitionChanged(value);
                 }
             }
         }
@@ -469,7 +490,7 @@ namespace ModernWpf.Controls
             LayoutChromeHelper.DrawChrome(
                 drawingContext,
                 RenderSize,
-                Background,
+                EffectiveBackground,
                 BackgroundSizing,
                 BorderBrush,
                 BorderThickness,
@@ -499,7 +520,14 @@ namespace ModernWpf.Controls
             return LayoutChromeHelper.Add(BorderThickness, Padding);
         }
 
+        internal Brush EffectiveBackground => _backgroundTransitionHelper?.GetEffectiveBrush(Background) ?? Background;
+
+        private BrushTransitionHelper BackgroundTransitionHelper =>
+            _backgroundTransitionHelper ?? (_backgroundTransitionHelper = new BrushTransitionHelper(InvalidateVisual));
+
         private Brush _background;
+        private BrushTransition _backgroundTransition;
+        private BrushTransitionHelper _backgroundTransitionHelper;
         private BackgroundSizing _backgroundSizing = BackgroundSizing.InnerBorderEdge;
         private Brush _borderBrush;
         private Thickness _borderThickness;
