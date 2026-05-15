@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -670,6 +671,12 @@ public class LayoutCompatibilityApiTests
                 Width = 120,
                 Height = 80,
                 Content = "Hello",
+                FontFamily = new FontFamily("Courier New"),
+                FontSize = 23,
+                FontStretch = FontStretches.Condensed,
+                FontStyle = FontStyles.Italic,
+                FontWeight = FontWeights.Bold,
+                Foreground = Brushes.Blue,
                 LineHeight = 37,
                 LineStackingStrategy = LineStackingStrategy.MaxHeight,
                 MaxLines = 2,
@@ -680,14 +687,24 @@ public class LayoutCompatibilityApiTests
 
             var textBlock = FindVisualChild<TextBlock>(presenter)
                 ?? throw new AssertFailedException("Expected ContentPresenterEx to generate a default TextBlock.");
+            Assert.AreEqual("Courier New", textBlock.FontFamily.Source);
+            Assert.AreEqual(23, textBlock.FontSize);
+            Assert.AreEqual(FontStretches.Condensed, textBlock.FontStretch);
+            Assert.AreEqual(FontStyles.Italic, textBlock.FontStyle);
+            Assert.AreEqual(FontWeights.Bold, textBlock.FontWeight);
+            Assert.AreSame(Brushes.Blue, textBlock.Foreground);
             Assert.AreEqual(TextWrapping.Wrap, textBlock.TextWrapping);
             Assert.AreEqual(37, textBlock.LineHeight);
             Assert.AreEqual(LineStackingStrategy.MaxHeight, textBlock.LineStackingStrategy);
             Assert.AreEqual(74, textBlock.MaxHeight);
             Assert.IsTrue(textBlock.ClipToBounds);
 
+            presenter.Foreground = Brushes.Green;
+            presenter.FontSize = 19;
             presenter.MaxLines = 0;
 
+            Assert.AreSame(Brushes.Green, textBlock.Foreground);
+            Assert.AreEqual(19, textBlock.FontSize);
             Assert.AreEqual(double.PositiveInfinity, textBlock.MaxHeight);
             Assert.IsFalse(textBlock.ClipToBounds);
         });
@@ -1150,6 +1167,97 @@ public class LayoutCompatibilityApiTests
 
             Assert.IsTrue(panel.AreHorizontalSnapPointsRegular);
             Assert.IsFalse(panel.AreVerticalSnapPointsRegular);
+        });
+    }
+
+    [TestMethod]
+    public void StackPanelExComputesWinUISnapPoints()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var panel = new ModernStackPanelEx
+            {
+                Width = 140,
+                Height = 50,
+                Orientation = Orientation.Horizontal,
+                AreScrollSnapPointsRegular = true,
+                Margin = new Thickness(3, 5, 7, 11)
+            };
+            panel.Children.Add(CreateStretchButton(width: 50, height: 20));
+            panel.Children.Add(CreateStretchButton(width: 50, height: 20));
+
+            using var host = new TestWindowHost(panel, width: 180, height: 90);
+
+            var snapInfo = (IScrollSnapPointsInfo)panel;
+            Assert.IsTrue(snapInfo.AreHorizontalSnapPointsRegular);
+            Assert.IsFalse(snapInfo.AreVerticalSnapPointsRegular);
+
+            var interval = snapInfo.GetRegularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Near, out var offset);
+            Assert.AreEqual(3.0f, offset, 0.001f);
+            Assert.AreEqual(50.0f, interval, 0.001f);
+
+            interval = snapInfo.GetRegularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Center, out offset);
+            Assert.AreEqual(28.0f, offset, 0.001f);
+            Assert.AreEqual(50.0f, interval, 0.001f);
+
+            interval = snapInfo.GetRegularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Far, out offset);
+            Assert.AreEqual(7.0f, offset, 0.001f);
+            Assert.AreEqual(50.0f, interval, 0.001f);
+
+            interval = snapInfo.GetRegularSnapPoints(Orientation.Vertical, SnapPointsAlignment.Near, out offset);
+            Assert.AreEqual(0.0f, offset, 0.001f);
+            Assert.AreEqual(0.0f, interval, 0.001f);
+            Assert.ThrowsException<InvalidOperationException>(() => snapInfo.GetIrregularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Near));
+
+            panel.AreScrollSnapPointsRegular = false;
+
+            Assert.ThrowsException<InvalidOperationException>(() => snapInfo.GetRegularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Near, out _));
+            AssertSnapPoints(new[] { 0.0f, 53.0f }, snapInfo.GetIrregularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Near));
+            AssertSnapPoints(new[] { 28.0f, 78.0f }, snapInfo.GetIrregularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Center));
+            AssertSnapPoints(new[] { 53.0f, 103.0f }, snapInfo.GetIrregularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Far));
+            Assert.AreEqual(0, snapInfo.GetIrregularSnapPoints(Orientation.Vertical, SnapPointsAlignment.Near).Count);
+        });
+    }
+
+    [TestMethod]
+    public void StackPanelExRaisesWinUISnapPointChangeEvents()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var panel = new ModernStackPanelEx
+            {
+                Width = 160,
+                Height = 60,
+                Orientation = Orientation.Horizontal,
+                AreScrollSnapPointsRegular = true
+            };
+            var snapInfo = (IScrollSnapPointsInfo)panel;
+            int horizontalChanges = 0;
+            int verticalChanges = 0;
+            snapInfo.HorizontalSnapPointsChanged += (_, __) => horizontalChanges++;
+            snapInfo.VerticalSnapPointsChanged += (_, __) => verticalChanges++;
+
+            panel.Children.Add(CreateStretchButton(width: 40, height: 20));
+
+            using var host = new TestWindowHost(panel, width: 180, height: 80);
+
+            Assert.AreEqual(1, horizontalChanges);
+            Assert.AreEqual(0, verticalChanges);
+
+            panel.AreScrollSnapPointsRegular = false;
+            int beforeChildChange = horizontalChanges;
+            panel.Children.Add(CreateStretchButton(width: 30, height: 20));
+            host.UpdateLayout();
+
+            Assert.IsTrue(horizontalChanges > beforeChildChange);
+            Assert.AreEqual(0, verticalChanges);
+
+            panel.Orientation = Orientation.Vertical;
+            host.UpdateLayout();
+
+            Assert.IsTrue(verticalChanges > 0);
+            Assert.IsFalse(snapInfo.AreHorizontalSnapPointsRegular);
+            Assert.IsFalse(snapInfo.AreVerticalSnapPointsRegular);
         });
     }
 
@@ -1840,6 +1948,15 @@ public class LayoutCompatibilityApiTests
     {
         var actual = element.TransformToAncestor(ancestor).Transform(new Point());
         Assert.AreEqual(expected, orientation == Orientation.Horizontal ? actual.X : actual.Y, 1.0, orientation.ToString());
+    }
+
+    private static void AssertSnapPoints(float[] expected, IReadOnlyList<float> actual)
+    {
+        Assert.AreEqual(expected.Length, actual.Count);
+        for (int i = 0; i < expected.Length; i++)
+        {
+            Assert.AreEqual(expected[i], actual[i], 0.001f, $"Snap point {i}");
+        }
     }
 
     private static T? FindVisualChild<T>(DependencyObject root)

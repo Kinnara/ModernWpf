@@ -1,14 +1,17 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Media;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.Media.Animation;
 
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Children))]
-    public class StackPanelEx : Panel
+    public class StackPanelEx : Panel, IScrollSnapPointsInfo
     {
         public StackPanelEx()
         {
@@ -59,7 +62,7 @@ namespace ModernWpf.Controls
                 nameof(AreScrollSnapPointsRegular),
                 typeof(bool),
                 typeof(StackPanelEx),
-                new PropertyMetadata(false));
+                new PropertyMetadata(false, OnAreScrollSnapPointsRegularPropertyChanged));
 
         public bool AreScrollSnapPointsRegular
         {
@@ -72,6 +75,42 @@ namespace ModernWpf.Controls
 
         public bool AreVerticalSnapPointsRegular =>
             Orientation == System.Windows.Controls.Orientation.Vertical && AreScrollSnapPointsRegular;
+
+        public event EventHandler<object> HorizontalSnapPointsChanged
+        {
+            add
+            {
+                _horizontalSnapPointsChanged += value;
+                CaptureSnapPointSignature(true, out _horizontalSnapPointSignature);
+                _hasHorizontalSnapPointSignature = true;
+            }
+            remove
+            {
+                _horizontalSnapPointsChanged -= value;
+                if (_horizontalSnapPointsChanged == null)
+                {
+                    _hasHorizontalSnapPointSignature = false;
+                }
+            }
+        }
+
+        public event EventHandler<object> VerticalSnapPointsChanged
+        {
+            add
+            {
+                _verticalSnapPointsChanged += value;
+                CaptureSnapPointSignature(false, out _verticalSnapPointSignature);
+                _hasVerticalSnapPointSignature = true;
+            }
+            remove
+            {
+                _verticalSnapPointsChanged -= value;
+                if (_verticalSnapPointsChanged == null)
+                {
+                    _hasVerticalSnapPointSignature = false;
+                }
+            }
+        }
 
         public static readonly DependencyProperty BackgroundSizingProperty =
             DependencyProperty.Register(
@@ -229,9 +268,120 @@ namespace ModernWpf.Controls
             return _itemsHost.Children;
         }
 
+        public IReadOnlyList<float> GetIrregularSnapPoints(Orientation orientation, SnapPointsAlignment alignment)
+        {
+            if (AreScrollSnapPointsRegular)
+            {
+                throw new InvalidOperationException("Irregular snap points are not available when AreScrollSnapPointsRegular is true.");
+            }
+
+            if (!HasSnapPointsForOrientation(orientation))
+            {
+                return Array.Empty<float>();
+            }
+
+            var snapPoints = new List<float>();
+            double lowerMarginSnapPointKey = GetLowerMarginSnapPointKey();
+            double cumulatedDim = 0.0;
+            bool isFirstChild = true;
+
+            foreach (UIElement child in Children)
+            {
+                if (child == null)
+                {
+                    continue;
+                }
+
+                double childDim = GetChildSnapDimension(child);
+                double snapPoint;
+
+                switch (alignment)
+                {
+                    case SnapPointsAlignment.Near:
+                        snapPoint = cumulatedDim;
+                        break;
+
+                    case SnapPointsAlignment.Center:
+                        snapPoint = cumulatedDim + childDim / 2.0;
+                        break;
+
+                    case SnapPointsAlignment.Far:
+                        snapPoint = cumulatedDim + childDim;
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(alignment), alignment, null);
+                }
+
+                cumulatedDim += childDim;
+
+                if (!(alignment == SnapPointsAlignment.Near && isFirstChild))
+                {
+                    snapPoint += lowerMarginSnapPointKey;
+                }
+
+                snapPoints.Add((float)snapPoint);
+                isFirstChild = false;
+            }
+
+            return snapPoints.AsReadOnly();
+        }
+
+        public float GetRegularSnapPoints(Orientation orientation, SnapPointsAlignment alignment, out float offset)
+        {
+            offset = 0.0f;
+
+            if (!AreScrollSnapPointsRegular)
+            {
+                throw new InvalidOperationException("Regular snap points are not available when AreScrollSnapPointsRegular is false.");
+            }
+
+            if (!HasSnapPointsForOrientation(orientation))
+            {
+                return 0.0f;
+            }
+
+            foreach (UIElement child in Children)
+            {
+                if (child == null)
+                {
+                    continue;
+                }
+
+                double childDim = GetChildSnapDimension(child);
+
+                switch (alignment)
+                {
+                    case SnapPointsAlignment.Near:
+                        offset = (float)GetLowerMarginSnapPointKey();
+                        break;
+
+                    case SnapPointsAlignment.Center:
+                        offset = (float)(childDim / 2.0 + GetLowerMarginSnapPointKey());
+                        break;
+
+                    case SnapPointsAlignment.Far:
+                        offset = (float)GetUpperMarginSnapPointKey();
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(alignment), alignment, null);
+                }
+
+                return (float)childDim;
+            }
+
+            return 0.0f;
+        }
+
         private static void OnBackgroundPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((StackPanelEx)d).UpdateBorder();
+        }
+
+        private static void OnAreScrollSnapPointsRegularPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((StackPanelEx)d).NotifySnapPointsChangedIfNeeded();
         }
 
         private static void OnBorderPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -247,6 +397,8 @@ namespace ModernWpf.Controls
                 stackPanel._itemsHost.Orientation = (Orientation)e.NewValue;
                 stackPanel._itemsHost.InvalidateMeasure();
             }
+
+            stackPanel.NotifySnapPointsChangedIfNeeded();
         }
 
         private static void OnSpacingPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -274,8 +426,146 @@ namespace ModernWpf.Controls
             _border.Padding = Padding;
         }
 
+        private bool HasSnapPointsForOrientation(Orientation orientation)
+        {
+            return (Orientation == System.Windows.Controls.Orientation.Horizontal && orientation == System.Windows.Controls.Orientation.Horizontal) ||
+                   (Orientation == System.Windows.Controls.Orientation.Vertical && orientation == System.Windows.Controls.Orientation.Vertical);
+        }
+
+        private double GetChildSnapDimension(UIElement child)
+        {
+            return Orientation == System.Windows.Controls.Orientation.Vertical
+                ? child.DesiredSize.Height
+                : child.DesiredSize.Width;
+        }
+
+        private double GetLowerMarginSnapPointKey()
+        {
+            return Orientation == System.Windows.Controls.Orientation.Horizontal ? Margin.Left : Margin.Top;
+        }
+
+        private double GetUpperMarginSnapPointKey()
+        {
+            return Orientation == System.Windows.Controls.Orientation.Horizontal ? Margin.Right : Margin.Bottom;
+        }
+
+        private void NotifySnapPointsChangedIfNeeded()
+        {
+            NotifySnapPointsChangedIfNeeded(true);
+            NotifySnapPointsChangedIfNeeded(false);
+        }
+
+        private void NotifySnapPointsChangedIfNeeded(bool isHorizontal)
+        {
+            var handlers = isHorizontal ? _horizontalSnapPointsChanged : _verticalSnapPointsChanged;
+            if (handlers == null)
+            {
+                return;
+            }
+
+            CaptureSnapPointSignature(isHorizontal, out var current);
+            bool hasPrevious = isHorizontal ? _hasHorizontalSnapPointSignature : _hasVerticalSnapPointSignature;
+            var previous = isHorizontal ? _horizontalSnapPointSignature : _verticalSnapPointSignature;
+
+            if (!hasPrevious || !current.Equals(previous))
+            {
+                if (isHorizontal)
+                {
+                    _horizontalSnapPointSignature = current;
+                    _hasHorizontalSnapPointSignature = true;
+                }
+                else
+                {
+                    _verticalSnapPointSignature = current;
+                    _hasVerticalSnapPointSignature = true;
+                }
+
+                handlers(this, EventArgs.Empty);
+            }
+        }
+
+        private void CaptureSnapPointSignature(bool isHorizontal, out SnapPointSignature signature)
+        {
+            bool isActiveAxis = isHorizontal
+                ? Orientation == System.Windows.Controls.Orientation.Horizontal
+                : Orientation == System.Windows.Controls.Orientation.Vertical;
+
+            if (!isActiveAxis)
+            {
+                signature = new SnapPointSignature(false, false, 0.0, 0.0, Array.Empty<double>());
+                return;
+            }
+
+            signature = new SnapPointSignature(
+                true,
+                AreScrollSnapPointsRegular,
+                GetLowerMarginSnapPointKey(),
+                GetUpperMarginSnapPointKey(),
+                GetSnapPointKeys());
+        }
+
+        private double[] GetSnapPointKeys()
+        {
+            if (AreScrollSnapPointsRegular)
+            {
+                foreach (UIElement child in Children)
+                {
+                    if (child != null)
+                    {
+                        return new[] { GetChildSnapDimension(child) };
+                    }
+                }
+
+                return new[] { 0.0 };
+            }
+
+            var keys = new List<double>();
+            foreach (UIElement child in Children)
+            {
+                if (child != null)
+                {
+                    keys.Add(GetChildSnapDimension(child));
+                }
+            }
+
+            return keys.ToArray();
+        }
+
         private readonly LayoutChromeDecorator _border;
         private readonly ItemsHost _itemsHost;
+        private EventHandler<object> _horizontalSnapPointsChanged;
+        private EventHandler<object> _verticalSnapPointsChanged;
+        private SnapPointSignature _horizontalSnapPointSignature;
+        private SnapPointSignature _verticalSnapPointSignature;
+        private bool _hasHorizontalSnapPointSignature;
+        private bool _hasVerticalSnapPointSignature;
+
+        private readonly struct SnapPointSignature
+        {
+            public SnapPointSignature(bool isActiveAxis, bool areRegular, double lowerMargin, double upperMargin, double[] keys)
+            {
+                IsActiveAxis = isActiveAxis;
+                AreRegular = areRegular;
+                LowerMargin = lowerMargin;
+                UpperMargin = upperMargin;
+                Keys = keys;
+            }
+
+            public bool Equals(SnapPointSignature other)
+            {
+                return IsActiveAxis == other.IsActiveAxis &&
+                    AreRegular == other.AreRegular &&
+                    LowerMargin.Equals(other.LowerMargin) &&
+                    UpperMargin.Equals(other.UpperMargin) &&
+                    Keys.SequenceEqual(other.Keys);
+            }
+
+            private bool IsActiveAxis { get; }
+            private bool AreRegular { get; }
+            private double LowerMargin { get; }
+            private double UpperMargin { get; }
+            private double[] Keys { get; }
+        }
 
         private class ItemsHost : Panel
         {
@@ -392,6 +682,7 @@ namespace ModernWpf.Controls
                     child.Arrange(childRect);
                 }
 
+                _owner.NotifySnapPointsChangedIfNeeded();
                 return arrangeSize;
             }
 
