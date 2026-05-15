@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.Media.Animation;
 
@@ -128,5 +129,36 @@ namespace ModernWpf.Controls
         }
 
         #endregion
+
+        public UIElement ContentTemplateRoot => GetContentTemplateRoot();
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            _contentPresenter = GetTemplateChild(ContentPresenterTemplatePartName) as ContentPresenter;
+        }
+
+        private UIElement GetContentTemplateRoot()
+        {
+            if (_contentPresenter == null)
+            {
+                return null;
+            }
+
+            int childCount = VisualTreeHelper.GetChildrenCount(_contentPresenter);
+            for (int i = 0; i < childCount; i++)
+            {
+                if (VisualTreeHelper.GetChild(_contentPresenter, i) is UIElement child)
+                {
+                    return child;
+                }
+            }
+
+            return null;
+        }
+
+        private const string ContentPresenterTemplatePartName = "PART_ContentPresenter";
+        private ContentPresenter _contentPresenter;
     }
 }

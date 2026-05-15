@@ -824,7 +824,44 @@ public class LayoutCompatibilityApiTests
             Assert.AreEqual(HorizontalAlignment.Right, presenter.HorizontalContentAlignment);
             Assert.IsFalse(presenter.IsTextScaleFactorEnabled);
             Assert.AreEqual(VerticalAlignment.Bottom, presenter.VerticalContentAlignment);
+            Assert.AreSame(button, control.ContentTemplateRoot);
             AssertBoundsRelativeTo(button, control, new Rect(65, 45, 40, 20));
+        });
+    }
+
+    [TestMethod]
+    public void ContentControlExExposesWinUIContentTemplateRoot()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var template = (DataTemplate)XamlReader.Parse(
+                """
+                <DataTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+                    <TextBlock Text="{Binding}" />
+                </DataTemplate>
+                """);
+            var control = new ModernContentControlEx
+            {
+                Width = 120,
+                Height = 60,
+                Content = "Templated",
+                ContentTemplate = template
+            };
+
+            Assert.IsNull(control.ContentTemplateRoot);
+
+            using var host = new TestWindowHost(control, width: 140, height: 80);
+
+            var textBlock = control.ContentTemplateRoot as TextBlock
+                ?? throw new AssertFailedException("Expected ContentTemplateRoot to expose the generated data-template root.");
+            Assert.AreEqual("Templated", textBlock.Text);
+
+            var button = CreateButton(40, 20);
+            control.ContentTemplate = null;
+            control.Content = button;
+            host.UpdateLayout();
+
+            Assert.AreSame(button, control.ContentTemplateRoot);
         });
     }
 

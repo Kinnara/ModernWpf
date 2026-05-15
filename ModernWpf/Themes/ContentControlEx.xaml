@@ -5,7 +5,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentControlEx">
-                    <local:ContentPresenterEx Content="{TemplateBinding Content}"
+                    <local:ContentPresenterEx x:Name="PART_ContentPresenter"
+                                              Content="{TemplateBinding Content}"
                                               Background="{TemplateBinding Background}"
                                               BackgroundSizing="{TemplateBinding BackgroundSizing}"
                                               BackgroundTransition="{TemplateBinding BackgroundTransition}"
