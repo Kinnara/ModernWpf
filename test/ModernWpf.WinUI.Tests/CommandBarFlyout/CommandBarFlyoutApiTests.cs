@@ -224,6 +224,8 @@ public class CommandBarFlyoutApiTests
 
             Assert.AreEqual(BackgroundSizing.OuterBorderEdge, innerBorder.BackgroundSizing);
             Assert.AreEqual(button.CornerRadius, innerBorder.CornerRadius);
+            Assert.IsNotNull(innerBorder.BackgroundTransition);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(83), innerBorder.BackgroundTransition.Duration);
             Assert.AreSame(icon, content.Content);
             Assert.AreEqual(button.Foreground, content.Foreground);
         });
@@ -254,6 +256,8 @@ public class CommandBarFlyoutApiTests
             var content = FindTemplateChild<ContentPresenterEx>(button, "Content");
 
             Assert.AreEqual(BackgroundSizing.OuterBorderEdge, innerBorder.BackgroundSizing);
+            Assert.IsNotNull(innerBorder.BackgroundTransition);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(83), innerBorder.BackgroundTransition.Duration);
             Assert.AreSame(icon, content.Content);
             Assert.AreEqual(button.Foreground, content.Foreground);
         });

@@ -83,9 +83,9 @@
                                 BackgroundSizing="{TemplateBinding BackgroundSizing}"
                                 ui:FocusVisualHelper.IsTemplateFocusTarget="True">
 
-                            <!--<contract7Present:Border.BackgroundTransition>
-                            <contract7Present:BrushTransition Duration="0:0:0.083" />
-                            </contract7Present:Border.BackgroundTransition>-->
+                            <ui:BorderEx.BackgroundTransition>
+                                <ui:BrushTransition Duration="0:0:0.083" />
+                            </ui:BorderEx.BackgroundTransition>
                         </ui:BorderEx>
 
                         <Grid x:Name="ContentRoot" Width="40">
@@ -319,9 +319,9 @@
                             BackgroundSizing="{TemplateBinding BackgroundSizing}"
                             ui:FocusVisualHelper.IsTemplateFocusTarget="True">
 
-                            <!--<contract7Present:Border.BackgroundTransition>
-                                <contract7Present:BrushTransition Duration="0:0:0.083" />
-                            </contract7Present:Border.BackgroundTransition>-->
+                            <ui:BorderEx.BackgroundTransition>
+                                <ui:BrushTransition Duration="0:0:0.083" />
+                            </ui:BorderEx.BackgroundTransition>
                         </ui:BorderEx>
 
                         <Grid x:Name="ContentRoot" Width="40">
