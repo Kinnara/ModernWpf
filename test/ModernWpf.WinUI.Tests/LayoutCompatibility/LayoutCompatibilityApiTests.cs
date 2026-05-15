@@ -14,6 +14,7 @@ using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 using ModernContentControlEx = ModernWpf.Controls.ContentControlEx;
 using ModernGridEx = ModernWpf.Controls.GridEx;
+using ModernRelativePanel = ModernWpf.Controls.RelativePanel;
 using ModernStackPanelEx = ModernWpf.Controls.StackPanelEx;
 
 namespace ModernWpf.WinUI.Tests.LayoutCompatibility;
@@ -68,6 +69,13 @@ public class LayoutCompatibilityApiTests
                 (control, brush) => control.Background = brush,
                 (control, transition) => control.BackgroundTransition = transition,
                 control => control.ClearValue(ModernGridEx.BackgroundTransitionProperty),
+                control => control.EffectiveBackground);
+
+            AssertTransitionBrush(
+                new ModernRelativePanel(),
+                (control, brush) => control.Background = brush,
+                (control, transition) => control.BackgroundTransition = transition,
+                control => control.ClearValue(ModernRelativePanel.BackgroundTransitionProperty),
                 control => control.EffectiveBackground);
 
             AssertTransitionBrush(
@@ -2017,6 +2025,167 @@ public class LayoutCompatibilityApiTests
             Assert.AreEqual(new CornerRadius(3), grid.CornerRadius);
             Assert.AreEqual(BackgroundSizing.OuterBorderEdge, grid.BackgroundSizing);
             Assert.AreEqual(1, grid.Children.Count);
+        });
+    }
+
+    [TestMethod]
+    public void RelativePanelAcceptsWinUILayoutSurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var backgroundTransition = new BrushTransition { Duration = TimeSpan.FromMilliseconds(70) };
+            var childrenTransitions = new ModernWpf.Media.Animation.TransitionCollection();
+            var panel = new ModernRelativePanel
+            {
+                BackgroundSizing = BackgroundSizing.OuterBorderEdge,
+                BackgroundTransition = backgroundTransition,
+                BorderBrush = Brushes.Blue,
+                BorderThickness = new Thickness(2),
+                ChildrenTransitions = childrenTransitions,
+                CornerRadius = new CornerRadius(4),
+                Padding = new Thickness(3)
+            };
+
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, panel.BackgroundSizing);
+            Assert.AreSame(backgroundTransition, panel.BackgroundTransition);
+            Assert.AreSame(Brushes.Blue, panel.BorderBrush);
+            Assert.AreEqual(new Thickness(2), panel.BorderThickness);
+            Assert.AreSame(childrenTransitions, panel.ChildrenTransitions);
+            Assert.AreEqual(new CornerRadius(4), panel.CornerRadius);
+            Assert.AreEqual(new Thickness(3), panel.Padding);
+        });
+    }
+
+    [TestMethod]
+    public void RelativePanelArrangesWinUIConstraintsAndInvalidatesOnChange()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var panel = new ModernRelativePanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                UseLayoutRounding = false
+            };
+            var first = CreateLayoutBox(width: 100, height: 100);
+            var second = CreateLayoutBox(width: 100, height: 100);
+            var third = CreateLayoutBox(width: 100, height: 100);
+
+            ModernRelativePanel.SetRightOf(second, first);
+            ModernRelativePanel.SetRightOf(third, second);
+            panel.Children.Add(first);
+            panel.Children.Add(second);
+            panel.Children.Add(third);
+
+            using var host = new TestWindowHost(panel, width: 400, height: 400);
+
+            AssertBoundsRelativeTo(first, panel, new Rect(0, 0, 100, 100));
+            AssertBoundsRelativeTo(second, panel, new Rect(100, 0, 100, 100));
+            AssertBoundsRelativeTo(third, panel, new Rect(200, 0, 100, 100));
+
+            ModernRelativePanel.SetRightOf(second, null);
+            ModernRelativePanel.SetRightOf(third, null);
+            ModernRelativePanel.SetBelow(second, first);
+            ModernRelativePanel.SetBelow(third, second);
+            host.UpdateLayout();
+
+            AssertBoundsRelativeTo(first, panel, new Rect(0, 0, 100, 100));
+            AssertBoundsRelativeTo(second, panel, new Rect(0, 100, 100, 100));
+            AssertBoundsRelativeTo(third, panel, new Rect(0, 200, 100, 100));
+        });
+    }
+
+    [TestMethod]
+    public void RelativePanelUsesWinUIBorderChromeForLayout()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var panel = new ModernRelativePanel
+            {
+                BorderBrush = Brushes.Red,
+                BorderThickness = new Thickness(10),
+                Padding = new Thickness(10),
+                CornerRadius = new CornerRadius(10),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                UseLayoutRounding = false
+            };
+            var first = CreateLayoutBox(width: 100, height: 100);
+            var second = CreateLayoutBox(width: 100, height: 100);
+            var third = CreateLayoutBox(width: 100, height: 100);
+
+            ModernRelativePanel.SetRightOf(second, first);
+            ModernRelativePanel.SetRightOf(third, second);
+            panel.Children.Add(first);
+            panel.Children.Add(second);
+            panel.Children.Add(third);
+
+            using var host = new TestWindowHost(panel, width: 400, height: 400);
+
+            Assert.AreEqual(340, panel.RenderSize.Width, 1.0);
+            Assert.AreEqual(140, panel.RenderSize.Height, 1.0);
+            AssertBoundsRelativeTo(first, panel, new Rect(20, 20, 100, 100));
+            AssertBoundsRelativeTo(second, panel, new Rect(120, 20, 100, 100));
+            AssertBoundsRelativeTo(third, panel, new Rect(220, 20, 100, 100));
+        });
+    }
+
+    [TestMethod]
+    public void RelativePanelParsesWinUIConstraintXaml()
+    {
+        WpfTestHost.Run(() =>
+        {
+            const string xaml =
+                """
+                <controls:RelativePanel
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Padding="5"
+                    BorderThickness="1"
+                    CornerRadius="3"
+                    BackgroundSizing="OuterBorderEdge">
+                    <Border x:Name="b0" Width="50" Height="20" Background="Transparent" />
+                    <Border x:Name="b1" Width="30" Height="20" Background="Transparent" controls:RelativePanel.RightOf="b0" />
+                </controls:RelativePanel>
+                """;
+
+            var panel = (ModernRelativePanel)XamlReader.Parse(xaml);
+
+            Assert.AreEqual(new Thickness(5), panel.Padding);
+            Assert.AreEqual(new Thickness(1), panel.BorderThickness);
+            Assert.AreEqual(new CornerRadius(3), panel.CornerRadius);
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, panel.BackgroundSizing);
+            Assert.AreEqual(2, panel.Children.Count);
+
+            using var host = new TestWindowHost(panel, width: 120, height: 80);
+
+            AssertBoundsRelativeTo((FrameworkElement)panel.Children[0], panel, new Rect(6, 6, 50, 20));
+            AssertBoundsRelativeTo((FrameworkElement)panel.Children[1], panel, new Rect(56, 6, 30, 20));
+        });
+    }
+
+    [TestMethod]
+    public void RelativePanelRejectsInvalidWinUIConstraints()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var panel = new ModernRelativePanel();
+            var first = CreateLayoutBox(width: 100, height: 100);
+            var second = CreateLayoutBox(width: 100, height: 100);
+            panel.Children.Add(first);
+            panel.Children.Add(second);
+
+            Assert.ThrowsException<ArgumentException>(() => ModernRelativePanel.SetRightOf(second, true));
+
+            ModernRelativePanel.SetRightOf(second, "missing");
+            Assert.ThrowsException<InvalidOperationException>(() => panel.Measure(new Size(300, 300)));
+
+            ModernRelativePanel.SetRightOf(second, first);
+            ModernRelativePanel.SetLeftOf(first, second);
+            Assert.ThrowsException<InvalidOperationException>(() => panel.Measure(new Size(300, 300)));
         });
     }
 
