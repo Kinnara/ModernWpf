@@ -1,6 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
     <Style TargetType="local:SelectorBar">
@@ -19,6 +20,11 @@
     </Style>
 
     <Style TargetType="local:SelectorBarItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BackgroundSizing" Value="OuterBorderEdge" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Focusable" Value="True" />
         <Setter Property="Padding" Value="12,8" />
         <Setter Property="Template">
@@ -27,20 +33,26 @@
                     <Button
                         x:Name="PART_Button"
                         Padding="{TemplateBinding Padding}"
-                        Background="Transparent"
-                        BorderThickness="0"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
                         Focusable="False"
-                        Foreground="{TemplateBinding Foreground}">
+                        Foreground="{TemplateBinding Foreground}"
+                        ui:ControlHelper.BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                        ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}">
                         <StackPanel Orientation="Horizontal">
-                            <ContentPresenter
+                            <ui:ContentPresenterEx
                                 Margin="0,0,6,0"
                                 Content="{TemplateBinding Icon}"
+                                Foreground="{TemplateBinding Foreground}"
                                 VerticalAlignment="Center" />
                             <TextBlock
                                 Text="{TemplateBinding Text}"
+                                Foreground="{TemplateBinding Foreground}"
                                 VerticalAlignment="Center" />
-                            <ContentPresenter
+                            <ui:ContentPresenterEx
                                 Content="{TemplateBinding Child}"
+                                Foreground="{TemplateBinding Foreground}"
                                 VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>

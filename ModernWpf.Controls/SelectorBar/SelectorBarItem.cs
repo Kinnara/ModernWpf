@@ -3,6 +3,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ModernWpf.Automation.Peers;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -15,6 +16,34 @@ namespace ModernWpf.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SelectorBarItem), new FrameworkPropertyMetadata(typeof(SelectorBarItem)));
         }
+
+        #region BackgroundSizing
+
+        public static readonly DependencyProperty BackgroundSizingProperty =
+            ControlHelper.BackgroundSizingProperty.AddOwner(
+                typeof(SelectorBarItem),
+                new FrameworkPropertyMetadata(BackgroundSizing.OuterBorderEdge));
+
+        public BackgroundSizing BackgroundSizing
+        {
+            get => (BackgroundSizing)GetValue(BackgroundSizingProperty);
+            set => SetValue(BackgroundSizingProperty, value);
+        }
+
+        #endregion
+
+        #region CornerRadius
+
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(SelectorBarItem));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register(

@@ -5,8 +5,10 @@ using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.SelectorBar;
@@ -25,6 +27,8 @@ public class SelectorBarApiTests
             Assert.IsNull(selectorBarItem.Icon);
             Assert.IsNull(selectorBarItem.Child);
             Assert.IsFalse(selectorBarItem.IsSelected);
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, selectorBarItem.BackgroundSizing);
+            Assert.AreEqual(new CornerRadius(), selectorBarItem.CornerRadius);
         });
     }
 
@@ -40,6 +44,47 @@ public class SelectorBarApiTests
             Assert.IsNull(selectorBar.SelectedItem);
             Assert.IsFalse(selectorBar.Focusable);
             Assert.AreEqual(KeyboardNavigationMode.Once, KeyboardNavigation.GetTabNavigation(selectorBar));
+        });
+    }
+
+    [TestMethod]
+    public void SelectorBarItemTemplateUsesWinUIPresenterSurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var icon = new SymbolIcon(Symbol.Delete);
+            var child = new Border { Width = 20, Height = 12 };
+            var foreground = new SolidColorBrush(Colors.Blue);
+            var item = new SelectorBarItem
+            {
+                Text = "Deleted",
+                Icon = icon,
+                Child = child,
+                BackgroundSizing = BackgroundSizing.OuterBorderEdge,
+                CornerRadius = new CornerRadius(5),
+                Foreground = foreground
+            };
+
+            using var host = new TestWindowHost(item, width: 240, height: 80);
+
+            var button = VisualTreeTestHelper
+                .EnumerateDescendants(item)
+                .OfType<Button>()
+                .FirstOrDefault()
+                ?? throw new AssertFailedException("Expected SelectorBarItem template to contain an item button.");
+            var presenters = VisualTreeTestHelper
+                .EnumerateDescendants(item)
+                .OfType<ContentPresenterEx>()
+                .ToList();
+            var iconPresenter = presenters.FirstOrDefault(candidate => ReferenceEquals(candidate.Content, icon))
+                ?? throw new AssertFailedException("Expected SelectorBarItem template to use ContentPresenterEx for the icon slot.");
+            var childPresenter = presenters.FirstOrDefault(candidate => ReferenceEquals(candidate.Content, child))
+                ?? throw new AssertFailedException("Expected SelectorBarItem template to use ContentPresenterEx for the child slot.");
+
+            Assert.AreEqual(BackgroundSizing.OuterBorderEdge, ControlHelper.GetBackgroundSizing(button));
+            Assert.AreEqual(new CornerRadius(5), ControlHelper.GetCornerRadius(button));
+            Assert.AreSame(foreground, iconPresenter.Foreground);
+            Assert.AreSame(foreground, childPresenter.Foreground);
         });
     }
 
