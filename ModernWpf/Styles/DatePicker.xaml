@@ -188,12 +188,12 @@
                                 </Popup.PlacementRectangle>
                             </Popup>
                         </Grid>
-                        <ContentPresenter
+                        <local:ContentPresenterEx
                             x:Name="DescriptionPresenter"
                             Grid.Row="2"
                             Content="{TemplateBinding primitives:ControlHelper.Description}"
                             Visibility="{TemplateBinding primitives:ControlHelper.DescriptionVisibility}"
-                            TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
+                            Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </Grid>
                     <ControlTemplate.Triggers>

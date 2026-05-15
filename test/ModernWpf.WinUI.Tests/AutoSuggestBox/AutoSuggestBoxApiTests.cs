@@ -62,6 +62,7 @@ public class AutoSuggestBoxApiTests
             var queryIcon = new SymbolIcon(Symbol.Find);
             var autoSuggestBox = new MuxAutoSuggestBox
             {
+                Description = "Search description",
                 QueryIcon = queryIcon,
                 Width = 400
             };
@@ -85,6 +86,13 @@ public class AutoSuggestBoxApiTests
             Assert.AreEqual(queryButton.Padding, presenter.Padding);
             Assert.AreEqual(ControlHelper.GetCornerRadius(queryButton), presenter.CornerRadius);
             Assert.AreEqual(12d, presenter.FontSize);
+
+            var descriptionPresenter = FindTemplateChild<ContentPresenterEx>(textBox, "DescriptionPresenter");
+            Assert.AreEqual("Search description", descriptionPresenter.Content);
+            Assert.AreEqual(Visibility.Visible, descriptionPresenter.Visibility);
+            Assert.AreSame(
+                descriptionPresenter.TryFindResource("SystemControlDescriptionTextForegroundBrush"),
+                descriptionPresenter.Foreground);
         });
     }
 

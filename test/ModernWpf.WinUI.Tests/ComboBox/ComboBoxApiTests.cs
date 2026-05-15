@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -22,6 +23,7 @@ public class ComboBoxApiTests
             TestApplication.EnsureInitialized();
 
             var comboBox = CreateComboBox();
+            comboBox.SelectedIndex = 0;
 
             using var host = new TestWindowHost(comboBox);
             host.UpdateLayout();
@@ -31,6 +33,19 @@ public class ComboBoxApiTests
             Assert.IsTrue(ComboBoxHelper.GetKeepInteriorCornersSquare(comboBox));
             Assert.IsNotNull(ComboBoxHelper.GetTextBoxStyle(comboBox));
             Assert.AreEqual(new Thickness(0), comboBox.TryFindResource("ComboBoxDropdownBorderPadding"));
+
+            ControlHelper.SetDescription(comboBox, "Pick one");
+            host.UpdateLayout();
+
+            var contentPresenter = FindTemplateChild<ContentPresenterEx>(comboBox, "ContentPresenter");
+            Assert.AreEqual("Item 1", contentPresenter.Content);
+
+            var descriptionPresenter = FindTemplateChild<ContentPresenterEx>(comboBox, "DescriptionPresenter");
+            Assert.AreEqual("Pick one", descriptionPresenter.Content);
+            Assert.AreEqual(Visibility.Visible, descriptionPresenter.Visibility);
+            Assert.AreSame(
+                descriptionPresenter.TryFindResource("SystemControlDescriptionTextForegroundBrush"),
+                descriptionPresenter.Foreground);
 
             comboBox.IsEditable = true;
             host.UpdateLayout();
@@ -47,6 +62,27 @@ public class ComboBoxApiTests
             AssertThemeResourceReference("Light", "ComboBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
             AssertThemeResourceReference("Dark", "ComboBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
             AssertThemeResourceReference("HighContrast", "ComboBoxLightDismissOverlayBackground", "SystemControlPageBackgroundMediumAltMediumBrush");
+        });
+    }
+
+    [TestMethod]
+    public void VerifyComboBoxItemTemplateUsesWinUIPresenterSlot()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var item = new ComboBoxItem
+            {
+                Content = "Item content"
+            };
+
+            using var host = new TestWindowHost(item);
+            host.UpdateLayout();
+
+            var presenter = FindTemplateChild<ContentPresenterEx>(item, "ContentPresenter");
+            Assert.AreEqual("Item content", presenter.Content);
+            Assert.AreSame(item.Foreground, presenter.Foreground);
         });
     }
 

@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 using ModernContentControlEx = ModernWpf.Controls.ContentControlEx;
 using ModernGridEx = ModernWpf.Controls.GridEx;
@@ -33,6 +34,41 @@ public class LayoutCompatibilityApiTests
             Assert.AreEqual(BackgroundSizing.OuterBorderEdge, border.BackgroundSizing);
             Assert.AreEqual(TimeSpan.FromMilliseconds(83), border.BackgroundTransition.Duration);
             Assert.IsNotNull(border.ChildTransitions);
+        });
+    }
+
+    [TestMethod]
+    public void CoreTextInputDescriptionPresentersUseWinUIPresenterSlot()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var controls = new Control[]
+            {
+                new TextBox(),
+                new PasswordBox(),
+                new RichTextBox(),
+                new DatePicker()
+            };
+
+            foreach (var control in controls)
+            {
+                ControlHelper.SetDescription(control, control.GetType().Name + " description");
+            }
+
+            using var host = new TestWindowHost(new StackPanel { Children = { controls[0], controls[1], controls[2], controls[3] } });
+            host.UpdateLayout();
+
+            foreach (var control in controls)
+            {
+                var descriptionPresenter = FindTemplateChild<ContentPresenterEx>(control, "DescriptionPresenter");
+                Assert.AreEqual(ControlHelper.GetDescription(control), descriptionPresenter.Content);
+                Assert.AreEqual(Visibility.Visible, descriptionPresenter.Visibility);
+                Assert.AreSame(
+                    descriptionPresenter.TryFindResource("SystemControlDescriptionTextForegroundBrush"),
+                    descriptionPresenter.Foreground);
+            }
         });
     }
 
@@ -1450,6 +1486,14 @@ public class LayoutCompatibilityApiTests
         }
 
         return null;
+    }
+
+    private static T FindTemplateChild<T>(Control control, string name)
+        where T : FrameworkElement
+    {
+        control.ApplyTemplate();
+        return control.Template?.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected template child '{name}' on {control.GetType().Name}.");
     }
 
     private static Color RenderBorderEdgePixel(BackgroundSizing backgroundSizing)

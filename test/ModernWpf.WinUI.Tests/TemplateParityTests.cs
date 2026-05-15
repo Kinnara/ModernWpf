@@ -55,6 +55,30 @@ public class TemplateParityTests
             "These source-backed template files should use ContentPresenterEx for presenter slots. Offenders: " + string.Join("; ", offenders));
     }
 
+    [TestMethod]
+    public void CoreInputSourceBackedPresenterSlotsDoNotUsePlainContentPresenter()
+    {
+        var repoRoot = FindRepoRoot();
+        var sourceBackedTemplateFiles = new[]
+        {
+            Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
+            Path.Combine("ModernWpf", "Styles", "PasswordBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "RichTextBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "TextBox.xaml")
+        };
+
+        var offenders = sourceBackedTemplateFiles
+            .Select(path => Path.Combine(repoRoot, path))
+            .SelectMany(path => FindPlainContentPresenterElementUses(repoRoot, path))
+            .ToArray();
+
+        Assert.IsFalse(
+            offenders.Any(),
+            "These core input template files should use ContentPresenterEx for source-backed presenter slots. Offenders: " + string.Join("; ", offenders));
+    }
+
     private static string FindRepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
