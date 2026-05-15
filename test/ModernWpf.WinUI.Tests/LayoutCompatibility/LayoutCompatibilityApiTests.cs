@@ -227,6 +227,53 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void CoreResidualTemplatesUseWinUIPresenterSlots()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var radioButton = new RadioButton
+            {
+                Content = "Radio content",
+                Foreground = Brushes.Red
+            };
+            var listViewHeaderItem = new ListViewHeaderItem
+            {
+                Content = "List header",
+                Foreground = Brushes.Blue
+            };
+            var titleBarButton = new TitleBarButton
+            {
+                Content = "X",
+                Foreground = Brushes.Green,
+                IsActive = true
+            };
+
+            var hostPanel = new StackPanel();
+            hostPanel.Children.Add(radioButton);
+            hostPanel.Children.Add(listViewHeaderItem);
+            hostPanel.Children.Add(titleBarButton);
+
+            using var host = new TestWindowHost(hostPanel, width: 320, height: 180);
+            host.UpdateLayout();
+
+            var radioPresenter = FindTemplateChild<ContentPresenterEx>(radioButton, "ContentPresenter");
+            Assert.AreEqual(radioButton.Content, radioPresenter.Content);
+            Assert.AreSame(radioButton.Foreground, radioPresenter.Foreground);
+
+            var headerPresenter = FindTemplateChild<ContentPresenterEx>(listViewHeaderItem, "ContentPresenter");
+            Assert.AreEqual(listViewHeaderItem.Content, headerPresenter.Content);
+            Assert.AreSame(listViewHeaderItem.Foreground, headerPresenter.Foreground);
+
+            var titlePresenter = FindTemplateChild<ContentPresenterEx>(titleBarButton, "Content");
+            Assert.AreEqual(titleBarButton.Content, titlePresenter.Content);
+            Assert.AreSame(titleBarButton.Foreground, titlePresenter.Foreground);
+            Assert.AreEqual(titleBarButton.FontSize, titlePresenter.FontSize);
+        });
+    }
+
+    [TestMethod]
     public void BorderExParsesTemplateCompatibilityXaml()
     {
         WpfTestHost.Run(() =>

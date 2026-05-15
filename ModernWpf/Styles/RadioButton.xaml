@@ -155,7 +155,11 @@
 
                             <local:ContentPresenterEx
                                 x:Name="ContentPresenter"
-                                TextElement.Foreground="{TemplateBinding Foreground}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                Foreground="{TemplateBinding Foreground}"
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"

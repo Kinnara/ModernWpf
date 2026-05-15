@@ -26,8 +26,13 @@
                         CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
                         SnapsToDevicePixels="True">
                         <StackPanel>
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 x:Name="ContentPresenter"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                Foreground="{TemplateBinding Foreground}"
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
