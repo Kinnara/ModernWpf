@@ -162,6 +162,40 @@ public class InfoBarApiTests
     }
 
     [TestMethod]
+    public void InfoBarTemplateUsesWinUIContentPresenterSlots()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var bannerContent = new TextBlock { Text = "details" };
+            var actionButton = new HyperlinkButton { Content = "Learn more" };
+            var infoBar = new ModernWpf.Controls.InfoBar
+            {
+                IsOpen = true,
+                Title = "Title",
+                Content = bannerContent,
+                ActionButton = actionButton
+            };
+
+            using var host = new TestWindowHost(infoBar, width: 400, height: 140);
+
+            var contentArea = FindNamedDescendant<ContentPresenterEx>(infoBar, "ContentArea");
+            Assert.AreSame(bannerContent, contentArea.Content);
+            Assert.AreEqual(1, Grid.GetColumn(contentArea));
+            Assert.AreEqual(1, Grid.GetRow(contentArea));
+            Assert.AreEqual(VerticalAlignment.Center, contentArea.VerticalAlignment);
+
+            var actionPresenter = FindContentPresenter(infoBar, actionButton);
+            Assert.AreEqual(VerticalAlignment.Top, actionPresenter.VerticalAlignment);
+            Assert.AreEqual(
+                new Thickness(16, 8, 0, 0),
+                InfoBarPanel.GetHorizontalOrientationMargin(actionPresenter));
+            Assert.AreEqual(
+                new Thickness(0, 12, 0, 0),
+                InfoBarPanel.GetVerticalOrientationMargin(actionPresenter));
+        });
+    }
+
+    [TestMethod]
     public void InfoBarAutomationPeerTest()
     {
         WpfTestHost.Run(() =>
@@ -240,5 +274,18 @@ public class InfoBarApiTests
         }
 
         throw new InvalidOperationException($"Could not find descendant named '{name}'.");
+    }
+
+    private static ContentPresenterEx FindContentPresenter(DependencyObject root, object content)
+    {
+        foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
+        {
+            if (descendant is ContentPresenterEx presenter && ReferenceEquals(presenter.Content, content))
+            {
+                return presenter;
+            }
+        }
+
+        throw new InvalidOperationException("Could not find ContentPresenterEx for the expected content.");
     }
 }
