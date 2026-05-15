@@ -12,6 +12,7 @@ using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
+using ModernCanvasEx = ModernWpf.Controls.CanvasEx;
 using ModernContentControlEx = ModernWpf.Controls.ContentControlEx;
 using ModernGridEx = ModernWpf.Controls.GridEx;
 using ModernRelativePanel = ModernWpf.Controls.RelativePanel;
@@ -58,6 +59,13 @@ public class LayoutCompatibilityApiTests
                 control => control.EffectiveBackground);
 
             AssertTransitionBrush(
+                new ModernCanvasEx(),
+                (control, brush) => control.Background = brush,
+                (control, transition) => control.BackgroundTransition = transition,
+                control => control.ClearValue(ModernCanvasEx.BackgroundTransitionProperty),
+                control => control.EffectiveBackground);
+
+            AssertTransitionBrush(
                 new ContentPresenterEx(),
                 (control, brush) => control.Background = brush,
                 (control, transition) => control.BackgroundTransition = transition,
@@ -84,6 +92,90 @@ public class LayoutCompatibilityApiTests
                 (control, transition) => control.BackgroundTransition = transition,
                 control => control.ClearValue(ModernStackPanelEx.BackgroundTransitionProperty),
                 control => control.EffectiveBackground);
+        });
+    }
+
+    [TestMethod]
+    public void CanvasExAcceptsWinUIPanelSurfaceAndAttachedProperties()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var backgroundTransition = new BrushTransition { Duration = TimeSpan.FromMilliseconds(70) };
+            var childrenTransitions = new ModernWpf.Media.Animation.TransitionCollection();
+            var child = new Border
+            {
+                Width = 12,
+                Height = 8,
+                Background = Brushes.Red
+            };
+            var canvas = new ModernCanvasEx
+            {
+                BackgroundTransition = backgroundTransition,
+                ChildrenTransitions = childrenTransitions
+            };
+
+            canvas.Children.Add(child);
+            ModernCanvasEx.SetLeft(child, 13);
+            ModernCanvasEx.SetTop(child, 17);
+            ModernCanvasEx.SetZIndex(child, 5);
+
+            Assert.AreSame(backgroundTransition, canvas.BackgroundTransition);
+            Assert.AreSame(childrenTransitions, canvas.ChildrenTransitions);
+            Assert.AreEqual(13, Canvas.GetLeft(child));
+            Assert.AreEqual(17, Canvas.GetTop(child));
+            Assert.AreEqual(5, Panel.GetZIndex(child));
+
+            canvas.Measure(new Size(100, 100));
+
+            Assert.AreEqual(0, canvas.DesiredSize.Width, 0.1);
+            Assert.AreEqual(0, canvas.DesiredSize.Height, 0.1);
+
+            canvas.Arrange(new Rect(0, 0, 100, 100));
+            canvas.UpdateLayout();
+
+            var origin = child.TranslatePoint(new Point(), canvas);
+            Assert.AreEqual(13, origin.X, 0.1);
+            Assert.AreEqual(17, origin.Y, 0.1);
+        });
+    }
+
+    [TestMethod]
+    public void CanvasExParsesWinUIPanelSurfaceXaml()
+    {
+        WpfTestHost.Run(() =>
+        {
+            const string xaml =
+                """
+                <controls:CanvasEx
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf"
+                    xmlns:animation="clr-namespace:ModernWpf.Media.Animation;assembly=ModernWpf"
+                    Background="Transparent">
+                    <controls:CanvasEx.BackgroundTransition>
+                        <controls:BrushTransition Duration="0:0:0.083" />
+                    </controls:CanvasEx.BackgroundTransition>
+                    <controls:CanvasEx.ChildrenTransitions>
+                        <animation:TransitionCollection />
+                    </controls:CanvasEx.ChildrenTransitions>
+                    <Border
+                        Width="12"
+                        Height="8"
+                        Background="Red"
+                        controls:CanvasEx.Left="7"
+                        controls:CanvasEx.Top="9"
+                        controls:CanvasEx.ZIndex="3" />
+                </controls:CanvasEx>
+                """;
+
+            var canvas = (ModernCanvasEx)XamlReader.Parse(xaml);
+            var child = (UIElement)canvas.Children[0];
+
+            Assert.IsNotNull(canvas.BackgroundTransition);
+            Assert.IsNotNull(canvas.ChildrenTransitions);
+            Assert.AreEqual(7, ModernCanvasEx.GetLeft(child));
+            Assert.AreEqual(9, ModernCanvasEx.GetTop(child));
+            Assert.AreEqual(3, ModernCanvasEx.GetZIndex(child));
         });
     }
 
