@@ -142,6 +142,91 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void CoreTabControlTemplatesUseWinUIPresenterSlots()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var tabItem = new TabItem
+            {
+                Header = "Tab Header",
+                Content = "Tab Content"
+            };
+            var tabControl = new TabControl
+            {
+                Width = 320,
+                Height = 160
+            };
+            TabControlHelper.SetTabStripHeader(tabControl, "Strip Header");
+            TabControlHelper.SetTabStripFooter(tabControl, "Strip Footer");
+            tabControl.Items.Add(tabItem);
+
+            using var host = new TestWindowHost(tabControl, width: 380, height: 220);
+            host.UpdateLayout();
+
+            var itemPresenter = FindTemplateChild<ContentPresenterEx>(tabItem, "ContentPresenter");
+            Assert.AreEqual(tabItem.Header, itemPresenter.Content);
+            Assert.AreSame(itemPresenter.TryFindResource("TabViewItemHeaderForegroundSelected"), itemPresenter.Foreground);
+
+            var headerPresenter = FindTemplateChild<ContentPresenterEx>(tabControl, "HeaderContentPresenter");
+            Assert.AreEqual(TabControlHelper.GetTabStripHeader(tabControl), headerPresenter.Content);
+
+            var footerPresenter = FindTemplateChild<ContentPresenterEx>(tabControl, "FooterContentPresenter");
+            Assert.AreEqual(TabControlHelper.GetTabStripFooter(tabControl), footerPresenter.Content);
+
+            var selectedContentHost = FindTemplateChild<ContentPresenterEx>(tabControl, "PART_SelectedContentHost");
+            Assert.AreEqual(tabItem.Content, selectedContentHost.Content);
+        });
+    }
+
+    [TestMethod]
+    public void CorePivotTemplatesUseWinUIPresenterSlots()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var pivotItem = new TabItem
+            {
+                Header = "Pivot Header",
+                Content = "Pivot Content"
+            };
+            var pivot = new TabControl
+            {
+                Style = FindStyleResource("TabControlPivotStyle"),
+                Width = 320,
+                Height = 160
+            };
+            PivotHelper.SetTitle(pivot, "Pivot Title");
+            PivotHelper.SetLeftHeader(pivot, "Left Header");
+            PivotHelper.SetRightHeader(pivot, "Right Header");
+            pivot.Items.Add(pivotItem);
+
+            using var host = new TestWindowHost(pivot, width: 380, height: 220);
+            host.UpdateLayout();
+
+            var itemPresenter = FindTemplateChild<ContentPresenterEx>(pivotItem, "ContentPresenter");
+            Assert.AreEqual(pivotItem.Header, itemPresenter.Content);
+            Assert.AreSame(itemPresenter.TryFindResource("PivotHeaderItemForegroundSelected"), itemPresenter.Foreground);
+
+            var titleControl = FindTemplateChild<ContentControl>(pivot, "TitleContentControl");
+            var titlePresenter = FindVisualChild<ContentPresenterEx>(titleControl)
+                ?? throw new AssertFailedException("Expected Pivot title template to use ContentPresenterEx.");
+            Assert.AreEqual(PivotHelper.GetTitle(pivot), titlePresenter.Content);
+
+            var leftHeader = FindTemplateChild<ContentPresenterEx>(pivot, "LeftHeaderPresenter");
+            Assert.AreEqual(PivotHelper.GetLeftHeader(pivot), leftHeader.Content);
+
+            var rightHeader = FindTemplateChild<ContentPresenterEx>(pivot, "RightHeaderPresenter");
+            Assert.AreEqual(PivotHelper.GetRightHeader(pivot), rightHeader.Content);
+
+            var selectedContentHost = FindTemplateChild<ContentPresenterEx>(pivot, "PART_SelectedContentHost");
+            Assert.AreEqual(pivotItem.Content, selectedContentHost.Content);
+        });
+    }
+
+    [TestMethod]
     public void BorderExParsesTemplateCompatibilityXaml()
     {
         WpfTestHost.Run(() =>
@@ -1581,6 +1666,12 @@ public class LayoutCompatibilityApiTests
         var key = new ComponentResourceKey(typeof(MenuItem), resourceId);
         return Application.Current.TryFindResource(key) as ControlTemplate
             ?? throw new AssertFailedException($"Expected MenuItem template resource '{resourceId}'.");
+    }
+
+    private static Style FindStyleResource(string resourceId)
+    {
+        return Application.Current.TryFindResource(resourceId) as Style
+            ?? throw new AssertFailedException($"Expected style resource '{resourceId}'.");
     }
 
     private static void AssertMenuTemplatePresenterSlot(MenuItem menuItem, string expectedForegroundResource)

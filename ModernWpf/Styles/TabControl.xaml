@@ -2,6 +2,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
@@ -115,15 +116,15 @@
                                                 Foreground="{DynamicResource TabViewItemIconForeground}" />
                                         </Viewbox>
 
-                                        <ContentPresenter
+                                        <local:ContentPresenterEx
                                             x:Name="ContentPresenter"
                                             Grid.Column="1"
                                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                             ContentSource="Header"
-                                            TextElement.Foreground="{DynamicResource TabViewItemHeaderForeground}"
-                                            TextElement.FontWeight="{TemplateBinding FontWeight}"
-                                            TextElement.FontSize="{DynamicResource TabViewItemHeaderFontSize}"
+                                            Foreground="{DynamicResource TabViewItemHeaderForeground}"
+                                            FontWeight="{TemplateBinding FontWeight}"
+                                            FontSize="{DynamicResource TabViewItemHeaderFontSize}"
                                             Focusable="False"
                                             RecognizesAccessKey="True"
                                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
@@ -138,17 +139,17 @@
                         <!-- PointerOver -->
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
                             <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundPointerOver}" />
                         </Trigger>
                         <!-- Selected -->
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Shadow" Property="IsShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
                             <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundSelected}" />
                             <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundSelected}" />
                             <Setter Property="Panel.ZIndex" Value="1" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.FontWeight" Value="SemiBold"/>
+                            <Setter TargetName="ContentPresenter" Property="FontWeight" Value="SemiBold"/>
                         </Trigger>
                         <!-- PointerOverSelected -->
                         <MultiTrigger>
@@ -157,15 +158,15 @@
                                 <Condition Property="IsSelected" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
                             <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundPointerOver}" />
                             <Setter Property="Panel.ZIndex" Value="1" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.FontWeight" Value="SemiBold"/>
+                            <Setter TargetName="ContentPresenter" Property="FontWeight" Value="SemiBold"/>
                         </MultiTrigger>
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewButtonForegroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
                         </Trigger>
                         <!-- NoIcon -->
                         <Trigger Property="primitives:TabItemHelper.Icon" Value="{x:Null}">
@@ -219,7 +220,7 @@
                             Grid.Column="0"
                             Background="{TemplateBinding Background}">
 
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 DockPanel.Dock="Left"
                                 x:Name="HeaderContentPresenter"
                                 Content="{TemplateBinding primitives:TabControlHelper.TabStripHeader}"
@@ -233,7 +234,7 @@
                                 Margin="{DynamicResource TabViewTopHeaderPadding}"
                                 IsItemsHost="true" />
 
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 DockPanel.Dock="Right"
                                 x:Name="FooterContentPresenter"
                                 HorizontalAlignment="Stretch"
@@ -250,7 +251,7 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             KeyboardNavigation.DirectionalNavigation="Contained"
                             KeyboardNavigation.TabNavigation="Local">
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 x:Name="PART_SelectedContentHost"
                                 Margin="{TemplateBinding Padding}"
                                 ContentSource="SelectedContent"

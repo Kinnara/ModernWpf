@@ -26,13 +26,13 @@
                         Padding="{TemplateBinding Padding}"
                         SnapsToDevicePixels="True">
                         <Grid>
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 x:Name="ContentPresenter"
                                 ContentSource="Header"
-                                TextElement.Foreground="{DynamicResource PivotHeaderItemForegroundUnselected}"
-                                TextElement.FontSize="{DynamicResource PivotHeaderItemFontSize}"
-                                TextElement.FontFamily="{DynamicResource PivotHeaderItemFontFamily}"
-                                TextElement.FontWeight="{DynamicResource PivotHeaderItemThemeFontWeight}"
+                                Foreground="{DynamicResource PivotHeaderItemForegroundUnselected}"
+                                FontSize="{DynamicResource PivotHeaderItemFontSize}"
+                                FontFamily="{DynamicResource PivotHeaderItemFontFamily}"
+                                FontWeight="{DynamicResource PivotHeaderItemThemeFontWeight}"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Stretch"
                                 Focusable="False"
@@ -65,7 +65,7 @@
                                 <Condition SourceName="Border" Property="IsMouseOver" Value="False" />
                             </MultiTrigger.Conditions>
                             <Setter Property="Panel.ZIndex" Value="1" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource PivotHeaderItemForegroundSelected}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource PivotHeaderItemForegroundSelected}" />
                             <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundSelected}" />
                         </MultiTrigger>
                         <!-- UnselectedPointerOver -->
@@ -74,7 +74,7 @@
                                 <Condition Property="IsSelected" Value="False" />
                                 <Condition SourceName="Border" Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource PivotHeaderItemForegroundUnselectedPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource PivotHeaderItemForegroundUnselectedPointerOver}" />
                             <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundUnselectedPointerOver}" />
                             <Setter TargetName="SelectedPipe" Property="Visibility" Value="Collapsed" />
                         </MultiTrigger>
@@ -85,11 +85,11 @@
                                 <Condition SourceName="Border" Property="IsMouseOver" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter Property="Panel.ZIndex" Value="1" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource PivotHeaderItemForegroundSelectedPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource PivotHeaderItemForegroundSelectedPointerOver}" />
                             <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundSelectedPointerOver}" />
                         </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource PivotHeaderItemForegroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource PivotHeaderItemForegroundDisabled}" />
                             <Setter TargetName="Border" Property="Background" Value="{DynamicResource PivotHeaderItemBackgroundDisabled}" />
                             <Setter TargetName="SelectedPipe" Property="Visibility" Value="Collapsed" />
                         </Trigger>
@@ -129,7 +129,7 @@
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ContentControl">
-                                            <ContentPresenter
+                                            <local:ContentPresenterEx
                                                 Content="{TemplateBinding Content}"
                                                 ContentTemplate="{TemplateBinding ContentTemplate}"
                                                 Margin="{TemplateBinding Padding}"
@@ -235,7 +235,7 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <ContentPresenter
+                                <local:ContentPresenterEx
                                     x:Name="LeftHeaderPresenter"
                                     Content="{TemplateBinding primitives:PivotHelper.LeftHeader}"
                                     ContentTemplate="{TemplateBinding primitives:PivotHelper.LeftHeaderTemplate}"
@@ -291,7 +291,7 @@
                                     Background="Transparent"
                                     Command="{x:Static ScrollBar.LineRightCommand}"
                                     CommandTarget="{Binding ElementName=ScrollViewer}" />
-                                <ContentPresenter
+                                <local:ContentPresenterEx
                                     x:Name="RightHeaderPresenter"
                                     Grid.Column="2"
                                     Content="{TemplateBinding primitives:PivotHelper.RightHeader}"
@@ -308,7 +308,7 @@
                                 KeyboardNavigation.DirectionalNavigation="Contained"
                                 KeyboardNavigation.TabIndex="2"
                                 KeyboardNavigation.TabNavigation="Local">
-                                <ContentPresenter
+                                <local:ContentPresenterEx
                                     x:Name="PART_SelectedContentHost"
                                     ContentSource="SelectedContent"
                                     Margin="{DynamicResource PivotItemMargin}"
