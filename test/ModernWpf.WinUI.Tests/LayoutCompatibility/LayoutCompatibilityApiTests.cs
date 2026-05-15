@@ -494,9 +494,14 @@ public class LayoutCompatibilityApiTests
         {
             var border = new TestBorderEx
             {
+                Width = 24,
+                Height = 24,
                 ClipToBounds = true,
                 CornerRadius = new CornerRadius(0, 12, 0, 0)
             };
+            border.Measure(new Size(24, 24));
+            border.Arrange(new Rect(0, 0, 24, 24));
+            border.UpdateLayout();
 
             var clip = border.GetLayoutClipForTest(new Size(24, 24));
 
@@ -504,6 +509,25 @@ public class LayoutCompatibilityApiTests
             Assert.IsTrue(clip.FillContains(new Point(1, 1)), "Top-left corner should remain square.");
             Assert.IsFalse(clip.FillContains(new Point(23, 1)), "Top-right corner should be clipped by the non-uniform radius.");
             Assert.IsTrue(clip.FillContains(new Point(12, 12)), "Center should remain inside the clip.");
+        });
+    }
+
+    [TestMethod]
+    public void RoundedLayoutClipPreservesBaseLayoutClip()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var baseClip = new RectangleGeometry(new Rect(0, 0, 12, 24));
+
+            var clip = LayoutChromeHelper.CreateRoundedLayoutClip(
+                new Size(24, 24),
+                new CornerRadius(12),
+                baseClip);
+
+            Assert.IsNotNull(clip);
+            Assert.IsTrue(clip.FillContains(new Point(6, 12)), "Point inside both clips should remain visible.");
+            Assert.IsFalse(clip.FillContains(new Point(18, 12)), "Point outside the base layout clip should be clipped.");
+            Assert.IsFalse(clip.FillContains(new Point(1, 1)), "Point outside the rounded corner should be clipped.");
         });
     }
 

@@ -91,7 +91,23 @@ namespace ModernWpf.Controls
                 roundedClip = CreateRoundedRectangleGeometry(new Rect(layoutSlotSize), cornerRadius);
             }
 
-            return roundedClip ?? baseClip;
+            if (roundedClip == null)
+            {
+                return baseClip;
+            }
+
+            if (baseClip == null)
+            {
+                return roundedClip;
+            }
+
+            var combinedClip = new CombinedGeometry(GeometryCombineMode.Intersect, baseClip, roundedClip);
+            if (combinedClip.CanFreeze)
+            {
+                combinedClip.Freeze();
+            }
+
+            return combinedClip;
         }
 
         public static Geometry CreateRoundedRectangleGeometry(Rect rect, CornerRadius cornerRadius, Thickness borderThickness, bool isOuter)
