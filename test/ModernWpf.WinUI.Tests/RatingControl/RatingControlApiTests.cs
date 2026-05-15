@@ -78,8 +78,9 @@ public class RatingControlApiTests
             Assert.AreEqual(new Thickness(20, 20, 0, 20), backgroundStackPanel.Margin);
             Assert.AreEqual(5, backgroundStackPanel.Children.Count);
 
-            var foregroundContentPresenter = FindNamedDescendant<ContentPresenter>(ratingControl, "ForegroundContentPresenter");
+            var foregroundContentPresenter = FindNamedDescendant<ContentPresenterEx>(ratingControl, "ForegroundContentPresenter");
             Assert.IsFalse(foregroundContentPresenter.IsHitTestVisible);
+            Assert.IsInstanceOfType(foregroundContentPresenter.Content, typeof(StackPanel));
 
             var foregroundStackPanel = FindNamedDescendant<StackPanel>(ratingControl, "RatingForegroundStackPanel");
             Assert.AreEqual(Orientation.Horizontal, foregroundStackPanel.Orientation);
