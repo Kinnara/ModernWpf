@@ -1,6 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:mux="clr-namespace:ModernWpf.Controls;assembly=ModernWpf">
 
@@ -34,7 +35,7 @@
                                 Visibility="Collapsed"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Stretch">
-                                <ContentPresenter Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}" />
+                                <ui:ContentPresenterEx Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}" />
                             </Viewbox>
                         </Grid>
                     </Border>

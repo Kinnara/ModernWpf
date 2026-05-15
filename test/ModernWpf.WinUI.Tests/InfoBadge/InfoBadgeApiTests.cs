@@ -100,6 +100,24 @@ public class InfoBadgeApiTests
     }
 
     [TestMethod]
+    public void InfoBadgeTemplateUsesWinUIIconPresenterSlot()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var infoBadge = new ModernWpf.Controls.InfoBadge
+            {
+                IconSource = new SymbolIconSource { Symbol = Symbol.Setting }
+            };
+
+            using var host = new TestWindowHost(infoBadge, width: 100, height: 100);
+
+            var presenter = FindContentPresenter(infoBadge, infoBadge.TemplateSettings.IconElement);
+            Assert.IsInstanceOfType(presenter.Content, typeof(SymbolIcon));
+            Assert.IsFalse(ContainsPlainContentPresenter(infoBadge));
+        });
+    }
+
+    [TestMethod]
     public void InfoBadgeValueLessThanNegativeOneThrows()
     {
         WpfTestHost.Run(() =>
@@ -132,5 +150,31 @@ public class InfoBadgeApiTests
         }
 
         throw new InvalidOperationException($"Could not find descendant named '{name}'.");
+    }
+
+    private static ContentPresenterEx FindContentPresenter(DependencyObject root, object content)
+    {
+        foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
+        {
+            if (descendant is ContentPresenterEx presenter && ReferenceEquals(presenter.Content, content))
+            {
+                return presenter;
+            }
+        }
+
+        throw new InvalidOperationException("Could not find ContentPresenterEx for the expected content.");
+    }
+
+    private static bool ContainsPlainContentPresenter(DependencyObject root)
+    {
+        foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
+        {
+            if (descendant?.GetType() == typeof(ContentPresenter))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
