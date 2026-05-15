@@ -5,6 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Controls;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.RadioButtons;
@@ -12,6 +14,39 @@ namespace ModernWpf.WinUI.Tests.RadioButtons;
 [TestClass]
 public class RadioButtonsApiTests
 {
+    [TestMethod]
+    public void VerifyHeaderPresenterMatchesWinUITemplate()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var headerTemplate = (DataTemplate)XamlReader.Parse(
+                @"<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>
+                    <TextBlock Text='{Binding}'/>
+                </DataTemplate>");
+            var radioButtons = new ModernWpf.Controls.RadioButtons
+            {
+                Header = "RadioButtons header",
+                HeaderTemplate = headerTemplate,
+                ItemsSource = new List<string> { "Option 1", "Option 2" }
+            };
+
+            using var host = new TestWindowHost(radioButtons);
+            host.UpdateLayout();
+
+            var headerPresenter = FindNamedDescendant<ContentPresenterEx>(radioButtons, "HeaderContentPresenter");
+            Assert.AreEqual("RadioButtons header", headerPresenter.Content);
+            Assert.AreSame(headerTemplate, headerPresenter.ContentTemplate);
+            AssertBrushEquals((Brush)headerPresenter.TryFindResource("RadioButtonsHeaderForeground"), headerPresenter.Foreground);
+
+            radioButtons.IsEnabled = false;
+            host.UpdateLayout();
+
+            AssertBrushEquals((Brush)headerPresenter.TryFindResource("RadioButtonsHeaderForegroundDisabled"), headerPresenter.Foreground);
+        });
+    }
+
     [TestMethod]
     public void VerifyCustomItemTemplate()
     {
@@ -85,5 +120,34 @@ public class RadioButtonsApiTests
     private static bool IsBlue(Brush brush)
     {
         return brush is SolidColorBrush solidColorBrush && solidColorBrush.Color == Colors.Blue;
+    }
+
+    private static void AssertBrushEquals(Brush expected, Brush actual)
+    {
+        Assert.IsNotNull(expected);
+        Assert.IsNotNull(actual);
+
+        if (expected is SolidColorBrush expectedSolid && actual is SolidColorBrush actualSolid)
+        {
+            Assert.AreEqual(expectedSolid.Color, actualSolid.Color);
+            Assert.AreEqual(expectedSolid.Opacity, actualSolid.Opacity);
+            return;
+        }
+
+        Assert.AreEqual(expected.ToString(), actual.ToString());
+    }
+
+    private static T FindNamedDescendant<T>(DependencyObject root, string name)
+        where T : FrameworkElement
+    {
+        foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
+        {
+            if (descendant is T element && element.Name == name)
+            {
+                return element;
+            }
+        }
+
+        throw new AssertFailedException($"Could not find descendant named '{name}'.");
     }
 }
