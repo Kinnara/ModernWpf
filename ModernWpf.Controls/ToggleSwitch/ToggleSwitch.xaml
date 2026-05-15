@@ -329,7 +329,7 @@
                                 Grid.Row="0"
                                 Content="{TemplateBinding Header}"
                                 ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                TextElement.Foreground="{DynamicResource ToggleSwitchHeaderForeground}"
+                                Foreground="{DynamicResource ToggleSwitchHeaderForeground}"
                                 IsHitTestVisible="False"
                                 Margin="{DynamicResource ToggleSwitchTopHeaderMargin}"
                                 TextWrapping="Wrap"
@@ -360,24 +360,24 @@
                                     CornerRadius="{TemplateBinding CornerRadius}"
                                     ui:FocusVisualHelper.IsTemplateFocusTarget="True"
                                     Background="{DynamicResource ToggleSwitchContainerBackground}" />
-                                <ContentPresenter
+                                <ui:ContentPresenterEx
                                     x:Name="OffContentPresenter"
                                     Grid.RowSpan="3"
                                     Grid.Column="2"
                                     Opacity="0"
-                                    TextElement.Foreground="{TemplateBinding Foreground}"
+                                    Foreground="{TemplateBinding Foreground}"
                                     IsHitTestVisible="False"
                                     Content="{TemplateBinding OffContent}"
                                     ContentTemplate="{TemplateBinding OffContentTemplate}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                <ContentPresenter
+                                <ui:ContentPresenterEx
                                     x:Name="OnContentPresenter"
                                     Grid.RowSpan="3"
                                     Grid.Column="2"
                                     Opacity="0"
-                                    TextElement.Foreground="{TemplateBinding Foreground}"
+                                    Foreground="{TemplateBinding Foreground}"
                                     IsHitTestVisible="False"
                                     Content="{TemplateBinding OnContent}"
                                     ContentTemplate="{TemplateBinding OnContentTemplate}"
@@ -466,8 +466,8 @@
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Foreground" TargetName="HeaderContentPresenter" Value="{DynamicResource ToggleSwitchHeaderForegroundDisabled}" />
-                            <Setter Property="TextElement.Foreground" TargetName="OffContentPresenter" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
-                            <Setter Property="TextElement.Foreground" TargetName="OnContentPresenter" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
+                            <Setter Property="Foreground" TargetName="OffContentPresenter" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
+                            <Setter Property="Foreground" TargetName="OnContentPresenter" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
                             <Setter Property="Fill" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchFillOnDisabled}" />
                             <Setter Property="Stroke" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchStrokeOnDisabled}" />
                         </Trigger>
