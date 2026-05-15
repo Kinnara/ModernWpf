@@ -87,9 +87,10 @@ public class RefreshContainerApiTests
     {
         WpfTestHost.Run(() =>
         {
+            var content = new TextBlock { Text = "Refreshable content" };
             var container = new RefreshContainer
             {
-                Content = new TextBlock { Text = "Refreshable content" }
+                Content = content
             };
 
             Assert.AreEqual(RefreshPullDirection.TopToBottom, container.PullDirection);
@@ -99,6 +100,10 @@ public class RefreshContainerApiTests
 
             Assert.IsNotNull(container.Visualizer);
             Assert.AreSame(container.Visualizer, FindNamedDescendant<RefreshVisualizer>(container, string.Empty, allowUnnamed: true));
+
+            var contentPresenter = FindNamedDescendant<ContentPresenterEx>(container, "ContentPresenter");
+            Assert.AreSame(content, contentPresenter.Content);
+            AssertTransparentBrush(contentPresenter.Background);
 
             var containerRequestCount = 0;
             var visualizerRequestCount = 0;
@@ -305,6 +310,13 @@ public class RefreshContainerApiTests
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertTransparentBrush(Brush brush)
+    {
+        Assert.IsInstanceOfType(brush, typeof(SolidColorBrush));
+        var solid = (SolidColorBrush)brush;
+        Assert.AreEqual(Colors.Transparent, solid.Color);
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name, bool allowUnnamed = false)

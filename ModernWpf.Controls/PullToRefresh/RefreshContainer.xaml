@@ -1,6 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
     <Style x:Key="DefaultRefreshContainerStyle" TargetType="local:RefreshContainer">
@@ -13,8 +14,9 @@
                     <Grid
                         x:Name="Root"
                         Background="{TemplateBinding Background}">
-                        <ContentPresenter
+                        <ui:ContentPresenterEx
                             x:Name="ContentPresenter"
+                            Background="Transparent"
                             Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}" />
                         <Grid
