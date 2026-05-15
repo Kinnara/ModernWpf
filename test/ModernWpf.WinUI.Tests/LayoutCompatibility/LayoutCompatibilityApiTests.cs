@@ -73,6 +73,45 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void CoreItemTemplatesUseWinUIPresenterSlots()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var listBoxItem = new ListBoxItem
+            {
+                Content = "ListBox content",
+                IsEnabled = false
+            };
+            var listViewItem = new System.Windows.Controls.ListViewItem
+            {
+                Content = "ListView content",
+                IsSelected = true
+            };
+            var header = new GridViewColumnHeader
+            {
+                Content = "Header content"
+            };
+
+            using var host = new TestWindowHost(new StackPanel { Children = { listBoxItem, listViewItem, header } });
+            host.UpdateLayout();
+
+            var listBoxPresenter = FindTemplateChild<ContentPresenterEx>(listBoxItem, "ContentPresenter");
+            Assert.AreEqual(listBoxItem.Content, listBoxPresenter.Content);
+            Assert.AreSame(listBoxPresenter.TryFindResource("ListBoxItemForegroundDisabled"), listBoxPresenter.Foreground);
+
+            var listViewPresenter = FindTemplateChild<ContentPresenterEx>(listViewItem, "ContentPresenter");
+            Assert.AreEqual(listViewItem.Content, listViewPresenter.Content);
+            Assert.AreSame(listViewPresenter.TryFindResource("ListViewItemForegroundSelected"), listViewPresenter.Foreground);
+
+            var headerPresenter = FindVisualChild<ContentPresenterEx>(header)
+                ?? throw new AssertFailedException("Expected GridViewColumnHeader template to use ContentPresenterEx.");
+            Assert.AreEqual(header.Content, headerPresenter.Content);
+        });
+    }
+
+    [TestMethod]
     public void BorderExParsesTemplateCompatibilityXaml()
     {
         WpfTestHost.Run(() =>

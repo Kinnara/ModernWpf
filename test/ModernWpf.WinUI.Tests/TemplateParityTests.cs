@@ -79,6 +79,27 @@ public class TemplateParityTests
             "These core input template files should use ContentPresenterEx for source-backed presenter slots. Offenders: " + string.Join("; ", offenders));
     }
 
+    [TestMethod]
+    public void CoreItemSourceBackedPresenterSlotsUseWinUIPresenterShape()
+    {
+        var repoRoot = FindRepoRoot();
+        var sourceBackedTemplateFiles = new[]
+        {
+            Path.Combine("ModernWpf", "Styles", "ListBox.xaml"),
+            Path.Combine("ModernWpf", "Styles", "ListView.xaml")
+        };
+
+        var offenders = sourceBackedTemplateFiles
+            .Select(path => Path.Combine(repoRoot, path))
+            .SelectMany(path => FindPlainContentPresenterElementUses(repoRoot, path)
+                .Concat(FindTextElementForegroundUses(repoRoot, path)))
+            .ToArray();
+
+        Assert.IsFalse(
+            offenders.Any(),
+            "These core item template files should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
+    }
+
     private static string FindRepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
@@ -117,6 +138,18 @@ public class TemplateParityTests
         return lines
             .Select((line, index) => (Line: line, LineNumber: index + 1))
             .Where(entry => Regex.IsMatch(entry.Line, @"<\s*ContentPresenter(?=[\s>/])"))
+            .Select(entry => $"{relativePath}:{entry.LineNumber}")
+            .ToArray();
+    }
+
+    private static string[] FindTextElementForegroundUses(string repoRoot, string path)
+    {
+        var relativePath = Path.GetRelativePath(repoRoot, path);
+        var lines = File.ReadAllLines(path);
+
+        return lines
+            .Select((line, index) => (Line: line, LineNumber: index + 1))
+            .Where(entry => entry.Line.Contains("TextElement.Foreground", StringComparison.Ordinal))
             .Select(entry => $"{relativePath}:{entry.LineNumber}")
             .ToArray();
     }
