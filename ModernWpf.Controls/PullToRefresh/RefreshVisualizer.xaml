@@ -14,13 +14,7 @@
                     <Grid
                         x:Name="Root"
                         MinHeight="80"
-                        Background="{TemplateBinding Background}">
-                        <ContentPresenter
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Content="{TemplateBinding Content}"
-                            TextElement.Foreground="{TemplateBinding Foreground}" />
-                    </Grid>
+                        Background="{TemplateBinding Background}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

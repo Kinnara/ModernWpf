@@ -5,6 +5,9 @@ namespace ModernWpf.Controls
 {
     public class RefreshVisualizer : Control
     {
+        private const string RootName = "Root";
+        private const double DefaultIndicatorSize = 30;
+
         private static readonly DependencyPropertyKey StatePropertyKey =
             DependencyProperty.RegisterReadOnly(
                 nameof(State),
@@ -37,7 +40,7 @@ namespace ModernWpf.Controls
                 nameof(Content),
                 typeof(UIElement),
                 typeof(RefreshVisualizer),
-                new PropertyMetadata(null));
+                new PropertyMetadata(null, OnContentChanged));
 
         public UIElement Content
         {
@@ -55,9 +58,20 @@ namespace ModernWpf.Controls
         {
             base.OnApplyTemplate();
 
+            if (_root != null)
+            {
+                _root.Children.Clear();
+            }
+
+            _root = GetTemplateChild(RootName) as Panel;
+
             if (Content == null)
             {
-                SetCurrentValue(ContentProperty, new SymbolIcon(Symbol.Refresh));
+                SetCurrentValue(ContentProperty, CreateDefaultContent());
+            }
+            else
+            {
+                UpdateContent();
             }
         }
 
@@ -129,5 +143,40 @@ namespace ModernWpf.Controls
             SetValue(StatePropertyKey, newState);
             RefreshStateChanged?.Invoke(this, new RefreshStateChangedEventArgs(oldState, newState));
         }
+
+        private static void OnContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((RefreshVisualizer)d).UpdateContent();
+        }
+
+        private void UpdateContent()
+        {
+            if (_root == null)
+            {
+                return;
+            }
+
+            _root.Children.Clear();
+
+            var content = Content ?? CreateDefaultContent();
+            if (content is FrameworkElement frameworkElement)
+            {
+                frameworkElement.HorizontalAlignment = HorizontalAlignment.Center;
+                frameworkElement.VerticalAlignment = VerticalAlignment.Center;
+            }
+
+            _root.Children.Add(content);
+        }
+
+        private static SymbolIcon CreateDefaultContent()
+        {
+            return new SymbolIcon(Symbol.Refresh)
+            {
+                Width = DefaultIndicatorSize,
+                Height = DefaultIndicatorSize
+            };
+        }
+
+        private Panel _root;
     }
 }

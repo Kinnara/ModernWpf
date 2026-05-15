@@ -31,7 +31,51 @@ public class RefreshContainerApiTests
             Assert.AreEqual(100.0, visualizer.Height);
             Assert.IsFalse(visualizer.IsTabStop);
             Assert.IsInstanceOfType(visualizer.Content, typeof(SymbolIcon));
-            Assert.AreEqual(Symbol.Refresh, ((SymbolIcon)visualizer.Content).Symbol);
+            var defaultIcon = (SymbolIcon)visualizer.Content;
+            Assert.AreEqual(Symbol.Refresh, defaultIcon.Symbol);
+            Assert.AreEqual(30.0, defaultIcon.Width);
+            Assert.AreEqual(30.0, defaultIcon.Height);
+
+            var root = FindNamedDescendant<Panel>(visualizer, "Root");
+            Assert.AreEqual(1, root.Children.Count);
+            Assert.AreSame(defaultIcon, root.Children[0]);
+            Assert.AreEqual(HorizontalAlignment.Center, defaultIcon.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, defaultIcon.VerticalAlignment);
+        });
+    }
+
+    [TestMethod]
+    public void RefreshVisualizerHostsContentInWinUIRootPanel()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var visualizer = new RefreshVisualizer();
+            using var host = new TestWindowHost(visualizer, width: 160, height: 140);
+            var root = FindNamedDescendant<Panel>(visualizer, "Root");
+
+            var replacement = new TextBlock { Text = "Refreshing" };
+            visualizer.Content = replacement;
+            host.UpdateLayout();
+
+            Assert.AreEqual(1, root.Children.Count);
+            Assert.AreSame(replacement, root.Children[0]);
+            Assert.AreEqual(HorizontalAlignment.Center, replacement.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, replacement.VerticalAlignment);
+
+            visualizer.Content = null;
+            host.UpdateLayout();
+
+            Assert.IsNull(visualizer.Content);
+            Assert.AreEqual(1, root.Children.Count);
+            Assert.IsInstanceOfType(root.Children[0], typeof(SymbolIcon));
+            var fallbackIcon = (SymbolIcon)root.Children[0];
+            Assert.AreEqual(Symbol.Refresh, fallbackIcon.Symbol);
+            Assert.AreEqual(30.0, fallbackIcon.Width);
+            Assert.AreEqual(30.0, fallbackIcon.Height);
+            Assert.AreEqual(HorizontalAlignment.Center, fallbackIcon.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, fallbackIcon.VerticalAlignment);
         });
     }
 

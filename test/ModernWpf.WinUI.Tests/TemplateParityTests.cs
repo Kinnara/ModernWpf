@@ -210,6 +210,21 @@ public class TemplateParityTests
             "These simple shell template files should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
     }
 
+    [TestMethod]
+    public void RefreshVisualizerTemplateUsesWinUIRootContentHosting()
+    {
+        var repoRoot = FindRepoRoot();
+        var templateFile = Path.Combine(repoRoot, "ModernWpf.Controls", "PullToRefresh", "RefreshVisualizer.xaml");
+
+        var offenders = FindPlainContentPresenterElementUses(repoRoot, templateFile)
+            .Concat(FindTextElementForegroundUses(repoRoot, templateFile))
+            .ToArray();
+
+        Assert.IsFalse(
+            offenders.Any(),
+            "RefreshVisualizer should keep content hosting in code like WinUI3, not in a template ContentPresenter. Offenders: " + string.Join("; ", offenders));
+    }
+
     private static string FindRepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
