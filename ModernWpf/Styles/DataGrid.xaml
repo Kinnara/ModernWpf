@@ -83,7 +83,18 @@
                                     IsHitTestVisible="False"
                                     Margin="2" />
                             </Grid>
-                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            <local:ContentPresenterEx
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -210,19 +221,27 @@
                                 <ColumnDefinition x:Name="SortIconColumn" MinWidth="32" Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 Content="{TemplateBinding Content}"
                                 ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalContentAlignment="Left"
+                                VerticalContentAlignment="Center"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 RecognizesAccessKey="True"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
-                                <ContentPresenter.Resources>
+                                <local:ContentPresenterEx.Resources>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
                                     </Style>
-                                </ContentPresenter.Resources>
-                            </ContentPresenter>
+                                </local:ContentPresenterEx.Resources>
+                            </local:ContentPresenterEx>
 
                             <local:FontIconFallback
                                 Grid.Column="1"
@@ -452,12 +471,22 @@
                             Fill="{TemplateBinding SeparatorBrush}"
                             Visibility="{TemplateBinding SeparatorVisibility}" />
 
-                        <ContentPresenter
+                        <local:ContentPresenterEx
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             Margin="{TemplateBinding Padding}"
                             Grid.Column="1"
                             Grid.RowSpan="2"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            FontSize="{TemplateBinding FontSize}"
+                            FontWeight="{TemplateBinding FontWeight}"
+                            Foreground="{TemplateBinding Foreground}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             RecognizesAccessKey="True"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
@@ -884,9 +913,19 @@
                             Data="{StaticResource ChevronRight}"
                             SnapsToDevicePixels="false"
                             Foreground="{TemplateBinding Foreground}" />
-                        <ContentPresenter
+                        <local:ContentPresenterEx
                             Grid.Column="1"
                             Margin="12,0,0,0"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            FontSize="{TemplateBinding FontSize}"
+                            FontWeight="{TemplateBinding FontWeight}"
+                            Foreground="{TemplateBinding Foreground}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             RecognizesAccessKey="True"
@@ -951,12 +990,22 @@
                                             Style="{StaticResource DataGridRowGroupHeaderStyle}"
                                             primitives:FocusVisualHelper.UseSystemFocusVisuals="True"
                                             primitives:FocusVisualHelper.FocusVisualMargin="0" />
-                                        <ContentPresenter
+                                        <local:ContentPresenterEx
                                             x:Name="ExpandSite"
                                             Margin="{TemplateBinding Padding}"
                                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                             DockPanel.Dock="Bottom"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                            FontFamily="{TemplateBinding FontFamily}"
+                                            FontSize="{TemplateBinding FontSize}"
+                                            FontWeight="{TemplateBinding FontWeight}"
+                                            Foreground="{TemplateBinding Foreground}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                             Focusable="false"
                                             Visibility="Collapsed" />
                                     </DockPanel>

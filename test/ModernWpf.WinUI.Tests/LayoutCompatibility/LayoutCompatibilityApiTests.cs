@@ -379,6 +379,51 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void DataGridWpfSpecificTemplatesUseModernPresenterSlots()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var cell = new DataGridCell
+            {
+                Style = FindStyleResource("DataGridCellExpanded"),
+                Content = "Cell content",
+                Foreground = Brushes.Red
+            };
+            var columnHeader = new DataGridColumnHeader
+            {
+                Style = FindStyleResource("DefaultDataGridColumnHeaderStyle"),
+                Content = "Column header",
+                Foreground = Brushes.Blue
+            };
+            var rowHeader = new DataGridRowHeader
+            {
+                Style = FindStyleResource("DefaultDataGridRowHeaderStyle"),
+                Content = "Row header",
+                Foreground = Brushes.Green
+            };
+            var groupHeader = new ToggleButton
+            {
+                Style = FindStyleResource("DataGridRowGroupHeaderStyle"),
+                Content = "Group header",
+                Foreground = Brushes.Purple
+            };
+
+            using var host = new TestWindowHost(new StackPanel
+            {
+                Children = { cell, columnHeader, rowHeader, groupHeader }
+            }, width: 360, height: 220);
+            host.UpdateLayout();
+
+            AssertDataGridPresenter(cell, cell.Content, cell.Foreground);
+            AssertDataGridPresenter(columnHeader, columnHeader.Content, columnHeader.Foreground);
+            AssertDataGridPresenter(rowHeader, rowHeader.Content, rowHeader.Foreground);
+            AssertDataGridPresenter(groupHeader, groupHeader.Content, groupHeader.Foreground);
+        });
+    }
+
+    [TestMethod]
     public void BorderExParsesTemplateCompatibilityXaml()
     {
         WpfTestHost.Run(() =>
@@ -1845,6 +1890,14 @@ public class LayoutCompatibilityApiTests
         Assert.AreEqual(button.Padding, presenter.Padding);
         Assert.AreEqual(ControlHelper.GetCornerRadius(button), presenter.CornerRadius);
         Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonBorderBrush"), presenter.BorderBrush);
+    }
+
+    private static void AssertDataGridPresenter(DependencyObject root, object expectedContent, Brush expectedForeground)
+    {
+        var presenter = FindVisualChild<ContentPresenterEx>(root)
+            ?? throw new AssertFailedException($"Expected {root.GetType().Name} template to use ContentPresenterEx.");
+        Assert.AreEqual(expectedContent, presenter.Content);
+        Assert.AreSame(expectedForeground, presenter.Foreground);
     }
 
     private static Color RenderBorderEdgePixel(BackgroundSizing backgroundSizing)

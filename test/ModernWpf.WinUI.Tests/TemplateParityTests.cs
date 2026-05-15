@@ -240,6 +240,20 @@ public class TemplateParityTests
             "Calendar navigation and weekday text slots should use ContentPresenterEx/direct foreground routing instead of WPF ContentPresenter/TextElement.Foreground. Offenders: " + string.Join("; ", offenders));
     }
 
+    [TestMethod]
+    public void DataGridWpfSpecificPresenterSlotsUseModernPresenterShape()
+    {
+        var repoRoot = FindRepoRoot();
+        var templateFile = Path.Combine(repoRoot, "ModernWpf", "Styles", "DataGrid.xaml");
+
+        var offenders = FindPlainContentPresenterElementUses(repoRoot, templateFile)
+            .ToArray();
+
+        Assert.IsFalse(
+            offenders.Any(),
+            "WPF-specific DataGrid template content slots should use ContentPresenterEx for consistent template compatibility. Offenders: " + string.Join("; ", offenders));
+    }
+
     private static string FindRepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
