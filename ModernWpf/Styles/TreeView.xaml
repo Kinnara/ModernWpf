@@ -22,7 +22,7 @@
                     <Border
                         Background="{TemplateBinding Background}"
                         Padding="{TemplateBinding Padding}">
-                        <ContentPresenter />
+                        <local:ContentPresenterEx />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -110,10 +110,11 @@
                                     </Grid>
                                 </ToggleButton>
 
-                                <ContentPresenter
+                                <local:ContentPresenterEx
                                     x:Name="PART_Header"
                                     Grid.Column="1"
                                     ContentSource="Header"
+                                    Foreground="{TemplateBinding Foreground}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     Margin="{TemplateBinding Padding}"
@@ -139,23 +140,23 @@
                         </Trigger>
                         <Trigger SourceName="ContentPresenterGrid" Property="IsMouseOver" Value="True">
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushPointerOver}" />
                         </Trigger>
                         <Trigger SourceName="ContentPresenterGrid" Property="primitives:PressHelper.IsPressed" Value="True">
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundPressed}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushPressed}" />
                         </Trigger>
                         <!-- Selected -->
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelected}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelected}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundDisabled}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushDisabled}" />
                         </Trigger>
                         <!-- PointerOverSelected -->
@@ -165,7 +166,7 @@
                                 <Condition Property="IsSelected" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelectedPointerOver}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedPointerOver}" />
                         </MultiTrigger>
                         <!-- PressedSelected -->
@@ -175,7 +176,7 @@
                                 <Condition Property="IsSelected" Value="True" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelectedPressed}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedPressed}" />
                         </MultiTrigger>
                         <!-- SelectedDisabled -->
@@ -185,7 +186,7 @@
                                 <Condition Property="IsEnabled" Value="False" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelectedDisabled}" />
-                            <Setter TargetName="PART_Header" Property="TextElement.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
+                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
                             <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedDisabled}" />
                         </MultiTrigger>
                     </ControlTemplate.Triggers>

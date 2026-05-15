@@ -787,6 +787,27 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewPaneToggleButtonTemplateUsesWinUIPresenterSlot()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            using var host = CreateNavigationViewHost(
+                out var navView,
+                ModernWpf.Controls.NavigationViewPaneDisplayMode.Left,
+                isPaneOpen: true);
+
+            var toggleButton = FindNamedDescendant<Button>(navView, "TogglePaneButton");
+            var contentPresenter = FindNamedDescendant<ModernWpf.Controls.ContentPresenterEx>(toggleButton, "ContentPresenter");
+
+            Assert.IsInstanceOfType(contentPresenter.Content, typeof(TextBlock));
+            Assert.AreSame(contentPresenter.TryFindResource("NavigationViewItemForegroundChecked"), contentPresenter.Foreground);
+            Assert.AreEqual(toggleButton.FontSize, contentPresenter.FontSize);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>

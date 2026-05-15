@@ -140,6 +140,37 @@ public class TreeViewResourceTests
         });
     }
 
+    [TestMethod]
+    public void TreeViewItemTemplateUsesWinUIPresenterSlots()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var root = new WpfTreeViewItem
+            {
+                Header = "Root",
+                IsExpanded = true,
+                IsSelected = true
+            };
+            root.Items.Add(new WpfTreeViewItem { Header = "Child" });
+
+            var treeView = new WpfTreeView();
+            treeView.Items.Add(root);
+
+            using var host = new TestWindowHost(treeView);
+
+            var headerPresenter = FindNamedDescendant<ContentPresenterEx>(root, "PART_Header");
+            Assert.AreEqual(root.Header, headerPresenter.Content);
+            Assert.AreSame(headerPresenter.TryFindResource("TreeViewItemForegroundSelected"), headerPresenter.Foreground);
+
+            var chevron = FindNamedDescendant<ToggleButton>(root, "ExpandCollapseChevron");
+            Assert.IsTrue(
+                VisualTreeTestHelper.EnumerateDescendants(chevron).OfType<ContentPresenterEx>().Any(),
+                "Expected the expand/collapse toggle template to use ContentPresenterEx.");
+        });
+    }
+
     private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
     {
         var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);

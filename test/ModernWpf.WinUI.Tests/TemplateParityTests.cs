@@ -141,6 +141,27 @@ public class TemplateParityTests
             "These core navigation header template files should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
     }
 
+    [TestMethod]
+    public void CoreNavigationViewAndTreePresenterSlotsUseWinUIPresenterShape()
+    {
+        var repoRoot = FindRepoRoot();
+        var sourceBackedTemplateFiles = new[]
+        {
+            Path.Combine("ModernWpf", "Styles", "NavigationView.xaml"),
+            Path.Combine("ModernWpf", "Styles", "TreeView.xaml")
+        };
+
+        var offenders = sourceBackedTemplateFiles
+            .Select(path => Path.Combine(repoRoot, path))
+            .SelectMany(path => FindPlainContentPresenterElementUses(repoRoot, path)
+                .Concat(FindTextElementForegroundUses(repoRoot, path)))
+            .ToArray();
+
+        Assert.IsFalse(
+            offenders.Any(),
+            "These NavigationView/TreeView template files should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
+    }
+
     private static string FindRepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
