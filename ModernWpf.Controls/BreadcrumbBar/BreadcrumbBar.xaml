@@ -1,6 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
     <Style TargetType="local:BreadcrumbBar">
@@ -16,6 +17,7 @@
     <Style TargetType="local:BreadcrumbBarItem">
         <Setter Property="Focusable" Value="True" />
         <Setter Property="Padding" Value="4,2" />
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:BreadcrumbBarItem">
@@ -30,12 +32,20 @@
                             Background="Transparent"
                             BorderThickness="0"
                             Focusable="False"
-                            Foreground="{TemplateBinding Foreground}">
-                            <ContentPresenter
+                            Foreground="{TemplateBinding Foreground}"
+                            ui:ControlHelper.ContentTransitions="{TemplateBinding ContentTransitions}"
+                            ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}">
+                            <ui:ContentPresenterEx
                                 Content="{TemplateBinding Content}"
                                 ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                Foreground="{TemplateBinding Foreground}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Button>
                         <TextBlock
                             x:Name="PART_ChevronTextBlock"

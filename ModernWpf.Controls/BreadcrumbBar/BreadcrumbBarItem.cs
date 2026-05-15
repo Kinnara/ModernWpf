@@ -3,6 +3,8 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ModernWpf.Automation.Peers;
+using ModernWpf.Controls.Primitives;
+using ModernWpf.Media.Animation;
 
 namespace ModernWpf.Controls
 {
@@ -17,6 +19,32 @@ namespace ModernWpf.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(BreadcrumbBarItem), new FrameworkPropertyMetadata(typeof(BreadcrumbBarItem)));
         }
+
+        #region ContentTransitions
+
+        public static readonly DependencyProperty ContentTransitionsProperty =
+            ControlHelper.ContentTransitionsProperty.AddOwner(typeof(BreadcrumbBarItem));
+
+        public TransitionCollection ContentTransitions
+        {
+            get => (TransitionCollection)GetValue(ContentTransitionsProperty);
+            set => SetValue(ContentTransitionsProperty, value);
+        }
+
+        #endregion
+
+        #region CornerRadius
+
+        public static readonly DependencyProperty CornerRadiusProperty =
+            ControlHelper.CornerRadiusProperty.AddOwner(typeof(BreadcrumbBarItem));
+
+        public CornerRadius CornerRadius
+        {
+            get => (CornerRadius)GetValue(CornerRadiusProperty);
+            set => SetValue(CornerRadiusProperty, value);
+        }
+
+        #endregion
 
         public override void OnApplyTemplate()
         {

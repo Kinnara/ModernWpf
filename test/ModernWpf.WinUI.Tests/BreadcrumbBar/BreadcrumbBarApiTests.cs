@@ -7,8 +7,11 @@ using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
+using ModernWpf.Media.Animation;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.BreadcrumbBar;
@@ -38,6 +41,65 @@ public class BreadcrumbBarApiTests
             using var host = new TestWindowHost(breadcrumb, width: 300, height: 80);
 
             Assert.AreEqual(0, breadcrumb.Containers.Count);
+        });
+    }
+
+    [TestMethod]
+    public void BreadcrumbBarItemAcceptsWinUIContentPresenterSurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var transitions = new TransitionCollection();
+            var item = new ModernWpf.Controls.BreadcrumbBarItem
+            {
+                ContentTransitions = transitions,
+                CornerRadius = new CornerRadius(4)
+            };
+
+            Assert.AreSame(transitions, item.ContentTransitions);
+            Assert.AreEqual(new CornerRadius(4), item.CornerRadius);
+        });
+    }
+
+    [TestMethod]
+    public void BreadcrumbBarItemTemplateUsesWinUIContentPresenter()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var content = new Border { Width = 80, Height = 24 };
+            var transitions = new TransitionCollection();
+            var foreground = new SolidColorBrush(Colors.Blue);
+            var item = new ModernWpf.Controls.BreadcrumbBarItem
+            {
+                Content = content,
+                ContentTransitions = transitions,
+                CornerRadius = new CornerRadius(5),
+                Foreground = foreground,
+                HorizontalContentAlignment = HorizontalAlignment.Right,
+                VerticalContentAlignment = VerticalAlignment.Bottom
+            };
+
+            using var host = new TestWindowHost(item, width: 240, height: 80);
+
+            var button = VisualTreeTestHelper
+                .EnumerateDescendants(item)
+                .OfType<Button>()
+                .FirstOrDefault()
+                ?? throw new AssertFailedException("Expected BreadcrumbBarItem template to contain an item button.");
+            var presenter = VisualTreeTestHelper
+                .EnumerateDescendants(item)
+                .OfType<ContentPresenterEx>()
+                .FirstOrDefault(candidate => ReferenceEquals(candidate.Content, content))
+                ?? throw new AssertFailedException("Expected BreadcrumbBarItem template to use ContentPresenterEx for the item content.");
+
+            Assert.AreSame(transitions, ControlHelper.GetContentTransitions(button));
+            Assert.AreEqual(new CornerRadius(5), ControlHelper.GetCornerRadius(button));
+            Assert.AreSame(transitions, presenter.ContentTransitions);
+            Assert.AreSame(foreground, presenter.Foreground);
+            Assert.AreEqual(HorizontalAlignment.Right, presenter.HorizontalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Right, presenter.HorizontalContentAlignment);
+            Assert.AreEqual(VerticalAlignment.Bottom, presenter.VerticalAlignment);
+            Assert.AreEqual(VerticalAlignment.Bottom, presenter.VerticalContentAlignment);
         });
     }
 
