@@ -73,7 +73,9 @@ public class TeachingTipApiTests
             Assert.AreSame(hero, teachingTip.HeroContent);
             Assert.IsInstanceOfType(teachingTip.TemplateSettings.IconElement, typeof(SymbolIcon));
             Assert.AreEqual(Visibility.Visible, FindNamedDescendant<FrameworkElement>(teachingTip, "HeroContentBorder").Visibility);
-            Assert.AreEqual(Visibility.Visible, FindNamedDescendant<FrameworkElement>(teachingTip, "IconPresenter").Visibility);
+            var iconPresenter = FindNamedDescendant<ContentPresenterEx>(teachingTip, "IconPresenter");
+            Assert.AreEqual(Visibility.Visible, iconPresenter.Visibility);
+            Assert.AreSame(teachingTip.TemplateSettings.IconElement, iconPresenter.Content);
         });
     }
 
@@ -314,7 +316,7 @@ public class TeachingTipApiTests
             };
 
             using var host = new TestWindowHost(root, width: 360, height: 240);
-            var mainContentPresenter = FindNamedDescendant<FrameworkElement>(teachingTip, "MainContentPresenter");
+            var mainContentPresenter = FindNamedDescendant<ContentPresenterEx>(teachingTip, "MainContentPresenter");
 
             Assert.AreEqual(new Thickness(0), mainContentPresenter.Margin);
 

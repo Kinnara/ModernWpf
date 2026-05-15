@@ -354,7 +354,7 @@ namespace ModernWpf.Controls
             _tailOcclusionScaleTransform = GetTemplateChild(TailOcclusionScaleTransformName) as ScaleTransform;
             _contentRootGrid = GetTemplateChild(ContentRootGridName) as Border;
             _heroContentBorder = GetTemplateChild(HeroContentBorderName) as Border;
-            _mainContentPresenter = GetTemplateChild(MainContentPresenterName) as Border;
+            _mainContentPresenter = GetTemplateChild(MainContentPresenterName) as ContentPresenterEx;
             _titleTextBlock = GetTemplateChild(TitleTextBlockName) as TextBlock;
             _subtitleTextBlock = GetTemplateChild(SubtitleTextBlockName) as TextBlock;
             _iconPresenter = GetTemplateChild(IconPresenterName) as FrameworkElement;
@@ -1037,7 +1037,7 @@ namespace ModernWpf.Controls
             {
                 SetBackgroundResource(_contentRootGrid, Border.BackgroundProperty, "TeachingTipTransientBackground");
                 SetBackgroundResource(_heroContentBorder, Border.BackgroundProperty, "TeachingTipTransientBackground");
-                SetBackgroundResource(_mainContentPresenter, Border.BackgroundProperty, "TeachingTipTransientBackground");
+                SetBackgroundResource(_mainContentPresenter, ContentPresenterEx.BackgroundProperty, "TeachingTipTransientBackground");
 
                 if (_tailPolygon != null)
                 {
@@ -1048,7 +1048,7 @@ namespace ModernWpf.Controls
             {
                 SetBackgroundBinding(_contentRootGrid, Border.BackgroundProperty);
                 SetBackgroundBinding(_heroContentBorder, Border.BackgroundProperty);
-                SetBackgroundBinding(_mainContentPresenter, Border.BackgroundProperty);
+                SetBackgroundBinding(_mainContentPresenter, ContentPresenterEx.BackgroundProperty);
 
                 if (_tailPolygon != null)
                 {
@@ -1553,7 +1553,7 @@ namespace ModernWpf.Controls
         private ScaleTransform _tailOcclusionScaleTransform;
         private Border _contentRootGrid;
         private Border _heroContentBorder;
-        private Border _mainContentPresenter;
+        private ContentPresenterEx _mainContentPresenter;
         private TextBlock _titleTextBlock;
         private TextBlock _subtitleTextBlock;
         private FrameworkElement _iconPresenter;

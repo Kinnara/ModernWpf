@@ -758,6 +758,35 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewItemTemplateUsesWinUIPresenterSlots()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var icon = new ModernWpf.Controls.SymbolIcon { Symbol = ModernWpf.Controls.Symbol.Home };
+            var menuItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Home",
+                Icon = icon
+            };
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                IsSettingsVisible = false
+            };
+            navView.MenuItems.Add(menuItem);
+
+            using var host = new TestWindowHost(navView);
+
+            var iconPresenter = FindNamedDescendant<ModernWpf.Controls.ContentPresenterEx>(menuItem, "Icon");
+            Assert.AreSame(icon, iconPresenter.Content);
+
+            var contentPresenter = FindNamedDescendant<ModernWpf.Controls.ContentPresenterEx>(menuItem, "ContentPresenter");
+            Assert.AreEqual("Home", contentPresenter.Content);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>

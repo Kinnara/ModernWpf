@@ -33,7 +33,8 @@ public class RadioMenuFlyoutItemApiTests
 
             var item = new RadioMenuItem
             {
-                Header = "Yellow"
+                Header = "Yellow",
+                Icon = new SymbolIcon { Symbol = Symbol.Accept }
             };
 
             using var host = new TestWindowHost(item, width: 240, height: 80);
@@ -48,6 +49,9 @@ public class RadioMenuFlyoutItemApiTests
             Assert.AreEqual(12.0, checkGlyph.FontSize);
             Assert.AreEqual(new Thickness(0, 0, 16, 0), checkGlyph.Margin);
             Assert.AreEqual(0.0, checkGlyph.Opacity);
+
+            var iconContent = GetTemplateChild<ContentPresenterEx>(item, "IconContent");
+            Assert.AreSame(item.Icon, iconContent.Content);
 
             item.SetCurrentValue(MenuItem.IsCheckedProperty, true);
             host.UpdateLayout();

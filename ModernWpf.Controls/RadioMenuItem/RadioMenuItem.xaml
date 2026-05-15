@@ -57,7 +57,7 @@
                                 Width="16"
                                 Height="16"
                                 Margin="0,0,12,0">
-                                <ContentPresenter x:Name="IconContent"
+                                <ui:ContentPresenterEx x:Name="IconContent"
                                     ContentSource="Icon"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             </Viewbox>
@@ -92,18 +92,18 @@
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPointerOver}" />
                             <Setter TargetName="TextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
-                            <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
+                            <Setter TargetName="IconContent" Property="Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPressed}" />
                             <Setter TargetName="TextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
-                            <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
+                            <Setter TargetName="IconContent" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="TextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
                             <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
-                            <Setter TargetName="IconContent" Property="TextElement.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
+                            <Setter TargetName="IconContent" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

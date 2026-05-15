@@ -157,7 +157,7 @@
                                 <Grid.RenderTransform>
                                     <TranslateTransform x:Name="ContentPresenterTranslateTransform" />
                                 </Grid.RenderTransform>
-                                <ContentPresenter
+                                <ui:ContentPresenterEx
                                     x:Name="ContentPresenter"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -203,7 +203,7 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="BorderBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="BorderBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                             <Setter TargetName="MultiSelectSquare" Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                             <Setter TargetName="MultiSelectCheck" Property="Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                         </MultiTrigger>
@@ -215,7 +215,7 @@
                             <Setter TargetName="MultiSelectCheck" Property="Opacity" Value="1" />
                             <Setter TargetName="BorderBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="BorderBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentLowBrush}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                             <Setter TargetName="MultiSelectSquare" Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                             <Setter TargetName="MultiSelectCheck" Property="Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                         </MultiTrigger>
@@ -227,7 +227,7 @@
                             <Setter TargetName="MultiSelectCheck" Property="Opacity" Value="1" />
                             <Setter TargetName="BorderBackground" Property="Opacity" Value="1" />
                             <Setter TargetName="BorderBackground" Property="Fill" Value="{DynamicResource SystemControlHighlightListAccentMediumBrush}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                             <Setter TargetName="MultiSelectSquare" Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                             <Setter TargetName="MultiSelectCheck" Property="Foreground" Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
                         </MultiTrigger>
