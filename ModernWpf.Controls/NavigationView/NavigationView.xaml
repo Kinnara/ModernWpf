@@ -1361,10 +1361,11 @@
                                                                 Grid.Row="2" />
 
                                                 <!-- FooterItems -->
-                                                <local:ItemsRepeaterScrollHost Grid.Row="3">
+                                                <local:ItemsRepeaterScrollHost
+                                                    Grid.Row="3"
+                                                    VerticalAnchorRatio="1">
                                                     <ScrollViewer x:Name="FooterItemsScrollViewer"
                                                                   VerticalScrollBarVisibility="Auto">
-                                                        <!-- contract7Present:VerticalAnchorRatio="1" -->
                                                         <local:ItemsRepeater
                                                             x:Name="FooterMenuItemsHost" VerticalAlignment="Bottom"/>
                                                     </ScrollViewer>

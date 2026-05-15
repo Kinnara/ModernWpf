@@ -808,6 +808,27 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewFooterItemsHostUsesWinUIBottomAnchor()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            using var host = CreateNavigationViewHost(
+                out var navView,
+                ModernWpf.Controls.NavigationViewPaneDisplayMode.Left,
+                isPaneOpen: true);
+
+            var footerScrollViewer = FindNamedDescendant<ScrollViewer>(navView, "FooterItemsScrollViewer");
+            var scrollHost = VisualTreeHelper.GetParent(footerScrollViewer) as ModernWpf.Controls.ItemsRepeaterScrollHost;
+
+            Assert.IsNotNull(scrollHost);
+            Assert.AreEqual(0.0, scrollHost!.HorizontalAnchorRatio);
+            Assert.AreEqual(1.0, scrollHost.VerticalAnchorRatio);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>
