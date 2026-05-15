@@ -17,6 +17,7 @@ using ModernContentControlEx = ModernWpf.Controls.ContentControlEx;
 using ModernGridEx = ModernWpf.Controls.GridEx;
 using ModernRelativePanel = ModernWpf.Controls.RelativePanel;
 using ModernStackPanelEx = ModernWpf.Controls.StackPanelEx;
+using ModernVariableSizedWrapGrid = ModernWpf.Controls.VariableSizedWrapGrid;
 
 namespace ModernWpf.WinUI.Tests.LayoutCompatibility;
 
@@ -91,6 +92,13 @@ public class LayoutCompatibilityApiTests
                 (control, brush) => control.Background = brush,
                 (control, transition) => control.BackgroundTransition = transition,
                 control => control.ClearValue(ModernStackPanelEx.BackgroundTransitionProperty),
+                control => control.EffectiveBackground);
+
+            AssertTransitionBrush(
+                new ModernVariableSizedWrapGrid(),
+                (control, brush) => control.Background = brush,
+                (control, transition) => control.BackgroundTransition = transition,
+                control => control.ClearValue(ModernVariableSizedWrapGrid.BackgroundTransitionProperty),
                 control => control.EffectiveBackground);
         });
     }
@@ -176,6 +184,145 @@ public class LayoutCompatibilityApiTests
             Assert.AreEqual(7, ModernCanvasEx.GetLeft(child));
             Assert.AreEqual(9, ModernCanvasEx.GetTop(child));
             Assert.AreEqual(3, ModernCanvasEx.GetZIndex(child));
+        });
+    }
+
+    [TestMethod]
+    public void VariableSizedWrapGridAcceptsWinUILayoutSurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var backgroundTransition = new BrushTransition { Duration = TimeSpan.FromMilliseconds(70) };
+            var childrenTransitions = new ModernWpf.Media.Animation.TransitionCollection();
+            var panel = new ModernVariableSizedWrapGrid
+            {
+                ItemHeight = 40,
+                ItemWidth = 50,
+                Orientation = Orientation.Horizontal,
+                HorizontalChildrenAlignment = HorizontalAlignment.Center,
+                VerticalChildrenAlignment = VerticalAlignment.Bottom,
+                MaximumRowsOrColumns = 3,
+                BackgroundTransition = backgroundTransition,
+                ChildrenTransitions = childrenTransitions
+            };
+
+            Assert.AreEqual(40, panel.ItemHeight);
+            Assert.AreEqual(50, panel.ItemWidth);
+            Assert.AreEqual(Orientation.Horizontal, panel.Orientation);
+            Assert.AreEqual(HorizontalAlignment.Center, panel.HorizontalChildrenAlignment);
+            Assert.AreEqual(VerticalAlignment.Bottom, panel.VerticalChildrenAlignment);
+            Assert.AreEqual(3, panel.MaximumRowsOrColumns);
+            Assert.AreSame(backgroundTransition, panel.BackgroundTransition);
+            Assert.AreSame(childrenTransitions, panel.ChildrenTransitions);
+        });
+    }
+
+    [TestMethod]
+    public void VariableSizedWrapGridWrapsHorizontallyAndVertically()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var horizontalPanel = CreateVariableSizedWrapGrid(Orientation.Horizontal, 7);
+            AssertVariableSizedWrapGridPositions(
+                horizontalPanel,
+                new[]
+                {
+                    new Point(0, 0),
+                    new Point(100, 0),
+                    new Point(200, 0),
+                    new Point(0, 100),
+                    new Point(100, 100),
+                    new Point(200, 100),
+                    new Point(0, 200)
+                });
+
+            var verticalPanel = CreateVariableSizedWrapGrid(Orientation.Vertical, 7);
+            AssertVariableSizedWrapGridPositions(
+                verticalPanel,
+                new[]
+                {
+                    new Point(0, 0),
+                    new Point(0, 100),
+                    new Point(0, 200),
+                    new Point(100, 0),
+                    new Point(100, 100),
+                    new Point(100, 200),
+                    new Point(200, 0)
+                });
+        });
+    }
+
+    [TestMethod]
+    public void VariableSizedWrapGridSupportsRowAndColumnSpans()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var panel = CreateVariableSizedWrapGrid(Orientation.Horizontal, 7);
+
+            ModernVariableSizedWrapGrid.SetColumnSpan(panel.Children[0], 2);
+            ModernVariableSizedWrapGrid.SetRowSpan(panel.Children[2], 2);
+
+            AssertVariableSizedWrapGridPositions(
+                panel,
+                new[]
+                {
+                    new Point(50, 0),
+                    new Point(200, 0),
+                    new Point(0, 150),
+                    new Point(100, 100),
+                    new Point(200, 100),
+                    new Point(100, 200),
+                    new Point(200, 200)
+                });
+        });
+    }
+
+    [TestMethod]
+    public void VariableSizedWrapGridParsesTemplateCompatibilityXaml()
+    {
+        WpfTestHost.Run(() =>
+        {
+            const string xaml =
+                """
+                <controls:VariableSizedWrapGrid
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf"
+                    xmlns:animation="clr-namespace:ModernWpf.Media.Animation;assembly=ModernWpf"
+                    ItemWidth="40"
+                    ItemHeight="30"
+                    Orientation="Horizontal"
+                    MaximumRowsOrColumns="2"
+                    HorizontalChildrenAlignment="Center"
+                    VerticalChildrenAlignment="Bottom">
+                    <controls:VariableSizedWrapGrid.BackgroundTransition>
+                        <controls:BrushTransition Duration="0:0:0.083" />
+                    </controls:VariableSizedWrapGrid.BackgroundTransition>
+                    <controls:VariableSizedWrapGrid.ChildrenTransitions>
+                        <animation:TransitionCollection />
+                    </controls:VariableSizedWrapGrid.ChildrenTransitions>
+                    <Border
+                        Width="10"
+                        Height="10"
+                        Background="Red"
+                        controls:VariableSizedWrapGrid.ColumnSpan="2"
+                        controls:VariableSizedWrapGrid.RowSpan="3" />
+                </controls:VariableSizedWrapGrid>
+                """;
+
+            var panel = (ModernVariableSizedWrapGrid)XamlReader.Parse(xaml);
+            var child = (UIElement)panel.Children[0];
+
+            Assert.AreEqual(40, panel.ItemWidth);
+            Assert.AreEqual(30, panel.ItemHeight);
+            Assert.AreEqual(Orientation.Horizontal, panel.Orientation);
+            Assert.AreEqual(2, panel.MaximumRowsOrColumns);
+            Assert.AreEqual(HorizontalAlignment.Center, panel.HorizontalChildrenAlignment);
+            Assert.AreEqual(VerticalAlignment.Bottom, panel.VerticalChildrenAlignment);
+            Assert.IsNotNull(panel.BackgroundTransition);
+            Assert.IsNotNull(panel.ChildrenTransitions);
+            Assert.AreEqual(2, ModernVariableSizedWrapGrid.GetColumnSpan(child));
+            Assert.AreEqual(3, ModernVariableSizedWrapGrid.GetRowSpan(child));
         });
     }
 
@@ -2482,6 +2629,50 @@ public class LayoutCompatibilityApiTests
             ?? throw new AssertFailedException($"Expected {root.GetType().Name} template to use ContentPresenterEx.");
         Assert.AreEqual(expectedContent, presenter.Content);
         Assert.AreSame(expectedForeground, presenter.Foreground);
+    }
+
+    private static ModernVariableSizedWrapGrid CreateVariableSizedWrapGrid(Orientation orientation, int itemCount)
+    {
+        var panel = new ModernVariableSizedWrapGrid
+        {
+            Width = 300,
+            Height = 300,
+            ItemWidth = 100,
+            ItemHeight = 100,
+            Orientation = orientation
+        };
+
+        for (int i = 0; i < itemCount; i++)
+        {
+            panel.Children.Add(new Border
+            {
+                Width = 100,
+                Height = 100,
+                Background = i % 2 == 0 ? Brushes.Red : Brushes.Blue,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            });
+        }
+
+        return panel;
+    }
+
+    private static void AssertVariableSizedWrapGridPositions(ModernVariableSizedWrapGrid panel, IReadOnlyList<Point> expectedPositions)
+    {
+        panel.Measure(new Size(panel.Width, panel.Height));
+        panel.Arrange(new Rect(0, 0, panel.Width, panel.Height));
+        panel.UpdateLayout();
+
+        Assert.AreEqual(300, panel.DesiredSize.Width, 0.1);
+        Assert.AreEqual(300, panel.DesiredSize.Height, 0.1);
+        Assert.AreEqual(expectedPositions.Count, panel.Children.Count);
+
+        for (int i = 0; i < expectedPositions.Count; i++)
+        {
+            var actual = ((UIElement)panel.Children[i]).TranslatePoint(new Point(), panel);
+            Assert.AreEqual(expectedPositions[i].X, actual.X, 0.1, $"Unexpected X position for item {i}.");
+            Assert.AreEqual(expectedPositions[i].Y, actual.Y, 0.1, $"Unexpected Y position for item {i}.");
+        }
     }
 
     private static Color RenderBorderEdgePixel(BackgroundSizing backgroundSizing)
