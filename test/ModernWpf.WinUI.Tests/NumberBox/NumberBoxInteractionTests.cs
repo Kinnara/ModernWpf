@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Markup;
+using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.WinUI.TestInfra;
@@ -427,14 +428,23 @@ public class NumberBoxInteractionTests
             var numberBox = new ModernWpf.Controls.NumberBox
             {
                 Width = 180,
-                Header = header
+                Header = header,
+                Description = "Description text"
             };
 
             using var host = new TestWindowHost(numberBox, width: 320, height: 180);
 
-            var headerPresenter = FindControlTemplatePart<ContentPresenter>(numberBox, "HeaderContentPresenter");
+            var headerPresenter = FindControlTemplatePart<ContentPresenterEx>(numberBox, "HeaderContentPresenter");
             Assert.AreEqual(Visibility.Visible, headerPresenter.Visibility);
             Assert.AreSame(header, headerPresenter.Content);
+
+            var descriptionPresenter = FindControlTemplatePart<ContentPresenterEx>(numberBox, "DescriptionPresenter");
+            Assert.AreEqual(Visibility.Visible, descriptionPresenter.Visibility);
+            Assert.AreEqual("Description text", descriptionPresenter.Content);
+            Assert.AreEqual(3, Grid.GetColumnSpan(descriptionPresenter));
+            AssertBrushEquals(
+                (Brush)descriptionPresenter.TryFindResource("SystemControlDescriptionTextForegroundBrush"),
+                descriptionPresenter.Foreground);
 
             numberBox.Header = null;
             host.UpdateLayout();
@@ -542,6 +552,21 @@ public class NumberBoxInteractionTests
         {
             Assert.AreEqual(expected, actual);
         }
+    }
+
+    private static void AssertBrushEquals(Brush expected, Brush actual)
+    {
+        Assert.IsNotNull(expected);
+        Assert.IsNotNull(actual);
+
+        if (expected is SolidColorBrush expectedSolid && actual is SolidColorBrush actualSolid)
+        {
+            Assert.AreEqual(expectedSolid.Color, actualSolid.Color);
+            Assert.AreEqual(expectedSolid.Opacity, actualSolid.Opacity);
+            return;
+        }
+
+        Assert.AreEqual(expected.ToString(), actual.ToString());
     }
 
     private static T FindTemplatePart<T>(DependencyObject root, string name)

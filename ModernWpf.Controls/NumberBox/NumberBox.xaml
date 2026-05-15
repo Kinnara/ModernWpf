@@ -195,14 +195,14 @@
                             MinWidth="34"
                             VerticalAlignment="Stretch"
                             ui:TextBoxHelper.IsDeleteButton="True" />
-                        <ContentPresenter
+                        <ui:ContentPresenterEx
                             x:Name="DescriptionPresenter"
                             Grid.Row="2"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
                             Content="{TemplateBinding ui:ControlHelper.Description}"
                             Visibility="{TemplateBinding ui:ControlHelper.DescriptionVisibility}"
-                            TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
+                            Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         <ui:FontIconFallback
                             Grid.Row="1"
@@ -446,12 +446,12 @@
                             Style="{StaticResource NumberBoxSpinButtonStyle}"
                             ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}" />
 
-                        <ContentPresenter
+                        <ui:ContentPresenterEx
                             x:Name="DescriptionPresenter"
                             Grid.Row="2"
-                            Grid.ColumnSpan="2"
+                            Grid.ColumnSpan="3"
                             Content="{TemplateBinding Description}"
-                            TextElement.Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
+                            Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
                             Visibility="{TemplateBinding ui:ControlHelper.DescriptionVisibility}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </Grid>
