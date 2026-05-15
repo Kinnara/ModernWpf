@@ -35,8 +35,16 @@
                                 Data="{StaticResource ChevronDown}"
                                 SnapsToDevicePixels="false"
                                 Foreground="{DynamicResource ExpanderChevronForeground}" />
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 Grid.Column="1"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                Foreground="{TemplateBinding Foreground}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
                                 Margin="8,0,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
@@ -110,8 +118,16 @@
                                     SnapsToDevicePixels="false"
                                     Foreground="{DynamicResource ExpanderChevronForeground}" />
                             </Grid>
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 Grid.Column="1"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                Foreground="{TemplateBinding Foreground}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
                                 Margin="8,0,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
@@ -185,8 +201,16 @@
                                     SnapsToDevicePixels="false"
                                     Foreground="{DynamicResource ExpanderChevronForeground}" />
                             </Grid>
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 Grid.Row="1"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                Foreground="{TemplateBinding Foreground}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
                                 Margin="0,4,0,0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
@@ -260,8 +284,16 @@
                                     SnapsToDevicePixels="false"
                                     Foreground="{DynamicResource ExpanderChevronForeground}" />
                             </Grid>
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 Grid.Row="1"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                Foreground="{TemplateBinding Foreground}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
                                 Margin="0,4,0,0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Top"
@@ -344,8 +376,16 @@
                                 Style="{StaticResource ExpanderDownHeaderStyle}"
                                 primitives:FocusVisualHelper.UseSystemFocusVisuals="True"
                                 primitives:FocusVisualHelper.FocusVisualMargin="-3" />
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 x:Name="ExpandSite"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                Foreground="{TemplateBinding Foreground}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
                                 Margin="{TemplateBinding Padding}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"

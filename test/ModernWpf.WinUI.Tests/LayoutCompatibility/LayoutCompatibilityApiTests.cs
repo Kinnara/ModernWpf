@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -270,6 +271,92 @@ public class LayoutCompatibilityApiTests
             Assert.AreEqual(titleBarButton.Content, titlePresenter.Content);
             Assert.AreSame(titleBarButton.Foreground, titlePresenter.Foreground);
             Assert.AreEqual(titleBarButton.FontSize, titlePresenter.FontSize);
+        });
+    }
+
+    [TestMethod]
+    public void SimpleShellTemplatesUseWinUIPresenterSlots()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var page = new ModernWpf.Controls.Page
+            {
+                Content = "Page content",
+                Foreground = Brushes.Red
+            };
+            var frame = new ModernWpf.Controls.Frame();
+            var groupBox = new GroupBox
+            {
+                Header = "Group header",
+                Content = "Group content",
+                Foreground = Brushes.Blue
+            };
+            var label = new Label
+            {
+                Content = "Label content",
+                Foreground = Brushes.Green
+            };
+            var statusBarItem = new StatusBarItem
+            {
+                Content = "Status content",
+                Foreground = Brushes.Orange
+            };
+            var expander = new System.Windows.Controls.Expander
+            {
+                Header = "Expander header",
+                Content = "Expander content",
+                Foreground = Brushes.Purple,
+                IsExpanded = true
+            };
+
+            var hostPanel = new StackPanel();
+            hostPanel.Children.Add(frame);
+            hostPanel.Children.Add(groupBox);
+            hostPanel.Children.Add(label);
+            hostPanel.Children.Add(statusBarItem);
+            hostPanel.Children.Add(expander);
+
+            using var pageHost = new TestWindowHost(page, width: 240, height: 120);
+            using var host = new TestWindowHost(hostPanel, width: 360, height: 320);
+            pageHost.UpdateLayout();
+            host.UpdateLayout();
+
+            var pagePresenter = FindVisualChild<ContentPresenterEx>(page)
+                ?? throw new AssertFailedException("Expected Page template to use ContentPresenterEx.");
+            Assert.AreEqual(page.Content, pagePresenter.Content);
+            Assert.AreSame(page.Foreground, pagePresenter.Foreground);
+
+            Assert.IsInstanceOfType(FindTemplateChild<ContentPresenterEx>(frame, "FirstContentPresenter"), typeof(ContentPresenterEx));
+            Assert.IsInstanceOfType(FindTemplateChild<ContentPresenterEx>(frame, "SecondContentPresenter"), typeof(ContentPresenterEx));
+
+            var groupPresenters = VisualTreeTestHelper.EnumerateDescendants(groupBox)
+                .OfType<ContentPresenterEx>()
+                .ToArray();
+            Assert.IsTrue(groupPresenters.Any(presenter => Equals(groupBox.Header, presenter.Content)));
+            Assert.IsTrue(groupPresenters.Any(presenter => Equals(groupBox.Content, presenter.Content)));
+
+            var labelPresenter = FindVisualChild<ContentPresenterEx>(label)
+                ?? throw new AssertFailedException("Expected Label template to use ContentPresenterEx.");
+            Assert.AreEqual(label.Content, labelPresenter.Content);
+            Assert.AreSame(label.Foreground, labelPresenter.Foreground);
+
+            var statusPresenter = FindVisualChild<ContentPresenterEx>(statusBarItem)
+                ?? throw new AssertFailedException("Expected StatusBarItem template to use ContentPresenterEx.");
+            Assert.AreEqual(statusBarItem.Content, statusPresenter.Content);
+            Assert.AreSame(statusBarItem.Foreground, statusPresenter.Foreground);
+
+            var expandSite = FindTemplateChild<ContentPresenterEx>(expander, "ExpandSite");
+            Assert.AreEqual(expander.Content, expandSite.Content);
+            Assert.AreSame(expander.Foreground, expandSite.Foreground);
+
+            var headerSite = FindTemplateChild<ToggleButton>(expander, "HeaderSite");
+            Assert.IsTrue(
+                VisualTreeTestHelper.EnumerateDescendants(headerSite)
+                    .OfType<ContentPresenterEx>()
+                    .Any(presenter => Equals(expander.Header, presenter.Content)),
+                "Expected Expander header template to use ContentPresenterEx.");
         });
     }
 
