@@ -1,6 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
     <Style x:Key="DefaultTwoPaneViewStyle" TargetType="local:TwoPaneView">
@@ -29,18 +30,18 @@
                         </Grid.RowDefinitions>
 
                         <ScrollViewer
-                            x:Name="PART_Pane1Presenter"
+                            x:Name="PART_Pane1ScrollViewer"
                             Grid.Column="0"
                             VerticalScrollBarVisibility="Auto"
                             HorizontalScrollBarVisibility="Auto">
-                            <ContentPresenter Content="{TemplateBinding Pane1}" />
+                            <ui:ContentPresenterEx Content="{TemplateBinding Pane1}" />
                         </ScrollViewer>
                         <ScrollViewer
-                            x:Name="PART_Pane2Presenter"
+                            x:Name="PART_Pane2ScrollViewer"
                             Grid.Column="2"
                             VerticalScrollBarVisibility="Auto"
                             HorizontalScrollBarVisibility="Auto">
-                            <ContentPresenter Content="{TemplateBinding Pane2}" />
+                            <ui:ContentPresenterEx Content="{TemplateBinding Pane2}" />
                         </ScrollViewer>
                     </Grid>
                 </ControlTemplate>

@@ -84,16 +84,16 @@ public class TwoPaneViewApiTests
 
             using var host = new TestWindowHost(twoPaneView, width: 720, height: 720);
 
-            var pane1Presenter = FindNamedDescendant<FrameworkElement>(twoPaneView, "PART_Pane1Presenter");
-            var pane2Presenter = FindNamedDescendant<FrameworkElement>(twoPaneView, "PART_Pane2Presenter");
+            var pane1ScrollViewer = FindNamedDescendant<FrameworkElement>(twoPaneView, "PART_Pane1ScrollViewer");
+            var pane2ScrollViewer = FindNamedDescendant<FrameworkElement>(twoPaneView, "PART_Pane2ScrollViewer");
             var columnLeft = FindNamedTemplatePart<ColumnDefinition>(twoPaneView, "PART_ColumnLeft");
             var columnRight = FindNamedTemplatePart<ColumnDefinition>(twoPaneView, "PART_ColumnRight");
             var rowTop = FindNamedTemplatePart<RowDefinition>(twoPaneView, "PART_RowTop");
             var rowBottom = FindNamedTemplatePart<RowDefinition>(twoPaneView, "PART_RowBottom");
 
             Assert.AreEqual(TwoPaneViewMode.Wide, twoPaneView.Mode);
-            Assert.AreEqual(0, Grid.GetColumn(pane1Presenter));
-            Assert.AreEqual(2, Grid.GetColumn(pane2Presenter));
+            Assert.AreEqual(0, Grid.GetColumn(pane1ScrollViewer));
+            Assert.AreEqual(2, Grid.GetColumn(pane2ScrollViewer));
             Assert.AreEqual(new GridLength(2, GridUnitType.Star), columnLeft.Width);
             Assert.AreEqual(new GridLength(3, GridUnitType.Star), columnRight.Width);
             Assert.IsTrue(modeChanges >= 1);
@@ -102,8 +102,8 @@ public class TwoPaneViewApiTests
             host.UpdateLayout();
 
             Assert.AreEqual(TwoPaneViewMode.Wide, twoPaneView.Mode);
-            Assert.AreEqual(2, Grid.GetColumn(pane1Presenter));
-            Assert.AreEqual(0, Grid.GetColumn(pane2Presenter));
+            Assert.AreEqual(2, Grid.GetColumn(pane1ScrollViewer));
+            Assert.AreEqual(0, Grid.GetColumn(pane2ScrollViewer));
             Assert.AreEqual(new GridLength(3, GridUnitType.Star), columnLeft.Width);
             Assert.AreEqual(new GridLength(2, GridUnitType.Star), columnRight.Width);
 
@@ -112,8 +112,8 @@ public class TwoPaneViewApiTests
             host.UpdateLayout();
 
             Assert.AreEqual(TwoPaneViewMode.Tall, twoPaneView.Mode);
-            Assert.AreEqual(0, Grid.GetRow(pane1Presenter));
-            Assert.AreEqual(2, Grid.GetRow(pane2Presenter));
+            Assert.AreEqual(0, Grid.GetRow(pane1ScrollViewer));
+            Assert.AreEqual(2, Grid.GetRow(pane2ScrollViewer));
             Assert.AreEqual(new GridLength(2, GridUnitType.Star), rowTop.Height);
             Assert.AreEqual(new GridLength(3, GridUnitType.Star), rowBottom.Height);
 
@@ -121,8 +121,8 @@ public class TwoPaneViewApiTests
             host.UpdateLayout();
 
             Assert.AreEqual(TwoPaneViewMode.Tall, twoPaneView.Mode);
-            Assert.AreEqual(2, Grid.GetRow(pane1Presenter));
-            Assert.AreEqual(0, Grid.GetRow(pane2Presenter));
+            Assert.AreEqual(2, Grid.GetRow(pane1ScrollViewer));
+            Assert.AreEqual(0, Grid.GetRow(pane2ScrollViewer));
             Assert.AreEqual(new GridLength(3, GridUnitType.Star), rowTop.Height);
             Assert.AreEqual(new GridLength(2, GridUnitType.Star), rowBottom.Height);
 
@@ -131,10 +131,36 @@ public class TwoPaneViewApiTests
             host.UpdateLayout();
 
             Assert.AreEqual(TwoPaneViewMode.SinglePane, twoPaneView.Mode);
-            Assert.AreEqual(Visibility.Collapsed, pane1Presenter.Visibility);
-            Assert.AreEqual(Visibility.Visible, pane2Presenter.Visibility);
-            Assert.AreEqual(0, Grid.GetColumn(pane2Presenter));
-            Assert.AreEqual(0, Grid.GetRow(pane2Presenter));
+            Assert.AreEqual(Visibility.Collapsed, pane1ScrollViewer.Visibility);
+            Assert.AreEqual(Visibility.Visible, pane2ScrollViewer.Visibility);
+            Assert.AreEqual(0, Grid.GetColumn(pane2ScrollViewer));
+            Assert.AreEqual(0, Grid.GetRow(pane2ScrollViewer));
+        });
+    }
+
+    [TestMethod]
+    public void TwoPaneViewTemplateUsesWinUIPaneHostSlots()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var pane1 = new Grid();
+            var pane2 = new TextBlock { Text = "Pane 2" };
+            var twoPaneView = new ModernWpf.Controls.TwoPaneView
+            {
+                Pane1 = pane1,
+                Pane2 = pane2
+            };
+
+            using var host = new TestWindowHost(twoPaneView, width: 720, height: 720);
+
+            var pane1ScrollViewer = FindNamedDescendant<ScrollViewer>(twoPaneView, "PART_Pane1ScrollViewer");
+            var pane2ScrollViewer = FindNamedDescendant<ScrollViewer>(twoPaneView, "PART_Pane2ScrollViewer");
+
+            var pane1Host = AssertPaneHost(pane1ScrollViewer);
+            var pane2Host = AssertPaneHost(pane2ScrollViewer);
+
+            Assert.AreSame(pane1, pane1Host.Content);
+            Assert.AreSame(pane2, pane2Host.Content);
         });
     }
 
@@ -162,5 +188,15 @@ public class TwoPaneViewApiTests
         }
 
         return part;
+    }
+
+    private static ContentPresenterEx AssertPaneHost(ScrollViewer scrollViewer)
+    {
+        if (scrollViewer.Content is ContentPresenterEx paneHost)
+        {
+            return paneHost;
+        }
+
+        throw new AssertFailedException("Expected TwoPaneView pane ScrollViewer to host content through ContentPresenterEx.");
     }
 }
