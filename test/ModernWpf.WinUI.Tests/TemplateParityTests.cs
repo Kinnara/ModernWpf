@@ -100,6 +100,26 @@ public class TemplateParityTests
             "These core item template files should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
     }
 
+    [TestMethod]
+    public void CoreMenuSourceBackedPresenterSlotsUseWinUIPresenterShape()
+    {
+        var repoRoot = FindRepoRoot();
+        var sourceBackedTemplateFiles = new[]
+        {
+            Path.Combine("ModernWpf", "Styles", "MenuItem.xaml")
+        };
+
+        var offenders = sourceBackedTemplateFiles
+            .Select(path => Path.Combine(repoRoot, path))
+            .SelectMany(path => FindPlainContentPresenterElementUses(repoRoot, path)
+                .Concat(FindTextElementForegroundUses(repoRoot, path)))
+            .ToArray();
+
+        Assert.IsFalse(
+            offenders.Any(),
+            "The core menu template file should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
+    }
+
     private static string FindRepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

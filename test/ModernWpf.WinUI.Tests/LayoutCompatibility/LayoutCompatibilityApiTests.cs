@@ -112,6 +112,36 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void CoreMenuItemTemplatesUseWinUIPresenterSlots()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var topLevelItem = CreateMenuItemWithTemplate("TopLevelItemTemplateKey", "File", null, isEnabled: true);
+            var topLevelHeader = CreateMenuItemWithTemplate("TopLevelHeaderTemplateKey", "Edit", null, isEnabled: true);
+            var submenuItem = CreateMenuItemWithTemplate("SubmenuItemTemplateKey", "Open", new TextBlock { Text = "Icon" }, isEnabled: false);
+            var submenuHeader = CreateMenuItemWithTemplate("SubmenuHeaderTemplateKey", "More", new TextBlock { Text = "Icon" }, isEnabled: false);
+
+            using var host = new TestWindowHost(new StackPanel
+            {
+                Children = { topLevelItem, topLevelHeader, submenuItem, submenuHeader }
+            });
+            host.UpdateLayout();
+
+            Assert.AreEqual(topLevelItem.Header, FindVisualChild<ContentPresenterEx>(topLevelItem)?.Content);
+            Assert.AreEqual(topLevelHeader.Header, FindVisualChild<ContentPresenterEx>(topLevelHeader)?.Content);
+
+            AssertMenuTemplatePresenterSlot(
+                submenuItem,
+                expectedForegroundResource: "MenuFlyoutItemForegroundDisabled");
+            AssertMenuTemplatePresenterSlot(
+                submenuHeader,
+                expectedForegroundResource: "MenuFlyoutSubItemForegroundDisabled");
+        });
+    }
+
+    [TestMethod]
     public void BorderExParsesTemplateCompatibilityXaml()
     {
         WpfTestHost.Run(() =>
@@ -1533,6 +1563,35 @@ public class LayoutCompatibilityApiTests
         control.ApplyTemplate();
         return control.Template?.FindName(name, control) as T
             ?? throw new AssertFailedException($"Expected template child '{name}' on {control.GetType().Name}.");
+    }
+
+    private static MenuItem CreateMenuItemWithTemplate(string templateResourceId, object header, object? icon, bool isEnabled)
+    {
+        return new MenuItem
+        {
+            Header = header,
+            Icon = icon,
+            IsEnabled = isEnabled,
+            Template = FindMenuItemTemplate(templateResourceId)
+        };
+    }
+
+    private static ControlTemplate FindMenuItemTemplate(string resourceId)
+    {
+        var key = new ComponentResourceKey(typeof(MenuItem), resourceId);
+        return Application.Current.TryFindResource(key) as ControlTemplate
+            ?? throw new AssertFailedException($"Expected MenuItem template resource '{resourceId}'.");
+    }
+
+    private static void AssertMenuTemplatePresenterSlot(MenuItem menuItem, string expectedForegroundResource)
+    {
+        var contentPresenter = FindTemplateChild<ContentPresenterEx>(menuItem, "ContentPresenter");
+        Assert.AreEqual(menuItem.Header, contentPresenter.Content);
+        Assert.AreSame(contentPresenter.TryFindResource(expectedForegroundResource), contentPresenter.Foreground);
+
+        var iconContent = FindTemplateChild<ContentPresenterEx>(menuItem, "IconContent");
+        Assert.AreEqual(menuItem.Icon, iconContent.Content);
+        Assert.AreSame(iconContent.TryFindResource(expectedForegroundResource), iconContent.Foreground);
     }
 
     private static Color RenderBorderEdgePixel(BackgroundSizing backgroundSizing)
