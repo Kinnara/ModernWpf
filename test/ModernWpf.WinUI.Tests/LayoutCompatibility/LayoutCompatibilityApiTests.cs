@@ -361,6 +361,24 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void CalendarNavigationButtonsUseWinUIPresenterSlots()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var calendar = new Calendar();
+            using var host = new TestWindowHost(calendar, width: 360, height: 320);
+            host.UpdateLayout();
+
+            var calendarItem = FindTemplateChild<CalendarItem>(calendar, "PART_CalendarItem");
+            AssertCalendarNavigationPresenter(FindTemplateChild<Button>(calendarItem, "PART_HeaderButton"));
+            AssertCalendarNavigationPresenter(FindTemplateChild<Button>(calendarItem, "PART_PreviousButton"));
+            AssertCalendarNavigationPresenter(FindTemplateChild<Button>(calendarItem, "PART_NextButton"));
+        });
+    }
+
+    [TestMethod]
     public void BorderExParsesTemplateCompatibilityXaml()
     {
         WpfTestHost.Run(() =>
@@ -1817,6 +1835,16 @@ public class LayoutCompatibilityApiTests
         var iconContent = FindTemplateChild<ContentPresenterEx>(menuItem, "IconContent");
         Assert.AreEqual(menuItem.Icon, iconContent.Content);
         Assert.AreSame(iconContent.TryFindResource(expectedForegroundResource), iconContent.Foreground);
+    }
+
+    private static void AssertCalendarNavigationPresenter(Button button)
+    {
+        var presenter = FindTemplateChild<ContentPresenterEx>(button, "Text");
+        Assert.AreEqual(button.Content, presenter.Content);
+        Assert.AreSame(button.Foreground, presenter.Foreground);
+        Assert.AreEqual(button.Padding, presenter.Padding);
+        Assert.AreEqual(ControlHelper.GetCornerRadius(button), presenter.CornerRadius);
+        Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonBorderBrush"), presenter.BorderBrush);
     }
 
     private static Color RenderBorderEdgePixel(BackgroundSizing backgroundSizing)
