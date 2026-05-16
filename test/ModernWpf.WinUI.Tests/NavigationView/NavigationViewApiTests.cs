@@ -1044,6 +1044,56 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewTopPaneSettingsItemStatesUseWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top,
+                IsSettingsVisible = true,
+                Width = 1008
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            var settingsItem = (ModernWpf.Controls.NavigationViewItem)navView.SettingsItem;
+            var layoutRoot = FindNamedDescendant<Border>(settingsItem, "LayoutRoot");
+            var pointerRectangle = FindNamedDescendant<Rectangle>(settingsItem, "PointerRectangle");
+            var icon = FindNamedDescendant<ModernWpf.Controls.ContentPresenterEx>(settingsItem, "Icon");
+
+            AssertStateSetter(layoutRoot, "PointerStates", "PointerOver",
+                "LayoutRoot.Background",
+                "PointerRectangle.Fill",
+                "Icon.Foreground");
+            AssertStateSetter(layoutRoot, "PointerStates", "PointerOverSelected",
+                "LayoutRoot.Background",
+                "PointerRectangle.Fill",
+                "Icon.Foreground");
+            AssertStateSetter(layoutRoot, "DisabledStates", "Disabled",
+                "Icon.Foreground");
+
+            Assert.IsTrue(VisualStateManager.GoToElementState(layoutRoot, "PointerOver", false));
+            AssertCurrentState(layoutRoot, "PointerStates", "PointerOver");
+            Assert.AreSame(settingsItem.TryFindResource("TopNavigationViewItemBackgroundPointerOver"), layoutRoot.Background);
+            Assert.AreSame(settingsItem.TryFindResource("NavigationViewItemBackgroundPointerOver"), pointerRectangle.Fill);
+            Assert.AreSame(settingsItem.TryFindResource("TopNavigationViewItemForegroundPointerOver"), icon.Foreground);
+
+            Assert.IsTrue(VisualStateManager.GoToElementState(layoutRoot, "PointerOverSelected", false));
+            AssertCurrentState(layoutRoot, "PointerStates", "PointerOverSelected");
+            Assert.AreSame(settingsItem.TryFindResource("TopNavigationViewItemBackgroundSelectedPointerOver"), layoutRoot.Background);
+            Assert.AreSame(settingsItem.TryFindResource("NavigationViewItemBackgroundSelectedPointerOver"), pointerRectangle.Fill);
+
+            settingsItem.IsEnabled = false;
+            host.UpdateLayout();
+            AssertCurrentState(layoutRoot, "DisabledStates", "Disabled");
+            Assert.AreSame(settingsItem.TryFindResource("TopNavigationViewItemForegroundDisabled"), icon.Foreground);
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewPaneToggleButtonTemplateUsesWinUIPresenterSlot()
     {
         WpfTestHost.Run(() =>

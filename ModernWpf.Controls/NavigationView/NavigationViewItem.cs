@@ -490,8 +490,17 @@ namespace ModernWpf.Controls
             }
             else
             {
-                VisualStateManager.GoToState(this, enabledStateValue, true);
-                VisualStateManager.GoToState(this, selectedStateValue, true);
+                GoToStateOnItemTemplateRoot(enabledStateValue, true);
+                GoToStateOnItemTemplateRoot(selectedStateValue, true);
+            }
+        }
+
+        void GoToStateOnItemTemplateRoot(string stateName, bool useTransitions)
+        {
+            if (!VisualStateManager.GoToState(this, stateName, useTransitions) &&
+                this.GetTemplateRoot() is { } templateRoot)
+            {
+                VisualStateManager.GoToElementState(templateRoot, stateName, useTransitions);
             }
         }
 

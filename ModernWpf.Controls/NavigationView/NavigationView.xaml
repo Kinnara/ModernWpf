@@ -374,25 +374,55 @@
                             Height="{DynamicResource TopNavigationViewSettingsButtonHeight}"
                             Width="{DynamicResource TopNavigationViewSettingsButtonHeight}"
                             ui:FocusVisualHelper.IsTemplateFocusTarget="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PointerStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="PointerStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" />
-                                <VisualState x:Name="Pressed" />
-                                <VisualState x:Name="Selected" />
-                                <VisualState x:Name="PointerOverSelected" />
-                                <VisualState x:Name="PressedSelected" />
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource TopNavigationViewItemBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Pressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource TopNavigationViewItemBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Selected">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource TopNavigationViewItemBackgroundSelected}" />
+                                        <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
+                                        <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelected}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverSelected">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource TopNavigationViewItemBackgroundSelectedPointerOver}" />
+                                        <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
+                                        <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PressedSelected">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource TopNavigationViewItemBackgroundSelectedPressed}" />
+                                        <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
+                                        <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="DisabledStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="DisabledStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Enabled"/>
-                                <VisualState x:Name="Disabled">
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid>
@@ -424,36 +454,6 @@
                             </Grid>
                         </Grid>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOver">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
-                        </Trigger>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="Pressed">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPressed}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
-                        </Trigger>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="Selected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundSelected}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelected}" />
-                        </Trigger>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOverSelected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
-                        </Trigger>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PressedSelected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource TopNavigationViewItemBackgroundPressed}" />
-                            <Setter TargetName="PointerRectangle" Property="Fill" Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
-                        </Trigger>
-                        <Trigger SourceName="DisabledStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
