@@ -898,16 +898,12 @@
 
                             <VisualStateGroup x:Name="PaneStateGroup">
                                 <VisualState x:Name="NotClosedCompact" />
-                                <VisualState x:Name="ClosedCompact">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneAutoSuggestBoxPresenter" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneAutoSuggestButton" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="ClosedCompact">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PaneAutoSuggestBoxPresenter.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PaneAutoSuggestButton.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="PaneStateListSizeGroup">

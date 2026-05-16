@@ -934,6 +934,41 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewClosedCompactStateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                MenuItems =
+                {
+                    new ModernWpf.Controls.NavigationViewItem
+                    {
+                        Content = "Home"
+                    }
+                }
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            var root = FindNamedDescendant<Grid>(navView, "RootGrid");
+            var autoSuggestPresenter = FindNamedDescendant<FrameworkElement>(navView, "PaneAutoSuggestBoxPresenter");
+            var autoSuggestButton = FindNamedDescendant<FrameworkElement>(navView, "PaneAutoSuggestButton");
+
+            AssertStateSetter(root, "PaneStateGroup", "ClosedCompact",
+                "PaneAutoSuggestBoxPresenter.Visibility",
+                "PaneAutoSuggestButton.Visibility");
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "ClosedCompact", false));
+            AssertCurrentState(root, "PaneStateGroup", "ClosedCompact");
+            Assert.AreEqual(Visibility.Collapsed, autoSuggestPresenter.Visibility);
+            Assert.AreEqual(Visibility.Visible, autoSuggestButton.Visibility);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>
