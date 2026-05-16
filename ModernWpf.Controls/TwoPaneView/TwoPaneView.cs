@@ -16,6 +16,7 @@ namespace ModernWpf.Controls
 
         public TwoPaneView()
         {
+            Loaded += OnLoaded;
             SizeChanged += OnSizeChanged;
         }
 
@@ -179,6 +180,11 @@ namespace ModernWpf.Controls
             UpdateMode();
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            UpdateMode();
+        }
+
         private void UpdateMode()
         {
             if (_pane1ScrollViewer == null || _pane2ScrollViewer == null ||
@@ -241,13 +247,6 @@ namespace ModernWpf.Controls
             _rowTop.Height = new GridLength(1, GridUnitType.Star);
             _rowMiddle.Height = new GridLength(0);
             _rowBottom.Height = new GridLength(0);
-
-            Grid.SetColumn(_pane1ScrollViewer, 0);
-            Grid.SetColumn(_pane2ScrollViewer, 2);
-            Grid.SetRow(_pane1ScrollViewer, 0);
-            Grid.SetRow(_pane2ScrollViewer, 0);
-            _pane1ScrollViewer.Visibility = Visibility.Visible;
-            _pane2ScrollViewer.Visibility = Visibility.Visible;
         }
 
         private void ApplyWideLayout()
@@ -257,17 +256,15 @@ namespace ModernWpf.Controls
 
             if (WideModeConfiguration == TwoPaneViewWideModeConfiguration.RightLeft)
             {
-                Grid.SetColumn(_pane1ScrollViewer, 2);
-                Grid.SetColumn(_pane2ScrollViewer, 0);
                 _columnLeft.Width = Pane2Length;
                 _columnRight.Width = Pane1Length;
+                GoToLayoutState("ViewMode_RightLeft");
             }
             else
             {
-                Grid.SetColumn(_pane1ScrollViewer, 0);
-                Grid.SetColumn(_pane2ScrollViewer, 2);
                 _columnLeft.Width = Pane1Length;
                 _columnRight.Width = Pane2Length;
+                GoToLayoutState("ViewMode_LeftRight");
             }
         }
 
@@ -278,21 +275,15 @@ namespace ModernWpf.Controls
 
             if (TallModeConfiguration == TwoPaneViewTallModeConfiguration.BottomTop)
             {
-                Grid.SetColumn(_pane1ScrollViewer, 0);
-                Grid.SetColumn(_pane2ScrollViewer, 0);
-                Grid.SetRow(_pane1ScrollViewer, 2);
-                Grid.SetRow(_pane2ScrollViewer, 0);
                 _rowTop.Height = Pane2Length;
                 _rowBottom.Height = Pane1Length;
+                GoToLayoutState("ViewMode_BottomTop");
             }
             else
             {
-                Grid.SetColumn(_pane1ScrollViewer, 0);
-                Grid.SetColumn(_pane2ScrollViewer, 0);
-                Grid.SetRow(_pane1ScrollViewer, 0);
-                Grid.SetRow(_pane2ScrollViewer, 2);
                 _rowTop.Height = Pane1Length;
                 _rowBottom.Height = Pane2Length;
+                GoToLayoutState("ViewMode_TopBottom");
             }
         }
 
@@ -303,21 +294,19 @@ namespace ModernWpf.Controls
             _rowTop.Height = new GridLength(1, GridUnitType.Star);
             _rowBottom.Height = new GridLength(0);
 
-            Grid.SetColumn(_pane1ScrollViewer, 0);
-            Grid.SetColumn(_pane2ScrollViewer, 0);
-            Grid.SetRow(_pane1ScrollViewer, 0);
-            Grid.SetRow(_pane2ScrollViewer, 0);
-
             if (PanePriority == TwoPaneViewPriority.Pane2)
             {
-                _pane1ScrollViewer.Visibility = Visibility.Collapsed;
-                _pane2ScrollViewer.Visibility = Visibility.Visible;
+                GoToLayoutState("ViewMode_TwoOnly");
             }
             else
             {
-                _pane1ScrollViewer.Visibility = Visibility.Visible;
-                _pane2ScrollViewer.Visibility = Visibility.Collapsed;
+                GoToLayoutState("ViewMode_OneOnly");
             }
+        }
+
+        private void GoToLayoutState(string stateName)
+        {
+            VisualStateManager.GoToState(this, stateName, false);
         }
 
         private FrameworkElement _pane1ScrollViewer;

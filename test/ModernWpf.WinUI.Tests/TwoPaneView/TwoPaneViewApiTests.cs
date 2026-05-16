@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -78,11 +79,13 @@ public class TwoPaneViewApiTests
                 Pane1 = new Border { Width = 40, Height = 40 },
                 Pane2 = new Border { Width = 40, Height = 40 },
                 Pane1Length = new GridLength(2, GridUnitType.Star),
-                Pane2Length = new GridLength(3, GridUnitType.Star)
+                Pane2Length = new GridLength(3, GridUnitType.Star),
+                Width = 900,
+                Height = 720
             };
             twoPaneView.ModeChanged += (_, _) => modeChanges++;
 
-            using var host = new TestWindowHost(twoPaneView, width: 720, height: 720);
+            using var host = new TestWindowHost(twoPaneView, width: 1024, height: 768);
 
             var pane1ScrollViewer = FindNamedDescendant<FrameworkElement>(twoPaneView, "PART_Pane1ScrollViewer");
             var pane2ScrollViewer = FindNamedDescendant<FrameworkElement>(twoPaneView, "PART_Pane2ScrollViewer");
@@ -92,6 +95,7 @@ public class TwoPaneViewApiTests
             var rowBottom = FindNamedTemplatePart<RowDefinition>(twoPaneView, "PART_RowBottom");
 
             Assert.AreEqual(TwoPaneViewMode.Wide, twoPaneView.Mode);
+            AssertModeState(twoPaneView, "ViewMode_LeftRight");
             Assert.AreEqual(0, Grid.GetColumn(pane1ScrollViewer));
             Assert.AreEqual(2, Grid.GetColumn(pane2ScrollViewer));
             Assert.AreEqual(new GridLength(2, GridUnitType.Star), columnLeft.Width);
@@ -102,6 +106,7 @@ public class TwoPaneViewApiTests
             host.UpdateLayout();
 
             Assert.AreEqual(TwoPaneViewMode.Wide, twoPaneView.Mode);
+            AssertModeState(twoPaneView, "ViewMode_RightLeft");
             Assert.AreEqual(2, Grid.GetColumn(pane1ScrollViewer));
             Assert.AreEqual(0, Grid.GetColumn(pane2ScrollViewer));
             Assert.AreEqual(new GridLength(3, GridUnitType.Star), columnLeft.Width);
@@ -112,6 +117,7 @@ public class TwoPaneViewApiTests
             host.UpdateLayout();
 
             Assert.AreEqual(TwoPaneViewMode.Tall, twoPaneView.Mode);
+            AssertModeState(twoPaneView, "ViewMode_TopBottom");
             Assert.AreEqual(0, Grid.GetRow(pane1ScrollViewer));
             Assert.AreEqual(2, Grid.GetRow(pane2ScrollViewer));
             Assert.AreEqual(new GridLength(2, GridUnitType.Star), rowTop.Height);
@@ -121,6 +127,7 @@ public class TwoPaneViewApiTests
             host.UpdateLayout();
 
             Assert.AreEqual(TwoPaneViewMode.Tall, twoPaneView.Mode);
+            AssertModeState(twoPaneView, "ViewMode_BottomTop");
             Assert.AreEqual(2, Grid.GetRow(pane1ScrollViewer));
             Assert.AreEqual(0, Grid.GetRow(pane2ScrollViewer));
             Assert.AreEqual(new GridLength(3, GridUnitType.Star), rowTop.Height);
@@ -131,11 +138,22 @@ public class TwoPaneViewApiTests
             host.UpdateLayout();
 
             Assert.AreEqual(TwoPaneViewMode.SinglePane, twoPaneView.Mode);
+            AssertModeState(twoPaneView, "ViewMode_TwoOnly");
             Assert.AreEqual(Visibility.Collapsed, pane1ScrollViewer.Visibility);
             Assert.AreEqual(Visibility.Visible, pane2ScrollViewer.Visibility);
             Assert.AreEqual(0, Grid.GetColumn(pane2ScrollViewer));
             Assert.AreEqual(0, Grid.GetRow(pane2ScrollViewer));
         });
+    }
+
+    private static void AssertModeState(ModernWpf.Controls.TwoPaneView twoPaneView, string expectedStateName)
+    {
+        var rootGrid = FindNamedDescendant<FrameworkElement>(twoPaneView, "RootGrid");
+        var modeStates = VisualStateManager.GetVisualStateGroups(rootGrid)
+            .OfType<VisualStateGroup>()
+            .Single(group => group.Name == "ModeStates");
+        Assert.IsNotNull(modeStates.CurrentState);
+        Assert.AreEqual(expectedStateName, modeStates.CurrentState.Name);
     }
 
     [TestMethod]

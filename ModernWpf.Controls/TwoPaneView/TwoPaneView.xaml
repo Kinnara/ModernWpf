@@ -28,6 +28,47 @@
                             <RowDefinition x:Name="PART_RowMiddle" Height="0" />
                             <RowDefinition x:Name="PART_RowBottom" Height="0" />
                         </Grid.RowDefinitions>
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ModeStates">
+                                <VisualState x:Name="ViewMode_LeftRight" />
+                                <ui:VisualStateEx x:Name="ViewMode_RightLeft">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_Pane1ScrollViewer.(Grid.Column)" Value="2" />
+                                        <ui:VisualStateSetter Target="PART_Pane2ScrollViewer.(Grid.Column)" Value="0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="ViewMode_TopBottom">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_Pane1ScrollViewer.(Grid.Column)" Value="0" />
+                                        <ui:VisualStateSetter Target="PART_Pane1ScrollViewer.(Grid.Row)" Value="0" />
+                                        <ui:VisualStateSetter Target="PART_Pane2ScrollViewer.(Grid.Column)" Value="0" />
+                                        <ui:VisualStateSetter Target="PART_Pane2ScrollViewer.(Grid.Row)" Value="2" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="ViewMode_BottomTop">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_Pane1ScrollViewer.(Grid.Column)" Value="0" />
+                                        <ui:VisualStateSetter Target="PART_Pane1ScrollViewer.(Grid.Row)" Value="2" />
+                                        <ui:VisualStateSetter Target="PART_Pane2ScrollViewer.(Grid.Column)" Value="0" />
+                                        <ui:VisualStateSetter Target="PART_Pane2ScrollViewer.(Grid.Row)" Value="0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="ViewMode_OneOnly">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_Pane2ScrollViewer.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="ViewMode_TwoOnly">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_Pane1ScrollViewer.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PART_Pane2ScrollViewer.(Grid.Column)" Value="0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
 
                         <ScrollViewer
                             x:Name="PART_Pane1ScrollViewer"

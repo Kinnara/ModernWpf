@@ -29,6 +29,7 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\ProgressRing\ProgressRing.xaml` | 1 | `ModernWpf.Controls\ProgressRing\ProgressRing.xaml` | Partial | The inactive layout opacity setter is represented with `VisualStateEx.Setters`; WinUI's `LottiePlayer.(AutomationProperties.AccessibilityView)` setter has no WPF ellipse-animation equivalent. |
 | `dev\RadioButtons\RadioButtons.xaml` | 1 | `ModernWpf.Controls\RadioButtons\RadioButtons.xaml` | Converted | Disabled header foreground now uses a dynamic-resource `VisualStateEx.Setters` entry instead of a WPF template trigger. |
 | `dev\CommonStyles\ToggleSwitch_themeresources.xaml` | 1 | `ModernWpf.Controls\ToggleSwitch\ToggleSwitch.xaml` | Converted | WinUI's pressed knob alignment setters are represented in ModernWpf's active `Dragging` state, because this WPF port routes thumb interaction through that state instead of `CommonStates.Pressed`. |
+| `dev\TwoPaneView\TwoPaneView.xaml` | 5 | `ModernWpf.Controls\TwoPaneView\TwoPaneView.xaml` | Converted | Mode-state pane row/column and single-pane visibility setters now live in `VisualStateEx.Setters`; code still computes mode and pane lengths. |
 
 ## Relevant Pending WinUI 2.8.7 Sources
 
@@ -69,7 +70,6 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\TeachingTip\TeachingTip.xaml` | 29 | `ModernWpf.Controls\TeachingTip\TeachingTip.xaml` | Pending | Large template state surface; convert direct placement/layout setters in slices. |
 | `dev\TitleBar\TitleBar.xaml`, `dev\TitleBar\TitleBar_themeresources.xaml` | 8 | `ModernWpf\TitleBar\TitleBarControl.xaml`, `ModernWpf\TitleBar\TitleBarButton.xaml` | Pending | WinUI title bar has newer experimental surface; map only WPF-owned chrome pieces. |
 | `dev\TreeView\TreeViewItem.xaml` | 10 | `ModernWpf\Styles\TreeView.xaml` | Pending | WPF stock TreeView mapping; audit chevron/content/check state setters. |
-| `dev\TwoPaneView\TwoPaneView.xaml` | 5 | `ModernWpf.Controls\TwoPaneView\TwoPaneView.xaml` | Pending | Likely direct pane visibility/layout setters. |
 
 ## Excluded Or Non-Product Sources
 
