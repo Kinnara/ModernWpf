@@ -258,7 +258,16 @@
                                         </Storyboard>
                                     </VisualTransition>
                                 </VisualStateGroup.Transitions>
-                                <VisualState x:Name="Dragging" />
+                                <ui:VisualStateEx x:Name="Dragging">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SwitchKnobOn.HorizontalAlignment" Value="Right" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOn.Margin" Value="0,0,3,0" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOff.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOff.Margin" Value="3,0,0,0" />
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Fill" Value="{DynamicResource ToggleSwitchFillOnPressed}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Stroke" Value="{DynamicResource ToggleSwitchStrokeOnPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <VisualState x:Name="Off">
                                     <Storyboard>
                                         <DoubleAnimation
@@ -453,15 +462,6 @@
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Fill" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchFillOnPointerOver}" />
                             <Setter Property="Stroke" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchStrokeOnPointerOver}" />
-                        </Trigger>
-                        <!-- Pressed -->
-                        <Trigger SourceName="SwitchThumb" Property="IsDragging" Value="true">
-                            <Setter TargetName="SwitchKnobOn" Property="HorizontalAlignment" Value="Right" />
-                            <Setter TargetName="SwitchKnobOn" Property="Margin" Value="0,0,3,0" />
-                            <Setter TargetName="SwitchKnobOff" Property="HorizontalAlignment" Value="Left" />
-                            <Setter TargetName="SwitchKnobOff" Property="Margin" Value="3,0,0,0" />
-                            <Setter Property="Fill" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchFillOnPressed}" />
-                            <Setter Property="Stroke" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchStrokeOnPressed}" />
                         </Trigger>
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="false">

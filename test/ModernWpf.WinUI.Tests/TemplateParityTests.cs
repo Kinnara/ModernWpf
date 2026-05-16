@@ -83,7 +83,8 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
             Path.Combine("ModernWpf.Controls", "CommandBar", "AppBarSeparator.xaml"),
             Path.Combine("ModernWpf.Controls", "InfoBadge", "InfoBadge.xaml"),
-            Path.Combine("ModernWpf.Controls", "RadioButtons", "RadioButtons.xaml")
+            Path.Combine("ModernWpf.Controls", "RadioButtons", "RadioButtons.xaml"),
+            Path.Combine("ModernWpf.Controls", "ToggleSwitch", "ToggleSwitch.xaml")
         };
 
         var offenders = convertedTemplateFiles

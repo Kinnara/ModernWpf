@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.WinUI.TestApp;
@@ -13,6 +14,33 @@ namespace ModernWpf.WinUI.Tests.ToggleSwitchControl;
 [TestClass]
 public class ToggleSwitchApiTests
 {
+    [TestMethod]
+    public void DraggingStateUsesVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var switchKnobOn = FindNamedDescendant<Border>(toggleSwitch, "SwitchKnobOn");
+            var switchKnobOff = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobOff");
+            var switchKnobBounds = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobBounds");
+
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(toggleSwitch, "Dragging", false));
+            host.UpdateLayout();
+
+            Assert.AreEqual(HorizontalAlignment.Right, switchKnobOn.HorizontalAlignment);
+            Assert.AreEqual(new Thickness(0, 0, 3, 0), switchKnobOn.Margin);
+            Assert.AreEqual(HorizontalAlignment.Left, switchKnobOff.HorizontalAlignment);
+            Assert.AreEqual(new Thickness(3, 0, 0, 0), switchKnobOff.Margin);
+            AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchFillOnPressed"), switchKnobBounds.Fill);
+            AssertBrushEquals((Brush)switchKnobBounds.TryFindResource("ToggleSwitchStrokeOnPressed"), switchKnobBounds.Stroke);
+        });
+    }
+
     [TestMethod]
     public void VerifyContentPresentersMatchWinUITemplate()
     {

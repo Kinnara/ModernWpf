@@ -24,6 +24,7 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\CommonStyles\AppBarSeparator_themeresources.xaml` | 2 | `ModernWpf.Controls\CommandBar\AppBarSeparator.xaml` | Converted | Compact and overflow layout states now use `VisualStateEx.Setters` instead of a `VisualStateGroupListener` trigger bridge. |
 | `dev\InfoBadge\InfoBadge_themeresources.xaml` | 3 | `ModernWpf.Controls\InfoBadge\InfoBadge.xaml` | Converted | `Dot`, `Icon`, `FontIcon`, and `Value` state behavior now lives in `VisualStateEx.Setters`; code only chooses the state and creates the icon element. |
 | `dev\RadioButtons\RadioButtons.xaml` | 1 | `ModernWpf.Controls\RadioButtons\RadioButtons.xaml` | Converted | Disabled header foreground now uses a dynamic-resource `VisualStateEx.Setters` entry instead of a WPF template trigger. |
+| `dev\CommonStyles\ToggleSwitch_themeresources.xaml` | 1 | `ModernWpf.Controls\ToggleSwitch\ToggleSwitch.xaml` | Converted | WinUI's pressed knob alignment setters are represented in ModernWpf's active `Dragging` state, because this WPF port routes thumb interaction through that state instead of `CommonStates.Pressed`. |
 
 ## Relevant Pending WinUI 2.8.7 Sources
 
@@ -47,7 +48,6 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\CommonStyles\MenuFlyout_themeresources.xaml` | 42 | `ModernWpf.Controls\MenuFlyout\MenuFlyout.xaml`, `ModernWpf\Styles\MenuItem.xaml`, `ModernWpf.Controls\RadioMenuItem\RadioMenuItem.xaml` | Pending | Large menu state matrix; direct setters should move to `VisualStateEx` where ModernWpf owns the template. |
 | `dev\CommonStyles\Pivot_themeresources.xaml` | 5 | `ModernWpf\Styles\Pivot.xaml` | Pending | Audit selected/header state setters. |
 | `dev\CommonStyles\ScrollBar_themeresources.xaml` | 8 | `ModernWpf\Styles\ScrollBar.xaml` | Pending | Template already uses `VisualStateManagerEx`; convert direct thumb/track setters where listener workaround is not needed. |
-| `dev\CommonStyles\ToggleSwitch_themeresources.xaml` | 1 | `ModernWpf.Controls\ToggleSwitch\ToggleSwitch.xaml` | Pending | Inspect whether the setter target is direct or nested before converting. |
 | `dev\DropDownButton\DropDownButton.xaml` | 3 | `ModernWpf.Controls\DropDownButton\DropDownButton.xaml` | Unsupported | WinUI setters target `AnimatedIcon.State`; ModernWpf currently uses `FontIconFallback`, so this needs an `AnimatedIcon.State` compatibility surface or a documented fallback. |
 | `dev\Expander\Expander.xaml`, `dev\Expander\Expander_themeresources.xaml` | 15 | `ModernWpf\Styles\Expander.xaml` | Pending | WPF stock Expander mapping; audit direct chevron/content visibility setters. |
 | `dev\InfoBar\InfoBar.xaml` | 8 | `ModernWpf.Controls\InfoBar\InfoBar.xaml` | Pending | Convert severity/icon/layout setters after checking dynamic-resource usage. |
