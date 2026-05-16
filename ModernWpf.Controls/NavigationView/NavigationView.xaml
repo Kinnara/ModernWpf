@@ -942,11 +942,16 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="PaneOverlayGroup">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="PaneOverlayGroupListener" />
-                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="PaneOverlaying" />
-                                <VisualState x:Name="PaneNotOverlaying" />
+                                <ui:VisualStateEx x:Name="PaneNotOverlaying">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootSplitView.BorderBrush" Value="Transparent" />
+                                        <ui:VisualStateSetter Target="RootSplitView.CornerRadius" Value="0" />
+                                        <ui:VisualStateSetter Target="RootSplitView.BorderThickness" Value="0" />
+                                        <ui:VisualStateSetter Target="PaneContentGrid.BorderThickness" Value="0,0,1,0" />
+                                        <ui:VisualStateSetter Target="RootSplitView.PaneBackground" Value="{DynamicResource NavigationViewExpandedPaneBackground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="TitleBarVisibilityGroup">
@@ -1414,13 +1419,6 @@
                         <Trigger SourceName="DisplayModeGroupListener" Property="CurrentStateName" Value="Expanded">
                             <Setter TargetName="RootSplitView" Property="PaneBackground" Value="{DynamicResource NavigationViewExpandedPaneBackground}" />
                         </Trigger>
-                        <Trigger SourceName="PaneOverlayGroupListener" Property="CurrentStateName" Value="PaneNotOverlaying">
-                            <Setter TargetName="RootSplitView" Property="CornerRadius" Value="0" />
-                            <Setter TargetName="RootSplitView" Property="BorderThickness" Value="0" />
-                            <Setter TargetName="PaneContentGrid" Property="BorderThickness" Value="0,0,1,0" />
-                            <Setter TargetName="RootSplitView" Property="PaneBackground" Value="{DynamicResource NavigationViewExpandedPaneBackground}" />
-                        </Trigger>
-
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

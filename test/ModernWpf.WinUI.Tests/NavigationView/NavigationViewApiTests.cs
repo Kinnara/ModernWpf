@@ -1208,6 +1208,41 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewPaneNotOverlayingStateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            using var host = CreateNavigationViewHost(out var navView);
+
+            var root = FindNamedDescendant<Grid>(navView, "RootGrid");
+            var splitView = (ModernWpf.Controls.SplitView)navView.Template.FindName("RootSplitView", navView);
+            var paneContentGrid = (Border)navView.Template.FindName("PaneContentGrid", navView);
+            Assert.IsNotNull(splitView);
+            Assert.IsNotNull(paneContentGrid);
+
+            AssertStateSetter(root, "PaneOverlayGroup", "PaneNotOverlaying",
+                "RootSplitView.BorderBrush",
+                "RootSplitView.CornerRadius",
+                "RootSplitView.BorderThickness",
+                "PaneContentGrid.BorderThickness",
+                "RootSplitView.PaneBackground");
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "PaneNotOverlaying", false));
+            AssertCurrentState(root, "PaneOverlayGroup", "PaneNotOverlaying");
+
+            Assert.IsInstanceOfType(splitView.BorderBrush, typeof(SolidColorBrush));
+            var borderBrush = (SolidColorBrush)splitView.BorderBrush;
+            Assert.AreEqual(Colors.Transparent, borderBrush.Color);
+            Assert.AreEqual(new CornerRadius(0), splitView.CornerRadius);
+            Assert.AreEqual(new Thickness(0), splitView.BorderThickness);
+            Assert.AreEqual(new Thickness(0, 0, 1, 0), paneContentGrid.BorderThickness);
+            Assert.AreSame(navView.FindResource("NavigationViewExpandedPaneBackground"), splitView.PaneBackground);
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewTitleBarCollapsedStateUsesWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>
