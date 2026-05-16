@@ -16,6 +16,10 @@
 
     <Style TargetType="local:BreadcrumbBarItem">
         <Setter Property="Focusable" Value="True" />
+        <Setter Property="Background" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ControlFillColorTransparentBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="Padding" Value="4,2" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="Template">
@@ -48,19 +52,121 @@
                         <Button
                             x:Name="PART_ItemButton"
                             Padding="{TemplateBinding Padding}"
-                            Background="Transparent"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="0"
                             Focusable="False"
                             Foreground="{TemplateBinding Foreground}"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            FontSize="{TemplateBinding FontSize}"
+                            FontWeight="Normal"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                             ui:ControlHelper.ContentTransitions="{TemplateBinding ContentTransitions}"
                             ui:ControlHelper.CornerRadius="{TemplateBinding CornerRadius}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid x:Name="PART_ItemButtonRoot" Background="Transparent">
+                                                    <VisualStateManager.CustomVisualStateManager>
+                                                        <ui:VisualStateManagerEx />
+                                                    </VisualStateManager.CustomVisualStateManager>
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup x:Name="CommonStates">
+                                                            <ui:VisualStateEx x:Name="Normal">
+                                                                <ui:VisualStateEx.Setters>
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}" />
+                                                                </ui:VisualStateEx.Setters>
+                                                            </ui:VisualStateEx>
+                                                            <ui:VisualStateEx x:Name="CurrentNormal">
+                                                                <ui:VisualStateEx.Setters>
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                                                                </ui:VisualStateEx.Setters>
+                                                            </ui:VisualStateEx>
+                                                            <ui:VisualStateEx x:Name="PointerOver">
+                                                                <ui:VisualStateEx.Setters>
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Background" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.BorderBrush" Value="{DynamicResource ControlFillColorTransparentBrush}" />
+                                                                </ui:VisualStateEx.Setters>
+                                                            </ui:VisualStateEx>
+                                                            <ui:VisualStateEx x:Name="CurrentPointerOver">
+                                                                <ui:VisualStateEx.Setters>
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Background" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.BorderBrush" Value="{DynamicResource ControlFillColorTransparentBrush}" />
+                                                                </ui:VisualStateEx.Setters>
+                                                            </ui:VisualStateEx>
+                                                            <ui:VisualStateEx x:Name="Pressed">
+                                                                <ui:VisualStateEx.Setters>
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Background" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.BorderBrush" Value="{DynamicResource ControlFillColorTransparentBrush}" />
+                                                                </ui:VisualStateEx.Setters>
+                                                            </ui:VisualStateEx>
+                                                            <ui:VisualStateEx x:Name="CurrentPressed">
+                                                                <ui:VisualStateEx.Setters>
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Background" Value="Transparent" />
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.BorderBrush" Value="Transparent" />
+                                                                </ui:VisualStateEx.Setters>
+                                                            </ui:VisualStateEx>
+                                                            <ui:VisualStateEx x:Name="Disabled">
+                                                                <ui:VisualStateEx.Setters>
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                                                                </ui:VisualStateEx.Setters>
+                                                            </ui:VisualStateEx>
+                                                            <ui:VisualStateEx x:Name="CurrentDisabled">
+                                                                <ui:VisualStateEx.Setters>
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                                                                </ui:VisualStateEx.Setters>
+                                                            </ui:VisualStateEx>
+                                                            <ui:VisualStateEx x:Name="Focus">
+                                                                <ui:VisualStateEx.Setters>
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                                                                </ui:VisualStateEx.Setters>
+                                                            </ui:VisualStateEx>
+                                                            <ui:VisualStateEx x:Name="CurrentFocus">
+                                                                <ui:VisualStateEx.Setters>
+                                                                    <ui:VisualStateSetter Target="PART_ContentPresenter.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                                                                </ui:VisualStateEx.Setters>
+                                                            </ui:VisualStateEx>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                    <ui:ContentPresenterEx
+                                                        x:Name="PART_ContentPresenter"
+                                                        Padding="{TemplateBinding Padding}"
+                                                        Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        Content="{TemplateBinding Content}"
+                                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                        ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                        ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                                        CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ui:ControlHelper.CornerRadius)}"
+                                                        Foreground="{TemplateBinding Foreground}"
+                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
                             <ui:ContentPresenterEx
+                                x:Name="PART_ItemContentPresenter"
                                 Content="{TemplateBinding Content}"
                                 ContentTemplate="{TemplateBinding ContentTemplate}"
                                 ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                                 ContentStringFormat="{TemplateBinding ContentStringFormat}"
                                 ContentTransitions="{TemplateBinding ContentTransitions}"
-                                Foreground="{TemplateBinding Foreground}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"

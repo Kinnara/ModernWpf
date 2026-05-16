@@ -118,10 +118,27 @@ public class BreadcrumbBarApiTests
             host.UpdateLayout();
 
             var root = FindTemplatePart<FrameworkElement>(item, "PART_LayoutRoot");
+            var itemButton = FindTemplatePart<Button>(item, "PART_ItemButton");
+            var itemButtonRoot = FindTemplatePart<FrameworkElement>(itemButton, "PART_ItemButtonRoot");
+            var itemButtonPresenter = FindTemplatePart<ContentPresenterEx>(itemButton, "PART_ContentPresenter");
+
             AssertStateSetter(root, "InlineItemTypeStates", "Default", "PART_ChevronTextBlock.Text");
             AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_ItemButton.Visibility");
             AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_ChevronTextBlock.Visibility");
             AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_LastItemContentPresenter.Visibility");
+
+            AssertStateSetter(itemButtonRoot, "CommonStates", "Normal", "PART_ContentPresenter.Foreground");
+            AssertStateSetter(itemButtonRoot, "CommonStates", "PointerOver", "PART_ContentPresenter.Foreground");
+            AssertStateSetter(itemButtonRoot, "CommonStates", "PointerOver", "PART_ContentPresenter.Background");
+            AssertStateSetter(itemButtonRoot, "CommonStates", "PointerOver", "PART_ContentPresenter.BorderBrush");
+            AssertStateSetter(itemButtonRoot, "CommonStates", "Pressed", "PART_ContentPresenter.Foreground");
+            AssertStateSetter(itemButtonRoot, "CommonStates", "Pressed", "PART_ContentPresenter.Background");
+            AssertStateSetter(itemButtonRoot, "CommonStates", "Pressed", "PART_ContentPresenter.BorderBrush");
+            AssertStateSetter(itemButtonRoot, "CommonStates", "Disabled", "PART_ContentPresenter.Foreground");
+            AssertStateSetter(itemButtonRoot, "CommonStates", "Focus", "PART_ContentPresenter.Foreground");
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemButton, "Pressed", false));
+            Assert.AreEqual(item.TryFindResource("TextFillColorSecondaryBrush"), itemButtonPresenter.Foreground);
 
             item.IsCurrentItem = true;
             host.UpdateLayout();
