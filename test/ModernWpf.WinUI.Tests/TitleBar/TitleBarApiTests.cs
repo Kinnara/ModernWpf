@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -278,6 +279,68 @@ public class TitleBarApiTests
             Assert.AreEqual("TitleContentCollapsed", FindVisualStateGroup(layoutRoot, "ExtendViewIntoTitleBarStates").CurrentState?.Name);
             Assert.IsNull(layoutRoot.Background);
             Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<StackPanel>(titleBarControl, "IconTitlePanel").Visibility);
+        });
+    }
+
+    [TestMethod]
+    public void VerifyTitleBarBackButtonUsesWinUIAnimatedIconStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = (ResourceDictionary)Application.LoadComponent(
+                new Uri("/ModernWpf;component/Styles/Window.xaml", UriKind.Relative));
+
+            var titleBarControl = new TitleBarControl
+            {
+                IsBackButtonVisible = true,
+                IsBackEnabled = true,
+                BackButtonStyle = (Style)resources["TitleBarBackButtonStyle"]
+            };
+
+            using var host = new TestWindowHost(titleBarControl);
+            host.UpdateLayout();
+
+            var backButton = FindNamedDescendant<TitleBarButton>(titleBarControl, "PART_BackButton");
+            Assert.AreSame(titleBarControl.BackButtonStyle, backButton.Style);
+
+            var rootGrid = FindNamedDescendant<Grid>(backButton, "RootGrid");
+            var content = FindNamedDescendant<ContentPresenterEx>(backButton, "Content");
+
+            var pointerOverState = AssertStateSetter(
+                rootGrid,
+                "CommonStates",
+                "PointerOver",
+                "Content.(local:AnimatedIcon.State)");
+            Assert.AreEqual(
+                "PointerOver",
+                pointerOverState.Setters.Single(setter => setter.Target == "Content.(local:AnimatedIcon.State)").Value);
+
+            var pressedState = AssertStateSetter(
+                rootGrid,
+                "CommonStates",
+                "Pressed",
+                "Content.(local:AnimatedIcon.State)");
+            Assert.AreEqual(
+                "Pressed",
+                pressedState.Setters.Single(setter => setter.Target == "Content.(local:AnimatedIcon.State)").Value);
+
+            var commonStates = FindVisualStateGroup(rootGrid, "CommonStates");
+            Assert.AreEqual("Normal", commonStates.CurrentState?.Name);
+            Assert.AreEqual("Normal", AnimatedIcon.GetState(content));
+
+            Assert.IsTrue(VisualStateManager.GoToState(backButton, "PointerOver", false));
+            Assert.AreEqual("PointerOver", AnimatedIcon.GetState(content));
+
+            Assert.IsTrue(VisualStateManager.GoToState(backButton, "Pressed", false));
+            Assert.AreEqual("Pressed", AnimatedIcon.GetState(content));
+
+            backButton.IsEnabled = false;
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual("Disabled", commonStates.CurrentState?.Name);
+            Assert.AreEqual("Normal", AnimatedIcon.GetState(content));
         });
     }
 
