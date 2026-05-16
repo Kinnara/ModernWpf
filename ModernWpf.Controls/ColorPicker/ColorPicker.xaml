@@ -258,6 +258,23 @@
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="Orientation">
+                                <ui:VisualStateEx x:Name="Vertical" />
+                                <ui:VisualStateEx x:Name="Horizontal">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootPanel.MinHeight" Value="{StaticResource ColorPickerVerticalOrientationMinHeight}" />
+                                        <ui:VisualStateSetter Target="RootPanel.MaxHeight" Value="{StaticResource ColorPickerVerticalOrientationMaxHeight}" />
+                                        <ui:VisualStateSetter Target="RootPanel.MinWidth" Value="0" />
+                                        <ui:VisualStateSetter Target="RootPanel.MaxWidth" Value="10000" />
+                                        <ui:VisualStateSetter Target="ThirdDimensionSlider.Orientation" Value="Vertical" />
+                                        <ui:VisualStateSetter Target="ThirdDimensionSlider.Margin" Value="0,0,6,0" />
+                                        <ui:VisualStateSetter Target="AlphaSlider.Orientation" Value="Vertical" />
+                                        <ui:VisualStateSetter Target="AlphaSlider.Margin" Value="0,0,16,0" />
+                                        <ui:VisualStateSetter Target="MoreButton.Margin" Value="0" />
+                                        <ui:VisualStateSetter Target="TextInputGrid.Margin" Value="0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <primitives:ColorSpectrum
                             x:Name="ColorSpectrum"

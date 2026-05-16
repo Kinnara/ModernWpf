@@ -510,6 +510,7 @@ namespace ModernWpf.Controls
             VisualStateManager.GoToState(this, IsAlphaEnabled && IsAlphaTextInputVisible ? "AlphaTextInputVisible" : "AlphaTextInputCollapsed", false);
             VisualStateManager.GoToState(this, IsHexInputVisible ? "HexInputVisible" : "HexInputCollapsed", false);
             VisualStateManager.GoToState(this, IsAlphaEnabled ? "AlphaEnabled" : "AlphaDisabled", false);
+            VisualStateManager.GoToState(this, isVerticalOrientation ? "Vertical" : "Horizontal", false);
         }
 
         private void UpdateTextBoxes(Vector4 hsv)

@@ -484,6 +484,64 @@ public class ColorPickerApiTests
     }
 
     [TestMethod]
+    public void OrientationStateUsesVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var colorPicker = new ColorPickerControl
+            {
+                Orientation = Orientation.Horizontal
+            };
+
+            using var host = new TestWindowHost(colorPicker, width: 620, height: 360);
+
+            var rootPanel = FindNamedDescendant<StackPanel>(colorPicker, "RootPanel");
+            var thirdDimensionSlider = FindNamedDescendant<ColorPickerSlider>(colorPicker, "ThirdDimensionSlider");
+            var alphaSlider = FindNamedDescendant<ColorPickerSlider>(colorPicker, "AlphaSlider");
+            var moreButton = FindNamedDescendant<ToggleButton>(colorPicker, "MoreButton");
+            var textInputGrid = FindNamedDescendant<Grid>(colorPicker, "TextInputGrid");
+
+            AssertStateSetter(
+                rootPanel,
+                "Orientation",
+                "Horizontal",
+                "RootPanel.MinHeight",
+                "RootPanel.MaxHeight",
+                "RootPanel.MinWidth",
+                "RootPanel.MaxWidth",
+                "ThirdDimensionSlider.Orientation",
+                "ThirdDimensionSlider.Margin",
+                "AlphaSlider.Orientation",
+                "AlphaSlider.Margin",
+                "MoreButton.Margin",
+                "TextInputGrid.Margin");
+
+            Assert.AreEqual("Horizontal", GetCurrentStateName(rootPanel, "Orientation"));
+            Assert.AreEqual(Orientation.Horizontal, rootPanel.Orientation);
+            Assert.AreEqual(312.0, rootPanel.MinHeight);
+            Assert.AreEqual(392.0, rootPanel.MaxHeight);
+            Assert.AreEqual(0.0, rootPanel.MinWidth);
+            Assert.AreEqual(10000.0, rootPanel.MaxWidth);
+            Assert.AreEqual(Orientation.Vertical, thirdDimensionSlider.Orientation);
+            Assert.AreEqual(new Thickness(0, 0, 6, 0), thirdDimensionSlider.Margin);
+            Assert.AreEqual(Orientation.Vertical, alphaSlider.Orientation);
+            Assert.AreEqual(new Thickness(0, 0, 16, 0), alphaSlider.Margin);
+            Assert.AreEqual(new Thickness(0), moreButton.Margin);
+            Assert.AreEqual(new Thickness(0), textInputGrid.Margin);
+
+            colorPicker.Orientation = Orientation.Vertical;
+            host.UpdateLayout();
+
+            Assert.AreEqual("Vertical", GetCurrentStateName(rootPanel, "Orientation"));
+            Assert.AreEqual(Orientation.Vertical, rootPanel.Orientation);
+            Assert.AreEqual(Orientation.Horizontal, thirdDimensionSlider.Orientation);
+            Assert.AreEqual(Orientation.Horizontal, alphaSlider.Orientation);
+        });
+    }
+
+    [TestMethod]
     public void ColorPickerTemplateVisibilityUsesVisualStateSetters()
     {
         WpfTestHost.Run(() =>
@@ -515,6 +573,20 @@ public class ColorPickerApiTests
             AssertStateSetter(rootPanel, "AlphaTextInputVisibility", "AlphaTextInputCollapsed", "AlphaTextBox.Visibility");
             AssertStateSetter(rootPanel, "HexInputVisibility", "HexInputCollapsed", "HexTextBox.Visibility");
             AssertStateSetter(rootPanel, "AlphaEnabledState", "AlphaEnabled", "HexTextBox.MaxLength");
+            AssertStateSetter(
+                rootPanel,
+                "Orientation",
+                "Horizontal",
+                "RootPanel.MinHeight",
+                "RootPanel.MaxHeight",
+                "RootPanel.MinWidth",
+                "RootPanel.MaxWidth",
+                "ThirdDimensionSlider.Orientation",
+                "ThirdDimensionSlider.Margin",
+                "AlphaSlider.Orientation",
+                "AlphaSlider.Margin",
+                "MoreButton.Margin",
+                "TextInputGrid.Margin");
         });
     }
 
