@@ -94,6 +94,7 @@ public class TreeViewResourceTests
             AssertDynamicResourceSetter(style, Control.BorderBrushProperty, "TreeViewItemBorderBrush");
             AssertDynamicResourceSetter(style, Control.BorderThicknessProperty, "TreeViewItemBorderThemeThickness");
             AssertDynamicResourceSetter(style, FrameworkElement.MinHeightProperty, "TreeViewItemMinHeight");
+            AssertSetterValue(style, TreeViewItemHelper.VisualStateSettersEnabledProperty, true);
             AssertDynamicResourceSetter(style, TreeViewItemHelper.GlyphBrushProperty, "TreeViewItemForeground");
             Assert.AreEqual(12.0, TreeViewItemHelper.GetGlyphSize(new WpfTreeViewItem()));
             Assert.IsNotNull(GetLocalSetter(style, TreeViewItemHelper.CollapsedPathProperty).Value);
@@ -171,6 +172,52 @@ public class TreeViewResourceTests
         });
     }
 
+    [TestMethod]
+    public void TreeViewItemCommonStatesUseVisualStateSettersForWinUIStateParity()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var root = new WpfTreeViewItem
+            {
+                Header = "Root",
+                IsExpanded = true,
+                IsSelected = true
+            };
+            root.Items.Add(new WpfTreeViewItem { Header = "Child" });
+
+            var treeView = new WpfTreeView();
+            treeView.Items.Add(root);
+
+            using var host = new TestWindowHost(treeView);
+            host.UpdateLayout();
+
+            var templateRoot = FindNamedDescendant<FrameworkElement>(root, "RootGrid");
+            var selectionIndicator = FindNamedDescendant<FrameworkElement>(root, "SelectionIndicator");
+
+            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "ContentPresenterGrid.Background");
+            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "PART_Header.Foreground");
+            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "SelectionIndicator.Fill");
+            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "CollapsedGlyph.Foreground");
+            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "ExpandedGlyph.Foreground");
+            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "ContentPresenterGrid.BorderBrush");
+            AssertStateSetter(templateRoot, "CommonStates", "PointerOver", "SelectionIndicator.Opacity");
+
+            AssertStateSetter(templateRoot, "CommonStates", "Selected", "ContentPresenterGrid.Background");
+            AssertStateSetter(templateRoot, "CommonStates", "Selected", "PART_Header.Foreground");
+            AssertStateSetter(templateRoot, "CommonStates", "Selected", "SelectionIndicator.Fill");
+            AssertStateSetter(templateRoot, "CommonStates", "Selected", "CollapsedGlyph.Foreground");
+            AssertStateSetter(templateRoot, "CommonStates", "Selected", "ExpandedGlyph.Foreground");
+            AssertStateSetter(templateRoot, "CommonStates", "Selected", "ContentPresenterGrid.BorderBrush");
+            AssertStateSetter(templateRoot, "CommonStates", "Selected", "SelectionIndicator.Opacity");
+
+            AssertStateSetter(templateRoot, "CommonStates", "PressedSelected", "ContentPresenterGrid.Background");
+            AssertStateSetter(templateRoot, "CommonStates", "SelectedDisabled", "SelectionIndicator.Opacity");
+            Assert.AreEqual(1.0, selectionIndicator.Opacity);
+        });
+    }
+
     private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)
     {
         var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
@@ -226,5 +273,26 @@ public class TreeViewResourceTests
 
         Assert.Fail($"Could not find descendant named '{name}'.");
         throw new InvalidOperationException();
+    }
+
+    private static void AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string setterTarget)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        var state = group.States
+            .Cast<VisualState>()
+            .Single(item => item.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        Assert.IsTrue(
+            stateEx.Setters.Any(setter => setter.Target == setterTarget),
+            $"{groupName}.{stateName} should set {setterTarget}.");
     }
 }

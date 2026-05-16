@@ -70,7 +70,7 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\TabView\TabView.xaml` | 18 | `ModernWpf\Styles\TabControl.xaml` | Pending | WPF TabControl mapping; decide which visual states are meaningful. |
 | `dev\TeachingTip\TeachingTip.xaml` | 29 | `ModernWpf.Controls\TeachingTip\TeachingTip.xaml` | Pending | Large template state surface; convert direct placement/layout setters in slices. |
 | `dev\TitleBar\TitleBar.xaml`, `dev\TitleBar\TitleBar_themeresources.xaml` | 8 | `ModernWpf\TitleBar\TitleBarControl.xaml`, `ModernWpf\TitleBar\TitleBarButton.xaml` | Pending | WinUI title bar has newer experimental surface; map only WPF-owned chrome pieces. |
-| `dev\TreeView\TreeViewItem.xaml` | 10 | `ModernWpf\Styles\TreeView.xaml` | Pending | WPF stock TreeView mapping; audit chevron/content/check state setters. |
+| `dev\TreeView\TreeViewItem.xaml` | 10 | `ModernWpf\Styles\TreeView.xaml` | Partial | Common-state background, foreground, glyph, border, and selection-indicator setters now use `VisualStateEx.Setters` driven by `TreeViewItemHelper`; WinUI multi-select and drag/reorder setter groups are not represented by the current WPF stock TreeView mapping. |
 
 ## Excluded Or Non-Product Sources
 

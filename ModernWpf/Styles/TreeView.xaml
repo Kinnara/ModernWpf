@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:root="clr-namespace:ModernWpf"
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
@@ -47,13 +48,98 @@
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:TreeViewItemHelper.IsEnabled" Value="True" />
+        <Setter Property="primitives:TreeViewItemHelper.VisualStateSettersEnabled" Value="True" />
         <Setter Property="primitives:TreeViewItemHelper.GlyphBrush" Value="{DynamicResource TreeViewItemForeground}" />
         <Setter Property="primitives:TreeViewItemHelper.CollapsedPath" Value="M 5.029297 19.091797 L 14.111328 10 L 5.029297 0.908203 L 5.908203 0.029297 L 15.888672 10 L 5.908203 19.970703 Z" />
         <Setter Property="primitives:TreeViewItemHelper.ExpandedPath" Value="M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TreeViewItem">
-                    <Grid>
+                    <Grid x:Name="RootGrid">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <root:VisualStateEx x:Name="PointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.Background" Value="{DynamicResource TreeViewItemBackgroundPointerOver}" />
+                                        <root:VisualStateSetter Target="PART_Header.Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundPointerOver}" />
+                                        <root:VisualStateSetter Target="CollapsedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
+                                        <root:VisualStateSetter Target="ExpandedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushPointerOver}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Opacity" Value="0" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Pressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.Background" Value="{DynamicResource TreeViewItemBackgroundPressed}" />
+                                        <root:VisualStateSetter Target="PART_Header.Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundPressed}" />
+                                        <root:VisualStateSetter Target="CollapsedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
+                                        <root:VisualStateSetter Target="ExpandedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushPressed}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Opacity" Value="0" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Selected">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.Background" Value="{DynamicResource TreeViewItemBackgroundSelected}" />
+                                        <root:VisualStateSetter Target="PART_Header.Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForeground}" />
+                                        <root:VisualStateSetter Target="CollapsedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
+                                        <root:VisualStateSetter Target="ExpandedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelected}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Opacity" Value="1" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Disabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.Background" Value="{DynamicResource TreeViewItemBackgroundDisabled}" />
+                                        <root:VisualStateSetter Target="PART_Header.Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundDisabled}" />
+                                        <root:VisualStateSetter Target="CollapsedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
+                                        <root:VisualStateSetter Target="ExpandedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushDisabled}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="PointerOverSelected">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.Background" Value="{DynamicResource TreeViewItemBackgroundSelectedPointerOver}" />
+                                        <root:VisualStateSetter Target="PART_Header.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundPointerOver}" />
+                                        <root:VisualStateSetter Target="CollapsedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
+                                        <root:VisualStateSetter Target="ExpandedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedPointerOver}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Opacity" Value="1" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="PressedSelected">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.Background" Value="{DynamicResource TreeViewItemBackgroundSelectedPressed}" />
+                                        <root:VisualStateSetter Target="PART_Header.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundPressed}" />
+                                        <root:VisualStateSetter Target="CollapsedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
+                                        <root:VisualStateSetter Target="ExpandedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedPressed}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Opacity" Value="1" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="SelectedDisabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.Background" Value="{DynamicResource TreeViewItemBackgroundSelectedDisabled}" />
+                                        <root:VisualStateSetter Target="PART_Header.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Fill" Value="{DynamicResource TreeViewItemSelectionIndicatorForegroundDisabled}" />
+                                        <root:VisualStateSetter Target="CollapsedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
+                                        <root:VisualStateSetter Target="ExpandedGlyph.Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
+                                        <root:VisualStateSetter Target="ContentPresenterGrid.BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedDisabled}" />
+                                        <root:VisualStateSetter Target="SelectionIndicator.Opacity" Value="1" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition />
@@ -74,6 +160,15 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
+
+                                <Rectangle
+                                    x:Name="SelectionIndicator"
+                                    Width="3"
+                                    Height="16"
+                                    Fill="{DynamicResource TreeViewItemSelectionIndicatorForeground}"
+                                    Opacity="0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center" />
 
                                 <ToggleButton
                                     x:Name="ExpandCollapseChevron"
@@ -138,57 +233,6 @@
                             <Setter TargetName="ExpandCollapseChevron" Property="Visibility" Value="Hidden" />
                             <Setter Property="primitives:TreeViewItemHelper.GlyphOpacity" Value="0" />
                         </Trigger>
-                        <Trigger SourceName="ContentPresenterGrid" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPointerOver}" />
-                            <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushPointerOver}" />
-                        </Trigger>
-                        <Trigger SourceName="ContentPresenterGrid" Property="primitives:PressHelper.IsPressed" Value="True">
-                            <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundPressed}" />
-                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundPressed}" />
-                            <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushPressed}" />
-                        </Trigger>
-                        <!-- Selected -->
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelected}" />
-                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelected}" />
-                            <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelected}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundDisabled}" />
-                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundDisabled}" />
-                            <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushDisabled}" />
-                        </Trigger>
-                        <!-- PointerOverSelected -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="ContentPresenterGrid" Property="IsMouseOver" Value="True" />
-                                <Condition Property="IsSelected" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelectedPointerOver}" />
-                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPointerOver}" />
-                            <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedPointerOver}" />
-                        </MultiTrigger>
-                        <!-- PressedSelected -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition SourceName="ContentPresenterGrid" Property="primitives:PressHelper.IsPressed" Value="True" />
-                                <Condition Property="IsSelected" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelectedPressed}" />
-                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedPressed}" />
-                            <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedPressed}" />
-                        </MultiTrigger>
-                        <!-- SelectedDisabled -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected" Value="True" />
-                                <Condition Property="IsEnabled" Value="False" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="ContentPresenterGrid" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelectedDisabled}" />
-                            <Setter TargetName="PART_Header" Property="Foreground" Value="{DynamicResource TreeViewItemForegroundSelectedDisabled}" />
-                            <Setter TargetName="ContentPresenterGrid" Property="BorderBrush" Value="{DynamicResource TreeViewItemBorderBrushSelectedDisabled}" />
-                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

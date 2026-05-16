@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -50,6 +52,40 @@ namespace ModernWpf.Controls.Primitives
             if ((bool)e.NewValue)
             {
                 UpdateIndentation((TreeViewItem)sender);
+            }
+        }
+
+        #endregion
+
+        #region VisualStateSettersEnabled
+
+        public static readonly DependencyProperty VisualStateSettersEnabledProperty =
+            DependencyProperty.RegisterAttached(
+                "VisualStateSettersEnabled",
+                typeof(bool),
+                typeof(TreeViewItemHelper),
+                new PropertyMetadata(false, OnVisualStateSettersEnabledChanged));
+
+        public static bool GetVisualStateSettersEnabled(TreeViewItem treeViewItem)
+        {
+            return (bool)treeViewItem.GetValue(VisualStateSettersEnabledProperty);
+        }
+
+        public static void SetVisualStateSettersEnabled(TreeViewItem treeViewItem, bool value)
+        {
+            treeViewItem.SetValue(VisualStateSettersEnabledProperty, value);
+        }
+
+        private static void OnVisualStateSettersEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var treeViewItem = (TreeViewItem)d;
+            if ((bool)e.NewValue)
+            {
+                GetOrCreateVisualStateTracker(treeViewItem).Attach();
+            }
+            else
+            {
+                GetVisualStateTracker(treeViewItem)?.Detach();
             }
         }
 
@@ -349,6 +385,206 @@ namespace ModernWpf.Controls.Primitives
                 item = parentItem;
             }
             return depth;
+        }
+
+        private static T GetTemplateChild<T>(string childName, Control control) where T : DependencyObject
+        {
+            return control.Template?.FindName(childName, control) as T;
+        }
+
+        private static readonly DependencyProperty VisualStateTrackerProperty =
+            DependencyProperty.RegisterAttached(
+                "VisualStateTracker",
+                typeof(TreeViewItemVisualStateTracker),
+                typeof(TreeViewItemHelper),
+                new PropertyMetadata(null));
+
+        private static TreeViewItemVisualStateTracker GetOrCreateVisualStateTracker(TreeViewItem treeViewItem)
+        {
+            var tracker = GetVisualStateTracker(treeViewItem);
+            if (tracker == null)
+            {
+                tracker = new TreeViewItemVisualStateTracker(treeViewItem);
+                treeViewItem.SetValue(VisualStateTrackerProperty, tracker);
+            }
+
+            return tracker;
+        }
+
+        private static TreeViewItemVisualStateTracker GetVisualStateTracker(TreeViewItem treeViewItem)
+        {
+            return (TreeViewItemVisualStateTracker)treeViewItem.GetValue(VisualStateTrackerProperty);
+        }
+
+        private sealed class TreeViewItemVisualStateTracker
+        {
+            private static readonly DependencyPropertyDescriptor IsSelectedPropertyDescriptor =
+                DependencyPropertyDescriptor.FromProperty(TreeViewItem.IsSelectedProperty, typeof(TreeViewItem));
+
+            private static readonly DependencyPropertyDescriptor PressHelperIsPressedPropertyDescriptor =
+                DependencyPropertyDescriptor.FromProperty(PressHelper.IsPressedProperty, typeof(Border));
+
+            public TreeViewItemVisualStateTracker(TreeViewItem treeViewItem)
+            {
+                _treeViewItem = treeViewItem;
+            }
+
+            public void Attach()
+            {
+                if (_isAttached)
+                {
+                    return;
+                }
+
+                _isAttached = true;
+                _treeViewItem.Loaded += OnLoaded;
+                _treeViewItem.Unloaded += OnUnloaded;
+                _treeViewItem.IsEnabledChanged += OnTreeViewItemStateChanged;
+                IsSelectedPropertyDescriptor.AddValueChanged(_treeViewItem, OnDependencyStateChanged);
+
+                AttachTemplateParts();
+                UpdateVisualStates(false);
+            }
+
+            public void Detach()
+            {
+                if (!_isAttached)
+                {
+                    return;
+                }
+
+                DetachTemplateParts();
+                IsSelectedPropertyDescriptor.RemoveValueChanged(_treeViewItem, OnDependencyStateChanged);
+                _treeViewItem.IsEnabledChanged -= OnTreeViewItemStateChanged;
+                _treeViewItem.Unloaded -= OnUnloaded;
+                _treeViewItem.Loaded -= OnLoaded;
+                _isAttached = false;
+            }
+
+            private void OnLoaded(object sender, RoutedEventArgs e)
+            {
+                AttachTemplateParts();
+                UpdateVisualStates(false);
+            }
+
+            private void OnUnloaded(object sender, RoutedEventArgs e)
+            {
+                DetachTemplateParts();
+            }
+
+            private void AttachTemplateParts()
+            {
+                DetachTemplateParts();
+
+                _treeViewItem.ApplyTemplate();
+                _contentPresenterGrid = GetTemplateChild<Border>("ContentPresenterGrid", _treeViewItem);
+
+                if (_contentPresenterGrid != null)
+                {
+                    _contentPresenterGrid.MouseEnter += OnInputStateChanged;
+                    _contentPresenterGrid.MouseLeave += OnInputStateChanged;
+                    _contentPresenterGrid.PreviewMouseLeftButtonDown += OnInputButtonStateChanged;
+                    _contentPresenterGrid.PreviewMouseLeftButtonUp += OnInputButtonStateChanged;
+                    _contentPresenterGrid.LostMouseCapture += OnInputStateChanged;
+                    PressHelperIsPressedPropertyDescriptor.AddValueChanged(_contentPresenterGrid, OnDependencyStateChanged);
+                }
+            }
+
+            private void DetachTemplateParts()
+            {
+                if (_contentPresenterGrid != null)
+                {
+                    PressHelperIsPressedPropertyDescriptor.RemoveValueChanged(_contentPresenterGrid, OnDependencyStateChanged);
+                    _contentPresenterGrid.LostMouseCapture -= OnInputStateChanged;
+                    _contentPresenterGrid.PreviewMouseLeftButtonUp -= OnInputButtonStateChanged;
+                    _contentPresenterGrid.PreviewMouseLeftButtonDown -= OnInputButtonStateChanged;
+                    _contentPresenterGrid.MouseLeave -= OnInputStateChanged;
+                    _contentPresenterGrid.MouseEnter -= OnInputStateChanged;
+                    _contentPresenterGrid = null;
+                }
+            }
+
+            private void OnTreeViewItemStateChanged(object sender, DependencyPropertyChangedEventArgs e)
+            {
+                ScheduleVisualStateUpdate();
+            }
+
+            private void OnDependencyStateChanged(object sender, EventArgs e)
+            {
+                ScheduleVisualStateUpdate();
+            }
+
+            private void OnInputStateChanged(object sender, MouseEventArgs e)
+            {
+                ScheduleVisualStateUpdate();
+            }
+
+            private void OnInputButtonStateChanged(object sender, MouseButtonEventArgs e)
+            {
+                ScheduleVisualStateUpdate();
+            }
+
+            private void ScheduleVisualStateUpdate()
+            {
+                UpdateVisualStates(true);
+                _treeViewItem.Dispatcher.BeginInvoke(
+                    (Action)(() =>
+                    {
+                        if (_isAttached)
+                        {
+                            UpdateVisualStates(true);
+                        }
+                    }),
+                    DispatcherPriority.Input);
+            }
+
+            private void UpdateVisualStates(bool useTransitions)
+            {
+                VisualStateManager.GoToState(_treeViewItem, GetCommonStateName(), useTransitions);
+            }
+
+            private string GetCommonStateName()
+            {
+                bool isSelected = _treeViewItem.IsSelected;
+                bool isPressed = _contentPresenterGrid != null && PressHelper.GetIsPressed(_contentPresenterGrid);
+                bool isPointerOver = _contentPresenterGrid?.IsMouseOver == true;
+
+                if (!_treeViewItem.IsEnabled)
+                {
+                    return isSelected ? "SelectedDisabled" : "Disabled";
+                }
+
+                if (isSelected)
+                {
+                    if (isPressed)
+                    {
+                        return "PressedSelected";
+                    }
+
+                    if (isPointerOver)
+                    {
+                        return "PointerOverSelected";
+                    }
+
+                    return "Selected";
+                }
+
+                if (isPressed)
+                {
+                    return "Pressed";
+                }
+
+                if (isPointerOver)
+                {
+                    return "PointerOver";
+                }
+
+                return "Normal";
+            }
+
+            private readonly TreeViewItem _treeViewItem;
+            private bool _isAttached;
+            private Border _contentPresenterGrid;
         }
     }
 }
