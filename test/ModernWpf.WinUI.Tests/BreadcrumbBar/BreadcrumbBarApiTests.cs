@@ -9,6 +9,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.Media.Animation;
@@ -100,6 +101,36 @@ public class BreadcrumbBarApiTests
             Assert.AreEqual(HorizontalAlignment.Right, presenter.HorizontalContentAlignment);
             Assert.AreEqual(VerticalAlignment.Bottom, presenter.VerticalAlignment);
             Assert.AreEqual(VerticalAlignment.Bottom, presenter.VerticalContentAlignment);
+        });
+    }
+
+    [TestMethod]
+    public void BreadcrumbBarItemTemplateUsesVisualStateSettersForWinUIStateParity()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var item = new ModernWpf.Controls.BreadcrumbBarItem
+            {
+                Content = "Node"
+            };
+
+            using var host = new TestWindowHost(item, width: 240, height: 80);
+            host.UpdateLayout();
+
+            var root = FindTemplatePart<FrameworkElement>(item, "PART_LayoutRoot");
+            AssertStateSetter(root, "InlineItemTypeStates", "Default", "PART_ChevronTextBlock.Text");
+            AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_ItemButton.Visibility");
+            AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_ChevronTextBlock.Visibility");
+            AssertStateSetter(root, "InlineItemTypeStates", "LastItem", "PART_LastItemContentPresenter.Visibility");
+
+            item.IsCurrentItem = true;
+            host.UpdateLayout();
+
+            Assert.AreEqual(Visibility.Collapsed, FindTemplatePart<Button>(item, "PART_ItemButton").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindTemplatePart<TextBlock>(item, "PART_ChevronTextBlock").Visibility);
+            var lastItemPresenter = FindTemplatePart<ContentPresenterEx>(item, "PART_LastItemContentPresenter");
+            Assert.AreEqual(Visibility.Visible, lastItemPresenter.Visibility);
+            Assert.AreEqual(FontWeights.SemiBold, lastItemPresenter.FontWeight);
         });
     }
 
@@ -246,6 +277,66 @@ public class BreadcrumbBarApiTests
         }
 
         button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+    }
+
+    private static T FindTemplatePart<T>(Control control, string name)
+        where T : class
+    {
+        control.ApplyTemplate();
+
+        return control.Template?.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Could not find template part '{name}'.");
+    }
+
+    private static void AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string expectedTarget)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        Assert.IsNotNull(group, $"Expected visual state group '{groupName}'.");
+
+        var state = FindVisualState(group!, stateName);
+        Assert.IsNotNull(state, $"Expected visual state '{groupName}.{stateName}'.");
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state!;
+        foreach (VisualStateSetter setter in stateEx.Setters)
+        {
+            if (setter.Target == expectedTarget)
+            {
+                return;
+            }
+        }
+
+        Assert.Fail($"Expected visual state '{groupName}.{stateName}' to contain setter '{expectedTarget}'.");
+    }
+
+    private static VisualStateGroup? FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        foreach (VisualStateGroup group in VisualStateManager.GetVisualStateGroups(stateGroupsRoot))
+        {
+            if (group.Name == groupName)
+            {
+                return group;
+            }
+        }
+
+        return null;
+    }
+
+    private static VisualState? FindVisualState(VisualStateGroup group, string stateName)
+    {
+        foreach (VisualState state in group.States)
+        {
+            if (state.Name == stateName)
+            {
+                return state;
+            }
+        }
+
+        return null;
     }
 
     private static DataTemplate CreateNameTemplate()

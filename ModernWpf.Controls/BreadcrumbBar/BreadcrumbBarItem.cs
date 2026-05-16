@@ -134,7 +134,7 @@ namespace ModernWpf.Controls
 
             if (_chevronTextBlock != null)
             {
-                _chevronTextBlock.Visibility = IsCurrentItem ? Visibility.Collapsed : Visibility.Visible;
+                VisualStateManager.GoToState(this, IsCurrentItem ? "LastItem" : "Default", true);
             }
         }
 

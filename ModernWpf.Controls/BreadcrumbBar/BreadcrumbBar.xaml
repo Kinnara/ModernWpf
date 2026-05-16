@@ -21,7 +21,26 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:BreadcrumbBarItem">
-                    <Grid>
+                    <Grid x:Name="PART_LayoutRoot">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="InlineItemTypeStates">
+                                <ui:VisualStateEx x:Name="Default">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_ChevronTextBlock.Text" Value="&#xE76C;" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="LastItem">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_ItemButton.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PART_ChevronTextBlock.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PART_LastItemContentPresenter.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
@@ -47,6 +66,20 @@
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Button>
+                        <ui:ContentPresenterEx
+                            x:Name="PART_LastItemContentPresenter"
+                            Visibility="Collapsed"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            FontWeight="SemiBold"
+                            Foreground="{TemplateBinding Foreground}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                         <TextBlock
                             x:Name="PART_ChevronTextBlock"
                             Grid.Column="1"
