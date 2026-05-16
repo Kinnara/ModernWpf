@@ -3371,6 +3371,14 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>When implemented in a derived class, retrieves an area that represents the viewport and buffer that the layout should fill with realized elements.</summary>
       <returns>An area that represents the viewport and buffer that the layout should fill with realized elements.</returns>
     </member>
+    <member name="P:ModernWpf.Controls.VirtualizingLayoutContext.VisibleRect">
+      <summary>Gets the visible viewport area for the layout.</summary>
+      <returns>The visible viewport area for the layout.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore">
+      <summary>When implemented in a derived class, retrieves the visible viewport area for the layout.</summary>
+      <returns>The visible viewport area for the layout.</returns>
+    </member>
     <member name="P:ModernWpf.Controls.VirtualizingLayoutContext.RecommendedAnchorIndex">
       <summary>Gets the recommended index from which to start the generation and layout of elements.</summary>
       <returns>The recommended index from which the layout should start.</returns>

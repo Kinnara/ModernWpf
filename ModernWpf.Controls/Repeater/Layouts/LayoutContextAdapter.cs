@@ -85,6 +85,11 @@ namespace ModernWpf.Controls
             return new Rect(0, 0, double.PositiveInfinity, double.PositiveInfinity);
         }
 
+        protected override Rect VisibleRectCore()
+        {
+            return new Rect(0, 0, double.PositiveInfinity, double.PositiveInfinity);
+        }
+
         protected override int RecommendedAnchorIndexCore => -1;
 
         protected override Point LayoutOriginCore

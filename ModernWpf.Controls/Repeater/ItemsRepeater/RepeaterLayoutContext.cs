@@ -52,6 +52,11 @@ namespace ModernWpf.Controls
             return GetOwner().RealizationWindow;
         }
 
+        protected override Rect VisibleRectCore()
+        {
+            return GetOwner().VisibleWindow;
+        }
+
         protected override int RecommendedAnchorIndexCore
         {
             get

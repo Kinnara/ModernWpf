@@ -155,6 +155,33 @@ public class RepeaterLayoutTests
     }
 
     [TestMethod]
+    public void VirtualizingLayoutContextUsesWinUIVisibleRectSurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var visibleRect = new Rect(1, 2, 30, 40);
+            var context = new TestVirtualizingLayoutContext(itemCount: 0, visibleRect);
+            Assert.AreEqual(visibleRect, context.VisibleRect);
+
+            var layout = new RecordingViewportLayout();
+            var repeater = new ItemsRepeater
+            {
+                Layout = layout,
+                ItemsSource = Enumerable.Range(0, 1),
+                ItemTemplate = CreateButtonTemplate(width: 10, height: 10),
+                HorizontalCacheLength = 0,
+                VerticalCacheLength = 0
+            };
+
+            using var host = new TestWindowHost(repeater, width: 100, height: 100);
+
+            var expectedWindow = new Rect(0, 0, double.MaxValue, double.MaxValue);
+            Assert.AreEqual(expectedWindow, layout.LastVisibleRect);
+            Assert.AreEqual(expectedWindow, layout.LastRealizationRect);
+        });
+    }
+
+    [TestMethod]
     public void StackLayoutKeepsFractionalAverageForRegularElementsLikeWinUI()
     {
         WpfTestHost.Run(() =>
@@ -416,9 +443,10 @@ public class RepeaterLayoutTests
 
     private sealed class TestVirtualizingLayoutContext : VirtualizingLayoutContext
     {
-        public TestVirtualizingLayoutContext(int itemCount)
+        public TestVirtualizingLayoutContext(int itemCount, Rect? visibleRect = null)
         {
             m_itemCount = itemCount;
+            m_visibleRect = visibleRect ?? Rect.Empty;
         }
 
         protected override int ItemCountCore()
@@ -426,7 +454,27 @@ public class RepeaterLayoutTests
             return m_itemCount;
         }
 
+        protected override Rect VisibleRectCore()
+        {
+            return m_visibleRect;
+        }
+
         private readonly int m_itemCount;
+        private readonly Rect m_visibleRect;
+    }
+
+    private sealed class RecordingViewportLayout : VirtualizingLayout
+    {
+        public Rect LastVisibleRect { get; private set; }
+
+        public Rect LastRealizationRect { get; private set; }
+
+        protected override Size MeasureOverride(VirtualizingLayoutContext context, Size availableSize)
+        {
+            LastVisibleRect = context.VisibleRect;
+            LastRealizationRect = context.RealizationRect;
+            return new Size(20, 20);
+        }
     }
 
     private sealed class NonVirtualStackLayout : NonVirtualizingLayout
