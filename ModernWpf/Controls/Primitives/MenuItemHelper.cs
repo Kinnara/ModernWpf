@@ -74,6 +74,9 @@ namespace ModernWpf.Controls.Primitives
             private static readonly DependencyPropertyDescriptor IsPressedPropertyDescriptor =
                 DependencyPropertyDescriptor.FromProperty(MenuItem.IsPressedProperty, typeof(MenuItem));
 
+            private static readonly DependencyPropertyDescriptor IsSubmenuOpenPropertyDescriptor =
+                DependencyPropertyDescriptor.FromProperty(MenuItem.IsSubmenuOpenProperty, typeof(MenuItem));
+
             private static readonly DependencyPropertyDescriptor IsEnabledPropertyDescriptor =
                 DependencyPropertyDescriptor.FromProperty(UIElement.IsEnabledProperty, typeof(MenuItem));
 
@@ -122,6 +125,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 IsHighlightedPropertyDescriptor.AddValueChanged(_menuItem, OnVisualStatePropertyChanged);
                 IsPressedPropertyDescriptor.AddValueChanged(_menuItem, OnVisualStatePropertyChanged);
+                IsSubmenuOpenPropertyDescriptor.AddValueChanged(_menuItem, OnVisualStatePropertyChanged);
                 IsEnabledPropertyDescriptor.AddValueChanged(_menuItem, OnVisualStatePropertyChanged);
                 IsCheckedPropertyDescriptor.AddValueChanged(_menuItem, OnVisualStatePropertyChanged);
                 InputGestureTextPropertyDescriptor.AddValueChanged(_menuItem, OnVisualStatePropertyChanged);
@@ -132,6 +136,7 @@ namespace ModernWpf.Controls.Primitives
                 InputGestureTextPropertyDescriptor.RemoveValueChanged(_menuItem, OnVisualStatePropertyChanged);
                 IsCheckedPropertyDescriptor.RemoveValueChanged(_menuItem, OnVisualStatePropertyChanged);
                 IsEnabledPropertyDescriptor.RemoveValueChanged(_menuItem, OnVisualStatePropertyChanged);
+                IsSubmenuOpenPropertyDescriptor.RemoveValueChanged(_menuItem, OnVisualStatePropertyChanged);
                 IsPressedPropertyDescriptor.RemoveValueChanged(_menuItem, OnVisualStatePropertyChanged);
                 IsHighlightedPropertyDescriptor.RemoveValueChanged(_menuItem, OnVisualStatePropertyChanged);
             }
@@ -156,6 +161,11 @@ namespace ModernWpf.Controls.Primitives
                 if (!_menuItem.IsEnabled)
                 {
                     return "Disabled";
+                }
+
+                if (_menuItem.IsSubmenuOpen)
+                {
+                    return "SubMenuOpened";
                 }
 
                 if (_menuItem.IsPressed)

@@ -79,6 +79,69 @@ public class MenuFlyoutVisualStateTests
         });
     }
 
+    [TestMethod]
+    public void SubmenuHeaderTemplateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var item = new MenuItem
+            {
+                Header = "More",
+                Icon = new TextBlock { Text = "I" },
+                Template = FindMenuItemTemplate("SubmenuHeaderTemplateKey")
+            };
+            item.Items.Add(new MenuItem { Header = "Child" });
+            MenuItemHelper.SetVisualStateSettersEnabled(item, true);
+
+            using var host = new TestWindowHost(item, width: 260, height: 140);
+            var root = FindTemplateChild<Border>(item, "LayoutRoot");
+
+            AssertStateSetter(root, "CommonStates", "PointerOver",
+                "LayoutRoot.Background",
+                "ContentPresenter.Foreground",
+                "CheckGlyph.Foreground",
+                "SubItemChevron.Foreground",
+                "IconContent.Foreground");
+            AssertStateSetter(root, "CommonStates", "Pressed",
+                "LayoutRoot.Background",
+                "ContentPresenter.Foreground",
+                "CheckGlyph.Foreground",
+                "SubItemChevron.Foreground",
+                "IconContent.Foreground");
+            AssertStateSetter(root, "CommonStates", "SubMenuOpened",
+                "LayoutRoot.Background",
+                "ContentPresenter.Foreground",
+                "CheckGlyph.Foreground",
+                "SubItemChevron.Foreground",
+                "IconContent.Foreground");
+            AssertStateSetter(root, "CommonStates", "Disabled",
+                "LayoutRoot.Background",
+                "ContentPresenter.Foreground",
+                "CheckGlyph.Foreground",
+                "SubItemChevron.Foreground",
+                "IconContent.Foreground");
+
+            AssertCurrentState(root, "CommonStates", "Normal");
+
+            item.SetCurrentValue(MenuItem.IsSubmenuOpenProperty, true);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            AssertCurrentState(root, "CommonStates", "SubMenuOpened");
+            Assert.AreSame(item.TryFindResource("MenuFlyoutSubItemBackgroundSubMenuOpened"), root.Background);
+            Assert.AreSame(
+                item.TryFindResource("MenuFlyoutSubItemForegroundSubMenuOpened"),
+                FindTemplateChild<ContentPresenterEx>(item, "ContentPresenter").Foreground);
+
+            item.IsEnabled = false;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            AssertCurrentState(root, "CommonStates", "Disabled");
+            Assert.AreSame(item.TryFindResource("MenuFlyoutSubItemBackgroundDisabled"), root.Background);
+        });
+    }
+
     private static ControlTemplate FindMenuItemTemplate(string resourceId)
     {
         var key = new ComponentResourceKey(typeof(MenuItem), resourceId);

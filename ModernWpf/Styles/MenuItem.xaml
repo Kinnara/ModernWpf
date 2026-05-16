@@ -316,6 +316,54 @@
             Margin="{DynamicResource MenuFlyoutItemMargin}"
             CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius}"
             SnapsToDevicePixels="True">
+            <VisualStateManager.CustomVisualStateManager>
+                <root:VisualStateManagerEx />
+            </VisualStateManager.CustomVisualStateManager>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+
+                    <root:VisualStateEx x:Name="PointerOver">
+                        <root:VisualStateEx.Setters>
+                            <root:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPointerOver}" />
+                            <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
+                            <root:VisualStateSetter Target="CheckGlyph.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
+                            <root:VisualStateSetter Target="SubItemChevron.Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronPointerOver}" />
+                            <root:VisualStateSetter Target="IconContent.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
+                        </root:VisualStateEx.Setters>
+                    </root:VisualStateEx>
+
+                    <root:VisualStateEx x:Name="Pressed">
+                        <root:VisualStateEx.Setters>
+                            <root:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPressed}" />
+                            <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
+                            <root:VisualStateSetter Target="CheckGlyph.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
+                            <root:VisualStateSetter Target="SubItemChevron.Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronPressed}" />
+                            <root:VisualStateSetter Target="IconContent.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
+                        </root:VisualStateEx.Setters>
+                    </root:VisualStateEx>
+
+                    <root:VisualStateEx x:Name="SubMenuOpened">
+                        <root:VisualStateEx.Setters>
+                            <root:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundSubMenuOpened}" />
+                            <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
+                            <root:VisualStateSetter Target="CheckGlyph.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
+                            <root:VisualStateSetter Target="SubItemChevron.Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronSubMenuOpened}" />
+                            <root:VisualStateSetter Target="IconContent.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
+                        </root:VisualStateEx.Setters>
+                    </root:VisualStateEx>
+
+                    <root:VisualStateEx x:Name="Disabled">
+                        <root:VisualStateEx.Setters>
+                            <root:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundDisabled}" />
+                            <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
+                            <root:VisualStateSetter Target="CheckGlyph.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
+                            <root:VisualStateSetter Target="SubItemChevron.Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronDisabled}" />
+                            <root:VisualStateSetter Target="IconContent.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
+                        </root:VisualStateEx.Setters>
+                    </root:VisualStateEx>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition SharedSizeGroup="MenuItemCheckColumnGroup" Width="Auto" />
@@ -427,34 +475,6 @@
             <Trigger Property="IsChecked" Value="True">
                 <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
                 <Setter TargetName="CheckGlyph" Property="Visibility" Value="Visible" />
-            </Trigger>
-            <Trigger Property="IsHighlighted" Value="True">
-                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPointerOver}" />
-                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
-                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
-                <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronPointerOver}" />
-                <Setter TargetName="IconContent" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPressed}" />
-                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
-                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
-                <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronPressed}" />
-                <Setter TargetName="IconContent" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPointerOver}" />
-            </Trigger>
-            <Trigger Property="IsSubmenuOpen" Value="True">
-                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundSubMenuOpened}" />
-                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
-                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
-                <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronSubMenuOpened}" />
-                <Setter TargetName="IconContent" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundDisabled}" />
-                <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
-                <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
-                <Setter TargetName="SubItemChevron" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemChevronDisabled}" />
-                <Setter TargetName="IconContent" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
             </Trigger>
             <!--<Trigger SourceName="SubMenuScrollViewer" Property="ScrollViewer.CanContentScroll" Value="false" >
             <Setter TargetName="OpaqueRect" Property="Canvas.Top" Value="{Binding ElementName=SubMenuScrollViewer, Path=VerticalOffset}" />
