@@ -81,6 +81,7 @@ public class TemplateParityTests
         var convertedTemplateFiles = new[]
         {
             Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
+            Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "Calendar.xaml"),
             Path.Combine("ModernWpf", "Styles", "Button.xaml"),
             Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),

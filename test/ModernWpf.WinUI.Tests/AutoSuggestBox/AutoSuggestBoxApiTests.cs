@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -86,6 +87,18 @@ public class AutoSuggestBoxApiTests
             Assert.AreEqual(queryButton.Padding, presenter.Padding);
             Assert.AreEqual(ControlHelper.GetCornerRadius(queryButton), presenter.CornerRadius);
             Assert.AreEqual(12d, presenter.FontSize);
+            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(queryButton));
+            AssertAnimatedIconStateSetter(presenter, "PointerOver", "PointerOver");
+            AssertAnimatedIconStateSetter(presenter, "Pressed", "Pressed");
+            Assert.AreEqual("Normal", AnimatedIcon.GetState(presenter));
+            Assert.IsTrue(VisualStateManager.GoToState(queryButton, "PointerOver", false));
+            Assert.AreEqual("PointerOver", AnimatedIcon.GetState(presenter));
+            Assert.IsTrue(VisualStateManager.GoToState(queryButton, "Pressed", false));
+            Assert.AreEqual("Pressed", AnimatedIcon.GetState(presenter));
+            Assert.IsTrue(VisualStateManager.GoToState(queryButton, "Disabled", false));
+            Assert.AreEqual("Normal", AnimatedIcon.GetState(presenter));
+            Assert.IsTrue(VisualStateManager.GoToState(queryButton, "Normal", false));
+            Assert.AreEqual("Normal", AnimatedIcon.GetState(presenter));
 
             var descriptionPresenter = FindTemplateChild<ContentPresenterEx>(textBox, "DescriptionPresenter");
             Assert.AreEqual("Search description", descriptionPresenter.Content);
@@ -143,6 +156,17 @@ public class AutoSuggestBoxApiTests
     {
         return control.Template?.FindName(name, control) as T
             ?? throw new InvalidOperationException($"Could not find template child '{name}'.");
+    }
+
+    private static void AssertAnimatedIconStateSetter(FrameworkElement stateGroupsRoot, string stateName, string expectedValue)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == "CommonStates");
+        var state = group.States.OfType<VisualStateEx>().Single(item => item.Name == stateName);
+        var setter = state.Setters.Single(item => item.Target == "ContentPresenter.(local:AnimatedIcon.State)");
+
+        Assert.AreEqual(expectedValue, setter.Value);
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
