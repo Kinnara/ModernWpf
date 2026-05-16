@@ -290,8 +290,9 @@ namespace ModernWpf.Controls
                 bounds.Width,
                 bounds.Height));
 
-            var oldEdgeOffset = previousBounds.Y + HorizontalAnchorRatio * previousBounds.Height;
-            var newEdgeOffset = newBounds.Y + HorizontalAnchorRatio * newBounds.Height;
+            var verticalAnchorRatio = GetVerticalAnchorRatio();
+            var oldEdgeOffset = previousBounds.Y + verticalAnchorRatio * previousBounds.Height;
+            var newEdgeOffset = newBounds.Y + verticalAnchorRatio * newBounds.Height;
 
             var unconstrainedPendingViewportShift = newEdgeOffset - oldEdgeOffset;
             var pendingViewportShift = unconstrainedPendingViewportShift;
@@ -361,7 +362,8 @@ namespace ModernWpf.Controls
                         HasPendingBringIntoView && !m_pendingBringIntoView.Animate ?
                         m_pendingBringIntoView.ChangeViewOffset.Y :
                         scrollViewer.VerticalOffset;
-                    double viewportEdgeOffset = verticalOffset + HorizontalAnchorRatio * scrollViewer.ViewportHeight + m_pendingViewportShift;
+                    var verticalAnchorRatio = GetVerticalAnchorRatio();
+                    double viewportEdgeOffset = verticalOffset + verticalAnchorRatio * scrollViewer.ViewportHeight + m_pendingViewportShift;
 
                     CandidateInfo bestCandidate = null;
                     double bestCandidateDistance = float.MaxValue;
@@ -381,7 +383,7 @@ namespace ModernWpf.Controls
                                 bounds.Height));
                         }
 
-                        double elementEdgeOffset = candidate.RelativeBounds.Y + HorizontalAnchorRatio * candidate.RelativeBounds.Height;
+                        double elementEdgeOffset = candidate.RelativeBounds.Y + verticalAnchorRatio * candidate.RelativeBounds.Height;
                         double candidateDistance = Math.Abs(elementEdgeOffset - viewportEdgeOffset);
                         if (candidateDistance < bestCandidateDistance)
                         {
@@ -411,6 +413,11 @@ namespace ModernWpf.Controls
             }
 
             return m_anchorElement;
+        }
+
+        private double GetVerticalAnchorRatio()
+        {
+            return double.IsNaN(VerticalAnchorRatio) ? HorizontalAnchorRatio : VerticalAnchorRatio;
         }
 
         private void OnScrollViewerScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -508,7 +515,7 @@ namespace ModernWpf.Controls
         private bool m_isAnchorElementDirty = true;
 
         private double m_horizontalEdge;
-        private double m_verticalEdge;    // Not used in this temporary implementation.
+        private double m_verticalEdge;
 
         // We can only bring an element into view after it got arranged and
         // we know its bounds as well as the viewport (so that we can account

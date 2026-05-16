@@ -160,6 +160,51 @@ public class RepeaterLayoutTests
         });
     }
 
+    [TestMethod]
+    public void ItemsRepeaterScrollHostUsesVerticalAnchorRatioForAnchorCandidates()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var first = new Border
+            {
+                Width = 100,
+                Height = 60
+            };
+            var second = new Border
+            {
+                Width = 100,
+                Height = 20
+            };
+            var content = new StackPanel();
+            content.Children.Add(first);
+            content.Children.Add(second);
+
+            var scrollViewer = new ScrollViewer
+            {
+                Width = 100,
+                Height = 50,
+                Content = content
+            };
+            var scrollHost = new ItemsRepeaterScrollHost
+            {
+                HorizontalAnchorRatio = 0,
+                VerticalAnchorRatio = 1,
+                ScrollViewer = scrollViewer
+            };
+
+            using var host = new TestWindowHost(scrollHost, width: 160, height: 120);
+
+            scrollViewer.ScrollToVerticalOffset(25);
+            host.UpdateLayout();
+
+            var scrollingSurface = (IRepeaterScrollingSurface)scrollHost;
+            scrollingSurface.RegisterAnchorCandidate(first);
+            scrollingSurface.RegisterAnchorCandidate(second);
+
+            Assert.AreSame(second, scrollHost.CurrentAnchor);
+        });
+    }
+
     private static DataTemplate CreateButtonTemplate(double? width = null, double? height = null)
     {
         var widthAttribute = width.HasValue ? $" Width='{width.Value}'" : string.Empty;
