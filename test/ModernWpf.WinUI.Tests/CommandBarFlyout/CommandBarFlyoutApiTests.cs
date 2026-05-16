@@ -381,6 +381,34 @@ public class CommandBarFlyoutApiTests
         });
     }
 
+    [TestMethod]
+    public void FlyoutToolBarAvailableAndCombinedStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = CreateCommandBarFlyoutResources();
+            var commandBar = new CommandBarFlyoutCommandBar
+            {
+                CornerRadius = new CornerRadius(2, 4, 6, 8),
+                BorderThickness = new Thickness(1),
+                CommandBarOverflowPresenterStyle = (Style)resources["CommandBarFlyoutCommandBarOverflowPresenterStyle"],
+                Width = 220,
+                Height = 48
+            };
+            commandBar.PrimaryCommands.Add(new AppBarButton { Label = "Primary" });
+            commandBar.SecondaryCommands.Add(new AppBarButton { Label = "Secondary" });
+
+            var rootHost = CreateTemplateHost(commandBar, resources);
+            using var host = new TestWindowHost(rootHost, width: 260, height: 160);
+            host.UpdateLayout();
+
+            var toolBar = FindTemplateChild<CommandBarFlyoutToolBar>(commandBar, "PART_ToolBar");
+            VerifyFlyoutToolBarAvailableAndCombinedStates(toolBar);
+        });
+    }
+
     private static CommandBarFlyoutCommandBar GetCommandBar(CommandBarFlyout commandBarFlyout)
     {
         var presenter = commandBarFlyout.GetPresenter();
@@ -871,6 +899,108 @@ public class CommandBarFlyoutApiTests
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonBackgroundChecked"), innerBorder.Background);
         Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundChecked"), content.Foreground);
         Assert.AreEqual(0.0, overflowCheckGlyph.Opacity);
+    }
+
+    private static void VerifyFlyoutToolBarAvailableAndCombinedStates(CommandBarFlyoutToolBar toolBar)
+    {
+        var layoutRoot = FindTemplateChild<System.Windows.Controls.Border>(toolBar, "LayoutRoot");
+        var primaryItemsRoot = FindTemplateChild<System.Windows.Controls.Border>(toolBar, "PrimaryItemsRoot");
+        var overflowPopup = FindTemplateChild<System.Windows.Controls.Primitives.Popup>(toolBar, "OverflowPopup");
+        var outerOverflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(toolBar, "OuterOverflowContentRoot");
+        var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(toolBar, "OverflowContentRoot");
+        var secondaryItemsControl = FindTemplateChild<CommandBarOverflowPresenter>(toolBar, "SecondaryItemsControl");
+        var overflowPanel = FindTemplateChild<CommandBarOverflowPanel>(toolBar, "PART_ToolBarOverflowPanel");
+
+        AssertStateSetter(
+            layoutRoot,
+            "AvailableCommandsStates",
+            "PrimaryCommandsOnly",
+            "OverflowContentRoot.Visibility");
+        AssertStateSetter(
+            layoutRoot,
+            "AvailableCommandsStates",
+            "SecondaryCommandsOnly",
+            "PrimaryItemsRoot.Visibility",
+            "OverflowPopup.Placement",
+            "PART_ToolBarOverflowPanel.Focusable");
+        AssertStateSetter(
+            layoutRoot,
+            "CombinedStates",
+            "ExpandedUpWithPrimaryCommands",
+            "SecondaryItemsControl.BorderThickness",
+            "LayoutRoot.CornerRadius",
+            "PrimaryItemsRoot.CornerRadius",
+            "OuterOverflowContentRoot.CornerRadius",
+            "SecondaryItemsControl.CornerRadius");
+        AssertStateSetter(
+            layoutRoot,
+            "CombinedStates",
+            "ExpandedDownWithPrimaryCommands",
+            "SecondaryItemsControl.BorderThickness",
+            "LayoutRoot.CornerRadius",
+            "PrimaryItemsRoot.CornerRadius",
+            "OuterOverflowContentRoot.CornerRadius",
+            "SecondaryItemsControl.CornerRadius");
+        AssertStateSetter(
+            layoutRoot,
+            "CombinedStates",
+            "ExpandedUpWithoutPrimaryCommands",
+            "SecondaryItemsControl.BorderThickness",
+            "LayoutRoot.CornerRadius",
+            "PrimaryItemsRoot.CornerRadius",
+            "OuterOverflowContentRoot.CornerRadius",
+            "SecondaryItemsControl.CornerRadius");
+        AssertStateSetter(
+            layoutRoot,
+            "CombinedStates",
+            "ExpandedDownWithoutPrimaryCommands",
+            "SecondaryItemsControl.BorderThickness",
+            "LayoutRoot.CornerRadius",
+            "PrimaryItemsRoot.CornerRadius",
+            "OuterOverflowContentRoot.CornerRadius",
+            "SecondaryItemsControl.CornerRadius");
+
+        Assert.AreEqual(Visibility.Visible, overflowContentRoot.Visibility);
+        Assert.IsTrue(VisualStateManager.GoToState(toolBar, "PrimaryCommandsOnly", false));
+        Assert.AreEqual(Visibility.Collapsed, overflowContentRoot.Visibility);
+        Assert.IsTrue(VisualStateManager.GoToState(toolBar, "BothCommands", false));
+        Assert.AreEqual(Visibility.Visible, overflowContentRoot.Visibility);
+
+        Assert.AreEqual(Visibility.Visible, primaryItemsRoot.Visibility);
+        Assert.AreEqual(PlacementMode.Bottom, overflowPopup.Placement);
+        Assert.IsFalse(overflowPanel.Focusable);
+        Assert.IsTrue(VisualStateManager.GoToState(toolBar, "SecondaryCommandsOnly", false));
+        Assert.AreEqual(Visibility.Collapsed, primaryItemsRoot.Visibility);
+        Assert.AreEqual(PlacementMode.Relative, overflowPopup.Placement);
+        Assert.IsTrue(overflowPanel.Focusable);
+        Assert.IsTrue(VisualStateManager.GoToState(toolBar, "BothCommands", false));
+        Assert.AreEqual(Visibility.Visible, primaryItemsRoot.Visibility);
+        Assert.AreEqual(PlacementMode.Bottom, overflowPopup.Placement);
+        Assert.IsFalse(overflowPanel.Focusable);
+
+        var topCornerRadius = new CornerRadius(2, 4, 0, 0);
+        var bottomCornerRadius = new CornerRadius(0, 0, 6, 8);
+
+        Assert.IsTrue(VisualStateManager.GoToState(toolBar, "ExpandedUpWithPrimaryCommands", false));
+        Assert.AreEqual(toolBar.TryFindResource("CommandBarFlyoutBorderUpThemeThickness"), secondaryItemsControl.BorderThickness);
+        Assert.AreEqual(bottomCornerRadius, layoutRoot.CornerRadius);
+        Assert.AreEqual(bottomCornerRadius, primaryItemsRoot.CornerRadius);
+        Assert.AreEqual(topCornerRadius, outerOverflowContentRoot.CornerRadius);
+        Assert.AreEqual(topCornerRadius, secondaryItemsControl.CornerRadius);
+
+        Assert.IsTrue(VisualStateManager.GoToState(toolBar, "ExpandedDownWithPrimaryCommands", false));
+        Assert.AreEqual(toolBar.TryFindResource("CommandBarFlyoutBorderDownThemeThickness"), secondaryItemsControl.BorderThickness);
+        Assert.AreEqual(topCornerRadius, layoutRoot.CornerRadius);
+        Assert.AreEqual(topCornerRadius, primaryItemsRoot.CornerRadius);
+        Assert.AreEqual(bottomCornerRadius, outerOverflowContentRoot.CornerRadius);
+        Assert.AreEqual(bottomCornerRadius, secondaryItemsControl.CornerRadius);
+
+        Assert.IsTrue(VisualStateManager.GoToState(toolBar, "ExpandedUpWithoutPrimaryCommands", false));
+        Assert.AreEqual(toolBar.TryFindResource("CommandBarFlyoutBorderThemeThickness"), secondaryItemsControl.BorderThickness);
+        Assert.AreEqual(toolBar.CornerRadius, layoutRoot.CornerRadius);
+        Assert.AreEqual(toolBar.CornerRadius, primaryItemsRoot.CornerRadius);
+        Assert.AreEqual(toolBar.CornerRadius, outerOverflowContentRoot.CornerRadius);
+        Assert.AreEqual(toolBar.CornerRadius, secondaryItemsControl.CornerRadius);
     }
 
     private static VisualStateEx AssertStateSetter(

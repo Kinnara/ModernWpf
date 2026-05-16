@@ -779,18 +779,60 @@
                                     <ui:VisualStateGroupListener x:Name="AvailableCommandsStatesListener" />
                                 </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="BothCommands" />
-                                <VisualState x:Name="PrimaryCommandsOnly" />
-                                <VisualState x:Name="SecondaryCommandsOnly" />
+                                <ui:VisualStateEx x:Name="PrimaryCommandsOnly">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="OverflowContentRoot.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SecondaryCommandsOnly">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryItemsRoot.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="OverflowPopup.Placement" Value="{x:Static PlacementMode.Relative}" />
+                                        <ui:VisualStateSetter Target="PART_ToolBarOverflowPanel.Focusable" Value="True" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
-                            <VisualStateGroup>
+                            <VisualStateGroup x:Name="CombinedStates">
                                 <ui:VisualStateGroupListener.Listener>
                                     <ui:VisualStateGroupListener x:Name="CombinedStatesListener" />
                                 </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Default" />
-                                <VisualState x:Name="ExpandedUpWithPrimaryCommands" />
-                                <VisualState x:Name="ExpandedDownWithPrimaryCommands" />
-                                <VisualState x:Name="ExpandedUpWithoutPrimaryCommands" />
-                                <VisualState x:Name="ExpandedDownWithoutPrimaryCommands" />
+                                <ui:VisualStateEx x:Name="ExpandedUpWithPrimaryCommands">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SecondaryItemsControl.BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderUpThemeThickness}" />
+                                        <ui:VisualStateSetter Target="LayoutRoot.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
+                                        <ui:VisualStateSetter Target="PrimaryItemsRoot.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
+                                        <ui:VisualStateSetter Target="OuterOverflowContentRoot.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
+                                        <ui:VisualStateSetter Target="SecondaryItemsControl.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="ExpandedDownWithPrimaryCommands">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SecondaryItemsControl.BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderDownThemeThickness}" />
+                                        <ui:VisualStateSetter Target="LayoutRoot.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
+                                        <ui:VisualStateSetter Target="PrimaryItemsRoot.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
+                                        <ui:VisualStateSetter Target="OuterOverflowContentRoot.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
+                                        <ui:VisualStateSetter Target="SecondaryItemsControl.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="ExpandedUpWithoutPrimaryCommands">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SecondaryItemsControl.BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderThemeThickness}" />
+                                        <ui:VisualStateSetter Target="LayoutRoot.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        <ui:VisualStateSetter Target="PrimaryItemsRoot.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        <ui:VisualStateSetter Target="OuterOverflowContentRoot.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        <ui:VisualStateSetter Target="SecondaryItemsControl.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="ExpandedDownWithoutPrimaryCommands">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SecondaryItemsControl.BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderThemeThickness}" />
+                                        <ui:VisualStateSetter Target="LayoutRoot.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        <ui:VisualStateSetter Target="PrimaryItemsRoot.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        <ui:VisualStateSetter Target="OuterOverflowContentRoot.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        <ui:VisualStateSetter Target="SecondaryItemsControl.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Border
@@ -947,48 +989,6 @@
                         <!-- Disabled -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="EllipsisIcon" Property="Foreground" Value="{DynamicResource CommandBarEllipsisIconForegroundDisabled}" />
-                        </Trigger>
-                        <!-- PrimaryCommandsOnly -->
-                        <Trigger SourceName="AvailableCommandsStatesListener" Property="CurrentStateName" Value="PrimaryCommandsOnly">
-                            <Setter TargetName="OverflowContentRoot" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
-                        <!-- SecondaryCommandsOnly -->
-                        <Trigger SourceName="AvailableCommandsStatesListener" Property="CurrentStateName" Value="SecondaryCommandsOnly">
-                            <Setter TargetName="PrimaryItemsRoot" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="OverflowPopup" Property="Placement" Value="{x:Static PlacementMode.Relative}" />
-                            <Setter TargetName="PART_ToolBarOverflowPanel" Property="Focusable" Value="True" />
-                        </Trigger>
-                        <!-- ExpandedUpWithPrimaryCommands -->
-                        <Trigger SourceName="CombinedStatesListener" Property="CurrentStateName" Value="ExpandedUpWithPrimaryCommands">
-                            <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderUpThemeThickness}" />
-                            <Setter TargetName="LayoutRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
-                            <Setter TargetName="PrimaryItemsRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
-                            <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
-                            <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
-                        </Trigger>
-                        <!-- ExpandedDownWithPrimaryCommands -->
-                        <Trigger SourceName="CombinedStatesListener" Property="CurrentStateName" Value="ExpandedDownWithPrimaryCommands">
-                            <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderDownThemeThickness}" />
-                            <Setter TargetName="LayoutRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
-                            <Setter TargetName="PrimaryItemsRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
-                            <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
-                            <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
-                        </Trigger>
-                        <!-- ExpandedUpWithoutPrimaryCommands -->
-                        <Trigger SourceName="CombinedStatesListener" Property="CurrentStateName" Value="ExpandedUpWithoutPrimaryCommands">
-                            <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderThemeThickness}" />
-                            <Setter TargetName="LayoutRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <Setter TargetName="PrimaryItemsRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
-                        </Trigger>
-                        <!-- ExpandedDownWithoutPrimaryCommands -->
-                        <Trigger SourceName="CombinedStatesListener" Property="CurrentStateName" Value="ExpandedDownWithoutPrimaryCommands">
-                            <Setter TargetName="SecondaryItemsControl" Property="BorderThickness" Value="{DynamicResource CommandBarFlyoutBorderThemeThickness}" />
-                            <Setter TargetName="LayoutRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <Setter TargetName="PrimaryItemsRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <Setter TargetName="OuterOverflowContentRoot" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <Setter TargetName="SecondaryItemsControl" Property="CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
