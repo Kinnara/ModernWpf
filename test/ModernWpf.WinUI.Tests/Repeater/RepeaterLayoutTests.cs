@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -205,6 +206,27 @@ public class RepeaterLayoutTests
         });
     }
 
+    [TestMethod]
+    public void ItemsRepeaterScrollHostStartsWithoutPendingBringIntoView()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var scrollHost = new ItemsRepeaterScrollHost
+            {
+                ScrollViewer = new ScrollViewer
+                {
+                    Content = new Border
+                    {
+                        Width = 100,
+                        Height = 100
+                    }
+                }
+            };
+
+            Assert.IsNull(GetPendingBringIntoViewTarget(scrollHost));
+        });
+    }
+
     private static DataTemplate CreateButtonTemplate(double? width = null, double? height = null)
     {
         var widthAttribute = width.HasValue ? $" Width='{width.Value}'" : string.Empty;
@@ -220,6 +242,24 @@ public class RepeaterLayoutTests
     {
         Assert.IsNotNull(element);
         Assert.AreEqual(expected, LayoutInformation.GetLayoutSlot(element));
+    }
+
+    private static UIElement? GetPendingBringIntoViewTarget(ItemsRepeaterScrollHost scrollHost)
+    {
+        var stateField = typeof(ItemsRepeaterScrollHost).GetField(
+            "m_pendingBringIntoView",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(stateField);
+
+        var state = stateField!.GetValue(scrollHost);
+        Assert.IsNotNull(state);
+
+        var targetProperty = state!.GetType().GetProperty(
+            "TargetElement",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.IsNotNull(targetProperty);
+
+        return (UIElement?)targetProperty!.GetValue(state);
     }
 
     private sealed class NonVirtualStackLayout : NonVirtualizingLayout

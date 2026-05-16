@@ -17,7 +17,7 @@ namespace ModernWpf.Controls
     {
         public ItemsRepeaterScrollHost()
         {
-            m_pendingBringIntoView = new BringIntoViewState(this);
+            m_pendingBringIntoView = new BringIntoViewState();
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -468,9 +468,8 @@ namespace ModernWpf.Controls
 
         private class BringIntoViewState
         {
-            public BringIntoViewState(UIElement owner)
+            public BringIntoViewState()
             {
-                TargetElement = owner;
             }
 
             public BringIntoViewState(
@@ -496,7 +495,7 @@ namespace ModernWpf.Controls
             public double AlignmentY { get; private set; }
             public double OffsetX { get; private set; }
             public double OffsetY { get; private set; }
-            public bool Animate { get; }
+            public bool Animate { get; private set; }
             public bool ChangeViewCalled { get; set; }
             public Point ChangeViewOffset { get; set; }
 
@@ -504,6 +503,8 @@ namespace ModernWpf.Controls
             {
                 TargetElement = null;
                 AlignmentX = AlignmentY = OffsetX = OffsetY = 0.0;
+                Animate = ChangeViewCalled = false;
+                ChangeViewOffset = default;
             }
         }
 
