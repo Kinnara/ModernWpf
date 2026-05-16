@@ -21,6 +21,7 @@
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="ui:ButtonHelper.VisualStateSettersEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:HyperlinkButton">
@@ -43,7 +44,31 @@
                         IsTextScaleFactorEnabled="{TemplateBinding ui:ControlHelper.IsTextScaleFactorEnabled}"
                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                         RecognizesAccessKey="True"
-                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                        ui:AnimatedIcon.State="Normal">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentPresenter.(ui:AnimatedIcon.State)" Value="PointerOver" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Pressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentPresenter.(ui:AnimatedIcon.State)" Value="Pressed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentPresenter.(ui:AnimatedIcon.State)" Value="Normal" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <ui:ContentPresenterEx.BackgroundTransition>
                             <ui:BrushTransition Duration="0:0:0.083" />
                         </ui:ContentPresenterEx.BackgroundTransition>

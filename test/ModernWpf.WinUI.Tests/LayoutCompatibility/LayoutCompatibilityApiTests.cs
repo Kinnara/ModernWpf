@@ -1771,6 +1771,9 @@ public class LayoutCompatibilityApiTests
             Assert.IsFalse(presenter.IsTextScaleFactorEnabled);
             Assert.IsNotNull(presenter.BackgroundTransition);
             Assert.AreEqual(TimeSpan.FromMilliseconds(83), presenter.BackgroundTransition.Duration);
+            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(button));
+            AssertAnimatedIconStateSetters(presenter, "ContentPresenter.(local:AnimatedIcon.State)");
+            AssertAnimatedIconStateTransitions(button, presenter);
         });
     }
 
@@ -1793,6 +1796,9 @@ public class LayoutCompatibilityApiTests
                 ?? throw new AssertFailedException("Expected AccentButtonStyle to use ContentPresenterEx directly.");
             Assert.IsNull(FindVisualChild<ModernContentControlEx>(button));
             Assert.AreEqual(BackgroundSizing.OuterBorderEdge, presenter.BackgroundSizing);
+            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(button));
+            AssertAnimatedIconStateSetters(presenter, "ContentPresenter.(local:AnimatedIcon.State)");
+            AssertAnimatedIconStateTransitions(button, presenter);
         });
     }
 
@@ -1876,6 +1882,9 @@ public class LayoutCompatibilityApiTests
             Assert.IsFalse(presenter.IsTextScaleFactorEnabled);
             Assert.IsNotNull(presenter.BackgroundTransition);
             Assert.AreEqual(TimeSpan.FromMilliseconds(83), presenter.BackgroundTransition.Duration);
+            Assert.IsTrue(ButtonHelper.GetVisualStateSettersEnabled(hyperlinkButton));
+            AssertAnimatedIconStateSetters(presenter, "ContentPresenter.(ui:AnimatedIcon.State)");
+            AssertAnimatedIconStateTransitions(hyperlinkButton, presenter);
         });
     }
 
@@ -3085,6 +3094,52 @@ public class LayoutCompatibilityApiTests
         Assert.IsTrue(
             stateEx.Setters.Any(setter => setter.Target == setterTarget),
             $"SelectionStates.{stateName} should set {setterTarget}.");
+    }
+
+    private static void AssertAnimatedIconStateSetters(FrameworkElement stateGroupsRoot, string setterTarget)
+    {
+        AssertAnimatedIconStateSetter(stateGroupsRoot, "PointerOver", setterTarget, "PointerOver");
+        AssertAnimatedIconStateSetter(stateGroupsRoot, "Pressed", setterTarget, "Pressed");
+        AssertAnimatedIconStateSetter(stateGroupsRoot, "Disabled", setterTarget, "Normal");
+    }
+
+    private static void AssertAnimatedIconStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string stateName,
+        string setterTarget,
+        string expectedValue)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == "CommonStates");
+        var state = group.States
+            .Cast<VisualState>()
+            .Single(item => item.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        var setter = stateEx.Setters.SingleOrDefault(item => item.Target == setterTarget)
+            ?? throw new AssertFailedException($"CommonStates.{stateName} should set {setterTarget}.");
+
+        Assert.AreEqual(expectedValue, setter.Value);
+    }
+
+    private static void AssertAnimatedIconStateTransitions(Control control, DependencyObject stateTarget)
+    {
+        Assert.AreEqual("Normal", AnimatedIcon.GetState(stateTarget));
+
+        Assert.IsTrue(VisualStateManager.GoToState(control, "PointerOver", false));
+        Assert.AreEqual("PointerOver", AnimatedIcon.GetState(stateTarget));
+
+        Assert.IsTrue(VisualStateManager.GoToState(control, "Pressed", false));
+        Assert.AreEqual("Pressed", AnimatedIcon.GetState(stateTarget));
+
+        Assert.IsTrue(VisualStateManager.GoToState(control, "Disabled", false));
+        Assert.AreEqual("Normal", AnimatedIcon.GetState(stateTarget));
+
+        Assert.IsTrue(VisualStateManager.GoToState(control, "Normal", false));
+        Assert.AreEqual("Normal", AnimatedIcon.GetState(stateTarget));
     }
 
     private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)

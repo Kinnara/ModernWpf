@@ -82,6 +82,7 @@ public class TemplateParityTests
         {
             Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "Calendar.xaml"),
+            Path.Combine("ModernWpf", "Styles", "Button.xaml"),
             Path.Combine("ModernWpf", "Styles", "CheckBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "ComboBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "DatePicker.xaml"),
@@ -101,6 +102,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf.Controls", "CommandBar", "AppBarSeparator.xaml"),
             Path.Combine("ModernWpf.Controls", "CommandBar", "AppBarToggleButton.xaml"),
             Path.Combine("ModernWpf.Controls", "CommandBar", "CommandBar.xaml"),
+            Path.Combine("ModernWpf.Controls", "HyperlinkButton", "HyperlinkButton.xaml"),
             Path.Combine("ModernWpf.Controls", "InfoBar", "InfoBar.xaml"),
             Path.Combine("ModernWpf.Controls", "InfoBadge", "InfoBadge.xaml"),
             Path.Combine("ModernWpf.Controls", "NavigationView", "NavigationView.xaml"),
