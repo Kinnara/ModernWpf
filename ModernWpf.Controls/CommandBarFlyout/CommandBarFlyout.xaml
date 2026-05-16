@@ -316,19 +316,95 @@
                                     <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
                                 </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" />
-                                <VisualState x:Name="Pressed" />
-                                <VisualState x:Name="Disabled" />
-                                <VisualState x:Name="Checked" />
-                                <VisualState x:Name="CheckedPointerOver" />
-                                <VisualState x:Name="CheckedPressed" />
-                                <VisualState x:Name="CheckedDisabled" />
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="AppBarButtonInnerBorder.Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Pressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="AppBarButtonInnerBorder.Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="AppBarButtonInnerBorder.Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundDisabled}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Checked">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="AppBarButtonInnerBorder.Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundChecked}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="AppBarButtonInnerBorder.Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundCheckedPointerOver}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundCheckedPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="AppBarButtonInnerBorder.Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundCheckedPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedDisabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundDisabled}" />
+                                        <ui:VisualStateSetter Target="OverflowCheckGlyph.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="OverflowCheckGlyph.Opacity" Value="1" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <VisualState x:Name="OverflowNormal" />
-                                <VisualState x:Name="OverflowPointerOver" />
-                                <VisualState x:Name="OverflowPressed" />
-                                <VisualState x:Name="OverflowChecked" />
-                                <VisualState x:Name="OverflowCheckedPointerOver" />
-                                <VisualState x:Name="OverflowCheckedPressed" />
+                                <ui:VisualStateEx x:Name="OverflowPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="AppBarButtonInnerBorder.Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="OverflowPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="AppBarButtonInnerBorder.Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="OverflowChecked">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="OverflowCheckGlyph.Opacity" Value="1" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="OverflowCheckedPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="OverflowCheckGlyph.Opacity" Value="1" />
+                                        <ui:VisualStateSetter Target="OverflowCheckGlyph.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="AppBarButtonInnerBorder.Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="OverflowCheckedPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="OverflowCheckGlyph.Opacity" Value="1" />
+                                        <ui:VisualStateSetter Target="OverflowCheckGlyph.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="AppBarButtonInnerBorder.Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
                                 <ui:VisualStateGroupListener.Listener>
@@ -408,89 +484,6 @@
                                 Visibility="Collapsed" />
                         </Grid>
                     </Grid>
-                    <ControlTemplate.Triggers>
-                        <!--#region ApplicationViewStates-->
-                        <!--#endregion-->
-                        <!--#region CommonStates-->
-                        <!-- PointerOver -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOver">
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
-                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
-                        </Trigger>
-                        <!-- Pressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Pressed">
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPressed}" />
-                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
-                        </Trigger>
-                        <!-- Disabled -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundDisabled}" />
-                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
-                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
-                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
-                        </Trigger>
-                        <!-- Checked -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Checked">
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundChecked}" />
-                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundChecked}" />
-                        </Trigger>
-                        <!-- CheckedPointerOver -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPointerOver">
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundCheckedPointerOver}" />
-                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundCheckedPointerOver}" />
-                        </Trigger>
-                        <!-- CheckedPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPressed">
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundCheckedPressed}" />
-                        </Trigger>
-                        <!-- CheckedDisabled -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedDisabled">
-                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundDisabled}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
-                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
-                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundDisabled}" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
-                        </Trigger>
-                        <!-- OverflowPointerOver -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPointerOver">
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
-                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
-                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
-                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPointerOver}" />
-                        </Trigger>
-                        <!-- OverflowPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowPressed">
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPressed}" />
-                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
-                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
-                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonKeyboardTextLabelForegroundPressed}" />
-                        </Trigger>
-                        <!-- OverflowChecked -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowChecked">
-                            <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
-                        </Trigger>
-                        <!-- OverflowCheckedPointerOver -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowCheckedPointerOver">
-                            <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPointerOver}" />
-                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
-                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
-                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPointerOver}" />
-                        </Trigger>
-                        <!-- OverflowCheckedPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="OverflowCheckedPressed">
-                            <Setter TargetName="OverflowCheckGlyph" Property="Opacity" Value="1" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
-                            <Setter TargetName="AppBarButtonInnerBorder" Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackgroundPressed}" />
-                            <Setter TargetName="Content" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
-                            <Setter TargetName="OverflowTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
-                            <Setter TargetName="KeyboardAcceleratorTextLabel" Property="Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
-                        </Trigger>
-                        <!--#endregion-->
-                        <!-- KeyboardAcceleratorTextVisible -->
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

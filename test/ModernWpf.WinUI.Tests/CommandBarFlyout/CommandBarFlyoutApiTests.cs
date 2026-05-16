@@ -357,6 +357,30 @@ public class CommandBarFlyoutApiTests
         });
     }
 
+    [TestMethod]
+    public void FlyoutAppBarToggleButtonCommonStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = CreateCommandBarFlyoutResources();
+            var button = new AppBarToggleButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarToggleButtonStyle"],
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept",
+                InputGestureText = "Ctrl+A"
+            };
+
+            var rootHost = CreateTemplateHost(button, resources);
+            using var host = new TestWindowHost(rootHost, width: 220, height: 120);
+            host.UpdateLayout();
+
+            VerifyAppBarToggleButtonCommonStates(button);
+        });
+    }
+
     private static CommandBarFlyoutCommandBar GetCommandBar(CommandBarFlyout commandBarFlyout)
     {
         var presenter = commandBarFlyout.GetPresenter();
@@ -716,6 +740,137 @@ public class CommandBarFlyoutApiTests
 
         Assert.AreSame(button.Background, innerBorder.Background);
         Assert.AreSame(button.Foreground, content.Foreground);
+    }
+
+    private static void VerifyAppBarToggleButtonCommonStates(AppBarToggleButton button)
+    {
+        var root = FindTemplateChild<System.Windows.Controls.Grid>(button, "Root");
+        var innerBorder = FindTemplateChild<BorderEx>(button, "AppBarButtonInnerBorder");
+        var content = FindTemplateChild<ContentPresenterEx>(button, "Content");
+        var overflowCheckGlyph = FindTemplateChild<FontIconFallback>(button, "OverflowCheckGlyph");
+        var overflowTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "OverflowTextLabel");
+        var keyboardAcceleratorTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "KeyboardAcceleratorTextLabel");
+
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "PointerOver",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "Pressed",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "Disabled",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground",
+            "OverflowTextLabel.Foreground",
+            "KeyboardAcceleratorTextLabel.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "Checked",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "CheckedPointerOver",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "CheckedPressed",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "CheckedDisabled",
+            "Content.Foreground",
+            "OverflowCheckGlyph.Foreground",
+            "OverflowTextLabel.Foreground",
+            "KeyboardAcceleratorTextLabel.Foreground",
+            "OverflowCheckGlyph.Opacity");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "OverflowPointerOver",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground",
+            "OverflowTextLabel.Foreground",
+            "KeyboardAcceleratorTextLabel.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "OverflowPressed",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground",
+            "OverflowTextLabel.Foreground",
+            "KeyboardAcceleratorTextLabel.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "OverflowChecked",
+            "OverflowCheckGlyph.Opacity");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "OverflowCheckedPointerOver",
+            "OverflowCheckGlyph.Opacity",
+            "OverflowCheckGlyph.Foreground",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground",
+            "OverflowTextLabel.Foreground",
+            "KeyboardAcceleratorTextLabel.Foreground");
+        AssertStateSetter(
+            root,
+            "CommonStates",
+            "OverflowCheckedPressed",
+            "OverflowCheckGlyph.Opacity",
+            "OverflowCheckGlyph.Foreground",
+            "AppBarButtonInnerBorder.Background",
+            "Content.Foreground",
+            "OverflowTextLabel.Foreground",
+            "KeyboardAcceleratorTextLabel.Foreground");
+
+        Assert.AreSame(button.Background, innerBorder.Background);
+        Assert.AreSame(button.Foreground, content.Foreground);
+        Assert.AreEqual(0.0, overflowCheckGlyph.Opacity);
+
+        button.IsEnabled = false;
+
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonBackgroundDisabled"), innerBorder.Background);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), content.Foreground);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), overflowTextLabel.Foreground);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), keyboardAcceleratorTextLabel.Foreground);
+
+        button.IsEnabled = true;
+        button.IsChecked = true;
+
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonBackgroundChecked"), innerBorder.Background);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundChecked"), content.Foreground);
+
+        button.IsEnabled = false;
+
+        Assert.AreSame(button.Background, innerBorder.Background);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonBackgroundDisabled"), content.Foreground);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), overflowCheckGlyph.Foreground);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), overflowTextLabel.Foreground);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundDisabled"), keyboardAcceleratorTextLabel.Foreground);
+        Assert.AreEqual(1.0, overflowCheckGlyph.Opacity);
+
+        button.IsEnabled = true;
+
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonBackgroundChecked"), innerBorder.Background);
+        Assert.AreSame(button.TryFindResource("CommandBarFlyoutAppBarButtonForegroundChecked"), content.Foreground);
+        Assert.AreEqual(0.0, overflowCheckGlyph.Opacity);
     }
 
     private static VisualStateEx AssertStateSetter(
