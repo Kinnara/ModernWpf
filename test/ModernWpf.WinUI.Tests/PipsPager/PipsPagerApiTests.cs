@@ -321,6 +321,40 @@ public class PipsPagerApiTests
         });
     }
 
+    [TestMethod]
+    public void DefaultPipButtonOrientationUsesVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var pipsPager = new ModernWpf.Controls.PipsPager
+            {
+                NumberOfPages = 3
+            };
+
+            using var host = new TestWindowHost(pipsPager, width: 300, height: 120);
+            host.UpdateLayout();
+
+            var pipButton = pipsPager.ContainerFromIndex(0);
+            var rootGrid = FindNamedDescendant<Grid>(pipButton, "RootGrid");
+
+            AssertStateSetter(rootGrid, "OrientationStates", "VerticalOrientation", "RootGrid.Width");
+            AssertStateSetter(rootGrid, "OrientationStates", "VerticalOrientation", "RootGrid.Height");
+            Assert.AreEqual("HorizontalOrientation", GetCurrentStateName(rootGrid, "OrientationStates"));
+            Assert.AreEqual(12.0, rootGrid.Width);
+            Assert.AreEqual(20.0, rootGrid.Height);
+
+            pipsPager.Orientation = Orientation.Vertical;
+            host.UpdateLayout();
+
+            pipButton = pipsPager.ContainerFromIndex(0);
+            rootGrid = FindNamedDescendant<Grid>(pipButton, "RootGrid");
+
+            Assert.AreEqual("VerticalOrientation", GetCurrentStateName(rootGrid, "OrientationStates"));
+            Assert.AreEqual(20.0, rootGrid.Width);
+            Assert.AreEqual(12.0, rootGrid.Height);
+        });
+    }
+
     private static List<Button> GetPipButtons(DependencyObject root)
     {
         return VisualTreeTestHelper

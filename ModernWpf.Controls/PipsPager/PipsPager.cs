@@ -31,6 +31,8 @@ namespace ModernWpf.Controls
         private const string NextPageButtonDisabledState = "NextPageButtonDisabled";
         private const string HorizontalOrientationViewState = "HorizontalOrientationView";
         private const string VerticalOrientationViewState = "VerticalOrientationView";
+        private const string HorizontalPipOrientationState = "HorizontalOrientation";
+        private const string VerticalPipOrientationState = "VerticalOrientation";
 
         static PipsPager()
         {
@@ -442,12 +444,7 @@ namespace ModernWpf.Controls
                 {
                     Content = (pageIndex + 1).ToString(),
                     Tag = pageIndex,
-                    MinWidth = 20,
-                    MinHeight = 20,
-                    Margin = new Thickness(2),
-                    Padding = new Thickness(0),
-                    Focusable = true,
-                    FontWeight = pageIndex == SelectedPageIndex ? FontWeights.Bold : FontWeights.Normal
+                    Focusable = true
                 };
 
                 var style = pageIndex == SelectedPageIndex ? SelectedPipStyle : NormalPipStyle;
@@ -464,7 +461,17 @@ namespace ModernWpf.Controls
                 button.Click += OnPipButtonClick;
                 _pipButtonsByPageIndex[pageIndex] = button;
                 _pipsPanel.Children.Add(button);
+                button.ApplyTemplate();
+                UpdatePipOrientation(button);
             }
+        }
+
+        private void UpdatePipOrientation(Button button)
+        {
+            VisualStateManager.GoToState(
+                button,
+                Orientation == System.Windows.Controls.Orientation.Vertical ? VerticalPipOrientationState : HorizontalPipOrientationState,
+                false);
         }
 
         private void UpdatePipsPagerItems()

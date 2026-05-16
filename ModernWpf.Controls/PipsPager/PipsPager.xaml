@@ -2,7 +2,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:local="clr-namespace:ModernWpf.Controls">
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:Double x:Key="PipsPagerHorizontalOrientationButtonWidth">12</sys:Double>
+    <sys:Double x:Key="PipsPagerHorizontalOrientationButtonHeight">20</sys:Double>
+    <sys:Double x:Key="PipsPagerVerticalOrientationButtonWidth">20</sys:Double>
+    <sys:Double x:Key="PipsPagerVerticalOrientationButtonHeight">12</sys:Double>
 
     <Style x:Key="DefaultPipsPagerNavigationButtonStyle" TargetType="Button">
         <Setter Property="MinWidth" Value="20" />
@@ -12,7 +18,53 @@
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
     </Style>
 
+    <Style x:Key="DefaultPipsPagerPipButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid
+                        x:Name="RootGrid"
+                        Width="{StaticResource PipsPagerHorizontalOrientationButtonWidth}"
+                        Height="{StaticResource PipsPagerHorizontalOrientationButtonHeight}"
+                        Background="{TemplateBinding Background}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="OrientationStates">
+                                <ui:VisualStateEx x:Name="HorizontalOrientation" />
+                                <ui:VisualStateEx x:Name="VerticalOrientation">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Width" Value="{StaticResource PipsPagerVerticalOrientationButtonWidth}" />
+                                        <ui:VisualStateSetter Target="RootGrid.Height" Value="{StaticResource PipsPagerVerticalOrientationButtonHeight}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter
+                            Content="{TemplateBinding Content}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DefaultPipsPagerSelectedPipButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultPipsPagerPipButtonStyle}">
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
     <Style TargetType="local:PipsPager">
+        <Setter Property="SelectedPipStyle" Value="{StaticResource DefaultPipsPagerSelectedPipButtonStyle}" />
+        <Setter Property="NormalPipStyle" Value="{StaticResource DefaultPipsPagerPipButtonStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PipsPager">
