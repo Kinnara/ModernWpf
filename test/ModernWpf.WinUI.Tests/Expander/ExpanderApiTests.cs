@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -117,6 +118,74 @@ public class ExpanderApiTests
     }
 
     [TestMethod]
+    public void VerifyExpanderVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var expander = new WpfExpander
+            {
+                Header = "Header",
+                Content = "Content",
+                IsExpanded = true
+            };
+
+            using var host = new TestWindowHost(expander, width: 400, height: 240);
+            host.UpdateLayout();
+
+            var expanderBorder = FindTemplateChild<FrameworkElement>(expander, "ExpanderBorder");
+            AssertStateSetter(expanderBorder, "CommonStates", "Disabled", "Foreground");
+            AssertStateSetter(expanderBorder, "ExpansionStates", "Expanded", "ExpandSite.Visibility");
+            AssertStateSetter(
+                expanderBorder,
+                "ExpandDirectionStates",
+                "ExpandUp",
+                "ExpandSite.(DockPanel.Dock)",
+                "HeaderSite.(DockPanel.Dock)",
+                "HeaderSite.Style",
+                "ExpanderBorder.BorderThickness");
+            AssertStateSetter(
+                expanderBorder,
+                "ExpandDirectionStates",
+                "ExpandLeft",
+                "ExpandSite.(DockPanel.Dock)",
+                "HeaderSite.(DockPanel.Dock)",
+                "HeaderSite.Style");
+            AssertStateSetter(
+                expanderBorder,
+                "ExpandDirectionStates",
+                "ExpandRight",
+                "ExpandSite.(DockPanel.Dock)",
+                "HeaderSite.(DockPanel.Dock)",
+                "HeaderSite.Style");
+
+            var expandSite = FindTemplateChild<ContentPresenterEx>(expander, "ExpandSite");
+            var headerSite = FindTemplateChild<ToggleButton>(expander, "HeaderSite");
+
+            Assert.AreEqual(Visibility.Visible, expandSite.Visibility);
+
+            expander.IsExpanded = false;
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Collapsed, expandSite.Visibility);
+
+            expander.ExpandDirection = ExpandDirection.Up;
+            host.UpdateLayout();
+            Assert.AreEqual(Dock.Top, DockPanel.GetDock(expandSite));
+            Assert.AreEqual(Dock.Bottom, DockPanel.GetDock(headerSite));
+            Assert.AreSame(expander.TryFindResource("ExpanderUpHeaderStyle"), headerSite.Style);
+            Assert.AreEqual(expander.TryFindResource("ExpanderContentUpBorderThickness"), ((Border)expanderBorder).BorderThickness);
+
+            expander.ExpandDirection = ExpandDirection.Down;
+            host.UpdateLayout();
+            Assert.AreEqual(Dock.Bottom, DockPanel.GetDock(expandSite));
+            Assert.AreEqual(Dock.Top, DockPanel.GetDock(headerSite));
+            Assert.AreSame(expander.TryFindResource("ExpanderDownHeaderStyle"), headerSite.Style);
+            Assert.AreEqual(expander.BorderThickness, ((Border)expanderBorder).BorderThickness);
+        });
+    }
+
+    [TestMethod]
     public void ExpanderAutomationPeerTest()
     {
         WpfTestHost.Run(() =>
@@ -198,6 +267,26 @@ public class ExpanderApiTests
     {
         return control.Template?.FindName(name, control) as T
             ?? throw new AssertFailedException($"Could not find template child '{name}'.");
+    }
+
+    private static VisualStateEx AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        params string[] expectedTargets)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(candidate => candidate.Name == groupName);
+        var state = group.States
+            .OfType<VisualState>()
+            .Single(candidate => candidate.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        CollectionAssert.AreEquivalent(expectedTargets, stateEx.Setters.Select(setter => setter.Target ?? setter.Property).ToArray());
+        return stateEx;
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
