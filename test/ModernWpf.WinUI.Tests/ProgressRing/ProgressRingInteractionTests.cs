@@ -24,12 +24,14 @@ public class ProgressRingInteractionTests
 
             AssertCurrentState(progressRing, "Active");
             AssertRingVisibility(progressRing, Visibility.Visible);
+            AssertRingOpacity(progressRing, 1.0);
 
             progressRing.IsIndeterminate = false;
             host.UpdateLayout();
 
             AssertCurrentState(progressRing, "DeterminateActive");
             AssertRingVisibility(progressRing, Visibility.Visible);
+            AssertRingOpacity(progressRing, 1.0);
             Assert.IsNotNull(GetRangeValueProvider(progressRing));
 
             progressRing.IsActive = false;
@@ -37,6 +39,7 @@ public class ProgressRingInteractionTests
 
             AssertCurrentState(progressRing, "Inactive");
             AssertRingVisibility(progressRing, Visibility.Collapsed);
+            AssertRingOpacity(progressRing, 0.0);
             Assert.IsNotNull(GetRangeValueProvider(progressRing));
         });
     }
@@ -153,6 +156,12 @@ public class ProgressRingInteractionTests
     {
         var ring = FindNamedDescendant<Border>(progressRing, "Ring");
         Assert.AreEqual(expectedVisibility, ring.Visibility);
+    }
+
+    private static void AssertRingOpacity(ProgressRingControl progressRing, double expectedOpacity)
+    {
+        var ring = FindNamedDescendant<Border>(progressRing, "Ring");
+        Assert.AreEqual(expectedOpacity, ring.Opacity);
     }
 
     private static IRangeValueProvider GetRangeValueProvider(ProgressRingControl progressRing)

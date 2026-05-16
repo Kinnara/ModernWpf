@@ -41,6 +41,9 @@
                                 <Setter Property="VerticalAlignment" Value="Top" />
                             </Style>
                         </Border.Resources>
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="SizeStates">
                                 <VisualState x:Name="Large">
@@ -53,7 +56,11 @@
                                 <VisualState x:Name="Small" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ActiveStates">
-                                <VisualState x:Name="Inactive" />
+                                <ui:VisualStateEx x:Name="Inactive">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Ring.Opacity" Value="0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <VisualState x:Name="DeterminateActive">
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="E1" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
