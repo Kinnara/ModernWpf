@@ -17,17 +17,41 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:RatingControl">
                     <Grid x:Name="LayoutRoot">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="Disabled" />
-                                <VisualState x:Name="Placeholder" />
-                                <VisualState x:Name="PointerOverPlaceholder" />
-                                <VisualState x:Name="PointerOverUnselected" />
-                                <VisualState x:Name="Set" />
-                                <VisualState x:Name="PointerOverSet" />
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ForegroundContentPresenter.Foreground" Value="{DynamicResource RatingControlDisabledSelectedForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Placeholder">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ForegroundContentPresenter.Foreground" Value="{DynamicResource RatingControlPlaceholderForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverPlaceholder">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ForegroundContentPresenter.Foreground" Value="{DynamicResource RatingControlPointerOverPlaceholderForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverUnselected">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ForegroundContentPresenter.Foreground" Value="{DynamicResource RatingControlPointerOverUnselectedForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Set">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ForegroundContentPresenter.Foreground" Value="{DynamicResource RatingControlSelectedForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverSet">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ForegroundContentPresenter.Foreground" Value="{DynamicResource RatingControlSelectedForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -70,33 +94,6 @@
                             </ui:ContentPresenterEx.Content>
                         </ui:ContentPresenterEx>
                     </Grid>
-
-                    <ControlTemplate.Triggers>
-                        <!-- Disabled -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="ForegroundContentPresenter" Property="Foreground" Value="{DynamicResource RatingControlDisabledSelectedForeground}" />
-                        </Trigger>
-                        <!-- Placeholder -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Placeholder">
-                            <Setter TargetName="ForegroundContentPresenter" Property="Foreground" Value="{DynamicResource RatingControlPlaceholderForeground}" />
-                        </Trigger>
-                        <!-- PointerOverPlaceholder -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOverPlaceholder">
-                            <Setter TargetName="ForegroundContentPresenter" Property="Foreground" Value="{DynamicResource RatingControlPointerOverPlaceholderForeground}" />
-                        </Trigger>
-                        <!-- PointerOverUnselected -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOverUnselected">
-                            <Setter TargetName="ForegroundContentPresenter" Property="Foreground" Value="{DynamicResource RatingControlPointerOverUnselectedForeground}" />
-                        </Trigger>
-                        <!-- Set -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Set">
-                            <Setter TargetName="ForegroundContentPresenter" Property="Foreground" Value="{DynamicResource RatingControlSelectedForeground}" />
-                        </Trigger>
-                        <!-- PointerOverSet -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOverSet">
-                            <Setter TargetName="ForegroundContentPresenter" Property="Foreground" Value="{DynamicResource RatingControlSelectedForeground}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

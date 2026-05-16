@@ -125,6 +125,55 @@ public class RatingControlApiTests
     }
 
     [TestMethod]
+    public void CommonStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var ratingControl = new ModernWpf.Controls.RatingControl();
+            using var host = new TestWindowHost(ratingControl, width: 420, height: 180);
+            host.UpdateLayout();
+
+            var layoutRoot = FindNamedDescendant<Grid>(ratingControl, "LayoutRoot");
+            var commonStatesGroup = VisualStateManager.GetVisualStateGroups(layoutRoot)
+                .Cast<VisualStateGroup>()
+                .Single(group => group.Name == "CommonStates");
+            var foregroundContentPresenter = FindNamedDescendant<ContentPresenterEx>(ratingControl, "ForegroundContentPresenter");
+            var expectedStates = new[]
+            {
+                new { StateName = "Disabled", ResourceKey = "RatingControlDisabledSelectedForeground" },
+                new { StateName = "Placeholder", ResourceKey = "RatingControlPlaceholderForeground" },
+                new { StateName = "PointerOverPlaceholder", ResourceKey = "RatingControlPointerOverPlaceholderForeground" },
+                new { StateName = "PointerOverUnselected", ResourceKey = "RatingControlPointerOverUnselectedForeground" },
+                new { StateName = "Set", ResourceKey = "RatingControlSelectedForeground" },
+                new { StateName = "PointerOverSet", ResourceKey = "RatingControlSelectedForeground" }
+            };
+
+            foreach (var expectedState in expectedStates)
+            {
+                var state = commonStatesGroup.States
+                    .Cast<VisualState>()
+                    .Single(item => item.Name == expectedState.StateName);
+                Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+                var stateEx = (VisualStateEx)state;
+                Assert.AreEqual(1, stateEx.Setters.Count, expectedState.StateName);
+                Assert.AreEqual("ForegroundContentPresenter.Foreground", stateEx.Setters[0].Target, expectedState.StateName);
+
+                Assert.IsTrue(
+                    VisualStateManager.GoToState(ratingControl, expectedState.StateName, false),
+                    $"Expected RatingControl to go to {expectedState.StateName}.");
+                host.UpdateLayout();
+
+                AssertBrushEquals(
+                    (Brush)foregroundContentPresenter.TryFindResource(expectedState.ResourceKey),
+                    foregroundContentPresenter.Foreground);
+            }
+        });
+    }
+
+    [TestMethod]
     public void VerifyWpfPathItemInfoFallbackStillRenders()
     {
         WpfTestHost.Run(() =>

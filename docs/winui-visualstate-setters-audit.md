@@ -63,7 +63,7 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\PagerControl\PagerControl.xaml` | 16 | `ModernWpf.Controls\PagerControl\PagerControl.xaml` | Pending | Audit number-panel/button state setters. |
 | `dev\PipsPager\PipsPager.xaml` | 7 | `ModernWpf.Controls\PipsPager\PipsPager.xaml` | Pending | Audit selected/normal/overflow pip state setters. |
 | `dev\RadioMenuFlyoutItem\RadioMenuFlyoutItem_themeresources.xaml` | 13 | `ModernWpf.Controls\RadioMenuItem\RadioMenuItem.xaml` | Pending | Map check glyph/placeholder setters to WPF menu item template. |
-| `dev\RatingControl\RatingControl.xaml` | 6 | `ModernWpf.Controls\RatingControl\RatingControl.xaml` | Pending | Audit caption/placeholder state setters. |
+| `dev\RatingControl\RatingControl.xaml` | 6 | `ModernWpf.Controls\RatingControl\RatingControl.xaml` | Converted | Disabled, placeholder, pointer-over placeholder/unselected, set, and pointer-over set foreground states now use `VisualStateEx.Setters` instead of the WPF listener/trigger bridge. |
 | `dev\SplitButton\SplitButton.xaml`, `dev\SplitButton\SplitButton_themeresources.xaml` | 34 | `ModernWpf.Controls\SplitButton\SplitButton.xaml` | Pending | Convert direct state setters; animated icon state remains unsupported where present. |
 | `dev\SwipeControl\SwipeControl_themeresources.xaml` | 1 | `ModernWpf.Controls\SwipeControl\SwipeControl.xaml` | Pending | Audit WPF swipe action template mapping. |
 | `dev\TabView\TabView.xaml` | 18 | `ModernWpf\Styles\TabControl.xaml` | Pending | WPF TabControl mapping; decide which visual states are meaningful. |
