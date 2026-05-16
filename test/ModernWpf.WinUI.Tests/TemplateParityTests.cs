@@ -97,6 +97,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf.Controls", "PipsPager", "PipsPager.xaml"),
             Path.Combine("ModernWpf.Controls", "ProgressRing", "ProgressRing.xaml"),
             Path.Combine("ModernWpf.Controls", "RadioButtons", "RadioButtons.xaml"),
+            Path.Combine("ModernWpf.Controls", "RadioMenuItem", "RadioMenuItem.xaml"),
             Path.Combine("ModernWpf.Controls", "RatingControl", "RatingControl.xaml"),
             Path.Combine("ModernWpf.Controls", "SplitView", "SplitView.xaml"),
             Path.Combine("ModernWpf.Controls", "SwipeControl", "SwipeControl.xaml"),

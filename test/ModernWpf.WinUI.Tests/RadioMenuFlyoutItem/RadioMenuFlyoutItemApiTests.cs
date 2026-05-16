@@ -1,5 +1,7 @@
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -52,11 +54,56 @@ public class RadioMenuFlyoutItemApiTests
 
             var iconContent = GetTemplateChild<ContentPresenterEx>(item, "IconContent");
             Assert.AreSame(item.Icon, iconContent.Content);
+            var iconRoot = GetTemplateChild<FrameworkElement>(item, "IconRoot");
+            Assert.AreEqual(Visibility.Visible, iconRoot.Visibility);
 
             item.SetCurrentValue(MenuItem.IsCheckedProperty, true);
             host.UpdateLayout();
 
             Assert.AreEqual(1.0, checkGlyph.Opacity);
+        });
+    }
+
+    [TestMethod]
+    public void DefaultTemplateUsesVisualStateSettersForWinUIStateParity()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var item = new RadioMenuItem
+            {
+                Header = "Yellow",
+                Icon = new SymbolIcon { Symbol = Symbol.Accept },
+                InputGestureText = "Ctrl+Y"
+            };
+
+            using var host = new TestWindowHost(item, width: 240, height: 80);
+            host.UpdateLayout();
+
+            var root = GetTemplateChild<FrameworkElement>(item, "LayoutRoot");
+            var keyboardAcceleratorTextBlock = GetTemplateChild<FrameworkElement>(item, "KeyboardAcceleratorTextBlock");
+
+            AssertStateSetter(root, "CommonStates", "PointerOver", "LayoutRoot.Background");
+            AssertStateSetter(root, "CommonStates", "PointerOver", "TextBlock.Foreground");
+            AssertStateSetter(root, "CommonStates", "PointerOver", "CheckGlyph.Foreground");
+            AssertStateSetter(root, "CommonStates", "PointerOver", "IconContent.Foreground");
+            AssertStateSetter(root, "CommonStates", "PointerOver", "KeyboardAcceleratorTextBlock.Foreground");
+            AssertStateSetter(root, "CommonStates", "Pressed", "LayoutRoot.Background");
+            AssertStateSetter(root, "CommonStates", "Pressed", "TextBlock.Foreground");
+            AssertStateSetter(root, "CommonStates", "Pressed", "CheckGlyph.Foreground");
+            AssertStateSetter(root, "CommonStates", "Pressed", "IconContent.Foreground");
+            AssertStateSetter(root, "CommonStates", "Pressed", "KeyboardAcceleratorTextBlock.Foreground");
+            AssertStateSetter(root, "CommonStates", "Disabled", "TextBlock.Foreground");
+            AssertStateSetter(root, "CommonStates", "Disabled", "CheckGlyph.Foreground");
+            AssertStateSetter(root, "CommonStates", "Disabled", "IconContent.Foreground");
+            AssertStateSetter(root, "CommonStates", "Disabled", "KeyboardAcceleratorTextBlock.Foreground");
+            AssertStateSetter(root, "CheckStates", "Checked", "CheckGlyph.Opacity");
+            AssertStateSetter(root, "CheckStates", "UncheckedWithIcon", "IconRoot.Visibility");
+            AssertStateSetter(root, "CheckStates", "CheckedWithIcon", "CheckGlyph.Opacity");
+            AssertStateSetter(root, "CheckStates", "CheckedWithIcon", "IconRoot.Visibility");
+            AssertStateSetter(root, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextVisible", "KeyboardAcceleratorTextBlock.Visibility");
+            Assert.AreEqual(Visibility.Visible, keyboardAcceleratorTextBlock.Visibility);
         });
     }
 
@@ -81,6 +128,27 @@ public class RadioMenuFlyoutItemApiTests
     {
         Assert.IsTrue(resources.Contains(resourceKey), $"Missing root resource '{resourceKey}'.");
         Assert.AreEqual(expectedValue, resources[resourceKey], resourceKey);
+    }
+
+    private static void AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string setterTarget)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        var state = group.States
+            .Cast<VisualState>()
+            .Single(item => item.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        Assert.IsTrue(
+            stateEx.Setters.Any(setter => setter.Target == setterTarget),
+            $"{groupName}.{stateName} should set {setterTarget}.");
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)

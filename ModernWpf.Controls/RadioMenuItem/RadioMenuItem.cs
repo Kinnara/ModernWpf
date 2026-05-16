@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,12 @@ namespace ModernWpf.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(RadioMenuItem), new FrameworkPropertyMetadata(typeof(RadioMenuItem)));
             IsCheckableProperty.OverrideMetadata(typeof(RadioMenuItem), new FrameworkPropertyMetadata(true, null, CoerceIsCheckable));
+        }
+
+        public RadioMenuItem()
+        {
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
         private static object CoerceIsCheckable(DependencyObject d, object baseValue)
@@ -129,6 +136,7 @@ namespace ModernWpf.Controls
             }
 
             UpdateCheckedItemInGroup();
+            UpdateVisualStates(true);
 
             base.OnChecked(e);
         }
@@ -146,6 +154,13 @@ namespace ModernWpf.Controls
 
             base.OnUnchecked(e);
             RemoveCheckedItemFromGroup(GroupName);
+            UpdateVisualStates(true);
+        }
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            UpdateVisualStates(false);
         }
 
         private void UpdateCheckedItemInGroup()
@@ -304,9 +319,105 @@ namespace ModernWpf.Controls
             element.SetValue(CollectionChangedHandlerProperty, value);
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            AttachVisualStatePropertyListeners();
+            UpdateVisualStates(false);
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            DetachVisualStatePropertyListeners();
+        }
+
+        private void AttachVisualStatePropertyListeners()
+        {
+            if (m_areVisualStatePropertyListenersAttached)
+            {
+                return;
+            }
+
+            m_areVisualStatePropertyListenersAttached = true;
+            IsHighlightedPropertyDescriptor.AddValueChanged(this, OnVisualStatePropertyChanged);
+            IsPressedPropertyDescriptor.AddValueChanged(this, OnVisualStatePropertyChanged);
+            IsEnabledPropertyDescriptor.AddValueChanged(this, OnVisualStatePropertyChanged);
+            IconPropertyDescriptor.AddValueChanged(this, OnVisualStatePropertyChanged);
+            InputGestureTextPropertyDescriptor.AddValueChanged(this, OnVisualStatePropertyChanged);
+        }
+
+        private void DetachVisualStatePropertyListeners()
+        {
+            if (!m_areVisualStatePropertyListenersAttached)
+            {
+                return;
+            }
+
+            InputGestureTextPropertyDescriptor.RemoveValueChanged(this, OnVisualStatePropertyChanged);
+            IconPropertyDescriptor.RemoveValueChanged(this, OnVisualStatePropertyChanged);
+            IsEnabledPropertyDescriptor.RemoveValueChanged(this, OnVisualStatePropertyChanged);
+            IsPressedPropertyDescriptor.RemoveValueChanged(this, OnVisualStatePropertyChanged);
+            IsHighlightedPropertyDescriptor.RemoveValueChanged(this, OnVisualStatePropertyChanged);
+            m_areVisualStatePropertyListenersAttached = false;
+        }
+
+        private void OnVisualStatePropertyChanged(object sender, EventArgs e)
+        {
+            UpdateVisualStates(true);
+        }
+
+        private void UpdateVisualStates(bool useTransitions)
+        {
+            string commonStateName;
+            if (!IsEnabled)
+            {
+                commonStateName = "Disabled";
+            }
+            else if (IsPressed)
+            {
+                commonStateName = "Pressed";
+            }
+            else if (IsHighlighted)
+            {
+                commonStateName = "PointerOver";
+            }
+            else
+            {
+                commonStateName = "Normal";
+            }
+
+            VisualStateManager.GoToState(this, commonStateName, useTransitions);
+
+            bool hasIcon = Icon != null;
+            string checkStateName = IsChecked
+                ? (hasIcon ? "CheckedWithIcon" : "Checked")
+                : (hasIcon ? "UncheckedWithIcon" : "Unchecked");
+            VisualStateManager.GoToState(this, checkStateName, useTransitions);
+
+            string keyboardAcceleratorTextStateName = string.IsNullOrEmpty(InputGestureText)
+                ? "KeyboardAcceleratorTextCollapsed"
+                : "KeyboardAcceleratorTextVisible";
+            VisualStateManager.GoToState(this, keyboardAcceleratorTextStateName, useTransitions);
+        }
+
+        private static readonly DependencyPropertyDescriptor IsHighlightedPropertyDescriptor =
+            DependencyPropertyDescriptor.FromProperty(IsHighlightedProperty, typeof(RadioMenuItem));
+
+        private static readonly DependencyPropertyDescriptor IsPressedPropertyDescriptor =
+            DependencyPropertyDescriptor.FromProperty(IsPressedProperty, typeof(RadioMenuItem));
+
+        private static readonly DependencyPropertyDescriptor IsEnabledPropertyDescriptor =
+            DependencyPropertyDescriptor.FromProperty(IsEnabledProperty, typeof(RadioMenuItem));
+
+        private static readonly DependencyPropertyDescriptor IconPropertyDescriptor =
+            DependencyPropertyDescriptor.FromProperty(IconProperty, typeof(RadioMenuItem));
+
+        private static readonly DependencyPropertyDescriptor InputGestureTextPropertyDescriptor =
+            DependencyPropertyDescriptor.FromProperty(InputGestureTextProperty, typeof(RadioMenuItem));
+
         private static readonly Dictionary<string, WeakReference<RadioMenuItem>> s_selectionMap = new Dictionary<string, WeakReference<RadioMenuItem>>();
 
         private bool m_isSafeUncheck;
         private bool m_surpressOnChecked;
+        private bool m_areVisualStatePropertyListenersAttached;
     }
 }

@@ -34,6 +34,67 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         Margin="{DynamicResource MenuFlyoutItemMargin}"
                         CornerRadius="{TemplateBinding CornerRadius}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="TextBlock.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="CheckGlyph.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="IconContent.Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextBlock.Foreground" Value="{DynamicResource ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Pressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="TextBlock.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="CheckGlyph.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="IconContent.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextBlock.Foreground" Value="{DynamicResource ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TextBlock.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="CheckGlyph.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="IconContent.Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextBlock.Foreground" Value="{DynamicResource ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Unchecked" />
+                                <ui:VisualStateEx x:Name="Checked">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="CheckGlyph.Opacity" Value="1" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="UncheckedWithIcon">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="IconRoot.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedWithIcon">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="CheckGlyph.Opacity" Value="1" />
+                                        <ui:VisualStateSetter Target="IconRoot.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
+                                <ui:VisualStateEx x:Name="KeyboardAcceleratorTextVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextBlock.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition SharedSizeGroup="{TemplateBinding Visibility, Converter={StaticResource SharedSizeGroupConverter}, ConverterParameter=MenuItemCheckColumnGroup}" Width="Auto" />
@@ -56,6 +117,7 @@
                                 VerticalAlignment="Center"
                                 Width="16"
                                 Height="16"
+                                Visibility="Collapsed"
                                 Margin="0,0,12,0">
                                 <ui:ContentPresenterEx x:Name="IconContent"
                                     ContentSource="Icon"
@@ -75,37 +137,10 @@
                                 Margin="24,0,0,0"
                                 Foreground="{DynamicResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
                                 HorizontalAlignment="Right"
-                                VerticalAlignment="Center" />
+                                VerticalAlignment="Center"
+                                Visibility="Collapsed" />
                         </Grid>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="Icon" Value="{x:Null}">
-                            <Setter Property="Visibility" TargetName="IconRoot" Value="Collapsed" />
-                        </Trigger>
-                        <Trigger Property="InputGestureText" Value="">
-                            <Setter Property="Visibility" TargetName="KeyboardAcceleratorTextBlock" Value="Collapsed" />
-                        </Trigger>
-                        <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
-                        </Trigger>
-                        <Trigger Property="IsHighlighted" Value="True">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPointerOver}" />
-                            <Setter TargetName="TextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
-                            <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
-                            <Setter TargetName="IconContent" Property="Foreground" Value="{DynamicResource MenuFlyoutItemForegroundPointerOver}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource MenuFlyoutSubItemBackgroundPressed}" />
-                            <Setter TargetName="TextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
-                            <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
-                            <Setter TargetName="IconContent" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundPressed}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="TextBlock" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
-                            <Setter TargetName="CheckGlyph" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
-                            <Setter TargetName="IconContent" Property="Foreground" Value="{DynamicResource MenuFlyoutSubItemForegroundDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
