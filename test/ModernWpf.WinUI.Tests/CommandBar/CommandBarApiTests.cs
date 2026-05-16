@@ -5,6 +5,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
@@ -185,6 +186,44 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void AppBarButtonTemplateUsesVisualStateSettersForWinUIStateParity()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var button = new AppBarButton
+            {
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept",
+                InputGestureText = "Ctrl+A",
+                Flyout = new MenuFlyout()
+            };
+
+            using var host = new TestWindowHost(button, width: 180, height: 120);
+            host.UpdateLayout();
+
+            var root = FindTemplateChild<Border>(button, "Root");
+
+            AssertStateSetter(root, "ApplicationViewStates", "Compact", "AppBarButtonInnerBorder.Margin");
+            AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", "TextLabel.(Grid.Row)");
+            AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", null, "Width");
+            AssertStateSetter(root, "ApplicationViewStates", "Overflow", "OverflowTextLabel.Visibility");
+            AssertStateSetter(root, "ApplicationViewStates", "OverflowWithMenuIcons", "ContentViewbox.Width");
+            AssertStateSetter(root, "ApplicationViewStates", "OverflowWithToggleButtonsAndMenuIcons", "OverflowTextLabel.Margin");
+
+            AssertStateSetter(root, "CommonStates", "PointerOver", "AppBarButtonInnerBorder.Background");
+            AssertStateSetter(root, "CommonStates", "Pressed", "Content.Foreground");
+            AssertStateSetter(root, "CommonStates", "Disabled", "KeyboardAcceleratorTextLabel.Foreground");
+            AssertStateSetter(root, "CommonStates", "OverflowPointerOver", "SubItemChevron.Foreground");
+            AssertStateSetter(root, "CommonStates", "OverflowPressed", "SubItemChevron.Foreground");
+
+            AssertStateSetter(root, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextVisible", "KeyboardAcceleratorTextLabel.Visibility");
+            AssertStateSetter(root, "FlyoutStates", "HasFlyout", "SubItemChevron.Visibility");
+        });
+    }
+
+    [TestMethod]
     public void AppBarToggleButtonDefaultsAndSetters()
     {
         WpfTestHost.Run(() =>
@@ -356,5 +395,65 @@ public class CommandBarApiTests
 
         return control.Template?.FindName(name, control) as T
             ?? throw new AssertFailedException($"Expected template child '{name}' to be {typeof(T).Name}.");
+    }
+
+    private static void AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string? expectedTarget,
+        string? expectedProperty = null)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        Assert.IsNotNull(group, $"Expected visual state group '{groupName}'.");
+
+        var state = FindVisualState(group!, stateName);
+        Assert.IsNotNull(state, $"Expected visual state '{groupName}.{stateName}'.");
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state!;
+        foreach (VisualStateSetter setter in stateEx.Setters)
+        {
+            bool targetMatches = expectedTarget is null ?
+                string.IsNullOrEmpty(setter.Target) :
+                setter.Target == expectedTarget;
+            bool propertyMatches = expectedProperty is null ?
+                string.IsNullOrEmpty(setter.Property) :
+                setter.Property == expectedProperty;
+
+            if (targetMatches && propertyMatches)
+            {
+                return;
+            }
+        }
+
+        Assert.Fail(
+            $"Expected visual state '{groupName}.{stateName}' to contain setter '{expectedTarget ?? expectedProperty}'.");
+    }
+
+    private static VisualStateGroup? FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        foreach (VisualStateGroup group in VisualStateManager.GetVisualStateGroups(stateGroupsRoot))
+        {
+            if (group.Name == groupName)
+            {
+                return group;
+            }
+        }
+
+        return null;
+    }
+
+    private static VisualState? FindVisualState(VisualStateGroup group, string stateName)
+    {
+        foreach (VisualState state in group.States)
+        {
+            if (state.Name == stateName)
+            {
+                return state;
+            }
+        }
+
+        return null;
     }
 }
