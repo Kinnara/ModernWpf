@@ -3055,6 +3055,18 @@ public class LayoutCompatibilityApiTests
         Assert.AreEqual(button.Padding, presenter.Padding);
         Assert.AreEqual(ControlHelper.GetCornerRadius(button), presenter.CornerRadius);
         Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonBorderBrush"), presenter.BorderBrush);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "MouseOver", false));
+        Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonBorderBrushPointerOver"), presenter.BorderBrush);
+        Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonForegroundPointerOver"), presenter.Foreground);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "Pressed", false));
+        Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonBorderBrush"), presenter.BorderBrush);
+        Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonForegroundPressed"), presenter.Foreground);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "Normal", false));
+        Assert.AreSame(presenter.TryFindResource("CalendarViewNavigationButtonBorderBrush"), presenter.BorderBrush);
+        Assert.AreSame(button.Foreground, presenter.Foreground);
     }
 
     private static void AssertDataGridPresenter(DependencyObject root, object expectedContent, Brush expectedForeground)
