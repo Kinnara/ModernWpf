@@ -929,13 +929,11 @@
 
                             <VisualStateGroup x:Name="TitleBarVisibilityGroup">
                                 <VisualState x:Name="TitleBarVisible" />
-                                <VisualState x:Name="TitleBarCollapsed">
-                                    <Storyboard>
-                                        <ThicknessAnimationUsingKeyFrames Storyboard.TargetName="PaneContentGrid" Storyboard.TargetProperty="Margin">
-                                            <DiscreteThicknessKeyFrame KeyTime="0" Value="0,32,0,0" />
-                                        </ThicknessAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="TitleBarCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PaneContentGrid.Margin" Value="0,32,0,0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="OverflowLabelGroup">

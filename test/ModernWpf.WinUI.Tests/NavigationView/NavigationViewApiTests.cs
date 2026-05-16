@@ -1158,6 +1158,38 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewTitleBarCollapsedStateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                MenuItems =
+                {
+                    new ModernWpf.Controls.NavigationViewItem
+                    {
+                        Content = "Home"
+                    }
+                }
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            var root = FindNamedDescendant<Grid>(navView, "RootGrid");
+            var paneContentGrid = FindNamedDescendant<FrameworkElement>(navView, "PaneContentGrid");
+
+            AssertStateSetter(root, "TitleBarVisibilityGroup", "TitleBarCollapsed",
+                "PaneContentGrid.Margin");
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "TitleBarCollapsed", false));
+            AssertCurrentState(root, "TitleBarVisibilityGroup", "TitleBarCollapsed");
+            Assert.AreEqual(new Thickness(0, 32, 0, 0), paneContentGrid.Margin);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>
