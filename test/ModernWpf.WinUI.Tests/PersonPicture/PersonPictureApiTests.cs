@@ -244,6 +244,49 @@ public class PersonPictureApiTests
     }
 
     [TestMethod]
+    public void VerifyWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var profileSource = new DrawingImage(
+                new GeometryDrawing(Brushes.Red, null, new RectangleGeometry(new Rect(0, 0, 1, 1))));
+            var badgeSource = new DrawingImage(
+                new GeometryDrawing(Brushes.Blue, null, new RectangleGeometry(new Rect(0, 0, 1, 1))));
+            var personPicture = new ModernWpf.Controls.PersonPicture
+            {
+                ProfilePicture = profileSource,
+                BadgeImageSource = badgeSource
+            };
+
+            using var host = new TestWindowHost(personPicture);
+
+            var rootGrid = FindNamedDescendant<Grid>(personPicture, "RootGrid");
+            AssertStateSetter(rootGrid, "CommonStates", "Photo", "PersonPictureEllipse.Fill");
+            var badgeWithImageSource = AssertStateSetter(
+                rootGrid,
+                "BadgeStates",
+                "BadgeWithImageSource",
+                "BadgeGrid.Visibility",
+                "BadgingEllipse.Opacity",
+                "BadgingEllipse.Fill");
+
+            var fillSetter = badgeWithImageSource.Setters.Single(setter => setter.Target == "BadgingEllipse.Fill");
+            Assert.IsInstanceOfType(fillSetter.Value, typeof(ImageBrush));
+            Assert.AreEqual(Stretch.UniformToFill, ((ImageBrush)fillSetter.Value).Stretch);
+
+            var personPictureEllipse = FindNamedDescendant<Ellipse>(personPicture, "PersonPictureEllipse");
+            var profileBrush = personPictureEllipse.Fill as ImageBrush;
+            Assert.IsNotNull(profileBrush);
+            Assert.AreSame(profileSource, profileBrush!.ImageSource);
+
+            var badgingEllipse = FindNamedDescendant<Ellipse>(personPicture, "BadgingEllipse");
+            var badgeBrush = badgingEllipse.Fill as ImageBrush;
+            Assert.IsNotNull(badgeBrush);
+            Assert.AreSame(badgeSource, badgeBrush!.ImageSource);
+        });
+    }
+
+    [TestMethod]
     public void VerifyPersonPictureVisualTree()
     {
         WpfTestHost.Run(() =>
@@ -340,6 +383,26 @@ public class PersonPictureApiTests
         return VisualTreeTestHelper.EnumerateDescendants(root)
             .OfType<T>()
             .Single(element => element.Name == name);
+    }
+
+    private static VisualStateEx AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        params string[] expectedTargets)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(candidate => candidate.Name == groupName);
+        var state = group.States
+            .OfType<VisualState>()
+            .Single(candidate => candidate.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        CollectionAssert.AreEquivalent(expectedTargets, stateEx.Setters.Select(setter => setter.Target).ToArray());
+        return stateEx;
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, object expectedResourceKey)

@@ -26,10 +26,11 @@
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="Photo" />
+                                <ui:VisualStateEx x:Name="Photo">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PersonPictureEllipse.Fill" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ActualImageBrush}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <VisualState x:Name="Initials" />
                                 <ui:VisualStateEx x:Name="NoPhotoOrInitials">
                                     <ui:VisualStateEx.Setters>
@@ -54,20 +55,14 @@
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="BadgeWithImageSource">
-                                    <VisualState.Storyboard>
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BadgingEllipse" Storyboard.TargetProperty="Fill">
-                                                <DiscreteObjectKeyFrame KeyTime="0">
-                                                    <DiscreteObjectKeyFrame.Value>
-                                                        <ImageBrush x:Name="BadgeImageBrush" Stretch="UniformToFill" />
-                                                    </DiscreteObjectKeyFrame.Value>
-                                                </DiscreteObjectKeyFrame>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState.Storyboard>
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="BadgeGrid.Visibility" Value="Visible" />
                                         <ui:VisualStateSetter Target="BadgingEllipse.Opacity" Value="{DynamicResource PersonPictureEllipseBadgeImageSourceStrokeOpacity}" />
+                                        <ui:VisualStateSetter Target="BadgingEllipse.Fill">
+                                            <ui:VisualStateSetter.Value>
+                                                <ImageBrush x:Name="BadgeImageBrush" Stretch="UniformToFill" />
+                                            </ui:VisualStateSetter.Value>
+                                        </ui:VisualStateSetter>
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -154,12 +149,6 @@
                         </Grid>
                     </Grid>
 
-                    <ControlTemplate.Triggers>
-                        <!-- Visual State when a Photo is available for display -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Photo">
-                            <Setter TargetName="PersonPictureEllipse" Property="Fill" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ActualImageBrush}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
