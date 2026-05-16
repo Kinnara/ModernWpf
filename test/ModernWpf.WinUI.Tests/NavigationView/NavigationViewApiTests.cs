@@ -1799,6 +1799,36 @@ public class NavigationViewApiTests
             AssertDynamicResourceSetter(normalStyle, FrameworkElement.WidthProperty, "NavigationBackButtonWidth");
             AssertSetterValue(normalStyle, Control.FontSizeProperty, 16.0);
             AssertSetterValue(normalStyle, FrameworkElement.MarginProperty, new Thickness(4, 2, 4, 2));
+            AssertSetterValue(
+                normalStyle,
+                ModernWpf.Controls.Primitives.ButtonHelper.VisualStateSettersEnabledProperty,
+                true);
+
+            var button = new Button
+            {
+                Style = normalStyle
+            };
+            using var buttonHost = new TestWindowHost(button);
+
+            var rootGrid = FindNamedDescendant<Border>(button, "RootGrid");
+            var content = FindNamedDescendant<ModernWpf.Controls.FontIconFallback>(button, "Content");
+
+            AssertStateSetter(rootGrid, "CommonStates", "PointerOver", "Content.(local:AnimatedIcon.State)");
+            Assert.AreEqual(
+                "PointerOver",
+                GetStateSetterValue<string>(rootGrid, "CommonStates", "PointerOver", "Content.(local:AnimatedIcon.State)"));
+            AssertStateSetter(rootGrid, "CommonStates", "Pressed", "Content.(local:AnimatedIcon.State)");
+            Assert.AreEqual(
+                "Pressed",
+                GetStateSetterValue<string>(rootGrid, "CommonStates", "Pressed", "Content.(local:AnimatedIcon.State)"));
+
+            Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(content));
+            Assert.IsTrue(VisualStateManager.GoToState(button, "PointerOver", false));
+            Assert.AreEqual("PointerOver", ModernWpf.Controls.AnimatedIcon.GetState(content));
+            Assert.IsTrue(VisualStateManager.GoToState(button, "Pressed", false));
+            Assert.AreEqual("Pressed", ModernWpf.Controls.AnimatedIcon.GetState(content));
+            Assert.IsTrue(VisualStateManager.GoToState(button, "Normal", false));
+            Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(content));
 
             var smallStyle = AssertStyleResource(navView, "NavigationBackButtonSmallStyle");
             Assert.AreSame(normalStyle, smallStyle.BasedOn);

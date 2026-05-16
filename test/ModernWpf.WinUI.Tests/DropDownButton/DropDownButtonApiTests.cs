@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using ModernWpf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.WinUI.TestApp;
@@ -121,5 +123,56 @@ public class DropDownButtonApiTests
             Assert.IsFalse(presenter.IsTextScaleFactorEnabled);
             Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentControlEx>(button));
         });
+    }
+
+    [TestMethod]
+    public void AnimatedChevronStateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var button = new ModernWpf.Controls.DropDownButton
+            {
+                Content = "Options"
+            };
+
+            using var host = new TestWindowHost(button, width: 220, height: 120);
+            host.UpdateLayout();
+
+            var rootGrid = VisualTreeTestHelper.FindDescendant<GridEx>(button)
+                ?? throw new AssertFailedException("Expected DropDownButton template root to use GridEx chrome.");
+            var chevron = VisualTreeTestHelper.FindDescendant<FontIconFallback>(button)
+                ?? throw new AssertFailedException("Expected DropDownButton chevron icon.");
+
+            AssertStateSetter(rootGrid, "CommonStates", "PointerOver", "ChevronIcon.(ui:AnimatedIcon.State)", "PointerOver");
+            AssertStateSetter(rootGrid, "CommonStates", "Pressed", "ChevronIcon.(ui:AnimatedIcon.State)", "Pressed");
+            AssertStateSetter(rootGrid, "CommonStates", "Disabled", "ChevronIcon.(ui:AnimatedIcon.State)", "Normal");
+
+            Assert.AreEqual("Normal", AnimatedIcon.GetState(chevron));
+
+            Assert.IsTrue(VisualStateManager.GoToState(button, "PointerOver", false));
+            Assert.AreEqual("PointerOver", AnimatedIcon.GetState(chevron));
+
+            Assert.IsTrue(VisualStateManager.GoToState(button, "Pressed", false));
+            Assert.AreEqual("Pressed", AnimatedIcon.GetState(chevron));
+
+            Assert.IsTrue(VisualStateManager.GoToState(button, "Disabled", false));
+            Assert.AreEqual("Normal", AnimatedIcon.GetState(chevron));
+
+            Assert.IsTrue(VisualStateManager.GoToState(button, "Normal", false));
+            Assert.AreEqual("Normal", AnimatedIcon.GetState(chevron));
+        });
+    }
+
+    private static void AssertStateSetter(FrameworkElement stateGroupsRoot, string groupName, string stateName, string target, object expectedValue)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        var state = group.States.OfType<VisualStateEx>().Single(item => item.Name == stateName);
+        var setter = state.Setters.Single(item => item.Target == target);
+
+        Assert.AreEqual(expectedValue, setter.Value);
     }
 }

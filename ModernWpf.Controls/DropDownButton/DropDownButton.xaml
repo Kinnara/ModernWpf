@@ -23,6 +23,7 @@
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
+        <Setter Property="ui:ButtonHelper.VisualStateSettersEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:DropDownButton">
@@ -37,10 +38,34 @@
                         BackgroundSizing="{TemplateBinding BackgroundSizing}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
 
                         <ui:GridEx.BackgroundTransition>
                             <ui:BrushTransition Duration="0:0:0.083" />
                         </ui:GridEx.BackgroundTransition>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ChevronIcon.(ui:AnimatedIcon.State)" Value="PointerOver" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Pressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ChevronIcon.(ui:AnimatedIcon.State)" Value="Pressed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ChevronIcon.(ui:AnimatedIcon.State)" Value="Normal" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
 
                         <ui:GridEx.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -72,7 +97,8 @@
                             Data="{StaticResource ChevronDownSmall}"
                             VerticalAlignment="Center"
                             Padding="2,4,2,0"
-                            Margin="8,0,0,0" />
+                            Margin="8,0,0,0"
+                            ui:AnimatedIcon.State="Normal" />
 
                     </ui:GridEx>
 
