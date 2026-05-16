@@ -1094,6 +1094,23 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewOverflowButtonStylesUseWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = (ResourceDictionary)Application.LoadComponent(
+                new Uri("/ModernWpf.Controls;component/NavigationView/NavigationView.xaml", UriKind.Relative));
+
+            AssertOverflowButtonStyleUsesWinUIVisualStateSetters(
+                (Style)resources["NavigationViewOverflowButtonStyleWhenPaneOnTop"]);
+            AssertOverflowButtonStyleUsesWinUIVisualStateSetters(
+                (Style)resources["NavigationViewOverflowButtonNoLabelStyleWhenPaneOnTop"]);
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewPaneToggleButtonTemplateUsesWinUIPresenterSlot()
     {
         WpfTestHost.Run(() =>
@@ -1810,6 +1827,54 @@ public class NavigationViewApiTests
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static void AssertOverflowButtonStyleUsesWinUIVisualStateSetters(Style style)
+    {
+        Assert.IsNotNull(style);
+        AssertSetterValue(
+            style,
+            ModernWpf.Controls.Primitives.ButtonHelper.VisualStateSettersEnabledProperty,
+            true);
+
+        var button = new Button
+        {
+            Style = style
+        };
+
+        using var host = new TestWindowHost(button);
+
+        var rootGrid = FindNamedDescendant<Grid>(button, "RootGrid");
+        var pointerRectangle = FindNamedDescendant<Rectangle>(button, "PointerRectangle");
+        var icon = FindNamedDescendant<ModernWpf.Controls.FontIconFallback>(button, "Icon");
+
+        AssertStateSetter(rootGrid, "CommonStates", "PointerOver",
+            "RootGrid.Background",
+            "PointerRectangle.Fill",
+            "Icon.Foreground");
+        AssertStateSetter(rootGrid, "CommonStates", "Pressed",
+            "RootGrid.Background",
+            "PointerRectangle.Fill",
+            "Icon.Foreground");
+        AssertStateSetter(rootGrid, "CommonStates", "Disabled",
+            "Icon.Foreground");
+
+        Assert.IsTrue(VisualStateManager.GoToElementState(rootGrid, "PointerOver", false));
+        AssertCurrentState(rootGrid, "CommonStates", "PointerOver");
+        Assert.AreSame(button.TryFindResource("TopNavigationViewItemBackgroundPointerOver"), rootGrid.Background);
+        Assert.AreSame(button.TryFindResource("NavigationViewItemBackgroundPointerOver"), pointerRectangle.Fill);
+        Assert.AreSame(button.TryFindResource("TopNavigationViewItemForegroundPointerOver"), icon.Foreground);
+
+        Assert.IsTrue(VisualStateManager.GoToElementState(rootGrid, "Pressed", false));
+        AssertCurrentState(rootGrid, "CommonStates", "Pressed");
+        Assert.AreSame(button.TryFindResource("TopNavigationViewItemBackgroundPressed"), rootGrid.Background);
+        Assert.AreSame(button.TryFindResource("NavigationViewItemBackgroundPressed"), pointerRectangle.Fill);
+        Assert.AreSame(button.TryFindResource("TopNavigationViewItemForegroundPressed"), icon.Foreground);
+
+        button.IsEnabled = false;
+        host.UpdateLayout();
+        AssertCurrentState(rootGrid, "CommonStates", "Disabled");
+        Assert.AreSame(button.TryFindResource("TopNavigationViewItemForegroundDisabled"), icon.Foreground);
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
