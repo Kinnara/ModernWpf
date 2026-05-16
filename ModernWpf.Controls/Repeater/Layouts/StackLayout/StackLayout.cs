@@ -27,8 +27,21 @@ namespace ModernWpf.Controls
 
         public bool DisableVirtualization
         {
-            get => (bool)GetValue(DisableVirtualizationProperty);
-            set => SetValue(DisableVirtualizationProperty, value);
+            get => !IsVirtualizationEnabled;
+            set => IsVirtualizationEnabled = !value;
+        }
+
+        public static readonly DependencyProperty IsVirtualizationEnabledProperty =
+            DependencyProperty.Register(
+                nameof(IsVirtualizationEnabled),
+                typeof(bool),
+                typeof(StackLayout),
+                new PropertyMetadata(true, OnPropertyChanged));
+
+        public bool IsVirtualizationEnabled
+        {
+            get => (bool)GetValue(IsVirtualizationEnabledProperty);
+            set => SetValue(IsVirtualizationEnabledProperty, value);
         }
 
         public static readonly DependencyProperty OrientationProperty =
@@ -108,7 +121,7 @@ namespace ModernWpf.Controls
                 m_itemSpacing,
                 uint.MaxValue /* maxItemsPerLine */,
                 OM.ScrollOrientation,
-                DisableVirtualization,
+                !IsVirtualizationEnabled,
                 LayoutId);
             return desiredSize;
         }
@@ -132,7 +145,13 @@ namespace ModernWpf.Controls
             object source,
             NotifyCollectionChangedEventArgs args)
         {
-            GetFlowAlgorithm(context).OnItemsSourceChanged(source, args, context);
+            var stackState = GetAsStackState(context.LayoutState);
+            if (args.Action == NotifyCollectionChangedAction.Reset)
+            {
+                stackState.OnElementSizesReset();
+            }
+
+            stackState.FlowAlgorithm.OnItemsSourceChanged(source, args, context);
             // Always invalidate layout to keep the view accurate.
             InvalidateLayout();
         }
@@ -342,6 +361,10 @@ namespace ModernWpf.Controls
             {
                 m_itemSpacing = (double)args.NewValue;
             }
+            else if (property == DisableVirtualizationProperty)
+            {
+                IsVirtualizationEnabled = !(bool)args.NewValue;
+            }
 
             InvalidateLayout();
         }
@@ -363,7 +386,11 @@ namespace ModernWpf.Controls
                 }
 
                 Debug.Assert(stackLayoutState.TotalElementsMeasured > 0);
-                averageElementSize = Math.Round(stackLayoutState.TotalElementSize / stackLayoutState.TotalElementsMeasured, MidpointRounding.AwayFromZero);
+                averageElementSize = stackLayoutState.TotalElementSize / stackLayoutState.TotalElementsMeasured;
+                if (!stackLayoutState.AreElementsMeasuredRegular)
+                {
+                    averageElementSize = Math.Round(averageElementSize, MidpointRounding.AwayFromZero);
+                }
             }
 
             return averageElementSize;

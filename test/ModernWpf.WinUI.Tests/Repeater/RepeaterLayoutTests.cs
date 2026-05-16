@@ -77,7 +77,7 @@ public class RepeaterLayoutTests
         {
             var repeater = new ItemsRepeater
             {
-                Layout = new StackLayout { DisableVirtualization = true },
+                Layout = new StackLayout { IsVirtualizationEnabled = false },
                 ItemsSource = Enumerable.Range(0, 10),
                 ItemTemplate = CreateButtonTemplate(height: 100)
             };
@@ -94,6 +94,61 @@ public class RepeaterLayoutTests
             {
                 Assert.IsNotNull(repeater.TryGetElement(i), $"Expected item {i} to remain realized.");
             }
+        });
+    }
+
+    [TestMethod]
+    public void StackLayoutUsesWinUIVirtualizationPropertySurface()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var layout = new StackLayout();
+
+            Assert.IsTrue(layout.IsVirtualizationEnabled);
+            Assert.IsFalse(layout.DisableVirtualization);
+
+            layout.IsVirtualizationEnabled = false;
+
+            Assert.IsFalse(layout.IsVirtualizationEnabled);
+            Assert.IsTrue(layout.DisableVirtualization);
+
+            layout.DisableVirtualization = false;
+
+            Assert.IsTrue(layout.IsVirtualizationEnabled);
+            Assert.IsFalse(layout.DisableVirtualization);
+
+            layout.SetValue(StackLayout.DisableVirtualizationProperty, true);
+
+            Assert.IsFalse(layout.IsVirtualizationEnabled);
+            Assert.IsTrue(layout.DisableVirtualization);
+        });
+    }
+
+    [TestMethod]
+    public void StackLayoutKeepsFractionalAverageForRegularElementsLikeWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var stackLayout = new StackLayout();
+            var stackState = new StackLayoutState();
+            var context = new TestVirtualizingLayoutContext(itemCount: 3);
+            stackState.OnElementSizesReset();
+
+            stackState.OnElementMeasured(0, 10.5, 20);
+            stackState.OnElementMeasured(1, 10.5, 20);
+
+            Assert.IsTrue(stackState.AreElementsMeasuredRegular);
+            Assert.AreEqual(10.5, GetAverageElementSize(stackLayout, context, stackState));
+
+            stackState.OnElementMeasured(2, 12.5, 20);
+
+            Assert.IsFalse(stackState.AreElementsMeasuredRegular);
+            Assert.AreEqual(11.0, GetAverageElementSize(stackLayout, context, stackState));
+
+            stackState.OnElementSizesReset();
+            Assert.IsTrue(stackState.AreElementsMeasuredRegular);
+            Assert.AreEqual(0, stackState.TotalElementsMeasured);
+            Assert.AreEqual(0.0, stackState.TotalElementSize);
         });
     }
 
@@ -227,6 +282,21 @@ public class RepeaterLayoutTests
         });
     }
 
+    private static double GetAverageElementSize(
+        StackLayout stackLayout,
+        VirtualizingLayoutContext context,
+        StackLayoutState stackState)
+    {
+        var method = typeof(StackLayout).GetMethod(
+            "GetAverageElementSize",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(method);
+
+        return (double)method!.Invoke(
+            stackLayout,
+            new object[] { new Size(double.PositiveInfinity, double.PositiveInfinity), context, stackState })!;
+    }
+
     private static DataTemplate CreateButtonTemplate(double? width = null, double? height = null)
     {
         var widthAttribute = width.HasValue ? $" Width='{width.Value}'" : string.Empty;
@@ -260,6 +330,21 @@ public class RepeaterLayoutTests
         Assert.IsNotNull(targetProperty);
 
         return (UIElement?)targetProperty!.GetValue(state);
+    }
+
+    private sealed class TestVirtualizingLayoutContext : VirtualizingLayoutContext
+    {
+        public TestVirtualizingLayoutContext(int itemCount)
+        {
+            m_itemCount = itemCount;
+        }
+
+        protected override int ItemCountCore()
+        {
+            return m_itemCount;
+        }
+
+        private readonly int m_itemCount;
     }
 
     private sealed class NonVirtualStackLayout : NonVirtualizingLayout

@@ -30,6 +30,8 @@ namespace ModernWpf.Controls
         {
             int estimationBufferIndex = elementIndex % m_estimationBuffer.Count;
             bool alreadyMeasured = m_estimationBuffer[estimationBufferIndex] != 0;
+            double lastElementSize = m_lastElementSize;
+
             if (!alreadyMeasured)
             {
                 TotalElementsMeasured++;
@@ -37,7 +39,13 @@ namespace ModernWpf.Controls
 
             TotalElementSize -= m_estimationBuffer[estimationBufferIndex];
             TotalElementSize += majorSize;
+            m_lastElementSize = majorSize;
             m_estimationBuffer[estimationBufferIndex] = majorSize;
+
+            if (AreElementsMeasuredRegular && lastElementSize != 0.0 && lastElementSize != m_lastElementSize)
+            {
+                AreElementsMeasuredRegular = false;
+            }
 
             MaxArrangeBounds = Math.Max(MaxArrangeBounds, minorSize);
         }
@@ -47,7 +55,18 @@ namespace ModernWpf.Controls
             MaxArrangeBounds = 0.0;
         }
 
+        internal void OnElementSizesReset()
+        {
+            AreElementsMeasuredRegular = true;
+            TotalElementsMeasured = 0;
+            TotalElementSize = 0.0;
+            m_lastElementSize = 0.0;
+            m_estimationBuffer.Clear();
+            m_estimationBuffer.Resize(BufferSize, 0.0);
+        }
+
         internal FlowLayoutAlgorithm FlowAlgorithm { get; } = new FlowLayoutAlgorithm();
+        internal bool AreElementsMeasuredRegular { get; private set; } = true;
         internal double TotalElementSize { get; private set; }
         // During the measure pass, as we measure the elements, we will keep track
         // of the largest arrange bounds in the non-virtualizing direction. This value
@@ -56,6 +75,7 @@ namespace ModernWpf.Controls
         internal int TotalElementsMeasured { get; private set; }
 
         private readonly List<double> m_estimationBuffer = new List<double>();
+        private double m_lastElementSize;
         private const int BufferSize = 100;
     }
 }
