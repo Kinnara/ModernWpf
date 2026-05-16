@@ -9,16 +9,26 @@ on:
 jobs:
   release-gate:
 
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 10.0.x
+        global-json-file: global.json
     - name: Setup Windows SDK
       uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.5
+      with:
+        sdk-version: 19041
+    - name: Verify Windows SDK metadata
+      shell: pwsh
+      run: |
+        $programFilesX86 = [Environment]::GetFolderPath([Environment+SpecialFolder]::ProgramFilesX86)
+        $platformXml = Join-Path $programFilesX86 'Windows Kits\10\Platforms\UAP\10.0.19041.0\Platform.xml'
+        if (-not (Test-Path -LiteralPath $platformXml)) {
+          throw "Missing Windows SDK metadata file: $platformXml"
+        }
     - name: Install dependencies
       run: dotnet restore ModernWpf.sln
     - name: Build
