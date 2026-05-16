@@ -1993,32 +1993,39 @@ public class NavigationViewApiTests
         AssertStateSetter(layoutRoot, "CommonStates", "PointerOver",
             "LayoutRoot.Background",
             "ContentPresenter.Foreground",
-            "Icon.Foreground");
+            "Icon.Foreground",
+            "Icon.(local:AnimatedIcon.State)");
         AssertStateSetter(layoutRoot, "CommonStates", "Pressed",
             "LayoutRoot.Background",
             "ContentPresenter.Foreground",
-            "Icon.Foreground");
+            "Icon.Foreground",
+            "Icon.(local:AnimatedIcon.State)");
         AssertStateSetter(layoutRoot, "CommonStates", "Disabled",
             "LayoutRoot.Background",
             "ContentPresenter.Foreground");
+
+        Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(icon));
 
         Assert.IsTrue(VisualStateManager.GoToElementState(layoutRoot, "PointerOver", false));
         AssertCurrentState(layoutRoot, "CommonStates", "PointerOver");
         Assert.AreSame(button.TryFindResource("NavigationViewButtonBackgroundPointerOver"), layoutRoot.Background);
         Assert.AreSame(button.TryFindResource("NavigationViewButtonForegroundPointerOver"), contentPresenter.Foreground);
         Assert.AreSame(button.TryFindResource("NavigationViewButtonForegroundPointerOver"), icon.Foreground);
+        Assert.AreEqual("PointerOver", ModernWpf.Controls.AnimatedIcon.GetState(icon));
 
         Assert.IsTrue(VisualStateManager.GoToElementState(layoutRoot, "Pressed", false));
         AssertCurrentState(layoutRoot, "CommonStates", "Pressed");
         Assert.AreSame(button.TryFindResource("NavigationViewButtonBackgroundPressed"), layoutRoot.Background);
         Assert.AreSame(button.TryFindResource("NavigationViewButtonForegroundPressed"), contentPresenter.Foreground);
         Assert.AreSame(button.TryFindResource("NavigationViewButtonForegroundPressed"), icon.Foreground);
+        Assert.AreEqual("Pressed", ModernWpf.Controls.AnimatedIcon.GetState(icon));
 
         button.IsEnabled = false;
         host.UpdateLayout();
         AssertCurrentState(layoutRoot, "CommonStates", "Disabled");
         Assert.AreSame(button.TryFindResource("NavigationViewButtonBackgroundDisabled"), layoutRoot.Background);
         Assert.AreSame(button.TryFindResource("NavigationViewButtonForegroundDisabled"), contentPresenter.Foreground);
+        Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(icon));
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
