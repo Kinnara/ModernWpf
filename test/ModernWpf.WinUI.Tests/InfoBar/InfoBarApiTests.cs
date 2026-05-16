@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
@@ -106,7 +107,10 @@ public class InfoBarApiTests
             var standardIconArea = FindNamedDescendant<FrameworkElement>(infoBar, "StandardIconArea");
             var userIconBox = FindNamedDescendant<FrameworkElement>(infoBar, "UserIconBox");
             var closeButton = FindNamedDescendant<Button>(infoBar, "CloseButton");
+            var contentRoot = FindNamedDescendant<Border>(infoBar, "ContentRoot");
 
+            Assert.AreEqual("StandardIconVisible", GetCurrentStateName(contentRoot, "IconStates"));
+            Assert.AreEqual("CloseButtonVisible", GetCurrentStateName(contentRoot, "CloseButtonStates"));
             Assert.AreEqual(Visibility.Visible, standardIconArea.Visibility);
             Assert.AreEqual(Visibility.Collapsed, userIconBox.Visibility);
             Assert.AreEqual(Visibility.Visible, closeButton.Visibility);
@@ -115,18 +119,21 @@ public class InfoBarApiTests
             host.UpdateLayout();
 
             Assert.IsInstanceOfType(infoBar.TemplateSettings.IconElement, typeof(SymbolIcon));
+            Assert.AreEqual("UserIconVisible", GetCurrentStateName(contentRoot, "IconStates"));
             Assert.AreEqual(Visibility.Collapsed, standardIconArea.Visibility);
             Assert.AreEqual(Visibility.Visible, userIconBox.Visibility);
 
             infoBar.IsIconVisible = false;
             host.UpdateLayout();
 
+            Assert.AreEqual("NoIconVisible", GetCurrentStateName(contentRoot, "IconStates"));
             Assert.AreEqual(Visibility.Collapsed, standardIconArea.Visibility);
             Assert.AreEqual(Visibility.Collapsed, userIconBox.Visibility);
 
             infoBar.IsClosable = false;
             host.UpdateLayout();
 
+            Assert.AreEqual("CloseButtonCollapsed", GetCurrentStateName(contentRoot, "CloseButtonStates"));
             Assert.AreEqual(Visibility.Collapsed, closeButton.Visibility);
         });
     }
@@ -143,9 +150,11 @@ public class InfoBarApiTests
             };
 
             using var host = new TestWindowHost(infoBar, width: 400, height: 140);
+            var contentRoot = FindNamedDescendant<Border>(infoBar, "ContentRoot");
             var standardIcon = FindNamedDescendant<TextBlock>(infoBar, "StandardIcon");
             var contentArea = FindNamedDescendant<FrameworkElement>(infoBar, "ContentArea");
 
+            Assert.AreEqual("Informational", GetCurrentStateName(contentRoot, "SeverityLevels"));
             Assert.AreEqual(0, Grid.GetRow(contentArea));
             Assert.AreEqual("\uF13F", standardIcon.Text);
 
@@ -157,7 +166,40 @@ public class InfoBarApiTests
             infoBar.Severity = InfoBarSeverity.Error;
             host.UpdateLayout();
 
+            Assert.AreEqual("Error", GetCurrentStateName(contentRoot, "SeverityLevels"));
             Assert.AreEqual("\uF13D", standardIcon.Text);
+        });
+    }
+
+    [TestMethod]
+    public void InfoBarForegroundStateUsesVisualStateBindingSetter()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var firstForeground = new SolidColorBrush(Colors.Red);
+            var secondForeground = new SolidColorBrush(Colors.Green);
+            var infoBar = new ModernWpf.Controls.InfoBar
+            {
+                IsOpen = true,
+                Title = "Title",
+                Message = "Message",
+                Foreground = firstForeground
+            };
+
+            using var host = new TestWindowHost(infoBar, width: 400, height: 120);
+            var contentRoot = FindNamedDescendant<Border>(infoBar, "ContentRoot");
+            var title = FindNamedDescendant<TextBlock>(infoBar, "Title");
+            var message = FindNamedDescendant<TextBlock>(infoBar, "Message");
+
+            Assert.AreEqual("ForegroundSet", GetCurrentStateName(contentRoot, "ForegroundStates"));
+            Assert.AreSame(firstForeground, title.Foreground);
+            Assert.AreSame(firstForeground, message.Foreground);
+
+            infoBar.Foreground = secondForeground;
+            host.UpdateLayout();
+
+            Assert.AreSame(secondForeground, title.Foreground);
+            Assert.AreSame(secondForeground, message.Foreground);
         });
     }
 
@@ -287,5 +329,14 @@ public class InfoBarApiTests
         }
 
         throw new InvalidOperationException("Could not find ContentPresenterEx for the expected content.");
+    }
+
+    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        Assert.IsNotNull(group.CurrentState);
+        return group.CurrentState.Name;
     }
 }

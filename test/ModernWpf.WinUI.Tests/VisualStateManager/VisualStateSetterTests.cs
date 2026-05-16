@@ -114,6 +114,48 @@ public class VisualStateSetterTests
     }
 
     [TestMethod]
+    public void VisualStateExAppliesBindingSetter()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var control = CreateControl(
+                """
+                <VisualStateGroup x:Name="CommonStates">
+                    <ui:VisualStateEx x:Name="Normal" />
+                    <ui:VisualStateEx x:Name="PointerOver">
+                        <ui:VisualStateEx.Setters>
+                            <ui:VisualStateSetter Target="TargetBorder.Background" Value="{Binding ElementName=SourceBorder, Path=Background}" />
+                        </ui:VisualStateEx.Setters>
+                    </ui:VisualStateEx>
+                </VisualStateGroup>
+                """,
+                """
+                <Grid>
+                    <Border x:Name="SourceBorder" Background="Red" />
+                    <Border x:Name="TargetBorder" Background="Blue" />
+                </Grid>
+                """);
+
+            using var host = new TestWindowHost(control);
+            var source = FindTemplateChild<Border>(control, "SourceBorder");
+            var target = FindTemplateChild<Border>(control, "TargetBorder");
+
+            AssertSolidColorBrush(target.Background, Colors.Blue);
+
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(control, "PointerOver", false));
+            AssertSolidColorBrush(target.Background, Colors.Red);
+
+            source.Background = new SolidColorBrush(Colors.Green);
+            WpfTestHost.DoEvents();
+
+            AssertSolidColorBrush(target.Background, Colors.Green);
+
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(control, "Normal", false));
+            AssertSolidColorBrush(target.Background, Colors.Blue);
+        });
+    }
+
+    [TestMethod]
     public void VisualStateExRestoresPreviousDynamicResourceValueOnStateExit()
     {
         WpfTestHost.Run(() =>

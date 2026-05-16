@@ -77,6 +77,12 @@ namespace ModernWpf
 
         private static SetterValue ResolveSetterValue(VisualStateSetter setter, DependencyProperty property)
         {
+            BindingBase binding = BindingOperations.GetBindingBase(setter, VisualStateSetter.ValueProperty);
+            if (binding != null)
+            {
+                return SetterValue.FromBinding(binding);
+            }
+
             object rawValue = setter.ReadLocalValue(VisualStateSetter.ValueProperty);
 
             if (TryGetDynamicResourceKey(rawValue, out object resourceKey))
@@ -343,10 +349,11 @@ namespace ModernWpf
 
         private readonly struct SetterValue
         {
-            private SetterValue(object value, object dynamicResourceKey, bool isDynamicResource)
+            private SetterValue(object value, object dynamicResourceKey, BindingBase binding, bool isDynamicResource)
             {
                 Value = value;
                 DynamicResourceKey = dynamicResourceKey;
+                Binding = binding;
                 IsDynamicResource = isDynamicResource;
             }
 
@@ -354,20 +361,33 @@ namespace ModernWpf
 
             public object DynamicResourceKey { get; }
 
+            public BindingBase Binding { get; }
+
             public bool IsDynamicResource { get; }
 
             public static SetterValue FromValue(object value)
             {
-                return new SetterValue(value, null, false);
+                return new SetterValue(value, null, null, false);
             }
 
             public static SetterValue FromDynamicResource(object resourceKey)
             {
-                return new SetterValue(null, resourceKey, true);
+                return new SetterValue(null, resourceKey, null, true);
+            }
+
+            public static SetterValue FromBinding(BindingBase binding)
+            {
+                return new SetterValue(null, null, binding, false);
             }
 
             public void Apply(DependencyObject target, DependencyProperty property)
             {
+                if (Binding != null)
+                {
+                    BindingOperations.SetBinding(target, property, Binding);
+                    return;
+                }
+
                 if (IsDynamicResource)
                 {
                     if (!TrySetResourceReference(target, property, DynamicResourceKey))

@@ -4,7 +4,6 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
 
@@ -13,13 +12,7 @@ namespace ModernWpf.Controls
     public class InfoBar : Control
     {
         private const string CloseButtonName = "CloseButton";
-        private const string StandardIconName = "StandardIcon";
-        private const string IconBackgroundName = "IconBackground";
         private const string ContentRootName = "ContentRoot";
-        private const string UserIconBoxName = "UserIconBox";
-        private const string StandardIconAreaName = "StandardIconArea";
-        private const string TitleName = "Title";
-        private const string MessageName = "Message";
         private const string ContentAreaName = "ContentArea";
 
         static InfoBar()
@@ -237,12 +230,6 @@ namespace ModernWpf.Controls
 
             _contentRoot = GetTemplateChild(ContentRootName) as Border;
             _closeButton = GetTemplateChild(CloseButtonName) as Button;
-            _standardIcon = GetTemplateChild(StandardIconName) as TextBlock;
-            _iconBackground = GetTemplateChild(IconBackgroundName) as TextBlock;
-            _standardIconArea = GetTemplateChild(StandardIconAreaName) as FrameworkElement;
-            _userIconBox = GetTemplateChild(UserIconBoxName) as FrameworkElement;
-            _titleTextBlock = GetTemplateChild(TitleName) as TextBlock;
-            _messageTextBlock = GetTemplateChild(MessageName) as TextBlock;
             _contentArea = GetTemplateChild(ContentAreaName) as FrameworkElement;
 
             if (_closeButton != null)
@@ -356,7 +343,7 @@ namespace ModernWpf.Controls
         {
             if (_contentRoot != null && (force || _contentRoot.Visibility != (IsOpen ? Visibility.Visible : Visibility.Collapsed)))
             {
-                _contentRoot.Visibility = IsOpen ? Visibility.Visible : Visibility.Collapsed;
+                VisualStateManager.GoToState(this, IsOpen ? "InfoBarVisible" : "InfoBarCollapsed", false);
                 var peer = FrameworkElementAutomationPeer.FromElement(this);
                 peer?.InvalidatePeer();
             }
@@ -364,48 +351,7 @@ namespace ModernWpf.Controls
 
         private void UpdateSeverity()
         {
-            if (_contentRoot == null)
-            {
-                return;
-            }
-
-            var backgroundKey = "InfoBarInformationalSeverityBackgroundBrush";
-            var iconBackgroundKey = "InfoBarInformationalSeverityIconBackground";
-            var iconForegroundKey = "InfoBarInformationalSeverityIconForeground";
-            var iconGlyph = "\uF13F";
-
-            switch (Severity)
-            {
-                case InfoBarSeverity.Success:
-                    backgroundKey = "InfoBarSuccessSeverityBackgroundBrush";
-                    iconBackgroundKey = "InfoBarSuccessSeverityIconBackground";
-                    iconForegroundKey = "InfoBarSuccessSeverityIconForeground";
-                    iconGlyph = "\uF13E";
-                    break;
-
-                case InfoBarSeverity.Warning:
-                    backgroundKey = "InfoBarWarningSeverityBackgroundBrush";
-                    iconBackgroundKey = "InfoBarWarningSeverityIconBackground";
-                    iconForegroundKey = "InfoBarWarningSeverityIconForeground";
-                    iconGlyph = "\uF13C";
-                    break;
-
-                case InfoBarSeverity.Error:
-                    backgroundKey = "InfoBarErrorSeverityBackgroundBrush";
-                    iconBackgroundKey = "InfoBarErrorSeverityIconBackground";
-                    iconForegroundKey = "InfoBarErrorSeverityIconForeground";
-                    iconGlyph = "\uF13D";
-                    break;
-            }
-
-            SetResourceReferenceOn(_contentRoot, Border.BackgroundProperty, backgroundKey);
-            SetResourceReferenceOn(_iconBackground, TextBlock.ForegroundProperty, iconBackgroundKey);
-            SetResourceReferenceOn(_standardIcon, TextBlock.ForegroundProperty, iconForegroundKey);
-
-            if (_standardIcon != null)
-            {
-                _standardIcon.Text = iconGlyph;
-            }
+            VisualStateManager.GoToState(this, Severity.ToString(), false);
         }
 
         private void UpdateIcon()
@@ -415,53 +361,25 @@ namespace ModernWpf.Controls
 
         private void UpdateIconVisibility()
         {
-            if (_standardIconArea == null || _userIconBox == null)
-            {
-                return;
-            }
-
-            if (!IsIconVisible)
-            {
-                _standardIconArea.Visibility = Visibility.Collapsed;
-                _userIconBox.Visibility = Visibility.Collapsed;
-            }
-            else if (IconSource != null)
-            {
-                _standardIconArea.Visibility = Visibility.Collapsed;
-                _userIconBox.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                _standardIconArea.Visibility = Visibility.Visible;
-                _userIconBox.Visibility = Visibility.Collapsed;
-            }
+            string stateName = !IsIconVisible
+                ? "NoIconVisible"
+                : IconSource != null
+                    ? "UserIconVisible"
+                    : "StandardIconVisible";
+            VisualStateManager.GoToState(this, stateName, false);
         }
 
         private void UpdateCloseButton()
         {
-            if (_closeButton != null)
-            {
-                _closeButton.Visibility = IsClosable ? Visibility.Visible : Visibility.Collapsed;
-            }
+            VisualStateManager.GoToState(this, IsClosable ? "CloseButtonVisible" : "CloseButtonCollapsed", false);
         }
 
         private void UpdateForeground()
         {
-            if (_titleTextBlock == null || _messageTextBlock == null)
-            {
-                return;
-            }
-
-            if (ReadLocalValue(ForegroundProperty) == DependencyProperty.UnsetValue)
-            {
-                SetResourceReferenceOn(_titleTextBlock, TextBlock.ForegroundProperty, "InfoBarTitleForeground");
-                SetResourceReferenceOn(_messageTextBlock, TextBlock.ForegroundProperty, "InfoBarMessageForeground");
-            }
-            else
-            {
-                _titleTextBlock.Foreground = Foreground;
-                _messageTextBlock.Foreground = Foreground;
-            }
+            VisualStateManager.GoToState(
+                this,
+                ReadLocalValue(ForegroundProperty) == DependencyProperty.UnsetValue ? "ForegroundNotSet" : "ForegroundSet",
+                false);
         }
 
         private void UpdateContentPosition()
@@ -473,20 +391,9 @@ namespace ModernWpf.Controls
             }
         }
 
-        private static void SetResourceReferenceOn(FrameworkElement element, DependencyProperty property, object resourceKey)
-        {
-            element?.SetResourceReference(property, resourceKey);
-        }
-
         private InfoBarCloseReason _lastCloseReason = InfoBarCloseReason.Programmatic;
         private Border _contentRoot;
         private Button _closeButton;
-        private TextBlock _standardIcon;
-        private TextBlock _iconBackground;
-        private FrameworkElement _standardIconArea;
-        private FrameworkElement _userIconBox;
-        private TextBlock _titleTextBlock;
-        private TextBlock _messageTextBlock;
         private FrameworkElement _contentArea;
     }
 }

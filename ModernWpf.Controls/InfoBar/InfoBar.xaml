@@ -78,8 +78,88 @@
                         Background="{DynamicResource InfoBarInformationalSeverityBackgroundBrush}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        Visibility="Collapsed">
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="SeverityLevels">
+                                <ui:VisualStateEx x:Name="Informational" />
+
+                                <ui:VisualStateEx x:Name="Error">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentRoot.Background" Value="{DynamicResource InfoBarErrorSeverityBackgroundBrush}" />
+                                        <ui:VisualStateSetter Target="IconBackground.Foreground" Value="{DynamicResource InfoBarErrorSeverityIconBackground}" />
+                                        <ui:VisualStateSetter Target="StandardIcon.Text" Value="{StaticResource InfoBarErrorIconGlyph}" />
+                                        <ui:VisualStateSetter Target="StandardIcon.Foreground" Value="{DynamicResource InfoBarErrorSeverityIconForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+
+                                <ui:VisualStateEx x:Name="Warning">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentRoot.Background" Value="{DynamicResource InfoBarWarningSeverityBackgroundBrush}" />
+                                        <ui:VisualStateSetter Target="IconBackground.Foreground" Value="{DynamicResource InfoBarWarningSeverityIconBackground}" />
+                                        <ui:VisualStateSetter Target="StandardIcon.Text" Value="{StaticResource InfoBarWarningIconGlyph}" />
+                                        <ui:VisualStateSetter Target="StandardIcon.Foreground" Value="{DynamicResource InfoBarWarningSeverityIconForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+
+                                <ui:VisualStateEx x:Name="Success">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentRoot.Background" Value="{DynamicResource InfoBarSuccessSeverityBackgroundBrush}" />
+                                        <ui:VisualStateSetter Target="IconBackground.Foreground" Value="{DynamicResource InfoBarSuccessSeverityIconBackground}" />
+                                        <ui:VisualStateSetter Target="StandardIcon.Text" Value="{StaticResource InfoBarSuccessIconGlyph}" />
+                                        <ui:VisualStateSetter Target="StandardIcon.Foreground" Value="{DynamicResource InfoBarSuccessSeverityIconForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="IconStates">
+                                <ui:VisualStateEx x:Name="StandardIconVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="UserIconBox.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="StandardIconArea.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+
+                                <ui:VisualStateEx x:Name="UserIconVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="UserIconBox.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="StandardIconArea.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+
+                                <ui:VisualStateEx x:Name="NoIconVisible" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="CloseButtonStates">
+                                <ui:VisualStateEx x:Name="CloseButtonVisible" />
+                                <ui:VisualStateEx x:Name="CloseButtonCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="CloseButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="InfoBarVisibility">
+                                <ui:VisualStateEx x:Name="InfoBarVisible" />
+                                <ui:VisualStateEx x:Name="InfoBarCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentRoot.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="ForegroundStates">
+                                <ui:VisualStateEx x:Name="ForegroundNotSet" />
+                                <ui:VisualStateEx x:Name="ForegroundSet">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Title.Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}" />
+                                        <ui:VisualStateSetter Target="Message.Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid
                             HorizontalAlignment="Stretch"
                             MinHeight="{StaticResource InfoBarMinHeight}"

@@ -25,7 +25,8 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\CommonStyles\CalendarView_themeresources.xaml` | 2 | `ModernWpf\Styles\Calendar.xaml` | Converted | Calendar navigation button pointer-over/pressed border and foreground setters now use `VisualStateEx.Setters` instead of WPF template triggers. |
 | `dev\CommonStyles\CommandBar_themeresources.xaml` | 3 | `ModernWpf.Controls\CommandBar\CommandBar.xaml` | Partial | The `DynamicOverflowEnabled` column-width setters now use `VisualStateEx.Setters`; the `CommandBarOverflowPresenter` full-width open-up/down states remain inactive in this WPF port and still need a compatibility decision. |
 | `dev\InfoBadge\InfoBadge_themeresources.xaml` | 3 | `ModernWpf.Controls\InfoBadge\InfoBadge.xaml` | Converted | `Dot`, `Icon`, `FontIcon`, and `Value` state behavior now lives in `VisualStateEx.Setters`; code only chooses the state and creates the icon element. |
-| `dev\PersonPicture\PersonPicture.xaml` | 5 | `ModernWpf.Controls\PersonPicture\PersonPicture.xaml` | Partial | Placeholder and badge visibility/opacity state effects now use `VisualStateEx.Setters`; the photo image-brush binding and badge image-brush object setter remain on WPF trigger/storyboard paths because binding-valued and named object-valued setters still need runtime work. |
+| `dev\InfoBar\InfoBar.xaml` | 8 | `ModernWpf.Controls\InfoBar\InfoBar.xaml` | Converted | Severity, icon, close-button, open/closed, and foreground states now use `VisualStateEx.Setters`; `VisualStateSetter` supports binding-valued setters for WinUI's `ForegroundSet` shape. |
+| `dev\PersonPicture\PersonPicture.xaml` | 5 | `ModernWpf.Controls\PersonPicture\PersonPicture.xaml` | Partial | Placeholder and badge visibility/opacity state effects now use `VisualStateEx.Setters`; the photo and badge image-brush object setter paths remain on WPF trigger/storyboard paths because named object-valued setters still need runtime/template work. |
 | `dev\ProgressRing\ProgressRing.xaml` | 1 | `ModernWpf.Controls\ProgressRing\ProgressRing.xaml` | Partial | The inactive layout opacity setter is represented with `VisualStateEx.Setters`; WinUI's `LottiePlayer.(AutomationProperties.AccessibilityView)` setter has no WPF ellipse-animation equivalent. |
 | `dev\RadioButtons\RadioButtons.xaml` | 1 | `ModernWpf.Controls\RadioButtons\RadioButtons.xaml` | Converted | Disabled header foreground now uses a dynamic-resource `VisualStateEx.Setters` entry instead of a WPF template trigger. |
 | `dev\CommonStyles\ScrollBar_themeresources.xaml` | 8 | `ModernWpf\Styles\ScrollBar.xaml` | Partial | Existing WPF conscious expand/collapse states now use `VisualStateEx.Setters` for pointer-over chrome and panning thumb brushes. WinUI common/indicator-state setters are not represented by this WPF ScrollBar template yet. |
@@ -54,7 +55,6 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\CommonStyles\Pivot_themeresources.xaml` | 5 | `ModernWpf\Styles\Pivot.xaml` | Pending | Audit selected/header state setters. |
 | `dev\DropDownButton\DropDownButton.xaml` | 3 | `ModernWpf.Controls\DropDownButton\DropDownButton.xaml` | Unsupported | WinUI setters target `AnimatedIcon.State`; ModernWpf currently uses `FontIconFallback`, so this needs an `AnimatedIcon.State` compatibility surface or a documented fallback. |
 | `dev\Expander\Expander.xaml`, `dev\Expander\Expander_themeresources.xaml` | 15 | `ModernWpf\Styles\Expander.xaml` | Pending | WPF stock Expander mapping; audit direct chevron/content visibility setters. |
-| `dev\InfoBar\InfoBar.xaml` | 8 | `ModernWpf.Controls\InfoBar\InfoBar.xaml` | Pending | Convert severity/icon/layout setters after checking dynamic-resource usage. |
 | `dev\NavigationView\NavigationBackButton.xaml` | 2 | `ModernWpf\Styles\NavigationBackButton.xaml` | Unsupported | WinUI setters target `AnimatedIcon.State`; ModernWpf uses `FontIconFallback`, so a real port needs an `AnimatedIcon.State` compatibility surface or an explicit static-icon fallback decision. |
 | `dev\NavigationView\NavigationView.xaml` | 21 | `ModernWpf.Controls\NavigationView\NavigationView.xaml` | Pending | Large item/header/overflow state surface; convert in small slices. |
 | `dev\NavigationView\NavigationView_rs1_themeresources.xaml` | 71 | `ModernWpf\Styles\NavigationView.xaml` | Pending | Resource-style visual states need separate audit against current WPF style mappings. |
@@ -87,6 +87,8 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 - Nested target paths such as `Rect.(Shape.Fill).(SolidColorBrush.Color)`.
 - Dynamic resource setters now work on `FrameworkElement` and
   `FrameworkContentElement` targets, but non-framework targets are unsupported.
+- Binding-valued setters now work by applying the captured `BindingBase` to the
+  target property for the active state.
 - WinUI attached properties that do not exist in ModernWpf, especially
   `AnimatedIcon.State`.
 - State setter timing versus transitions: controls with transition storyboards
