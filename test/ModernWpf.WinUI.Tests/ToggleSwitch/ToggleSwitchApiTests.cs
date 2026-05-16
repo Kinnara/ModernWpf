@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -14,6 +15,51 @@ namespace ModernWpf.WinUI.Tests.ToggleSwitchControl;
 [TestClass]
 public class ToggleSwitchApiTests
 {
+    [TestMethod]
+    public void DragDoesNotToggleUntilCrossingHalfRange()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+
+            RaiseDragStarted(thumb);
+            RaiseDragDelta(thumb, 3);
+            RaiseDragCompleted(thumb);
+            host.UpdateLayout();
+
+            Assert.IsFalse(toggleSwitch.IsOn);
+        });
+    }
+
+    [TestMethod]
+    public void DragDeltaAccumulatesBeforeThresholdToggle()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch();
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var thumb = FindNamedDescendant<Thumb>(toggleSwitch, "SwitchThumb");
+
+            RaiseDragStarted(thumb);
+            RaiseDragDelta(thumb, 6);
+            RaiseDragDelta(thumb, 6);
+            RaiseDragCompleted(thumb);
+            host.UpdateLayout();
+
+            Assert.IsTrue(toggleSwitch.IsOn);
+        });
+    }
+
     [TestMethod]
     public void DraggingStateUsesVisualStateSetters()
     {
@@ -86,6 +132,30 @@ public class ToggleSwitchApiTests
             AssertBrushEquals((Brush)headerPresenter.TryFindResource("ToggleSwitchHeaderForegroundDisabled"), headerPresenter.Foreground);
             AssertBrushEquals((Brush)offPresenter.TryFindResource("ToggleSwitchContentForegroundDisabled"), offPresenter.Foreground);
             AssertBrushEquals((Brush)onPresenter.TryFindResource("ToggleSwitchContentForegroundDisabled"), onPresenter.Foreground);
+        });
+    }
+
+    private static void RaiseDragStarted(Thumb thumb)
+    {
+        thumb.RaiseEvent(new DragStartedEventArgs(0, 0)
+        {
+            RoutedEvent = Thumb.DragStartedEvent
+        });
+    }
+
+    private static void RaiseDragDelta(Thumb thumb, double horizontalChange)
+    {
+        thumb.RaiseEvent(new DragDeltaEventArgs(horizontalChange, 0)
+        {
+            RoutedEvent = Thumb.DragDeltaEvent
+        });
+    }
+
+    private static void RaiseDragCompleted(Thumb thumb)
+    {
+        thumb.RaiseEvent(new DragCompletedEventArgs(0, 0, false)
+        {
+            RoutedEvent = Thumb.DragCompletedEvent
         });
     }
 

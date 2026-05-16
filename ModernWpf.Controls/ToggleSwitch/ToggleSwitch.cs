@@ -394,8 +394,16 @@ namespace ModernWpf.Controls
         private void OnSwitchThumbDragStarted(object sender, DragStartedEventArgs e)
         {
             e.Handled = true;
+            _wasDragged = false;
             _startTranslation = KnobTranslateTransform.X;
+
+            if (!IsKeyboardFocusWithin)
+            {
+                Focus();
+            }
+
             UpdateVisualStates(true);
+            StopKnobTranslationAnimation();
             KnobTranslateTransform.X = _startTranslation;
         }
 
@@ -405,7 +413,7 @@ namespace ModernWpf.Controls
             if (e.HorizontalChange != 0)
             {
                 _wasDragged = true;
-                double dragTranslation = _startTranslation + e.HorizontalChange;
+                double dragTranslation = KnobTranslateTransform.X + e.HorizontalChange;
                 KnobTranslateTransform.X = Math.Max(_offTranslation, Math.Min(_onTranslation, dragTranslation));
             }
         }
@@ -413,25 +421,51 @@ namespace ModernWpf.Controls
         private void OnSwitchThumbDragCompleted(object sender, DragCompletedEventArgs e)
         {
             e.Handled = true;
-            bool click = false;
+
+            if (e.Canceled)
+            {
+                _wasDragged = false;
+                ClearKnobTranslation();
+                UpdateVisualStates(true);
+                return;
+            }
+
+            bool shouldToggle = false;
             if (_wasDragged)
             {
-                double edge = IsOn ? _onTranslation : _offTranslation;
-                if (KnobTranslateTransform.X != edge)
-                {
-                    click = true;
-                }
+                double halfOfTranslationRange = (_onTranslation - _offTranslation) / 2;
+                shouldToggle = IsOn
+                    ? KnobTranslateTransform.X <= halfOfTranslationRange
+                    : KnobTranslateTransform.X >= halfOfTranslationRange;
             }
             else
             {
-                click = true;
-            }
-            if (click)
-            {
-                Toggle();
+                shouldToggle = true;
             }
 
             _wasDragged = false;
+            ClearKnobTranslation();
+
+            if (shouldToggle)
+            {
+                Toggle();
+            }
+            else
+            {
+                UpdateVisualStates(true);
+            }
+        }
+
+        private void ClearKnobTranslation()
+        {
+            StopKnobTranslationAnimation();
+            KnobTranslateTransform?.ClearValue(TranslateTransform.XProperty);
+            _startTranslation = 0;
+        }
+
+        private void StopKnobTranslationAnimation()
+        {
+            KnobTranslateTransform?.BeginAnimation(TranslateTransform.XProperty, null);
         }
 
         private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
