@@ -866,6 +866,70 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewItemPositionStatesUseWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var item = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Home"
+            };
+
+            using var host = new TestWindowHost(item, width: 180, height: 80);
+
+            var root = FindNamedDescendant<Grid>(item, "NVIRootGrid");
+            var presenter = FindNamedDescendant<ModernWpf.Controls.Primitives.NavigationViewItemPresenter>(
+                item, "NavigationViewItemPresenter");
+            var flyout = (ModernWpf.Controls.Flyout)item.Template.FindName("ChildrenFlyout", item);
+            Assert.IsNotNull(flyout);
+
+            AssertStateSetter(root, "ItemOnNavigationViewListPositionStates", "OnLeftNavigation",
+                "NavigationViewItemPresenter.Style");
+            AssertStateSetter(root, "ItemOnNavigationViewListPositionStates", "OnTopNavigationPrimary",
+                "NavigationViewItemPresenter.Margin",
+                "NavigationViewItemPresenter.Foreground",
+                "NavigationViewItemPresenter.Style",
+                "ChildrenFlyout.Placement");
+            AssertStateSetter(root, "ItemOnNavigationViewListPositionStates", "OnTopNavigationOverflow",
+                "NavigationViewItemPresenter.Style");
+
+            var onLeftStyle = GetStateSetterValue<Style>(
+                root,
+                "ItemOnNavigationViewListPositionStates",
+                "OnLeftNavigation",
+                "NavigationViewItemPresenter.Style");
+            var onTopStyle = GetStateSetterValue<Style>(
+                root,
+                "ItemOnNavigationViewListPositionStates",
+                "OnTopNavigationPrimary",
+                "NavigationViewItemPresenter.Style");
+            var onTopOverflowStyle = GetStateSetterValue<Style>(
+                root,
+                "ItemOnNavigationViewListPositionStates",
+                "OnTopNavigationOverflow",
+                "NavigationViewItemPresenter.Style");
+
+            Assert.IsTrue(VisualStateManager.GoToState(item, "OnTopNavigationPrimary", false));
+            AssertCurrentState(root, "ItemOnNavigationViewListPositionStates", "OnTopNavigationPrimary");
+            Assert.AreEqual(item.TryFindResource("TopNavigationViewItemMargin"), presenter.Margin);
+            Assert.AreSame(onTopStyle, presenter.Style);
+            Assert.AreEqual(
+                ModernWpf.Controls.Primitives.FlyoutPlacementMode.BottomEdgeAlignedLeft,
+                flyout.Placement);
+
+            Assert.IsTrue(VisualStateManager.GoToState(item, "OnTopNavigationOverflow", false));
+            AssertCurrentState(root, "ItemOnNavigationViewListPositionStates", "OnTopNavigationOverflow");
+            Assert.AreSame(onTopOverflowStyle, presenter.Style);
+
+            Assert.IsTrue(VisualStateManager.GoToState(item, "OnLeftNavigation", false));
+            AssertCurrentState(root, "ItemOnNavigationViewListPositionStates", "OnLeftNavigation");
+            Assert.AreSame(onLeftStyle, presenter.Style);
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewHeaderAndAutoSuggestStatesUseWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>
@@ -1430,6 +1494,14 @@ public class NavigationViewApiTests
             .ToArray();
 
         CollectionAssert.IsSubsetOf(expectedTargets, actualTargets);
+    }
+
+    private static T GetStateSetterValue<T>(FrameworkElement stateGroupsRoot, string groupName, string stateName, string target)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        var state = group.States.OfType<VisualStateEx>().Single(item => item.Name == stateName);
+        var setter = state.Setters.Single(item => item.Target == target);
+        return (T)setter.Value;
     }
 
     private static void AssertCurrentState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)

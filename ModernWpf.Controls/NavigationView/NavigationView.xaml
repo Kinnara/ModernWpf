@@ -1448,20 +1448,29 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ItemOnNavigationViewListPositionStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="ItemOnNavigationViewListPositionStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="OnLeftNavigation" />
-                                <VisualState x:Name="OnTopNavigationPrimary">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ChildrenFlyout" Storyboard.TargetProperty="Placement">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static primitives:FlyoutPlacementMode.BottomEdgeAlignedLeft}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="OnTopNavigationOverflow" />
+                                <ui:VisualStateEx x:Name="OnLeftNavigation">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="NavigationViewItemPresenter.Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnLeftPane}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="OnTopNavigationPrimary">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="NavigationViewItemPresenter.Margin" Value="{DynamicResource TopNavigationViewItemMargin}"/>
+                                        <ui:VisualStateSetter Target="NavigationViewItemPresenter.Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
+                                        <ui:VisualStateSetter Target="NavigationViewItemPresenter.Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPane}" />
+                                        <ui:VisualStateSetter Target="ChildrenFlyout.Placement" Value="{x:Static primitives:FlyoutPlacementMode.BottomEdgeAlignedLeft}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="OnTopNavigationOverflow">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="NavigationViewItemPresenter.Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPaneOverflow}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -1510,28 +1519,6 @@
                         </primitives:FlyoutBase.AttachedFlyout>
                     </Grid>
 
-                    <ControlTemplate.Triggers>
-                        <!-- OnLeftNavigation -->
-                        <Trigger Property="CurrentStateName" Value="OnLeftNavigation" SourceName="ItemOnNavigationViewListPositionStatesListener">
-                            <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnLeftPane}" />
-                        </Trigger>
-                        <!-- OnLeftNavigationReveal -->
-                        <!--
-                        <Trigger Property="CurrentStateName" Value="OnLeftNavigationReveal" SourceName="ItemOnNavigationViewListPositionStatesListener">
-                        <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnLeftPaneWithRevealFocus}" />
-                        </Trigger>
-                        -->
-                        <!-- OnTopNavigationPrimary -->
-                        <Trigger Property="CurrentStateName" Value="OnTopNavigationPrimary" SourceName="ItemOnNavigationViewListPositionStatesListener">
-                            <Setter TargetName="NavigationViewItemPresenter" Property="Margin" Value="{DynamicResource TopNavigationViewItemMargin}" />
-                            <Setter TargetName="NavigationViewItemPresenter" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
-                            <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPane}" />
-                        </Trigger>
-                        <!-- OnTopNavigationOverflow -->
-                        <Trigger Property="CurrentStateName" Value="OnTopNavigationOverflow" SourceName="ItemOnNavigationViewListPositionStatesListener">
-                            <Setter TargetName="NavigationViewItemPresenter" Property="Style" Value="{StaticResource MUX_NavigationViewItemPresenterStyleWhenOnTopPaneOverflow}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
