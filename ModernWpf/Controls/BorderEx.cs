@@ -9,6 +9,13 @@ namespace ModernWpf.Controls
     {
         static BorderEx()
         {
+            CornerRadiusProperty.OverrideMetadata(
+                typeof(BorderEx),
+                new FrameworkPropertyMetadata(
+                    new CornerRadius(),
+                    FrameworkPropertyMetadataOptions.AffectsArrange |
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
             BackgroundProperty.OverrideMetadata(
                 typeof(BorderEx),
                 new FrameworkPropertyMetadata(

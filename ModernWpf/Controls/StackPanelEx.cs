@@ -189,6 +189,7 @@ namespace ModernWpf.Controls
                 typeof(StackPanelEx),
                 new FrameworkPropertyMetadata(
                     new CornerRadius(),
+                    FrameworkPropertyMetadataOptions.AffectsArrange |
                     FrameworkPropertyMetadataOptions.AffectsRender,
                     OnBorderPropertyChanged));
 

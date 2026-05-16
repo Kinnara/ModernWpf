@@ -137,6 +137,7 @@ namespace ModernWpf.Controls
                 typeof(ContentPresenterEx),
                 new FrameworkPropertyMetadata(
                     new CornerRadius(),
+                    FrameworkPropertyMetadataOptions.AffectsArrange |
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
         public CornerRadius CornerRadius

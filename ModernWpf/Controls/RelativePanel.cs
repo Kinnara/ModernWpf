@@ -106,6 +106,7 @@ namespace ModernWpf.Controls
                 typeof(RelativePanel),
                 new FrameworkPropertyMetadata(
                     new CornerRadius(),
+                    FrameworkPropertyMetadataOptions.AffectsArrange |
                     FrameworkPropertyMetadataOptions.AffectsRender,
                     OnBorderPropertyChanged));
 

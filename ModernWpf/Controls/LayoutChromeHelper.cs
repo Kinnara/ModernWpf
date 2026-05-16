@@ -437,6 +437,7 @@ namespace ModernWpf.Controls
                 if (!_cornerRadius.Equals(value))
                 {
                     _cornerRadius = value;
+                    InvalidateArrange();
                     InvalidateVisual();
                 }
             }

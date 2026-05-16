@@ -125,6 +125,7 @@ namespace ModernWpf.Controls
                 typeof(GridEx),
                 new FrameworkPropertyMetadata(
                     new CornerRadius(),
+                    FrameworkPropertyMetadataOptions.AffectsArrange |
                     FrameworkPropertyMetadataOptions.AffectsRender,
                     OnBorderPropertyChanged));
 

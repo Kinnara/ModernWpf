@@ -58,6 +58,7 @@ namespace ModernWpf.Controls
                 typeof(LayoutPanel),
                 new FrameworkPropertyMetadata(
                     new CornerRadius(),
+                    FrameworkPropertyMetadataOptions.AffectsArrange |
                     FrameworkPropertyMetadataOptions.AffectsRender));
 
         public CornerRadius CornerRadius
@@ -202,6 +203,36 @@ namespace ModernWpf.Controls
             }
 
             return result;
+        }
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            LayoutChromeHelper.DrawChrome(
+                drawingContext,
+                RenderSize,
+                Background,
+                BackgroundSizing.InnerBorderEdge,
+                BorderBrush,
+                BorderThickness,
+                CornerRadius);
+        }
+
+        protected override Geometry GetLayoutClip(Size layoutSlotSize)
+        {
+            return LayoutChromeHelper.CreateRoundedLayoutClip(
+                layoutSlotSize,
+                CornerRadius,
+                base.GetLayoutClip(layoutSlotSize));
+        }
+
+        protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
+        {
+            if (!LayoutChromeHelper.FillContainsRoundedRectangle(RenderSize, CornerRadius, hitTestParameters.HitPoint))
+            {
+                return null;
+            }
+
+            return base.HitTestCore(hitTestParameters);
         }
 
         private LayoutContext m_layoutContext = null;

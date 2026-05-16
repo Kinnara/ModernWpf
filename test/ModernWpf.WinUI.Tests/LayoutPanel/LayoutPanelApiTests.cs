@@ -2,7 +2,9 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.WinUI.TestInfra;
 using LayoutPanel = ModernWpf.Controls.LayoutPanel;
@@ -175,6 +177,92 @@ public class LayoutPanelApiTests
         });
     }
 
+    [TestMethod]
+    public void VerifyBorderChromeRenders()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var panel = new LayoutPanel
+            {
+                Width = 30,
+                Height = 30,
+                Background = Brushes.Red,
+                BorderBrush = Brushes.Blue,
+                BorderThickness = new Thickness(6)
+            };
+
+            var borderPixel = RenderElementPixel(panel, 3, 15, 30, 30);
+            var backgroundPixel = RenderElementPixel(panel, 15, 15, 30, 30);
+
+            Assert.IsTrue(borderPixel.B > 200 && borderPixel.A > 200, $"Expected LayoutPanel border chrome to render. Pixel={borderPixel}");
+            Assert.IsTrue(backgroundPixel.R > 200 && backgroundPixel.A > 200, $"Expected LayoutPanel background chrome to render inside the border. Pixel={backgroundPixel}");
+        });
+    }
+
+    [TestMethod]
+    public void VerifyRoundedCornerClipAndHitTest()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var panel = new TestLayoutPanel
+            {
+                Width = 30,
+                Height = 30,
+                Background = Brushes.Red,
+                CornerRadius = new CornerRadius(12, 0, 0, 0)
+            };
+            panel.Children.Add(new Border
+            {
+                Width = 30,
+                Height = 30,
+                Background = Brushes.Red
+            });
+
+            panel.Measure(new Size(30, 30));
+            panel.Arrange(new Rect(0, 0, 30, 30));
+            panel.UpdateLayout();
+
+            var clip = panel.GetLayoutClipForTest(new Size(30, 30));
+            Assert.IsNotNull(clip);
+            Assert.IsFalse(clip.FillContains(new Point(1, 1)), "Top-left corner should be clipped by LayoutPanel.CornerRadius.");
+            Assert.IsTrue(clip.FillContains(new Point(15, 15)), "Center should remain inside the LayoutPanel clip.");
+
+            Assert.IsNull(VisualTreeHelper.HitTest(panel, new Point(1, 1)), "Top-left point should be clipped by the rounded chrome.");
+            Assert.IsNotNull(VisualTreeHelper.HitTest(panel, new Point(15, 15)), "Center point should hit inside the rounded chrome.");
+
+            var clippedCorner = RenderElementPixel(panel, 1, 1, 30, 30);
+            var center = RenderElementPixel(panel, 15, 15, 30, 30);
+            Assert.IsTrue(clippedCorner.A < 30, $"Expected child content to be clipped out of the rounded corner. Pixel={clippedCorner}");
+            Assert.IsTrue(center.R > 200 && center.A > 200, $"Expected child content to render inside the rounded clip. Pixel={center}");
+        });
+    }
+
+    [TestMethod]
+    public void VerifyTemplateCompatibilityXamlParsesChromeProperties()
+    {
+        WpfTestHost.Run(() =>
+        {
+            const string xaml =
+                """
+                <controls:LayoutPanel
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:controls="http://schemas.modernwpf.com/2019"
+                    BorderThickness="1"
+                    Padding="2"
+                    CornerRadius="3">
+                    <Button Content="Parsed" />
+                </controls:LayoutPanel>
+                """;
+
+            var panel = (LayoutPanel)XamlReader.Parse(xaml);
+
+            Assert.AreEqual(new Thickness(1), panel.BorderThickness);
+            Assert.AreEqual(new Thickness(2), panel.Padding);
+            Assert.AreEqual(new CornerRadius(3), panel.CornerRadius);
+            Assert.AreEqual(1, panel.Children.Count);
+        });
+    }
+
     private sealed class CustomNonVirtualizingStackLayout : NonVirtualizingLayout
     {
         protected override Size MeasureOverride(NonVirtualizingLayoutContext context, Size availableSize)
@@ -201,6 +289,28 @@ public class LayoutPanelApiTests
             }
 
             return finalSize;
+        }
+    }
+
+    private static Color RenderElementPixel(FrameworkElement element, int x, int y, int width, int height)
+    {
+        element.Measure(new Size(width, height));
+        element.Arrange(new Rect(0, 0, width, height));
+        element.UpdateLayout();
+
+        var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+        bitmap.Render(element);
+
+        var pixels = new byte[4];
+        bitmap.CopyPixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
+        return Color.FromArgb(pixels[3], pixels[2], pixels[1], pixels[0]);
+    }
+
+    private sealed class TestLayoutPanel : LayoutPanel
+    {
+        public Geometry GetLayoutClipForTest(Size layoutSlotSize)
+        {
+            return base.GetLayoutClip(layoutSlotSize);
         }
     }
 }
