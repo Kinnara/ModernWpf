@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -264,17 +265,34 @@ public class CommandBarApiTests
     {
         WpfTestHost.Run(() =>
         {
+            TestApplication.EnsureInitialized();
+
             var separator = new AppBarSeparator();
+            using var host = new TestWindowHost(separator, width: 120, height: 80);
+            host.UpdateLayout();
+
+            var rootGrid = FindTemplateChild<Grid>(separator, "RootGrid");
+            var separatorRectangle = FindTemplateChild<Rectangle>(separator, "SeparatorRectangle");
 
             Assert.IsFalse(separator.Focusable);
             Assert.IsFalse(separator.IsCompact);
             Assert.IsFalse(separator.IsInOverflow);
 
             separator.IsCompact = true;
+            host.UpdateLayout();
+
+            Assert.AreEqual((double)rootGrid.TryFindResource("AppBarThemeCompactHeight"), rootGrid.Height);
+            Assert.AreEqual(VerticalAlignment.Top, rootGrid.VerticalAlignment);
+
             ToolBar.SetOverflowMode(separator, OverflowMode.Always);
+            host.UpdateLayout();
 
             Assert.IsTrue(separator.IsCompact);
             Assert.IsTrue(separator.IsInOverflow);
+            Assert.IsTrue(double.IsNaN(separatorRectangle.Width));
+            Assert.AreEqual(HorizontalAlignment.Stretch, separatorRectangle.HorizontalAlignment);
+            Assert.AreEqual(1.0, separatorRectangle.Height);
+            Assert.AreEqual(new Thickness(0, 4, 0, 4), separatorRectangle.Margin);
         });
     }
 

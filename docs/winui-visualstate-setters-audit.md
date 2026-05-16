@@ -21,6 +21,7 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | WinUI 2.8.7 source | Setter blocks | ModernWpf file | Status | Notes |
 | --- | ---: | --- | --- | --- |
 | `dev\ProgressBar\ProgressBar.xaml` | 4 | `ModernWpf\ProgressBar\ProgressBar.xaml` | Partial | Direct opacity setters for `Indeterminate`, `IndeterminateError`, and `IndeterminatePaused` are converted. The `UpdatingError` brush-color setter still uses a storyboard because nested target paths such as `(Shape.Fill).(SolidColorBrush.Color)` are not supported yet. |
+| `dev\CommonStyles\AppBarSeparator_themeresources.xaml` | 2 | `ModernWpf.Controls\CommandBar\AppBarSeparator.xaml` | Converted | Compact and overflow layout states now use `VisualStateEx.Setters` instead of a `VisualStateGroupListener` trigger bridge. |
 | `dev\InfoBadge\InfoBadge_themeresources.xaml` | 3 | `ModernWpf.Controls\InfoBadge\InfoBadge.xaml` | Converted | `Dot`, `Icon`, `FontIcon`, and `Value` state behavior now lives in `VisualStateEx.Setters`; code only chooses the state and creates the icon element. |
 | `dev\RadioButtons\RadioButtons.xaml` | 1 | `ModernWpf.Controls\RadioButtons\RadioButtons.xaml` | Converted | Disabled header foreground now uses a dynamic-resource `VisualStateEx.Setters` entry instead of a WPF template trigger. |
 
@@ -35,7 +36,6 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\ComboBox\ComboBox_themeresources.xaml` | 10 | `ModernWpf\Styles\ComboBox.xaml` | Pending | Audit popup/open/disabled setter groups. |
 | `dev\CommandBarFlyout\CommandBarFlyout_themeresources.xaml` | 41 | `ModernWpf.Controls\CommandBarFlyout\CommandBarFlyout.xaml` | Pending | Large visual-state matrix; convert direct layout/visibility setters after dynamic-resource support is settled. |
 | `dev\CommonStyles\AppBarButton_themeresources.xaml` | 16 | `ModernWpf.Controls\CommandBar\AppBarButton.xaml` | Pending | Audit direct state setters; animated icon state remains unsupported. |
-| `dev\CommonStyles\AppBarSeparator_themeresources.xaml` | 2 | `ModernWpf.Controls\CommandBar\AppBarSeparator.xaml` | Pending | Likely simple direct setters. |
 | `dev\CommonStyles\AppBarToggleButton_themeresources.xaml` | 18 | `ModernWpf.Controls\CommandBar\AppBarToggleButton.xaml` | Pending | Audit checked/common state setters; animated icon state remains unsupported. |
 | `dev\CommonStyles\Button_themeresources.xaml` | 3 | `ModernWpf\Styles\Button.xaml`, `ModernWpf.Controls\HyperlinkButton\HyperlinkButton.xaml` | Pending | Determine which setters map to stock WPF button style versus ModernWpf-owned controls. |
 | `dev\CommonStyles\CalendarDatePicker_themeresources.xaml` | 1 | `ModernWpf\Styles\DatePicker.xaml` | Pending | Stock WPF mapping; decide whether a VisualStateEx port is meaningful. |

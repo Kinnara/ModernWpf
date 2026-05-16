@@ -19,16 +19,28 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:AppBarSeparator">
                     <Grid x:Name="RootGrid">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="ApplicationViewStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
                                 <!-- FullSize is used when we are in landscape or filled mode -->
                                 <VisualState x:Name="FullSize" />
                                 <!-- Compact is used when we are in portrait or snapped mode -->
-                                <VisualState x:Name="Compact" />
-                                <VisualState x:Name="Overflow" />
+                                <ui:VisualStateEx x:Name="Compact">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Height" Value="{DynamicResource AppBarThemeCompactHeight}" />
+                                        <ui:VisualStateSetter Target="RootGrid.VerticalAlignment" Value="Top" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Overflow">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SeparatorRectangle.Width" Value="NaN" />
+                                        <ui:VisualStateSetter Target="SeparatorRectangle.HorizontalAlignment" Value="Stretch" />
+                                        <ui:VisualStateSetter Target="SeparatorRectangle.Height" Value="{StaticResource AppBarOverflowSeparatorHeight}" />
+                                        <ui:VisualStateSetter Target="SeparatorRectangle.Margin" Value="{StaticResource AppBarOverflowSeparatorMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -40,21 +52,6 @@
                             Fill="{TemplateBinding Foreground}"
                             Margin="{TemplateBinding Padding}"/>
                     </Grid>
-                    
-                    <ControlTemplate.Triggers>
-                        <!-- Compact -->
-                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Compact">
-                            <Setter TargetName="RootGrid" Property="Height" Value="{DynamicResource AppBarThemeCompactHeight}" />
-                            <Setter TargetName="RootGrid" Property="VerticalAlignment" Value="Top" />
-                        </Trigger>
-                        <!-- Overflow -->
-                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
-                            <Setter TargetName="SeparatorRectangle" Property="Width" Value="NaN" />
-                            <Setter TargetName="SeparatorRectangle" Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter TargetName="SeparatorRectangle" Property="Height" Value="{StaticResource AppBarOverflowSeparatorHeight}" />
-                            <Setter TargetName="SeparatorRectangle" Property="Margin" Value="{StaticResource AppBarOverflowSeparatorMargin}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
