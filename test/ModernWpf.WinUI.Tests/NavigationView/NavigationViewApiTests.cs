@@ -973,6 +973,77 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewTopPaneOverflowItemPresenterStatesUseWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var item = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Overflow",
+                Icon = new ModernWpf.Controls.SymbolIcon { Symbol = ModernWpf.Controls.Symbol.Home }
+            };
+
+            using var host = new TestWindowHost(item, width: 180, height: 80);
+
+            var itemRoot = FindNamedDescendant<Grid>(item, "NVIRootGrid");
+            var overflowStyle = GetStateSetterValue<Style>(
+                itemRoot,
+                "ItemOnNavigationViewListPositionStates",
+                "OnTopNavigationOverflow",
+                "NavigationViewItemPresenter.Style");
+
+            var itemPresenter = new ModernWpf.Controls.Primitives.NavigationViewItemPresenter
+            {
+                Style = overflowStyle,
+                Content = "Overflow",
+                Icon = new ModernWpf.Controls.SymbolIcon { Symbol = ModernWpf.Controls.Symbol.Home }
+            };
+            host.Window.Content = itemPresenter;
+            host.UpdateLayout();
+
+            var layoutRoot = (Grid)VisualTreeHelper.GetChild(itemPresenter, 0);
+            var icon = FindNamedDescendant<ModernWpf.Controls.ContentPresenterEx>(itemPresenter, "Icon");
+            var contentPresenter = FindNamedDescendant<ModernWpf.Controls.ContentPresenterEx>(itemPresenter, "ContentPresenter");
+            var iconBox = FindNamedDescendant<FrameworkElement>(itemPresenter, "IconBox");
+            var chevron = FindNamedDescendant<FrameworkElement>(itemPresenter, "ExpandCollapseChevron");
+            var chevronIcon = FindNamedDescendant<ModernWpf.Controls.FontIconFallback>(itemPresenter, "ExpandCollapseChevronIcon");
+            var chevronRotateTransform = (RotateTransform)chevronIcon.RenderTransform;
+
+            AssertStateSetter(layoutRoot, "PointerStates", "PointerOver",
+                "LayoutRoot.Background",
+                "Icon.Foreground",
+                "ContentPresenter.Foreground");
+            AssertStateSetter(layoutRoot, "DisabledStates", "Disabled",
+                "Icon.Foreground",
+                "ContentPresenter.Foreground");
+            AssertStateSetter(layoutRoot, "NavigationViewIconPositionStates", "ContentOnly",
+                "IconBox.Visibility",
+                "ContentPresenter.Margin");
+            AssertStateSetter(layoutRoot, "ChevronStates", "ChevronVisibleOpen",
+                "ExpandCollapseChevron.Visibility",
+                "ExpandCollapseChevronRotateTransform.Angle");
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "PointerOver", false));
+            AssertCurrentState(layoutRoot, "PointerStates", "PointerOver");
+            Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemBackgroundPointerOver"), layoutRoot.Background);
+            Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemForegroundPointerOver"), icon.Foreground);
+            Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemForegroundPointerOver"), contentPresenter.Foreground);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "ContentOnly", false));
+            AssertCurrentState(layoutRoot, "NavigationViewIconPositionStates", "ContentOnly");
+            Assert.AreEqual(Visibility.Collapsed, iconBox.Visibility);
+            Assert.AreEqual(itemPresenter.TryFindResource("TopNavigationViewItemOnOverflowNoIconContentPresenterMargin"), contentPresenter.Margin);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "ChevronVisibleOpen", false));
+            AssertCurrentState(layoutRoot, "ChevronStates", "ChevronVisibleOpen");
+            Assert.AreEqual(Visibility.Visible, chevron.Visibility);
+            Assert.AreEqual(180.0, chevronRotateTransform.Angle);
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewPaneToggleButtonTemplateUsesWinUIPresenterSlot()
     {
         WpfTestHost.Run(() =>

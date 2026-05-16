@@ -709,40 +709,81 @@
                             </Storyboard>
                         </Grid.Resources>
 
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PointerStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="PointerStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" />
-                                <VisualState x:Name="Pressed" />
-                                <VisualState x:Name="Selected" />
-                                <VisualState x:Name="PointerOverSelected" />
-                                <VisualState x:Name="PressedSelected" />
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Pressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Selected">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
+                                        <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundSelected}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundSelected}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverSelected">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
+                                        <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PressedSelected">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
+                                        <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="DisabledStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="DisabledStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Enabled"/>
-                                <VisualState x:Name="Disabled"/>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="NavigationViewIconPositionStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="NavigationViewIconPositionStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="IconOnLeft" />
                                 <VisualState x:Name="IconOnly" />
-                                <VisualState x:Name="ContentOnly" />
+                                <ui:VisualStateEx x:Name="ContentOnly">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="IconBox.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Margin" Value="{DynamicResource TopNavigationViewItemOnOverflowNoIconContentPresenterMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ChevronStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="ChevronStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="ChevronHidden"/>
-                                <VisualState x:Name="ChevronVisibleOpen"/>
-                                <VisualState x:Name="ChevronVisibleClosed"/>
+                                <ui:VisualStateEx x:Name="ChevronVisibleOpen">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevron.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronRotateTransform.Angle" Value="180" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="ChevronVisibleClosed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevron.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronRotateTransform.Angle" Value="0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="PresenterContentRootGrid">
@@ -819,47 +860,6 @@
                             </Grid>
                         </Grid>
                     </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOver">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
-                        </Trigger>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="Pressed">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
-                        </Trigger>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="Selected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundSelected}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundSelected}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundSelected}" />
-                        </Trigger>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PointerOverSelected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
-                        </Trigger>
-                        <Trigger SourceName="PointerStatesListener" Property="CurrentStateName" Value="PressedSelected">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
-                        </Trigger>
-                        <Trigger SourceName="DisabledStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TopNavigationViewItemForegroundDisabled}" />
-                        </Trigger>
-                        <Trigger SourceName="NavigationViewIconPositionStatesListener" Property="CurrentStateName" Value="ContentOnly">
-                            <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="ContentPresenter" Property="Margin" Value="{DynamicResource TopNavigationViewItemOnOverflowNoIconContentPresenterMargin}" />
-                        </Trigger>
-                        <Trigger SourceName="ChevronStatesListener" Property="CurrentStateName" Value="ChevronVisibleOpen">
-                            <Setter TargetName="ExpandCollapseChevron" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                        <Trigger SourceName="ChevronStatesListener" Property="CurrentStateName" Value="ChevronVisibleClosed">
-                            <Setter TargetName="ExpandCollapseChevron" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
