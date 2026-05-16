@@ -78,20 +78,21 @@ public class TemplateParityTests
     public void ProductTemplatesUseVisualStateExForConvertedStateSetters()
     {
         var repoRoot = FindRepoRoot();
-        var productTemplateRoots = new[]
+        var convertedTemplateFiles = new[]
         {
-            Path.Combine(repoRoot, "ModernWpf"),
-            Path.Combine(repoRoot, "ModernWpf.Controls")
+            Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
+            Path.Combine("ModernWpf.Controls", "InfoBadge", "InfoBadge.xaml")
         };
 
-        var hasConvertedSetters = productTemplateRoots
-            .Where(Directory.Exists)
-            .SelectMany(root => Directory.EnumerateFiles(root, "*.xaml", SearchOption.AllDirectories))
-            .Any(path => File.ReadAllText(path).Contains("VisualStateEx.Setters", StringComparison.Ordinal));
+        var offenders = convertedTemplateFiles
+            .Select(path => Path.Combine(repoRoot, path))
+            .Where(path => !File.ReadAllText(path).Contains("VisualStateEx.Setters", StringComparison.Ordinal))
+            .Select(path => Path.GetRelativePath(repoRoot, path))
+            .ToArray();
 
-        Assert.IsTrue(
-            hasConvertedSetters,
-            "At least one product template should use VisualStateEx.Setters so the WinUI setter runtime is not test-only.");
+        Assert.IsFalse(
+            offenders.Any(),
+            "Templates with converted WinUI VisualState.Setters should keep using VisualStateEx.Setters. Offenders: " + string.Join("; ", offenders));
     }
 
     [TestMethod]

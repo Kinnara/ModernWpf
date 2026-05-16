@@ -21,6 +21,32 @@
                         Background="{TemplateBinding Background}"
                         CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.InfoBadgeCornerRadius}"
                         Padding="{TemplateBinding Padding}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="DisplayKindStates">
+                                <ui:VisualStateEx x:Name="Dot" />
+                                <ui:VisualStateEx x:Name="Icon">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="IconPresenter.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="IconPresenter.Margin" Value="4,4,4,4" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="FontIcon">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="IconPresenter.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="IconPresenter.Margin" Value="4,0,4,2" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Value">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ValueTextBlock.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="ValueTextBlock.Margin" Value="4,0,4,2" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <TextBlock
                                 x:Name="ValueTextBlock"

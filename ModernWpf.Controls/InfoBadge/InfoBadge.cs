@@ -6,10 +6,6 @@ namespace ModernWpf.Controls
 {
     public class InfoBadge : Control
     {
-        private static readonly Thickness s_iconMargin = new(4, 4, 4, 4);
-        private static readonly Thickness s_fontIconMargin = new(4, 0, 4, 2);
-        private static readonly Thickness s_valueMargin = new(4, 0, 4, 2);
-
         static InfoBadge()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(InfoBadge), new FrameworkPropertyMetadata(typeof(InfoBadge)));
@@ -76,9 +72,6 @@ namespace ModernWpf.Controls
         {
             base.OnApplyTemplate();
 
-            _valueTextBlock = GetTemplateChild("ValueTextBlock") as TextBlock;
-            _iconPresenter = GetTemplateChild("IconPresenter") as FrameworkElement;
-
             UpdateCornerRadius();
             UpdateDisplayKind();
         }
@@ -111,30 +104,23 @@ namespace ModernWpf.Controls
 
         private void UpdateDisplayKind()
         {
-            if (_valueTextBlock == null || _iconPresenter == null)
-            {
-                return;
-            }
-
+            string stateName;
             if (Value >= 0)
             {
-                _valueTextBlock.Visibility = Visibility.Visible;
-                _valueTextBlock.Margin = s_valueMargin;
-                _iconPresenter.Visibility = Visibility.Collapsed;
+                stateName = "Value";
             }
             else if (IconSource is { } iconSource)
             {
                 TemplateSettings.IconElement = iconSource.CreateIconElement();
-                _valueTextBlock.Visibility = Visibility.Collapsed;
-                _iconPresenter.Visibility = Visibility.Visible;
-                _iconPresenter.Margin = iconSource is FontIconSource ? s_fontIconMargin : s_iconMargin;
+                stateName = iconSource is FontIconSource ? "FontIcon" : "Icon";
             }
             else
             {
                 TemplateSettings.IconElement = null;
-                _valueTextBlock.Visibility = Visibility.Collapsed;
-                _iconPresenter.Visibility = Visibility.Collapsed;
+                stateName = "Dot";
             }
+
+            VisualStateManager.GoToState(this, stateName, false);
         }
 
         private void UpdateCornerRadius()
@@ -145,8 +131,5 @@ namespace ModernWpf.Controls
 
             TemplateSettings.InfoBadgeCornerRadius = cornerRadius;
         }
-
-        private TextBlock _valueTextBlock;
-        private FrameworkElement _iconPresenter;
     }
 }
