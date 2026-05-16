@@ -2,12 +2,12 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, maintenance-reboot-1x ]
   pull_request:
     branches: [ '**' ]
 
 jobs:
-  build:
+  release-gate:
 
     runs-on: windows-latest
 
@@ -23,8 +23,27 @@ jobs:
       run: dotnet restore ModernWpf.sln
     - name: Build
       run: dotnet build ModernWpf.sln --configuration Release --no-restore
+    - name: Test theme resources
+      run: dotnet test test\ModernWpf.Theme.Tests\ModernWpf.Theme.Tests.csproj --configuration Release --no-build
+    - name: Test gallery metadata
+      run: dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Release --no-build
+    - name: Test WinUI layout and template parity
+      run: dotnet test test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Release --no-build --filter "LayoutCompatibility|LayoutPanel|TemplateParityTests|Repeater"
+    - name: Pack
+      run: dotnet pack ModernWpf.Controls\ModernWpf.Controls.csproj --configuration Release --no-build
+    - name: Verify package
+      shell: pwsh
+      run: |
+        $package = Get-ChildItem artifacts\ModernWpfUI.*.nupkg | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+        .\tools\release\Verify-ModernWpfPackage.ps1 -PackagePath $package.FullName
+    - name: Smoke test package
+      shell: pwsh
+      run: |
+        $package = Get-ChildItem artifacts\ModernWpfUI.*.nupkg | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+        .\tools\release\Test-ModernWpfPackageSmoke.ps1 -PackagePath $package.FullName
     - name: Publish
       if: success() && github.ref_name == 'master' && github.event.head_commit.message == 'Bump version'
+      shell: pwsh
       run: |
-         dotnet pack ModernWpf.Controls\ModernWpf.Controls.csproj -c Release --no-build
-         dotnet nuget push "artifacts\*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+        $package = Get-ChildItem artifacts\ModernWpfUI.*.nupkg | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+        dotnet nuget push $package.FullName -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json

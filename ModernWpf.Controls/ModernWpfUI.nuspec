@@ -9,6 +9,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">$license$</license>
     <projectUrl>$projectUrl$</projectUrl>
+    <readme>readme.md</readme>
     <description>Modern styles and controls for your WPF applications.</description>
     <tags>$tags$</tags>
     <dependencies>
@@ -31,6 +32,6 @@
   <files>
     <file src="bin\$configuration$\**\ModernWpf*.dll" target="lib" />
     <file src="bin\$configuration$\**\ModernWpf*.xml" target="lib" />
-    <file src="readme.txt" target="" />
+    <file src="readme.md" target="" />
   </files>
 </package>
