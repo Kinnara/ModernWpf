@@ -162,6 +162,7 @@ public class ExpanderApiTests
 
             var expandSite = FindTemplateChild<ContentPresenterEx>(expander, "ExpandSite");
             var headerSite = FindTemplateChild<ToggleButton>(expander, "HeaderSite");
+            AssertHeaderToggleVisualStateSetters(headerSite);
 
             Assert.AreEqual(Visibility.Visible, expandSite.Visibility);
 
@@ -174,6 +175,7 @@ public class ExpanderApiTests
             Assert.AreEqual(Dock.Top, DockPanel.GetDock(expandSite));
             Assert.AreEqual(Dock.Bottom, DockPanel.GetDock(headerSite));
             Assert.AreSame(expander.TryFindResource("ExpanderUpHeaderStyle"), headerSite.Style);
+            AssertHeaderToggleVisualStateSetters(headerSite);
             Assert.AreEqual(expander.TryFindResource("ExpanderContentUpBorderThickness"), ((Border)expanderBorder).BorderThickness);
 
             expander.ExpandDirection = ExpandDirection.Down;
@@ -181,7 +183,18 @@ public class ExpanderApiTests
             Assert.AreEqual(Dock.Bottom, DockPanel.GetDock(expandSite));
             Assert.AreEqual(Dock.Top, DockPanel.GetDock(headerSite));
             Assert.AreSame(expander.TryFindResource("ExpanderDownHeaderStyle"), headerSite.Style);
+            AssertHeaderToggleVisualStateSetters(headerSite);
             Assert.AreEqual(expander.BorderThickness, ((Border)expanderBorder).BorderThickness);
+
+            expander.ExpandDirection = ExpandDirection.Left;
+            host.UpdateLayout();
+            Assert.AreSame(expander.TryFindResource("ExpanderLeftHeaderStyle"), headerSite.Style);
+            AssertHeaderToggleVisualStateSetters(headerSite);
+
+            expander.ExpandDirection = ExpandDirection.Right;
+            host.UpdateLayout();
+            Assert.AreSame(expander.TryFindResource("ExpanderRightHeaderStyle"), headerSite.Style);
+            AssertHeaderToggleVisualStateSetters(headerSite);
         });
     }
 
@@ -267,6 +280,35 @@ public class ExpanderApiTests
     {
         return control.Template?.FindName(name, control) as T
             ?? throw new AssertFailedException($"Could not find template child '{name}'.");
+    }
+
+    private static void AssertHeaderToggleVisualStateSetters(ToggleButton headerSite)
+    {
+        headerSite.ApplyTemplate();
+        var headerRoot = FindTemplateChild<FrameworkElement>(headerSite, "HeaderRoot");
+
+        AssertStateSetter(
+            headerRoot,
+            "CommonStates",
+            "MouseOver",
+            "Foreground",
+            "BorderBrush",
+            "arrow.Foreground");
+        AssertStateSetter(
+            headerRoot,
+            "CommonStates",
+            "Pressed",
+            "Foreground",
+            "BorderBrush",
+            "arrow.Foreground");
+        AssertStateSetter(
+            headerRoot,
+            "CommonStates",
+            "Disabled",
+            "Foreground",
+            "BorderBrush",
+            "arrow.Foreground");
+        AssertStateSetter(headerRoot, "CheckStates", "Checked", "arrow.Data");
     }
 
     private static VisualStateEx AssertStateSetter(

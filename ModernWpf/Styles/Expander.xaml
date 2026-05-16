@@ -15,11 +15,49 @@
                         <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
                     <Border
+                        x:Name="HeaderRoot"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Padding="{TemplateBinding Padding}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <root:VisualStateEx x:Name="MouseOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Pressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Disabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderDisabledBorderBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Unchecked" />
+                                <root:VisualStateEx x:Name="Checked">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid
                             Background="Transparent"
                             SnapsToDevicePixels="False">
@@ -87,11 +125,49 @@
                         <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
                     <Border
+                        x:Name="HeaderRoot"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Padding="{TemplateBinding Padding}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <root:VisualStateEx x:Name="MouseOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Pressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Disabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderDisabledBorderBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Unchecked" />
+                                <root:VisualStateEx x:Name="Checked">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid
                             Background="Transparent"
                             SnapsToDevicePixels="False">
@@ -170,11 +246,49 @@
                         <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
                     <Border
+                        x:Name="HeaderRoot"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Padding="{TemplateBinding Padding}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <root:VisualStateEx x:Name="MouseOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Pressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Disabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderDisabledBorderBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Unchecked" />
+                                <root:VisualStateEx x:Name="Checked">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid
                             Background="Transparent"
                             SnapsToDevicePixels="False">
@@ -253,11 +367,49 @@
                         <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
                     <Border
+                        x:Name="HeaderRoot"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         Padding="{TemplateBinding Padding}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <root:VisualStateEx x:Name="MouseOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPointerOver}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPointerOverBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPointerOverForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Pressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderForegroundPressed}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderPressedBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderChevronPressedForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="Disabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Property="Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
+                                        <root:VisualStateSetter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderDisabledBorderBrush}" />
+                                        <root:VisualStateSetter Target="arrow.Foreground" Value="{DynamicResource ExpanderHeaderDisabledForeground}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Unchecked" />
+                                <root:VisualStateEx x:Name="Checked">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="arrow.Data" Value="{StaticResource ChevronUp}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid
                             Background="Transparent"
                             SnapsToDevicePixels="False">
