@@ -866,15 +866,14 @@
 
                             <VisualStateGroup x:Name="TogglePaneGroup">
                                 <VisualState x:Name="TogglePaneButtonCollapsed" />
-                                <VisualState x:Name="TogglePaneButtonVisible">
-                                    <Storyboard>
+                                <ui:VisualStateEx x:Name="TogglePaneButtonVisible">
+                                    <ui:VisualStateEx.Setters>
                                         <!-- Might not need this setter when all the margins/paddings will be adequately set. -->
-                                        <!-- This MinHeight setter is only here to ensure that AutoSuggestBox doesn't draw over ToggelButton. -->
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PaneContentGridToggleButtonRow" Storyboard.TargetProperty="MinHeight">
-                                            <DiscreteDoubleKeyFrame KeyTime="0" Value="{DynamicResource NavigationViewPaneHeaderRowMinHeight}"/>
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                        <!-- This MinHeight setter is only here to ensure that AutoSuggestBox doesn't draw over ToggleButton. -->
+                                        <ui:VisualStateSetter Target="PaneContentGridToggleButtonRow.MinHeight" Value="{DynamicResource NavigationViewPaneHeaderRowMinHeight}" />
+                                        <ui:VisualStateSetter Target="PaneTitlePresenter.Margin" Value="{DynamicResource NavigationViewItemInnerHeaderMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="HeaderGroup">

@@ -1088,6 +1088,43 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewTogglePaneButtonVisibleStateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneTitle = "Menu",
+                MenuItems =
+                {
+                    new ModernWpf.Controls.NavigationViewItem
+                    {
+                        Content = "Home"
+                    }
+                }
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            var root = FindNamedDescendant<Grid>(navView, "RootGrid");
+            var toggleButtonRow = navView.Template.FindName("PaneContentGridToggleButtonRow", navView) as RowDefinition;
+            var paneTitlePresenter = FindNamedDescendant<FrameworkElement>(navView, "PaneTitlePresenter");
+
+            Assert.IsNotNull(toggleButtonRow);
+            AssertStateSetter(root, "TogglePaneGroup", "TogglePaneButtonVisible",
+                "PaneContentGridToggleButtonRow.MinHeight",
+                "PaneTitlePresenter.Margin");
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "TogglePaneButtonVisible", false));
+            AssertCurrentState(root, "TogglePaneGroup", "TogglePaneButtonVisible");
+            Assert.AreEqual(root.TryFindResource("NavigationViewPaneHeaderRowMinHeight"), toggleButtonRow!.MinHeight);
+            Assert.AreEqual(root.TryFindResource("NavigationViewItemInnerHeaderMargin"), paneTitlePresenter.Margin);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>
