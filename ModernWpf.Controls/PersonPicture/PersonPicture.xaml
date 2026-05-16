@@ -21,6 +21,9 @@
                     </ControlTemplate.Resources>
 
                     <Grid x:Name="RootGrid">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -28,16 +31,29 @@
                                 </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="Photo" />
                                 <VisualState x:Name="Initials" />
-                                <VisualState x:Name="NoPhotoOrInitials" />
-                                <VisualState x:Name="Group" />
+                                <ui:VisualStateEx x:Name="NoPhotoOrInitials">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="InitialsTextBlock.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PlaceholderIcon.Data" Value="{StaticResource Contact}" />
+                                        <ui:VisualStateSetter Target="PlaceholderIcon.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Group">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="InitialsTextBlock.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PlaceholderIcon.Data" Value="{StaticResource People}" />
+                                        <ui:VisualStateSetter Target="PlaceholderIcon.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="BadgeStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="BadgeStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="NoBadge" />
-                                <VisualState x:Name="BadgeWithoutImageSource" />
-                                <VisualState x:Name="BadgeWithImageSource">
+                                <ui:VisualStateEx x:Name="BadgeWithoutImageSource">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="BadgeGrid.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="BadgeWithImageSource">
                                     <VisualState.Storyboard>
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BadgingEllipse" Storyboard.TargetProperty="Fill">
@@ -49,7 +65,11 @@
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState.Storyboard>
-                                </VisualState>
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="BadgeGrid.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="BadgingEllipse.Opacity" Value="{DynamicResource PersonPictureEllipseBadgeImageSourceStrokeOpacity}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -138,27 +158,6 @@
                         <!-- Visual State when a Photo is available for display -->
                         <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Photo">
                             <Setter TargetName="PersonPictureEllipse" Property="Fill" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ActualImageBrush}" />
-                        </Trigger>
-                        <!-- Visual State when no Photo is available (but there are initials). -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="NoPhotoOrInitials">
-                            <Setter TargetName="InitialsTextBlock" Property="Visibility" Value="Collapsed" />
-                            <!-- Placeholder symbol for 'Contact' (https://docs.microsoft.com/en-us/windows/uwp/design/style/segoe-ui-symbol-font) -->
-                            <Setter TargetName="PlaceholderIcon" Property="Data" Value="{StaticResource Contact}" />
-                            <Setter TargetName="PlaceholderIcon" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                        <!-- Visual State when in Group mode -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Group">
-                            <Setter TargetName="InitialsTextBlock" Property="Visibility" Value="Collapsed" />
-                            <!-- Placeholder symbol for 'People' (https://docs.microsoft.com/en-us/windows/uwp/design/style/segoe-ui-symbol-font) -->
-                            <Setter TargetName="PlaceholderIcon" Property="Data" Value="{StaticResource People}" />
-                            <Setter TargetName="PlaceholderIcon" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                        <Trigger SourceName="BadgeStatesListener" Property="CurrentStateName" Value="BadgeWithoutImageSource">
-                            <Setter TargetName="BadgeGrid" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                        <Trigger SourceName="BadgeStatesListener" Property="CurrentStateName" Value="BadgeWithImageSource">
-                            <Setter TargetName="BadgeGrid" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="BadgingEllipse" Property="Opacity" Value="{DynamicResource PersonPictureEllipseBadgeImageSourceStrokeOpacity}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

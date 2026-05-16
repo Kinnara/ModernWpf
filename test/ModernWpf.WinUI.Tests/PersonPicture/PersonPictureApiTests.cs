@@ -159,6 +159,10 @@ public class PersonPictureApiTests
 
             var initialsTextBlock = FindNamedDescendant<TextBlock>(personPicture, "InitialsTextBlock");
             var badgeNumberTextBlock = FindNamedDescendant<TextBlock>(personPicture, "BadgeNumberTextBlock");
+            var badgeGrid = FindNamedDescendant<Grid>(personPicture, "BadgeGrid");
+            var badgingEllipse = FindNamedDescendant<Ellipse>(personPicture, "BadgingEllipse");
+
+            Assert.AreEqual(Visibility.Collapsed, badgeGrid.Visibility);
 
             personPicture.Initials = "AS";
             host.UpdateLayout();
@@ -175,11 +179,24 @@ public class PersonPictureApiTests
 
             personPicture.BadgeNumber = 1;
             host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, badgeGrid.Visibility);
             Assert.AreEqual("1", badgeNumberTextBlock.Text);
 
             personPicture.BadgeNumber = 125;
             host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, badgeGrid.Visibility);
             Assert.AreEqual("99+", badgeNumberTextBlock.Text);
+
+            personPicture.BadgeNumber = 0;
+            personPicture.BadgeImageSource = new DrawingImage(
+                new GeometryDrawing(Brushes.Blue, null, new RectangleGeometry(new Rect(0, 0, 1, 1))));
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, badgeGrid.Visibility);
+            Assert.AreEqual((double)personPicture.TryFindResource("PersonPictureEllipseBadgeImageSourceStrokeOpacity"), badgingEllipse.Opacity);
+
+            personPicture.BadgeImageSource = null;
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Collapsed, badgeGrid.Visibility);
         });
     }
 
