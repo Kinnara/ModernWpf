@@ -209,6 +209,7 @@
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
                                         <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="PointerOver" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Pressed">
@@ -216,6 +217,7 @@
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
                                         <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="Pressed" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Selected">
@@ -230,6 +232,7 @@
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundSelectedPointerOver}" />
                                         <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundSelectedPointerOver}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="PointerOver" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="PressedSelected">
@@ -237,6 +240,7 @@
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundSelectedPressed}" />
                                         <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundSelectedPressed}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="Pressed" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -338,7 +342,8 @@
                                         <ui:ContentPresenterEx
                                             x:Name="Icon"
                                             Content="{TemplateBinding Icon}"
-                                            Foreground="{TemplateBinding Foreground}" />
+                                            Foreground="{TemplateBinding Foreground}"
+                                            ui:AnimatedIcon.State="Normal" />
                                     </Viewbox>
                                 </Border>
 
@@ -543,6 +548,7 @@
                                         <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
                                         <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="PointerOver" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Pressed">
@@ -551,6 +557,7 @@
                                         <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
                                         <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="Pressed" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Selected">
@@ -567,6 +574,7 @@
                                         <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelectedPointerOver}" />
                                         <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelectedPointerOver}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="PointerOver" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="PressedSelected">
@@ -575,6 +583,7 @@
                                         <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelectedPressed}" />
                                         <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundSelectedPressed}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="Pressed" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -682,7 +691,8 @@
                                     <ui:ContentPresenterEx
                                         x:Name="Icon"
                                         Content="{TemplateBinding Icon}"
-                                        Foreground="{TemplateBinding Foreground}"/>
+                                        Foreground="{TemplateBinding Foreground}"
+                                        ui:AnimatedIcon.State="Normal"/>
                                 </Viewbox>
                                 <ui:ContentPresenterEx
                                     x:Name="ContentPresenter"
@@ -783,6 +793,7 @@
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
                                         <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="PointerOver" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Pressed">
@@ -790,6 +801,7 @@
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
                                         <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="Pressed" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Selected">
@@ -804,6 +816,7 @@
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
                                         <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="PointerOver" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="PressedSelected">
@@ -811,6 +824,7 @@
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
                                         <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="Pressed" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -890,7 +904,8 @@
                                     <ui:ContentPresenterEx
                                         x:Name="Icon"
                                         Content="{TemplateBinding Icon}"
-                                        Foreground="{TemplateBinding Foreground}" />
+                                        Foreground="{TemplateBinding Foreground}"
+                                        ui:AnimatedIcon.State="Normal" />
                                 </Viewbox>
                                 <ui:ContentPresenterEx
                                     x:Name="ContentPresenter"

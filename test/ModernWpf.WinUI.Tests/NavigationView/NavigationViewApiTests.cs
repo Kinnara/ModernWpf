@@ -831,7 +831,17 @@ public class NavigationViewApiTests
             AssertStateSetter(layoutRoot, "PointerStates", "PointerOver",
                 "LayoutRoot.Background",
                 "Icon.Foreground",
-                "ContentPresenter.Foreground");
+                "ContentPresenter.Foreground",
+                "Icon.(ui:AnimatedIcon.State)");
+            AssertStateSetter(layoutRoot, "PointerStates", "Pressed",
+                "LayoutRoot.Background",
+                "Icon.Foreground",
+                "ContentPresenter.Foreground",
+                "Icon.(ui:AnimatedIcon.State)");
+            AssertStateSetter(layoutRoot, "PointerStates", "PointerOverSelected",
+                "Icon.(ui:AnimatedIcon.State)");
+            AssertStateSetter(layoutRoot, "PointerStates", "PressedSelected",
+                "Icon.(ui:AnimatedIcon.State)");
             AssertStateSetter(layoutRoot, "DisabledStates", "Disabled",
                 "LayoutRoot.Opacity");
             AssertStateSetter(layoutRoot, "IconStates", "IconCollapsed",
@@ -852,11 +862,19 @@ public class NavigationViewApiTests
                 "InfoBadgePresenter.HorizontalAlignment",
                 "InfoBadgePresenter.Margin");
 
+            Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(icon));
+
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "PointerOver", false));
             AssertCurrentState(layoutRoot, "PointerStates", "PointerOver");
             Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemBackgroundPointerOver"), layoutRoot.Background);
             Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemForegroundPointerOver"), icon.Foreground);
             Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemForegroundPointerOver"), contentPresenter.Foreground);
+            Assert.AreEqual("PointerOver", ModernWpf.Controls.AnimatedIcon.GetState(icon));
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "Pressed", false));
+            AssertCurrentState(layoutRoot, "PointerStates", "Pressed");
+            Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemForegroundPressed"), icon.Foreground);
+            Assert.AreEqual("Pressed", ModernWpf.Controls.AnimatedIcon.GetState(icon));
 
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "Disabled", false));
             AssertCurrentState(layoutRoot, "DisabledStates", "Disabled");
@@ -931,12 +949,26 @@ public class NavigationViewApiTests
                 "LayoutRoot.Background",
                 "PointerRectangle.Fill",
                 "Icon.Foreground",
-                "ContentPresenter.Foreground");
+                "ContentPresenter.Foreground",
+                "Icon.(ui:AnimatedIcon.State)");
+            AssertStateSetter(layoutRoot, "PointerStates", "Pressed",
+                "LayoutRoot.Background",
+                "PointerRectangle.Fill",
+                "Icon.Foreground",
+                "ContentPresenter.Foreground",
+                "Icon.(ui:AnimatedIcon.State)");
             AssertStateSetter(layoutRoot, "PointerStates", "PointerOverSelected",
                 "LayoutRoot.Background",
                 "PointerRectangle.Fill",
                 "Icon.Foreground",
-                "ContentPresenter.Foreground");
+                "ContentPresenter.Foreground",
+                "Icon.(ui:AnimatedIcon.State)");
+            AssertStateSetter(layoutRoot, "PointerStates", "PressedSelected",
+                "LayoutRoot.Background",
+                "PointerRectangle.Fill",
+                "Icon.Foreground",
+                "ContentPresenter.Foreground",
+                "Icon.(ui:AnimatedIcon.State)");
             AssertStateSetter(layoutRoot, "DisabledStates", "Disabled",
                 "Icon.Foreground",
                 "ContentPresenter.Foreground");
@@ -963,17 +995,26 @@ public class NavigationViewApiTests
             AssertStateSetter(layoutRoot, "PointerChevronStates", "PressedChevronVisibleClosed",
                 "ExpandCollapseChevronIcon.Foreground");
 
+            Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(icon));
+
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "PointerOver", false));
             AssertCurrentState(layoutRoot, "PointerStates", "PointerOver");
             Assert.AreSame(itemPresenter.TryFindResource("TopNavigationViewItemBackgroundPointerOver"), layoutRoot.Background);
             Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemBackgroundPointerOver"), pointerRectangle.Fill);
             Assert.AreSame(itemPresenter.TryFindResource("TopNavigationViewItemForegroundPointerOver"), icon.Foreground);
             Assert.AreSame(itemPresenter.TryFindResource("TopNavigationViewItemForegroundPointerOver"), contentPresenter.Foreground);
+            Assert.AreEqual("PointerOver", ModernWpf.Controls.AnimatedIcon.GetState(icon));
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "Pressed", false));
+            AssertCurrentState(layoutRoot, "PointerStates", "Pressed");
+            Assert.AreSame(itemPresenter.TryFindResource("TopNavigationViewItemForegroundPressed"), icon.Foreground);
+            Assert.AreEqual("Pressed", ModernWpf.Controls.AnimatedIcon.GetState(icon));
 
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "PointerOverSelected", false));
             AssertCurrentState(layoutRoot, "PointerStates", "PointerOverSelected");
             Assert.AreSame(itemPresenter.TryFindResource("TopNavigationViewItemBackgroundSelectedPointerOver"), layoutRoot.Background);
             Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemBackgroundSelectedPointerOver"), pointerRectangle.Fill);
+            Assert.AreEqual("PointerOver", ModernWpf.Controls.AnimatedIcon.GetState(icon));
 
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "IconOnly", false));
             AssertCurrentState(layoutRoot, "NavigationViewIconPositionStates", "IconOnly");
@@ -1051,7 +1092,17 @@ public class NavigationViewApiTests
             AssertStateSetter(layoutRoot, "PointerStates", "PointerOver",
                 "LayoutRoot.Background",
                 "Icon.Foreground",
-                "ContentPresenter.Foreground");
+                "ContentPresenter.Foreground",
+                "Icon.(ui:AnimatedIcon.State)");
+            AssertStateSetter(layoutRoot, "PointerStates", "Pressed",
+                "LayoutRoot.Background",
+                "Icon.Foreground",
+                "ContentPresenter.Foreground",
+                "Icon.(ui:AnimatedIcon.State)");
+            AssertStateSetter(layoutRoot, "PointerStates", "PointerOverSelected",
+                "Icon.(ui:AnimatedIcon.State)");
+            AssertStateSetter(layoutRoot, "PointerStates", "PressedSelected",
+                "Icon.(ui:AnimatedIcon.State)");
             AssertStateSetter(layoutRoot, "DisabledStates", "Disabled",
                 "Icon.Foreground",
                 "ContentPresenter.Foreground");
@@ -1064,11 +1115,19 @@ public class NavigationViewApiTests
                 "ExpandCollapseChevron.Visibility",
                 "ExpandCollapseChevronRotateTransform.Angle");
 
+            Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(icon));
+
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "PointerOver", false));
             AssertCurrentState(layoutRoot, "PointerStates", "PointerOver");
             Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemBackgroundPointerOver"), layoutRoot.Background);
             Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemForegroundPointerOver"), icon.Foreground);
             Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemForegroundPointerOver"), contentPresenter.Foreground);
+            Assert.AreEqual("PointerOver", ModernWpf.Controls.AnimatedIcon.GetState(icon));
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "Pressed", false));
+            AssertCurrentState(layoutRoot, "PointerStates", "Pressed");
+            Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemForegroundPressed"), icon.Foreground);
+            Assert.AreEqual("Pressed", ModernWpf.Controls.AnimatedIcon.GetState(icon));
 
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "ContentOnly", false));
             AssertCurrentState(layoutRoot, "NavigationViewIconPositionStates", "ContentOnly");
