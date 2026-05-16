@@ -6,7 +6,9 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.Controls;
 using ModernWpf.WinUI.TestInfra;
 
@@ -217,6 +219,108 @@ public class PipsPagerApiTests
         });
     }
 
+    [TestMethod]
+    public void NavigationButtonStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var pipsPager = new ModernWpf.Controls.PipsPager
+            {
+                NumberOfPages = 3,
+                PreviousButtonVisibility = PipsPagerButtonVisibility.Visible,
+                NextButtonVisibility = PipsPagerButtonVisibility.Visible
+            };
+
+            using var host = new TestWindowHost(pipsPager, width: 300, height: 120);
+            host.UpdateLayout();
+
+            var rootPanel = FindNamedDescendant<StackPanel>(pipsPager, "PART_RootPanel");
+            var previousButton = FindNamedDescendant<Button>(pipsPager, "PART_PreviousButton");
+            var nextButton = FindNamedDescendant<Button>(pipsPager, "PART_NextButton");
+
+            AssertStateSetter(rootPanel, "PreviousPageButtonVisibilityStates", "PreviousPageButtonHidden", "PART_PreviousButton.Opacity");
+            AssertStateSetter(rootPanel, "PreviousPageButtonVisibilityStates", "PreviousPageButtonCollapsed", "PART_PreviousButton.Visibility");
+            AssertStateSetter(rootPanel, "PreviousPageButtonIsEnabledStates", "PreviousPageButtonDisabled", "PART_PreviousButton.IsEnabled");
+            AssertStateSetter(rootPanel, "NextPageButtonVisibilityStates", "NextPageButtonHidden", "PART_NextButton.Opacity");
+            AssertStateSetter(rootPanel, "NextPageButtonVisibilityStates", "NextPageButtonCollapsed", "PART_NextButton.Visibility");
+            AssertStateSetter(rootPanel, "NextPageButtonIsEnabledStates", "NextPageButtonDisabled", "PART_NextButton.IsEnabled");
+
+            Assert.AreEqual("PreviousPageButtonHidden", GetCurrentStateName(rootPanel, "PreviousPageButtonVisibilityStates"));
+            Assert.AreEqual("PreviousPageButtonDisabled", GetCurrentStateName(rootPanel, "PreviousPageButtonIsEnabledStates"));
+            Assert.AreEqual(0, previousButton.Opacity);
+            Assert.IsFalse(previousButton.IsEnabled);
+            Assert.AreEqual(Visibility.Visible, previousButton.Visibility);
+
+            Assert.AreEqual("NextPageButtonVisible", GetCurrentStateName(rootPanel, "NextPageButtonVisibilityStates"));
+            Assert.AreEqual("NextPageButtonEnabled", GetCurrentStateName(rootPanel, "NextPageButtonIsEnabledStates"));
+            Assert.AreEqual(1, nextButton.Opacity);
+            Assert.IsTrue(nextButton.IsEnabled);
+
+            pipsPager.SelectedPageIndex = 1;
+            host.UpdateLayout();
+
+            Assert.AreEqual("PreviousPageButtonVisible", GetCurrentStateName(rootPanel, "PreviousPageButtonVisibilityStates"));
+            Assert.AreEqual("PreviousPageButtonEnabled", GetCurrentStateName(rootPanel, "PreviousPageButtonIsEnabledStates"));
+            Assert.AreEqual(1, previousButton.Opacity);
+            Assert.IsTrue(previousButton.IsEnabled);
+
+            pipsPager.PreviousButtonVisibility = PipsPagerButtonVisibility.Collapsed;
+            host.UpdateLayout();
+
+            Assert.AreEqual("PreviousPageButtonCollapsed", GetCurrentStateName(rootPanel, "PreviousPageButtonVisibilityStates"));
+            Assert.AreEqual("PreviousPageButtonDisabled", GetCurrentStateName(rootPanel, "PreviousPageButtonIsEnabledStates"));
+            Assert.AreEqual(Visibility.Collapsed, previousButton.Visibility);
+            Assert.IsFalse(previousButton.IsEnabled);
+        });
+    }
+
+    [TestMethod]
+    public void OrientationStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var pipsPager = new ModernWpf.Controls.PipsPager
+            {
+                NumberOfPages = 3,
+                PreviousButtonVisibility = PipsPagerButtonVisibility.Visible,
+                NextButtonVisibility = PipsPagerButtonVisibility.Visible
+            };
+
+            using var host = new TestWindowHost(pipsPager, width: 300, height: 120);
+            host.UpdateLayout();
+
+            var rootPanel = FindNamedDescendant<StackPanel>(pipsPager, "PART_RootPanel");
+            var pipsPanel = FindNamedDescendant<StackPanel>(pipsPager, "PART_PipsPanel");
+            var previousButton = FindNamedDescendant<Button>(pipsPager, "PART_PreviousButton");
+            var nextButton = FindNamedDescendant<Button>(pipsPager, "PART_NextButton");
+            var orientationState = AssertStateSetter(
+                rootPanel,
+                "RootPanelOrientationStates",
+                "HorizontalOrientationView",
+                "PART_RootPanel.Orientation");
+
+            Assert.AreEqual(7, orientationState.Setters.Count);
+            Assert.AreEqual("HorizontalOrientationView", GetCurrentStateName(rootPanel, "RootPanelOrientationStates"));
+            Assert.AreEqual(Orientation.Horizontal, rootPanel.Orientation);
+            Assert.AreEqual(Orientation.Horizontal, pipsPanel.Orientation);
+            Assert.AreEqual(PlacementMode.Left, ToolTipService.GetPlacement(previousButton));
+            Assert.AreEqual(PlacementMode.Right, ToolTipService.GetPlacement(nextButton));
+            AssertRotateTransform(previousButton.RenderTransform);
+            AssertRotateTransform(nextButton.RenderTransform);
+
+            pipsPager.Orientation = Orientation.Vertical;
+            host.UpdateLayout();
+
+            Assert.AreEqual("VerticalOrientationView", GetCurrentStateName(rootPanel, "RootPanelOrientationStates"));
+            Assert.AreEqual(Orientation.Vertical, rootPanel.Orientation);
+            Assert.AreEqual(Orientation.Vertical, pipsPanel.Orientation);
+            Assert.AreEqual(PlacementMode.Top, ToolTipService.GetPlacement(previousButton));
+            Assert.AreEqual(PlacementMode.Bottom, ToolTipService.GetPlacement(nextButton));
+            Assert.IsFalse(previousButton.RenderTransform is RotateTransform);
+            Assert.IsFalse(nextButton.RenderTransform is RotateTransform);
+        });
+    }
+
     private static List<Button> GetPipButtons(DependencyObject root)
     {
         return VisualTreeTestHelper
@@ -241,5 +345,56 @@ public class PipsPagerApiTests
         }
 
         return button;
+    }
+
+    private static VisualStateEx AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string setterTarget)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        var state = group.States
+            .Cast<VisualState>()
+            .Single(item => item.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        Assert.IsTrue(
+            stateEx.Setters.Any(setter => setter.Target == setterTarget),
+            $"{groupName}.{stateName} should set {setterTarget}.");
+        return stateEx;
+    }
+
+    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        Assert.IsNotNull(group.CurrentState);
+        return group.CurrentState.Name;
+    }
+
+    private static void AssertRotateTransform(Transform transform)
+    {
+        Assert.IsInstanceOfType(transform, typeof(RotateTransform));
+        Assert.AreEqual(-90, ((RotateTransform)transform).Angle);
+    }
+
+    private static T FindNamedDescendant<T>(DependencyObject root, string name)
+        where T : FrameworkElement
+    {
+        foreach (var descendant in VisualTreeTestHelper.EnumerateDescendants(root))
+        {
+            if (descendant is T element && element.Name == name)
+            {
+                return element;
+            }
+        }
+
+        throw new AssertFailedException($"Could not find descendant named '{name}'.");
     }
 }

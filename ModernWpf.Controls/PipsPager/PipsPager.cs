@@ -19,6 +19,18 @@ namespace ModernWpf.Controls
         private const string PipsPanelName = "PART_PipsPanel";
         private const string PreviousButtonName = "PART_PreviousButton";
         private const string NextButtonName = "PART_NextButton";
+        private const string PreviousPageButtonVisibleState = "PreviousPageButtonVisible";
+        private const string PreviousPageButtonHiddenState = "PreviousPageButtonHidden";
+        private const string PreviousPageButtonCollapsedState = "PreviousPageButtonCollapsed";
+        private const string PreviousPageButtonEnabledState = "PreviousPageButtonEnabled";
+        private const string PreviousPageButtonDisabledState = "PreviousPageButtonDisabled";
+        private const string NextPageButtonVisibleState = "NextPageButtonVisible";
+        private const string NextPageButtonHiddenState = "NextPageButtonHidden";
+        private const string NextPageButtonCollapsedState = "NextPageButtonCollapsed";
+        private const string NextPageButtonEnabledState = "NextPageButtonEnabled";
+        private const string NextPageButtonDisabledState = "NextPageButtonDisabled";
+        private const string HorizontalOrientationViewState = "HorizontalOrientationView";
+        private const string VerticalOrientationViewState = "VerticalOrientationView";
 
         static PipsPager()
         {
@@ -224,6 +236,30 @@ namespace ModernWpf.Controls
             return new PipsPagerAutomationPeer(this);
         }
 
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            base.OnMouseEnter(e);
+            UpdateNavigationButtonVisualStates();
+        }
+
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            base.OnMouseLeave(e);
+            UpdateNavigationButtonVisualStates();
+        }
+
+        protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            base.OnGotKeyboardFocus(e);
+            UpdateNavigationButtonVisualStates();
+        }
+
+        protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
+        {
+            base.OnLostKeyboardFocus(e);
+            UpdateNavigationButtonVisualStates();
+        }
+
         private static void OnPagerPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var pager = (PipsPager)d;
@@ -308,29 +344,26 @@ namespace ModernWpf.Controls
             CoerceValue(SelectedPageIndexProperty);
             UpdatePipsPagerItems();
             UpdateRootPanel();
-            UpdateNavigationButton(_previousButton, PreviousButtonStyle, PreviousButtonVisibility, SelectedPageIndex > 0);
-            UpdateNavigationButton(_nextButton, NextButtonStyle, NextButtonVisibility, NumberOfPages < 0 || SelectedPageIndex < NumberOfPages - 1);
+            UpdateNavigationButton(_previousButton, PreviousButtonStyle);
+            UpdateNavigationButton(_nextButton, NextButtonStyle);
+            UpdateNavigationButtonVisualStates();
             UpdatePipButtons();
         }
 
         private void UpdateRootPanel()
         {
-            if (_rootPanel != null)
-            {
-                _rootPanel.Orientation = Orientation;
-            }
-
             if (_pipsPanel != null)
             {
                 _pipsPanel.Orientation = Orientation;
             }
+
+            VisualStateManager.GoToState(
+                this,
+                Orientation == System.Windows.Controls.Orientation.Horizontal ? HorizontalOrientationViewState : VerticalOrientationViewState,
+                false);
         }
 
-        private void UpdateNavigationButton(
-            Button button,
-            Style style,
-            PipsPagerButtonVisibility buttonVisibility,
-            bool isEnabled)
+        private void UpdateNavigationButton(Button button, Style style)
         {
             if (button == null)
             {
@@ -341,9 +374,50 @@ namespace ModernWpf.Controls
             {
                 button.Style = style;
             }
+        }
 
-            button.Visibility = buttonVisibility == PipsPagerButtonVisibility.Collapsed ? Visibility.Collapsed : Visibility.Visible;
-            button.IsEnabled = isEnabled;
+        private void UpdateNavigationButtonVisualStates()
+        {
+            UpdateNavigationButtonVisualStates(
+                PreviousButtonVisibility,
+                SelectedPageIndex > 0,
+                PreviousPageButtonVisibleState,
+                PreviousPageButtonHiddenState,
+                PreviousPageButtonCollapsedState,
+                PreviousPageButtonEnabledState,
+                PreviousPageButtonDisabledState);
+            UpdateNavigationButtonVisualStates(
+                NextButtonVisibility,
+                NumberOfPages < 0 || SelectedPageIndex < NumberOfPages - 1,
+                NextPageButtonVisibleState,
+                NextPageButtonHiddenState,
+                NextPageButtonCollapsedState,
+                NextPageButtonEnabledState,
+                NextPageButtonDisabledState);
+        }
+
+        private void UpdateNavigationButtonVisualStates(
+            PipsPagerButtonVisibility buttonVisibility,
+            bool isPageNavigationAvailable,
+            string visibleStateName,
+            string hiddenStateName,
+            string collapsedStateName,
+            string enabledStateName,
+            string disabledStateName)
+        {
+            if (buttonVisibility == PipsPagerButtonVisibility.Collapsed)
+            {
+                VisualStateManager.GoToState(this, collapsedStateName, false);
+                VisualStateManager.GoToState(this, disabledStateName, false);
+                return;
+            }
+
+            bool isGenerallyVisible = isPageNavigationAvailable && NumberOfPages != 0 && MaxVisiblePips > 0;
+            bool shouldShow = isGenerallyVisible &&
+                (buttonVisibility == PipsPagerButtonVisibility.Visible || IsMouseOver || IsKeyboardFocusWithin);
+
+            VisualStateManager.GoToState(this, shouldShow ? visibleStateName : hiddenStateName, false);
+            VisualStateManager.GoToState(this, isGenerallyVisible ? enabledStateName : disabledStateName, false);
         }
 
         private void UpdatePipButtons()
