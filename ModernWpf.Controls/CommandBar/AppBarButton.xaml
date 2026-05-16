@@ -50,6 +50,7 @@
                                         <ui:VisualStateSetter Target="TextLabel.(Grid.Column)" Value="1" />
                                         <ui:VisualStateSetter Target="TextLabel.TextAlignment" Value="Left" />
                                         <ui:VisualStateSetter Target="TextLabel.Margin" Value="{DynamicResource AppBarButtonTextLabelOnRightMargin}" />
+                                        <ui:VisualStateSetter Target="SubItemChevron.Margin" Value="{DynamicResource AppBarButtonSubItemChevronLabelOnRightMargin}" />
                                         <ui:VisualStateSetter Property="Width" Value="NaN" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
@@ -145,7 +146,12 @@
                                         <ui:VisualStateSetter Target="SubItemChevron.Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundDisabled}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
-                                <VisualState x:Name="OverflowNormal" />
+                                <ui:VisualStateEx x:Name="OverflowNormal">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SubItemChevron.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="OverflowSubItemChevron.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="OverflowPointerOver">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="AppBarButtonInnerBorder.Background" Value="{DynamicResource AppBarButtonBackgroundPointerOver}" />
@@ -155,6 +161,8 @@
                                         <ui:VisualStateSetter Target="OverflowTextLabel.Foreground" Value="{DynamicResource AppBarButtonForegroundPointerOver}" />
                                         <ui:VisualStateSetter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPointerOver}" />
                                         <ui:VisualStateSetter Target="SubItemChevron.Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="SubItemChevron.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="OverflowSubItemChevron.Visibility" Value="Visible" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="OverflowPressed">
@@ -166,9 +174,23 @@
                                         <ui:VisualStateSetter Target="OverflowTextLabel.Foreground" Value="{DynamicResource AppBarButtonForegroundPressed}" />
                                         <ui:VisualStateSetter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundPressed}" />
                                         <ui:VisualStateSetter Target="SubItemChevron.Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="SubItemChevron.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="OverflowSubItemChevron.Visibility" Value="Visible" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
-                                <!--<VisualState x:Name="OverflowSubMenuOpened" />-->
+                                <ui:VisualStateEx x:Name="OverflowSubMenuOpened">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="AppBarButtonInnerBorder.Background" Value="{DynamicResource AppBarButtonBackgroundSubMenuOpened}" />
+                                        <ui:VisualStateSetter Target="AppBarButtonInnerBorder.BorderBrush" Value="{DynamicResource AppBarButtonBorderBrushSubMenuOpened}" />
+                                        <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource AppBarButtonForegroundSubMenuOpened}" />
+                                        <ui:VisualStateSetter Target="TextLabel.Foreground" Value="{DynamicResource AppBarButtonForegroundSubMenuOpened}" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Foreground" Value="{DynamicResource AppBarButtonForegroundSubMenuOpened}" />
+                                        <ui:VisualStateSetter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{DynamicResource AppBarButtonKeyboardAcceleratorTextForegroundSubMenuOpened}" />
+                                        <ui:VisualStateSetter Target="SubItemChevron.Foreground" Value="{DynamicResource AppBarButtonSubItemChevronForegroundSubMenuOpened}" />
+                                        <ui:VisualStateSetter Target="SubItemChevron.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="OverflowSubItemChevron.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="InputModeStates">
                                 <VisualState x:Name="InputModeDefault" />
@@ -201,7 +223,7 @@
                                 <VisualState x:Name="NoFlyout" />
                                 <ui:VisualStateEx x:Name="HasFlyout">
                                     <ui:VisualStateEx.Setters>
-                                        <ui:VisualStateSetter Target="SubItemChevron.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="SubItemChevronPanel.Visibility" Value="{DynamicResource AppBarButtonHasFlyoutChevronVisibility}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -275,15 +297,28 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     Visibility="Collapsed" />
-                                <ui:FontIconFallback
-                                    x:Name="SubItemChevron"
+                                <Grid
+                                    x:Name="SubItemChevronPanel"
                                     Grid.Column="2"
-                                    Data="{StaticResource ChevronRight}"
-                                    FontFamily="{DynamicResource SymbolThemeFontFamily}"
-                                    FontSize="12"
-                                    Foreground="{DynamicResource AppBarButtonSubItemChevronForeground}"
-                                    Margin="12,0,12,0"
-                                    Visibility="Collapsed" />
+                                    Visibility="Collapsed">
+                                    <ui:FontIconFallback
+                                        x:Name="SubItemChevron"
+                                        Data="{StaticResource ChevronRight}"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        FontSize="{DynamicResource AppBarButtonSubItemChevronFontSize}"
+                                        Foreground="{DynamicResource AppBarButtonSubItemChevronForeground}"
+                                        VerticalAlignment="Top"
+                                        Margin="{DynamicResource AppBarButtonSubItemChevronMargin}" />
+                                    <ui:FontIconFallback
+                                        x:Name="OverflowSubItemChevron"
+                                        Data="{StaticResource ChevronRight}"
+                                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                        FontSize="{DynamicResource AppBarButtonSecondarySubItemChevronFontSize}"
+                                        Foreground="{DynamicResource AppBarButtonSubItemChevronForeground}"
+                                        VerticalAlignment="Center"
+                                        Margin="{DynamicResource AppBarButtonSecondarySubItemChevronMargin}"
+                                        Visibility="Collapsed" />
+                                </Grid>
 
                             </Grid>
                         </Grid>

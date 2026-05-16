@@ -237,10 +237,14 @@ public class CommandBarApiTests
             host.UpdateLayout();
 
             var root = FindTemplateChild<Border>(button, "Root");
+            var subItemChevronPanel = FindTemplateChild<Grid>(button, "SubItemChevronPanel");
+            var subItemChevron = FindTemplateChild<FontIconFallback>(button, "SubItemChevron");
+            var overflowSubItemChevron = FindTemplateChild<FontIconFallback>(button, "OverflowSubItemChevron");
             var overflowTextLabel = FindTemplateChild<TextBlock>(button, "OverflowTextLabel");
 
             AssertStateSetter(root, "ApplicationViewStates", "Compact", "AppBarButtonInnerBorder.Margin");
             AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", "TextLabel.(Grid.Row)");
+            AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", "SubItemChevron.Margin");
             AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", null, "Width");
             AssertStateSetter(root, "ApplicationViewStates", "Overflow", "OverflowTextLabel.Visibility");
             AssertStateSetter(root, "ApplicationViewStates", "OverflowWithMenuIcons", "ContentViewbox.Width");
@@ -249,8 +253,18 @@ public class CommandBarApiTests
             AssertStateSetter(root, "CommonStates", "PointerOver", "AppBarButtonInnerBorder.Background");
             AssertStateSetter(root, "CommonStates", "Pressed", "Content.Foreground");
             AssertStateSetter(root, "CommonStates", "Disabled", "KeyboardAcceleratorTextLabel.Foreground");
+            AssertStateSetter(root, "CommonStates", "OverflowNormal", "SubItemChevron.Visibility");
+            AssertStateSetter(root, "CommonStates", "OverflowNormal", "OverflowSubItemChevron.Visibility");
             AssertStateSetter(root, "CommonStates", "OverflowPointerOver", "SubItemChevron.Foreground");
+            AssertStateSetter(root, "CommonStates", "OverflowPointerOver", "SubItemChevron.Visibility");
+            AssertStateSetter(root, "CommonStates", "OverflowPointerOver", "OverflowSubItemChevron.Visibility");
             AssertStateSetter(root, "CommonStates", "OverflowPressed", "SubItemChevron.Foreground");
+            AssertStateSetter(root, "CommonStates", "OverflowPressed", "SubItemChevron.Visibility");
+            AssertStateSetter(root, "CommonStates", "OverflowPressed", "OverflowSubItemChevron.Visibility");
+            AssertStateSetter(root, "CommonStates", "OverflowSubMenuOpened", "AppBarButtonInnerBorder.Background");
+            AssertStateSetter(root, "CommonStates", "OverflowSubMenuOpened", "SubItemChevron.Foreground");
+            AssertStateSetter(root, "CommonStates", "OverflowSubMenuOpened", "SubItemChevron.Visibility");
+            AssertStateSetter(root, "CommonStates", "OverflowSubMenuOpened", "OverflowSubItemChevron.Visibility");
 
             AssertStateSetter(root, "InputModeStates", "TouchInputMode", "OverflowTextLabel.Padding");
             AssertStateSetter(root, "InputModeStates", "GameControllerInputMode", "OverflowTextLabel.Padding");
@@ -260,7 +274,14 @@ public class CommandBarApiTests
             Assert.AreEqual((Thickness)button.TryFindResource("AppBarButtonOverflowTextLabelPadding"), overflowTextLabel.Padding);
 
             AssertStateSetter(root, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextVisible", "KeyboardAcceleratorTextLabel.Visibility");
-            AssertStateSetter(root, "FlyoutStates", "HasFlyout", "SubItemChevron.Visibility");
+            AssertStateSetter(root, "FlyoutStates", "HasFlyout", "SubItemChevronPanel.Visibility");
+            AssertVisualState(root, "FlyoutStates", "HasFlyout");
+            Assert.AreEqual((Visibility)button.TryFindResource("AppBarButtonHasFlyoutChevronVisibility"), subItemChevronPanel.Visibility);
+            Assert.AreEqual(Visibility.Visible, subItemChevron.Visibility);
+            Assert.AreEqual(Visibility.Collapsed, overflowSubItemChevron.Visibility);
+
+            Assert.IsTrue(VisualStateManager.GoToState(button, "LabelOnRight", false));
+            Assert.AreEqual((Thickness)button.TryFindResource("AppBarButtonSubItemChevronLabelOnRightMargin"), subItemChevron.Margin);
         });
     }
 
