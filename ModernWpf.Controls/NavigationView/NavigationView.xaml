@@ -1565,7 +1565,7 @@
                                     <VisualTransition From="HeaderTextVisible" To="HeaderTextCollapsed">
                                         <Storyboard>
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="InnerHeaderGrid" Storyboard.TargetProperty="Height">
-                                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="20" />
+                                                <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
                                             </DoubleAnimationUsingKeyFrames>
 
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Visibility">
@@ -1584,17 +1584,21 @@
                                 </VisualStateGroup.Transitions>
 
                                 <VisualState x:Name="HeaderTextVisible"/>
-                                <VisualState x:Name="HeaderTextCollapsed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderText" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
+                                <ui:VisualStateEx x:Name="HeaderTextCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HeaderText.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="InnerHeaderGrid.Height" Value="0"/>
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
 
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="InnerHeaderGrid" Storyboard.TargetProperty="Height">
-                                            <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="20" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                            <VisualStateGroup x:Name="DisplayModeStates">
+                                <VisualState x:Name="LeftMode"/>
+                                <ui:VisualStateEx x:Name="TopMode">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="InnerHeaderGrid.Margin" Value="{DynamicResource TopNavigationViewItemInnerHeaderMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="InnerHeaderGrid" Height="40" HorizontalAlignment="Left" Margin="{DynamicResource NavigationViewItemInnerHeaderMargin}">

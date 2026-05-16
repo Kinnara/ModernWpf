@@ -930,6 +930,41 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewItemHeaderStatesUseWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var header = new ModernWpf.Controls.NavigationViewItemHeader
+            {
+                Content = "Section"
+            };
+
+            using var host = new TestWindowHost(header, width: 180, height: 80);
+
+            var root = FindNamedDescendant<Grid>(header, "NavigationViewItemHeaderRootGrid");
+            var headerText = FindNamedDescendant<FrameworkElement>(header, "HeaderText");
+            var innerHeaderGrid = FindNamedDescendant<Grid>(header, "InnerHeaderGrid");
+
+            AssertStateSetter(root, "PaneStates", "HeaderTextCollapsed",
+                "HeaderText.Visibility",
+                "InnerHeaderGrid.Height");
+            AssertStateSetter(root, "DisplayModeStates", "TopMode",
+                "InnerHeaderGrid.Margin");
+
+            Assert.IsTrue(VisualStateManager.GoToState(header, "HeaderTextCollapsed", false));
+            AssertCurrentState(root, "PaneStates", "HeaderTextCollapsed");
+            Assert.AreEqual(Visibility.Collapsed, headerText.Visibility);
+            Assert.AreEqual(0.0, innerHeaderGrid.Height);
+
+            Assert.IsTrue(VisualStateManager.GoToState(header, "TopMode", false));
+            AssertCurrentState(root, "DisplayModeStates", "TopMode");
+            Assert.AreEqual(header.TryFindResource("TopNavigationViewItemInnerHeaderMargin"), innerHeaderGrid.Margin);
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewHeaderAndAutoSuggestStatesUseWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>
