@@ -88,6 +88,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "Styles", "Pivot.xaml"),
             Path.Combine("ModernWpf", "Styles", "ScrollBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "TreeView.xaml"),
+            Path.Combine("ModernWpf", "TitleBar", "TitleBarControl.xaml"),
             Path.Combine("ModernWpf.Controls", "BreadcrumbBar", "BreadcrumbBar.xaml"),
             Path.Combine("ModernWpf.Controls", "ContentDialog", "ContentDialog.xaml"),
             Path.Combine("ModernWpf.Controls", "CommandBar", "AppBarButton.xaml"),

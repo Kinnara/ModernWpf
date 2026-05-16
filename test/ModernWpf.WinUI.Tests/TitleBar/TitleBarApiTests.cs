@@ -202,6 +202,86 @@ public class TitleBarApiTests
     }
 
     [TestMethod]
+    public void VerifyTitleBarControlUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var inactiveBackground = Brushes.Green;
+            var inactiveForeground = Brushes.Gray;
+            var titleBarControl = new TitleBarControl
+            {
+                Title = "ModernWpf Test Title",
+                IsActive = true,
+                IsBackButtonVisible = true,
+                IsIconVisible = true,
+                InactiveBackground = inactiveBackground,
+                InactiveForeground = inactiveForeground
+            };
+
+            using var host = new TestWindowHost(titleBarControl, width: 420, height: 180);
+            host.UpdateLayout();
+
+            var layoutRoot = FindNamedDescendant<Grid>(titleBarControl, "LayoutRoot");
+            AssertStateSetter(layoutRoot, "ActivationStateGroup", "Deactivated",
+                "LayoutRoot.Background",
+                "HighContrastBackground.Fill",
+                "Title.Foreground",
+                "PART_BackButton.Foreground");
+            AssertStateSetter(layoutRoot, "BackButtonVisibilityGroup", "BackButtonVisible", "PART_BackButton.Visibility");
+            AssertStateSetter(layoutRoot, "BackButtonVisibilityGroup", "BackButtonCollapsed",
+                "PART_BackButton.Visibility",
+                "Icon.Margin");
+            AssertStateSetter(layoutRoot, "IconVisibilityGroup", "IconVisible",
+                "Icon.Visibility",
+                "Title.Margin");
+            AssertStateSetter(layoutRoot, "IconVisibilityGroup", "IconCollapsed",
+                "Icon.Visibility",
+                "Title.Margin");
+            AssertStateSetter(layoutRoot, "TitleTextVisibilityGroup", "TitleTextVisible", "Title.Visibility");
+            AssertStateSetter(layoutRoot, "TitleTextVisibilityGroup", "TitleTextCollapsed", "Title.Visibility");
+            AssertStateSetter(layoutRoot, "ExtendViewIntoTitleBarStates", "TitleContentCollapsed",
+                "LayoutRoot.Background",
+                "IconTitlePanel.Visibility");
+
+            Assert.AreEqual("Activated", FindVisualStateGroup(layoutRoot, "ActivationStateGroup").CurrentState?.Name);
+            Assert.AreEqual("BackButtonVisible", FindVisualStateGroup(layoutRoot, "BackButtonVisibilityGroup").CurrentState?.Name);
+            Assert.AreEqual("IconVisible", FindVisualStateGroup(layoutRoot, "IconVisibilityGroup").CurrentState?.Name);
+            Assert.AreEqual("TitleTextVisible", FindVisualStateGroup(layoutRoot, "TitleTextVisibilityGroup").CurrentState?.Name);
+
+            titleBarControl.IsActive = false;
+            titleBarControl.IsBackButtonVisible = false;
+            titleBarControl.IsIconVisible = false;
+            titleBarControl.Title = string.Empty;
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual("Deactivated", FindVisualStateGroup(layoutRoot, "ActivationStateGroup").CurrentState?.Name);
+            Assert.AreEqual("BackButtonCollapsed", FindVisualStateGroup(layoutRoot, "BackButtonVisibilityGroup").CurrentState?.Name);
+            Assert.AreEqual("IconCollapsed", FindVisualStateGroup(layoutRoot, "IconVisibilityGroup").CurrentState?.Name);
+            Assert.AreEqual("TitleTextCollapsed", FindVisualStateGroup(layoutRoot, "TitleTextVisibilityGroup").CurrentState?.Name);
+
+            var backButton = FindNamedDescendant<TitleBarButton>(titleBarControl, "PART_BackButton");
+            var icon = FindNamedDescendant<Image>(titleBarControl, "Icon");
+            var title = FindNamedDescendant<TextBlock>(titleBarControl, "Title");
+            AssertBrushEquals(inactiveBackground, layoutRoot.Background);
+            AssertBrushEquals(inactiveForeground, title.Foreground);
+            Assert.AreEqual(Visibility.Collapsed, backButton.Visibility);
+            Assert.AreEqual(new Thickness(16, 0, 0, 0), icon.Margin);
+            Assert.AreEqual(Visibility.Collapsed, icon.Visibility);
+            Assert.AreEqual(new Thickness(12, 0, 12, 0), title.Margin);
+            Assert.AreEqual(Visibility.Collapsed, title.Visibility);
+
+            titleBarControl.ExtendViewIntoTitleBar = true;
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual("TitleContentCollapsed", FindVisualStateGroup(layoutRoot, "ExtendViewIntoTitleBarStates").CurrentState?.Name);
+            Assert.IsNull(layoutRoot.Background);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<StackPanel>(titleBarControl, "IconTitlePanel").Visibility);
+        });
+    }
+
+    [TestMethod]
     public void VerifyFinalWinUI2TitleBarResources()
     {
         WpfTestHost.Run(() =>
@@ -278,6 +358,35 @@ public class TitleBarApiTests
         }
 
         Assert.AreEqual(expected.ToString(), actual.ToString());
+    }
+
+    private static VisualStateEx AssertStateSetter(FrameworkElement stateGroupsRoot, string groupName, string stateName, params string[] expectedTargets)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        var state = group.States
+            .OfType<VisualState>()
+            .SingleOrDefault(candidate => candidate.Name == stateName);
+        Assert.IsNotNull(state, $"{groupName} is missing {stateName}.");
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state!;
+        foreach (var expectedTarget in expectedTargets)
+        {
+            Assert.IsTrue(
+                stateEx.Setters.Any(setter => setter.Target == expectedTarget),
+                $"{groupName}.{stateName} is missing setter target {expectedTarget}.");
+        }
+
+        return stateEx;
+    }
+
+    private static VisualStateGroup FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .SingleOrDefault(candidate => candidate.Name == groupName);
+        Assert.IsNotNull(group, $"Missing visual state group {groupName}.");
+        return group!;
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)

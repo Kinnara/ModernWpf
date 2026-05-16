@@ -50,7 +50,7 @@ namespace ModernWpf.Controls.Primitives
                 nameof(IsActive),
                 typeof(bool),
                 typeof(TitleBarControl),
-                new PropertyMetadata(false));
+                new PropertyMetadata(false, OnVisualStatePropertyChanged));
 
         public bool IsActive
         {
@@ -106,7 +106,7 @@ namespace ModernWpf.Controls.Primitives
                 nameof(Title),
                 typeof(string),
                 typeof(TitleBarControl),
-                new PropertyMetadata(string.Empty));
+                new PropertyMetadata(string.Empty, OnVisualStatePropertyChanged));
 
         public string Title
         {
@@ -190,7 +190,9 @@ namespace ModernWpf.Controls.Primitives
         #region IsIconVisible
 
         public static readonly DependencyProperty IsIconVisibleProperty =
-            TitleBar.IsIconVisibleProperty.AddOwner(typeof(TitleBarControl));
+            TitleBar.IsIconVisibleProperty.AddOwner(
+                typeof(TitleBarControl),
+                new PropertyMetadata(false, OnVisualStatePropertyChanged));
 
         public bool IsIconVisible
         {
@@ -203,7 +205,9 @@ namespace ModernWpf.Controls.Primitives
         #region IsBackButtonVisible
 
         public static readonly DependencyProperty IsBackButtonVisibleProperty =
-            TitleBar.IsBackButtonVisibleProperty.AddOwner(typeof(TitleBarControl));
+            TitleBar.IsBackButtonVisibleProperty.AddOwner(
+                typeof(TitleBarControl),
+                new PropertyMetadata(false, OnVisualStatePropertyChanged));
 
         public bool IsBackButtonVisible
         {
@@ -288,7 +292,9 @@ namespace ModernWpf.Controls.Primitives
         #region ExtendViewIntoTitleBar
 
         public static readonly DependencyProperty ExtendViewIntoTitleBarProperty =
-            TitleBar.ExtendViewIntoTitleBarProperty.AddOwner(typeof(TitleBarControl));
+            TitleBar.ExtendViewIntoTitleBarProperty.AddOwner(
+                typeof(TitleBarControl),
+                new PropertyMetadata(false, OnVisualStatePropertyChanged));
 
         public bool ExtendViewIntoTitleBar
         {
@@ -372,6 +378,8 @@ namespace ModernWpf.Controls.Primitives
                 RightSystemOverlay.SizeChanged += OnRightSystemOverlaySizeChanged;
                 UpdateSystemOverlayRightInset(RightSystemOverlay.ActualWidth);
             }
+
+            UpdateVisualStates(false);
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -444,6 +452,20 @@ namespace ModernWpf.Controls.Primitives
             {
                 TitleBar.SetSystemOverlayRightInset(window, value);
             }
+        }
+
+        private static void OnVisualStatePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((TitleBarControl)d).UpdateVisualStates(false);
+        }
+
+        private void UpdateVisualStates(bool useTransitions)
+        {
+            VisualStateManager.GoToState(this, IsActive ? "Activated" : "Deactivated", useTransitions);
+            VisualStateManager.GoToState(this, IsBackButtonVisible ? "BackButtonVisible" : "BackButtonCollapsed", useTransitions);
+            VisualStateManager.GoToState(this, IsIconVisible ? "IconVisible" : "IconCollapsed", useTransitions);
+            VisualStateManager.GoToState(this, string.IsNullOrEmpty(Title) ? "TitleTextCollapsed" : "TitleTextVisible", useTransitions);
+            VisualStateManager.GoToState(this, ExtendViewIntoTitleBar ? "TitleContentCollapsed" : "TitleContentVisible", useTransitions);
         }
 
         private void MinimizeWindow(object sender, ExecutedRoutedEventArgs e)
