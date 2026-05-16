@@ -310,6 +310,20 @@
                             <root:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <root:VisualStateEx x:Name="Disabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="Root.Background" Value="{DynamicResource ScrollBarBackgroundDisabled}" />
+                                        <root:VisualStateSetter Target="Root.BorderBrush" Value="{DynamicResource ScrollBarBorderBrushDisabled}" />
+                                        <root:VisualStateSetter Target="Root.Opacity" Value="0.5" />
+                                        <root:VisualStateSetter Target="VerticalTrackRect.Stroke" Value="{DynamicResource ScrollBarTrackStrokeDisabled}" />
+                                        <root:VisualStateSetter Target="VerticalTrackRect.Fill" Value="{DynamicResource ScrollBarTrackFillDisabled}" />
+                                        <root:VisualStateSetter Target="PART_LineUpButton.Visibility" Value="Hidden" />
+                                        <root:VisualStateSetter Target="PART_LineDownButton.Visibility" Value="Hidden" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
                             <VisualStateGroup x:Name="ConsciousStates">
                                 <primitives:VisualStateGroupListener.Listener>
                                     <primitives:VisualStateGroupListener x:Name="ConsciousStatesListener" />
@@ -429,17 +443,6 @@
                                 HorizontalAlignment="Center" />
                         </Grid>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Root" Property="Background" Value="{DynamicResource ScrollBarBackgroundDisabled}" />
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrushDisabled}" />
-                            <Setter TargetName="Root" Property="Opacity" Value="0.5" />
-                            <Setter TargetName="VerticalTrackRect" Property="Stroke" Value="{DynamicResource ScrollBarTrackStrokeDisabled}" />
-                            <Setter TargetName="VerticalTrackRect" Property="Fill" Value="{DynamicResource ScrollBarTrackFillDisabled}" />
-                            <Setter TargetName="PART_LineUpButton" Property="Visibility" Value="Hidden" />
-                            <Setter TargetName="PART_LineDownButton" Property="Visibility" Value="Hidden" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -526,6 +529,20 @@
                                     <root:VisualStateManagerEx />
                                 </VisualStateManager.CustomVisualStateManager>
                                 <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <root:VisualStateEx x:Name="Disabled">
+                                            <root:VisualStateEx.Setters>
+                                                <root:VisualStateSetter Target="Root.Background" Value="{DynamicResource ScrollBarBackgroundDisabled}" />
+                                                <root:VisualStateSetter Target="Root.BorderBrush" Value="{DynamicResource ScrollBarBorderBrushDisabled}" />
+                                                <root:VisualStateSetter Target="Root.Opacity" Value="0.5" />
+                                                <root:VisualStateSetter Target="HorizontalTrackRect.Stroke" Value="{DynamicResource ScrollBarTrackStrokeDisabled}" />
+                                                <root:VisualStateSetter Target="HorizontalTrackRect.Fill" Value="{DynamicResource ScrollBarTrackFillDisabled}" />
+                                                <root:VisualStateSetter Target="PART_LineLeftButton.Visibility" Value="Hidden" />
+                                                <root:VisualStateSetter Target="PART_LineRightButton.Visibility" Value="Hidden" />
+                                            </root:VisualStateEx.Setters>
+                                        </root:VisualStateEx>
+                                    </VisualStateGroup>
                                     <VisualStateGroup x:Name="ConsciousStates">
                                         <primitives:VisualStateGroupListener.Listener>
                                             <primitives:VisualStateGroupListener x:Name="ConsciousStatesListener" />
@@ -644,17 +661,6 @@
                                         VerticalAlignment="Center" />
                                 </Grid>
                             </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource ScrollBarBackgroundDisabled}" />
-                                    <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ScrollBarBorderBrushDisabled}" />
-                                    <Setter TargetName="Root" Property="Opacity" Value="0.5" />
-                                    <Setter TargetName="HorizontalTrackRect" Property="Stroke" Value="{DynamicResource ScrollBarTrackStrokeDisabled}" />
-                                    <Setter TargetName="HorizontalTrackRect" Property="Fill" Value="{DynamicResource ScrollBarTrackFillDisabled}" />
-                                    <Setter TargetName="PART_LineLeftButton" Property="Visibility" Value="Hidden" />
-                                    <Setter TargetName="PART_LineRightButton" Property="Visibility" Value="Hidden" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
