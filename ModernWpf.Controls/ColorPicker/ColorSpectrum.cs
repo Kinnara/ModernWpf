@@ -548,19 +548,10 @@ namespace ModernWpf.Controls.Primitives
 
         private void UpdateShapeVisibility()
         {
-            var boxVisible = Shape == ColorSpectrumShape.Box;
-            SetVisibility(_spectrumRectangle, boxVisible);
-            SetVisibility(_spectrumOverlayRectangle, boxVisible);
-            SetVisibility(_spectrumEllipse, !boxVisible);
-            SetVisibility(_spectrumOverlayEllipse, !boxVisible);
-        }
-
-        private static void SetVisibility(UIElement element, bool visible)
-        {
-            if (element != null)
-            {
-                element.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
-            }
+            VisualStateManager.GoToState(
+                this,
+                Shape == ColorSpectrumShape.Box ? "BoxSelected" : "RingSelected",
+                false);
         }
 
         private static double Clamp01(double value)

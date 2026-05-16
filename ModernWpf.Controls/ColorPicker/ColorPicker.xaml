@@ -1,6 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
@@ -32,10 +33,27 @@
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:ColorSpectrum">
                     <Border
+                        x:Name="LayoutRoot"
                         BorderBrush="{DynamicResource ColorPickerBorderBrush}"
                         BorderThickness="2"
                         CornerRadius="{StaticResource ColorPickerSliderCornerRadius}"
                         ClipToBounds="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ShapeSelected">
+                                <ui:VisualStateEx x:Name="BoxSelected" />
+                                <ui:VisualStateEx x:Name="RingSelected">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SpectrumRectangle.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="SpectrumOverlayRectangle.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="SpectrumEllipse.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="SpectrumOverlayEllipse.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Canvas Background="Transparent">
                             <Rectangle x:Name="SpectrumRectangle" Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}" Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}">
                                 <Rectangle.Fill>

@@ -252,6 +252,15 @@ public class ColorPickerApiTests
 
             var spectrumRectangle = FindNamedDescendant<Rectangle>(colorSpectrum, "SpectrumRectangle");
             var spectrumEllipse = FindNamedDescendant<Ellipse>(colorSpectrum, "SpectrumEllipse");
+            var layoutRoot = FindNamedDescendant<Border>(colorSpectrum, "LayoutRoot");
+            AssertStateSetter(
+                layoutRoot,
+                "ShapeSelected",
+                "RingSelected",
+                "SpectrumRectangle.Visibility",
+                "SpectrumOverlayRectangle.Visibility",
+                "SpectrumEllipse.Visibility",
+                "SpectrumOverlayEllipse.Visibility");
 
             Assert.IsNotNull(spectrumRectangle.Fill);
 
@@ -463,6 +472,26 @@ public class ColorPickerApiTests
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static VisualStateEx AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        params string[] expectedTargets)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(candidate => candidate.Name == groupName);
+        var state = group.States
+            .OfType<VisualState>()
+            .Single(candidate => candidate.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        CollectionAssert.AreEquivalent(expectedTargets, stateEx.Setters.Select(setter => setter.Target).ToArray());
+        return stateEx;
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
