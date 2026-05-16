@@ -325,6 +325,9 @@
                     <Grid
                         x:Name="LayoutRoot"
                         SnapsToDevicePixels="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <Grid.Resources>
                             <Style TargetType="local:SplitButton" BasedOn="{StaticResource SplitButtonCommandBarStyle}"/>
                             <Style TargetType="local:ToggleSplitButton" BasedOn="{StaticResource SplitButtonCommandBarStyle}"/>
@@ -346,6 +349,15 @@
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="DynamicOverflowStates">
+                                <VisualState x:Name="DynamicOverflowDisabled" />
+                                <ui:VisualStateEx x:Name="DynamicOverflowEnabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentControlColumnDefinition.Width" Value="Auto" />
+                                        <ui:VisualStateSetter Target="PrimaryItemsControlColumnDefinition.Width" Value="*" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid
@@ -465,11 +477,6 @@
                         </Trigger>
                         <Trigger Property="DefaultLabelPosition" Value="Bottom">
                             <Setter TargetName="MoreButton" Property="VerticalAlignment" Value="Stretch" />
-                        </Trigger>
-                        <!-- DynamicOverflowEnabled -->
-                        <Trigger Property="IsDynamicOverflowEnabled" Value="True">
-                            <Setter TargetName="ContentControlColumnDefinition" Property="Width" Value="Auto" />
-                            <Setter TargetName="PrimaryItemsControlColumnDefinition" Property="Width" Value="*" />
                         </Trigger>
                         <Trigger Property="IsOverflowOpen" Value="True">
                             <Setter TargetName="OpenBorder" Property="Visibility" Value="Visible" />

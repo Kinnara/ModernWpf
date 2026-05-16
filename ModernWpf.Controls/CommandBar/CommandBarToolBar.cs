@@ -256,6 +256,7 @@ namespace ModernWpf.Controls.Primitives
                 commandBar.UpdateVisualState(false);
             }
 
+            UpdateDynamicOverflowVisualState(false);
             InvalidateLayout();
         }
 
@@ -290,6 +291,10 @@ namespace ModernWpf.Controls.Primitives
             {
                 UpdateEffectiveOverflowButtonVisibility();
                 HasOverflowItemsChanged?.Invoke(this, EventArgs.Empty);
+            }
+            else if (e.Property == IsDynamicOverflowEnabledProperty)
+            {
+                UpdateDynamicOverflowVisualState(true);
             }
         }
 
@@ -375,6 +380,12 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
+        private void UpdateDynamicOverflowVisualState(bool useTransitions)
+        {
+            string stateName = IsDynamicOverflowEnabled ? DynamicOverflowEnabledStateName : DynamicOverflowDisabledStateName;
+            VisualStateManager.GoToState(this, stateName, useTransitions);
+        }
+
         private FrameworkElement m_layoutRoot;
         private ButtonBase m_moreButton;
         private Popup m_overflowPopup;
@@ -387,5 +398,7 @@ namespace ModernWpf.Controls.Primitives
         private const string OverflowPopupName = "OverflowPopup";
         private const string ToolBarPanelName = "PART_ToolBarPanel";
         private const string ToolBarOverflowPanelName = "PART_ToolBarOverflowPanel";
+        private const string DynamicOverflowDisabledStateName = "DynamicOverflowDisabled";
+        private const string DynamicOverflowEnabledStateName = "DynamicOverflowEnabled";
     }
 }

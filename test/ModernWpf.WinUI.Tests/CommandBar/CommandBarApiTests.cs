@@ -93,6 +93,43 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void CommandBarToolBarDynamicOverflowUsesVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                Content = "Title",
+                IsDynamicOverflowEnabled = false
+            };
+
+            using var host = new TestWindowHost(commandBar, width: 300, height: 80);
+            host.UpdateLayout();
+
+            var toolBar = FindTemplateChild<CommandBarToolBar>(commandBar, "PART_ToolBar");
+            var contentColumn = FindTemplateChild<ColumnDefinition>(toolBar, "ContentControlColumnDefinition");
+            var primaryColumn = FindTemplateChild<ColumnDefinition>(toolBar, "PrimaryItemsControlColumnDefinition");
+
+            Assert.AreEqual(GridUnitType.Star, contentColumn.Width.GridUnitType);
+            Assert.AreEqual(GridUnitType.Auto, primaryColumn.Width.GridUnitType);
+
+            commandBar.IsDynamicOverflowEnabled = true;
+            host.UpdateLayout();
+
+            Assert.AreEqual(GridUnitType.Auto, contentColumn.Width.GridUnitType);
+            Assert.AreEqual(GridUnitType.Star, primaryColumn.Width.GridUnitType);
+
+            commandBar.IsDynamicOverflowEnabled = false;
+            host.UpdateLayout();
+
+            Assert.AreEqual(GridUnitType.Star, contentColumn.Width.GridUnitType);
+            Assert.AreEqual(GridUnitType.Auto, primaryColumn.Width.GridUnitType);
+        });
+    }
+
+    [TestMethod]
     public void AppBarButtonDefaultsAndCommandTextMapping()
     {
         WpfTestHost.Run(() =>
