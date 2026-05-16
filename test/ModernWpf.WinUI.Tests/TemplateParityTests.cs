@@ -75,6 +75,26 @@ public class TemplateParityTests
     }
 
     [TestMethod]
+    public void ProductTemplatesUseVisualStateExForConvertedStateSetters()
+    {
+        var repoRoot = FindRepoRoot();
+        var productTemplateRoots = new[]
+        {
+            Path.Combine(repoRoot, "ModernWpf"),
+            Path.Combine(repoRoot, "ModernWpf.Controls")
+        };
+
+        var hasConvertedSetters = productTemplateRoots
+            .Where(Directory.Exists)
+            .SelectMany(root => Directory.EnumerateFiles(root, "*.xaml", SearchOption.AllDirectories))
+            .Any(path => File.ReadAllText(path).Contains("VisualStateEx.Setters", StringComparison.Ordinal));
+
+        Assert.IsTrue(
+            hasConvertedSetters,
+            "At least one product template should use VisualStateEx.Setters so the WinUI setter runtime is not test-only.");
+    }
+
+    [TestMethod]
     public void BatchedSourceBackedPresenterSlotsDoNotUsePlainContentPresenter()
     {
         var repoRoot = FindRepoRoot();

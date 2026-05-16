@@ -104,11 +104,6 @@
                                 </ObjectAnimationUsingKeyFrames>
                             </Storyboard>
                             <Storyboard x:Key="IndeterminateStoryboard" RepeatBehavior="Forever">
-                                <!--#region Setters-->
-                                <DoubleAnimation Storyboard.TargetName="IndeterminateProgressBarIndicator" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
-                                <DoubleAnimation Storyboard.TargetName="IndeterminateProgressBarIndicator2" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
-                                <DoubleAnimation Storyboard.TargetName="ProgressBarTrack" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
-                                <!--#endregion-->
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="IndeterminateProgressBarIndicator" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
                                     <DiscreteDoubleKeyFrame KeyTime="0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ContainerAnimationStartPosition}" />
                                     <SplineDoubleKeyFrame KeyTime="0:0:1.5" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ContainerAnimationEndPosition}" KeySpline="0.4, 0.0, 0.6, 1.0" />
@@ -121,12 +116,6 @@
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                             <Storyboard x:Key="IndeterminateErrorStoryboard">
-                                <!--#region Setters-->
-                                <DoubleAnimation Storyboard.TargetName="IndeterminateProgressBarIndicator" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
-                                <DoubleAnimation Storyboard.TargetName="DeterminateProgressBarIndicator" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
-                                <DoubleAnimation Storyboard.TargetName="IndeterminateProgressBarIndicator2" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
-                                <DoubleAnimation Storyboard.TargetName="ProgressBarTrack" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
-                                <!--#endregion-->
                                 <DoubleAnimationUsingKeyFrames
                                     Storyboard.TargetName="IndeterminateProgressBarIndicator2"
                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
@@ -155,12 +144,6 @@
                                     Duration="0:0:0.167" />
                             </Storyboard>
                             <Storyboard x:Key="IndeterminatePausedStoryboard">
-                                <!--#region Setters-->
-                                <DoubleAnimation Storyboard.TargetName="IndeterminateProgressBarIndicator" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
-                                <DoubleAnimation Storyboard.TargetName="DeterminateProgressBarIndicator" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
-                                <DoubleAnimation Storyboard.TargetName="IndeterminateProgressBarIndicator2" Storyboard.TargetProperty="Opacity" To="1" Duration="0" />
-                                <DoubleAnimation Storyboard.TargetName="ProgressBarTrack" Storyboard.TargetProperty="Opacity" To="0" Duration="0" />
-                                <!--#endregion-->
                                 <DoubleAnimationUsingKeyFrames
                                     Storyboard.TargetName="IndeterminateProgressBarIndicator2"
                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)">
@@ -220,9 +203,29 @@
                                 <VisualState x:Name="UpdatingError" Storyboard="{StaticResource UpdatingErrorStoryboard}" />
                                 <VisualState x:Name="Error" Storyboard="{StaticResource ErrorStoryboard}" />
                                 <VisualState x:Name="Paused" Storyboard="{StaticResource PausedStoryboard}" />
-                                <VisualState x:Name="Indeterminate" Storyboard="{StaticResource IndeterminateStoryboard}" />
-                                <VisualState x:Name="IndeterminateError" Storyboard="{StaticResource IndeterminateErrorStoryboard}" />
-                                <VisualState x:Name="IndeterminatePaused" Storyboard="{StaticResource IndeterminatePausedStoryboard}" />
+                                <root:VisualStateEx x:Name="Indeterminate" Storyboard="{StaticResource IndeterminateStoryboard}">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="IndeterminateProgressBarIndicator.Opacity" Value="1" />
+                                        <root:VisualStateSetter Target="IndeterminateProgressBarIndicator2.Opacity" Value="1" />
+                                        <root:VisualStateSetter Target="ProgressBarTrack.Opacity" Value="0" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="IndeterminateError" Storyboard="{StaticResource IndeterminateErrorStoryboard}">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="IndeterminateProgressBarIndicator.Opacity" Value="0" />
+                                        <root:VisualStateSetter Target="DeterminateProgressBarIndicator.Opacity" Value="0" />
+                                        <root:VisualStateSetter Target="IndeterminateProgressBarIndicator2.Opacity" Value="1" />
+                                        <root:VisualStateSetter Target="ProgressBarTrack.Opacity" Value="0" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="IndeterminatePaused" Storyboard="{StaticResource IndeterminatePausedStoryboard}">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="IndeterminateProgressBarIndicator.Opacity" Value="0" />
+                                        <root:VisualStateSetter Target="DeterminateProgressBarIndicator.Opacity" Value="0" />
+                                        <root:VisualStateSetter Target="IndeterminateProgressBarIndicator2.Opacity" Value="1" />
+                                        <root:VisualStateSetter Target="ProgressBarTrack.Opacity" Value="0" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
