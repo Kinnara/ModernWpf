@@ -33,6 +33,27 @@ public class TemplateParityTests
     }
 
     [TestMethod]
+    public void ProductTemplatesUseExLayoutControlsForWinUILayoutAttributes()
+    {
+        var repoRoot = FindRepoRoot();
+        var productTemplateRoots = new[]
+        {
+            Path.Combine(repoRoot, "ModernWpf"),
+            Path.Combine(repoRoot, "ModernWpf.Controls")
+        };
+
+        var offenders = productTemplateRoots
+            .Where(Directory.Exists)
+            .SelectMany(root => Directory.EnumerateFiles(root, "*.xaml", SearchOption.AllDirectories))
+            .SelectMany(path => FindNativeLayoutElementsWithWinUILayoutAttributes(repoRoot, path))
+            .ToArray();
+
+        Assert.IsFalse(
+            offenders.Any(),
+            "Native WPF layout elements cannot host WinUI layout/chrome attributes; use the matching *Ex layout control. Offenders: " + string.Join("; ", offenders));
+    }
+
+    [TestMethod]
     public void BatchedSourceBackedPresenterSlotsDoNotUsePlainContentPresenter()
     {
         var repoRoot = FindRepoRoot();
@@ -305,6 +326,38 @@ public class TemplateParityTests
             .Select((line, index) => (Line: line, LineNumber: index + 1))
             .Where(entry => entry.Line.Contains("TextElement.Foreground", StringComparison.Ordinal))
             .Select(entry => $"{relativePath}:{entry.LineNumber}")
+            .ToArray();
+    }
+
+    private static string[] FindNativeLayoutElementsWithWinUILayoutAttributes(string repoRoot, string path)
+    {
+        var relativePath = Path.GetRelativePath(repoRoot, path);
+        var text = File.ReadAllText(path);
+        var checks = new[]
+        {
+            (Element: "Grid", Attributes: "BackgroundSizing|BackgroundTransition|BorderBrush|BorderThickness|ChildrenTransitions|ColumnSpacing|CornerRadius|Padding|RowSpacing"),
+            (Element: "StackPanel", Attributes: "BackgroundSizing|BackgroundTransition|BorderBrush|BorderThickness|ChildrenTransitions|CornerRadius|Padding|Spacing"),
+            (Element: "Border", Attributes: "BackgroundSizing|BackgroundTransition|ChildTransitions"),
+            (Element: "ContentPresenter", Attributes: "BackgroundSizing|BackgroundTransition|ContentTransitions|CornerRadius|HorizontalContentAlignment|LineHeight|MaxLines|Padding|TextWrapping|VerticalContentAlignment")
+        };
+
+        return checks
+            .SelectMany(check => FindNativeLayoutElementWithAttributes(relativePath, text, check.Element, check.Attributes))
+            .ToArray();
+    }
+
+    private static string[] FindNativeLayoutElementWithAttributes(string relativePath, string text, string element, string attributes)
+    {
+        var elementPattern = $@"<\s*(?<name>(?:[A-Za-z_][\w.-]*:)?{element})(?=[\s>/])(?<body>[^>]*)>";
+        var attributePattern = $@"(?:^|\s)(?<attribute>(?:[A-Za-z_][\w.-]*:)?(?:{attributes}))\s*=";
+
+        return Regex.Matches(text, elementPattern, RegexOptions.Singleline)
+            .Cast<Match>()
+            .Select(match => (
+                LineNumber: text.Take(match.Index).Count(ch => ch == '\n') + 1,
+                Attribute: Regex.Match(match.Groups["body"].Value, attributePattern).Groups["attribute"].Value))
+            .Where(match => !string.IsNullOrEmpty(match.Attribute))
+            .Select(match => $"{relativePath}:{match.LineNumber} {element}.{match.Attribute}")
             .ToArray();
     }
 }
