@@ -6,6 +6,8 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Controls;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 using XamlControlsResources = ModernWpf.Controls.XamlControlsResources;
@@ -116,6 +118,112 @@ public class TabViewResourceTests
         });
     }
 
+    [TestMethod]
+    public void WpfTabItemStatesUseVisualStateSettersForWinUIParity()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var tabItem = new TabItem
+            {
+                Header = "First",
+                Content = "First content",
+                IsSelected = true
+            };
+            TabItemHelper.SetIcon(tabItem, new TextBlock { Text = "I" });
+
+            var secondItem = new TabItem
+            {
+                Header = "Second",
+                Content = "Second content"
+            };
+            var tabControl = new TabControl
+            {
+                Width = 360,
+                Height = 180,
+                Items =
+                {
+                    tabItem,
+                    secondItem
+                }
+            };
+
+            using var host = new TestWindowHost(tabControl, width: 420, height: 240);
+            var layoutRoot = FindNamedDescendant<Border>(tabItem, "LayoutRoot");
+
+            AssertStateSetter(layoutRoot, "CommonStates", "PointerOver",
+                "TabContainer.Background",
+                "ContentPresenter.Foreground",
+                "IconControl.Foreground");
+            AssertStateSetter(layoutRoot, "CommonStates", "Pressed",
+                "TabContainer.Background",
+                "ContentPresenter.Foreground",
+                "IconControl.Foreground");
+            AssertStateSetter(layoutRoot, "CommonStates", "Selected",
+                "Shadow.IsShadowEnabled",
+                "TabContainer.Background",
+                "TabContainer.Margin",
+                "TabContainer.BorderThickness",
+                "TabContainer.Padding",
+                "ContentPresenter.Foreground",
+                "IconControl.Foreground",
+                "ContentPresenter.FontWeight");
+            AssertStateSetter(layoutRoot, "CommonStates", "PointerOverSelected",
+                "TabContainer.Background",
+                "ContentPresenter.FontWeight");
+            AssertStateSetter(layoutRoot, "CommonStates", "PressedSelected",
+                "TabContainer.Background",
+                "ContentPresenter.FontWeight");
+            AssertStateSetter(layoutRoot, "DisabledStates", "Disabled",
+                "TabContainer.Background",
+                "IconControl.Foreground",
+                "ContentPresenter.Foreground");
+            AssertStateSetter(layoutRoot, "IconStates", "NoIcon", "IconBox.Visibility");
+            AssertStateSetter(layoutRoot, "ForegroundStates", "ForegroundSet",
+                "IconControl.Foreground",
+                "ContentPresenter.Foreground");
+
+            AssertCurrentState(layoutRoot, "CommonStates", "Selected");
+            AssertCurrentState(layoutRoot, "DisabledStates", "Enabled");
+            AssertCurrentState(layoutRoot, "IconStates", "Icon");
+            AssertCurrentState(layoutRoot, "ForegroundStates", "ForegroundNotSet");
+
+            var contentPresenter = FindNamedDescendant<ContentPresenterEx>(tabItem, "ContentPresenter");
+            var tabContainer = FindNamedDescendant<Border>(tabItem, "TabContainer");
+            Assert.AreEqual(FontWeights.SemiBold, contentPresenter.FontWeight);
+            Assert.AreSame(tabItem.TryFindResource("TabViewItemHeaderBackgroundSelected"), tabContainer.Background);
+            Assert.AreEqual(new Thickness(-1, 0, -1, 0), tabContainer.Margin);
+            Assert.AreEqual(new Thickness(1, 1, 1, 0), tabContainer.BorderThickness);
+            Assert.AreEqual(new Thickness(9, 3, 5, 4), tabContainer.Padding);
+            Assert.AreEqual(1, Panel.GetZIndex(tabItem));
+
+            var foreground = Brushes.Red;
+            tabItem.Foreground = foreground;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            AssertCurrentState(layoutRoot, "ForegroundStates", "ForegroundSet");
+            Assert.AreSame(foreground, contentPresenter.Foreground);
+
+            TabItemHelper.SetIcon(tabItem, null);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            AssertCurrentState(layoutRoot, "IconStates", "NoIcon");
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<Viewbox>(tabItem, "IconBox").Visibility);
+
+            tabItem.ClearValue(Control.ForegroundProperty);
+            tabItem.IsEnabled = false;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            AssertCurrentState(layoutRoot, "ForegroundStates", "ForegroundNotSet");
+            AssertCurrentState(layoutRoot, "DisabledStates", "Disabled");
+            Assert.AreSame(tabItem.TryFindResource("TabViewItemHeaderForegroundDisabled"), contentPresenter.Foreground);
+        });
+    }
+
     private static void AssertLightDarkTabViewResources(string themeName)
     {
         AssertThemeResourceReference(themeName, "TabViewBackground", "SubtleFillColorTransparentBrush");
@@ -202,6 +310,48 @@ public class TabViewResourceTests
         AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonBorderBrushPressed", "SystemColorButtonTextColorBrush");
         AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonBorderBrushSelected", "SystemColorButtonTextColorBrush");
         AssertThemeResourceReference("HighContrast", "TabViewItemHeaderCloseButtonBorderBrushDisabled", "SubtleFillColorTransparentBrush");
+    }
+
+    private static VisualStateEx AssertStateSetter(FrameworkElement stateGroupsRoot, string groupName, string stateName, params string[] expectedTargets)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        var state = group.States.OfType<VisualState>().SingleOrDefault(state => state.Name == stateName);
+        Assert.IsNotNull(state, $"Could not find visual state '{groupName}.{stateName}'.");
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state!;
+        foreach (var expectedTarget in expectedTargets)
+        {
+            Assert.IsTrue(
+                stateEx.Setters.Any(setter => setter.Target == expectedTarget),
+                $"{groupName}.{stateName} is missing setter target '{expectedTarget ?? "<self>"}'.");
+        }
+
+        return stateEx;
+    }
+
+    private static void AssertCurrentState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)
+    {
+        Assert.AreEqual(expectedStateName, FindVisualStateGroup(stateGroupsRoot, groupName).CurrentState?.Name);
+    }
+
+    private static VisualStateGroup FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .SingleOrDefault(group => group.Name == groupName);
+        Assert.IsNotNull(group, $"Could not find visual state group '{groupName}'.");
+        return group!;
+    }
+
+    private static T FindNamedDescendant<T>(DependencyObject root, string name)
+        where T : FrameworkElement
+    {
+        var element = VisualTreeTestHelper.EnumerateDescendants(root)
+            .OfType<T>()
+            .SingleOrDefault(element => element.Name == name);
+        Assert.IsNotNull(element, $"Could not find descendant named '{name}'.");
+        return element!;
     }
 
     private static void AssertResource(ResourceDictionary resources, string key, object expected)

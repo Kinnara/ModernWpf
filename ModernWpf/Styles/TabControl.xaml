@@ -1,7 +1,8 @@
-﻿<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:root="clr-namespace:ModernWpf"
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
@@ -63,6 +64,7 @@
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="primitives:FocusVisualHelper.UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="primitives:ControlHelper.CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
+        <Setter Property="primitives:TabItemHelper.VisualStateSettersEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
@@ -77,6 +79,102 @@
                             Padding="{TemplateBinding Padding}"
                             Margin="-1,0,0,0"
                             SnapsToDevicePixels="True">
+                            <VisualStateManager.CustomVisualStateManager>
+                                <root:VisualStateManagerEx />
+                            </VisualStateManager.CustomVisualStateManager>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <root:VisualStateEx x:Name="Normal" />
+
+                                    <root:VisualStateEx x:Name="PointerOver">
+                                        <root:VisualStateEx.Setters>
+                                            <root:VisualStateSetter Target="TabContainer.Background" Value="{DynamicResource TabViewItemHeaderBackgroundPointerOver}" />
+                                            <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
+                                            <root:VisualStateSetter Target="IconControl.Foreground" Value="{DynamicResource TabViewItemIconForegroundPointerOver}" />
+                                        </root:VisualStateEx.Setters>
+                                    </root:VisualStateEx>
+
+                                    <root:VisualStateEx x:Name="Pressed">
+                                        <root:VisualStateEx.Setters>
+                                            <root:VisualStateSetter Target="TabContainer.Background" Value="{DynamicResource TabViewItemHeaderBackgroundPressed}" />
+                                            <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPressed}" />
+                                            <root:VisualStateSetter Target="IconControl.Foreground" Value="{DynamicResource TabViewItemIconForegroundPressed}" />
+                                        </root:VisualStateEx.Setters>
+                                    </root:VisualStateEx>
+
+                                    <root:VisualStateEx x:Name="Selected">
+                                        <root:VisualStateEx.Setters>
+                                            <root:VisualStateSetter Target="Shadow.IsShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
+                                            <root:VisualStateSetter Target="TabContainer.Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
+                                            <root:VisualStateSetter Target="TabContainer.Margin" Value="{DynamicResource TabViewSelectedItemHeaderMargin}" />
+                                            <root:VisualStateSetter Target="TabContainer.BorderThickness" Value="{DynamicResource TabViewSelectedItemBorderThickness}" />
+                                            <root:VisualStateSetter Target="TabContainer.Padding" Value="{DynamicResource TabViewSelectedItemHeaderPadding}" />
+                                            <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundSelected}" />
+                                            <root:VisualStateSetter Target="IconControl.Foreground" Value="{DynamicResource TabViewItemIconForegroundSelected}" />
+                                            <root:VisualStateSetter Target="ContentPresenter.FontWeight" Value="SemiBold" />
+                                        </root:VisualStateEx.Setters>
+                                    </root:VisualStateEx>
+
+                                    <root:VisualStateEx x:Name="PointerOverSelected">
+                                        <root:VisualStateEx.Setters>
+                                            <root:VisualStateSetter Target="Shadow.IsShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
+                                            <root:VisualStateSetter Target="TabContainer.Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
+                                            <root:VisualStateSetter Target="TabContainer.Margin" Value="{DynamicResource TabViewSelectedItemHeaderMargin}" />
+                                            <root:VisualStateSetter Target="TabContainer.BorderThickness" Value="{DynamicResource TabViewSelectedItemBorderThickness}" />
+                                            <root:VisualStateSetter Target="TabContainer.Padding" Value="{DynamicResource TabViewSelectedItemHeaderPadding}" />
+                                            <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundSelected}" />
+                                            <root:VisualStateSetter Target="IconControl.Foreground" Value="{DynamicResource TabViewItemIconForegroundSelected}" />
+                                            <root:VisualStateSetter Target="ContentPresenter.FontWeight" Value="SemiBold" />
+                                        </root:VisualStateEx.Setters>
+                                    </root:VisualStateEx>
+
+                                    <root:VisualStateEx x:Name="PressedSelected">
+                                        <root:VisualStateEx.Setters>
+                                            <root:VisualStateSetter Target="Shadow.IsShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
+                                            <root:VisualStateSetter Target="TabContainer.Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
+                                            <root:VisualStateSetter Target="TabContainer.Margin" Value="{DynamicResource TabViewSelectedItemHeaderMargin}" />
+                                            <root:VisualStateSetter Target="TabContainer.BorderThickness" Value="{DynamicResource TabViewSelectedItemBorderThickness}" />
+                                            <root:VisualStateSetter Target="TabContainer.Padding" Value="{DynamicResource TabViewSelectedItemHeaderPadding}" />
+                                            <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundSelected}" />
+                                            <root:VisualStateSetter Target="IconControl.Foreground" Value="{DynamicResource TabViewItemIconForegroundSelected}" />
+                                            <root:VisualStateSetter Target="ContentPresenter.FontWeight" Value="SemiBold" />
+                                        </root:VisualStateEx.Setters>
+                                    </root:VisualStateEx>
+                                </VisualStateGroup>
+
+                                <VisualStateGroup x:Name="DisabledStates">
+                                    <root:VisualStateEx x:Name="Enabled" />
+
+                                    <root:VisualStateEx x:Name="Disabled">
+                                        <root:VisualStateEx.Setters>
+                                            <root:VisualStateSetter Target="TabContainer.Background" Value="{DynamicResource TabViewItemHeaderBackgroundDisabled}" />
+                                            <root:VisualStateSetter Target="IconControl.Foreground" Value="{DynamicResource TabViewButtonForegroundDisabled}" />
+                                            <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
+                                        </root:VisualStateEx.Setters>
+                                    </root:VisualStateEx>
+                                </VisualStateGroup>
+
+                                <VisualStateGroup x:Name="IconStates">
+                                    <root:VisualStateEx x:Name="Icon" />
+
+                                    <root:VisualStateEx x:Name="NoIcon">
+                                        <root:VisualStateEx.Setters>
+                                            <root:VisualStateSetter Target="IconBox.Visibility" Value="Collapsed" />
+                                        </root:VisualStateEx.Setters>
+                                    </root:VisualStateEx>
+                                </VisualStateGroup>
+
+                                <VisualStateGroup x:Name="ForegroundStates">
+                                    <root:VisualStateEx x:Name="ForegroundNotSet" />
+
+                                    <root:VisualStateEx x:Name="ForegroundSet">
+                                        <root:VisualStateEx.Setters>
+                                            <root:VisualStateSetter Target="IconControl.Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}" />
+                                            <root:VisualStateSetter Target="ContentPresenter.Foreground" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}" />
+                                        </root:VisualStateEx.Setters>
+                                    </root:VisualStateEx>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
                             <Grid>
 
                                 <Border
@@ -93,6 +191,7 @@
                                     Background="{DynamicResource TabViewItemHeaderBackground}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
+                                    primitives:PressHelper.IsEnabled="True"
                                     primitives:FocusVisualHelper.IsTemplateFocusTarget="True"
                                     Padding="{DynamicResource TabViewItemHeaderPadding}"
                                     CornerRadius="{TemplateBinding primitives:ControlHelper.CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}">
@@ -136,41 +235,8 @@
                     </primitives:ThemeShadowChrome>
 
                     <ControlTemplate.Triggers>
-                        <!-- PointerOver -->
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
-                            <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundPointerOver}" />
-                        </Trigger>
-                        <!-- Selected -->
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Shadow" Property="IsShadowEnabled" Value="{DynamicResource {x:Static SystemParameters.DropShadowKey}}" />
-                            <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundSelected}" />
-                            <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundSelected}" />
                             <Setter Property="Panel.ZIndex" Value="1" />
-                            <Setter TargetName="ContentPresenter" Property="FontWeight" Value="SemiBold"/>
-                        </Trigger>
-                        <!-- PointerOverSelected -->
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsMouseOver" Value="True" />
-                                <Condition Property="IsSelected" Value="True" />
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="TabContainer" Property="Background" Value="{DynamicResource TabViewItemHeaderBackgroundSelected}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundPointerOver}" />
-                            <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewItemIconForegroundPointerOver}" />
-                            <Setter Property="Panel.ZIndex" Value="1" />
-                            <Setter TargetName="ContentPresenter" Property="FontWeight" Value="SemiBold"/>
-                        </MultiTrigger>
-                        <!-- Disabled -->
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="IconControl" Property="Foreground" Value="{DynamicResource TabViewButtonForegroundDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TabViewItemHeaderForegroundDisabled}" />
-                        </Trigger>
-                        <!-- NoIcon -->
-                        <Trigger Property="primitives:TabItemHelper.Icon" Value="{x:Null}">
-                            <Setter TargetName="IconBox" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <DataTrigger Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Bottom">
                             <Setter TargetName="TabContainer" Property="CornerRadius" Value="{Binding Path=(primitives:ControlHelper.CornerRadius), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
