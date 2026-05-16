@@ -50,10 +50,50 @@
                                 <VisualState x:Name="Compact" />
                                 <VisualState x:Name="LabelOnRight" />
                                 <VisualState x:Name="LabelCollapsed" />
-                                <VisualState x:Name="Overflow" />
-                                <VisualState x:Name="OverflowWithToggleButtons" />
-                                <VisualState x:Name="OverflowWithMenuIcons" />
-                                <VisualState x:Name="OverflowWithToggleButtonsAndMenuIcons" />
+                                <ui:VisualStateEx x:Name="Overflow">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentRoot.MinHeight" Value="0" />
+                                        <ui:VisualStateSetter Target="ContentRoot.Width" Value="NaN" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.Margin" Value="12,0,12,0" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="OverflowWithToggleButtons">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentRoot.MinHeight" Value="0" />
+                                        <ui:VisualStateSetter Target="ContentRoot.Width" Value="NaN" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Margin" Value="39,0,12,0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="OverflowWithMenuIcons">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentRoot.MinHeight" Value="0" />
+                                        <ui:VisualStateSetter Target="ContentRoot.Width" Value="NaN" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.VerticalAlignment" Value="Center" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.Width" Value="16" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.Height" Value="16" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.Margin" Value="12,0,12,0" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Margin" Value="39,0,12,0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="OverflowWithToggleButtonsAndMenuIcons">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentRoot.MinHeight" Value="0" />
+                                        <ui:VisualStateSetter Target="ContentRoot.Width" Value="NaN" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.VerticalAlignment" Value="Center" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.Width" Value="16" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.Height" Value="16" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.Margin" Value="39,0,12,0" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Margin" Value="67,0,12,0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CommonStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -148,46 +188,6 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <!--#region ApplicationViewStates-->
-                        <!-- Overflow -->
-                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
-                            <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
-                            <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
-                            <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="ContentViewbox" Property="Margin" Value="12,0,12,0" />
-                            <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                        <!-- OverflowWithToggleButtons -->
-                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtons">
-                            <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
-                            <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
-                            <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="39,0,12,0" />
-                        </Trigger>
-                        <!-- OverflowWithMenuIcons -->
-                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
-                            <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
-                            <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
-                            <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
-                            <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
-                            <Setter TargetName="ContentViewbox" Property="Width" Value="16" />
-                            <Setter TargetName="ContentViewbox" Property="Height" Value="16" />
-                            <Setter TargetName="ContentViewbox" Property="Margin" Value="12,0,12,0" />
-                            <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="39,0,12,0" />
-                        </Trigger>
-                        <!-- OverflowWithToggleButtonsAndMenuIcons -->
-                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithToggleButtonsAndMenuIcons">
-                            <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
-                            <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
-                            <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
-                            <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
-                            <Setter TargetName="ContentViewbox" Property="Width" Value="16" />
-                            <Setter TargetName="ContentViewbox" Property="Height" Value="16" />
-                            <Setter TargetName="ContentViewbox" Property="Margin" Value="39,0,12,0" />
-                            <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="67,0,12,0" />
-                        </Trigger>
                         <!--#endregion-->
                         <!--#region CommonStates-->
                         <!-- PointerOver -->
@@ -286,8 +286,30 @@
                                 <VisualState x:Name="Compact" />
                                 <VisualState x:Name="LabelOnRight" />
                                 <VisualState x:Name="LabelCollapsed" />
-                                <VisualState x:Name="Overflow" />
-                                <VisualState x:Name="OverflowWithMenuIcons" />
+                                <ui:VisualStateEx x:Name="Overflow">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentRoot.MinHeight" Value="0" />
+                                        <ui:VisualStateSetter Target="ContentRoot.Width" Value="NaN" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="OverflowCheckGlyph.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="OverflowWithMenuIcons">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentRoot.MinHeight" Value="0" />
+                                        <ui:VisualStateSetter Target="ContentRoot.Width" Value="NaN" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.VerticalAlignment" Value="Center" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.MaxWidth" Value="16" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.MaxHeight" Value="16" />
+                                        <ui:VisualStateSetter Target="ContentViewbox.Margin" Value="39,0,12,0" />
+                                        <ui:VisualStateSetter Target="OverflowCheckGlyph.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Margin" Value="67,0,12,0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CommonStates">
                                 <ui:VisualStateGroupListener.Listener>
@@ -388,28 +410,6 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <!--#region ApplicationViewStates-->
-                        <!-- Overflow -->
-                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="Overflow">
-                            <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
-                            <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
-                            <Setter TargetName="ContentViewbox" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                        <!-- OverflowWithMenuIcons -->
-                        <Trigger SourceName="ApplicationViewStatesListener" Property="CurrentStateName" Value="OverflowWithMenuIcons">
-                            <Setter TargetName="ContentRoot" Property="MinHeight" Value="0" />
-                            <Setter TargetName="ContentRoot" Property="Width" Value="NaN" />
-                            <Setter TargetName="ContentViewbox" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="ContentViewbox" Property="HorizontalAlignment" Value="Left" />
-                            <Setter TargetName="ContentViewbox" Property="VerticalAlignment" Value="Center" />
-                            <Setter TargetName="ContentViewbox" Property="MaxWidth" Value="16" />
-                            <Setter TargetName="ContentViewbox" Property="MaxHeight" Value="16" />
-                            <Setter TargetName="ContentViewbox" Property="Margin" Value="39,0,12,0" />
-                            <Setter TargetName="OverflowCheckGlyph" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="OverflowTextLabel" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="OverflowTextLabel" Property="Margin" Value="67,0,12,0" />
-                        </Trigger>
                         <!--#endregion-->
                         <!--#region CommonStates-->
                         <!-- PointerOver -->

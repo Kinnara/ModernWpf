@@ -299,6 +299,40 @@ public class CommandBarFlyoutApiTests
         });
     }
 
+    [TestMethod]
+    public void FlyoutButtonApplicationViewStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = CreateCommandBarFlyoutResources();
+            var button = new AppBarButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarButtonStyle"],
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept"
+            };
+            var toggleButton = new AppBarToggleButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarToggleButtonStyle"],
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Accept"
+            };
+
+            var root = new System.Windows.Controls.StackPanel();
+            root.Resources.MergedDictionaries.Add(resources);
+            root.Children.Add(button);
+            root.Children.Add(toggleButton);
+
+            using var host = new TestWindowHost(root, width: 220, height: 180);
+            host.UpdateLayout();
+
+            VerifyAppBarButtonApplicationViewStates(button);
+            VerifyAppBarToggleButtonApplicationViewStates(toggleButton);
+        });
+    }
+
     private static CommandBarFlyoutCommandBar GetCommandBar(CommandBarFlyout commandBarFlyout)
     {
         var presenter = commandBarFlyout.GetPresenter();
@@ -464,6 +498,139 @@ public class CommandBarFlyoutApiTests
         Assert.AreEqual(Visibility.Visible, label.Visibility);
         Assert.IsTrue(VisualStateManager.GoToState(control, "KeyboardAcceleratorTextCollapsed", false));
         Assert.AreEqual(Visibility.Collapsed, label.Visibility);
+    }
+
+    private static void VerifyAppBarButtonApplicationViewStates(AppBarButton button)
+    {
+        var root = FindTemplateChild<System.Windows.Controls.Grid>(button, "Root");
+        var contentRoot = FindTemplateChild<System.Windows.Controls.Grid>(button, "ContentRoot");
+        var contentViewbox = FindTemplateChild<System.Windows.Controls.Viewbox>(button, "ContentViewbox");
+        var overflowTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "OverflowTextLabel");
+
+        AssertStateSetter(
+            root,
+            "ApplicationViewStates",
+            "Overflow",
+            "ContentRoot.MinHeight",
+            "ContentRoot.Width",
+            "ContentViewbox.Visibility",
+            "ContentViewbox.Margin",
+            "OverflowTextLabel.Visibility");
+        AssertStateSetter(
+            root,
+            "ApplicationViewStates",
+            "OverflowWithToggleButtons",
+            "ContentRoot.MinHeight",
+            "ContentRoot.Width",
+            "ContentViewbox.Visibility",
+            "OverflowTextLabel.Visibility",
+            "OverflowTextLabel.Margin");
+        AssertStateSetter(
+            root,
+            "ApplicationViewStates",
+            "OverflowWithMenuIcons",
+            "ContentRoot.MinHeight",
+            "ContentRoot.Width",
+            "ContentViewbox.HorizontalAlignment",
+            "ContentViewbox.VerticalAlignment",
+            "ContentViewbox.Width",
+            "ContentViewbox.Height",
+            "ContentViewbox.Margin",
+            "OverflowTextLabel.Visibility",
+            "OverflowTextLabel.Margin");
+        AssertStateSetter(
+            root,
+            "ApplicationViewStates",
+            "OverflowWithToggleButtonsAndMenuIcons",
+            "ContentRoot.MinHeight",
+            "ContentRoot.Width",
+            "ContentViewbox.HorizontalAlignment",
+            "ContentViewbox.VerticalAlignment",
+            "ContentViewbox.Width",
+            "ContentViewbox.Height",
+            "ContentViewbox.Margin",
+            "OverflowTextLabel.Visibility",
+            "OverflowTextLabel.Margin");
+
+        Assert.AreEqual(40.0, contentRoot.Width);
+        Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "OverflowWithToggleButtonsAndMenuIcons", false));
+
+        Assert.AreEqual(0.0, contentRoot.MinHeight);
+        Assert.IsTrue(double.IsNaN(contentRoot.Width));
+        Assert.AreEqual(HorizontalAlignment.Left, contentViewbox.HorizontalAlignment);
+        Assert.AreEqual(VerticalAlignment.Center, contentViewbox.VerticalAlignment);
+        Assert.AreEqual(16.0, contentViewbox.Width);
+        Assert.AreEqual(16.0, contentViewbox.Height);
+        Assert.AreEqual(new Thickness(39, 0, 12, 0), contentViewbox.Margin);
+        Assert.AreEqual(Visibility.Visible, overflowTextLabel.Visibility);
+        Assert.AreEqual(new Thickness(67, 0, 12, 0), overflowTextLabel.Margin);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "FullSize", false));
+
+        Assert.AreEqual(40.0, contentRoot.Width);
+        Assert.IsTrue(double.IsNaN(contentViewbox.Width));
+        Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
+    }
+
+    private static void VerifyAppBarToggleButtonApplicationViewStates(AppBarToggleButton button)
+    {
+        var root = FindTemplateChild<System.Windows.Controls.Grid>(button, "Root");
+        var contentRoot = FindTemplateChild<System.Windows.Controls.Grid>(button, "ContentRoot");
+        var contentViewbox = FindTemplateChild<System.Windows.Controls.Viewbox>(button, "ContentViewbox");
+        var overflowCheckGlyph = FindTemplateChild<FrameworkElement>(button, "OverflowCheckGlyph");
+        var overflowTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "OverflowTextLabel");
+
+        AssertStateSetter(
+            root,
+            "ApplicationViewStates",
+            "Overflow",
+            "ContentRoot.MinHeight",
+            "ContentRoot.Width",
+            "ContentViewbox.Visibility",
+            "OverflowCheckGlyph.Visibility",
+            "OverflowTextLabel.Visibility");
+        AssertStateSetter(
+            root,
+            "ApplicationViewStates",
+            "OverflowWithMenuIcons",
+            "ContentRoot.MinHeight",
+            "ContentRoot.Width",
+            "ContentViewbox.Visibility",
+            "ContentViewbox.HorizontalAlignment",
+            "ContentViewbox.VerticalAlignment",
+            "ContentViewbox.MaxWidth",
+            "ContentViewbox.MaxHeight",
+            "ContentViewbox.Margin",
+            "OverflowCheckGlyph.Visibility",
+            "OverflowTextLabel.Visibility",
+            "OverflowTextLabel.Margin");
+
+        Assert.AreEqual(40.0, contentRoot.Width);
+        Assert.AreEqual(Visibility.Collapsed, overflowCheckGlyph.Visibility);
+        Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "OverflowWithMenuIcons", false));
+
+        Assert.AreEqual(0.0, contentRoot.MinHeight);
+        Assert.IsTrue(double.IsNaN(contentRoot.Width));
+        Assert.AreEqual(Visibility.Visible, contentViewbox.Visibility);
+        Assert.AreEqual(HorizontalAlignment.Left, contentViewbox.HorizontalAlignment);
+        Assert.AreEqual(VerticalAlignment.Center, contentViewbox.VerticalAlignment);
+        Assert.AreEqual(16.0, contentViewbox.MaxWidth);
+        Assert.AreEqual(16.0, contentViewbox.MaxHeight);
+        Assert.AreEqual(new Thickness(39, 0, 12, 0), contentViewbox.Margin);
+        Assert.AreEqual(Visibility.Visible, overflowCheckGlyph.Visibility);
+        Assert.AreEqual(Visibility.Visible, overflowTextLabel.Visibility);
+        Assert.AreEqual(new Thickness(67, 0, 12, 0), overflowTextLabel.Margin);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "FullSize", false));
+
+        Assert.AreEqual(40.0, contentRoot.Width);
+        Assert.IsTrue(double.IsPositiveInfinity(contentViewbox.MaxWidth));
+        Assert.AreEqual(Visibility.Collapsed, overflowCheckGlyph.Visibility);
+        Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
     }
 
     private static VisualStateEx AssertStateSetter(
