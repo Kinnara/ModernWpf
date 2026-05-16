@@ -46,6 +46,9 @@
                         Background="Transparent"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
 
                         <ui:GridEx.Resources>
                             <!-- Override the style of the inner buttons so that they don't affect background/foreground/border colors -->
@@ -68,6 +71,21 @@
                                                 x:Name="RootGrid"
                                                 Background="Transparent"
                                                 SnapsToDevicePixels="True">
+                                                <VisualStateManager.CustomVisualStateManager>
+                                                    <ui:VisualStateManagerEx />
+                                                </VisualStateManager.CustomVisualStateManager>
+                                                <VisualStateManager.VisualStateGroups>
+                                                    <VisualStateGroup x:Name="CommonStates">
+                                                        <VisualState x:Name="Normal" />
+                                                        <ui:VisualStateEx x:Name="Disabled">
+                                                            <ui:VisualStateEx.Setters>
+                                                                <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource SplitButtonForegroundDisabled}" />
+                                                                <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource SplitButtonBackgroundDisabled}" />
+                                                                <ui:VisualStateSetter Target="ContentPresenter.BorderBrush" Value="Transparent" />
+                                                            </ui:VisualStateEx.Setters>
+                                                        </ui:VisualStateEx>
+                                                    </VisualStateGroup>
+                                                </VisualStateManager.VisualStateGroups>
                                                 <ui:ContentPresenterEx
                                                     x:Name="ContentPresenter"
                                                     BorderBrush="{TemplateBinding BorderBrush}"
@@ -85,11 +103,6 @@
                                                     RecognizesAccessKey="True"
                                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                             </Grid>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsEnabled" Value="False">
-                                                    <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource SplitButtonForegroundDisabled}" />
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
@@ -99,19 +112,140 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="FlyoutOpen" />
-                                <VisualState x:Name="TouchPressed" />
-                                <VisualState x:Name="PrimaryPointerOver" />
-                                <VisualState x:Name="PrimaryPressed" />
-                                <VisualState x:Name="SecondaryPointerOver" />
-                                <VisualState x:Name="SecondaryPressed" />
-                                <VisualState x:Name="Checked" />
-                                <VisualState x:Name="CheckedFlyoutOpen" />
-                                <VisualState x:Name="CheckedTouchPressed" />
-                                <VisualState x:Name="CheckedPrimaryPointerOver" />
-                                <VisualState x:Name="CheckedPrimaryPressed" />
-                                <VisualState x:Name="CheckedSecondaryPointerOver" />
-                                <VisualState x:Name="CheckedSecondaryPressed" />
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource SplitButtonBorderBrushDisabled}" />
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="Transparent" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="Transparent" />
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="Transparent" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="FlyoutOpen">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource SplitButtonBorderBrushPressed}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundSecondaryPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="TouchPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource SplitButtonBorderBrushPressed}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundSecondaryPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PrimaryPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PrimaryPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SecondaryPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackground}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.BorderBrush" Value="{DynamicResource SplitButtonBorderBrushPointerOver}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="DividerBackgroundGrid.Background" Value="Transparent" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundSecondary}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SecondaryPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackground}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundSecondaryPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Checked">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource SplitButtonBorderBrushChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Target="DividerBackgroundGrid.Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedFlyoutOpen">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource SplitButtonBorderBrushCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="DividerBackgroundGrid.Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedTouchPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource SplitButtonBorderBrushCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="DividerBackgroundGrid.Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedPrimaryPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource SplitButtonBorderBrushChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundCheckedPointerOver}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPointerOver}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Target="DividerBackgroundGrid.Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedPrimaryPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource SplitButtonBorderBrushChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Target="DividerBackgroundGrid.Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedSecondaryPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource SplitButtonBorderBrushChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundCheckedPointerOver}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPointerOver}" />
+                                        <ui:VisualStateSetter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Target="DividerBackgroundGrid.Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CheckedSecondaryPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="Border.BorderBrush" Value="{DynamicResource SplitButtonBorderBrushChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Target="SecondaryBackgroundGrid.Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
+                                        <ui:VisualStateSetter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
+                                        <ui:VisualStateSetter Target="DividerBackgroundGrid.Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <ui:VisualStateGroupListener.Listener>
                                     <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
                                 </ui:VisualStateGroupListener.Listener>
@@ -119,18 +253,12 @@
 
                             <VisualStateGroup x:Name="SecondaryButtonPlacementStates">
                                 <VisualState x:Name="SecondaryButtonRight" />
-                                <VisualState x:Name="SecondaryButtonSpan">
-                                    <VisualState.Storyboard>
-                                        <Storyboard>
-                                            <Int32AnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="(Grid.Column)">
-                                                <DiscreteInt32KeyFrame KeyTime="0" Value="0" />
-                                            </Int32AnimationUsingKeyFrames>
-                                            <Int32AnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="(Grid.ColumnSpan)">
-                                                <DiscreteInt32KeyFrame KeyTime="0" Value="3" />
-                                            </Int32AnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState.Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="SecondaryButtonSpan">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SecondaryButton.(Grid.Column)" Value="0" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.(Grid.ColumnSpan)" Value="3" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -214,121 +342,6 @@
                         </Button>
                     </ui:GridEx>
 
-                    <ControlTemplate.Triggers>
-                        <!-- FlyoutOpen -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="FlyoutOpen">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundPressed}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundPressed}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushPressed}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundPressed}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundSecondaryPressed}" />
-                        </Trigger>
-                        <!-- TouchPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="TouchPressed">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundPressed}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundPressed}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushPressed}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundPressed}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundSecondaryPressed}" />
-                        </Trigger>
-                        <!-- PrimaryPointerOver -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PrimaryPointerOver">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundPointerOver}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundPointerOver}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackground}" />
-                        </Trigger>
-                        <!-- PrimaryPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PrimaryPressed">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundPressed}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundPressed}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackground}" />
-                        </Trigger>
-                        <!-- SecondaryPointerOver -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="SecondaryPointerOver">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackground}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundPointerOver}" />
-                            <Setter TargetName="SecondaryButton" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushPointerOver}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundPointerOver}" />
-                            <Setter TargetName="DividerBackgroundGrid" Property="Background" Value="Transparent" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundSecondary}" />
-                        </Trigger>
-                        <!-- SecondaryPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="SecondaryPressed">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackground}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundPressed}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundSecondaryPressed}" />
-                        </Trigger>
-                        <!-- Checked -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Checked">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushChecked}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
-                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
-                            <Setter TargetName="DividerBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}"/>
-                        </Trigger>
-                        <!-- CheckedFlyoutOpen -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedFlyoutOpen">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushCheckedPressed}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
-                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
-                            <Setter TargetName="DividerBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}"/>
-                        </Trigger>
-                        <!-- CheckedTouchPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedTouchPressed">
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushCheckedPressed}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
-                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
-                            <Setter TargetName="DividerBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}"/>
-                        </Trigger>
-                        <!-- CheckedPrimaryPointerOver -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPrimaryPointerOver">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushChecked}" />
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundCheckedPointerOver}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPointerOver}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
-                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
-                            <Setter TargetName="DividerBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}"/>
-                        </Trigger>
-                        <!-- CheckedPrimaryPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedPrimaryPressed">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushChecked}" />
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
-                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
-                            <Setter TargetName="DividerBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}"/>
-                        </Trigger>
-                        <!-- CheckedSecondaryPointerOver -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedSecondaryPointerOver">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushChecked}" />
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundCheckedPointerOver}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPointerOver}" />
-                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
-                            <Setter TargetName="DividerBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}"/>
-                        </Trigger>
-                        <!-- CheckedSecondaryPressed -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="CheckedSecondaryPressed">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SplitButtonBorderBrushChecked}" />
-                            <Setter TargetName="PrimaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundChecked}" />
-                            <Setter TargetName="PrimaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
-                            <Setter TargetName="SecondaryBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBackgroundCheckedPressed}" />
-                            <Setter TargetName="SecondaryButton" Property="Foreground" Value="{DynamicResource SplitButtonForegroundCheckedPressed}" />
-                            <Setter Property="Foreground" Value="{DynamicResource SplitButtonForegroundChecked}" />
-                            <Setter TargetName="DividerBackgroundGrid" Property="Background" Value="{DynamicResource SplitButtonBorderBrushCheckedDivider}"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

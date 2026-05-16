@@ -186,6 +186,54 @@ public class SplitButtonApiTests
     }
 
     [TestMethod]
+    public void TemplateUsesVisualStateSettersForWinUIStateParity()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var splitButton = new ToggleSplitButton
+            {
+                Content = "Split",
+                Width = 220,
+                Height = 40,
+                IsChecked = true
+            };
+
+            using var host = new TestWindowHost(splitButton, width: 360, height: 180);
+            host.UpdateLayout();
+
+            var root = FindTemplatePart<GridEx>(splitButton, "RootGrid");
+
+            AssertStateSetter(root, "CommonStates", "Disabled", "Border.BorderBrush");
+            AssertStateSetter(root, "CommonStates", "FlyoutOpen", "PrimaryBackgroundGrid.Background");
+            AssertStateSetter(root, "CommonStates", "TouchPressed", "SecondaryButton.Foreground");
+            AssertStateSetter(root, "CommonStates", "PrimaryPointerOver", "PrimaryButton.Foreground");
+            AssertStateSetter(root, "CommonStates", "PrimaryPressed", "PrimaryBackgroundGrid.Background");
+            AssertStateSetter(root, "CommonStates", "SecondaryPointerOver", "DividerBackgroundGrid.Background");
+            AssertStateSetter(root, "CommonStates", "SecondaryPressed", "SecondaryButton.Foreground");
+            AssertStateSetter(root, "CommonStates", "Checked", "DividerBackgroundGrid.Background");
+            AssertStateSetter(root, "CommonStates", "CheckedFlyoutOpen", null, "Foreground");
+            AssertStateSetter(root, "CommonStates", "CheckedTouchPressed", "Border.BorderBrush");
+            AssertStateSetter(root, "CommonStates", "CheckedPrimaryPointerOver", "PrimaryBackgroundGrid.Background");
+            AssertStateSetter(root, "CommonStates", "CheckedPrimaryPressed", "PrimaryButton.Foreground");
+            AssertStateSetter(root, "CommonStates", "CheckedSecondaryPointerOver", "SecondaryButton.Foreground");
+            AssertStateSetter(root, "CommonStates", "CheckedSecondaryPressed", "SecondaryBackgroundGrid.Background");
+            AssertStateSetter(root, "SecondaryButtonPlacementStates", "SecondaryButtonSpan", "SecondaryButton.(Grid.Column)");
+            AssertStateSetter(root, "SecondaryButtonPlacementStates", "SecondaryButtonSpan", "SecondaryButton.(Grid.ColumnSpan)");
+
+            var primaryButton = FindTemplatePart<System.Windows.Controls.Button>(splitButton, "PrimaryButton");
+            primaryButton.ApplyTemplate();
+            var primaryButtonRoot = primaryButton.Template?.FindName("RootGrid", primaryButton) as FrameworkElement
+                ?? throw new AssertFailedException("Expected SplitButton primary button template root.");
+
+            AssertStateSetter(primaryButtonRoot, "CommonStates", "Disabled", "ContentPresenter.Foreground");
+            AssertStateSetter(primaryButtonRoot, "CommonStates", "Disabled", "RootGrid.Background");
+            AssertStateSetter(primaryButtonRoot, "CommonStates", "Disabled", "ContentPresenter.BorderBrush");
+        });
+    }
+
+    [TestMethod]
     public void VerifyIsCheckedProperty()
     {
         WpfTestHost.Run(() =>
@@ -207,6 +255,66 @@ public class SplitButtonApiTests
 
         return splitButton.Template?.FindName(name, splitButton) as T
             ?? throw new AssertFailedException($"Could not find SplitButton template part '{name}'.");
+    }
+
+    private static void AssertStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string groupName,
+        string stateName,
+        string? expectedTarget,
+        string? expectedProperty = null)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        Assert.IsNotNull(group, $"Expected visual state group '{groupName}'.");
+
+        var state = FindVisualState(group!, stateName);
+        Assert.IsNotNull(state, $"Expected visual state '{groupName}.{stateName}'.");
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state!;
+        foreach (VisualStateSetter setter in stateEx.Setters)
+        {
+            bool targetMatches = expectedTarget is null ?
+                string.IsNullOrEmpty(setter.Target) :
+                setter.Target == expectedTarget;
+            bool propertyMatches = expectedProperty is null ?
+                string.IsNullOrEmpty(setter.Property) :
+                setter.Property == expectedProperty;
+
+            if (targetMatches && propertyMatches)
+            {
+                return;
+            }
+        }
+
+        Assert.Fail(
+            $"Expected visual state '{groupName}.{stateName}' to contain setter '{expectedTarget ?? expectedProperty}'.");
+    }
+
+    private static VisualStateGroup? FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        foreach (VisualStateGroup group in VisualStateManager.GetVisualStateGroups(stateGroupsRoot))
+        {
+            if (group.Name == groupName)
+            {
+                return group;
+            }
+        }
+
+        return null;
+    }
+
+    private static VisualState? FindVisualState(VisualStateGroup group, string stateName)
+    {
+        foreach (VisualState state in group.States)
+        {
+            if (state.Name == stateName)
+            {
+                return state;
+            }
+        }
+
+        return null;
     }
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)

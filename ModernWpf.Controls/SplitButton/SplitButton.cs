@@ -28,6 +28,7 @@ namespace ModernWpf.Controls
         {
             KeyDown += OnSplitButtonKeyDown;
             KeyUp += OnSplitButtonKeyUp;
+            IsEnabledChanged += OnSplitButtonIsEnabledChanged;
 
             InputBindings.Add(new KeyBinding(new OpenFlyoutCommand(this), Key.Down, ModifierKeys.Alt));
         }
@@ -262,6 +263,12 @@ namespace ModernWpf.Controls
             }
 
             // change visual state
+            if (!IsEnabled)
+            {
+                VisualStateManager.GoToState(this, "Disabled", useTransitions);
+                return;
+            }
+
             var primaryButton = m_primaryButton;
             var secondaryButton = m_secondaryButton;
             if (primaryButton != null && m_secondaryButton != null)
@@ -447,6 +454,11 @@ namespace ModernWpf.Controls
                 OpenFlyout();
                 args.Handled = true;
             }
+        }
+
+        private void OnSplitButtonIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs args)
+        {
+            UpdateVisualStates();
         }
 
         private void UnregisterEvents()
