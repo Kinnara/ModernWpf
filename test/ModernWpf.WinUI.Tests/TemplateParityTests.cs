@@ -167,6 +167,15 @@ public class TemplateParityTests
         Assert.IsFalse(
             offenders.Any(),
             "VisualState setter audit rows should use explicit actionable statuses, not the ambiguous Partial bucket. Offenders: " + string.Join("; ", offenders));
+
+        var pendingRows = statuses
+            .Where(entry => entry.Status == "Pending")
+            .Select(entry => $"docs{Path.DirectorySeparatorChar}winui-visualstate-setters-audit.md:{entry.LineNumber}")
+            .ToArray();
+
+        Assert.IsFalse(
+            pendingRows.Any(),
+            "Audited WinUI VisualState.Setters rows should be converted or carry an explicit compatibility gap decision. Pending rows: " + string.Join("; ", pendingRows));
     }
 
     [TestMethod]
