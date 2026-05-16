@@ -111,6 +111,26 @@ public class ItemsRepeaterApiTests
         });
     }
 
+    [TestMethod]
+    public void GetOrCreateElementRejectsInvalidIndexesLikeWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var repeater = new ItemsRepeater
+            {
+                ItemsSource = Enumerable.Range(0, 5).Select(i => $"Item #{i}")
+            };
+
+            var negativeException = Assert.ThrowsException<ArgumentException>(() => repeater.GetOrCreateElement(-1));
+            StringAssert.Contains(negativeException.Message, "Argument index is invalid.");
+            Assert.AreEqual("index", negativeException.ParamName);
+
+            var pastEndException = Assert.ThrowsException<ArgumentException>(() => repeater.GetOrCreateElement(5));
+            StringAssert.Contains(pastEndException.Message, "Argument index is invalid.");
+            Assert.AreEqual("index", pastEndException.ParamName);
+        });
+    }
+
     private static TestWindowHost CreateScrollHost(ItemsRepeater repeater)
     {
         var scrollViewer = new ScrollViewer

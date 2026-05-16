@@ -366,9 +366,9 @@ namespace ModernWpf.Controls
                 throw new InvalidOperationException("ItemSource doesn't have a value");
             }
 
-            if (index >= 0 && index >= ItemsSourceView.Count)
+            if (index < 0 || index >= ItemsSourceView.Count)
             {
-                throw new ArgumentException(nameof(index), "Argument index is invalid.");
+                throw new ArgumentException("Argument index is invalid.", nameof(index));
             }
 
             if (m_isLayoutInProgress)
