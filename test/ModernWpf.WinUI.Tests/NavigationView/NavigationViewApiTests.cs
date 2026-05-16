@@ -765,10 +765,12 @@ public class NavigationViewApiTests
             TestApplication.EnsureInitialized();
 
             var icon = new ModernWpf.Controls.SymbolIcon { Symbol = ModernWpf.Controls.Symbol.Home };
+            var infoBadge = new ModernWpf.Controls.InfoBadge { Value = 7 };
             var menuItem = new ModernWpf.Controls.NavigationViewItem
             {
                 Content = "Home",
-                Icon = icon
+                Icon = icon,
+                InfoBadge = infoBadge
             };
             var navView = new ModernWpf.Controls.NavigationView
             {
@@ -783,6 +785,13 @@ public class NavigationViewApiTests
 
             var contentPresenter = FindNamedDescendant<ModernWpf.Controls.ContentPresenterEx>(menuItem, "ContentPresenter");
             Assert.AreEqual("Home", contentPresenter.Content);
+
+            var itemPresenter = VisualTreeTestHelper.FindDescendant<ModernWpf.Controls.Primitives.NavigationViewItemPresenter>(menuItem);
+            Assert.IsNotNull(itemPresenter);
+            Assert.AreSame(infoBadge, itemPresenter!.InfoBadge);
+
+            var infoBadgePresenter = FindNamedDescendant<ContentPresenter>(itemPresenter, "InfoBadgePresenter");
+            Assert.AreSame(infoBadge, infoBadgePresenter.Content);
         });
     }
 
@@ -796,7 +805,8 @@ public class NavigationViewApiTests
             var menuItem = new ModernWpf.Controls.NavigationViewItem
             {
                 Content = "Home",
-                Icon = new ModernWpf.Controls.SymbolIcon { Symbol = ModernWpf.Controls.Symbol.Home }
+                Icon = new ModernWpf.Controls.SymbolIcon { Symbol = ModernWpf.Controls.Symbol.Home },
+                InfoBadge = new ModernWpf.Controls.InfoBadge { Value = 7 }
             };
             var navView = new ModernWpf.Controls.NavigationView
             {
@@ -816,6 +826,7 @@ public class NavigationViewApiTests
             var iconColumn = FindNamedDescendant<Border>(itemPresenter, "IconColumn");
             var chevron = FindNamedDescendant<FrameworkElement>(itemPresenter, "ExpandCollapseChevron");
             var contentGrid = FindNamedDescendant<Grid>(itemPresenter, "ContentGrid");
+            var infoBadgePresenter = FindNamedDescendant<ContentPresenter>(itemPresenter, "InfoBadgePresenter");
 
             AssertStateSetter(layoutRoot, "PointerStates", "PointerOver",
                 "LayoutRoot.Background",
@@ -826,13 +837,20 @@ public class NavigationViewApiTests
             AssertStateSetter(layoutRoot, "IconStates", "IconCollapsed",
                 "IconBox.Visibility",
                 "IconColumn.Width");
+            AssertStateSetter(layoutRoot, "InfoBadgeStates", "InfoBadgeCollapsed",
+                "InfoBadgePresenter.Visibility");
             AssertStateSetter(layoutRoot, "ChevronStates", "ChevronVisibleOpen",
                 "ExpandCollapseChevron.Visibility",
                 "ExpandCollapseChevronIcon.Visibility",
                 "ExpandCollapseChevronRotateTransform.Angle");
             AssertStateSetter(layoutRoot, "PaneAndTopLevelItemStates", "ClosedCompactAndTopLevelItem",
                 "ContentPresenter.Margin",
-                "ContentGrid.Margin");
+                "ContentGrid.Margin",
+                "InfoBadgePresenter.(Grid.Column)",
+                "InfoBadgePresenter.(Grid.ColumnSpan)",
+                "InfoBadgePresenter.VerticalAlignment",
+                "InfoBadgePresenter.HorizontalAlignment",
+                "InfoBadgePresenter.Margin");
 
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "PointerOver", false));
             AssertCurrentState(layoutRoot, "PointerStates", "PointerOver");
@@ -857,6 +875,15 @@ public class NavigationViewApiTests
             AssertCurrentState(layoutRoot, "PaneAndTopLevelItemStates", "ClosedCompactAndTopLevelItem");
             Assert.AreEqual(itemPresenter.TryFindResource("NavigationViewCompactItemContentPresenterMargin"), contentPresenter.Margin);
             Assert.AreEqual(new Thickness(0), contentGrid.Margin);
+            Assert.AreEqual(0, Grid.GetColumn(infoBadgePresenter));
+            Assert.AreEqual(4, Grid.GetColumnSpan(infoBadgePresenter));
+            Assert.AreEqual(VerticalAlignment.Top, infoBadgePresenter.VerticalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Right, infoBadgePresenter.HorizontalAlignment);
+            Assert.AreEqual(new Thickness(0, 2, 2, 0), infoBadgePresenter.Margin);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "InfoBadgeCollapsed", false));
+            AssertCurrentState(layoutRoot, "InfoBadgeStates", "InfoBadgeCollapsed");
+            Assert.AreEqual(Visibility.Collapsed, infoBadgePresenter.Visibility);
         });
     }
 
@@ -871,6 +898,7 @@ public class NavigationViewApiTests
             {
                 Content = "Home",
                 Icon = new ModernWpf.Controls.SymbolIcon { Symbol = ModernWpf.Controls.Symbol.Home },
+                InfoBadge = new ModernWpf.Controls.InfoBadge { Value = 7 },
                 IsExpanded = true
             };
             menuItem.MenuItems.Add(new ModernWpf.Controls.NavigationViewItem { Content = "Child" });
@@ -897,6 +925,7 @@ public class NavigationViewApiTests
             var chevron = FindNamedDescendant<FrameworkElement>(itemPresenter, "ExpandCollapseChevron");
             var chevronIcon = FindNamedDescendant<ModernWpf.Controls.FontIconFallback>(itemPresenter, "ExpandCollapseChevronIcon");
             var chevronRotateTransform = (RotateTransform)chevronIcon.RenderTransform;
+            var infoBadgePresenter = FindNamedDescendant<ContentPresenter>(itemPresenter, "InfoBadgePresenter");
 
             AssertStateSetter(layoutRoot, "PointerStates", "PointerOver",
                 "LayoutRoot.Background",
@@ -924,6 +953,8 @@ public class NavigationViewApiTests
                 "ContentPresenter.Margin",
                 "SelectionIndicatorGrid.Margin",
                 "ExpandCollapseChevron.Margin");
+            AssertStateSetter(layoutRoot, "InfoBadgeStates", "InfoBadgeCollapsed",
+                "InfoBadgePresenter.Visibility");
             AssertStateSetter(layoutRoot, "ChevronStates", "ChevronVisibleOpen",
                 "ExpandCollapseChevron.Visibility",
                 "ExpandCollapseChevronRotateTransform.Angle");
@@ -960,6 +991,10 @@ public class NavigationViewApiTests
             Assert.AreEqual(itemPresenter.TryFindResource("TopNavigationViewItemContentOnlyContentPresenterMargin"), contentPresenter.Margin);
             Assert.AreEqual(new Thickness(12, 0, 12, 4), selectionIndicatorGrid.Margin);
             Assert.AreEqual(itemPresenter.TryFindResource("TopNavigationViewItemContentOnlyExpandChevronMargin"), chevron.Margin);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "InfoBadgeCollapsed", false));
+            AssertCurrentState(layoutRoot, "InfoBadgeStates", "InfoBadgeCollapsed");
+            Assert.AreEqual(Visibility.Collapsed, infoBadgePresenter.Visibility);
 
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "ChevronVisibleOpen", false));
             AssertCurrentState(layoutRoot, "ChevronStates", "ChevronVisibleOpen");
@@ -998,7 +1033,8 @@ public class NavigationViewApiTests
             {
                 Style = overflowStyle,
                 Content = "Overflow",
-                Icon = new ModernWpf.Controls.SymbolIcon { Symbol = ModernWpf.Controls.Symbol.Home }
+                Icon = new ModernWpf.Controls.SymbolIcon { Symbol = ModernWpf.Controls.Symbol.Home },
+                InfoBadge = new ModernWpf.Controls.InfoBadge { Value = 7 }
             };
             host.Window.Content = itemPresenter;
             host.UpdateLayout();
@@ -1010,6 +1046,7 @@ public class NavigationViewApiTests
             var chevron = FindNamedDescendant<FrameworkElement>(itemPresenter, "ExpandCollapseChevron");
             var chevronIcon = FindNamedDescendant<ModernWpf.Controls.FontIconFallback>(itemPresenter, "ExpandCollapseChevronIcon");
             var chevronRotateTransform = (RotateTransform)chevronIcon.RenderTransform;
+            var infoBadgePresenter = FindNamedDescendant<ContentPresenter>(itemPresenter, "InfoBadgePresenter");
 
             AssertStateSetter(layoutRoot, "PointerStates", "PointerOver",
                 "LayoutRoot.Background",
@@ -1021,6 +1058,8 @@ public class NavigationViewApiTests
             AssertStateSetter(layoutRoot, "NavigationViewIconPositionStates", "ContentOnly",
                 "IconBox.Visibility",
                 "ContentPresenter.Margin");
+            AssertStateSetter(layoutRoot, "InfoBadgeStates", "InfoBadgeCollapsed",
+                "InfoBadgePresenter.Visibility");
             AssertStateSetter(layoutRoot, "ChevronStates", "ChevronVisibleOpen",
                 "ExpandCollapseChevron.Visibility",
                 "ExpandCollapseChevronRotateTransform.Angle");
@@ -1035,6 +1074,10 @@ public class NavigationViewApiTests
             AssertCurrentState(layoutRoot, "NavigationViewIconPositionStates", "ContentOnly");
             Assert.AreEqual(Visibility.Collapsed, iconBox.Visibility);
             Assert.AreEqual(itemPresenter.TryFindResource("TopNavigationViewItemOnOverflowNoIconContentPresenterMargin"), contentPresenter.Margin);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "InfoBadgeCollapsed", false));
+            AssertCurrentState(layoutRoot, "InfoBadgeStates", "InfoBadgeCollapsed");
+            Assert.AreEqual(Visibility.Collapsed, infoBadgePresenter.Visibility);
 
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "ChevronVisibleOpen", false));
             AssertCurrentState(layoutRoot, "ChevronStates", "ChevronVisibleOpen");
@@ -1060,9 +1103,15 @@ public class NavigationViewApiTests
             using var host = new TestWindowHost(navView);
 
             var settingsItem = (ModernWpf.Controls.NavigationViewItem)navView.SettingsItem;
+            var infoBadge = new ModernWpf.Controls.InfoBadge { Value = 7 };
+            settingsItem.InfoBadge = infoBadge;
+            host.UpdateLayout();
+
             var layoutRoot = FindNamedDescendant<Border>(settingsItem, "LayoutRoot");
             var pointerRectangle = FindNamedDescendant<Rectangle>(settingsItem, "PointerRectangle");
             var icon = FindNamedDescendant<ModernWpf.Controls.ContentPresenterEx>(settingsItem, "Icon");
+            var infoBadgePresenter = FindNamedDescendant<ContentPresenter>(settingsItem, "InfoBadgePresenter");
+            Assert.AreSame(infoBadge, infoBadgePresenter.Content);
 
             AssertStateSetter(layoutRoot, "PointerStates", "PointerOver",
                 "LayoutRoot.Background",

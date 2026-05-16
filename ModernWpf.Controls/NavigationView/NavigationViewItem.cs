@@ -311,6 +311,11 @@ namespace ModernWpf.Controls
             UpdateVisualStateNoTransition();
         }
 
+        void OnInfoBadgePropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            UpdateVisualStateForInfoBadge();
+        }
+
         void OnMenuItemsPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
             UpdateRepeaterItemsSource();
@@ -341,6 +346,15 @@ namespace ModernWpf.Controls
             if (m_navigationViewItemPresenter is { } presenter)
             {
                 var stateName = showIcon ? (showContent ? "IconOnLeft" : "IconOnly") : "ContentOnly";
+                VisualStateManager.GoToState(presenter, stateName, false /*useTransitions*/);
+            }
+        }
+
+        void UpdateVisualStateForInfoBadge()
+        {
+            if (m_navigationViewItemPresenter is { } presenter)
+            {
+                var stateName = ShouldShowInfoBadge() ? "InfoBadgeVisible" : "InfoBadgeCollapsed";
                 VisualStateManager.GoToState(presenter, stateName, false /*useTransitions*/);
             }
         }
@@ -531,6 +545,8 @@ namespace ModernWpf.Controls
 
             UpdateVisualStateForIconAndContent(shouldShowIcon, shouldShowContent);
 
+            UpdateVisualStateForInfoBadge();
+
             // visual state for focus state. top navigation use it to provide different visual for selected and selected+focused
             UpdateVisualStateForKeyboardFocusedState();
 
@@ -600,6 +616,11 @@ namespace ModernWpf.Controls
         bool ShouldShowIcon()
         {
             return Icon != null;
+        }
+
+        bool ShouldShowInfoBadge()
+        {
+            return InfoBadge != null;
         }
 
         bool ShouldEnableToolTip()

@@ -59,6 +59,23 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
+        #region InfoBadge
+
+        public static readonly DependencyProperty InfoBadgeProperty =
+            DependencyProperty.Register(
+                nameof(InfoBadge),
+                typeof(InfoBadge),
+                typeof(NavigationViewItemPresenter),
+                null);
+
+        public InfoBadge InfoBadge
+        {
+            get => (InfoBadge)GetValue(InfoBadgeProperty);
+            set => SetValue(InfoBadgeProperty, value);
+        }
+
+        #endregion
+
         #region TemplateSettings
 
         private static readonly DependencyPropertyKey TemplateSettingsPropertyKey =
