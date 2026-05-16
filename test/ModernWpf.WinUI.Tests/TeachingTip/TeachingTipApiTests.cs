@@ -328,6 +328,182 @@ public class TeachingTipApiTests
     }
 
     [TestMethod]
+    public void TeachingTipTemplateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button { Width = 80, Height = 24, Content = "Target" };
+            var teachingTip = new TeachingTipControl
+            {
+                IsOpen = true,
+                Target = target,
+                Title = "Title",
+                Subtitle = "Subtitle",
+                Content = "Details",
+                HeroContent = new Border { Height = 24 },
+                HeroContentPlacement = TeachingTipHeroContentPlacementMode.Bottom,
+                IconSource = new SymbolIconSource { Symbol = Symbol.People },
+                ActionButtonContent = "Action",
+                CloseButtonContent = "Close",
+                PreferredPlacement = TeachingTipPlacementMode.TopRight,
+                TailVisibility = TeachingTipTailVisibility.Visible,
+                IsLightDismissEnabled = true,
+                CornerRadius = new CornerRadius(2, 4, 6, 8)
+            };
+            var root = new StackPanel
+            {
+                Children =
+                {
+                    target,
+                    teachingTip
+                }
+            };
+
+            using var host = new TestWindowHost(root, width: 420, height: 260);
+            var layoutRoot = FindNamedDescendant<Grid>(teachingTip, "LayoutRoot");
+
+            AssertStateSetter(layoutRoot, "LightDismissStates", "LightDismiss",
+                "TailPolygon.Fill",
+                "ContentRootGrid.Background",
+                "MainContentPresenter.Background",
+                "HeroContentBorder.Background");
+            AssertStateSetter(layoutRoot, "ButtonsStates", "NoButtonsVisible",
+                "CloseButton.Visibility",
+                "ActionButton.Visibility");
+            AssertStateSetter(layoutRoot, "ButtonsStates", "ActionButtonVisible",
+                "CloseButton.Visibility",
+                "ActionButton.Visibility",
+                "ActionButton.(Grid.ColumnSpan)",
+                "ActionButton.Margin");
+            AssertStateSetter(layoutRoot, "ButtonsStates", "CloseButtonVisible",
+                "CloseButton.Visibility",
+                "CloseButton.Margin",
+                "CloseButton.(Grid.Column)",
+                "CloseButton.(Grid.ColumnSpan)",
+                "ActionButton.Visibility");
+            AssertStateSetter(layoutRoot, "ButtonsStates", "BothButtonsVisible",
+                "CloseButton.Visibility",
+                "CloseButton.Margin",
+                "ActionButton.Visibility",
+                "ActionButton.(Grid.Column)",
+                "ActionButton.Margin");
+            AssertStateSetter(layoutRoot, "ContentStates", "Content", "MainContentPresenter.Margin");
+            AssertStateSetter(layoutRoot, "ContentStates", "NoContent", "MainContentPresenter.Margin");
+            AssertStateSetter(layoutRoot, "CloseButtonLocations", "HeaderCloseButton",
+                "TitlesStackPanel.Margin",
+                "AlternateCloseButton.Visibility");
+            AssertStateSetter(layoutRoot, "CloseButtonLocations", "FooterCloseButton",
+                "TitlesStackPanel.Margin",
+                "AlternateCloseButton.Visibility");
+            AssertStateSetter(layoutRoot, "IconStates", "Icon",
+                "IconPresenter.Visibility",
+                "IconPresenter.Margin");
+            AssertStateSetter(layoutRoot, "IconStates", "NoIcon",
+                "IconPresenter.Visibility",
+                "IconPresenter.Margin");
+            AssertStateSetter(layoutRoot, "HeroContentPlacementStates", "HeroContentTop",
+                "HeroContentBorder.(Grid.Row)",
+                "HeroContentBorder.CornerRadius");
+            AssertStateSetter(layoutRoot, "HeroContentPlacementStates", "HeroContentBottom",
+                "HeroContentBorder.(Grid.Row)",
+                "HeroContentBorder.CornerRadius");
+
+            foreach (var placementState in new[]
+            {
+                "Top",
+                "Bottom",
+                "Left",
+                "Right",
+                "TopRight",
+                "TopLeft",
+                "BottomRight",
+                "BottomLeft",
+                "LeftTop",
+                "LeftBottom",
+                "RightTop",
+                "RightBottom",
+                "Center"
+            })
+            {
+                AssertStateSetter(layoutRoot, "PlacementStates", placementState,
+                    "TailPolygon.Visibility",
+                    "TailPolygon.Points",
+                    "TailPolygon.(Grid.Row)",
+                    "TailPolygon.(Grid.Column)",
+                    "TailPolygon.HorizontalAlignment",
+                    "TailPolygon.VerticalAlignment",
+                    "TailPolygon.Margin");
+            }
+
+            AssertStateSetter(layoutRoot, "PlacementStates", "Untargeted", "TailPolygon.Visibility");
+            AssertStateSetter(layoutRoot, "TitleBlockStates", "ShowTitleTextBlock", "TitleTextBlock.Visibility");
+            AssertStateSetter(layoutRoot, "SubtitleBlockStates", "ShowSubtitleTextBlock", "SubtitleTextBlock.Visibility");
+
+            AssertCurrentState(layoutRoot, "LightDismissStates", "LightDismiss");
+            AssertCurrentState(layoutRoot, "ButtonsStates", "BothButtonsVisible");
+            AssertCurrentState(layoutRoot, "ContentStates", "Content");
+            AssertCurrentState(layoutRoot, "CloseButtonLocations", "FooterCloseButton");
+            AssertCurrentState(layoutRoot, "IconStates", "Icon");
+            AssertCurrentState(layoutRoot, "HeroContentPlacementStates", "HeroContentBottom");
+            AssertCurrentState(layoutRoot, "PlacementStates", "TopRight");
+            AssertCurrentState(layoutRoot, "TitleBlockStates", "ShowTitleTextBlock");
+            AssertCurrentState(layoutRoot, "SubtitleBlockStates", "ShowSubtitleTextBlock");
+
+            var actionButton = FindNamedDescendant<Button>(teachingTip, "ActionButton");
+            var closeButton = FindNamedDescendant<Button>(teachingTip, "CloseButton");
+            var alternateCloseButton = FindNamedDescendant<Button>(teachingTip, "AlternateCloseButton");
+            var mainContentPresenter = FindNamedDescendant<ContentPresenterEx>(teachingTip, "MainContentPresenter");
+            var heroContentBorder = FindNamedDescendant<Border>(teachingTip, "HeroContentBorder");
+            var iconPresenter = FindNamedDescendant<ContentPresenterEx>(teachingTip, "IconPresenter");
+            var tail = FindNamedDescendant<Polygon>(teachingTip, "TailPolygon");
+
+            Assert.AreEqual(Visibility.Visible, actionButton.Visibility);
+            Assert.AreEqual(Visibility.Visible, closeButton.Visibility);
+            Assert.AreEqual(Visibility.Collapsed, alternateCloseButton.Visibility);
+            Assert.AreEqual(new Thickness(0, 12, 0, 0), mainContentPresenter.Margin);
+            Assert.AreEqual(2, Grid.GetRow(heroContentBorder));
+            Assert.AreEqual(new CornerRadius(0, 0, 6, 8), heroContentBorder.CornerRadius);
+            Assert.AreEqual(Visibility.Visible, iconPresenter.Visibility);
+            Assert.AreEqual(Visibility.Visible, tail.Visibility);
+            Assert.AreEqual(HorizontalAlignment.Left, tail.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Bottom, tail.VerticalAlignment);
+
+            teachingTip.Title = string.Empty;
+            teachingTip.Subtitle = string.Empty;
+            teachingTip.Content = null;
+            teachingTip.HeroContentPlacement = TeachingTipHeroContentPlacementMode.Top;
+            teachingTip.IconSource = null;
+            teachingTip.ActionButtonContent = null;
+            teachingTip.CloseButtonContent = null;
+            teachingTip.PreferredPlacement = TeachingTipPlacementMode.BottomLeft;
+            teachingTip.IsLightDismissEnabled = false;
+            host.UpdateLayout();
+
+            AssertCurrentState(layoutRoot, "LightDismissStates", "NormalDismiss");
+            AssertCurrentState(layoutRoot, "ButtonsStates", "NoButtonsVisible");
+            AssertCurrentState(layoutRoot, "ContentStates", "NoContent");
+            AssertCurrentState(layoutRoot, "CloseButtonLocations", "HeaderCloseButton");
+            AssertCurrentState(layoutRoot, "IconStates", "NoIcon");
+            AssertCurrentState(layoutRoot, "HeroContentPlacementStates", "HeroContentTop");
+            AssertCurrentState(layoutRoot, "PlacementStates", "BottomLeft");
+            AssertCurrentState(layoutRoot, "TitleBlockStates", "CollapseTitleTextBlock");
+            AssertCurrentState(layoutRoot, "SubtitleBlockStates", "CollapseSubtitleTextBlock");
+
+            Assert.AreEqual(Visibility.Collapsed, actionButton.Visibility);
+            Assert.AreEqual(Visibility.Collapsed, closeButton.Visibility);
+            Assert.AreEqual(Visibility.Visible, alternateCloseButton.Visibility);
+            Assert.AreEqual(new Thickness(), mainContentPresenter.Margin);
+            Assert.AreEqual(0, Grid.GetRow(heroContentBorder));
+            Assert.AreEqual(new CornerRadius(2, 4, 0, 0), heroContentBorder.CornerRadius);
+            Assert.AreEqual(Visibility.Collapsed, iconPresenter.Visibility);
+            Assert.AreEqual(HorizontalAlignment.Right, tail.HorizontalAlignment);
+            Assert.AreEqual(VerticalAlignment.Top, tail.VerticalAlignment);
+        });
+    }
+
+    [TestMethod]
     public void TeachingTipExpandAnimationStartsAtWinUIMinimumScale()
     {
         WpfTestHost.Run(() =>
@@ -657,6 +833,63 @@ public class TeachingTipApiTests
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.IsTrue(themeDictionary.Contains(expectedResourceKey), $"{themeName} is missing {expectedResourceKey}.");
         Assert.AreSame(themeDictionary[expectedResourceKey], themeDictionary[resourceKey], $"{themeName}:{resourceKey}");
+    }
+
+    private static VisualStateEx AssertStateSetter(FrameworkElement stateGroupsRoot, string groupName, string stateName, params string[] expectedTargets)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        var state = FindVisualState(group, stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state!;
+        foreach (var expectedTarget in expectedTargets)
+        {
+            var found = false;
+            foreach (var setter in stateEx.Setters)
+            {
+                if (setter.Target == expectedTarget)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            Assert.IsTrue(found, $"{groupName}.{stateName} is missing setter target '{expectedTarget}'.");
+        }
+
+        return stateEx;
+    }
+
+    private static void AssertCurrentState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)
+    {
+        Assert.AreEqual(expectedStateName, FindVisualStateGroup(stateGroupsRoot, groupName).CurrentState?.Name);
+    }
+
+    private static VisualStateGroup FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        foreach (VisualStateGroup group in VisualStateManager.GetVisualStateGroups(stateGroupsRoot))
+        {
+            if (group.Name == groupName)
+            {
+                return group;
+            }
+        }
+
+        throw new InvalidOperationException($"Could not find visual state group '{groupName}'.");
+    }
+
+    private static VisualState FindVisualState(VisualStateGroup group, string stateName)
+    {
+        foreach (VisualState state in group.States)
+        {
+            if (state.Name == stateName)
+            {
+                return state;
+            }
+        }
+
+        throw new InvalidOperationException($"Could not find visual state '{group.Name}.{stateName}'.");
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)

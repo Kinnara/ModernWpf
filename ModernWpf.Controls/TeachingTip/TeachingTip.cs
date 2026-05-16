@@ -651,17 +651,17 @@ namespace ModernWpf.Controls
 
             if (_titleTextBlock != null)
             {
-                _titleTextBlock.Visibility = string.IsNullOrEmpty(Title) ? Visibility.Collapsed : Visibility.Visible;
+                VisualStateManager.GoToState(this, string.IsNullOrEmpty(Title) ? "CollapseTitleTextBlock" : "ShowTitleTextBlock", false);
             }
 
             if (_subtitleTextBlock != null)
             {
-                _subtitleTextBlock.Visibility = string.IsNullOrEmpty(Subtitle) ? Visibility.Collapsed : Visibility.Visible;
+                VisualStateManager.GoToState(this, string.IsNullOrEmpty(Subtitle) ? "CollapseSubtitleTextBlock" : "ShowSubtitleTextBlock", false);
             }
 
             if (_iconPresenter != null)
             {
-                _iconPresenter.Visibility = IconSource == null ? Visibility.Collapsed : Visibility.Visible;
+                VisualStateManager.GoToState(this, IconSource == null ? "NoIcon" : "Icon", false);
             }
 
             UpdateButtons();
@@ -708,25 +708,17 @@ namespace ModernWpf.Controls
             var hasActionButton = !ControlHelper.IsNullOrEmptyString(ActionButtonContent) || ActionButtonCommand != null;
             var hasCloseButton = !ControlHelper.IsNullOrEmptyString(CloseButtonContent) || CloseButtonCommand != null;
 
-            if (_actionButton != null)
+            if (_actionButton != null || _closeButton != null)
             {
-                _actionButton.Visibility = hasActionButton ? Visibility.Visible : Visibility.Collapsed;
-                Grid.SetColumn(_actionButton, hasCloseButton ? 0 : 0);
-                Grid.SetColumnSpan(_actionButton, hasCloseButton ? 1 : 2);
-                _actionButton.Margin = hasCloseButton ? GetThicknessResource("TeachingTipLeftButtonMargin") : GetThicknessResource("TeachingTipButtonPanelMargin");
-            }
-
-            if (_closeButton != null)
-            {
-                _closeButton.Visibility = hasCloseButton ? Visibility.Visible : Visibility.Collapsed;
-                Grid.SetColumn(_closeButton, hasActionButton ? 1 : 0);
-                Grid.SetColumnSpan(_closeButton, hasActionButton ? 1 : 2);
-                _closeButton.Margin = hasActionButton ? GetThicknessResource("TeachingTipRightButtonMargin") : GetThicknessResource("TeachingTipButtonPanelMargin");
-            }
-
-            if (_alternateCloseButton != null)
-            {
-                _alternateCloseButton.Visibility = hasCloseButton ? Visibility.Collapsed : Visibility.Visible;
+                var buttonState = hasActionButton && hasCloseButton
+                    ? "BothButtonsVisible"
+                    : hasActionButton
+                        ? "ActionButtonVisible"
+                        : hasCloseButton
+                            ? "CloseButtonVisible"
+                            : "NoButtonsVisible";
+                VisualStateManager.GoToState(this, buttonState, false);
+                VisualStateManager.GoToState(this, hasCloseButton ? "FooterCloseButton" : "HeaderCloseButton", false);
             }
         }
 
@@ -737,10 +729,7 @@ namespace ModernWpf.Controls
                 return;
             }
 
-            var hasContent = !ControlHelper.IsNullOrEmptyString(Content);
-            _mainContentPresenter.Margin = hasContent
-                ? GetThicknessResource("TeachingTipMainContentPresentMargin", new Thickness(0, 12, 0, 0))
-                : GetThicknessResource("TeachingTipMainContentAbsentMargin", new Thickness());
+            VisualStateManager.GoToState(this, ControlHelper.IsNullOrEmptyString(Content) ? "NoContent" : "Content", false);
         }
 
         private void UpdateHeroContentPlacement()
@@ -751,7 +740,10 @@ namespace ModernWpf.Controls
             }
 
             _heroContentBorder.Visibility = HeroContent == null ? Visibility.Collapsed : Visibility.Visible;
-            Grid.SetRow(_heroContentBorder, HeroContentPlacement == TeachingTipHeroContentPlacementMode.Bottom ? 2 : 0);
+            VisualStateManager.GoToState(
+                this,
+                HeroContentPlacement == TeachingTipHeroContentPlacementMode.Bottom ? "HeroContentBottom" : "HeroContentTop",
+                false);
         }
 
         private void UpdateTailPlacement()
@@ -766,54 +758,13 @@ namespace ModernWpf.Controls
 
             if (!showTail)
             {
-                _tailPolygon.Visibility = Visibility.Collapsed;
+                VisualStateManager.GoToState(this, "Untargeted", false);
                 return;
             }
 
-            _tailPolygon.Visibility = Visibility.Visible;
-
-            ApplyTailPlacement(GetEffectivePlacement());
-        }
-
-        private void ApplyTailPlacement(TeachingTipPlacementMode placement)
-        {
+            var placement = GetEffectivePlacement();
             UpdateAnimationCenterPoint(placement);
-
-            switch (placement)
-            {
-                case TeachingTipPlacementMode.Top:
-                case TeachingTipPlacementMode.TopLeft:
-                case TeachingTipPlacementMode.TopRight:
-                case TeachingTipPlacementMode.Center:
-                    SetTail("0,0 10,10 20,0", 4, 2, HorizontalAlignment.Center, VerticalAlignment.Bottom, "TeachingTipTailPolygonMarginTop");
-                    break;
-
-                case TeachingTipPlacementMode.Left:
-                case TeachingTipPlacementMode.LeftTop:
-                case TeachingTipPlacementMode.LeftBottom:
-                    SetTail("0,0 10,10 0,20", 2, 4, HorizontalAlignment.Right, VerticalAlignment.Center, "TeachingTipTailPolygonMarginLeft");
-                    break;
-
-                case TeachingTipPlacementMode.Right:
-                case TeachingTipPlacementMode.RightTop:
-                case TeachingTipPlacementMode.RightBottom:
-                    SetTail("10,0 0,10 10,20", 2, 0, HorizontalAlignment.Left, VerticalAlignment.Center, "TeachingTipTailPolygonMarginRight");
-                    break;
-
-                default:
-                    SetTail("0,10 10,0 20,10", 0, 2, HorizontalAlignment.Center, VerticalAlignment.Top, "TeachingTipTailPolygonMarginBottom");
-                    break;
-            }
-        }
-
-        private void SetTail(string points, int row, int column, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment, string marginResourceKey)
-        {
-            _tailPolygon.Points = PointCollection.Parse(points);
-            Grid.SetRow(_tailPolygon, row);
-            Grid.SetColumn(_tailPolygon, column);
-            _tailPolygon.HorizontalAlignment = horizontalAlignment;
-            _tailPolygon.VerticalAlignment = verticalAlignment;
-            _tailPolygon.Margin = GetThicknessResource(marginResourceKey);
+            VisualStateManager.GoToState(this, placement.ToString(), false);
         }
 
         private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)
@@ -1033,38 +984,7 @@ namespace ModernWpf.Controls
 
         private void UpdateBackgroundResources()
         {
-            if (IsLightDismissEnabled)
-            {
-                SetBackgroundResource(_contentRootGrid, Border.BackgroundProperty, "TeachingTipTransientBackground");
-                SetBackgroundResource(_heroContentBorder, Border.BackgroundProperty, "TeachingTipTransientBackground");
-                SetBackgroundResource(_mainContentPresenter, ContentPresenterEx.BackgroundProperty, "TeachingTipTransientBackground");
-
-                if (_tailPolygon != null)
-                {
-                    _tailPolygon.SetResourceReference(Shape.FillProperty, "TeachingTipTransientBackground");
-                }
-            }
-            else
-            {
-                SetBackgroundBinding(_contentRootGrid, Border.BackgroundProperty);
-                SetBackgroundBinding(_heroContentBorder, Border.BackgroundProperty);
-                SetBackgroundBinding(_mainContentPresenter, ContentPresenterEx.BackgroundProperty);
-
-                if (_tailPolygon != null)
-                {
-                    _tailPolygon.SetBinding(Shape.FillProperty, new System.Windows.Data.Binding(nameof(Background)) { Source = this });
-                }
-            }
-        }
-
-        private static void SetBackgroundResource(FrameworkElement element, DependencyProperty property, object resourceKey)
-        {
-            element?.SetResourceReference(property, resourceKey);
-        }
-
-        private void SetBackgroundBinding(FrameworkElement element, DependencyProperty property)
-        {
-            element?.SetBinding(property, new System.Windows.Data.Binding(nameof(Background)) { Source = this });
+            VisualStateManager.GoToState(this, IsLightDismissEnabled ? "LightDismiss" : "NormalDismiss", false);
         }
 
         private FrameworkElement GetPopupPlacementTarget()
@@ -1526,16 +1446,6 @@ namespace ModernWpf.Controls
         private double GetGridLengthResourceValue(object key, double fallback)
         {
             return TryFindResource(key) is GridLength gridLength ? gridLength.Value : fallback;
-        }
-
-        private Thickness GetThicknessResource(object key)
-        {
-            return GetThicknessResource(key, new Thickness());
-        }
-
-        private Thickness GetThicknessResource(object key, Thickness fallback)
-        {
-            return TryFindResource(key) is Thickness thickness ? thickness : fallback;
         }
 
         private TeachingTipCloseReason _lastCloseReason = TeachingTipCloseReason.Programmatic;

@@ -37,6 +37,8 @@
     <sys:Double x:Key="TeachingTipTopHighlightHeight">1</sys:Double>
     <sys:Double x:Key="TeachingTipBorderThickness">1</sys:Double>
     <Thickness x:Key="TeachingTipTopHighlightOffsetForBorder">0,1,0,0</Thickness>
+    <ui:CornerRadiusFilterConverter x:Key="TopCornerRadiusFilterConverter" Filter="Top" />
+    <ui:CornerRadiusFilterConverter x:Key="BottomCornerRadiusFilterConverter" Filter="Bottom" />
 
     <Style x:Key="TeachingTipAlternateCloseButtonStyle" TargetType="Button">
         <Setter Property="Width" Value="{StaticResource TeachingTipAlternateCloseButtonSize}" />
@@ -65,7 +67,293 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:TeachingTip">
-                    <Grid>
+                    <Grid x:Name="LayoutRoot">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="LightDismissStates">
+                                <ui:VisualStateEx x:Name="LightDismiss">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Fill" Value="{DynamicResource TeachingTipTransientBackground}" />
+                                        <ui:VisualStateSetter Target="ContentRootGrid.Background" Value="{DynamicResource TeachingTipTransientBackground}" />
+                                        <ui:VisualStateSetter Target="MainContentPresenter.Background" Value="{DynamicResource TeachingTipTransientBackground}" />
+                                        <ui:VisualStateSetter Target="HeroContentBorder.Background" Value="{DynamicResource TeachingTipTransientBackground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="NormalDismiss">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Fill" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        <ui:VisualStateSetter Target="ContentRootGrid.Background" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        <ui:VisualStateSetter Target="MainContentPresenter.Background" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        <ui:VisualStateSetter Target="HeroContentBorder.Background" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="ButtonsStates">
+                                <ui:VisualStateEx x:Name="NoButtonsVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="CloseButton.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="ActionButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="ActionButtonVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="CloseButton.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="ActionButton.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="ActionButton.(Grid.ColumnSpan)" Value="2" />
+                                        <ui:VisualStateSetter Target="ActionButton.Margin" Value="{StaticResource TeachingTipButtonPanelMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CloseButtonVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="CloseButton.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="CloseButton.Margin" Value="{StaticResource TeachingTipButtonPanelMargin}" />
+                                        <ui:VisualStateSetter Target="CloseButton.(Grid.Column)" Value="0" />
+                                        <ui:VisualStateSetter Target="CloseButton.(Grid.ColumnSpan)" Value="2" />
+                                        <ui:VisualStateSetter Target="ActionButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="BothButtonsVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="CloseButton.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="CloseButton.Margin" Value="{StaticResource TeachingTipRightButtonMargin}" />
+                                        <ui:VisualStateSetter Target="ActionButton.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="ActionButton.(Grid.Column)" Value="0" />
+                                        <ui:VisualStateSetter Target="ActionButton.Margin" Value="{StaticResource TeachingTipLeftButtonMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="ContentStates">
+                                <ui:VisualStateEx x:Name="Content">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="MainContentPresenter.Margin" Value="{StaticResource TeachingTipMainContentPresentMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="NoContent">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="MainContentPresenter.Margin" Value="{StaticResource TeachingTipMainContentAbsentMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="CloseButtonLocations">
+                                <ui:VisualStateEx x:Name="HeaderCloseButton">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TitlesStackPanel.Margin" Value="{StaticResource TeachingTipTitleStackPanelMarginWithHeaderCloseButton}" />
+                                        <ui:VisualStateSetter Target="AlternateCloseButton.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="FooterCloseButton">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TitlesStackPanel.Margin" Value="{StaticResource TeachingTipTitleStackPanelMarginWithFooterCloseButton}" />
+                                        <ui:VisualStateSetter Target="AlternateCloseButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="IconStates">
+                                <ui:VisualStateEx x:Name="Icon">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="IconPresenter.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="IconPresenter.Margin" Value="{StaticResource TeachingTipIconPresenterMarginWithIcon}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="NoIcon">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="IconPresenter.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="IconPresenter.Margin" Value="{StaticResource TeachingTipIconPresenterMarginWithoutIcon}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="HeroContentPlacementStates">
+                                <ui:VisualStateEx x:Name="HeroContentTop">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HeroContentBorder.(Grid.Row)" Value="0" />
+                                        <ui:VisualStateSetter Target="HeroContentBorder.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopCornerRadiusFilterConverter}}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="HeroContentBottom">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HeroContentBorder.(Grid.Row)" Value="2" />
+                                        <ui:VisualStateSetter Target="HeroContentBorder.CornerRadius" Value="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomCornerRadiusFilterConverter}}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="PlacementStates">
+                                <ui:VisualStateEx x:Name="Top">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="0,0 10,10 20,0" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="4" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Center" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Bottom" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginTop}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Bottom">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="0,10 10,0 20,10" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="0" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Center" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Top" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginBottom}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Left">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="0,0 10,10 0,20" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="4" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Right" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Center" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginLeft}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Right">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="10,0 0,10 10,20" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="0" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Center" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginRight}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="TopRight">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="0,0 10,10 20,0" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="4" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Bottom" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginTop}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="TopLeft">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="0,0 10,10 20,0" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="4" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Right" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Bottom" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginTop}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="BottomRight">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="0,10 10,0 20,10" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="0" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Top" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginBottom}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="BottomLeft">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="0,10 10,0 20,10" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="0" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Right" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Top" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginBottom}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="LeftTop">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="0,0 10,10 0,20" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="4" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Right" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Bottom" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginLeft}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="LeftBottom">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="0,0 10,10 0,20" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="4" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Right" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Top" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginLeft}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="RightTop">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="10,0 0,10 10,20" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="0" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Bottom" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginRight}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="RightBottom">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="10,0 0,10 10,20" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="0" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Top" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginRight}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Center">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Points" Value="0,0 10,10 20,0" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Row)" Value="4" />
+                                        <ui:VisualStateSetter Target="TailPolygon.(Grid.Column)" Value="2" />
+                                        <ui:VisualStateSetter Target="TailPolygon.HorizontalAlignment" Value="Center" />
+                                        <ui:VisualStateSetter Target="TailPolygon.VerticalAlignment" Value="Bottom" />
+                                        <ui:VisualStateSetter Target="TailPolygon.Margin" Value="{StaticResource TeachingTipTailPolygonMarginTop}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Untargeted">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TailPolygon.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="TitleBlockStates">
+                                <ui:VisualStateEx x:Name="ShowTitleTextBlock">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TitleTextBlock.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <VisualState x:Name="CollapseTitleTextBlock" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="SubtitleBlockStates">
+                                <ui:VisualStateEx x:Name="ShowSubtitleTextBlock">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SubtitleTextBlock.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <VisualState x:Name="CollapseSubtitleTextBlock" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
                         <Popup
                             x:Name="Popup"
                             AllowsTransparency="True"
