@@ -94,6 +94,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf.Controls", "InfoBar", "InfoBar.xaml"),
             Path.Combine("ModernWpf.Controls", "InfoBadge", "InfoBadge.xaml"),
             Path.Combine("ModernWpf.Controls", "NumberBox", "NumberBox.xaml"),
+            Path.Combine("ModernWpf.Controls", "PagerControl", "PagerControl.xaml"),
             Path.Combine("ModernWpf.Controls", "PersonPicture", "PersonPicture.xaml"),
             Path.Combine("ModernWpf.Controls", "PipsPager", "PipsPager.xaml"),
             Path.Combine("ModernWpf.Controls", "ProgressRing", "ProgressRing.xaml"),

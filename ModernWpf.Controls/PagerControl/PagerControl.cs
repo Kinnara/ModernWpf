@@ -23,6 +23,10 @@ namespace ModernWpf.Controls
         private const string PreviousButtonName = "PART_PreviousButton";
         private const string NextButtonName = "PART_NextButton";
         private const string LastButtonName = "PART_LastButton";
+        private const string FirstPageButtonStatePrefix = "FirstPageButton";
+        private const string PreviousPageButtonStatePrefix = "PreviousPageButton";
+        private const string NextPageButtonStatePrefix = "NextPageButton";
+        private const string LastPageButtonStatePrefix = "LastPageButton";
         private const int InfiniteModeComboBoxItemsIncrement = 100;
 
         static PagerControl()
@@ -483,10 +487,10 @@ namespace ModernWpf.Controls
         private void UpdateVisuals()
         {
             UpdateTemplateSettingElementLists();
-            UpdateNavigationButton(_firstButton, FirstButtonStyle, FirstButtonVisibility, SelectedPageIndex != 0);
-            UpdateNavigationButton(_previousButton, PreviousButtonStyle, PreviousButtonVisibility, SelectedPageIndex != 0);
-            UpdateNavigationButton(_nextButton, NextButtonStyle, NextButtonVisibility, NumberOfPages < 0 || SelectedPageIndex < NumberOfPages - 1);
-            UpdateNavigationButton(_lastButton, LastButtonStyle, LastButtonVisibility, NumberOfPages > 0 && SelectedPageIndex < NumberOfPages - 1);
+            UpdateNavigationButton(_firstButton, FirstButtonStyle, FirstButtonVisibility, SelectedPageIndex != 0, FirstPageButtonStatePrefix);
+            UpdateNavigationButton(_previousButton, PreviousButtonStyle, PreviousButtonVisibility, SelectedPageIndex != 0, PreviousPageButtonStatePrefix);
+            UpdateNavigationButton(_nextButton, NextButtonStyle, NextButtonVisibility, NumberOfPages < 0 || SelectedPageIndex < NumberOfPages - 1, NextPageButtonStatePrefix);
+            UpdateNavigationButton(_lastButton, LastButtonStyle, LastButtonVisibility, NumberOfPages > 0 && SelectedPageIndex < NumberOfPages - 1, LastPageButtonStatePrefix);
             UpdateNumberPanelButtons();
         }
 
@@ -542,7 +546,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        private void UpdateNavigationButton(Button button, Style style, PagerControlButtonVisibility buttonVisibility, bool isEnabled)
+        private void UpdateNavigationButton(Button button, Style style, PagerControlButtonVisibility buttonVisibility, bool isEnabled, string statePrefix)
         {
             if (button == null)
             {
@@ -554,8 +558,15 @@ namespace ModernWpf.Controls
                 button.Style = style;
             }
 
-            button.Visibility = GetButtonVisibility(buttonVisibility, isEnabled);
-            button.IsEnabled = isEnabled;
+            bool useFallback = !VisualStateManager.GoToState(this, GetButtonVisibilityStateName(buttonVisibility, statePrefix), false);
+            useFallback |= !VisualStateManager.GoToState(this, GetButtonEnabledStateName(buttonVisibility, isEnabled, statePrefix), false);
+
+            if (useFallback)
+            {
+                button.Visibility = GetButtonVisibility(buttonVisibility, isEnabled);
+                button.Opacity = buttonVisibility == PagerControlButtonVisibility.HiddenOnEdge && !isEnabled ? 0 : 1;
+                button.IsEnabled = isEnabled;
+            }
         }
 
         private static Visibility GetButtonVisibility(PagerControlButtonVisibility buttonVisibility, bool isEnabled)
@@ -571,6 +582,23 @@ namespace ModernWpf.Controls
             }
 
             return Visibility.Visible;
+        }
+
+        private static string GetButtonVisibilityStateName(PagerControlButtonVisibility buttonVisibility, string statePrefix)
+        {
+            return buttonVisibility == PagerControlButtonVisibility.Hidden
+                ? statePrefix + "Collapsed"
+                : statePrefix + "Visible";
+        }
+
+        private static string GetButtonEnabledStateName(PagerControlButtonVisibility buttonVisibility, bool isEnabled, string statePrefix)
+        {
+            if (buttonVisibility == PagerControlButtonVisibility.HiddenOnEdge && !isEnabled)
+            {
+                return statePrefix + "Hidden";
+            }
+
+            return isEnabled ? statePrefix + "Enabled" : statePrefix + "Disabled";
         }
 
         private void UpdateNumberPanelButtons()

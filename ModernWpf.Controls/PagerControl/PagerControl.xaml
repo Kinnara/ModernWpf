@@ -1,6 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="clr-namespace:ModernWpf;assembly=ModernWpf"
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
     <Style x:Key="DefaultPagerControlNavigationButtonStyle" TargetType="Button">
@@ -14,6 +15,99 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:PagerControl">
                     <StackPanel x:Name="PART_RootPanel" Orientation="Horizontal">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="FirstPageButtonVisibilityStates">
+                                <VisualState x:Name="FirstPageButtonVisible" />
+                                <ui:VisualStateEx x:Name="FirstPageButtonCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_FirstButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="FirstPageButtonHidden">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_FirstButton.Opacity" Value="0" />
+                                        <ui:VisualStateSetter Target="PART_FirstButton.IsEnabled" Value="False" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="FirstPageButtonIsEnabledStates">
+                                <VisualState x:Name="FirstPageButtonEnabled" />
+                                <ui:VisualStateEx x:Name="FirstPageButtonDisabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_FirstButton.IsEnabled" Value="False" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="PreviousPageButtonVisibilityStates">
+                                <VisualState x:Name="PreviousPageButtonVisible" />
+                                <ui:VisualStateEx x:Name="PreviousPageButtonCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_PreviousButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PreviousPageButtonHidden">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_PreviousButton.Opacity" Value="0" />
+                                        <ui:VisualStateSetter Target="PART_PreviousButton.IsEnabled" Value="False" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="PreviousPageButtonIsEnabledStates">
+                                <VisualState x:Name="PreviousPageButtonEnabled" />
+                                <ui:VisualStateEx x:Name="PreviousPageButtonDisabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_PreviousButton.IsEnabled" Value="False" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="NextPageButtonVisibilityStates">
+                                <VisualState x:Name="NextPageButtonVisible" />
+                                <ui:VisualStateEx x:Name="NextPageButtonCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_NextButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="NextPageButtonIsEnabledStates">
+                                <VisualState x:Name="NextPageButtonEnabled" />
+                                <ui:VisualStateEx x:Name="NextPageButtonDisabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_NextButton.IsEnabled" Value="False" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="NextPageButtonHidden">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_NextButton.Opacity" Value="0" />
+                                        <ui:VisualStateSetter Target="PART_NextButton.IsEnabled" Value="False" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="LastPageButtonStates">
+                                <VisualState x:Name="LastPageButtonVisible" />
+                                <ui:VisualStateEx x:Name="LastPageButtonCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_LastButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="LastPageButtonIsEnabledStates">
+                                <VisualState x:Name="LastPageButtonEnabled" />
+                                <ui:VisualStateEx x:Name="LastPageButtonDisabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_LastButton.IsEnabled" Value="False" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="LastPageButtonHidden">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_LastButton.Opacity" Value="0" />
+                                        <ui:VisualStateSetter Target="PART_LastButton.IsEnabled" Value="False" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Button
                             x:Name="PART_FirstButton"
                             Content="|&lt;"
