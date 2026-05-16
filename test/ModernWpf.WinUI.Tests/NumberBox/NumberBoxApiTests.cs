@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
@@ -74,19 +75,20 @@ public class NumberBoxApiTests
             host.UpdateLayout();
 
             var layoutRoot = (FrameworkElement)VisualTreeHelper.GetChild(numberBox, 0);
-            var commonStatesGroup = VisualStateManager.GetVisualStateGroups(layoutRoot)
-                .OfType<VisualStateGroup>()
-                .Single(group => group.Name == "CommonStates");
+            var header = FindControlTemplatePart<ContentPresenterEx>(numberBox, "HeaderContentPresenter");
+            var normalHeaderForeground = header.Foreground;
 
-            Assert.AreEqual("Normal", commonStatesGroup.CurrentState.Name);
+            Assert.AreEqual("Normal", GetCurrentStateName(layoutRoot, "CommonStates"));
 
             numberBox.IsEnabled = false;
             host.UpdateLayout();
-            Assert.AreEqual("Disabled", commonStatesGroup.CurrentState.Name);
+            Assert.AreEqual("Disabled", GetCurrentStateName(layoutRoot, "CommonStates"));
+            Assert.AreNotSame(normalHeaderForeground, header.Foreground);
 
             numberBox.IsEnabled = true;
             host.UpdateLayout();
-            Assert.AreEqual("Normal", commonStatesGroup.CurrentState.Name);
+            Assert.AreEqual("Normal", GetCurrentStateName(layoutRoot, "CommonStates"));
+            Assert.AreSame(normalHeaderForeground, header.Foreground);
         });
     }
 
@@ -139,16 +141,26 @@ public class NumberBoxApiTests
             using var host = new TestWindowHost(numberBox, width: 320, height: 180);
             host.UpdateLayout();
 
+            var layoutRoot = (FrameworkElement)VisualTreeHelper.GetChild(numberBox, 0);
+            Assert.AreEqual("SpinButtonsVisible", GetCurrentStateName(layoutRoot, "SpinButtonStates"));
+
             var inputBox = FindTemplatePart<TextBox>(numberBox, "InputBox");
             Assert.AreEqual(120.0, inputBox.MinWidth);
+            var inlineInputBoxStyle = inputBox.Style;
 
             var upButton = FindTemplatePart<RepeatButton>(numberBox, "UpSpinButton");
             var downButton = FindTemplatePart<RepeatButton>(numberBox, "DownSpinButton");
+            Assert.AreEqual(Visibility.Visible, upButton.Visibility);
+            Assert.AreEqual(Visibility.Visible, downButton.Visibility);
             AssertInlineSpinButtonMetrics(upButton, numberBox.FontSize);
             AssertInlineSpinButtonMetrics(downButton, numberBox.FontSize);
 
             numberBox.SpinButtonPlacementMode = ModernWpf.Controls.NumberBoxSpinButtonPlacementMode.Compact;
             host.UpdateLayout();
+
+            Assert.AreEqual("SpinButtonsPopup", GetCurrentStateName(layoutRoot, "SpinButtonStates"));
+            Assert.IsNotNull(inputBox.Style);
+            Assert.AreNotSame(inlineInputBoxStyle, inputBox.Style);
 
             var popup = FindTemplatePart<Popup>(numberBox, "UpDownPopup");
             Assert.AreEqual(-21.0, popup.HorizontalOffset);
@@ -203,6 +215,14 @@ public class NumberBoxApiTests
             .Single(element => element.Name == name);
     }
 
+    private static T FindControlTemplatePart<T>(Control control, string name)
+        where T : FrameworkElement
+    {
+        control.ApplyTemplate();
+        return control.Template.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected control template part '{name}'.");
+    }
+
     private static InputScopeName GetInputScopeName(TextBox textBox)
     {
         return textBox.InputScope.Names[0] as InputScopeName
@@ -253,5 +273,14 @@ public class NumberBoxApiTests
             ?? FrameworkElementAutomationPeer.CreatePeerForElement(element);
 
         Assert.AreEqual(expectedName, peer.GetName());
+    }
+
+    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        Assert.IsNotNull(group.CurrentState);
+        return group.CurrentState.Name;
     }
 }

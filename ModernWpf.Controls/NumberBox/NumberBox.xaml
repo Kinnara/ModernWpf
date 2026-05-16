@@ -275,45 +275,55 @@
                         <StreamGeometry x:Key="ChevronDown">M 18.935547 4.560547 L 19.814453 5.439453 L 10 15.253906 L 0.185547 5.439453 L 1.064453 4.560547 L 10 13.496094 Z</StreamGeometry>
                         <StreamGeometry x:Key="ChevronUp">M 19.091797 14.970703 L 10 5.888672 L 0.908203 14.970703 L 0.029297 14.091797 L 10 4.111328 L 19.970703 14.091797 Z</StreamGeometry>
                     </ControlTemplate.Resources>
-                    
+
                     <Grid Height="{TemplateBinding Height}" ui:ThemeManager.HasThemeResources="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="Disabled" />
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HeaderContentPresenter.Foreground" Value="{DynamicResource TextControlHeaderForegroundDisabled}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="SpinButtonStates">
                                 <VisualState x:Name="SpinButtonsCollapsed" />
-                                <VisualState x:Name="SpinButtonsVisible" />
-                                <VisualState x:Name="SpinButtonsPopup" />
+                                <ui:VisualStateEx x:Name="SpinButtonsVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="DownSpinButton.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="UpSpinButton.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="InputBox.MinWidth" Value="{DynamicResource NumberBoxMinWidth}" />
+                                        <ui:VisualStateSetter Target="InputBox.(ui:ControlHelper.CornerRadius)" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SpinButtonsPopup">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="InputBox.Style" Value="{StaticResource NumberBoxTextBoxStyle}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="UpSpinButtonEnabledStates">
                                 <VisualState x:Name="UpSpinButtonEnabled" />
-                                <VisualState x:Name="UpSpinButtonDisabled">
-                                    <Storyboard>
-                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="UpSpinButton" Storyboard.TargetProperty="IsEnabled">
-                                            <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
-                                        </BooleanAnimationUsingKeyFrames>
-                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="PopupUpSpinButton" Storyboard.TargetProperty="IsEnabled">
-                                            <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
-                                        </BooleanAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="UpSpinButtonDisabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="UpSpinButton.IsEnabled" Value="False" />
+                                        <ui:VisualStateSetter Target="PopupUpSpinButton.IsEnabled" Value="False" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="DownSpinButtonEnabledStates">
                                 <VisualState x:Name="DownSpinButtonEnabled" />
-                                <VisualState x:Name="DownSpinButtonDisabled">
-                                    <Storyboard>
-                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="DownSpinButton" Storyboard.TargetProperty="IsEnabled">
-                                            <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
-                                        </BooleanAnimationUsingKeyFrames>
-                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetName="PopupDownSpinButton" Storyboard.TargetProperty="IsEnabled">
-                                            <DiscreteBooleanKeyFrame KeyTime="0" Value="False" />
-                                        </BooleanAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="DownSpinButtonDisabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="DownSpinButton.IsEnabled" Value="False" />
+                                        <ui:VisualStateSetter Target="PopupDownSpinButton.IsEnabled" Value="False" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -455,22 +465,6 @@
                             Visibility="{TemplateBinding ui:ControlHelper.DescriptionVisibility}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource TextControlHeaderForegroundDisabled}" />
-                        </Trigger>
-                        <!-- SpinButtonsVisible -->
-                        <Trigger Property="SpinButtonPlacementMode" Value="Inline">
-                            <Setter TargetName="DownSpinButton" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="UpSpinButton" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="InputBox" Property="MinWidth" Value="{DynamicResource NumberBoxMinWidth}" />
-                            <Setter TargetName="InputBox" Property="ui:ControlHelper.CornerRadius" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
-                        </Trigger>
-                        <!-- SpinButtonsPopup -->
-                        <Trigger Property="SpinButtonPlacementMode" Value="Compact">
-                            <Setter TargetName="InputBox" Property="Style" Value="{StaticResource NumberBoxTextBoxStyle}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
