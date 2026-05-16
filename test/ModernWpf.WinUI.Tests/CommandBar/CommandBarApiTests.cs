@@ -237,6 +237,7 @@ public class CommandBarApiTests
             host.UpdateLayout();
 
             var root = FindTemplateChild<Border>(button, "Root");
+            var overflowTextLabel = FindTemplateChild<TextBlock>(button, "OverflowTextLabel");
 
             AssertStateSetter(root, "ApplicationViewStates", "Compact", "AppBarButtonInnerBorder.Margin");
             AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", "TextLabel.(Grid.Row)");
@@ -250,6 +251,13 @@ public class CommandBarApiTests
             AssertStateSetter(root, "CommonStates", "Disabled", "KeyboardAcceleratorTextLabel.Foreground");
             AssertStateSetter(root, "CommonStates", "OverflowPointerOver", "SubItemChevron.Foreground");
             AssertStateSetter(root, "CommonStates", "OverflowPressed", "SubItemChevron.Foreground");
+
+            AssertStateSetter(root, "InputModeStates", "TouchInputMode", "OverflowTextLabel.Padding");
+            AssertStateSetter(root, "InputModeStates", "GameControllerInputMode", "OverflowTextLabel.Padding");
+            Assert.IsTrue(VisualStateManager.GoToState(button, "TouchInputMode", false));
+            Assert.AreEqual((Thickness)button.TryFindResource("AppBarButtonOverflowTextTouchMargin"), overflowTextLabel.Padding);
+            Assert.IsTrue(VisualStateManager.GoToState(button, "InputModeDefault", false));
+            Assert.AreEqual((Thickness)button.TryFindResource("AppBarButtonOverflowTextLabelPadding"), overflowTextLabel.Padding);
 
             AssertStateSetter(root, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextVisible", "KeyboardAcceleratorTextLabel.Visibility");
             AssertStateSetter(root, "FlyoutStates", "HasFlyout", "SubItemChevron.Visibility");
@@ -327,6 +335,8 @@ public class CommandBarApiTests
             host.UpdateLayout();
 
             var root = FindTemplateChild<Border>(toggleButton, "Root");
+            var overflowCheckGlyph = FindTemplateChild<FontIconFallback>(toggleButton, "OverflowCheckGlyph");
+            var overflowTextLabel = FindTemplateChild<TextBlock>(toggleButton, "OverflowTextLabel");
 
             AssertStateSetter(root, "ApplicationViewStates", "Compact", "AppBarToggleButtonInnerBorder.Margin");
             AssertStateSetter(root, "ApplicationViewStates", "LabelOnRight", "TextLabel.(Grid.Column)");
@@ -341,6 +351,17 @@ public class CommandBarApiTests
             AssertStateSetter(root, "CommonStates", "OverflowPointerOver", "OverflowCheckGlyph.Foreground");
             AssertStateSetter(root, "CommonStates", "OverflowCheckedPointerOver", "AppBarToggleButtonInnerBorder.Background");
             AssertStateSetter(root, "CommonStates", "OverflowCheckedPressed", "Content.Foreground");
+
+            AssertStateSetter(root, "InputModeStates", "TouchInputMode", "OverflowTextLabel.Padding");
+            AssertStateSetter(root, "InputModeStates", "TouchInputMode", "OverflowCheckGlyph.Margin");
+            AssertStateSetter(root, "InputModeStates", "GameControllerInputMode", "OverflowTextLabel.Padding");
+            AssertStateSetter(root, "InputModeStates", "GameControllerInputMode", "OverflowCheckGlyph.Margin");
+            Assert.IsTrue(VisualStateManager.GoToState(toggleButton, "GameControllerInputMode", false));
+            Assert.AreEqual((Thickness)toggleButton.TryFindResource("AppBarToggleButtonOverflowTextTouchMargin"), overflowTextLabel.Padding);
+            Assert.AreEqual((Thickness)toggleButton.TryFindResource("AppBarToggleButtonOverflowCheckTouchMargin"), overflowCheckGlyph.Margin);
+            Assert.IsTrue(VisualStateManager.GoToState(toggleButton, "InputModeDefault", false));
+            Assert.AreEqual((Thickness)toggleButton.TryFindResource("AppBarToggleButtonOverflowTextLabelPadding"), overflowTextLabel.Padding);
+            Assert.AreEqual((Thickness)toggleButton.TryFindResource("AppBarToggleButtonOverflowCheckMargin"), overflowCheckGlyph.Margin);
 
             AssertStateSetter(root, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextVisible", "KeyboardAcceleratorTextLabel.Visibility");
         });

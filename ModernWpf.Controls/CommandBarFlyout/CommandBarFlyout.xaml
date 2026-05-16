@@ -139,6 +139,19 @@
                                 </ui:VisualStateEx>
                                 <!--<VisualState x:Name="OverflowSubMenuOpened" />-->
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="InputModeStates">
+                                <VisualState x:Name="InputModeDefault" />
+                                <ui:VisualStateEx x:Name="TouchInputMode">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Padding" Value="0,9,0,11" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="GameControllerInputMode">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Padding" Value="0,9,0,11" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
                             <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
                                 <ui:VisualStateGroupListener.Listener>
                                     <ui:VisualStateGroupListener x:Name="KeyboardAcceleratorTextVisibilityListener" />
@@ -403,6 +416,21 @@
                                         <ui:VisualStateSetter Target="Content.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
                                         <ui:VisualStateSetter Target="OverflowTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
                                         <ui:VisualStateSetter Target="KeyboardAcceleratorTextLabel.Foreground" Value="{DynamicResource CommandBarFlyoutAppBarButtonForegroundPressed}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="InputModeStates">
+                                <VisualState x:Name="InputModeDefault" />
+                                <ui:VisualStateEx x:Name="TouchInputMode">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Padding" Value="0,9,0,11" />
+                                        <ui:VisualStateSetter Target="OverflowCheckGlyph.Margin" Value="12,10,12,10" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="GameControllerInputMode">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="OverflowTextLabel.Padding" Value="0,9,0,11" />
+                                        <ui:VisualStateSetter Target="OverflowCheckGlyph.Margin" Value="12,10,12,10" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>

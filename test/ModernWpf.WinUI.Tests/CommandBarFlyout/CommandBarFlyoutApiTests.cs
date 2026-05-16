@@ -627,9 +627,20 @@ public class CommandBarFlyoutApiTests
             "ContentViewbox.Margin",
             "OverflowTextLabel.Visibility",
             "OverflowTextLabel.Margin");
+        AssertStateSetter(
+            root,
+            "InputModeStates",
+            "TouchInputMode",
+            "OverflowTextLabel.Padding");
+        AssertStateSetter(
+            root,
+            "InputModeStates",
+            "GameControllerInputMode",
+            "OverflowTextLabel.Padding");
 
         Assert.AreEqual(40.0, contentRoot.Width);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
+        Assert.AreEqual(new Thickness(0, 5, 0, 7), overflowTextLabel.Padding);
 
         Assert.IsTrue(VisualStateManager.GoToState(button, "OverflowWithToggleButtonsAndMenuIcons", false));
 
@@ -648,6 +659,12 @@ public class CommandBarFlyoutApiTests
         Assert.AreEqual(40.0, contentRoot.Width);
         Assert.IsTrue(double.IsNaN(contentViewbox.Width));
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "TouchInputMode", false));
+        Assert.AreEqual(new Thickness(0, 9, 0, 11), overflowTextLabel.Padding);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "InputModeDefault", false));
+        Assert.AreEqual(new Thickness(0, 5, 0, 7), overflowTextLabel.Padding);
     }
 
     private static void VerifyAppBarToggleButtonApplicationViewStates(AppBarToggleButton button)
@@ -682,10 +699,24 @@ public class CommandBarFlyoutApiTests
             "OverflowCheckGlyph.Visibility",
             "OverflowTextLabel.Visibility",
             "OverflowTextLabel.Margin");
+        AssertStateSetter(
+            root,
+            "InputModeStates",
+            "TouchInputMode",
+            "OverflowTextLabel.Padding",
+            "OverflowCheckGlyph.Margin");
+        AssertStateSetter(
+            root,
+            "InputModeStates",
+            "GameControllerInputMode",
+            "OverflowTextLabel.Padding",
+            "OverflowCheckGlyph.Margin");
 
         Assert.AreEqual(40.0, contentRoot.Width);
         Assert.AreEqual(Visibility.Collapsed, overflowCheckGlyph.Visibility);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
+        Assert.AreEqual(new Thickness(15, 4, 14, 4), overflowCheckGlyph.Margin);
+        Assert.AreEqual(new Thickness(0, 5, 0, 7), overflowTextLabel.Padding);
 
         Assert.IsTrue(VisualStateManager.GoToState(button, "OverflowWithMenuIcons", false));
 
@@ -707,6 +738,14 @@ public class CommandBarFlyoutApiTests
         Assert.IsTrue(double.IsPositiveInfinity(contentViewbox.MaxWidth));
         Assert.AreEqual(Visibility.Collapsed, overflowCheckGlyph.Visibility);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "GameControllerInputMode", false));
+        Assert.AreEqual(new Thickness(12, 10, 12, 10), overflowCheckGlyph.Margin);
+        Assert.AreEqual(new Thickness(0, 9, 0, 11), overflowTextLabel.Padding);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "InputModeDefault", false));
+        Assert.AreEqual(new Thickness(15, 4, 14, 4), overflowCheckGlyph.Margin);
+        Assert.AreEqual(new Thickness(0, 5, 0, 7), overflowTextLabel.Padding);
     }
 
     private static void VerifyAppBarButtonCommonStates(AppBarButton button)
