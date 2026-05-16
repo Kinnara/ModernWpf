@@ -58,31 +58,67 @@
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CombinedStates">
-                                <VisualState x:Name="UncheckedNormal" />
-                                <VisualState x:Name="UncheckedPointerOver" />
-                                <VisualState x:Name="UncheckedPressed" />
-                                <VisualState x:Name="UncheckedDisabled" />
-                                <VisualState x:Name="CheckedNormal" />
-                                <VisualState x:Name="CheckedPointerOver" />
-                                <VisualState x:Name="CheckedPressed" />
-                                <VisualState x:Name="CheckedDisabled" />
+                                <root:VisualStateEx x:Name="UncheckedNormal">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="NormalOff" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="UncheckedPointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="PointerOverOff" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="UncheckedPressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="PressedOff" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="UncheckedDisabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="NormalOff" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedNormal">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="NormalOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedPointerOver">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="PointerOverOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedPressed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="PressedOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="CheckedDisabled">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="NormalOn" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="IndeterminateNormal">
                                     <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="NormalIndeterminate" />
                                         <root:VisualStateSetter Target="DownLevelCheckGlyph.Margin" Value="0" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="IndeterminatePointerOver">
                                     <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="PointerOverIndeterminate" />
                                         <root:VisualStateSetter Target="DownLevelCheckGlyph.Margin" Value="0" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="IndeterminatePressed">
                                     <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="PressedIndeterminate" />
                                         <root:VisualStateSetter Target="DownLevelCheckGlyph.Margin" Value="0" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
                                 <root:VisualStateEx x:Name="IndeterminateDisabled">
                                     <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DownLevelCheckGlyph.(local:AnimatedIcon.State)" Value="NormalIndeterminate" />
                                         <root:VisualStateSetter Target="DownLevelCheckGlyph.Margin" Value="0" />
                                     </root:VisualStateEx.Setters>
                                 </root:VisualStateEx>
@@ -114,6 +150,7 @@
                                     FontSize="{StaticResource CheckBoxGlyphSize}"
                                     Foreground="{DynamicResource CheckBoxCheckGlyphForegroundUnchecked}"
                                     Margin="4"
+                                    local:AnimatedIcon.State="NormalOff"
                                     Opacity="0" />
                             </Grid>
                             <local:ContentPresenterEx

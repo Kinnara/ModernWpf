@@ -35,14 +35,54 @@ public class CheckBoxVisualStateTests
             AssertStateSetter(root, "IndeterminatePointerOver", "DownLevelCheckGlyph.Margin");
             AssertStateSetter(root, "IndeterminatePressed", "DownLevelCheckGlyph.Margin");
             AssertStateSetter(root, "IndeterminateDisabled", "DownLevelCheckGlyph.Margin");
+            AssertAnimatedIconStateSetter(root, "IndeterminateNormal", "NormalIndeterminate");
+            AssertAnimatedIconStateSetter(root, "IndeterminatePointerOver", "PointerOverIndeterminate");
+            AssertAnimatedIconStateSetter(root, "IndeterminatePressed", "PressedIndeterminate");
+            AssertAnimatedIconStateSetter(root, "IndeterminateDisabled", "NormalIndeterminate");
             Assert.AreEqual("IndeterminateNormal", GetCurrentStateName(root));
+            Assert.AreEqual("NormalIndeterminate", AnimatedIcon.GetState(glyph));
             Assert.AreEqual(new Thickness(0), glyph.Margin);
 
             checkBox.IsChecked = false;
             host.UpdateLayout();
 
             Assert.AreEqual("UncheckedNormal", GetCurrentStateName(root));
+            Assert.AreEqual("NormalOff", AnimatedIcon.GetState(glyph));
             Assert.AreEqual(new Thickness(4), glyph.Margin);
+        });
+    }
+
+    [TestMethod]
+    public void CombinedStatesUseVisualStateSettersForAnimatedIconState()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var checkBox = new CheckBox
+            {
+                IsThreeState = true,
+                Content = "Option"
+            };
+
+            using var host = new TestWindowHost(checkBox, width: 180, height: 80);
+            host.UpdateLayout();
+
+            var root = FindTemplatePart<FrameworkElement>(checkBox, "RootGrid");
+            var glyph = FindTemplatePart<FontIconFallback>(checkBox, "DownLevelCheckGlyph");
+
+            AssertAnimatedIconState(root, glyph, "UncheckedNormal", "NormalOff");
+            AssertAnimatedIconState(root, glyph, "UncheckedPointerOver", "PointerOverOff");
+            AssertAnimatedIconState(root, glyph, "UncheckedPressed", "PressedOff");
+            AssertAnimatedIconState(root, glyph, "UncheckedDisabled", "NormalOff");
+            AssertAnimatedIconState(root, glyph, "CheckedNormal", "NormalOn");
+            AssertAnimatedIconState(root, glyph, "CheckedPointerOver", "PointerOverOn");
+            AssertAnimatedIconState(root, glyph, "CheckedPressed", "PressedOn");
+            AssertAnimatedIconState(root, glyph, "CheckedDisabled", "NormalOn");
+            AssertAnimatedIconState(root, glyph, "IndeterminateNormal", "NormalIndeterminate");
+            AssertAnimatedIconState(root, glyph, "IndeterminatePointerOver", "PointerOverIndeterminate");
+            AssertAnimatedIconState(root, glyph, "IndeterminatePressed", "PressedIndeterminate");
+            AssertAnimatedIconState(root, glyph, "IndeterminateDisabled", "NormalIndeterminate");
         });
     }
 
@@ -62,6 +102,35 @@ public class CheckBoxVisualStateTests
         Assert.IsTrue(
             stateEx.Setters.Any(setter => setter.Target == setterTarget),
             $"CombinedStates.{stateName} should set {setterTarget}.");
+    }
+
+    private static void AssertAnimatedIconState(
+        FrameworkElement stateGroupsRoot,
+        DependencyObject glyph,
+        string stateName,
+        string expectedValue)
+    {
+        AssertAnimatedIconStateSetter(stateGroupsRoot, stateName, expectedValue);
+        Assert.IsTrue(VisualStateManager.GoToElementState(stateGroupsRoot, stateName, false));
+        Assert.AreEqual(expectedValue, AnimatedIcon.GetState(glyph));
+    }
+
+    private static void AssertAnimatedIconStateSetter(
+        FrameworkElement stateGroupsRoot,
+        string stateName,
+        string expectedValue)
+    {
+        var group = GetCombinedStatesGroup(stateGroupsRoot);
+        var state = group.States
+            .Cast<VisualState>()
+            .Single(item => item.Name == stateName);
+
+        Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+        var stateEx = (VisualStateEx)state;
+        var setter = stateEx.Setters.Single(item => item.Target == "DownLevelCheckGlyph.(local:AnimatedIcon.State)");
+
+        Assert.AreEqual(expectedValue, setter.Value);
     }
 
     private static string GetCurrentStateName(FrameworkElement stateGroupsRoot)
