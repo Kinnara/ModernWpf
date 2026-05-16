@@ -505,40 +505,38 @@
                     <Border
                         x:Name="LayoutRoot"
                         Background="{TemplateBinding Background}"
+                        Padding="{TemplateBinding Padding}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{DynamicResource CommandBarOverflowPresenterBorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <!--<VisualStateManager.VisualStateGroups>
-                        <VisualStateGroup x:Name="DisplayModeStates">
-                        <VisualState x:Name="DisplayModeDefault" />
-                        <VisualState x:Name="FullWidthOpenDown" />
-                        <VisualState x:Name="FullWidthOpenUp" />
-                        </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>-->
-                        <Border
-                            Padding="{TemplateBinding Padding}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{DynamicResource CommandBarOverflowPresenterBorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
-                            <ScrollViewer
-                                Content="{TemplateBinding Content}"
-                                HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                Padding="3"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </Border>
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="DisplayModeStates">
+                                <VisualState x:Name="DisplayModeDefault" />
+                                <ui:VisualStateEx x:Name="FullWidthOpenDown">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderDownPadding}" />
+                                        <ui:VisualStateSetter Target="LayoutRoot.BorderThickness" Value="{DynamicResource CommandBarOverflowPresenterBorderDownThickness}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="FullWidthOpenUp">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="LayoutRoot.Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderUpPadding}" />
+                                        <ui:VisualStateSetter Target="LayoutRoot.BorderThickness" Value="{DynamicResource CommandBarOverflowPresenterBorderUpThickness}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ScrollViewer
+                            Content="{TemplateBinding Content}"
+                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                            Padding="3"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <!-- FullWidthOpenDown -->
-                        <!--<Trigger SourceName="DisplayModeStatesListener" Property="CurrentStateName" Value="FullWidthOpenDown">
-                        <Setter TargetName="LayoutRoot" Property="Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderDownPadding}" />
-                        <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="{DynamicResource CommandBarOverflowPresenterBorderDownThickness}" />
-                        </Trigger>-->
-                        <!-- FullWidthOpenUp -->
-                        <!--<Trigger SourceName="DisplayModeStatesListener" Property="CurrentStateName" Value="FullWidthOpenUp">
-                        <Setter TargetName="LayoutRoot" Property="Padding" Value="{DynamicResource CommandBarOverflowPresenterBorderUpPadding}" />
-                        <Setter TargetName="LayoutRoot" Property="BorderThickness" Value="{DynamicResource CommandBarOverflowPresenterBorderUpThickness}" />
-                        </Trigger>-->
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

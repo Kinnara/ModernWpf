@@ -131,6 +131,39 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void CommandBarOverflowPresenterFullWidthStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var presenter = new CommandBarOverflowPresenter
+            {
+                Content = new StackPanel()
+            };
+
+            using var host = new TestWindowHost(presenter, width: 320, height: 160);
+            host.UpdateLayout();
+
+            var layoutRoot = FindTemplateChild<Border>(presenter, "LayoutRoot");
+
+            AssertStateSetter(layoutRoot, "DisplayModeStates", "FullWidthOpenDown", "LayoutRoot.Padding");
+            AssertStateSetter(layoutRoot, "DisplayModeStates", "FullWidthOpenDown", "LayoutRoot.BorderThickness");
+            AssertStateSetter(layoutRoot, "DisplayModeStates", "FullWidthOpenUp", "LayoutRoot.Padding");
+            AssertStateSetter(layoutRoot, "DisplayModeStates", "FullWidthOpenUp", "LayoutRoot.BorderThickness");
+
+            AssertVisualState(layoutRoot, "DisplayModeStates", "FullWidthOpenDown");
+            Assert.AreEqual((Thickness)presenter.TryFindResource("CommandBarOverflowPresenterBorderDownPadding"), layoutRoot.Padding);
+            Assert.AreEqual((Thickness)presenter.TryFindResource("CommandBarOverflowPresenterBorderDownThickness"), layoutRoot.BorderThickness);
+
+            Assert.IsTrue(VisualStateManager.GoToState(presenter, "FullWidthOpenUp", false));
+
+            Assert.AreEqual((Thickness)presenter.TryFindResource("CommandBarOverflowPresenterBorderUpPadding"), layoutRoot.Padding);
+            Assert.AreEqual((Thickness)presenter.TryFindResource("CommandBarOverflowPresenterBorderUpThickness"), layoutRoot.BorderThickness);
+        });
+    }
+
+    [TestMethod]
     public void AppBarButtonDefaultsAndCommandTextMapping()
     {
         WpfTestHost.Run(() =>
@@ -467,6 +500,13 @@ public class CommandBarApiTests
 
         Assert.Fail(
             $"Expected visual state '{groupName}.{stateName}' to contain setter '{expectedTarget ?? expectedProperty}'.");
+    }
+
+    private static void AssertVisualState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)
+    {
+        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
+        Assert.IsNotNull(group, $"Expected visual state group '{groupName}'.");
+        Assert.AreEqual(expectedStateName, group!.CurrentState?.Name);
     }
 
     private static VisualStateGroup? FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)

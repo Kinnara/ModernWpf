@@ -54,11 +54,11 @@ namespace ModernWpf.Controls.Primitives
         {
             string stateName;
 
-            //if (IsLoaded && IsVisible)
-            //{
-            //    stateName = IsPopupOpenDown() ? "FullWidthOpenDown" : "FullWidthOpenUp";
-            //}
-            //else
+            if (IsLoaded && IsVisible)
+            {
+                stateName = IsPopupOpenDown() ? "FullWidthOpenDown" : "FullWidthOpenUp";
+            }
+            else
             {
                 stateName = "DisplayModeDefault";
             }
