@@ -69,13 +69,18 @@ namespace ModernWpf
         {
             ParsedTargetPath targetPath = ParsedTargetPath.Parse(setter);
             DependencyObject target = ResolveTarget(control, stateGroupsRoot, targetPath.TargetName);
-            DependencyProperty property = ResolveDependencyProperty(target, targetPath.PropertyPath);
-            SetterValue value = ResolveSetterValue(setter, property);
+            TargetProperty targetProperty = ResolveTargetProperty(target, targetPath.PropertyPath);
+            SetterValue value = ResolveSetterValue(control, stateGroupsRoot, targetProperty.Target, setter, targetProperty.Property);
 
-            return new ResolvedVisualStateSetter(target, property, value);
+            return new ResolvedVisualStateSetter(targetProperty.Target, targetProperty.Property, value);
         }
 
-        private static SetterValue ResolveSetterValue(VisualStateSetter setter, DependencyProperty property)
+        private static SetterValue ResolveSetterValue(
+            FrameworkElement control,
+            FrameworkElement stateGroupsRoot,
+            DependencyObject target,
+            VisualStateSetter setter,
+            DependencyProperty property)
         {
             BindingBase binding = BindingOperations.GetBindingBase(setter, VisualStateSetter.ValueProperty);
             if (binding != null)
@@ -87,6 +92,12 @@ namespace ModernWpf
 
             if (TryGetDynamicResourceKey(rawValue, out object resourceKey))
             {
+                if (!CanSetResourceReference(target))
+                {
+                    object resourceValue = FindResourceValue(control, stateGroupsRoot, resourceKey, property);
+                    return SetterValue.FromValue(ConvertValue(resourceValue, property));
+                }
+
                 return SetterValue.FromDynamicResource(resourceKey);
             }
 
@@ -139,6 +150,51 @@ namespace ModernWpf
             throw new InvalidOperationException($"Unable to resolve visual state setter target '{targetName}'.");
         }
 
+        private static TargetProperty ResolveTargetProperty(DependencyObject target, string propertyPath)
+        {
+            string[] segments = SplitPropertyPath(propertyPath);
+            DependencyObject currentTarget = target;
+
+            for (int i = 0; i < segments.Length; i++)
+            {
+                DependencyProperty property = ResolveDependencyProperty(currentTarget, segments[i]);
+                if (i == segments.Length - 1)
+                {
+                    return new TargetProperty(currentTarget, property);
+                }
+
+                object nextTarget = currentTarget.GetValue(property);
+                if (nextTarget is Freezable freezable && freezable.IsFrozen)
+                {
+                    Freezable clone = freezable.CloneCurrentValue();
+                    try
+                    {
+                        currentTarget.SetCurrentValue(property, clone);
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        throw new InvalidOperationException(
+                            $"Nested visual state setter target path '{propertyPath}' resolved '{segments[i]}' to a frozen Freezable that could not be cloned back onto its owner.",
+                            ex);
+                    }
+
+                    nextTarget = clone;
+                }
+
+                if (nextTarget is DependencyObject dependencyObject)
+                {
+                    currentTarget = dependencyObject;
+                }
+                else
+                {
+                    throw new InvalidOperationException(
+                        $"Nested visual state setter target path '{propertyPath}' resolved '{segments[i]}' to a non-dependency object.");
+                }
+            }
+
+            throw new InvalidOperationException("Visual state setter property path cannot be empty.");
+        }
+
         private static DependencyProperty ResolveDependencyProperty(DependencyObject target, string propertyPath)
         {
             if (string.IsNullOrWhiteSpace(propertyPath))
@@ -154,10 +210,69 @@ namespace ModernWpf
 
             if (propertyPath.IndexOf('.') >= 0 || propertyPath.IndexOf('(') >= 0 || propertyPath.IndexOf(')') >= 0)
             {
-                throw new NotSupportedException($"Nested visual state setter target path '{propertyPath}' is not supported.");
+                throw new NotSupportedException($"Visual state setter property path segment '{propertyPath}' is invalid.");
             }
 
             return ResolveDependencyPropertyField(target.GetType(), propertyPath, propertyPath);
+        }
+
+        private static string[] SplitPropertyPath(string propertyPath)
+        {
+            if (string.IsNullOrWhiteSpace(propertyPath))
+            {
+                throw new InvalidOperationException("Visual state setter property path cannot be empty.");
+            }
+
+            var segments = new List<string>();
+            int segmentStart = 0;
+            int depth = 0;
+
+            for (int i = 0; i < propertyPath.Length; i++)
+            {
+                char ch = propertyPath[i];
+                if (ch == '(')
+                {
+                    if (depth != 0)
+                    {
+                        throw new NotSupportedException($"Nested visual state setter target path '{propertyPath}' is invalid.");
+                    }
+
+                    depth = 1;
+                }
+                else if (ch == ')')
+                {
+                    if (depth == 0)
+                    {
+                        throw new NotSupportedException($"Nested visual state setter target path '{propertyPath}' is invalid.");
+                    }
+
+                    depth = 0;
+                }
+                else if (ch == '.' && depth == 0)
+                {
+                    AddPropertyPathSegment(segments, propertyPath, segmentStart, i);
+                    segmentStart = i + 1;
+                }
+            }
+
+            if (depth != 0)
+            {
+                throw new NotSupportedException($"Nested visual state setter target path '{propertyPath}' is invalid.");
+            }
+
+            AddPropertyPathSegment(segments, propertyPath, segmentStart, propertyPath.Length);
+            return segments.ToArray();
+        }
+
+        private static void AddPropertyPathSegment(List<string> segments, string propertyPath, int start, int end)
+        {
+            string segment = propertyPath.Substring(start, end - start).Trim();
+            if (segment.Length == 0)
+            {
+                throw new NotSupportedException($"Nested visual state setter target path '{propertyPath}' is invalid.");
+            }
+
+            segments.Add(segment);
         }
 
         private static bool TryParseAttachedPropertyPath(string propertyPath, out string ownerTypeName, out string propertyName)
@@ -329,6 +444,37 @@ namespace ModernWpf
             return false;
         }
 
+        private static bool CanSetResourceReference(DependencyObject target)
+        {
+            return target is FrameworkElement || target is FrameworkContentElement;
+        }
+
+        private static object FindResourceValue(
+            FrameworkElement control,
+            FrameworkElement stateGroupsRoot,
+            object resourceKey,
+            DependencyProperty property)
+        {
+            object value = stateGroupsRoot?.TryFindResource(resourceKey);
+            if (value == null)
+            {
+                value = control?.TryFindResource(resourceKey);
+            }
+
+            if (value == null && Application.Current != null)
+            {
+                value = Application.Current.TryFindResource(resourceKey);
+            }
+
+            if (value != null)
+            {
+                return value;
+            }
+
+            throw new InvalidOperationException(
+                $"Unable to resolve dynamic resource '{resourceKey}' for visual state setter property '{property.Name}'.");
+        }
+
         private static SetterValueStore GetSetterValueStore(FrameworkElement stateGroupsRoot)
         {
             var store = (SetterValueStore)stateGroupsRoot.GetValue(SetterValueStoreProperty);
@@ -419,6 +565,19 @@ namespace ModernWpf
             public SetterValue Value { get; }
 
             public SetterKey Key => new SetterKey(Target, Property);
+        }
+
+        private readonly struct TargetProperty
+        {
+            public TargetProperty(DependencyObject target, DependencyProperty property)
+            {
+                Target = target;
+                Property = property;
+            }
+
+            public DependencyObject Target { get; }
+
+            public DependencyProperty Property { get; }
         }
 
         private readonly struct SetterKey : IEquatable<SetterKey>
@@ -606,14 +765,10 @@ namespace ModernWpf
                 if (propertyPath.StartsWith("(", StringComparison.Ordinal))
                 {
                     int closeIndex = propertyPath.IndexOf(')');
-                    if (closeIndex != propertyPath.Length - 1)
+                    if (closeIndex < 0)
                     {
-                        throw new NotSupportedException($"Nested visual state setter target path '{target}' is not supported.");
+                        throw new NotSupportedException($"Visual state setter target path '{target}' is invalid.");
                     }
-                }
-                else if (propertyPath.IndexOf('.') >= 0)
-                {
-                    throw new NotSupportedException($"Nested visual state setter target path '{target}' is not supported.");
                 }
 
                 return new ParsedTargetPath(targetName, propertyPath);

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.WinUI.TestInfra;
 
@@ -339,28 +340,67 @@ public class VisualStateSetterTests
     }
 
     [TestMethod]
-    public void VisualStateExThrowsForNestedTargetPath()
+    public void VisualStateExAppliesNestedTargetPath()
     {
         WpfTestHost.Run(() =>
         {
             var control = CreateControl(
                 """
                 <VisualStateGroup x:Name="CommonStates">
-                    <ui:VisualStateEx x:Name="Broken">
+                    <ui:VisualStateEx x:Name="Normal" />
+                    <ui:VisualStateEx x:Name="PointerOver">
                         <ui:VisualStateEx.Setters>
-                            <ui:VisualStateSetter Target="TargetBorder.(Panel.Background).(SolidColorBrush.Color)" Value="Red" />
+                            <ui:VisualStateSetter Target="TargetRectangle.(Shape.Fill).(SolidColorBrush.Color)" Value="Red" />
                         </ui:VisualStateEx.Setters>
                     </ui:VisualStateEx>
                 </VisualStateGroup>
                 """,
                 """
-                <Border x:Name="TargetBorder" Background="Blue" />
+                <Rectangle x:Name="TargetRectangle" Fill="Blue" />
                 """);
 
             using var host = new TestWindowHost(control);
+            var target = FindTemplateChild<Rectangle>(control, "TargetRectangle");
 
-            Assert.ThrowsException<NotSupportedException>(
-                () => System.Windows.VisualStateManager.GoToState(control, "Broken", false));
+            AssertSolidColorBrush(target.Fill, Colors.Blue);
+
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(control, "PointerOver", false));
+            AssertSolidColorBrush(target.Fill, Colors.Red);
+
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(control, "Normal", false));
+            AssertSolidColorBrush(target.Fill, Colors.Blue);
+        });
+    }
+
+    [TestMethod]
+    public void VisualStateExAppliesNestedDynamicResourceTargetPath()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var control = CreateControl(
+                """
+                <VisualStateGroup x:Name="CommonStates">
+                    <ui:VisualStateEx x:Name="Normal" />
+                    <ui:VisualStateEx x:Name="PointerOver">
+                        <ui:VisualStateEx.Setters>
+                            <ui:VisualStateSetter Target="TargetRectangle.(Shape.Fill).(SolidColorBrush.Color)" Value="{DynamicResource SetterColor}" />
+                        </ui:VisualStateEx.Setters>
+                    </ui:VisualStateEx>
+                </VisualStateGroup>
+                """,
+                """
+                <Rectangle x:Name="TargetRectangle" Fill="Blue" />
+                """);
+            control.Resources["SetterColor"] = Colors.Red;
+
+            using var host = new TestWindowHost(control);
+            var target = FindTemplateChild<Rectangle>(control, "TargetRectangle");
+
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(control, "PointerOver", false));
+            AssertSolidColorBrush(target.Fill, Colors.Red);
+
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(control, "Normal", false));
+            AssertSolidColorBrush(target.Fill, Colors.Blue);
         });
     }
 

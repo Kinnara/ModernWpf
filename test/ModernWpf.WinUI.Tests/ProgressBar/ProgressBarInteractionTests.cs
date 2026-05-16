@@ -5,8 +5,10 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Markup;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf;
 using ModernWpf.WinUI.TestInfra;
 using ProgressBar = ModernWpf.Controls.ProgressBar;
 
@@ -169,6 +171,37 @@ public class ProgressBarInteractionTests
     }
 
     [TestMethod]
+    public void UpdatingErrorStateUsesNestedVisualStateSetter()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var progressBar = CreateProgressBar(width: 100);
+
+            using var host = new TestWindowHost(progressBar, width: 320, height: 180);
+
+            var state = GetCommonStatesGroup(progressBar).States
+                .OfType<VisualState>()
+                .Single(candidate => candidate.Name == "UpdatingError");
+            Assert.IsInstanceOfType(state, typeof(VisualStateEx));
+
+            var stateEx = (VisualStateEx)state;
+            Assert.IsTrue(
+                stateEx.Setters.Any(setter => setter.Target == "DeterminateProgressBarIndicator.(Shape.Fill).(SolidColorBrush.Color)"),
+                "UpdatingError should use the WinUI nested brush-color setter path.");
+
+            var indicator = FindNamedDescendant<Rectangle>(progressBar, "DeterminateProgressBarIndicator");
+            var initialColor = ((SolidColorBrush)indicator.Fill).Color;
+            var expectedErrorColor = (Color)progressBar.TryFindResource("ProgressBarErrorForegroundColor");
+
+            Assert.IsTrue(VisualStateManager.GoToState(progressBar, "UpdatingError", false));
+            AssertSolidColorBrush(indicator.Fill, expectedErrorColor);
+
+            Assert.IsTrue(VisualStateManager.GoToState(progressBar, "Determinate", false));
+            AssertSolidColorBrush(indicator.Fill, initialColor);
+        });
+    }
+
+    [TestMethod]
     public void RetemplateUpdateIndicatorWidthTest()
     {
         WpfTestHost.Run(() =>
@@ -283,6 +316,13 @@ public class ProgressBarInteractionTests
     {
         var indicator = FindNamedDescendant<Rectangle>(progressBar, "DeterminateProgressBarIndicator");
         Assert.AreEqual(expected, indicator.Width, 0.5);
+    }
+
+    private static void AssertSolidColorBrush(Brush brush, Color expectedColor)
+    {
+        var solidColorBrush = brush as SolidColorBrush
+            ?? throw new AssertFailedException("Expected a SolidColorBrush.");
+        Assert.AreEqual(expectedColor, solidColorBrush.Color);
     }
 
     private static ControlTemplate CreateRetemplate()

@@ -94,11 +94,6 @@
                             </Storyboard>
 
                             <Storyboard x:Key="UpdatingErrorStoryboard">
-                                <ColorAnimation
-                                    Storyboard.TargetName="DeterminateProgressBarIndicator"
-                                    Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
-                                    To="{DynamicResource ProgressBarErrorForegroundColor}"
-                                    Duration="0:0:0.0" />
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarTrack" Storyboard.TargetProperty="Fill">
                                     <DiscreteObjectKeyFrame KeyTime="0" Value="{TemplateBinding Background}" />
                                 </ObjectAnimationUsingKeyFrames>
@@ -200,7 +195,11 @@
 
                                 <VisualState x:Name="Determinate" />
                                 <VisualState x:Name="Updating" />
-                                <VisualState x:Name="UpdatingError" Storyboard="{StaticResource UpdatingErrorStoryboard}" />
+                                <root:VisualStateEx x:Name="UpdatingError" Storyboard="{StaticResource UpdatingErrorStoryboard}">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="DeterminateProgressBarIndicator.(Shape.Fill).(SolidColorBrush.Color)" Value="{DynamicResource ProgressBarErrorForegroundColor}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
                                 <VisualState x:Name="Error" Storyboard="{StaticResource ErrorStoryboard}" />
                                 <VisualState x:Name="Paused" Storyboard="{StaticResource PausedStoryboard}" />
                                 <root:VisualStateEx x:Name="Indeterminate" Storyboard="{StaticResource IndeterminateStoryboard}">
