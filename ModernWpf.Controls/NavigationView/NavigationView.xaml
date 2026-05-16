@@ -291,6 +291,54 @@
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
 
+                            <VisualStateGroup x:Name="PointerChevronStates">
+                                <VisualState x:Name="NormalChevronHidden"/>
+                                <ui:VisualStateEx x:Name="NormalChevronVisibleOpen">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="NormalOn" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="NormalChevronVisibleClosed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="NormalOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverChevronHidden">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PointerOverOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverChevronVisibleOpen">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PointerOverOn" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverChevronVisibleClosed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PointerOverOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PressedChevronHidden">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PressedOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PressedChevronVisibleOpen">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PressedOn" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PressedChevronVisibleClosed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PressedOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+
                             <VisualStateGroup x:Name="PaneAndTopLevelItemStates">
                                 <VisualState x:Name="NotClosedCompactAndTopLevelItem" />
                                 <ui:VisualStateEx x:Name="ClosedCompactAndTopLevelItem">
@@ -377,7 +425,8 @@
                                         Data="{DynamicResource NavigationViewItemExpandedPath}"
                                         FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                         HorizontalAlignment="Center"
-                                        VerticalAlignment="Center">
+                                        VerticalAlignment="Center"
+                                        ui:AnimatedIcon.State="NormalOff">
                                         <ui:FontIconFallback.RenderTransform>
                                             <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" Angle="0"/>
                                         </ui:FontIconFallback.RenderTransform>
@@ -431,6 +480,7 @@
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource TopNavigationViewItemBackgroundPointerOver}" />
                                         <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundPointerOver}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="PointerOver" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Pressed">
@@ -438,6 +488,7 @@
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource TopNavigationViewItemBackgroundPressed}" />
                                         <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundPressed}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="Pressed" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="Selected">
@@ -452,6 +503,7 @@
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource TopNavigationViewItemBackgroundSelectedPointerOver}" />
                                         <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundSelectedPointerOver}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="PointerOver" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="PressedSelected">
@@ -459,6 +511,7 @@
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{DynamicResource TopNavigationViewItemBackgroundSelectedPressed}" />
                                         <ui:VisualStateSetter Target="PointerRectangle.Fill" Value="{DynamicResource NavigationViewItemBackgroundSelectedPressed}" />
                                         <ui:VisualStateSetter Target="Icon.Foreground" Value="{DynamicResource TopNavigationViewItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="Icon.(ui:AnimatedIcon.State)" Value="Pressed" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -496,7 +549,8 @@
                                     <ui:ContentPresenterEx
                                         x:Name="Icon"
                                         Content="{TemplateBinding Icon}"
-                                        Foreground="{TemplateBinding Foreground}" />
+                                        Foreground="{TemplateBinding Foreground}"
+                                        ui:AnimatedIcon.State="Normal" />
                                 </Viewbox>
                                 <ContentPresenter
                                     x:Name="InfoBadgePresenter"
@@ -643,28 +697,48 @@
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="PointerChevronStates">
                                 <VisualState x:Name="NormalChevronHidden"/>
-                                <VisualState x:Name="NormalChevronVisibleOpen"/>
-                                <VisualState x:Name="NormalChevronVisibleClosed"/>
-                                <VisualState x:Name="PointerOverChevronHidden"/>
+                                <ui:VisualStateEx x:Name="NormalChevronVisibleOpen">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="NormalOn" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="NormalChevronVisibleClosed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="NormalOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverChevronHidden">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PointerOverOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="PointerOverChevronVisibleOpen">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PointerOverOn" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="PointerOverChevronVisibleClosed">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PointerOverOff" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
-                                <VisualState x:Name="PressedChevronHidden"/>
+                                <ui:VisualStateEx x:Name="PressedChevronHidden">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PressedOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="PressedChevronVisibleOpen">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PressedOn" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="PressedChevronVisibleClosed">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.Foreground" Value="{DynamicResource NavigationViewItemForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PressedOff" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -723,7 +797,8 @@
                                         Data="{DynamicResource NavigationViewItemExpandedPath}"
                                         FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                         VerticalAlignment="Center"
-                                        HorizontalAlignment="Center">
+                                        HorizontalAlignment="Center"
+                                        ui:AnimatedIcon.State="NormalOff">
                                         <ui:FontIconFallback.RenderTransform>
                                             <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" Angle="0"/>
                                         </ui:FontIconFallback.RenderTransform>
@@ -870,6 +945,49 @@
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="PointerChevronStates">
+                                <VisualState x:Name="NormalChevronHidden"/>
+                                <ui:VisualStateEx x:Name="NormalChevronVisibleOpen">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="NormalOn" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="NormalChevronVisibleClosed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="NormalOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverChevronHidden">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PointerOverOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverChevronVisibleOpen">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PointerOverOn" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverChevronVisibleClosed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PointerOverOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PressedChevronHidden">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PressedOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PressedChevronVisibleOpen">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PressedOn" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PressedChevronVisibleClosed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)" Value="PressedOff" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="PresenterContentRootGrid">
                             <!-- Wrap SelectionIndicator in a grid so that its offset is 0,0 - this enables the offset animation. -->
@@ -937,7 +1055,8 @@
                                             Data="{DynamicResource NavigationViewItemExpandedPath}"
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             HorizontalAlignment="Center"
-                                            VerticalAlignment="Center">
+                                            VerticalAlignment="Center"
+                                            ui:AnimatedIcon.State="NormalOff">
                                             <ui:FontIconFallback.RenderTransform>
                                                 <RotateTransform x:Name="ExpandCollapseChevronRotateTransform" Angle="0"/>
                                             </ui:FontIconFallback.RenderTransform>

@@ -825,6 +825,7 @@ public class NavigationViewApiTests
             var iconBox = FindNamedDescendant<FrameworkElement>(itemPresenter, "IconBox");
             var iconColumn = FindNamedDescendant<Border>(itemPresenter, "IconColumn");
             var chevron = FindNamedDescendant<FrameworkElement>(itemPresenter, "ExpandCollapseChevron");
+            var chevronIcon = FindNamedDescendant<ModernWpf.Controls.FontIconFallback>(itemPresenter, "ExpandCollapseChevronIcon");
             var contentGrid = FindNamedDescendant<Grid>(itemPresenter, "ContentGrid");
             var infoBadgePresenter = FindNamedDescendant<ContentPresenter>(itemPresenter, "InfoBadgePresenter");
 
@@ -853,6 +854,7 @@ public class NavigationViewApiTests
                 "ExpandCollapseChevron.Visibility",
                 "ExpandCollapseChevronIcon.Visibility",
                 "ExpandCollapseChevronRotateTransform.Angle");
+            AssertChevronAnimatedIconStateSetters(layoutRoot);
             AssertStateSetter(layoutRoot, "PaneAndTopLevelItemStates", "ClosedCompactAndTopLevelItem",
                 "ContentPresenter.Margin",
                 "ContentGrid.Margin",
@@ -888,6 +890,7 @@ public class NavigationViewApiTests
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "ChevronVisibleOpen", false));
             AssertCurrentState(layoutRoot, "ChevronStates", "ChevronVisibleOpen");
             Assert.AreEqual(Visibility.Visible, chevron.Visibility);
+            AssertChevronAnimatedIconStateTransitions(itemPresenter, layoutRoot, chevronIcon);
 
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "ClosedCompactAndTopLevelItem", false));
             AssertCurrentState(layoutRoot, "PaneAndTopLevelItemStates", "ClosedCompactAndTopLevelItem");
@@ -994,6 +997,7 @@ public class NavigationViewApiTests
                 "ExpandCollapseChevronIcon.Foreground");
             AssertStateSetter(layoutRoot, "PointerChevronStates", "PressedChevronVisibleClosed",
                 "ExpandCollapseChevronIcon.Foreground");
+            AssertChevronAnimatedIconStateSetters(layoutRoot);
 
             Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(icon));
 
@@ -1045,6 +1049,7 @@ public class NavigationViewApiTests
             Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "PointerOverChevronVisibleOpen", false));
             AssertCurrentState(layoutRoot, "PointerChevronStates", "PointerOverChevronVisibleOpen");
             Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemForegroundPointerOver"), chevronIcon.Foreground);
+            AssertChevronAnimatedIconStateTransitions(itemPresenter, layoutRoot, chevronIcon);
         });
     }
 
@@ -1114,6 +1119,7 @@ public class NavigationViewApiTests
             AssertStateSetter(layoutRoot, "ChevronStates", "ChevronVisibleOpen",
                 "ExpandCollapseChevron.Visibility",
                 "ExpandCollapseChevronRotateTransform.Angle");
+            AssertChevronAnimatedIconStateSetters(layoutRoot);
 
             Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(icon));
 
@@ -1142,6 +1148,7 @@ public class NavigationViewApiTests
             AssertCurrentState(layoutRoot, "ChevronStates", "ChevronVisibleOpen");
             Assert.AreEqual(Visibility.Visible, chevron.Visibility);
             Assert.AreEqual(180.0, chevronRotateTransform.Angle);
+            AssertChevronAnimatedIconStateTransitions(itemPresenter, layoutRoot, chevronIcon);
         });
     }
 
@@ -1175,24 +1182,45 @@ public class NavigationViewApiTests
             AssertStateSetter(layoutRoot, "PointerStates", "PointerOver",
                 "LayoutRoot.Background",
                 "PointerRectangle.Fill",
-                "Icon.Foreground");
+                "Icon.Foreground",
+                "Icon.(ui:AnimatedIcon.State)");
+            AssertStateSetter(layoutRoot, "PointerStates", "Pressed",
+                "LayoutRoot.Background",
+                "PointerRectangle.Fill",
+                "Icon.Foreground",
+                "Icon.(ui:AnimatedIcon.State)");
             AssertStateSetter(layoutRoot, "PointerStates", "PointerOverSelected",
                 "LayoutRoot.Background",
                 "PointerRectangle.Fill",
-                "Icon.Foreground");
+                "Icon.Foreground",
+                "Icon.(ui:AnimatedIcon.State)");
+            AssertStateSetter(layoutRoot, "PointerStates", "PressedSelected",
+                "LayoutRoot.Background",
+                "PointerRectangle.Fill",
+                "Icon.Foreground",
+                "Icon.(ui:AnimatedIcon.State)");
             AssertStateSetter(layoutRoot, "DisabledStates", "Disabled",
                 "Icon.Foreground");
+
+            Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(icon));
 
             Assert.IsTrue(VisualStateManager.GoToElementState(layoutRoot, "PointerOver", false));
             AssertCurrentState(layoutRoot, "PointerStates", "PointerOver");
             Assert.AreSame(settingsItem.TryFindResource("TopNavigationViewItemBackgroundPointerOver"), layoutRoot.Background);
             Assert.AreSame(settingsItem.TryFindResource("NavigationViewItemBackgroundPointerOver"), pointerRectangle.Fill);
             Assert.AreSame(settingsItem.TryFindResource("TopNavigationViewItemForegroundPointerOver"), icon.Foreground);
+            Assert.AreEqual("PointerOver", ModernWpf.Controls.AnimatedIcon.GetState(icon));
+
+            Assert.IsTrue(VisualStateManager.GoToElementState(layoutRoot, "Pressed", false));
+            AssertCurrentState(layoutRoot, "PointerStates", "Pressed");
+            Assert.AreSame(settingsItem.TryFindResource("TopNavigationViewItemForegroundPressed"), icon.Foreground);
+            Assert.AreEqual("Pressed", ModernWpf.Controls.AnimatedIcon.GetState(icon));
 
             Assert.IsTrue(VisualStateManager.GoToElementState(layoutRoot, "PointerOverSelected", false));
             AssertCurrentState(layoutRoot, "PointerStates", "PointerOverSelected");
             Assert.AreSame(settingsItem.TryFindResource("TopNavigationViewItemBackgroundSelectedPointerOver"), layoutRoot.Background);
             Assert.AreSame(settingsItem.TryFindResource("NavigationViewItemBackgroundSelectedPointerOver"), pointerRectangle.Fill);
+            Assert.AreEqual("PointerOver", ModernWpf.Controls.AnimatedIcon.GetState(icon));
 
             settingsItem.IsEnabled = false;
             host.UpdateLayout();
@@ -2119,6 +2147,51 @@ public class NavigationViewApiTests
         var state = group.States.OfType<VisualStateEx>().Single(item => item.Name == stateName);
         var setter = state.Setters.Single(item => item.Target == target);
         return (T)setter.Value;
+    }
+
+    private static void AssertChevronAnimatedIconStateSetters(FrameworkElement stateGroupsRoot)
+    {
+        const string target = "ExpandCollapseChevronIcon.(ui:AnimatedIcon.State)";
+
+        AssertStateSetter(stateGroupsRoot, "PointerChevronStates", "NormalChevronVisibleOpen", target);
+        AssertStateSetter(stateGroupsRoot, "PointerChevronStates", "NormalChevronVisibleClosed", target);
+        AssertStateSetter(stateGroupsRoot, "PointerChevronStates", "PointerOverChevronHidden", target);
+        AssertStateSetter(stateGroupsRoot, "PointerChevronStates", "PointerOverChevronVisibleOpen", target);
+        AssertStateSetter(stateGroupsRoot, "PointerChevronStates", "PointerOverChevronVisibleClosed", target);
+        AssertStateSetter(stateGroupsRoot, "PointerChevronStates", "PressedChevronHidden", target);
+        AssertStateSetter(stateGroupsRoot, "PointerChevronStates", "PressedChevronVisibleOpen", target);
+        AssertStateSetter(stateGroupsRoot, "PointerChevronStates", "PressedChevronVisibleClosed", target);
+
+        Assert.AreEqual("NormalOn", GetStateSetterValue<string>(stateGroupsRoot, "PointerChevronStates", "NormalChevronVisibleOpen", target));
+        Assert.AreEqual("NormalOff", GetStateSetterValue<string>(stateGroupsRoot, "PointerChevronStates", "NormalChevronVisibleClosed", target));
+        Assert.AreEqual("PointerOverOff", GetStateSetterValue<string>(stateGroupsRoot, "PointerChevronStates", "PointerOverChevronHidden", target));
+        Assert.AreEqual("PointerOverOn", GetStateSetterValue<string>(stateGroupsRoot, "PointerChevronStates", "PointerOverChevronVisibleOpen", target));
+        Assert.AreEqual("PointerOverOff", GetStateSetterValue<string>(stateGroupsRoot, "PointerChevronStates", "PointerOverChevronVisibleClosed", target));
+        Assert.AreEqual("PressedOff", GetStateSetterValue<string>(stateGroupsRoot, "PointerChevronStates", "PressedChevronHidden", target));
+        Assert.AreEqual("PressedOn", GetStateSetterValue<string>(stateGroupsRoot, "PointerChevronStates", "PressedChevronVisibleOpen", target));
+        Assert.AreEqual("PressedOff", GetStateSetterValue<string>(stateGroupsRoot, "PointerChevronStates", "PressedChevronVisibleClosed", target));
+    }
+
+    private static void AssertChevronAnimatedIconStateTransitions(
+        Control control,
+        FrameworkElement stateGroupsRoot,
+        DependencyObject chevronIcon)
+    {
+        Assert.IsTrue(VisualStateManager.GoToState(control, "NormalChevronVisibleClosed", false));
+        AssertCurrentState(stateGroupsRoot, "PointerChevronStates", "NormalChevronVisibleClosed");
+        Assert.AreEqual("NormalOff", ModernWpf.Controls.AnimatedIcon.GetState(chevronIcon));
+
+        Assert.IsTrue(VisualStateManager.GoToState(control, "NormalChevronVisibleOpen", false));
+        AssertCurrentState(stateGroupsRoot, "PointerChevronStates", "NormalChevronVisibleOpen");
+        Assert.AreEqual("NormalOn", ModernWpf.Controls.AnimatedIcon.GetState(chevronIcon));
+
+        Assert.IsTrue(VisualStateManager.GoToState(control, "PointerOverChevronVisibleOpen", false));
+        AssertCurrentState(stateGroupsRoot, "PointerChevronStates", "PointerOverChevronVisibleOpen");
+        Assert.AreEqual("PointerOverOn", ModernWpf.Controls.AnimatedIcon.GetState(chevronIcon));
+
+        Assert.IsTrue(VisualStateManager.GoToState(control, "PressedChevronVisibleClosed", false));
+        AssertCurrentState(stateGroupsRoot, "PointerChevronStates", "PressedChevronVisibleClosed");
+        Assert.AreEqual("PressedOff", ModernWpf.Controls.AnimatedIcon.GetState(chevronIcon));
     }
 
     private static void AssertCurrentState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)
