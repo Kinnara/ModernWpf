@@ -81,7 +81,8 @@ public class TemplateParityTests
         var convertedTemplateFiles = new[]
         {
             Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
-            Path.Combine("ModernWpf.Controls", "InfoBadge", "InfoBadge.xaml")
+            Path.Combine("ModernWpf.Controls", "InfoBadge", "InfoBadge.xaml"),
+            Path.Combine("ModernWpf.Controls", "RadioButtons", "RadioButtons.xaml")
         };
 
         var offenders = convertedTemplateFiles

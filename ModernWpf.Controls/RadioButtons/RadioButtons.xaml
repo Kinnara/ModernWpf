@@ -14,10 +14,17 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:RadioButtons">
                     <StackPanel SnapsToDevicePixels="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="Disabled" />
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HeaderContentPresenter.Foreground" Value="{DynamicResource RadioButtonsHeaderForegroundDisabled}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <ui:ContentPresenterEx x:Name="HeaderContentPresenter"
@@ -34,11 +41,6 @@
                             </local:ItemsRepeater.Layout>
                         </local:ItemsRepeater>
                     </StackPanel>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="HeaderContentPresenter" Property="Foreground" Value="{DynamicResource RadioButtonsHeaderForegroundDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -70,9 +70,21 @@ namespace ModernWpf
             ParsedTargetPath targetPath = ParsedTargetPath.Parse(setter);
             DependencyObject target = ResolveTarget(control, stateGroupsRoot, targetPath.TargetName);
             DependencyProperty property = ResolveDependencyProperty(target, targetPath.PropertyPath);
-            object value = ConvertValue(setter.Value, property);
+            SetterValue value = ResolveSetterValue(setter, property);
 
             return new ResolvedVisualStateSetter(target, property, value);
+        }
+
+        private static SetterValue ResolveSetterValue(VisualStateSetter setter, DependencyProperty property)
+        {
+            object rawValue = setter.ReadLocalValue(VisualStateSetter.ValueProperty);
+
+            if (TryGetDynamicResourceKey(rawValue, out object resourceKey))
+            {
+                return SetterValue.FromDynamicResource(resourceKey);
+            }
+
+            return SetterValue.FromValue(ConvertValue(setter.Value, property));
         }
 
         private static DependencyObject ResolveTarget(FrameworkElement control, FrameworkElement stateGroupsRoot, string targetName)
@@ -255,6 +267,62 @@ namespace ModernWpf
                 $"Unable to convert visual state setter value '{value}' to '{propertyType.FullName}' for '{property.Name}'.");
         }
 
+        private static bool TryGetDynamicResourceKey(object value, out object resourceKey)
+        {
+            resourceKey = null;
+
+            if (value == null || value == DependencyProperty.UnsetValue)
+            {
+                return false;
+            }
+
+            Type valueType = value.GetType();
+            if (!string.Equals(valueType.FullName, "System.Windows.ResourceReferenceExpression", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            PropertyInfo property = valueType.GetProperty(
+                "ResourceKey",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (property == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                resourceKey = property.GetValue(value);
+            }
+            catch (MemberAccessException)
+            {
+                return false;
+            }
+            catch (TargetInvocationException)
+            {
+                return false;
+            }
+
+            return resourceKey != null;
+        }
+
+        private static bool TrySetResourceReference(DependencyObject target, DependencyProperty property, object resourceKey)
+        {
+            if (target is FrameworkElement frameworkElement)
+            {
+                frameworkElement.SetResourceReference(property, resourceKey);
+                return true;
+            }
+
+            if (target is FrameworkContentElement frameworkContentElement)
+            {
+                frameworkContentElement.SetResourceReference(property, resourceKey);
+                return true;
+            }
+
+            return false;
+        }
+
         private static SetterValueStore GetSetterValueStore(FrameworkElement stateGroupsRoot)
         {
             var store = (SetterValueStore)stateGroupsRoot.GetValue(SetterValueStoreProperty);
@@ -273,9 +341,51 @@ namespace ModernWpf
                 typeof(SetterValueStore),
                 typeof(VisualStateManagerEx));
 
+        private readonly struct SetterValue
+        {
+            private SetterValue(object value, object dynamicResourceKey, bool isDynamicResource)
+            {
+                Value = value;
+                DynamicResourceKey = dynamicResourceKey;
+                IsDynamicResource = isDynamicResource;
+            }
+
+            public object Value { get; }
+
+            public object DynamicResourceKey { get; }
+
+            public bool IsDynamicResource { get; }
+
+            public static SetterValue FromValue(object value)
+            {
+                return new SetterValue(value, null, false);
+            }
+
+            public static SetterValue FromDynamicResource(object resourceKey)
+            {
+                return new SetterValue(null, resourceKey, true);
+            }
+
+            public void Apply(DependencyObject target, DependencyProperty property)
+            {
+                if (IsDynamicResource)
+                {
+                    if (!TrySetResourceReference(target, property, DynamicResourceKey))
+                    {
+                        throw new NotSupportedException(
+                            $"Dynamic resource visual state setter value for '{property.Name}' requires a FrameworkElement or FrameworkContentElement target.");
+                    }
+
+                    return;
+                }
+
+                target.SetValue(property, Value);
+            }
+        }
+
         private readonly struct ResolvedVisualStateSetter
         {
-            public ResolvedVisualStateSetter(DependencyObject target, DependencyProperty property, object value)
+            public ResolvedVisualStateSetter(DependencyObject target, DependencyProperty property, SetterValue value)
             {
                 Target = target;
                 Property = property;
@@ -286,7 +396,7 @@ namespace ModernWpf
 
             public DependencyProperty Property { get; }
 
-            public object Value { get; }
+            public SetterValue Value { get; }
 
             public SetterKey Key => new SetterKey(Target, Property);
         }
@@ -359,7 +469,7 @@ namespace ModernWpf
                     ActiveSetter activeSetter = _activeSetters[i];
                     if (activeSetter.Setter.Key.Equals(key))
                     {
-                        key.Target.SetValue(key.Property, activeSetter.Setter.Value);
+                        activeSetter.Setter.Value.Apply(key.Target, key.Property);
                         return;
                     }
                 }
@@ -412,6 +522,12 @@ namespace ModernWpf
 
                 if (LocalValue != DependencyProperty.UnsetValue)
                 {
+                    if (TryGetDynamicResourceKey(LocalValue, out object resourceKey) &&
+                        TrySetResourceReference(target, property, resourceKey))
+                    {
+                        return;
+                    }
+
                     try
                     {
                         target.SetValue(property, LocalValue);

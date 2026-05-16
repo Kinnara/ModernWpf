@@ -22,6 +22,7 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | --- | ---: | --- | --- | --- |
 | `dev\ProgressBar\ProgressBar.xaml` | 4 | `ModernWpf\ProgressBar\ProgressBar.xaml` | Partial | Direct opacity setters for `Indeterminate`, `IndeterminateError`, and `IndeterminatePaused` are converted. The `UpdatingError` brush-color setter still uses a storyboard because nested target paths such as `(Shape.Fill).(SolidColorBrush.Color)` are not supported yet. |
 | `dev\InfoBadge\InfoBadge_themeresources.xaml` | 3 | `ModernWpf.Controls\InfoBadge\InfoBadge.xaml` | Converted | `Dot`, `Icon`, `FontIcon`, and `Value` state behavior now lives in `VisualStateEx.Setters`; code only chooses the state and creates the icon element. |
+| `dev\RadioButtons\RadioButtons.xaml` | 1 | `ModernWpf.Controls\RadioButtons\RadioButtons.xaml` | Converted | Disabled header foreground now uses a dynamic-resource `VisualStateEx.Setters` entry instead of a WPF template trigger. |
 
 ## Relevant Pending WinUI 2.8.7 Sources
 
@@ -58,7 +59,6 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\PersonPicture\PersonPicture.xaml` | 5 | `ModernWpf.Controls\PersonPicture\PersonPicture.xaml` | Pending | Likely simple badge/image/initials visibility setters. |
 | `dev\PipsPager\PipsPager.xaml` | 7 | `ModernWpf.Controls\PipsPager\PipsPager.xaml` | Pending | Audit selected/normal/overflow pip state setters. |
 | `dev\ProgressRing\ProgressRing.xaml` | 1 | `ModernWpf.Controls\ProgressRing\ProgressRing.xaml` | Pending | WPF uses a storyboard fallback; check whether the setter maps to a direct property. |
-| `dev\RadioButtons\RadioButtons.xaml` | 1 | `ModernWpf.Controls\RadioButtons\RadioButtons.xaml` | Pending | Likely direct enabled/disabled layout state. |
 | `dev\RadioMenuFlyoutItem\RadioMenuFlyoutItem_themeresources.xaml` | 13 | `ModernWpf.Controls\RadioMenuItem\RadioMenuItem.xaml` | Pending | Map check glyph/placeholder setters to WPF menu item template. |
 | `dev\RatingControl\RatingControl.xaml` | 6 | `ModernWpf.Controls\RatingControl\RatingControl.xaml` | Pending | Audit caption/placeholder state setters. |
 | `dev\SplitButton\SplitButton.xaml`, `dev\SplitButton\SplitButton_themeresources.xaml` | 34 | `ModernWpf.Controls\SplitButton\SplitButton.xaml` | Pending | Convert direct state setters; animated icon state remains unsupported where present. |
@@ -84,7 +84,8 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 ## Runtime Gaps Blocking Full Conversion
 
 - Nested target paths such as `Rect.(Shape.Fill).(SolidColorBrush.Color)`.
-- Dynamic resource values in `VisualStateSetter.Value`; direct literal values are safe today.
+- Dynamic resource setters now work on `FrameworkElement` and
+  `FrameworkContentElement` targets, but non-framework targets are unsupported.
 - WinUI attached properties that do not exist in ModernWpf, especially
   `AnimatedIcon.State`.
 - State setter timing versus transitions: controls with transition storyboards
