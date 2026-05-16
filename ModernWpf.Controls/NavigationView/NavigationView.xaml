@@ -939,11 +939,12 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="OverflowLabelGroup">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="OverflowLabelGroupListener" />
-                                </ui:VisualStateGroupListener.Listener>
                                 <VisualState x:Name="OverflowButtonWithLabel" />
-                                <VisualState x:Name="OverflowButtonNoLabel" />
+                                <ui:VisualStateEx x:Name="OverflowButtonNoLabel">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="TopNavOverflowButton.Style" Value="{DynamicResource NavigationViewOverflowButtonNoLabelStyleWhenPaneOnTop}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="BackButtonGroup">
@@ -1399,9 +1400,6 @@
                             <Setter TargetName="RootSplitView" Property="PaneBackground" Value="{DynamicResource NavigationViewExpandedPaneBackground}" />
                         </Trigger>
 
-                        <Trigger SourceName="OverflowLabelGroupListener" Property="CurrentStateName" Value="OverflowButtonNoLabel">
-                            <Setter TargetName="TopNavOverflowButton" Property="Style" Value="{DynamicResource NavigationViewOverflowButtonNoLabelStyleWhenPaneOnTop}" />
-                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

@@ -1125,6 +1125,39 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewOverflowButtonNoLabelStateUsesWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top,
+                MenuItems =
+                {
+                    new ModernWpf.Controls.NavigationViewItem
+                    {
+                        Content = "Home"
+                    }
+                }
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            var root = FindNamedDescendant<Grid>(navView, "RootGrid");
+            var overflowButton = FindNamedDescendant<Button>(navView, "TopNavOverflowButton");
+
+            AssertStateSetter(root, "OverflowLabelGroup", "OverflowButtonNoLabel",
+                "TopNavOverflowButton.Style");
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "OverflowButtonNoLabel", false));
+            AssertCurrentState(root, "OverflowLabelGroup", "OverflowButtonNoLabel");
+            Assert.AreSame(root.TryFindResource("NavigationViewOverflowButtonNoLabelStyleWhenPaneOnTop"), overflowButton.Style);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>
