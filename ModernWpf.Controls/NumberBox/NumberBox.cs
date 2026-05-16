@@ -627,18 +627,23 @@ namespace ModernWpf.Controls
         private void UpdateSpinButtonPlacement()
         {
             var spinButtonMode = SpinButtonPlacementMode;
+            var state = "SpinButtonsCollapsed";
 
             if (spinButtonMode == NumberBoxSpinButtonPlacementMode.Inline)
             {
-                VisualStateManager.GoToState(this, "SpinButtonsVisible", false);
+                state = "SpinButtonsVisible";
             }
             else if (spinButtonMode == NumberBoxSpinButtonPlacementMode.Compact)
             {
-                VisualStateManager.GoToState(this, "SpinButtonsPopup", false);
+                state = "SpinButtonsPopup";
             }
-            else
+
+            VisualStateManager.GoToState(this, state, false);
+
+            if (m_textBox != null)
             {
-                VisualStateManager.GoToState(this, "SpinButtonsCollapsed", false);
+                m_textBox.ApplyTemplate();
+                VisualStateManager.GoToState(m_textBox, state, false);
             }
         }
 

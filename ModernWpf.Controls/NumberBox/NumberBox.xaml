@@ -106,6 +106,9 @@
                         </Style>
                     </ControlTemplate.Resources>
                     <Grid SnapsToDevicePixels="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ButtonStates">
                                 <VisualState x:Name="ButtonVisible">
@@ -116,6 +119,15 @@
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="ButtonCollapsed" />
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SpinButtonStates">
+                                <VisualState x:Name="SpinButtonsCollapsed" />
+                                <ui:VisualStateEx x:Name="SpinButtonsPopup">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PopupIndicator.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <VisualState x:Name="SpinButtonsVisible" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.RowDefinitions>
@@ -205,8 +217,10 @@
                             Foreground="{DynamicResource SystemControlDescriptionTextForegroundBrush}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         <ui:FontIconFallback
+                            x:Name="PopupIndicator"
                             Grid.Row="1"
                             Grid.Column="2"
+                            Visibility="Collapsed"
                             Margin="{StaticResource NumberBoxPopupIndicatorMargin}"
                             Foreground="{DynamicResource NumberBoxPopupIndicatorForeground}"
                             VerticalAlignment="Center"
@@ -296,6 +310,7 @@
                                         <ui:VisualStateSetter Target="DownSpinButton.Visibility" Value="Visible" />
                                         <ui:VisualStateSetter Target="UpSpinButton.Visibility" Value="Visible" />
                                         <ui:VisualStateSetter Target="InputBox.MinWidth" Value="{DynamicResource NumberBoxMinWidth}" />
+                                        <ui:VisualStateSetter Target="SpinButtonsColumn.Width" Value="72" />
                                         <ui:VisualStateSetter Target="InputBox.(ui:ControlHelper.CornerRadius)" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
@@ -357,7 +372,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition x:Name="SpinButtonsColumn" Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <ui:ContentPresenterEx

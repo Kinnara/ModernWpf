@@ -142,10 +142,17 @@ public class NumberBoxApiTests
             host.UpdateLayout();
 
             var layoutRoot = (FrameworkElement)VisualTreeHelper.GetChild(numberBox, 0);
+            var layoutGrid = (Grid)layoutRoot;
+            AssertStateSetter(layoutRoot, "SpinButtonStates", "SpinButtonsVisible",
+                "DownSpinButton.Visibility",
+                "UpSpinButton.Visibility",
+                "InputBox.MinWidth",
+                "SpinButtonsColumn.Width");
             Assert.AreEqual("SpinButtonsVisible", GetCurrentStateName(layoutRoot, "SpinButtonStates"));
 
             var inputBox = FindTemplatePart<TextBox>(numberBox, "InputBox");
             Assert.AreEqual(120.0, inputBox.MinWidth);
+            Assert.AreEqual(new GridLength(72), layoutGrid.ColumnDefinitions[2].Width);
             var inlineInputBoxStyle = inputBox.Style;
 
             var upButton = FindTemplatePart<RepeatButton>(numberBox, "UpSpinButton");
@@ -161,6 +168,14 @@ public class NumberBoxApiTests
             Assert.AreEqual("SpinButtonsPopup", GetCurrentStateName(layoutRoot, "SpinButtonStates"));
             Assert.IsNotNull(inputBox.Style);
             Assert.AreNotSame(inlineInputBoxStyle, inputBox.Style);
+
+            var inputBoxRoot = (FrameworkElement)VisualTreeHelper.GetChild(inputBox, 0);
+            AssertStateSetter(inputBoxRoot, "SpinButtonStates", "SpinButtonsPopup",
+                "PopupIndicator.Visibility");
+            Assert.AreEqual("SpinButtonsPopup", GetCurrentStateName(inputBoxRoot, "SpinButtonStates"));
+
+            var popupIndicator = FindTemplatePart<FontIconFallback>(inputBox, "PopupIndicator");
+            Assert.AreEqual(Visibility.Visible, popupIndicator.Visibility);
 
             var popup = FindTemplatePart<Popup>(numberBox, "UpDownPopup");
             Assert.AreEqual(-21.0, popup.HorizontalOffset);
@@ -282,5 +297,18 @@ public class NumberBoxApiTests
             .Single(item => item.Name == groupName);
         Assert.IsNotNull(group.CurrentState);
         return group.CurrentState.Name;
+    }
+
+    private static void AssertStateSetter(FrameworkElement stateGroupsRoot, string groupName, string stateName, params string[] expectedTargets)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        var state = group.States.OfType<VisualStateEx>().Single(item => item.Name == stateName);
+        var actualTargets = state.Setters
+            .Select(setter => string.IsNullOrEmpty(setter.Target) ? setter.Property : setter.Target)
+            .ToArray();
+
+        CollectionAssert.IsSubsetOf(expectedTargets, actualTargets);
     }
 }
