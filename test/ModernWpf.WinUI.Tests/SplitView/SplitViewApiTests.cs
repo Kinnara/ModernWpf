@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -140,5 +141,141 @@ public class SplitViewApiTests
             Assert.AreEqual(SplitViewPanePlacement.Right, splitView.PanePlacement);
             Assert.AreEqual(296d, splitView.TemplateSettings.OpenPaneLength);
         });
+    }
+
+    [TestMethod]
+    public void ClosedCompactStatesUseVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            VerifyClosedCompactState(SplitViewPanePlacement.Left);
+            VerifyClosedCompactState(SplitViewPanePlacement.Right);
+        });
+    }
+
+    [TestMethod]
+    public void OpenInlineLeftStateUsesVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var splitView = new ModernWpf.Controls.SplitView
+            {
+                DisplayMode = SplitViewDisplayMode.Inline,
+                PanePlacement = SplitViewPanePlacement.Left,
+                IsPaneOpen = true,
+                OpenPaneLength = 296
+            };
+
+            using var host = new TestWindowHost(splitView, width: 640, height: 360);
+            WpfTestHost.DoEvents();
+            host.UpdateLayout();
+
+            var layoutRoot = (FrameworkElement)VisualTreeHelper.GetChild(splitView, 0);
+            Assert.AreEqual("OpenInlineLeft", GetCurrentStateName(layoutRoot, "DisplayModeStates"));
+
+            var contentRoot = FindTemplatePart<Grid>(splitView, "ContentRoot");
+            var paneRoot = FindTemplatePart<FrameworkElement>(splitView, "PaneRoot");
+            var hcPaneBorder = FindTemplatePart<FrameworkElement>(splitView, "HCPaneBorder");
+            var paneTransform = FindTemplatePart<TranslateTransform>(splitView, "PaneTransform");
+            var contentTransform = FindTemplatePart<TranslateTransform>(splitView, "ContentTransform");
+            var paneClipTransform = FindTemplatePart<TranslateTransform>(splitView, "PaneClipRectangleTransform");
+
+            Assert.AreEqual(Visibility.Visible, paneRoot.Visibility);
+            Assert.AreEqual(Visibility.Visible, hcPaneBorder.Visibility);
+            Assert.AreEqual(1, Grid.GetColumn(contentRoot));
+            Assert.AreEqual(1, Grid.GetColumnSpan(contentRoot));
+            Assert.AreEqual(1, Grid.GetColumnSpan(paneRoot));
+            Assert.AreEqual(0, paneTransform.X);
+            Assert.AreEqual(0, contentTransform.X);
+            Assert.AreEqual(0, paneClipTransform.X);
+        });
+    }
+
+    [TestMethod]
+    public void OpenCompactOverlayLeftStateUsesVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var splitView = new ModernWpf.Controls.SplitView
+            {
+                DisplayMode = SplitViewDisplayMode.CompactOverlay,
+                PanePlacement = SplitViewPanePlacement.Left,
+                IsPaneOpen = true,
+                OpenPaneLength = 296,
+                CompactPaneLength = 48
+            };
+
+            using var host = new TestWindowHost(splitView, width: 640, height: 360);
+            WpfTestHost.DoEvents();
+            host.UpdateLayout();
+
+            var layoutRoot = (FrameworkElement)VisualTreeHelper.GetChild(splitView, 0);
+            Assert.AreEqual("OpenCompactOverlayLeft", GetCurrentStateName(layoutRoot, "DisplayModeStates"));
+
+            var contentRoot = FindTemplatePart<Grid>(splitView, "ContentRoot");
+            Assert.AreEqual(1, Grid.GetColumn(contentRoot));
+            Assert.AreEqual(1, Grid.GetColumnSpan(contentRoot));
+        });
+    }
+
+    private static void VerifyClosedCompactState(SplitViewPanePlacement panePlacement)
+    {
+        var splitView = new ModernWpf.Controls.SplitView
+        {
+            DisplayMode = SplitViewDisplayMode.CompactInline,
+            PanePlacement = panePlacement,
+            IsPaneOpen = false,
+            OpenPaneLength = 296,
+            CompactPaneLength = 48
+        };
+
+        using var host = new TestWindowHost(splitView, width: 640, height: 360);
+        WpfTestHost.DoEvents();
+        host.UpdateLayout();
+
+        var layoutRoot = (FrameworkElement)VisualTreeHelper.GetChild(splitView, 0);
+        var contentRoot = FindTemplatePart<Grid>(splitView, "ContentRoot");
+        var paneRoot = FindTemplatePart<FrameworkElement>(splitView, "PaneRoot");
+        var columnDefinition1 = FindTemplatePart<ColumnDefinition>(splitView, "ColumnDefinition1");
+        var columnDefinition2 = FindTemplatePart<ColumnDefinition>(splitView, "ColumnDefinition2");
+        var paneClipTransform = FindTemplatePart<TranslateTransform>(splitView, "PaneClipRectangleTransform");
+
+        if (panePlacement == SplitViewPanePlacement.Left)
+        {
+            Assert.AreEqual("ClosedCompactLeft", GetCurrentStateName(layoutRoot, "DisplayModeStates"));
+            Assert.AreEqual(new GridLength(48), columnDefinition1.Width);
+            Assert.AreEqual(1, Grid.GetColumn(contentRoot));
+            Assert.AreEqual(1, Grid.GetColumnSpan(contentRoot));
+            Assert.AreEqual(Visibility.Visible, paneRoot.Visibility);
+            Assert.AreEqual(-248, paneClipTransform.X);
+        }
+        else
+        {
+            Assert.AreEqual("ClosedCompactRight", GetCurrentStateName(layoutRoot, "DisplayModeStates"));
+            Assert.AreEqual(GridUnitType.Star, columnDefinition1.Width.GridUnitType);
+            Assert.AreEqual(new GridLength(48), columnDefinition2.Width);
+            Assert.AreEqual(1, Grid.GetColumnSpan(contentRoot));
+            Assert.AreEqual(Visibility.Visible, paneRoot.Visibility);
+            Assert.AreEqual(2, Grid.GetColumnSpan(paneRoot));
+            Assert.AreEqual(HorizontalAlignment.Right, paneRoot.HorizontalAlignment);
+            Assert.AreEqual(248, paneClipTransform.X);
+        }
+    }
+
+    private static T FindTemplatePart<T>(Control control, string name)
+        where T : DependencyObject
+    {
+        control.ApplyTemplate();
+        return control.Template.FindName(name, control) as T
+            ?? throw new AssertFailedException($"Expected SplitView template part '{name}'.");
+    }
+
+    private static string GetCurrentStateName(FrameworkElement stateGroupsRoot, string groupName)
+    {
+        var group = VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
+            .OfType<VisualStateGroup>()
+            .Single(item => item.Name == groupName);
+        Assert.IsNotNull(group.CurrentState);
+        return group.CurrentState.Name;
     }
 }
