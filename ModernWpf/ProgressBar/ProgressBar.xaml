@@ -191,7 +191,7 @@
                         </Grid.Resources>
 
                         <VisualStateManager.CustomVisualStateManager>
-                            <root:ModernVisualStateManager />
+                            <root:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
 
                         <VisualStateManager.VisualStateGroups>

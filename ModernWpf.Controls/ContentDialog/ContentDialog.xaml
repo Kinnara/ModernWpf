@@ -36,7 +36,7 @@
                 <ControlTemplate TargetType="local:ContentDialog">
                     <Border x:Name="Container">
                         <VisualStateManager.CustomVisualStateManager>
-                            <ui:ModernVisualStateManager />
+                            <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DialogShowingStates">

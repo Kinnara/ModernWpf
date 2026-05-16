@@ -37,7 +37,7 @@
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                         <VisualStateManager.CustomVisualStateManager>
-                            <ui:ModernVisualStateManager />
+                            <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="MultiSelectStates">

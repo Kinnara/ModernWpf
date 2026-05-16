@@ -1556,7 +1556,7 @@
                 <ControlTemplate TargetType="local:NavigationViewItemHeader">
                     <Grid x:Name="NavigationViewItemHeaderRootGrid">
                         <VisualStateManager.CustomVisualStateManager>
-                            <ui:ModernVisualStateManager />
+                            <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PaneStates">

@@ -259,7 +259,7 @@ public class VisualStateSetterTests
                 TargetType="{x:Type ContentControl}">
                 <Grid x:Name="Root">
                     <VisualStateManager.CustomVisualStateManager>
-                        <ui:ModernVisualStateManager />
+                        <ui:VisualStateManagerEx />
                     </VisualStateManager.CustomVisualStateManager>
                     <VisualStateManager.VisualStateGroups>
                         {{visualStateGroups}}

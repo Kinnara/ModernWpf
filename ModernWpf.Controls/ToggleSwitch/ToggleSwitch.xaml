@@ -61,7 +61,7 @@
                         </Border.Resources>
 
                         <VisualStateManager.CustomVisualStateManager>
-                            <ui:ModernVisualStateManager />
+                            <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">

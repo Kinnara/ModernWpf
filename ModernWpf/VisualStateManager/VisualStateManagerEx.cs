@@ -17,7 +17,7 @@ namespace ModernWpf
     /// <summary>
     ///     VisualStateManager with WinUI-style VisualStateEx.Setters support.
     /// </summary>
-    public class ModernVisualStateManager : SimpleVisualStateManager
+    public class VisualStateManagerEx : SimpleVisualStateManager
     {
         protected override bool GoToStateCore(
             FrameworkElement control,
@@ -271,7 +271,7 @@ namespace ModernWpf
             DependencyProperty.RegisterAttached(
                 "SetterValueStore",
                 typeof(SetterValueStore),
-                typeof(ModernVisualStateManager));
+                typeof(VisualStateManagerEx));
 
         private readonly struct ResolvedVisualStateSetter
         {
