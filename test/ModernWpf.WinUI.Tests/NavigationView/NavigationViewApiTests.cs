@@ -866,6 +866,42 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewHeaderAndAutoSuggestStatesUseWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Header = "Header",
+                IsSettingsVisible = false,
+                Width = 800.0,
+                Height = 600.0,
+                Content = "Content"
+            };
+
+            using var host = new TestWindowHost(navView);
+
+            var root = FindNamedDescendant<Grid>(navView, "RootGrid");
+
+            AssertStateSetter(root, "HeaderGroup", "HeaderCollapsed", "HeaderContent.Visibility");
+            AssertStateSetter(root, "AutoSuggestGroup", "AutoSuggestBoxCollapsed",
+                "AutoSuggestArea.Visibility",
+                "TopPaneAutoSuggestArea.Visibility");
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "HeaderCollapsed", false));
+            AssertCurrentState(root, "HeaderGroup", "HeaderCollapsed");
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<FrameworkElement>(navView, "HeaderContent").Visibility);
+
+            Assert.IsTrue(VisualStateManager.GoToState(navView, "AutoSuggestBoxCollapsed", false));
+            AssertCurrentState(root, "AutoSuggestGroup", "AutoSuggestBoxCollapsed");
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<FrameworkElement>(navView, "AutoSuggestArea").Visibility);
+            Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<FrameworkElement>(navView, "TopPaneAutoSuggestArea").Visibility);
+        });
+    }
+
+    [TestMethod]
     public void VerifyOverflowButtonToolTip()
     {
         WpfTestHost.Run(() =>

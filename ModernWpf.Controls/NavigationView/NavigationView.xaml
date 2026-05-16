@@ -849,6 +849,9 @@
                 <ControlTemplate TargetType="local:NavigationView">
                     <Grid x:Name="RootGrid"
                           KeyboardNavigation.TabNavigation="Local">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DisplayModeGroup">
                                 <ui:VisualStateGroupListener.Listener>
@@ -876,27 +879,21 @@
 
                             <VisualStateGroup x:Name="HeaderGroup">
                                 <VisualState x:Name="HeaderVisible" />
-                                <VisualState x:Name="HeaderCollapsed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderContent" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="HeaderCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HeaderContent.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="AutoSuggestGroup">
                                 <VisualState x:Name="AutoSuggestBoxVisible" />
-                                <VisualState x:Name="AutoSuggestBoxCollapsed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AutoSuggestArea" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopPaneAutoSuggestArea" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="AutoSuggestBoxCollapsed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="AutoSuggestArea.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="TopPaneAutoSuggestArea.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="PaneStateGroup">
