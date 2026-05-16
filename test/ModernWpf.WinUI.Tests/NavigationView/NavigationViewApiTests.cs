@@ -861,6 +861,118 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewTopPaneItemPresenterStatesUseWinUIVisualStateSetters()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var menuItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Home",
+                Icon = new ModernWpf.Controls.SymbolIcon { Symbol = ModernWpf.Controls.Symbol.Home },
+                IsExpanded = true
+            };
+            menuItem.MenuItems.Add(new ModernWpf.Controls.NavigationViewItem { Content = "Child" });
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top,
+                IsSettingsVisible = false,
+                Width = 1008
+            };
+            navView.MenuItems.Add(menuItem);
+
+            using var host = new TestWindowHost(navView);
+
+            var presenter = VisualTreeTestHelper.FindDescendant<ModernWpf.Controls.Primitives.NavigationViewItemPresenter>(menuItem);
+            Assert.IsNotNull(presenter);
+            var itemPresenter = presenter!;
+            var layoutRoot = (Border)VisualTreeHelper.GetChild(itemPresenter, 0);
+            var pointerRectangle = FindNamedDescendant<Rectangle>(itemPresenter, "PointerRectangle");
+            var icon = FindNamedDescendant<ModernWpf.Controls.ContentPresenterEx>(itemPresenter, "Icon");
+            var contentPresenter = FindNamedDescendant<ModernWpf.Controls.ContentPresenterEx>(itemPresenter, "ContentPresenter");
+            var iconBox = FindNamedDescendant<FrameworkElement>(itemPresenter, "IconBox");
+            var selectionIndicatorGrid = FindNamedDescendant<FrameworkElement>(itemPresenter, "SelectionIndicatorGrid");
+            var chevron = FindNamedDescendant<FrameworkElement>(itemPresenter, "ExpandCollapseChevron");
+            var chevronIcon = FindNamedDescendant<ModernWpf.Controls.FontIconFallback>(itemPresenter, "ExpandCollapseChevronIcon");
+            var chevronRotateTransform = (RotateTransform)chevronIcon.RenderTransform;
+
+            AssertStateSetter(layoutRoot, "PointerStates", "PointerOver",
+                "LayoutRoot.Background",
+                "PointerRectangle.Fill",
+                "Icon.Foreground",
+                "ContentPresenter.Foreground");
+            AssertStateSetter(layoutRoot, "PointerStates", "PointerOverSelected",
+                "LayoutRoot.Background",
+                "PointerRectangle.Fill",
+                "Icon.Foreground",
+                "ContentPresenter.Foreground");
+            AssertStateSetter(layoutRoot, "DisabledStates", "Disabled",
+                "Icon.Foreground",
+                "ContentPresenter.Foreground");
+            AssertStateSetter(layoutRoot, "NavigationViewIconPositionStates", "IconOnly",
+                "LayoutRoot.Width",
+                "LayoutRoot.Height",
+                "LayoutRoot.Margin",
+                "IconBox.Margin",
+                "ContentPresenter.Visibility",
+                "SelectionIndicatorGrid.Margin",
+                "ExpandCollapseChevron.Margin");
+            AssertStateSetter(layoutRoot, "NavigationViewIconPositionStates", "ContentOnly",
+                "IconBox.Visibility",
+                "ContentPresenter.Margin",
+                "SelectionIndicatorGrid.Margin",
+                "ExpandCollapseChevron.Margin");
+            AssertStateSetter(layoutRoot, "ChevronStates", "ChevronVisibleOpen",
+                "ExpandCollapseChevron.Visibility",
+                "ExpandCollapseChevronRotateTransform.Angle");
+            AssertStateSetter(layoutRoot, "PointerChevronStates", "PointerOverChevronVisibleOpen",
+                "ExpandCollapseChevronIcon.Foreground");
+            AssertStateSetter(layoutRoot, "PointerChevronStates", "PressedChevronVisibleClosed",
+                "ExpandCollapseChevronIcon.Foreground");
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "PointerOver", false));
+            AssertCurrentState(layoutRoot, "PointerStates", "PointerOver");
+            Assert.AreSame(itemPresenter.TryFindResource("TopNavigationViewItemBackgroundPointerOver"), layoutRoot.Background);
+            Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemBackgroundPointerOver"), pointerRectangle.Fill);
+            Assert.AreSame(itemPresenter.TryFindResource("TopNavigationViewItemForegroundPointerOver"), icon.Foreground);
+            Assert.AreSame(itemPresenter.TryFindResource("TopNavigationViewItemForegroundPointerOver"), contentPresenter.Foreground);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "PointerOverSelected", false));
+            AssertCurrentState(layoutRoot, "PointerStates", "PointerOverSelected");
+            Assert.AreSame(itemPresenter.TryFindResource("TopNavigationViewItemBackgroundSelectedPointerOver"), layoutRoot.Background);
+            Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemBackgroundSelectedPointerOver"), pointerRectangle.Fill);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "IconOnly", false));
+            AssertCurrentState(layoutRoot, "NavigationViewIconPositionStates", "IconOnly");
+            Assert.AreEqual(36.0, layoutRoot.Width);
+            Assert.AreEqual(36.0, layoutRoot.Height);
+            Assert.AreEqual(new Thickness(2), layoutRoot.Margin);
+            Assert.AreEqual(new Thickness(10, 0, 10, 0), iconBox.Margin);
+            Assert.AreEqual(Visibility.Collapsed, contentPresenter.Visibility);
+            Assert.AreEqual(new Thickness(0), selectionIndicatorGrid.Margin);
+            Assert.AreEqual(itemPresenter.TryFindResource("TopNavigationViewItemIconOnlyExpandChevronMargin"), chevron.Margin);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "ContentOnly", false));
+            AssertCurrentState(layoutRoot, "NavigationViewIconPositionStates", "ContentOnly");
+            Assert.AreEqual(Visibility.Collapsed, iconBox.Visibility);
+            Assert.AreEqual(itemPresenter.TryFindResource("TopNavigationViewItemContentOnlyContentPresenterMargin"), contentPresenter.Margin);
+            Assert.AreEqual(new Thickness(12, 0, 12, 4), selectionIndicatorGrid.Margin);
+            Assert.AreEqual(itemPresenter.TryFindResource("TopNavigationViewItemContentOnlyExpandChevronMargin"), chevron.Margin);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "ChevronVisibleOpen", false));
+            AssertCurrentState(layoutRoot, "ChevronStates", "ChevronVisibleOpen");
+            Assert.AreEqual(Visibility.Visible, chevron.Visibility);
+            Assert.AreEqual(180.0, chevronRotateTransform.Angle);
+
+            Assert.IsTrue(VisualStateManager.GoToState(itemPresenter, "PointerOverChevronVisibleOpen", false));
+            AssertCurrentState(layoutRoot, "PointerChevronStates", "PointerOverChevronVisibleOpen");
+            Assert.AreSame(itemPresenter.TryFindResource("NavigationViewItemForegroundPointerOver"), chevronIcon.Foreground);
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewPaneToggleButtonTemplateUsesWinUIPresenterSlot()
     {
         WpfTestHost.Run(() =>

@@ -38,6 +38,15 @@ namespace ModernWpf.Controls
         const string c_chevronHidden = "ChevronHidden";
         const string c_chevronVisibleOpen = "ChevronVisibleOpen";
         const string c_chevronVisibleClosed = "ChevronVisibleClosed";
+        const string c_normalChevronHidden = "NormalChevronHidden";
+        const string c_normalChevronVisibleOpen = "NormalChevronVisibleOpen";
+        const string c_normalChevronVisibleClosed = "NormalChevronVisibleClosed";
+        const string c_pointerOverChevronHidden = "PointerOverChevronHidden";
+        const string c_pointerOverChevronVisibleOpen = "PointerOverChevronVisibleOpen";
+        const string c_pointerOverChevronVisibleClosed = "PointerOverChevronVisibleClosed";
+        const string c_pressedChevronHidden = "PressedChevronHidden";
+        const string c_pressedChevronVisibleOpen = "PressedChevronVisibleOpen";
+        const string c_pressedChevronVisibleClosed = "PressedChevronVisibleClosed";
 
         static NavigationViewItem()
         {
@@ -524,8 +533,52 @@ namespace ModernWpf.Controls
             if (m_navigationViewItemPresenter is { } presenter)
             {
                 var chevronState = HasChildren() && !(m_isClosedCompact && ShouldRepeaterShowInFlyout()) ? (IsExpanded ? c_chevronVisibleOpen : c_chevronVisibleClosed) : c_chevronHidden;
+                var pointerChevronState = GetPointerChevronState(chevronState);
+                VisualStateManager.GoToState(presenter, pointerChevronState, true);
                 VisualStateManager.GoToState(presenter, chevronState, true);
             }
+        }
+
+        string GetPointerChevronState(string chevronState)
+        {
+            bool isPressed = IsEnabled && m_isPressed;
+            bool isPointerOver = IsEnabled && m_isPointerOver;
+
+            if (chevronState == c_chevronVisibleOpen)
+            {
+                if (isPressed)
+                {
+                    return c_pressedChevronVisibleOpen;
+                }
+                if (isPointerOver)
+                {
+                    return c_pointerOverChevronVisibleOpen;
+                }
+                return c_normalChevronVisibleOpen;
+            }
+
+            if (chevronState == c_chevronVisibleClosed)
+            {
+                if (isPressed)
+                {
+                    return c_pressedChevronVisibleClosed;
+                }
+                if (isPointerOver)
+                {
+                    return c_pointerOverChevronVisibleClosed;
+                }
+                return c_normalChevronVisibleClosed;
+            }
+
+            if (isPressed)
+            {
+                return c_pressedChevronHidden;
+            }
+            if (isPointerOver)
+            {
+                return c_pointerOverChevronHidden;
+            }
+            return c_normalChevronHidden;
         }
 
         internal bool HasChildren()
